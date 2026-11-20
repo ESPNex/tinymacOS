@@ -152,12 +152,20 @@
     "sha256": "4aead08c18f721d1454898a53bfdc5e1f977e988fce5e6235fa1701054649fc5"
   },
   {
+    "path": "tools/dualboot-iso.py",
+    "sha256": "21bba1a8517da922a168ce91a9b5366e6986807d12bc1c5bde3ecaab4e6000d7"
+  },
+  {
     "path": "tools/env.sh",
     "sha256": "0c269b50f1db644087a477aceca0cc87044cca2de22ade07db56d570b73d4c91"
   },
   {
     "path": "tools/iso.sh",
     "sha256": "87756ae3406e52736f5cfac4d2997c3e11e1e66895441f9b6bee0529d0714a22"
+  },
+  {
+    "path": "tools/run-bios-iso.sh",
+    "sha256": "95160ce3b7ed4295baf4636f31a89f1696d1ba30ce4bfb3d9a32fead5efab23d"
   },
   {
     "path": "tools/run-bios-qemu.sh",
