@@ -2,6 +2,8 @@
 
 **Sostituzione della stessa release v2.4.5, dopo il mouse ancora fermo sulla 21B7.**
 
+**DEPLOY COMPLETATO E VERIFICATO:** release ID `453129451` invariato; nuova ISO riscaricata sotto il nome definitivo e confrontata con il checksum. Tag `v2.4.5` al commit sorgenti `f4e499bd2dcea87bbf2eae86e81e714b1b7c0e8b`; vecchi sorgenti conservati come `v2.4.5-21B7`. Ricevuta `github-release-verification.json`.
+
 L’utente ha confermato che la tastiera ora funziona, ma il mouse USB no, indicando una **ASRock Q1900M**. Non consideriamo i PASS QEMU precedenti una conferma su quel PC. Recovery usa il firmware e non prova la correttezza del driver nativo.
 
 ## Mouse USB: lacune corrette

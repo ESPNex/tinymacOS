@@ -1,0 +1,28 @@
+{
+  "published": true,
+  "replaced_existing_release": true,
+  "release_id": 453129451,
+  "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5",
+  "tag": "v2.4.5",
+  "tag_commit": "f4e499bd2dcea87bbf2eae86e81e714b1b7c0e8b",
+  "archived_prior_tag": "v2.4.5-21B7",
+  "build": "21B8",
+  "iso_sha256": "fd24fc89e28e4cbb20a05738e2ccfc29ad7597ddb742afe26ab85f1375cf47e2",
+  "bytes": 221509632,
+  "remote_download_verified": true,
+  "downloaded_external": "/var/tmp/tmc245-input3-publish-ao89m9ou/published-download",
+  "assets": [
+    {
+      "id": 773482228,
+      "name": "SHA256SUMS.txt",
+      "size": 112,
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/SHA256SUMS.txt"
+    },
+    {
+      "id": 773482226,
+      "name": "tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso",
+      "size": 221509632,
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso"
+    }
+  ]
+}

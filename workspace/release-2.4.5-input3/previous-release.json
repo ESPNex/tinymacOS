@@ -1,0 +1,18 @@
+{
+  "release_id": 453129451,
+  "tag": "v2.4.5",
+  "tag_commit": "1cc3e8423a3ba8b3021d0d87675415e3cce06709",
+  "iso_sha256": "2d164de30042f026f107d573d485398e1930a96b692de11a9934976abd62e17a",
+  "assets": [
+    {
+      "id": 773315284,
+      "name": "tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso",
+      "size": 221509632
+    },
+    {
+      "id": 773315287,
+      "name": "SHA256SUMS.txt",
+      "size": 112
+    }
+  ]
+}
