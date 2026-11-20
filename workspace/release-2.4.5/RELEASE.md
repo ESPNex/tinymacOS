@@ -2,6 +2,8 @@
 
 **Build 21B6 · x86-64 · BIOS e UEFI · senza Safari/WebKit**
 
+**Pubblicata e riscaricata/verificata:** [release v2.4.5](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5) · [ISO](https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso) · [SHA256SUMS](https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/SHA256SUMS.txt). Repository privata: serve accesso GitHub autorizzato. Receipt: `github-release-verification.json`.
+
 Questa manutenzione anticipa il lavoro browser su richiesta dell’utente, per il mouse USB cablato che funziona in Recovery ma resta fermo al login live, e per il ritardo del cursore. Non è una ISO diagnostica: contiene il desktop, le app, l’installer e il Recupero offline normali. La diagnostica F11 è una funzione del login, non sostituisce le app.
 
 ## Modifiche

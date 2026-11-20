@@ -27,6 +27,9 @@ run(gh,'release','download',tag,'--repo',repo,'--pattern',iso.name,'--pattern','
 download=w/iso.name
 assert download.stat().st_size==a['bytes'] and hashlib.file_digest(download.open('rb'),'sha256').hexdigest()==a['sha256']
 assert (w/'SHA256SUMS.txt').read_bytes()==(r/'SHA256SUMS.txt').read_bytes()
+# GitHub may postpone materializing a draft's new tag until publication.
+# Create the exact verified source ref explicitly, never move an existing ref.
+run(gh,'api','--method','POST','repos/'+repo+'/git/refs','-f','ref=refs/tags/'+tag,'-f','sha='+sha)
 ref=api('repos/'+repo+'/git/ref/tags/'+tag)
 assert ref['object']['type']=='commit' and ref['object']['sha']==sha,'Release tag source mismatch'
 run(gh,'release','edit',tag,'--repo',repo,'--draft=false','--latest')

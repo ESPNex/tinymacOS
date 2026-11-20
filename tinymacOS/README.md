@@ -1,4 +1,4 @@
-> **Corrente: manutenzione input 2.4.5 Levante / 21B6.** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
+> **Corrente: manutenzione input 2.4.5 Levante / 21B6, [pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
 
 > **Revisione installatore OC2:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2) aggiorna la manutenzione **2.4.4 Levante / 21B5**, senza browser. Live CD BIOS+UEFI, disco installato BIOS/OpenDuet/OpenCore e UEFI/OpenCore; installazione grafica, ISO rimossa, login, riavvio, documento persistente e Recupero offline verificati in QEMU. [Note, limiti, checksum e screenshot](../workspace/release-2.4.4/installer-media/RELEASE.md).
 
