@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "iso_sha256": "00b15326b3772de4a86a428a4035699fd2b141d1c47e24dd45651cec0c9fd8a0",
+  "profile": "ps2",
+  "firmware": "bios",
+  "work": "/var/tmp/tmc-input4-italian-apps-gauzlhtl",
+  "checks": [
+    "Accented account name and UTF-8 password enroll through actual native key events",
+    "Italian accents/euro/AltGr/punctuation round trip through shell and filesystem, SHA-256 verified",
+    "TextEdit Unicode insertion, left/backspace/delete and accented Save As filename, exact UTF-8 bytes verified",
+    "Finder Italian folder name is created and read by another process",
+    "Italian password authenticates again after lock, no ASCII-only path"
+  ],
+  "i8042_present": true
+}

@@ -1,0 +1,44 @@
+{
+  "passed": true,
+  "version": "2.4.5",
+  "build": "21B9",
+  "sha256": "00b15326b3772de4a86a428a4035699fd2b141d1c47e24dd45651cec0c9fd8a0",
+  "bytes": 221532160,
+  "independent_clean_rebuild_identical": true,
+  "f11_diagnostic_absent": true,
+  "live_input_profiles_passed": 17,
+  "installed_input_profiles_passed": 10,
+  "input_assertions": 236,
+  "independent_x_y_profiles_passed": 27,
+  "italian_app_profiles_passed": 4,
+  "italian_app_assertions": 20,
+  "italian_extra_clients_passed": [
+    "Notes",
+    "Stickies",
+    "Calendar",
+    "Settings search",
+    "Desktop search"
+  ],
+  "italian_recovery_profiles_passed": 4,
+  "sole_italian_keyboard_passed": true,
+  "vertical_only_decoder_negative_control_passed": true,
+  "kernel_regressions": {
+    "passed": 29,
+    "total": 29
+  },
+  "native_kernel_matches_production": true,
+  "mission_control_chrome_and_menu_alignment_passed": true,
+  "installer_and_sealed_local_recovery_passed": true,
+  "forced_pointer_transport_verified": true,
+  "usb_keyboard_profiles_without_i8042": true,
+  "prior_21B8_features_regression_passed": true,
+  "physical_hardware_verified": false,
+  "limits": [
+    "Not all HID/USB device classes; bounded parser/static capacity",
+    "OHCI, SuperSpeed hubs and hotplug/reconnect not implemented",
+    "Physical Bay Trail and EHCI HS transaction translator path not hardware-validated",
+    "Recovery direct keyboard: HID Boot USB or ACPI PNP0303 PS/2",
+    "Synthetic decoder negative control, not an observed descriptor from the physical mouse",
+    "QEMU/host tests do not guarantee physical PC compatibility"
+  ]
+}

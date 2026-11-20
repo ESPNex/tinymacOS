@@ -11,8 +11,8 @@ E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGN
 for f in crypto/sha256.c kernel/string.c storage/maintenance.c;do gcc "${E[@]}" -c "$f" -o "$D/efi-${f##*/}.o";done
 efilink(){ local name=$1;shift;ld -nostdlib --build-id=none -znocombreloc -T "$EFILIB/elf_x86_64_efi.lds" -shared -Bsymbolic "$EFILIB/crt0-efi-x86_64.o" "$@" "$D/efi-sha256.c.o" "$D/efi-string.c.o" -L"$EFILIB" -lgnuefi -o "$D/$name.so";objcopy --strip-all -j .text -j .rodata -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64 "$D/$name.so" "$D/$name.EFI";}
 python3 tools/recoveryart.py "$D"; (cd "$D" && gcc -c recovery-art.S -o recovery-art.o)
-for f in recovery/{main,screen,usbhid}.c drivers/hidtablet.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
-efilink RECOVERY "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-usbhid.c.o" "$D/rec-hidtablet.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
+for f in recovery/{main,screen,usbhid,keyboard}.c drivers/hidtablet.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
+efilink RECOVERY "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-usbhid.c.o" "$D/rec-keyboard.c.o" "$D/rec-hidtablet.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI"
 gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"

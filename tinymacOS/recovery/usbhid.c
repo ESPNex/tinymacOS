@@ -70,40 +70,32 @@ static int get_desc(EfiUsb *io, u8 rt, u16 type, u16 iface, void *dst, u16 n)
 static int probe(EfiUsb *io)
 {
     UsbInterface f;
-    if (EFI_ERROR(io->interface_desc(io, &f)) || f.cls != 3 || f.alt || !f.eps || f.eps > 16) return 0;
-    relative = f.sub == 1 && f.proto == 2;
-    if (!relative && f.proto == 1) return 0;
-    u8 desc[1024];
-    unsigned wanted = 0;
-    if (relative) {
-        // Only an unclaimed boot mouse; select its standard 3-byte layout.
-        UsbRequest req = {0x21, 11, 0, f.number, 0};
-        UINT32 err = 0;
-        if (EFI_ERROR(io->control(io, &req, 2, 250, 0, 0, &err)) || err) return 0;
-    } else {
-        if (!get_desc(io, 0x80, 0x200, 0, desc, 9)) return 0;
-        unsigned len = desc[2] | (desc[3] << 8);
-        if (len < 9 || len > sizeof(desc) || !get_desc(io, 0x80, 0x200, 0, desc, len)) return 0;
-        int matching = 0;
-        for (unsigned i = 0; i + 2 <= len;) {
-            const u8 *p = desc + i;
-            unsigned z = p[0];
-            if (z < 2 || z > len - i) return 0;
-            if (p[1] == 4) matching = z >= 9 && p[2] == f.number && !p[3];
-            if (matching && p[1] == 0x21 && z >= 6) {
-                if (p[5] > (z - 6) / 3) return 0;
-                for (unsigned j = 0; j < p[5]; j++) if (p[6 + 3 * j] == 0x22) wanted = p[7 + 3 * j] | p[8 + 3 * j] << 8;
+    if(EFI_ERROR(io->interface_desc(io,&f))||f.cls!=3||f.alt||!f.eps||f.eps>16||f.proto==1)return 0;
+    int boot=f.sub==1&&f.proto==2;u8 desc[1024];unsigned wanted=0;
+    if(get_desc(io,0x80,0x200,0,desc,9)){
+        unsigned len=desc[2]|desc[3]<<8;
+        if(len>=9&&len<=sizeof desc&&get_desc(io,0x80,0x200,0,desc,len)){
+            int matching=0;
+            for(unsigned at=0;at+2<=len;){const u8 *p=desc+at;unsigned z=p[0];
+                if(z<2||z>len-at)return 0;
+                if(p[1]==4)matching=z>=9&&p[2]==f.number&&!p[3];
+                if(matching&&p[1]==0x21&&z>=6){
+                    if(p[5]>(z-6)/3)return 0;
+                    for(unsigned j=0;j<p[5];j++)if(p[6+3*j]==0x22)wanted=p[7+3*j]|p[8+3*j]<<8;
+                }at+=z;
             }
-            i += z;
         }
-        if (!wanted || wanted > sizeof(desc) || !get_desc(io, 0x81, 0x2200, f.number, desc, wanted)) return 0;
     }
-    for (unsigned j = 0; j < f.eps; j++) {
+    int report=wanted&&wanted<=sizeof desc&&get_desc(io,0x81,0x2200,f.number,desc,wanted);
+    for(unsigned j=0;j<f.eps;j++){
         UsbEndpoint e;
-        if (EFI_ERROR(io->endpoint_desc(io, j, &e)) || (e.attr & 3) != 3 || !(e.addr & 128) || !(e.addr & 15)) continue;
-        unsigned packet = e.packet & 2047;
-        if (packet >= 3 && packet <= 64 && (relative || pointer_layout(desc, wanted, packet, &layout)) &&
-                !EFI_ERROR(io->async(io, e.addr, TRUE, 8, packet, received, 0))) return 1;
+        if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.addr&128)||!(e.addr&15))continue;
+        unsigned packet=e.packet&2047;if(packet<3||packet>64)continue;
+        relative=0;
+        if(!(report&&pointer_layout(desc,wanted,packet,&layout))){if(!boot)continue;relative=1;}
+        if(boot){UsbRequest req={0x21,11,relative?0:1,f.number,0};UINT32 err=0;
+            if(EFI_ERROR(io->control(io,&req,2,250,0,0,&err))||err)continue;}
+        if(!EFI_ERROR(io->async(io,e.addr,TRUE,8,packet,received,0)))return 1;
     }
     return 0;
 }

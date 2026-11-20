@@ -385,13 +385,7 @@ static void event(Event *e)
         else if (k == '\n')
             confirm();
         else if (dialog <= 3) {
-            int l = strlen(field);
-            if (k == 8 && l)
-                field[l - 1] = 0;
-            else if (k >= 32 && k < 127 && l < 47) {
-                field[l] = k;
-                field[l + 1] = 0;
-            }
+            text_append_key(field,48,k);
         }
         return;
     }
@@ -422,15 +416,11 @@ static void event(Event *e)
             act(ACT_PREVIEW);
             return;
         }
-        if (k >= 33 && k <= 126 && n) {
+        if (text_printable(k) && k != 32 && n) {
             u64 now = sc(S_TICKS, 0, 0, 0, 0);
             if (now - prefixTick > 80)prefix[0] = 0;
             prefixTick = now;
-            int l = strlen(prefix);
-            if (l < 46) {
-                prefix[l] = (k >= 'A' && k <= 'Z') ? k + 32 : k;
-                prefix[l + 1] = 0;
-            }
+            text_append_key(prefix,sizeof prefix,k>='A'&&k<='Z'?k+32:k);
             for (int z = 0; z < n; z++) {
                 const char *s = files[z].name;
                 int j = 0;

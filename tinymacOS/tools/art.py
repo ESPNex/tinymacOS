@@ -9,7 +9,7 @@ from PIL import Image,ImageDraw,ImageFont,ImageOps
 D=Path(__file__).resolve().parents[1]/'assets'
 for s in ('prisma','alba','laguna','aurora'):
  im=ImageOps.fit(Image.open(D/(s+'-master.jpg')).convert('RGB'),(1280,800),method=Image.Resampling.LANCZOS);im.save(D/(s+'.qoi'))
-glyphs=list(range(32,127))+list(range(160,256))+list(map(ord,'…←→↑↓⌘•−▸⌕✓’–—⌫'))
+glyphs=list(range(32,127))+list(range(160,256))+list(map(ord,'…←→↑↓⌘•−▸⌕✓’–—⌫€'))
 faces=[('DejaVuSans.ttf',12),('DejaVuSans.ttf',14),('DejaVuSans-Bold.ttf',14),('DejaVuSans-Bold.ttf',25),('DejaVuSans.ttf',38),('DejaVuSansMono.ttf',13),('DejaVuSans-Bold.ttf',10),('DejaVuSans.ttf',54),('DejaVuSans.ttf',17),('DejaVuSans-Bold.ttf',86)]
 head=bytearray(b'TFN2'+struct.pack('<II',len(faces),len(glyphs))+struct.pack('<%dI'%len(glyphs),*glyphs));pix=bytearray()
 for name,size in faces:

@@ -7,14 +7,16 @@ static void layout(void)
     int width = MAX(20, MIN(88, (aw - 67) / 8));
     int n = 0, col = 0;
     starts[n++] = 0;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length;) {
+        int next=text_next(doc,i);
         if (doc[i] == '\n') {
-            starts[n++] = i + 1;
+            starts[n++] = next;
             col = 0;
-        } else if (++col >= width && i + 1 < length && doc[i + 1] != '\n') {
-            starts[n++] = i + 1;
+        } else if (++col >= width && next < length && doc[next] != '\n') {
+            starts[n++] = next;
             col = 0;
         }
+        i=next;
     }
     starts[n] = length;
     nlines = n;
@@ -153,17 +155,11 @@ static void dk(int k)
     }
     if (dialog >= 3)
         return;
-    if (replace && (k == 8 || (k >= 32 && k < 127))) {
+    if (replace && (k == 8 || text_printable(k))) {
         field[0] = 0;
         replace = 0;
     }
-    int l = strlen(field);
-    if (k == 8 && l)
-        field[l - 1] = 0;
-    else if (k >= 32 && k < 127 && l < PATHLEN - 1) {
-        field[l] = k;
-        field[l + 1] = 0;
-    }
+    text_append_key(field,sizeof field,k);
 }
 static void key(Event *e)
 {
@@ -187,33 +183,25 @@ static void key(Event *e)
             act(ACT_PASTE);
         return;
     }
-    if (k == 8 && cursor) {
-        memmove(doc + cursor - 1, doc + cursor, length - cursor + 1);
-        length--;
-        cursor--;
-        dirty = 1;
-    } else if (k == K_DEL && cursor < length) {
-        memmove(doc + cursor, doc + cursor + 1, length - cursor);
-        length--;
-        dirty = 1;
+    if(k==8&&cursor){text_backspace(doc,&cursor);length=strlen(doc);dirty=1;
+    } else if(k==K_DEL&&cursor<length){text_delete(doc,cursor);length=strlen(doc);dirty=1;
     } else if (k == K_LEFT)
-        cursor = MAX(0, cursor - 1);
+        cursor = text_prev(doc,cursor);
     else if (k == K_RIGHT)
-        cursor = MIN(length, cursor + 1);
+        cursor = text_next(doc,cursor);
     else if (k == K_HOME || k == K_END || k == K_UP || k == K_DOWN) {
         layout();
-        int j = cursorline(), col = cursor - starts[j];
+        int j = cursorline(), col = text_columns(doc+starts[j],cursor-starts[j]);
         if (k == K_HOME)
             cursor = starts[j];
         else if (k == K_END)
             cursor = endline(j);
         else {
             j = MAX(0, MIN(nlines - 1, j + (k == K_UP ? -1 : 1)));
-            cursor = MIN(starts[j] + col, endline(j));
+            cursor = text_offset(doc,starts[j],endline(j),col);
         }
-    } else if (k == '\n' || (k >= 32 && k < 127)) {
-        char ch = k;
-        paste(&ch, 1);
+    } else if(k=='\n'||text_printable(k)){
+        if(text_insert(doc,sizeof doc,&cursor,k)){length=strlen(doc);dirty=1;}
     } else if (k == '\t')
         paste("    ", 4);
 }
@@ -237,13 +225,13 @@ static void paint(void)
     Box(0, 48, aw, ah - 82, 0, CARD);
     Box(0, ah - 34, aw, 1, 0, EDGE);
     for (int i = firstline; i < nlines && i < firstline + nrows; i++) {
-        char s[96];
-        int n = MIN(94, endline(i) - starts[i]);
+        char s[360];
+        int n = MIN(358, endline(i) - starts[i]);
         memcpy(s, doc + starts[i], n);
         s[n] = 0;
         Text(28, 70 + (i - firstline) * 20, s, F_MONO, TX);
     }
-    Box(28 + 8 * (cursor - starts[j]), 71 + 20 * (j - firstline), 2, 16, 0, ACC);
+    Box(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, 0, ACC);
     char z[96] = "Riga ";
     addnum(z, j + 1, 96);
     append(z, "   /   ", 96);
@@ -306,7 +294,7 @@ void app_main(void)
                         prompt(1);
                 } else if (e.b >= 67 && e.b < ah - 33) {
                     int j = MIN(nlines - 1, MAX(0, firstline + (e.b - 67) / 20));
-                    cursor = MIN(endline(j), starts[j] + MAX(0, (e.a - 24) / 8));
+                    cursor = text_offset(doc,starts[j],endline(j),MAX(0,(e.a-24)/8));
                 }
             }
         }

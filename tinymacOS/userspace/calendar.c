@@ -159,16 +159,12 @@ void app_main(void)
                 continue;
             }
             if (edit && e.type == EV_KEY) {
-                int k = e.a, l = strlen(memo);
+                int k = e.a;
                 if (k == 27) {
                     strset(memo, prev, sizeof memo);
                     edit = 0;
                 } else if (k == '\n' || (e.b && k == 's'))save();
-                else if (k == 8 && l)memo[l - 1] = 0;
-                else if (k >= 32 && k < 127 && l < (int)sizeof(memo) - 1) {
-                    memo[l] = k;
-                    memo[l + 1] = 0;
-                }
+                else text_append_key(memo,sizeof memo,k);
                 continue;
             }
             if (edit)continue;

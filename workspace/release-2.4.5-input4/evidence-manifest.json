@@ -1,0 +1,74 @@
+[
+  {
+    "source": "/var/tmp/tmc-input2-uefi-xhci-hub-_q4uog3t/evidence/login-cursor.png",
+    "original_sha256": "8a71d49b1786f496b2a6f3b20107855f743f9a5291dc21549060764b6286867e",
+    "crop": [
+      100,
+      440,
+      810,
+      665
+    ],
+    "retained": "evidence/input-uefi-xhci-hub-login-cursor.png",
+    "sha256": "26f9d859095dc59f23a249a5043bf436d4855ba0489fe44deaf2c51d963d4b0d"
+  },
+  {
+    "source": "/var/tmp/tmc-input2-bios-xhci-nested-hub-2de97b_p/evidence/login-cursor.png",
+    "original_sha256": "8a71d49b1786f496b2a6f3b20107855f743f9a5291dc21549060764b6286867e",
+    "crop": [
+      100,
+      440,
+      810,
+      665
+    ],
+    "retained": "evidence/input-bios-xhci-nested-hub-login-cursor.png",
+    "sha256": "26f9d859095dc59f23a249a5043bf436d4855ba0489fe44deaf2c51d963d4b0d"
+  },
+  {
+    "source": "/var/tmp/tmc-input2-uefi-xhci-hub-ncdbd1u7/evidence/desktop-terminal.png",
+    "original_sha256": "86dbd60904a75a2764a984e675b8b80625be61a59bb4160e85e1c3649e39f50e",
+    "crop": [
+      200,
+      120,
+      1100,
+      680
+    ],
+    "retained": "evidence/installed-uefi-xhci-hub-desktop-terminal.png",
+    "sha256": "a41f54e5eb0c00b6cb8b37cb78f670f14d80f2081cffea96e5201bd75f1abda8"
+  },
+  {
+    "source": "/var/tmp/tmc-input4-italian-apps-xlm9sdaf/evidence/textedit-italian.png",
+    "original_sha256": "916d9255b42ef9899a33066f7a6d8ea70c5154d780b0f3b5f439237a08bcdddc",
+    "crop": [
+      100,
+      200,
+      1160,
+      665
+    ],
+    "retained": "evidence/textedit-italian.png",
+    "sha256": "38a916e7136c0f83a891b0eff02b86595c785269c40e281873cc90e61fcad2d5"
+  },
+  {
+    "source": "/var/tmp/tmc-input4-rec-kbd-7h94q5kk/evidence/italian-physical-keys.png",
+    "original_sha256": "41f8505ba5f45269cebdeab454815be3f687ce792ff7f0baa6b65a3faa370cc7",
+    "crop": [
+      100,
+      200,
+      1160,
+      665
+    ],
+    "retained": "evidence/italian-physical-keys.png",
+    "sha256": "ce63f77c984da848678007527d7e0afbbd55ee1a82cf52d30e5d3545ebd7a9f8"
+  },
+  {
+    "source": "/var/tmp/tmc-input4-italian-apps-2zy19xgx/evidence/textedit-italian.png",
+    "original_sha256": "916d9255b42ef9899a33066f7a6d8ea70c5154d780b0f3b5f439237a08bcdddc",
+    "crop": [
+      390,
+      280,
+      800,
+      350
+    ],
+    "retained": "evidence/euro-detail.png",
+    "sha256": "1a5387a1e81ba3feca634056d75cbf134b19d6063792ddbffe7727da8dc612bc"
+  }
+]

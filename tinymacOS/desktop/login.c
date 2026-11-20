@@ -1,3 +1,4 @@
+#include "text_input.h"
 #include "desk.h"
 #include "date.h"
 #include "activity.h"
@@ -163,11 +164,11 @@ static void field_draw(int i)
                        "Password · almeno 8 caratteri" : "Conferma password";
     if (!s[0])text(r.x + 17, r.y + 8, hint, F_SMALL, 0xf3f5fc);
     else if (secret) {
-        int n = MIN(19, (int)strlen(s));
+        int n = MIN(19, text_columns(s,strlen(s)));
         for (int j = 0; j < n; j++)roundr(r.x + 16 + j * 9, r.y + 14, 5, 5, 2, 0xc4d8ec, 245);
         /* Secure fields intentionally show dots only, with no white caret bar. */
     } else {
-        const char *t = s + MAX(0, (int)strlen(s) - 22);
+        const char *t = s + text_offset(s,0,strlen(s),MAX(0,text_columns(s,strlen(s))-22));
         text(r.x + 16, r.y + 7, t, F_BODY, 0xffffff);
         if (i == field && blink)rect(r.x + 18 + textw(t, F_BODY), r.y + 8, 1, 17, 0xffffff);
     }
@@ -253,7 +254,7 @@ static void submit(void)
             notice_set("Inserisci il tuo nome.");
             return;
         }
-        if (strlen(form.password) < 8) {
+        if (text_columns(form.password,strlen(form.password)) < 8) {
             field = 1;
             notice_set("Scegli una password di almeno 8 caratteri.");
             return;
@@ -400,12 +401,7 @@ void login_input(Event *e)
         if (k == 'u' || k == 'a')wipe(p, max + 1);
         return;
     }
-    if (k == 8 && len) {
-        p[len - 1] = 0;
-    } else if (k >= 32 && k < 127 && len < max) {
-        p[len] = k;
-        p[len + 1] = 0;
-    }
+    (void)len;text_append_key(p,max+1,k);
     notice[0] = 0;
 }
 int login_step(void)

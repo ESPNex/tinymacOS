@@ -150,11 +150,11 @@ static void edit(int k)
         if (id < 0)return;
     }
     if (k == K_LEFT) {
-        cur = MAX(0, cur - 1);
+        cur = text_prev(body,cur);
         return;
     }
     if (k == K_RIGHT) {
-        cur = MIN(cur + 1, n);
+        cur = text_next(body,cur);
         return;
     }
     if (k == K_HOME) {
@@ -168,30 +168,27 @@ static void edit(int k)
     if (k == K_UP || k == K_DOWN) {
         int a = cur;
         while (a && body[a - 1] != '\n')a--;
-        int col = cur - a;
+        int col = text_columns(body+a,cur-a);
         if (k == K_UP) {
             if (!a)return;
             int end = a - 1;
             a = end;
             while (a && body[a - 1] != '\n')a--;
-            cur = MIN(a + col, end);
+            cur = text_offset(body,a,end,col);
         } else {
             while (cur < n && body[cur] != '\n')cur++;
             if (cur < n) {
                 a = ++cur;
-                while (cur < n && body[cur] != '\n' && cur - a < col)cur++;
+                int end=cur;while(end<n&&body[end]!='\n')end++;
+                cur=text_offset(body,a,end,col);
             }
         }
         return;
     }
-    if (k == 8 && cur) {
-        memmove(body + cur - 1, body + cur, n - cur + 1);
-        cur--;
-    } else if (k == K_DEL && cur < n)memmove(body + cur, body + cur + 1, n - cur);
-    else if ((k == '\n' || (k >= 32 && k < 127)) && n < 6000) {
-        memmove(body + cur + 1, body + cur, n - cur + 1);
-        body[cur++] = k;
-    } else return;
+    if(k==8&&cur)text_backspace(body,&cur);
+    else if(k==K_DEL&&cur<n)text_delete(body,cur);
+    else if(text_printable(k)||k=='\n'){if(!text_insert(body,sizeof body,&cur,k))return;}
+    else return;
     dirty = 1;
     due = sc(S_TICKS, 0, 0, 0, 0) + 75;
     strset(status, "Modificato", 95);
@@ -214,7 +211,7 @@ static int editor(int draw, int hitx, int hity)
     while (at < n) {
         int z = 0;
         while (at < n && z < c && body[at] != '\n') {
-            at++;
+            at=text_next(body,at);
             z++;
         }
         if (at < n && body[at] == '\n')at++;
@@ -228,13 +225,13 @@ static int editor(int draw, int hitx, int hity)
         int a = lineends[i], b = i + 1 < nlines ? lineends[i + 1] : n;
         if (b > a && body[b - 1] == '\n')b--;
         int z = b - a;
-        if (!draw && hity >= y - 2 && hity < y + 20)return a + MIN(z, MAX(0, (hitx - x) / 8));
+        if (!draw && hity >= y - 2 && hity < y + 20)return text_offset(body,a,b,MAX(0,(hitx-x)/8));
         if (draw) {
-            char s[100];
+            char s[360];
             memcpy(s, body + a, z);
             s[z] = 0;
             Text(x, y, s, F_MONO, STICKY ? 0x34322c : TX);
-            if (!focus && i == here)Box(x + MIN(z, cur - a) * 8, y + 1, 1, 16, 0, STICKY ? 0x423941 : ACC);
+            if (!focus && i == here)Box(x + text_columns(body+a,MIN(z,cur-a)) * 8, y + 1, 1, 16, 0, STICKY ? 0x423941 : ACC);
         }
     }
     return cur;
@@ -345,18 +342,13 @@ void app_main(void)
                     continue;
                 }
                 if (focus) {
-                    int n = strlen(search);
                     if (e.a == '\n') {
                         if (ns)selectid(ids[0]);
                         focus = 0;
                     } else if (e.a == 27) {
                         focus = 0;
                         *search = 0;
-                    } else if (e.a == 8 && n)search[n - 1] = 0;
-                    else if (e.a >= 32 && e.a < 127 && n < 46) {
-                        search[n] = e.a;
-                        search[n + 1] = 0;
-                    }
+                    } else text_append_key(search,sizeof search,e.a);
                     indexnotes();
                 } else edit(e.a);
             }

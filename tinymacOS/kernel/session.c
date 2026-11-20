@@ -1,5 +1,6 @@
 #include "k.h"
 #include "sha256.h"
+#include "text_input.h"
 #define ROUNDS 120000u
 // Redundant records in reserved sectors 13/14. Trailer SHA detects torn/corrupt
 // records; it is NOT an integrity guarantee against an offline disk editor.
@@ -30,11 +31,7 @@ static int zero(const u8 *p, int n)
 }
 static int field(const char *s, int max)
 {
-    for (int i = 0; i < max; i++) {
-        if (!s[i])return i;
-        if ((u8)s[i] < 32 || (u8)s[i] > 126)return -1;
-    }
-    return -1;
+    return text_field_length(s,max);
 }
 static int valid(const Account *a)
 {
@@ -113,7 +110,7 @@ int session_begin(const AuthRequest *q)
     int n = field(q->password, sizeof q->password);
     if (n < 1)return -1;
     if (state == SESSION_SETUP) {
-        if (n < 8 || field(q->name, 32) < 1)return -1;
+        if (n < 0 || text_columns(q->password,n) < 8 || field(q->name, 32) < 1)return -1;
         memset(&draft, 0, sizeof draft);
         memcpy(draft.magic, "TMCUSER2", 8);
         draft.version = 1;

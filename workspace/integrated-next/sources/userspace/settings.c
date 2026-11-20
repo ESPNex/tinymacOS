@@ -321,7 +321,7 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 2.4.5 (21B8)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 2.4.5 (21B9)");
         row2(x, r0 + 40, w, "NOME", "Levante");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
@@ -446,15 +446,8 @@ static void key(Event *e)
             modal_mode = 0;
             strset(msg, rr ? "Operazione non riuscita." : "Crittografia aggiornata.", sizeof msg);
             refresh();
-        } else if (k == 8) {
-            int n = (int)strlen(modal_buf);
-            if (n)modal_buf[n - 1] = 0;
-            modal_err = 0;
-        } else if (k >= 32 && k < 127 && strlen(modal_buf) < 64) {
-            char c[2] = {(char)k, 0};
-            append(modal_buf, c, 65);
-            modal_err = 0;
-        }
+        } else {text_append_key(modal_buf,65,k);modal_err=0;}
+
         return;
     }
     if (modal_mode == 2) {
@@ -473,13 +466,7 @@ static void key(Event *e)
             query[0] = 0;
             focus_search = 0;
         } else if (k == '\n')focus_search = 0;
-        else if (k == 8) {
-            int n = (int)strlen(query);
-            if (n)query[n - 1] = 0;
-        } else if (k >= 32 && k < 127 && strlen(query) < 20) {
-            char c[2] = {(char)k, 0};
-            append(query, c, 24);
-        }
+        else text_append_key(query,sizeof query,k);
         if (query[0] && !match(pname[pane])) {
             for (int i = 0; i < NP;i++)if (match(pname[i])) {
                     pane = i;

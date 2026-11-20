@@ -4,7 +4,7 @@
 #define STAGES 6
 #define INPUT 320
 static char cwd[PATHLEN] = HOME, oldcwd[PATHLEN] = HOME, input[INPUT], saved[INPUT], history[NH][INPUT],
-                           screen[NR][100], redir[PATHLEN], readfrom[PATHLEN];
+                           screen[NR][400], redir[PATHLEN], readfrom[PATHLEN];
 static u8 kinds[NR];
 static int nh, hpos, nt, scroll, cur, job, stage, count, mode, last, mark;
 static ExecArgs cmd[STAGES];
@@ -17,7 +17,7 @@ static int cols(void)
 static void line(const char *s, int n, int kind)
 {
     int i = nt++ % NR;
-    n = MIN(98, n);
+    n = MIN(398, n);
     memcpy(screen[i], s, n);
     screen[i][n] = 0;
     kinds[i] = kind;
@@ -25,7 +25,7 @@ static void line(const char *s, int n, int kind)
     /* Mirror every terminal row to COM1 as [user:Terminale] <row> so the
        black-box harness can assert command output without OCR. */
     {
-        char b[100];
+        char b[400];
         memcpy(b, s, n);
         b[n] = 0;
         trace(b);
@@ -34,24 +34,18 @@ static void line(const char *s, int n, int kind)
 }
 static void output(const char *s, int n, int kind)
 {
-    char row[100];
-    int z = 0, c = cols();
-    for (int i = 0; i < n; i++) {
-        unsigned char a = s[i];
-        if (a == '\n') {
-            line(row, z, kind);
-            z = 0;
-            continue;
-        }
-        if (a == '\r')continue;
-        if (z == c) {
-            line(row, z, kind);
-            z = 0;
-        }
-        row[z++] = a == '\t' ? ' ' : a < 32 ? '.' : a;
+    char row[400];int bytes=0,column=0,c=cols();
+    for(int i=0;i<n;){
+        unsigned char a=s[i];int next=MIN(n,text_next(s,i)),z=next-i;
+        if(a=='\n'){line(row,bytes,kind);bytes=column=0;i++;continue;}
+        if(a=='\r'){i++;continue;}
+        if(column==c){line(row,bytes,kind);bytes=column=0;}
+        if(a<32){row[bytes++]=a=='\t'?' ':'.';}else{memcpy(row+bytes,s+i,z);bytes+=z;}
+        column++;i=next;
     }
-    if (z)line(row, z, kind);
+    if(bytes)line(row,bytes,kind);
 }
+
 static void note(const char *s)
 {
     output(s, strlen(s), 2);
@@ -332,7 +326,7 @@ static void paint(void)
     prompt(q, sizeof q);
     int pre = strlen(q);
     append(q, input, sizeof q);
-    int nr = job ? 0 : (strlen(q) / c + 1);
+    int nr = job ? 0 : (text_columns(q,strlen(q)) / c + 1);
     int end = MAX(0, nt - scroll), start = MAX(MAX(0, nt - NR), end - rows + (scroll ? 0 : nr)), y = 12;
     for (int i = start; i < end; i++, y += 19) {
         int k = i % NR;
@@ -340,14 +334,11 @@ static void paint(void)
     }
     if (!scroll && !job) {
         for (int i = 0; i < nr; i++, y += 19) {
-            char row[100];
-            int z = MIN((int)strlen(q) - i * c, c);
-            memcpy(row, q + i * c, z);
-            row[z] = 0;
-            if ((pre + cur) / c == i && mark) {
-                int x = 14 + ((pre + cur) % c) * 8;
-                Box(x, y + 1, 2, 15, 0, fg);
-            }
+            char row[400];
+            int begin=text_offset(q,0,strlen(q),i*c),end=text_offset(q,begin,strlen(q),c),z=end-begin;
+            memcpy(row,q+begin,z);row[z]=0;
+            int caret=text_columns(q,pre+cur);
+            if(caret/c==i&&mark){int x=14+(caret%c)*8;Box(x,y+1,2,15,0,fg);}
             Text(14, y, row, F_MONO, fg);
         }
     }
@@ -400,11 +391,11 @@ static void key(Event *e)
         return;
     }
     if (k == K_LEFT) {
-        cur = MAX(0, cur - 1);
+        cur = text_prev(input,cur);
         return;
     }
     if (k == K_RIGHT) {
-        cur = MIN(n, cur + 1);
+        cur = text_next(input,cur);
         return;
     }
     if (k == K_HOME) {
@@ -415,14 +406,11 @@ static void key(Event *e)
         cur = n;
         return;
     }
-    if (k == 8 && cur) {
-        memmove(input + cur - 1, input + cur, n - cur + 1);
-        cur--;
-    } else if (k == K_DEL && cur < n)memmove(input + cur, input + cur + 1, n - cur);
-    else if (k >= 32 && k < 127 && n < INPUT - 1) {
-        memmove(input + cur + 1, input + cur, n - cur + 1);
-        input[cur++] = k;
-    }
+    if(k==8&&cur)text_backspace(input,&cur);
+    else if(k==K_DEL&&cur<n)text_delete(input,cur);
+    else if(text_printable(k)){if(!text_insert(input,INPUT,&cur,k))return;}
+    else return;
+
 }
 void app_main(void)
 {

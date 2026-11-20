@@ -25,3 +25,5 @@ gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c drivers/h
 "$out/hubs"
 gcc $C tests/usbroute.c -o "$out/route"
 "$out/route"
+
+gcc $C tests/keyboard_it.c -o "$out/keyboard-it";"$out/keyboard-it"

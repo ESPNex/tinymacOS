@@ -26,6 +26,7 @@ static void complete(TRB *t,int type,int code,int ep,int slot)
 static void test_doorbell(int slot,int ep)
 {
     if(!slot){TRB *t=&commands.tr[prev(commands.at)];complete(t,33,1,0,1);return;}
+    if(slot==1&&ep==3)return; /* Interrupt-IN rearm doorbell. */
     assert(slot==1&&ep==1);
     struct Usb *u=usb;unsigned at=prev(u->ctrl.at);TRB *t=&u->ctrl.tr[at];
     at=prev(at);if((u->ctrl.tr[at].ctl>>10&63)==3)at=prev(at);
@@ -47,22 +48,38 @@ static void test_doorbell(int slot,int ep)
 static int run(int reject_boot,int reject_report,int current,int bad)
 {
     memset(controllers,0,sizeof controllers);memset(&input_diag,0,sizeof input_diag);
-    hc=controllers;ir=fakeir;db=fakedb;evcycle=1;cs=32;ringinit(&commands);
+    hc=controllers;connected=1;ir=fakeir;db=fakedb;evcycle=1;cs=32;ringinit(&commands);
     boot_rejected=reject_boot;report_rejected=reject_report;protocol=current;malformed=bad;
     boot_requests=report_requests=0;
     return configure(usb,1,3);
 }
 int main(void)
 {
-    assert(run(0,0,1,0));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1&&!report_requests);
-    assert(input_diag.pointers==1&&!input_diag.report_fallbacks);
-    puts("PASS normal boot mouse: explicit Boot selected and boot decoder kept");
-    assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&usb[0].hid[0].tablet.id==4);
-    assert(input_diag.pointers==1&&input_diag.control_errors==1&&input_diag.report_fallbacks==1);
+    /* Negative control: a boot-labelled ID/16-bit report decoded as bytes 1/2
+     * produces X=0, Y=64 from a horizontal-only motion. */
+    u8 horizontal[]={4,0,64,0,0,0,0};
+    assert((int8_t)horizontal[1]==0&&(int8_t)horizontal[2]==64);
+    assert(run(0,0,1,0));assert(usb[0].hid[0].proto==3&&protocol==1&&!boot_requests&&report_requests==1);
+    TabletState s;assert(pointer_read(&usb[0].hid[0].tablet,horizontal,7,1280,800,&s));
+    assert(s.x==64&&s.y==0&&!s.buttons);
+    horizontal[2]=0;horizontal[4]=64;
+    assert(pointer_read(&usb[0].hid[0].tablet,horizontal,7,1280,800,&s)&&s.x==0&&s.y==64);
+    /* Exercise the real interrupt completion -> pointer_read -> input queue,
+     * not only the descriptor helper. A short 7-of-8-byte transfer is valid. */
+    struct Hid *h=&usb[0].hid[0];Event e;TRB event={0,(13u<<24)|1,TY(32)|(1u<<24)|(3u<<16)};
+    horizontal[2]=64;horizontal[4]=0;memcpy(h->report,horizontal,7);h->armed=1;
+    transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==64&&e.b==0&&!e.c&&h->armed);
+    horizontal[2]=0;horizontal[4]=64;memcpy(h->report,horizontal,7);
+    transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==64&&!e.c&&h->armed);
+    assert(!input_pop(&e));
+    puts("PASS vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64");
+    assert(input_diag.pointers==1&&!input_diag.control_errors);
     assert(input_diag.device[0].vid==0x1234&&input_diag.device[0].pid==0x5678);
-    assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==2);
-    puts("PASS boot STALL: EP0 reset, report descriptor parsed, Report protocol set or GET_PROTOCOL verified");
-    assert(!run(1,1,0,0));assert(!input_diag.pointers&&!input_diag.report_fallbacks);
+    assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&!boot_requests);
+    assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==1);
+    puts("PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL");
+    assert(!run(1,1,0,0));assert(!input_diag.pointers);
     assert(!run(1,0,1,1));assert(!report_requests&&!input_diag.pointers);
-    puts("PASS fail closed: unconfirmed Report protocol or malformed descriptor never decoded as boot bytes");
+    assert(run(0,0,1,1));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
+    puts("PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed");
 }

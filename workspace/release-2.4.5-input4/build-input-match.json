@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "files_checked": 423,
+  "allowed_postbuild_changes": [
+    "tests/*",
+    "README.md",
+    "tools/run-input-qa.sh"
+  ]
+}

@@ -3,7 +3,10 @@ import json, os, re, socket, struct, subprocess, time
 from pathlib import Path
 from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
-KEYS = {' ': 'spc', '/':'slash', '.':'dot', ',':'comma', '-':'minus', '_':'shift-minus', '+':'shift-equal', '=':'equal', '*':'shift-8', ':':'shift-semicolon', '"':'shift-apostrophe', '\n':'ret'}
+KEYS = {' ': 'spc', '/':'shift-7', '.':'dot', ',':'comma', '-':'slash', '_':'shift-slash', '+':'bracket_right', '=':'shift-0', '*':'shift-bracket_right', ':':'shift-dot', '"':'shift-2', '\n':'ret',
+ '|':'shift-grave_accent','>':'shift-less','<':'less',"'":'minus','~':'alt_r-equal','$':'shift-4','@':'alt_r-semicolon','#':'alt_r-apostrophe','%':'shift-5','?':'shift-minus',';':'shift-comma','(':'shift-8',')':'shift-9','!':'shift-1','\\':'grave_accent',
+ '[':'alt_r-bracket_left',']':'alt_r-bracket_right','{':'alt_r-shift-bracket_left','}':'alt_r-shift-bracket_right','&':'shift-6','`':'alt_r-minus','£':'shift-3','€':'alt_r-e','à':'apostrophe','è':'bracket_left','é':'shift-bracket_left','ì':'equal','ò':'semicolon','ù':'backslash',
+ }
 
 def default_iso():
     out=Path(os.environ.get('TMC_BUILD',Path(os.environ.get('TMPDIR','/tmp'))/f'tinymacos-{os.getuid()}'/'1.3'))

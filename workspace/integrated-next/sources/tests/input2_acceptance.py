@@ -43,7 +43,7 @@ try:
                 assert 'QEMU USB Hub' in usb and 'usb-hub' in g.hmp('info qtree')
         if profile.endswith('-kbd'):
             assert 'QEMU USB Keyboard' in usb
-            assert 'isa-i8042' not in g.hmp('info qtree'),'USB keyboard acceptance must not fall back to PS/2'
+            assert 'i8042' not in g.hmp('info qtree'),'USB keyboard acceptance must not fall back to PS/2'
             record['ps2_controller_present']=False
         else:assert 'USB Keyboard' not in usb
         passed('Exact topology: '+('PS/2 keyboard and mouse; no USB pointing device' if profile=='ps2' else ('USB keyboard' if profile.endswith('-kbd') else 'PS/2-only keyboard')+' and '+profile+' USB mouse'))
@@ -59,22 +59,29 @@ try:
             for y,t in [(448,'NativeInput'),(489,'local-test-285'),(530,'local-test-285')]:g.click(641,y);g.type(t)
             g.click(640,575)
         g.visible('Preferiti',40);passed('Keyboard password entry plus mouse field/submit clicks open desktop')
+        cursor(g,600,75);cursor(g,70,450)
+        passed('Independent horizontal-only X and vertical-only Y cursor sprite positions')
         cursor(g,1003,361);cursor(g,308,115)
         x,y=g.visible('Preferiti',faces=(0,));g.move(x+200,y-40);g.mouse(True);g.move(x+287,y+1);g.mouse(False);g.move(1050,605)
         assert g.visible('Preferiti',faces=(0,))==(x+87,y+41)
         g.move(1005,502);g.button('right',True);g.button('right',False);g.visible('Apri Scrivania in Finder');g.key('esc')
         passed('Desktop sprite, exact Finder drag/release and right-click menu')
         g.key('f2');g.visible('Sessione locale');g.cmd('echo PS2_USB2_INPUT_OK','PS2_USB2_INPUT_OK')
-        g.cmd('sw_vers','ProductVersion:    2.4.5');g.visible('BuildVersion:      21B8')
-        passed('Native keyboard F2, uppercase/underscore command typing and version 21B8')
+        g.cmd('sw_vers','ProductVersion:    2.4.5');g.visible('BuildVersion:      21B9')
+        passed('Native keyboard F2, uppercase/underscore command typing and version 21B9')
         # PS/2 negotiates a wheel packet; EHCI/UHCI prefer validated Report protocol.
-        # The unchanged xHCI boot-mouse profile is not used to claim wheel support.
-        if profile!='xhci':
+        # xHCI now prefers the validated Report layout, including wheel.
+        if True:
             x,y=g.visible('su console',faces=(5,));g.move(x+18,y+47)
             g.button('wheel-up',True);g.button('wheel-up',False);g.visible('Cronologia',8,faces=(0,))
             g.button('wheel-down',True);g.button('wheel-down',False);g.visible('Sessione locale',8,faces=(0,))
             passed('Mouse wheel up opens terminal history; down closes it')
-        if source:g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');passed('Installed disk document preserved, ISO absent')
+        if source:
+            g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');passed('Installed disk document preserved, ISO absent')
+            value='àèéìòù€@#'
+            g.cmd('echo -n "'+value+'" > Documents/italiano-installato.txt')
+            g.cmd('shasum -a 256 Documents/italiano-installato.txt',hashlib.sha256(value.encode()).hexdigest())
+            passed('Installed Italian accents, euro and AltGr typed into a UTF-8 file, exact SHA-256 verified')
         g.shot('desktop-terminal');record['final_mice']=g.req('query-mice')
         assert [m['name'] for m in record['final_mice'] if m['current']]==[target]
         record['passed']=True

@@ -8,7 +8,6 @@ from guest import Guest,KEYS
 # Every retail test explicitly assigns its own disposable fixtures after importing this module.
 for _key in ('ISO','DISK','LEGACY_DATA','RECOVERY_IMG','STATE','BOOT_DISK','LIVE'):
     os.environ.pop(_key,None)
-KEYS.update({'|':'shift-backslash','>':'shift-dot','<':'shift-comma',"'":'apostrophe','~':'shift-grave_accent','$':'shift-4','@':'shift-2','#':'shift-3','%':'shift-5','?':'shift-slash',';':'semicolon','(':'shift-9',')':'shift-0','!':'shift-1','\\':'backslash'})
 def fold(s):return ''.join(c for c in unicodedata.normalize('NFD',s.lower()) if c.isalnum())
 class Retail(Guest):
     initial='account'

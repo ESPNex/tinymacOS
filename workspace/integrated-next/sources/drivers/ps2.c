@@ -1,4 +1,6 @@
-#ifdef TMC_PS2_TEST
+#ifdef TMC_PS2_RECOVERY
+#include "../recovery/ps2_support.h"
+#elif defined(TMC_PS2_TEST)
 #include "../tests/ps2_test_support.h"
 #else
 #include "../kernel/k.h"
@@ -22,7 +24,7 @@ static const u8 set1[128]={
  [12]=45,[13]=46,[14]=42,[15]=43,[16]=20,[17]=26,[18]=8,[19]=21,[20]=23,[21]=28,[22]=24,[23]=12,[24]=18,[25]=19,
  [26]=47,[27]=48,[28]=40,[30]=4,[31]=22,[32]=7,[33]=9,[34]=10,[35]=11,[36]=13,[37]=14,[38]=15,[39]=51,[40]=52,[41]=53,
  [43]=49,[44]=29,[45]=27,[46]=6,[47]=25,[48]=5,[49]=17,[50]=16,[51]=54,[52]=55,[53]=56,[55]=85,[57]=44,[58]=57,
- [59]=58,[60]=59,[61]=60,[62]=61,[63]=62,[64]=63,[65]=64,[66]=65,[67]=66,[68]=67,[87]=68,
+ [59]=58,[60]=59,[61]=60,[62]=61,[63]=62,[64]=63,[65]=64,[66]=65,[67]=66,[68]=67,[86]=100,[87]=68,
  [71]=74,[72]=82,[73]=75,[74]=86,[75]=80,[76]=93,[77]=79,[78]=87,[79]=77,[80]=81,[81]=78,[82]=98,[83]=76
 };
 static void keyboard_byte(u8 b)
@@ -119,13 +121,8 @@ void ps2_init(void)
     /* Self/interface tests and enable commands may change the clock bits. */
     if(cmd(0x60))data((u8)cfg);
 }
-void ps2_poll(void)
+static void keyboard_led_poll(void)
 {
-    for(int i=0;i<64;i++) {
-        u8 s=inb(0x64);if(s==255||!(s&1))break;u8 b=inb(0x60);
-        if(s&0xc0){mouse_at=0;ext=0;continue;}
-        if(s&32){if(mouse_on)mouse_byte(b);}else if(keyboard_on)keyboard_byte(b);
-    }
     /* LED command/ACK state machine never blocks the timer or steals a key. */
     if(!keyboard_on)return;
     if(led_phase && ticks>=led_deadline){led_applied=led_sent;led_phase=0;}
@@ -134,4 +131,14 @@ void ps2_poll(void)
         led_sent=led_want;led_retries=0;led_phase=1;led_deadline=ticks+25;outb(0x60,0xed);
     } else if(led_phase==4){led_phase=1;outb(0x60,0xed);}
     else if(led_phase==2){led_phase=3;outb(0x60,(u8)led_sent);}
+}
+
+void ps2_poll(void)
+{
+    for(int i=0;i<64;i++) {
+        u8 s=inb(0x64);if(s==255||!(s&1))break;u8 b=inb(0x60);
+        if(s&0xc0){mouse_at=0;ext=0;continue;}
+        if(s&32){if(mouse_on)mouse_byte(b);}else if(keyboard_on)keyboard_byte(b);
+    }
+    keyboard_led_poll();
 }

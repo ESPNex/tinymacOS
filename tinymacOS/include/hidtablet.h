@@ -1,7 +1,7 @@
 #pragma once
 #include "base.h"
-/* The supported HID application is one absolute XY pointer, optionally prefixed
- * by one report ID. Field offsets include that prefix. No VID/PID lookup. */
+/* One complete relative/absolute XY pointer selected by usage, including its
+ * Report ID. Other report IDs keep independent offsets; no VID/PID lookup. */
 typedef struct {
     unsigned bit, width;
     int low, high;

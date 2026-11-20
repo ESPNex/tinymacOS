@@ -27,6 +27,8 @@ int main(void)
  keyboard_byte(0x3a);keyboard_byte(0x3a);keyboard_byte(0xba);keyboard_byte(0x1e);key('A',0,0);keyboard_byte(0x9e);
  keyboard_byte(0x2a);keyboard_byte(0x1e);key('a',0,1);keyboard_byte(0x9e);keyboard_byte(0xaa);
  keyboard_byte(0x3a);keyboard_byte(0xba);
+ keyboard_byte(0x56);key('<',0,0);keyboard_byte(0xd6);
+ keyboard_byte(0xe0);keyboard_byte(0x38);keyboard_byte(0x27);key('@',0,0);keyboard_byte(0xa7);keyboard_byte(0xe0);keyboard_byte(0xb8);
  keyboard_byte(0xe0);keyboard_byte(0x48);key(K_UP,0,0);keyboard_byte(0xe0);keyboard_byte(0xc8);
  keyboard_byte(0x3c);key(K_F2,0,0);keyboard_byte(0xbc);
  u8 print[]={0xe0,0x2a,0xe0,0x37,0xe0,0xb7,0xe0,0xaa};

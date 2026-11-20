@@ -3,6 +3,9 @@
 #include "../boot/recoveryboot.h"
 #include "startup.h"
 #include "hidtablet.h"
+#include "text_input.h"
+int rec_keyboard_start(EFI_BOOT_SERVICES *);
+int rec_keyboard_next(EFI_BOOT_SERVICES *,int *);
 int rec_pointer_start(EFI_BOOT_SERVICES *,int,int);
 int rec_pointer_next(EFI_BOOT_SERVICES *, TabletState *);
 // This EFI application is the entire recovery runtime: no user session, compositor, Dock or desktop app archive.
@@ -127,7 +130,7 @@ static void paint(void)
     fill(0, 0, rw, rh, 0, 0xe9eaf0);
     fill(0, 0, rw, 34, 0, 0x34353a);
     glyph(15, 6, 20, 0);
-    label(50, 6, 2, "Recupero tinymacOS", 0xffffff);
+    label(50, 6, 2, "Recupero tinymacOS — Tastiera ITA", 0xffffff);
     label(rw - 109, 9, 0, "Spegni…", 0xf2f2f5);
     const char *head = page == HOME_MENU ? "Recupero tinymacOS" : page == DEST ? "Seleziona un disco" : page ==
                        TOOLS ? "Utility Disco" : page == TERM ? "Terminale" : page == CONFIRM ? "Conferma l’operazione" : page ==
@@ -351,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 2.4.5 (21B8)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 2.4.5 (21B9)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -456,33 +459,25 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     }
     if (absolute) absolute->Reset(absolute,FALSE);
     int direct = rec_pointer_start(bs,mx,my);
+    int keyboards=rec_keyboard_start(bs);
+    if(!keyboards)strset(info,"Tastiera ITA: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
 
     for (;;) {
         if (dirty) {
             paint();
             dirty = 0;
         }
-        EFI_INPUT_KEY k;
-        if (!EFI_ERROR(st->ConIn->ReadKeyStroke(st->ConIn, &k))) {
-            dirty = 1;
-            int c = k.UnicodeChar;
-            if (k.ScanCode == SCAN_ESC || c == 27)back();
-            else if (c == 13) {
-                if (page == TERM)term();
-                else enter();
-            } else if (k.ScanCode == SCAN_DOWN || k.ScanCode == SCAN_UP) {
-                int d = k.ScanCode == SCAN_DOWN ? 1 : -1;
-                if (page == HOME_MENU)menu = (menu + 5 + d) % 5;
-                else if (page == TOOLS)row = (row + 3 + d) % 3;
-                else if (page == DEST && num)sel = (sel + num + d) % num;
-            } else if (page == TERM || (page == CONFIRM && op == ERASE)) {
-                int n = strlen(field);
-                if (c == 8 && n)field[n - 1] = 0;
-                else if (c >= 32 && c < 127 && n < 90) {
-                    field[n] = c;
-                    field[n + 1] = 0;
-                }
-            }
+        int c;
+        if(rec_keyboard_next(bs,&c)){
+            dirty=1;
+            if(c==27)back();
+            else if(c==10||c==13){if(page==TERM)term();else enter();}
+            else if(c==0x101||c==0x102){
+                int d=c==0x102?1:-1;
+                if(page==HOME_MENU)menu=(menu+5+d)%5;
+                else if(page==TOOLS)row=(row+3+d)%3;
+                else if(page==DEST&&num)sel=(sel+num+d)%num;
+            } else if(page==TERM||(page==CONFIRM&&op==ERASE))text_append_key(field,sizeof field,c);
         }
         int got_abs = 0;
         if (direct) {

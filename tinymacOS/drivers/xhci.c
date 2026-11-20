@@ -289,31 +289,28 @@ static int configure(struct Usb*u, int port, int speed)
     u->nhid=count;
     int usable=0;
     for(int k=0;k<count;k++) {
-        struct Hid *h=&u->hid[k];int ok=1;
+        struct Hid *h=&u->hid[k];int ok=1,report_ready=0;
+        /* Boot-capable does not mean current packets are boot-shaped. Prefer
+         * the advertised descriptor, independently extracting X and Y. */
+        if(h->proto==2 && h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
+           !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
+           pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
+            int confirmed=!control(u,0x21,11,1,h->iface,0);
+            if(!confirmed && !u->ctrl_dead)confirmed=!control(u,0xa1,3,0,h->iface,1)&&u->desc[0]==1;
+            if(confirmed){h->proto=3;report_ready=1;}
+        }
         if(h->proto==3) {
-            if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
-            else {
-                memset(u->desc,0,sizeof u->desc);
-                if(control(u,0x81,6,0x2200,h->iface,h->report_len)||
-                   !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
-            }
-        } else {
-            if(control(u,0x21,11,0,h->iface,0)) {
-                ok=0;
-                /* Some mice advertise Boot but reject it. Never decode a
-                 * report-ID/16-bit layout as three boot bytes. Require a
-                 * valid report descriptor AND confirmed Report protocol. */
-                if(h->proto==2 && !u->ctrl_dead && h->report_len>0 && h->report_len<=1024 &&
-                   !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
-                   pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
-                    int report=!control(u,0x21,11,1,h->iface,0);
-                    if(!report && !u->ctrl_dead) {
-                        report=!control(u,0xa1,3,0,h->iface,1) && u->desc[0]==1;
-                    }
-                    if(report){h->proto=3;ok=1;input_diag.report_fallbacks++;}
+            if(!report_ready) {
+                if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
+                else {
+                    memset(u->desc,0,sizeof u->desc);
+                    if(control(u,0x81,6,0x2200,h->iface,h->report_len)||
+                       !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
                 }
             }
-            if(ok&&h->proto==1) {u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
+        } else {
+            if(control(u,0x21,11,0,h->iface,0))ok=0;
+            if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
         const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":

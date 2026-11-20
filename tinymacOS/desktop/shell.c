@@ -1,3 +1,4 @@
+#include "text_input.h"
 #include "desk.h"
 #include "date.h"
 #define NS 9
@@ -798,12 +799,7 @@ int shell_key(Event *e)
         if (k == K_UP)pick = MAX(0, pick - 1);
         else if (k == K_DOWN)pick = MIN(MAX(0, count - 1), pick + 1);
         else {
-            int len = strlen(query);
-            if (k == 8 && len)query[len - 1] = 0;
-            else if (k >= 32 && k < 127 && len < 46) {
-                query[len] = k;
-                query[len + 1] = 0;
-            }
+            text_append_key(query,sizeof query,k);
             hits();
         }
     } else if (ov == OV_LIBRARY) {

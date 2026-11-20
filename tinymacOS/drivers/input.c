@@ -3,6 +3,7 @@
 #else
 #include "../kernel/k.h"
 #endif
+#include "keyboard_it.h"
 // Validated USB HID and native PS/2 decoders -> input events. No BIOS input calls.
 static Event q[128];
 static int head, tail, caps;
@@ -65,16 +66,8 @@ int input_pop(Event *e)
 }
 static void emit(int k, int m)
 {
-    int shift = !!(m & 0x22), ctrl = !!(m & 0x99), v = 0;
-    if (k >= 4 && k <= 29)
-        v = (shift ^ caps ? 'A' : 'a') + k - 4;
-    else if (k >= 30 && k <= 39)
-        v = (shift ? "!@#$%^&*()" : "1234567890")[k - 30];
-    else if (k >= 40 && k <= 56) {
-        static const char a[] = {10, 27, 8, 9, ' ', '-', '=', '[', ']', '\\', '#', ';', '\'', '`', ',', '.', '/'};
-        static const char b[] = {10, 27, 8, 9, ' ', '_', '+', '{', '}', '|', '~', ':', '"', '~', '<', '>', '?'};
-        v = (shift ? b : a)[k - 40];
-    } else if (k >= 58 && k <= 67)
+    int shift=!!(m&0x22),ctrl=!(m&0x40)&&!!(m&0x99),v=it_character(k,m,caps);
+    if(v){} else if (k >= 58 && k <= 67)
         v = K_F1 + k - 58;
     else if (k == 68)
         v = K_F11;
@@ -92,10 +85,6 @@ static void emit(int k, int m)
         v = K_DOWN;
     else if (k == 82)
         v = K_UP;
-    else if(k>=84&&k<=88)v="/*-+\n"[k-84];
-    else if(k>=89&&k<=97)v='1'+k-89;
-    else if(k==98)v='0';
-    else if(k==99)v='.';
     if (v)
         put((Event) {
         .type = EV_KEY, .a = v, .b = ctrl, .c = shift
