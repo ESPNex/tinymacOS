@@ -6,9 +6,9 @@
 | TCP | S_NET/4–9, polling, descriptor backend comuni file/TCP; test guest locale 1/2 vCPU PASS | API descriptor libc POSIX, ownership kernel per processo, attese interrompibili e carico concorrente |
 | Integrità TCP | stress host 35.539.167 byte; guest lwIP/e1000 reale 1.048.893 byte + SHA256 con pausa consumatore e half-close PASS | carico concorrente, condizioni di rete diverse, DNS reale e rete non-QEMU |
 | EOF/errori | FIN/half-close, reset non-EOF, timeout/EAGAIN e handle invalidi ora testati anche sul guest | altri errori e concorrenza; la manutenzione 2.4.1 include le ABI, la 2.4.0 no |
-| Threading | S_THREAD, FS/errno per-task, S_WORDWAIT privato e mutex/condition reali, guest 1/4/8 CPU PASS | Startup automatica, join/detach sicuri, TSD con distruttori, pthread e gestione lifetime; nessuna funzione vuota che riporti successo |
+| Threading | S_THREAD + final handoff kernel, startup TLS dei figli, identità, join/timedjoin, TSD con generazioni/distruttori, mutex/condition; guest 1/4/8 CPU PASS | Bootstrap iniziale generale, detach, metadata stack/sospensione, wrapper pthread/WTF e gestione allocazioni; nessuno stub di successo |
 | Memoria virtuale | nuova S_VM: riserva/commit/protezioni/NONE/guard/decommit/release, test MMU guest 1/2 CPU e 7 fault PASS, stress concorrente 4/8 CPU | arena 240 MiB, 32 riserve, max64 MiB; niente EXEC/JIT, mapping file o fixed; adattamento WTF/JSC non ancora eseguito |
-| C++ | nessun runtime target WebKit validato | C++ standard library, atomiche, ABI/runtime e toolchain compatibili col commit |
+| C++ | consumatore C++20 freestanding RAII/C-ABI eseguito nel guest; nessuna standard library target/WebKit validata | C++ standard library, atomiche, ABI/runtime e toolchain compatibili col commit |
 | Clock | tick kernel a 100 Hz e data/ora via SysInfo | realtime UTC validato per certificati, clock_gettime, timer/event loop |
 | Entropia | sorgenti di entropia kernel usate per credenziali; nessuna syscall generale per byte casuali sicuri | CSPRNG kernel con API utenti e gestione fallimenti; niente PRNG basati sul tempo |
 | TLS | nessun backend TLS utenti integrato | libreria mantenuta, SNI, trust store, hostname/date/chain validation, test negativi |

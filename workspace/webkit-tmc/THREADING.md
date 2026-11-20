@@ -1,5 +1,7 @@
 # WebKit runtime — private parking and synchronization milestone
 
+> **Latest large block:** [managed thread runtime](RUNTIME-THREADS.md) now adds automatic child TCB startup, stable process-local identity, safe kernel-final-handoff join and generation TSD with reentrant bounded destructors. Full expanded suite is **29/29 PASS**. This document retains the earlier synchronization milestone and interface comparison, updated below.
+
 ## What is implemented and tested
 
 These are real native primitives, **not pthread stubs** and not a compiled WebKit engine:
@@ -13,7 +15,7 @@ These are real native primitives, **not pthread stubs** and not a compiled WebKi
 
 ### Evidence
 
-The expanded `tools/run-tests.py --guest` suite is **24/24 PASS**:
+The synchronization milestone passed **24/24**; the subsequent managed-thread block expands this to **29/29 PASS** (see linked report). Original synchronization coverage:
 
 - 10 host/contracts/target-compilation checks, including ASan/UBSan sync algorithms over Linux futex transport;
 - four diagnostic guest builds;
@@ -37,20 +39,20 @@ Real upstream headers are saved, copyright intact, in `upstream-reference/Source
 | `ThreadingPrimitives.h`: `Mutex::lock/tryLock/unlock` | `tmc_mutex_*` | Platform types/configuration, real WTF compilation and tests |
 | `ThreadCondition::wait/signal/broadcast` | `tmc_condition_*` | WTF adapter and engine lifecycle integration |
 | `ThreadCondition::timedWait(Mutex&, WallTime)` | absolute **monotonic tick** wait only | A validated realtime/WallTime bridge. Do **not** pass epoch seconds as kernel ticks or pretend the two clocks are interchangeable |
-| `Threading.h`: create, current ID, join/detach | legacy `S_THREAD` only | Automatic TCB startup, stable identity, safe exit/join and cleanup; not a done flag published while a thread still uses its control block |
-| `ThreadSpecific.h`: key create/get/set and destructors | FS-based TCB and errno cell | Key allocation/generation, per-thread storage and destructor iteration/exit integration |
+| `Threading.h`: create, current ID, join/detach | managed native startup/identity/join + kernel final handoff now tested | WTF adapter/types, initial process startup and detach cleanup still missing |
+| `ThreadSpecific.h`: key create/get/set and destructors | native generation keys, per-thread storage and bounded/reentrant destructor cleanup now tested | Integrate actual WTF types/calls; validate capacity and engine lifecycle |
 | `StackBounds.h`: current/new-thread bounds | fixed native thread stacks | Real stack metadata and portable runtime exposure |
 | Thread suspension/stack inspection | no complete native counterpart | Collector/thread cooperation or a supported non-JIT engine configuration; no fake success |
 
 ### Next implementation boundary
 
-The next hard dependency is **native thread startup/lifetime + thread-specific keys with cleanup**, followed by the target C/C++ runtime needed to compile real WTF/JavaScriptCore. The mutex/condition foundation does not by itself make the existing descriptor tables safe for shared concurrent callers.
+Native thread startup/lifetime and thread-specific keys with cleanup are now implemented in the subsequent macroblock. The next boundary is the **target allocator/libc/C++ runtime and actual WTF/JSC platform integration**; see `RUNTIME-THREADS.md`. The mutex/condition foundation does not by itself make the existing descriptor tables safe for shared concurrent callers.
 
 No empty implementations should report success for join, cancellation, suspend/resume or thread-specific destructors. Until a correct realtime API exists, WTF WallTime waits also remain an explicit integration gap.
 
 ## Limits
 
-- No complete pthread implementation, automatic startup/trampoline, join/detach, robust mutexes, priority inheritance, process-shared futexes, requeue, cancellation, signal semantics or destruction/lifetime management.
+- No complete pthread implementation, general initial-process bootstrap, detach, robust mutexes, priority inheritance, process-shared futexes, requeue, cancellation or signal semantics. Managed child startup and join/TSD cleanup are covered by the linked newer report; caller-owned objects still require external lifecycle ordering.
 - Objects must stay mapped until all waiters return; callers prevent address/sequence ABA and do not reinitialize a live object. No fairness or latency guarantee; a woken task is eligible for ordinary scheduling.
 - Thread-local errno is not ELF/C++ TLS/DTV or network TLS/HTTPS.
 - No WTF/JSC/WebCore build or browser rendering/HTTPS acceptance yet. Real Safari UI and integration with every theme remain gated on the engine/runtime.

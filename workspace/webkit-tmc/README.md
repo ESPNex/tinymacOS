@@ -2,7 +2,7 @@
 
 ## Stato reale
 
-**Aggiornamento sviluppo integrato:** SMP VM non è più limitato a una CPU. Stress nativo concorrente PASS con 4 e 8 vCPU (4 worker, 400 round, 1.600 chiamate buffer S_INFO), evidenze in `../integrated-next/evidence/smp-stress-{4,8}/`. Suite backend/runtime completa **24/24 PASS**, ora con attesa/risveglio atomici nativi, mutex/condition e FS/errno su 1/4/8 vCPU; non sono test JSC/WebCore. Le note di milestone precedenti conservate altrove possono descrivere il vecchio rifiuto SMP. Repository privata di backup: https://github.com/ESPNex/tinymacOS .
+**Aggiornamento sviluppo integrato:** SMP VM non è più limitato a una CPU. Stress nativo concorrente PASS con 4 e 8 vCPU (4 worker, 400 round, 1.600 chiamate buffer S_INFO), evidenze in `../integrated-next/evidence/smp-stress-{4,8}/`. Suite backend/runtime completa **29/29 PASS**, ora con attesa/risveglio atomici nativi, mutex/condition, FS/errno, startup/join/TSD e consumatore C++ freestanding su 1/4/8 vCPU; non sono test JSC/WebCore. Le note di milestone precedenti conservate altrove possono descrivere il vecchio rifiuto SMP. Repository privata di backup: https://github.com/ESPNex/tinymacOS .
 
 **Non è ancora un browser e non è ancora un port WebKit compilabile.**
 
@@ -11,7 +11,7 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 
 È stato iniziato il backend nativo che servirà allo shim POSIX: DNS IPv4, apertura/lettura/scrittura/chiusura TCP, clock monotono e un punto d'ingresso per la casualità sicura che al momento fallisce esplicitamente con ENOSYS. Non è una libc POSIX completa. Le API sono volutamente prefissate `tmc_`: non sostituiscono ancora socket, getaddrinfo o pthread nel motore.
 
-**Sincronizzazione nativa:** `posix/src/sync.c` usa S_WORDWAIT per mutex e condition reali, con timeout e riacquisizione del mutex. Non è pthread completo; startup/join/TSD restano da integrare. [Contratti, prove e confronto con le interfacce WTF reali](THREADING.md). Nessuna nuova ISO pubblicata in questo passo.
+**Sincronizzazione nativa:** `posix/src/sync.c` usa S_WORDWAIT per mutex e condition reali, con timeout e riacquisizione del mutex. Il macroblocco successivo ora include startup TLS automatica dei figli, handoff finale kernel, join sicuro e TSD con distruttori: [dettagli e prove](RUNTIME-THREADS.md). Non è pthread completo né runtime C++ completo. [Contratti, prove e confronto con le interfacce WTF reali](THREADING.md). Nessuna nuova ISO pubblicata in questo passo.
 
 ### File
 
@@ -19,7 +19,7 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 - `posix/src/poll.c`: attesa su handle TCP con timeout.
 - `posix/src/descriptors.c`: namespace comune file read-only/TCP, dup/offset condiviso, lifetime e poll misto. Contratto backend, non ancora API libc POSIX; chiamante serializzato.
 - `posix/src/vm.c`: nuova VM nativa con riserva/commit/protezioni/guard/decommit, validata sul guest a 1/2 vCPU e stress concorrente a 4/8 vCPU; EXEC resta rifiutato, non è mmap POSIX.
-- `kernel-overlay/`: diciannove file di integrazione sincronizzati con TinymacOS, inclusa la correzione della backpressure TCP.
+- `kernel-overlay/`: venti file di integrazione sincronizzati con TinymacOS, inclusa la correzione della backpressure TCP.
 - `platform/src/appearance.c`: lettura reale S_INFO, palette condivisa con il compositor, rilevamento cambiamenti. Non ancora collegato a un’interfaccia browser.
 - `posix/src/native_syscall.c`: ponte syscall x86-64 nativo, non syscall Linux.
 - `posix/src/clock_entropy.c`: clock 100 Hz; nessuna falsa entropia per TLS.
@@ -65,4 +65,4 @@ Revisione manutenzione pubblicata e riscaricata/verificata: [v2.4.4-oc2](https:/
 
 Probe reale guest **PASS a 1/4/8 vCPU**: quattro worker, **600 verifiche dopo yield** per profilo, TCB/celle errno distinti, valore del thread principale preservato, basi invalide rifiutate e reset FS verificato. Su SMP è richiesta esecuzione su più di una CPU (mask), non necessariamente migrazione di ogni singolo thread. Risultati `test-results/guest-tls-smp{1,4,8}.json`; ritagli del vero Terminale in `test-results/tls/`. Dopo le modifiche, suite backend/runtime completa **15/15 PASS** rieseguita.
 
-**Non è ancora il TLS di rete HTTPS, una libc completa, ELF/C++ TLS (`__thread`/DTV), pthread o JavaScriptCore.** **Dopo il tag OC2**, gli adattatori target ora risolvono errno tramite `__errno_location()` nel TCB: nessun simbolo globale errno, fail-fast se la startup non ha installato un TCB. Startup/creazione thread sono ancora esplicite e caller-owned; non è pthread automatico. La suite reale 1/4/8 vCPU verifica 4 worker/600 controlli post-yield, anche dopo errori negli adattatori VM/descriptor e confronto tra `&errno` e cella TLS. Le tabelle descriptor condivise restano da sincronizzare: errno isolato non le rende thread-safe. Restano attese/futex e join, runtime C/C++, integrazione reale WTF/JSC, grafica/font e WebCore, HTTPS validato, UI e temi. La patch browser resta subordinata a questi gate.
+**Non è ancora il TLS di rete HTTPS, una libc completa, ELF/C++ TLS (`__thread`/DTV), pthread o JavaScriptCore.** **Dopo il tag OC2**, gli adattatori target ora risolvono errno tramite `__errno_location()` nel TCB: nessun simbolo globale errno, fail-fast se la startup non ha installato un TCB. I nuovi thread creati tramite `tmc_thread_create` ora ricevono automaticamente il TCB; bootstrap iniziale e storage restano espliciti/caller-owned. Il runtime gestisce join e TSD con distruttori, non pthread completo. La suite reale 1/4/8 vCPU verifica 4 worker/600 controlli post-yield, anche dopo errori negli adattatori VM/descriptor e confronto tra `&errno` e cella TLS. Le tabelle descriptor condivise restano da sincronizzare: errno isolato non le rende thread-safe. Restano allocator/libc e runtime C/C++, detach/stack metadata/clock realtime e integrazione pthread/WTF, integrazione reale WTF/JSC, grafica/font e WebCore, HTTPS validato, UI e temi. La patch browser resta subordinata a questi gate.

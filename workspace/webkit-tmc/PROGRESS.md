@@ -123,10 +123,10 @@ Test descriptor host con ASan/UBSan: percorsi di errore, saturazione tabella, al
 ## Suite ripetibile
 
 ```sh
-# 10 controlli host/oggetti target, senza avvio VM
+# 11 controlli host/oggetti target, senza avvio VM
 python3 /home/user/workspace/webkit-tmc/tools/run-tests.py
 
-# 24 controlli: stessi 10 + quattro build QA + dieci profili guest
+# 29 controlli: stessi 11 + cinque build QA + tredici profili guest
 # Prerequisiti da sorgenti: toolchain local-tools.py, QEMU/OVMF, numpy e Pillow.
 chmod u+x /home/user/tinymacOS/tools/run-qemu.sh
 python3 /home/user/workspace/webkit-tmc/tools/run-tests.py --guest
@@ -164,3 +164,11 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 - Ripetuta la suite estesa completa: **24/24 PASS**, compresi rete/VM su 1/2 CPU e nuovi test sync/FS-errno su 1/4/8 CPU. Si conserva l’indagine sul precedente fallimento della sola copertura CPU prima della correzione del workload: `test-results/sync-investigation.json`.
 - Aggiunti i veri header upstream Threading/ThreadSpecific/StackBounds al piccolo sottoinsieme di riferimento, con hash e copyright. **Non significa che WTF sia stato compilato.** Confronto API e prossimi blocchi concreti in `THREADING.md`.
 - Nessun nuovo deploy o upload ISO. Le immagini diagnostiche sono esterne e non distribuibili; OC2 resta immutata. Prossimo confine: startup/lifetime/join e TSD con cleanup, runtime C/C++ e build WTF/JSC reale.
+
+## Macroblocco successivo completato — thread lifecycle, TSD e ponte C++
+
+- Startup TLS automatica per i figli, identità process-local non riusate, kernel final handoff con FS azzerato e completion release; join esclusivo/timedjoin e risultati a larghezza piena/NULL. Il thread non tocca più il proprio TCB dopo la pubblicazione del completamento.
+- TSD con generazioni, gestione dell’esaurimento chiavi, distruttori reentranti fuori lock e massimo quattro passaggi; ritorno ed exit esplicita attraversano lo stesso cleanup.
+- Suite completa fresca **29/29 PASS**. I profili nativi 1/4/8 CPU eseguono 90 creazioni di base più figli fino all’esaurimento reale dei Task, 320 aggiornamenti concorrenti, 64 riusi e 16 TCB VM smappati subito dopo il join.
+- Un consumatore C++20 freestanding RAII/C-ABI è compilato, linkato senza librerie C++ e senza simboli indefiniti, ed eseguito nel guest. Non è libc++/libstdc++, eccezioni o motore WebKit.
+- Fonti, contratti, limiti e prossimo macroblocco allocator/libc/runtime C++ + WTF/JSC in `RUNTIME-THREADS.md`. Nessun nuovo deploy/ISO upload; OC2 invariata.

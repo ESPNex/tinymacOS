@@ -24,7 +24,9 @@
     "compact_password_dots_and_reported_white_line_guest_regression": true,
     "real_multi_cpu_vm_support_and_stress_tests": true,
     "native_thread_pointer_and_explicit_errno_cells_guest_tested": true,
-    "native_private_word_parking_mutex_condition_guest_tested": true
+    "native_private_word_parking_mutex_condition_guest_tested": true,
+    "native_managed_thread_startup_join_tsd_destructors_guest_tested": true,
+    "freestanding_cpp_raii_native_c_abi_consumer_guest_tested": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -135,11 +137,39 @@
     "workers": 4,
     "serialized_updates_per_profile": 240,
     "host_serialized_updates": 8000,
-    "full_runtime_suite_passed": 24,
+    "full_runtime_suite_passed": 29,
     "pthread": false,
     "join_detach": false,
     "thread_specific_destructors": false,
     "validated_walltime_bridge": false,
     "descriptor_shared_synchronization": false
+  },
+  "native_thread_runtime_scope": {
+    "shipped_in_oc2": false,
+    "guest_cpus": [
+      1,
+      4,
+      8
+    ],
+    "base_creations_per_profile": 90,
+    "additional_real_task_exhaustion_and_recovery": true,
+    "concurrent_updates_per_profile": 320,
+    "automatic_child_tcb": true,
+    "initial_thread_bootstrap": "explicit, caller-owned",
+    "safe_kernel_final_handoff": true,
+    "exclusive_timed_join": true,
+    "tsd_keys": 32,
+    "tsd_generation_handles": true,
+    "destructor_iterations_maximum": 4,
+    "reentrant_destructors": true,
+    "control_block_reuses_tested": 64,
+    "actual_tcb_vm_unmaps_after_join_tested": 16,
+    "limited_freestanding_cpp_raii_consumer": true,
+    "complete_cpp_runtime": false,
+    "complete_pthread": false,
+    "detach": false,
+    "elf_cpp_tls": false,
+    "wtf_jsc_compiled": false,
+    "full_runtime_suite_passed": 29
   }
 }
