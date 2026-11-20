@@ -30,11 +30,12 @@ h.write_bytes(raw[:i])
 PYF
 mkesp(){ : > "$1";truncate -s "$2" "$1";mkfs.fat --invariant -R32 -F16 -n "$3" "$1" >/dev/null;mmd -i "$1" ::/EFI ::/EFI/BOOT ::/System ::/System/Library ::/System/Library/CoreServices ::/System/Library/KernelCollections;mcopy -i "$1" "$D/KernelCache" ::/System/Library/KernelCollections/KernelCache;mcopy -i "$1" "$D/$4" ::/System/Library/CoreServices/System.vol;mcopy -i "$1" "$D/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI;mcopy -i "$1" "$D/BootConfig.bin" ::/BOOTCFG.BIN; }
 mkesp "$D/install.esp" 24M LEVANTE System-disk.vol
-# The installed FAT16 ESP is readable by OpenDuet: preserve native UEFI fallback,
-# and add the native TMC target plus OpenCore at OpenDuet's BDS default path.
+# FAT16 ESP: force removable fallback through OpenCore for BOTH firmwares.
+# Otherwise OpenDuet BDS bypasses OC, and its USB input drivers never load.
 mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
+mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/BOOT/BOOTX64.EFI
 for driver in BiosVideo XhciDxe OpenUsbKbDxe UsbMouseDxe;do
  mcopy -i "$D/install.esp" "vendor/opencore-1.0.8/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
 done
