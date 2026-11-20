@@ -197,7 +197,7 @@
   },
   {
     "path": "tools/iso.sh",
-    "sha256": "be644bc115acb49ad4d185f54de750b8d8f280a6fa0854fa61e233f5f2be8049"
+    "sha256": "1d1a45fbe865aed38f5525d9a1a7d1011c34f59f83461f73d8e7d4ba09fc2950"
   },
   {
     "path": "tools/run-bios-installed.sh",

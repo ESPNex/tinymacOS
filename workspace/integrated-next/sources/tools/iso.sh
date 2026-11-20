@@ -32,7 +32,9 @@ mkesp(){ : > "$1";truncate -s "$2" "$1";mkfs.fat --invariant -R32 -F16 -n "$3" "
 mkesp "$D/install.esp" 24M LEVANTE System-disk.vol
 # FAT16 ESP: force removable fallback through OpenCore for BOTH firmwares.
 # Otherwise OpenDuet BDS bypasses OC, and its USB input drivers never load.
-mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES
+# Precreate empty OC legacy-NVRAM directory before sealing: LoadNvram opens it
+# with CREATE even with an empty schema, which would otherwise alter the seal.
+mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES ::/NVRAM
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
