@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "dirty_lba": 64,
+  "original_sha256": "c93b6dc2139ff120eac91d0beddfff24ba89ee81072ef176eb9969c6a47982c4",
+  "external_evidence": "/var/tmp/tmc-bios-dirty-by692kow/evidence",
+  "after_sha256": "c93b6dc2139ff120eac91d0beddfff24ba89ee81072ef176eb9969c6a47982c4",
+  "entire_disk_unchanged": true,
+  "gui_refusal": true
+}

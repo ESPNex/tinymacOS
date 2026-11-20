@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "3c4caffe46f76825beb34fa480acde7006034fbfc57abcc7fe17428006d6a895"
+    "sha256": "9e6b856dc5d9b2d7b2341508a741eb1662bccecfe13ab62379d7b9be0179d38c"
   },
   {
     "path": "arch/biosdisk.S",
@@ -201,7 +201,7 @@
   },
   {
     "path": "tools/run-bios-installed.sh",
-    "sha256": "ca8ab884420debf30f4cb961af62ec7ed4c9b4d5c057b868d4fff58a2768706d"
+    "sha256": "af5096511de3928fc253ae6020db8ccfd0873ff80c0045a5aea11ec319e22906"
   },
   {
     "path": "tools/run-bios-iso.sh",

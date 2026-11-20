@@ -9,16 +9,18 @@ src=Path(json.loads((Path(__file__).parent/'bios-installer-result.json').read_te
 w=Path(tempfile.mkdtemp(prefix='tmc-bios-recovery-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir();(w/'target').mkdir();disk=w/'target/system.raw';shutil.copyfile(src,disk);before=gpt(disk)
 cache=Path('/var/tmp/tmc-bios-install-system/KernelCache').read_bytes();offset=before['esp'].index(cache)+128
 with disk.open('r+b') as f:f.seek(2048*512+offset);v=f.read(1);f.seek(-1,1);f.write(bytes([v[0]^8]))
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_POINTER='mouse',TMC_SMP='2')
+pointer=os.environ.get('TMC_REC_POINTER','mouse');firmware=os.environ.get('TMC_REC_FIRMWARE','bios')
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_POINTER=pointer,TMC_SMP='2')
 class Rec(Retail):
  initial='Scegli come proseguire.'
  def reset_pointer(self):self.mx,self.my=1280-48,800-55
  def move(self,x,y):
+  if pointer=='tablet':return super().move(x,y)
   self.hmp(f'mouse_move {x-self.mx} {y-self.my}');self.mx,self.my=x,y;time.sleep(.65)
  def mouse(self,down):self.hmp('mouse_button '+('1' if down else '0'));time.sleep(.45)
-rec={'passed':False,'external_evidence':str(ev),'scope':'BIOS HDD-only tampered KernelCache rejection -> local Recovery -> sealed offline OS restore -> same BIOS desktop'}
+rec={'passed':False,'external_evidence':str(ev),'firmware':firmware,'pointer':pointer,'scope':'HDD-only tampered KernelCache rejection -> local Recovery -> sealed offline OS restore -> same BIOS desktop'}
 try:
- with Rec('/not-attached',w,ev,'bios-recovery',disk='target',boot_disk=True,launcher=root/'tinymacOS/tools/run-bios-installed.sh') as g:
+ with Rec('/not-attached',w,ev,'bios-recovery',disk='target',boot_disk=True,launcher=(root/'tinymacOS/tools/run-bios-installed.sh') if firmware=='bios' else None) as g:
   blocks=g.req('query-block');assert str(disk) in str(blocks) and '.iso' not in str(blocks)
   g.shot('bios-local-recovery')
   def clicktext(text):
@@ -31,5 +33,5 @@ try:
  with disk.open('rb') as f:f.seek(64*512);duet=f.read((root/'tinymacOS/vendor/opencore-1.0.8/bootX64').stat().st_size)
  assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64').read_bytes()
  rec.update(passed=True,local_recovery_without_iso=True,automatic_damaged_kernel_rejection=True,sealed_esp_restored_byte_identical=True,documents_unchanged=True,duet_gap_unchanged=True,desktop_reboot_after_restore=True)
-finally:(Path(__file__).parent/'bios-recovery-result.json').write_text(json.dumps(rec,indent=2)+'\n')
+finally:(Path(__file__).parent/('bios-recovery-result.json' if pointer=='mouse' and firmware=='bios' else firmware+'-recovery-'+pointer+'-result.json')).write_text(json.dumps(rec,indent=2)+'\n')
 print('PASS BIOS-only local Recovery, sealed offline OS restore, preserved documents, BIOS desktop reboot')

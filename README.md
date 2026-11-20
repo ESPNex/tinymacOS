@@ -1,4 +1,4 @@
-> **Aggiornamento supporto OpenCore:** ISO dual-boot ottica BIOS/OpenDuet/OpenCore + UEFI: [v2.4.4-oc1](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1). Installer ancora UEFI; non immagine DD USB. [Dettagli e prove](workspace/release-2.4.4/opencore-media/RELEASE.md).
+> **Manutenzione OpenCore aggiornata:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2): live ottica BIOS+UEFI e **disco installato autonomo BIOS/OpenDuet/OpenCore+UEFI**. Prove con ISO rimossa, riavvio e Recupero locale. Non immagine USB DD. [Note e QA](workspace/release-2.4.4/installer-media/RELEASE.md).
 
 # tinymacOS — sorgenti e workspace di sviluppo
 
@@ -6,7 +6,7 @@ Repository privata: https://github.com/ESPNex/tinymacOS
 
 Questo repository conserva i file del workspace necessari a riprendere lo sviluppo senza dipendere dal limite di 128 MiB degli snapshot della conversazione. Non contiene credenziali, ISO, archivi di sorgenti o directory di build. I file vendor selezionati sono conservati estratti, con licenze e lock disponibili nei rispettivi alberi.
 
-**Release 2.4.4 Levante (21B5):** [download privato e note](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4). [QA e checksum](workspace/release-2.4.4/RELEASE.md). ISO UEFI, senza browser; bootstrap BIOS soltanto QA separato.
+**Release 2.4.4 Levante (21B5):** [download privato e note](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4). [QA e checksum](workspace/release-2.4.4/RELEASE.md). La ISO originale era UEFI; OC2 aggiunge live ottica e installazione BIOS, sempre senza browser.
 
 ## Mappa
 
@@ -20,7 +20,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 ## Stato e limiti reali
 
 - VM/MMU nativa: verifiche positive su 1/2 vCPU e stress concorrente su 4/8 vCPU documentati. Non sono prove di pthread/POSIX completo o WebKit.
-- Bootstrap BIOS di prova: SeaBIOS → OpenDuet 1.0.8 BlockIO → OpenCore → loader nativo e desktop, con verbose tramite `BOOTCFG.BIN`, verificati in QEMU. Il bootstrap è una **immagine disco QA separata**, non ancora un'ISO ibrida distribuita e non un installer BIOS completo.
+- Supporto OC2: CD BIOS via MEMDISK/OpenDuet BlockIO/OpenCore; installato BIOS via ponte MBR → OpenDuet completo USB/AHCI → OpenCore → loader/kernel nativi. Il medesimo disco avvia anche in UEFI tramite il launcher OpenCore ufficiale. GPT/FAT16 invariata; Recupero e sorgente sigillata verificati. OC1 resta una revisione precedente solo ottica.
 - Verbose UEFI diretto selezionato con `V`, comandi `bootverbose status`, `on`, `off`, `log [pagina]` implementati. Verificati selezione live, stato, log e rifiuto di scrittura persistente sulla live. Il test completo della preferenza installata in `workspace/integrated-next/qa/verbose_installed.py` è passato: off → on da Terminale → riavvio verbose → off → riavvio quieto; ESP sigillata e payload Recovery invariati. Evidenze in `workspace/integrated-next/evidence/verbose-installed/`.
 - `workspace/webkit-tmc/test-results/milestone-tests.json` riporta la suite backend/runtime. Date e commit delle prove contano: un risultato precedente non valida automaticamente modifiche successive.
 - **Safari/WebKit reale non è completato. La 2.4.4 è una release intermedia senza browser, non la futura ISO Safari.**

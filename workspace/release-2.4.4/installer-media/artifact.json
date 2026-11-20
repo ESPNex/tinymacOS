@@ -1,0 +1,11 @@
+{
+  "native_iso_sha256": "440ef81c81c539c977a23bb306f0e46911f39f5232756c8410f030051f491dba",
+  "filename": "tinymacOS-2.4.4-OpenCore-Installer-x86_64.iso",
+  "bytes": 221485056,
+  "sha256": "714799fb0af8f6c88a051c7fba89f02a5cf68557d9a7e458cea112907726ec22",
+  "bios": "El Torito ISOLINUX/MEMDISK RAM disk, OpenDuet BlockIO 1.0.8 -> OpenCore 1.0.8 -> native loader",
+  "uefi": "original direct El Torito EFI.IMG",
+  "bios_installer": true,
+  "legacy_usb_dd_supported": false,
+  "browser": false
+}

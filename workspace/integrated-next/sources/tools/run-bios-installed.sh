@@ -8,10 +8,11 @@ mkdir -p "$STATE"
 DISK=${DISK:-$STATE/system.raw}
 [[ "$DISK" == /var/tmp/* ]] || exit 2
 if [[ ! -f "$DISK" ]];then [[ ${BOOT_DISK:-0} == 0 ]] || exit 2;python3 tools/mkdisk.py "$DISK";fi
+case ${TMC_POINTER:-mouse} in mouse) pointer=usb-mouse;;tablet) pointer=usb-tablet;;*) exit 2;;esac
 Q=(-machine q35 -accel "${ACCEL:-tcg}" -cpu max -smp "${TMC_SMP:-2}" -m 1024 -vga std
  -L "$TOOLROOT/usr/share/qemu" -L "$TOOLROOT/usr/share/seabios"
  -device ich9-usb-ehci1,id=ehci -device usb-kbd,bus=ehci.0,port=1
- -device qemu-xhci,id=xhci -device usb-kbd,bus=xhci.0,port=1 -device usb-mouse,bus=xhci.0,port=2,id=pointer
+ -device qemu-xhci,id=xhci -device usb-kbd,bus=xhci.0,port=1 -device "$pointer,bus=xhci.0,port=2,id=pointer"
  -drive "if=none,id=hd,format=raw,file=$DISK" -device ide-hd,drive=hd,bus=ide.0,bootindex=2
  -object rng-random,filename=/dev/urandom,id=rng -device virtio-rng-pci,rng=rng)
 if [[ ${BOOT_DISK:-0} == 0 ]];then

@@ -99,6 +99,23 @@
     "global_errno_adapters_converted": false,
     "pthread": false,
     "elf_cpp_tls_loader": false,
-    "https_tls": false
+    "https_tls": false,
+    "shipped_in_oc2": true
+  },
+  "maintenance_244_opencore_installer": {
+    "tag": "v2.4.4-oc2",
+    "version": "2.4.4",
+    "build": "21B5",
+    "codename": "Levante",
+    "sha256": "714799fb0af8f6c88a051c7fba89f02a5cf68557d9a7e458cea112907726ec22",
+    "bios_installer": true,
+    "bios_hdd_only_boot_reboot": true,
+    "uefi_same_disk": true,
+    "recovery_mouse_tablet_offline_restore": true,
+    "sealed_esp_byte_identical": true,
+    "dirty_target_zero_writes": true,
+    "published": false,
+    "browser_included": false,
+    "legacy_usb_dd": false
   }
 }

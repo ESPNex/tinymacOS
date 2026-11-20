@@ -1,6 +1,6 @@
-> **Redeploy ottico:** [v2.4.4-oc1 OpenDuet/OpenCore + UEFI](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1) è ora pubblicato e verificato da CD su SeaBIOS/OVMF. È una revisione del supporto 2.4.4, non una nuova versione OS: il vecchio limite UEFI-only delle note 2.4.4 sottostanti vale per la ISO originale, non per l'avvio ottico della nuova revisione. L'installer rimane UEFI. [Note complete](../workspace/release-2.4.4/opencore-media/RELEASE.md).
+> **Revisione installatore OC2:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2) aggiorna la manutenzione **2.4.4 Levante / 21B5**, senza browser. Live CD BIOS+UEFI, disco installato BIOS/OpenDuet/OpenCore e UEFI/OpenCore; installazione grafica, ISO rimossa, login, riavvio, documento persistente e Recupero offline verificati in QEMU. [Note, limiti, checksum e screenshot](../workspace/release-2.4.4/installer-media/RELEASE.md).
 
-> **Sorgenti main dopo il tag:** includono il primo TLS per-thread FS nativo, verificato con 1/4/8 vCPU; è sviluppo WebKit non ancora distribuito, non pthread/libc completa o HTTPS. Per ricostruire esattamente la ISO OpenCore usare il tag `v2.4.4-oc1`, non main.
+> OC2 include anche il TLS nativo per-thread già verificato con 1/4/8 vCPU, non pthread/libc completa né WebKit/HTTPS. Le note storiche UEFI-only sotto descrivono la ISO originale `v2.4.4`, non OC2. Usare il tag OC2 per ricostruire questa revisione.
 
 # tinymacOS 2.4.4 · Levante
 
@@ -19,7 +19,7 @@ Novità rispetto alla manutenzione 2.4.3:
 - Versione/build aggiornate nelle app, `sw_vers`, `uname`, metadati bundle, installer, Recupero e documento iniziale. Corrette anche le etichette disegnate dell’Info e dell’installer: **LEVANTE**, non RIVIERA.
 - Restano puntini password compatti, gestione dei piccoli movimenti USB relativi e correzioni GOP della 2.4.3.
 
-**La ISO e l’installer rimangono UEFI.** Il bootstrap MBR/FAT32 SeaBIOS → OpenDuet/OpenCore → sistema nativo è stato collaudato su un disco QA separato. Non è integrato come boot BIOS dell’ISO e non rende BIOS l’installazione GPT/FAT16. Nessuna promessa di compatibilità hardware universale.
+**La ISO OC2 e il disco installato supportano BIOS e UEFI nei profili QEMU documentati.** Il ponte MBR legge OpenDuet dallo spazio riservato prima dell’ESP; la GPT/FAT16 e le copie Recovery/sistema restano invariate. Non è una migrazione automatica dei dischi installati con versioni precedenti. Nessuna promessa di compatibilità hardware universale.
 
 ## Avvio e installazione
 
