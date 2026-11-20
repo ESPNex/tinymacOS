@@ -1,4 +1,4 @@
-> **Aggiornamento release:** l'utente ha autorizzato una nuova ISO intermedia dopo il backup. È stata preparata e collaudata **2.4.4 Levante (21B5)**; note/QA/hash in `../release-2.4.4/RELEASE.md`. Il vecchio paragrafo sottostante che indicava nessun nuovo deploy descriveva lo stato precedente. La futura patch Safari resta 2.4.5 Levante e richiede browser reale e temi.
+> **Aggiornamento release:** l'utente ha autorizzato una nuova ISO intermedia dopo il backup. È stata preparata, collaudata e pubblicata su GitHub **2.4.4 Levante (21B5)**; note/QA/hash in `../release-2.4.4/RELEASE.md`. Il vecchio paragrafo sottostante che indicava nessun nuovo deploy descriveva lo stato precedente. La futura patch Safari resta 2.4.5 Levante e richiede browser reale e temi.
 
 # Sviluppo integrato — stato di ripresa
 
@@ -47,7 +47,7 @@ bootverbose log 1
 2. Il bootstrap BIOS di prova non aggiorna l'installer GPT/FAT16 a un sistema BIOS installato autonomo. Non distribuire il disco QA come se fosse l'ISO integrata richiesta.
 3. Verificare o correggere il percorso OpenCore `-v`: i tentativi precedenti senza BOOTCFG non hanno attivato il flag. Il risultato positivo corrente usa deliberatamente BOOTCFG, non nasconde questo limite.
 4. Completare i test di regressione e hardware prima di una release. Lo stress nativo non equivale a un audit generale della sicurezza.
-5. **Nessun nuovo deploy ISO.** Ultima release distribuita resta la manutenzione 2.4.3, senza browser; non chiamare le build diagnostiche una nuova release Safari.
+5. **Release intermedia 2.4.4 pubblicata su autorizzazione esplicita**, senza browser: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4 . Tag immutato `9e7c83c58f0452e6d2d5f00768862cab339de2ca`; checksum e download remoto verificati. Non chiamare questa ISO o le build diagnostiche una release Safari. La successiva patch 2.4.5 resta condizionata al browser reale e ai temi.
 
 ## Ripetizione QA
 
