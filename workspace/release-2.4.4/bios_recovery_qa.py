@@ -23,8 +23,8 @@ try:
   clicktext('Disco di avvio');clicktext('Continua');g.visible('Seleziona un disco');clicktext('Continua')
   g.visible('BiosDisk',60);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.shot('bios-restored-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
  after=gpt(disk);assert after['esp']==before['esp']==before['src'];assert after['data']==before['data']
- with disk.open('rb') as f:f.seek(64*512);duet=f.read(224768)
- assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64-blockio').read_bytes()
+ with disk.open('rb') as f:f.seek(64*512);duet=f.read((root/'tinymacOS/vendor/opencore-1.0.8/bootX64').stat().st_size)
+ assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64').read_bytes()
  rec.update(passed=True,local_recovery_without_iso=True,automatic_damaged_kernel_rejection=True,sealed_esp_restored_byte_identical=True,documents_unchanged=True,duet_gap_unchanged=True,desktop_reboot_after_restore=True)
 finally:(Path(__file__).parent/'bios-recovery-result.json').write_text(json.dumps(rec,indent=2)+'\n')
 print('PASS BIOS-only local Recovery, sealed offline OS restore, preserved documents, BIOS desktop reboot')

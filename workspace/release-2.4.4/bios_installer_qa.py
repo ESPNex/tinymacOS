@@ -22,9 +22,9 @@ try:
   g.enroll(name='BiosDisk');g.key('f11');g.visible('Introduzione');g.key('ret');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',150,faces=(3,));g.shot('bios-install-complete');g.key('ret');g.p.wait(timeout=15);assert g.p.returncode==0
  disk=w/'target/system.raw';layout=gpt(disk)
  with disk.open('rb') as f:
-  mbr=f.read(512);f.seek(64*512);duet=f.read(224768)
+  mbr=f.read(512);f.seek(64*512);duet=f.read((root/'tinymacOS/vendor/opencore-1.0.8/bootX64').stat().st_size)
  assert mbr[:440]==Path('/var/tmp/tmc-bios-install-system/bios-mbr.bin').read_bytes();assert mbr[450]==0xee and mbr[510:]==b'\x55\xaa'
- assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64-blockio').read_bytes()
+ assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64').read_bytes()
  with Installed('/not-attached',w,ev,'bios-hdd-only',disk='target',boot_disk=True,launcher=launcher) as g:
   no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    2.4.4');g.cmd('bootverbose log','[boot] CPUs online: 2');g.cmd('echo BIOS_DISK_PERSISTENT > Documents/bios-proof.txt');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('bios-hdd-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
  with Installed('/not-attached',w,ev,'bios-reboot',disk='target',boot_disk=True,launcher=launcher) as g:

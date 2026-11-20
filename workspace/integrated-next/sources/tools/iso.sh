@@ -39,7 +39,13 @@ mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX
 for driver in BiosVideo XhciDxe OpenUsbKbDxe UsbMouseDxe;do
  mcopy -i "$D/install.esp" "vendor/opencore-1.0.8/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
 done
-mcopy -i "$D/install.esp" boot/opencore.plist ::/EFI/OC/config.plist
+python3 - "$D/installed-opencore.plist" <<'PYOC'
+import plistlib,sys
+from pathlib import Path
+p=plistlib.loads(Path('boot/opencore.plist').read_bytes());p['NVRAM']['Add']={}
+Path(sys.argv[1]).write_bytes(plistlib.dumps(p,sort_keys=False))
+PYOC
+mcopy -i "$D/install.esp" "$D/installed-opencore.plist" ::/EFI/OC/config.plist
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
 mkesp "$R/EFI.IMG" 64M LEVANTECD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,

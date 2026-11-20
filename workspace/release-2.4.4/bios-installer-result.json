@@ -1,6 +1,6 @@
 {
   "passed": false,
-  "iso_sha256": "2760fb93ac756dc0f213e1b487be780fca87870ec0cb634c1f80eaee266029f7",
-  "external_work": "/var/tmp/tmc-bios-install-qa-5uuue_9r",
+  "iso_sha256": "6b3ec5b767aebc100c3463e5110902048445fa048d31438bb89346e4943eba39",
+  "external_work": "/var/tmp/tmc-bios-install-qa-f_zq7uhw",
   "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU"
 }

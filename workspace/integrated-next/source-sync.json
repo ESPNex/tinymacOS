@@ -5,7 +5,7 @@
   },
   {
     "path": "arch/biosdisk.S",
-    "sha256": "00d07bc3b34855d4c7dd8cd4cd480102e7fc55d5f8ca650bba5779e7b49d4c0b"
+    "sha256": "2fa9d50033ec050894438fd0b62f850882bc6957847f844804d5e690cc3eece4"
   },
   {
     "path": "arch/cpu.c",
@@ -169,7 +169,7 @@
   },
   {
     "path": "tools/bios-image.py",
-    "sha256": "2b3a237a132c8b457a8c260593d4c15b42b12af1be3e9b82c882ff1421e5f3fa"
+    "sha256": "6193948b7b49cd64addaedcd2a273b838fcd9770e8f62f423d53af96c5bc5076"
   },
   {
     "path": "tools/build-legacy.py",
@@ -193,7 +193,7 @@
   },
   {
     "path": "tools/iso.sh",
-    "sha256": "7e3f39feac0a571e7c1a671449e7aefbb37cf5e198cf8b3e8274d9e86d8eeb62"
+    "sha256": "be644bc115acb49ad4d185f54de750b8d8f280a6fa0854fa61e233f5f2be8049"
   },
   {
     "path": "tools/run-bios-installed.sh",
