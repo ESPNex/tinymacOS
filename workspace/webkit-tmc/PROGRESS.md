@@ -4,7 +4,7 @@
 
 Applicazione **Safari**, UI desktop classica, integrazione con tutti i temi di tinymacOS. Progetto indipendente da Apple.
 
-Le manutenzioni 2.4.1/2.4.2 e l’**ultima 2.4.3 esplicitamente richiesta** sono state distribuite senza browser. Dopo la 2.4.3 niente altre ISO intermedie salvo nuova autorizzazione. Prossima release browser solo con vero HTTPS/HTML/CSS/JavaScript, temi e sicurezza collaudati.
+Le manutenzioni fino alla **2.4.4 Levante / OC2**, esplicitamente autorizzate, sono state distribuite senza browser. OC2 aggiunge l’installer/disco BIOS attraverso OpenDuet/OpenCore e mantiene UEFI. Prossima release browser solo con vero HTTPS/HTML/CSS/JavaScript, temi e sicurezza collaudati.
 
 ## Release intermedia 2.4.4 autorizzata dopo il backup
 
@@ -138,7 +138,7 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 
 ## Cosa manca prima dell'ISO browser
 
-1. libc/C++ target, pthread, TLS di thread ed errno, attese; estensione VM a SMP e alle reali dimensioni/mapping richiesti da WTF/JSC.
+1. libc/C++ target, startup/thread trampoline automatici, pthread/attese, ELF/C++ TLS/DTV e allocator per le reali dimensioni/mapping WTF/JSC. FS per-task e errno target sono ora per-thread con attachment esplicito; VM SMP è già verificata, non equivale a runtime completo.
 2. Semantica dei file scrivibili/cache, integrazione descriptor nelle vere API libc e ownership kernel dei socket.
 3. API sicura di casualità generale e backend TLS mantenuto: trust store, date, hostname/catena, SNI e test negativi.
 4. Build e test target di WTF/JavaScriptCore, poi WebCore/rendering, font/shaping ed event loop.
@@ -146,3 +146,12 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 6. Isolamento contenuti e collaudo rappresentativo HTML/CSS/JS/HTTPS; solo dopo build/test/upload della release browser.
 
 È ancora presente solo il piccolo sottoinsieme upstream di riferimento, **non un checkout completo di WebKit**. Non sono stati compilati JavaScriptCore o WebCore. Nessuna compatibilità universale con i siti è garantita.
+
+## Ripresa immediata dopo OC2 — errno target collegato al TLS
+
+- OC2 scaricata da GitHub e verificata: `installer-media/github-verification.json` nella directory release 2.4.4. Contiene kernel S_TLS; non contiene le modifiche successive agli adattatori errno.
+- `posix/libc-headers/errno.h` ora usa `__errno_location()`; `posix/src/errno.c` restituisce la cella del TCB nativo corrente. Nessun errno globale, nessun fallback condiviso. L’uso senza TCB valido termina il processo tramite trap: è un errore di startup, non una falsa riuscita.
+- Inizializzazione ancora esplicita: ogni thread che chiama un adattatore errno deve mantenere un TCB caller-owned mappato. Non dichiarare pthread/ELF TLS o libc completa.
+- Guest TLS su **1/4/8 vCPU PASS**, 4 worker × 150 iterazioni per profilo: `&errno` uguale alla cella FS, errori reali EFAULT/EBADF negli adattatori VM/descriptor, valori distinti preservati dopo yield. Le tabelle descriptor condivise non diventano per questo thread-safe.
+- Regressione completa fresca **15/15 PASS**: contratti host, compilazione target, build guest rete/VM, rete/read-only-file e VM reali su 1/2 vCPU. Log e hash sotto `test-results/`.
+- Mancano ancora startup/libc/C++/pthread/attese, veri WTF/JSC/WebCore, rendering/font, HTTPS validato e interfaccia Safari collegata a tutti i temi. La futura release browser resta 2.4.5 Levante.
