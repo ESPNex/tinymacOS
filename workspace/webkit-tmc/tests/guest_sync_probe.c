@@ -9,7 +9,8 @@ static struct tmc_mutex mutex=TMC_MUTEX_INITIALIZER;
 static struct tmc_condition condition=TMC_CONDITION_INITIALIZER;
 static u32 ready,go,done,counter,inside;
 static volatile u32 failed,mask;
-static void bad(void){__atomic_store_n(&failed,1,__ATOMIC_RELEASE);}
+static void bad_at(u32 line){u32 zero=0;__atomic_compare_exchange_n(&failed,&zero,line,0,__ATOMIC_RELEASE,__ATOMIC_RELAXED);}
+#define bad() bad_at(__LINE__)
 static void say(const char *s){sc(S_STDOUT,s,strlen(s),0,0);}
 static void num(u64 n){char b[24];number(b,n);say(b);}
 static void sample(void){SysInfo s;if(sc(S_INFO,&s,0,0,0)||s.current_cpu>=8)bad();else __atomic_fetch_or(&mask,1u<<s.current_cpu,__ATOMIC_RELAXED);}
@@ -61,5 +62,6 @@ void app_main(void)
  SysInfo s;sc(S_INFO,&s,0,0,0);if(s.ncpu>1 && !(mask&(mask-1)))bad();
  say(failed?"SYNC PARK FAIL\n":"SYNC PARK SMP PASS\n");say("updates=");num(counter);say(" workers=4 cpus=");num(s.ncpu);
  say("\ncompare-park=atomic timeout=relocked\nthread-errno=preserved\n");
+ say("first-failure-line=");num(failed);say(" cpu-mask=");num(mask);say("\n");
  sc(S_RETURN,failed?42:0,0,0,0);
 }
