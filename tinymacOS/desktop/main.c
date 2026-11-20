@@ -330,10 +330,9 @@ static void render(int dt)
         for (int i = 0; i < W * H; i++)canvas[i] = blend(prevwall[i], canvas[i], p);
         dirty = 1;
     }
-    nlayer = 0;
-    sceneSeed = hash(hash(12631+sys.fsrev, wallEpoch * 97 + wallpaper_age), sys.day + 32 * sys.month);
-    shell_base();
-    // Mission Control backdrop: fade a dim layer in behind the arranged windows.
+    // Advance the dim layer BEFORE keying any cached material. Chrome caches
+    // include shadow padding (real backdrop pixels), not only the glass body.
+    // Reusing a tile from a different dim phase leaves a rectangle/halo at exit.
     {
         int target = mc ? 112 : 0;
         if (mcdim != target) {
@@ -341,8 +340,11 @@ static void render(int dt)
             mcdim += mcdim < target ? MIN(step, target - mcdim) : -MIN(step, mcdim - target);
             dirty = 1;
         }
-        if (mcdim > 0)roundr(0, BAR, W, H - BAR, 0, 0x07090f, mcdim);
     }
+    nlayer = 0;
+    sceneSeed = hash(hash(hash(12631+sys.fsrev, wallEpoch * 97 + wallpaper_age), sys.day + 32 * sys.month), mcdim);
+    shell_base();
+    if (mcdim > 0)roundr(0, BAR, W, H - BAR, 0, 0x07090f, mcdim);
     int mcn = mc ? mcvis() : 0, mcidx = 0;
     int focus = topwin();
     for (int j = 0; j < nz;) {

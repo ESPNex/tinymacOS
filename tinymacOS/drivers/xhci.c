@@ -5,7 +5,11 @@
 #endif
 #include "hidtablet.h"
 #include "hidconfig.h"
-// Root-port HID: boot keyboard, boot relative mouse, and report-protocol absolute tablet.
+#include "usbroute.h"
+#ifndef TMC_INPUT_TEST
+#include "usbhost.h"
+#endif
+// Native HID at root ports and behind USB2 hubs (including onboard hubs).
 // Supervisor-only DMA memory, producer-cycle rings, bounded waits, no firmware/PS2 input.
 #define NS 8
 #define NR 64
@@ -36,13 +40,14 @@ struct Usb {
     u8 desc[1024] ALIGNED(1024); /* Data Stage TRBs have the same 64 KiB boundary rule */
     struct Hid hid[NHID];
     int id,port,speed,nhid,diag,ctrl_dead;
+    unsigned route,depth,tt_slot,tt_port,tt_think,hub_ports,hub_think;
 };
 static struct Xhci {
     u64 dcbaa[256] ALIGNED(64),sptr[32] ALIGNED(64);
     TRB events[NE] ALIGNED(4096);
     struct {u64 base;u32 size,res;} erst ALIGNED(64);
     Ring commands;
-    int evpos,evcycle,cs,connected,active,lastcode;
+    int evpos,evcycle,cs,connected,active,lastcode,version;
     u32 pci;
     volatile u32 *op,*db,*ir;
     struct Usb usb[NS];
@@ -113,7 +118,8 @@ static int waitresult(TRB*t, int ty, int slot,TRB *setup,TRB *data,int control_s
 {
     TRB e;
     hc->lastcode=0;
-    for (int i = 0; i < 1500000; i++) {
+    for (int i = 0; i < 500000; i++) {
+        if(i && !(i%1000))usb_delay_ms(1);
         if (!event(&e)) {
             asm volatile("pause");
             continue;
@@ -189,6 +195,29 @@ static void endpoint(u32 *p, Ring*r, int type, int pkt, int interval)
     p[3] = 0;
     p[4] = type == 4 ? 8 : (u32)pkt | ((u32)pkt << 16);
 }
+/* USB2 hub interface, alternate zero. A firmware-visible motherboard socket
+ * may be downstream of such a hub: "directly connected" is not root-port-only. */
+static int hub_config(struct Usb *u,int cfg)
+{
+    if(u->speed>3 || control(u,0,9,cfg,0,0))return 0;
+    memset(u->desc,0,sizeof u->desc);
+    if(control(u,0xa0,6,0x2900,0,9))return 0;
+    if(u->desc[0]<7 || u->desc[1]!=0x29 || !u->desc[2] || u->desc[2]>15)return 0;
+    u->hub_ports=u->desc[2];u->hub_think=(u->desc[3]>>5)&3;
+    unsigned delay=MAX(20u,(unsigned)u->desc[5]*2);
+    memset(u->ic,0,sizeof u->ic);ctx(u,0)[1]=1;
+    u32 *s=ctx(u,1);memcpy(s,u->outctx,cs);
+    /* Default hub alternate is single-TT, including multi-TT capable hubs. */
+    s[0]=(s[0]&~(1u<<25))|1u<<26;
+    s[1]=(s[1]&0x00ffffffu)|(u->hub_ports<<24);
+    if(u->speed==3)s[2]=(s[2]&~(3u<<16))|(u->hub_think<<16);
+    s[3]=0;
+    if(command(hc->version>0x95?12:13,(u64)u->ic,u->id)<0)return 0;
+    for(unsigned p=1;p<=u->hub_ports;p++)if(control(u,0x23,3,8,p,0))return 0;
+    usb_delay_ms(delay);
+    device_add("USB2 hub (xHCI)","usb",0);
+    return 2;
+}
 static int configure(struct Usb*u, int port, int speed)
 {
     int id = command(9, 0, 0);
@@ -201,8 +230,9 @@ static int configure(struct Usb*u, int port, int speed)
     ringinit(&u->ctrl);
     ctx(u, 0)[1] = 3;
     u32 *s = ctx(u, 1);
-    s[0] = ((u32)speed << 20) | (1u << 27);
+    s[0] = u->route | ((u32)speed << 20) | (1u << 27);
     s[1] = (u32)port << 16;
+    s[2] = u->tt_slot | (u->tt_port<<8); /* TTT is reserved except in HS hub contexts */
     int pkt = speed >= 4 ? 512 : speed == 3 ? 64 : 8;
     endpoint(ctx(u, 2), &u->ctrl, 4, pkt, 0);
     if (command(11, (u64)u->ic, id) < 0 || control(u, 128, 6, 0x100, 0, 8))
@@ -231,6 +261,11 @@ static int configure(struct Usb*u, int port, int speed)
     if (len < 9 || len > 1024 || control(u, 128, 6, 0x200, 0, len))
         return 0;
     int cfg=u->desc[5];
+    for(unsigned at=0;at<(unsigned)len;) {
+        unsigned z=u->desc[at];if(z<2||z>(unsigned)len-at)return 0;
+        if(u->desc[at+1]==4 && z>=9 && !u->desc[at+3] && u->desc[at+5]==9)return hub_config(u,cfg);
+        at+=z;
+    }
     HidInterface choices[NHID];
     int count=hid_interfaces(u->desc,len,choices,NHID);
     if(count<=0)return 0;
@@ -298,12 +333,62 @@ static void arm(struct Usb *u,struct Hid *h)
 }
 static int waitbit(volatile u32*p, u32 m, int set)
 {
-    for (int i = 0; i < 4000000; i++) {
-        if (!!(*p & m) == set)
-            return 1;
-        asm volatile("pause");
+    for(unsigned ms=0;ms<1000;ms++) {
+        if(!!(*p&m)==set)return 1;
+        usb_delay_ms(1);
     }
-    return 0;
+    return !!(*p&m)==set;
+}
+static void attach(struct Usb *,unsigned,unsigned,unsigned);
+static int hub_status(struct Usb *u,unsigned p,unsigned *status)
+{
+    memset(u->desc,0,4);
+    if(control(u,0xa3,0,0,p,4))return 0;
+    *status=u->desc[0]|u->desc[1]<<8;return 1;
+}
+static void hub_children(struct Usb *u)
+{
+    if(u->depth>=5)return;
+    for(unsigned p=1;p<=u->hub_ports && connected<NS;p++) {
+        unsigned st;
+        if(!hub_status(u,p,&st)||!(st&1))continue;
+        usb_delay_ms(100); /* connect debounce, independent of CPU speed */
+        if(!hub_status(u,p,&st)||!(st&1)||(st&8))continue;
+        if(control(u,0x23,3,4,p,0))continue;
+        int ready=0;
+        for(unsigned ms=0;ms<500;ms+=10) {
+            usb_delay_ms(10);
+            if(!hub_status(u,p,&st)||!(st&1))break;
+            if(!(st&16)&&(st&2)){ready=1;break;}
+        }
+        if(!ready)continue;
+        for(unsigned f=16;f<=20;f++)(void)control(u,0x23,1,f,p,0);
+        usb_delay_ms(10); /* reset recovery before Address Device */
+        attach(u,p,st&1024?3:st&512?2:1,u->depth+1);
+    }
+}
+static void attach(struct Usb *parent,unsigned port,unsigned speed,unsigned depth)
+{
+    if(connected>=NS||depth>5||!port||port>255)return;
+    struct Usb *u=usb+connected;memset(u,0,sizeof *u);u->depth=depth;
+    unsigned root=port;
+    if(parent) {
+        root=parent->port;u->route=parent->route|(MIN(port,15u)<<(4*(depth-1)));
+        if(speed<3) {
+            if(parent->speed==3){u->tt_slot=parent->id;u->tt_port=port;u->tt_think=parent->hub_think;}
+            else {u->tt_slot=parent->tt_slot;u->tt_port=parent->tt_port;u->tt_think=parent->tt_think;}
+        }
+    }
+    connected++; /* reserve parent slot before descending; never overwrite its DMA */
+    int kind=configure(u,root,speed);
+    if(kind==2)hub_children(u);
+    else if(!kind) {
+        if(u->id>0){
+            if(command(10,0,u->id)<0){u->nhid=0;logstr("[usb] quarantined disabled-slot failure\n");return;}
+            dcbaa[u->id]=0;
+        }
+        memset(u,0,sizeof *u);connected--;
+    }
 }
 static void controller_init(u32 dev)
 {
@@ -314,6 +399,7 @@ static void controller_init(u32 dev)
         return;
     }
     u32 h1 = c[1], h2 = c[2], cap = c[4];
+    hc->version=c[0]>>16;
     cs = (cap & 4) ? 64 : 32;
     op = (void*)((u8*)c + (c[0] & 255));
     db = (void*)((u8*)c + (c[5] & ~3u));
@@ -336,6 +422,7 @@ static void controller_init(u32 dev)
     if (!waitbit(op + 1, 1, 1))
         return;
     op[0] |= 2;
+    usb_delay_ms(1); /* Intel reset recovery: do not immediately touch HC registers */
     if (!waitbit(op, 2, 0) || !waitbit(op + 1, 1 << 11, 0))
         return;
     int scratch = ((h2 >> 27) & 31) | ((h2 >> 16) & 0x3e0);
@@ -361,9 +448,14 @@ static void controller_init(u32 dev)
     if (!waitbit(op+1, 1, 0))
         return;
     device_add("USB xHCI controller", "usb", 0);
+    /* Only after a working xHC exists: switch known Intel shared ports before
+     * probing EHCI. No board name matching and no writes to unknown vendors. */
+    usb_route_intel_xhci(dev);
+    usb_delay_ms(100);
     for (int i = 0; i < (int)(h1 >> 24) && connected < NS; i++) {
         volatile u32*p = op + 0x100 + 4 * i;
         u32 v = *p;
+        if((cap&8) && !(v&(1u<<9))) {*p=(v&0x0e000200u)|(1u<<9);usb_delay_ms(20);v=*p;}
         if (!(v & 1))
             continue;
         input_diag.root_devices++;
@@ -373,18 +465,8 @@ static void controller_init(u32 dev)
             if (!waitbit(p, 1 << 4, 0) || !(*p & 2))
                 continue;
         }
-        if (configure(usb + connected, i + 1, (*p >> 10) & 15))
-            connected++;
-        else {
-            if (usb[connected].id > 0) {
-                command(10, 0, usb[connected].id);
-                dcbaa[usb[connected].id] = 0;
-            }
-            logstr("[usb] skipped root port ");
-            lognum(i + 1);
-            logstr("\n");
-            memset(usb + connected, 0, sizeof usb[0]);
-        }
+        usb_delay_ms(10);
+        attach(0,i+1,(*p>>10)&15,0);
     }
     hc->active=1;input_diag.active_xhci++;
     for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++)

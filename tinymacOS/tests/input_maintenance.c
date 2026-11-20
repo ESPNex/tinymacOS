@@ -4,6 +4,7 @@
 #include "../drivers/input.c"
 #include "../drivers/xhci.c"
 u64 ticks;
+void usb_delay_ms(unsigned ms){(void)ms;}
 static u32 fakeir[16],fakedb[256];
 static void fixture(void)
 {

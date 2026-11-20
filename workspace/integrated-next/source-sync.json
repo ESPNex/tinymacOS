@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "ac1f8cfb9e0182b355110f406895c4d0bdbf0dbc915156c67e6ca7db777cd053"
+    "sha256": "a648a8645d91197a20c27b645ca535bd3bf6b6d924d481c19b425c091edae9cc"
   },
   {
     "path": "arch/biosdisk.S",
@@ -41,15 +41,19 @@
   },
   {
     "path": "desktop/main.c",
-    "sha256": "c28ee91c7ca8da958562c348c87b1631106d4e76f3e28c9e68b19eb0243dfbc4"
+    "sha256": "b57d084cbb34617e7ac373b7a9fdbfb0e3b3acab0736fdfc305f936046ebf55a"
+  },
+  {
+    "path": "desktop/shell.c",
+    "sha256": "e4eeb022480398d022393d7632e3cb401d30f7864549f73cfeb1e72f90a69ced"
   },
   {
     "path": "docs/QUICKSTART.txt",
-    "sha256": "20e1852236dd20d988e74579d9a94af102f9e17c1ab2dbd987d5387db499a039"
+    "sha256": "86a77c3dd04170103d1821376e01c9ce985d184b5702ce3957a4492de4ffacd2"
   },
   {
     "path": "drivers/ehci.c",
-    "sha256": "73cf1b452cb17c4b7c35da5dc4b7a0e82e34676d409aae60bbad3890eea7b309"
+    "sha256": "42c8cfe2cce98b452897290bb096493353874b265eb1849a2fac4a7b4ac0c891"
   },
   {
     "path": "drivers/input.c",
@@ -68,8 +72,12 @@
     "sha256": "1c380de49f2b5db6a816bf1839de02df058539bec679dcdb516fd37ba0fd531b"
   },
   {
+    "path": "drivers/usbroute.c",
+    "sha256": "fe3e824167404ea96d8a5ea3e13a3dc0252f3c863303cac06dea5f1c4295bc11"
+  },
+  {
     "path": "drivers/xhci.c",
-    "sha256": "600a73b3e7a8d84da85e78888a69a73dd6edd98f0ff81d52d0fbcd209988be2e"
+    "sha256": "d116dd0968b388785531e595bbae7f2dada924fa9e09ecf60e75e03a472cc15f"
   },
   {
     "path": "fs/btrfs.c",
@@ -128,6 +136,10 @@
     "sha256": "0fd03752bed8f55d83a56cb9656cf2d6cf6a8bba7b6c31917b650bda1eba7c16"
   },
   {
+    "path": "include/usbroute.h",
+    "sha256": "f6b6c54f70793073a8c7d7775cbb05f19d90201a512fc6017aae41ee06e302fa"
+  },
+  {
     "path": "include/vmabi.h",
     "sha256": "1205319381faad851048e57ed1e81fc5929e2515dab661c5caa7b1eb93351315"
   },
@@ -165,7 +177,7 @@
   },
   {
     "path": "recovery/main.c",
-    "sha256": "96c9ca6be4df473d4d6f032d1c632b2643e3166408d777c87f8ee936eee6d36c"
+    "sha256": "e90e7154ad225f9dcceb5e4130bc3a2b5bc86b7f2303f3e173cc31012558c368"
   },
   {
     "path": "tests/account_reset.py",
@@ -181,7 +193,7 @@
   },
   {
     "path": "tests/input2_acceptance.py",
-    "sha256": "dcce2f509029de23f47c1bcd7349057a1e9f587d92e995770039c8fc8faec2a0"
+    "sha256": "c1452dcd1bfa1e230ea8e1e6caa36ff5e28d3bb280d30d8ae054741f1890183e"
   },
   {
     "path": "tests/input2_smoke.py",
@@ -189,11 +201,11 @@
   },
   {
     "path": "tests/input_enumeration.c",
-    "sha256": "d262c9bd0b2c73d6614e4af5c75325bbdb2e43107fbfe18466980d70e9ac0722"
+    "sha256": "cb1909e94b2ebab869424a66aefe0b6cd04310d92910e001152bb885b50ff241"
   },
   {
     "path": "tests/input_maintenance.c",
-    "sha256": "b28943541d108adedbbf7b9397b333964f8fb8460c0e5e81c388cbeca1f66951"
+    "sha256": "53ed5edf3225f5389242d22f5ab91013a7569f1f1ba48db5ec25b2ba0d6869c0"
   },
   {
     "path": "tests/input_pixels.py",
@@ -201,7 +213,7 @@
   },
   {
     "path": "tests/input_test_support.h",
-    "sha256": "bd5312da897506177fd86f97e5dbd46d94596f70265d9c8bf3e6a80c1a79429b"
+    "sha256": "9ca2b0c8b0e63c9caf4c8606ca6a874557c1604e339eceac014d77f86f34e4eb"
   },
   {
     "path": "tests/integration.py",
@@ -218,6 +230,10 @@
   {
     "path": "tests/levante_pointer.py",
     "sha256": "5fc2a7c1e3aed8937d82d892bbd8a7440323bdf5d052c90750f6e114b76f5c55"
+  },
+  {
+    "path": "tests/mission_chrome.py",
+    "sha256": "5994187c074cd623e4c5a7bc9df9c7c8e8e1d7add4d1c968b80f5cf274b03da4"
   },
   {
     "path": "tests/orizzonte.py",
@@ -269,7 +285,7 @@
   },
   {
     "path": "tests/test-input-maintenance.sh",
-    "sha256": "03aeee6129e9d8408d35f5f53606eb9cee4dbf4fee3b62624508870841390e0d"
+    "sha256": "c35d3820803c35159e4f14d1d55a5a0846eac5d3c73d2bed2da2fd12cdf6906c"
   },
   {
     "path": "tests/test-legacy-input.sh",
@@ -278,6 +294,14 @@
   {
     "path": "tests/usbinput_contract.c",
     "sha256": "3edead5d7f37837164e16e6c453c09ddb4608a990cf3b6699d542229a33006d9"
+  },
+  {
+    "path": "tests/usbroute.c",
+    "sha256": "41298cf43cfbd65a796c8036ecf9a58fb219ad2bcf0fb853ae165453e262685b"
+  },
+  {
+    "path": "tests/xhci_hubs.c",
+    "sha256": "eebf70da1a12d619e993ab228d1b958d24b86328ca06ace4145dbaf0055a0964"
   },
   {
     "path": "tools/bios-image.py",
@@ -289,7 +313,7 @@
   },
   {
     "path": "tools/console/integrata.html",
-    "sha256": "f1ef0bac01b99b8693b2057111b03c426b1ffb56fd8cc13d00a315dd6471d268"
+    "sha256": "f5ca742dce1f01a18664196324c57e9e09918cfbb1fa1471cdde4db1eefdeb45"
   },
   {
     "path": "tools/console/server.py",
@@ -321,7 +345,7 @@
   },
   {
     "path": "tools/run-input-qa.sh",
-    "sha256": "3334050e27e18b3d8556a8d14d58ea1dfcfdf7f6291d03050d835da91d3f242e"
+    "sha256": "d7742a0f235c786ec3b0406a3f8a4797510a2232967433ee3f30940a8ed0b178"
   },
   {
     "path": "tools/run-qemu.sh",
@@ -329,15 +353,15 @@
   },
   {
     "path": "tools/system_volume.py",
-    "sha256": "5b5029591d78b80360d8d18726b7e4575d8af28c38af9b949dc3a277e719f2e1"
+    "sha256": "bca474a5c0d5966485a0215efc7120d2af306ffbcb78f0eec68ae5dd57818d2d"
   },
   {
     "path": "userspace/about.c",
-    "sha256": "cbf8cf8caeeba2e94688a1cac50cc79550471dcaf560de5c9fdd5edf9a9d2e99"
+    "sha256": "11d055d8d4c15b00e8b6ca3eeb9a17c86560627c1233e42cdf89c6739e6e7087"
   },
   {
     "path": "userspace/command.c",
-    "sha256": "44f602ef225a45bb149a1128ab1d2f80bb4923cb2fdbc1554f2d22ab0d2455b4"
+    "sha256": "948fb93407da67420f85756adfece8be4e6d5831d68af3ff73e92827416bf764"
   },
   {
     "path": "userspace/installer.c",
@@ -345,7 +369,7 @@
   },
   {
     "path": "userspace/settings.c",
-    "sha256": "0fc65444a6acfef2228355d0a01a5cb37445f52b752d197bab0a38c8511e0bee"
+    "sha256": "25a9fa3ddb46c82f40c551a9fdff4ed52039d96726fd20fb8f9c8c68b3138405"
   },
   {
     "path": "vendor/opencore-1.0.8/BOOTx64.efi",

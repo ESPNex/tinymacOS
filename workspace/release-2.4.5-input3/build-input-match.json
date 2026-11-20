@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "files_checked": 489,
+  "allowed_postbuild_changes": [
+    "tests/*",
+    "README.md",
+    "tools/run-input-qa.sh"
+  ],
+  "note": "postbuild changes only to QA/readme; independent media rebuild and five probe kernels also match"
+}

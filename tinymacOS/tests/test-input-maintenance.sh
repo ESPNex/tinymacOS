@@ -20,3 +20,8 @@ PY
 gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c drivers/hidconfig.c drivers/hidtablet.c -o "$out/enumeration"
 "$out/enumeration"
 for t in hidconfig relative_pointer; do gcc $C "tests/$t.c" drivers/hidconfig.c drivers/hidtablet.c -o "$out/$t";"$out/$t";done
+
+gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c drivers/hidconfig.c drivers/hidtablet.c -o "$out/hubs"
+"$out/hubs"
+gcc $C tests/usbroute.c -o "$out/route"
+"$out/route"

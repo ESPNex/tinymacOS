@@ -5,7 +5,9 @@ cd "$(dirname "$0")/..";source tools/env.sh
 : "${STATE:?External QA state required}"
 [[ "$STATE" == /var/tmp/* ]] || exit 2
 mkdir -p "$STATE"
-Q=(-machine q35 -accel "${ACCEL:-tcg}" -cpu max -smp "${TMC_SMP:-2}" -m "${TMC_MEM:-768}" -vga std -L "$TOOLROOT/usr/share/qemu" -L "$TOOLROOT/usr/share/seabios")
+MACHINE=q35
+if [[ ${TMC_TEST_INPUT:-ps2} == *-kbd ]];then MACHINE=q35,i8042=off;fi
+Q=(-machine "$MACHINE" -accel "${ACCEL:-tcg}" -cpu max -smp "${TMC_SMP:-2}" -m "${TMC_MEM:-768}" -vga std -L "$TOOLROOT/usr/share/qemu" -L "$TOOLROOT/usr/share/seabios")
 case ${TMC_TEST_FIRMWARE:-uefi} in
  uefi)
  [[ -f "$STATE/vars.fd" ]]||cp "$TOOLROOT/usr/share/OVMF/OVMF_VARS_4M.fd" "$STATE/vars.fd"
@@ -22,6 +24,12 @@ case ${TMC_TEST_INPUT:-ps2} in
  companion|companion-kbd)
  Q+=(-device ich9-usb-ehci1,id=ehci -device ich9-usb-uhci1,masterbus=ehci.0,firstport=0,id=uhci -device usb-mouse,bus=ehci.0,port=1,id=pointer,usb_version=1)
  if [[ "$TMC_TEST_INPUT" == companion-kbd ]];then Q+=(-device usb-kbd,bus=ehci.0,port=2,usb_version=1);fi;;
+ xhci-hub|xhci-hub-kbd|xhci-nested-hub)
+ Q+=(-device qemu-xhci,id=xhci -device usb-hub,bus=xhci.0,port=1,id=hub)
+ hubport=1.3
+ if [[ "$TMC_TEST_INPUT" == xhci-nested-hub ]];then Q+=(-device usb-hub,bus=xhci.0,port=1.3,id=hub2);hubport=1.3.2;fi
+ Q+=(-device usb-mouse,bus=xhci.0,port=$hubport,id=pointer,usb_version=1)
+ if [[ "$TMC_TEST_INPUT" == xhci-hub-kbd ]];then Q+=(-device usb-kbd,bus=xhci.0,port=1.4,usb_version=1);fi;;
  xhci) Q+=(-device qemu-xhci,id=xhci -device usb-mouse,bus=xhci.0,port=1,id=pointer);;
  *) exit 2;;
 esac

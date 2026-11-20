@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "scope": "actual listed input code with host transport/MMIO substitutes; not physical controller proof",
+  "checks": [
+    {
+      "script": "test-input-maintenance.sh",
+      "exit_code": 0,
+      "log": "host-maintenance.log",
+      "sha256": "897c4252ab02ffa16785c775a0df1421c3e71be12958c3bca8aa3b549a3f21fa"
+    },
+    {
+      "script": "test-legacy-input.sh",
+      "exit_code": 0,
+      "log": "host-legacy.log",
+      "sha256": "072ab2ec8f935d0fbf69afba9b6de249a7bc7e89e8c74f5e67dff7d363dec1e1"
+    }
+  ],
+  "source_sha256": {
+    "drivers/xhci.c": "d116dd0968b388785531e595bbae7f2dada924fa9e09ecf60e75e03a472cc15f",
+    "drivers/usbroute.c": "fe3e824167404ea96d8a5ea3e13a3dc0252f3c863303cac06dea5f1c4295bc11",
+    "drivers/ps2.c": "0b13db9dd4034d2429ad464d21ec2eb230a7c2fb954adbce4091cae116fadcbb",
+    "drivers/usbinput.c": "1c380de49f2b5db6a816bf1839de02df058539bec679dcdb516fd37ba0fd531b",
+    "drivers/input.c": "b902cd8405498c2df20d767507f967583a6aeeddc5c890fb409e60afdb749244",
+    "drivers/hidconfig.c": "8e95eb3d2b91c50a887fa9f04f0aa309340a2fbaa55fdee6e373eb43a4da5fdf",
+    "drivers/hidtablet.c": "091c4f925589900fa5d9a9064895ef4767c61e356e162c0b554960173e7c9b25"
+  }
+}

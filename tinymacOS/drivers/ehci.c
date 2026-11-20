@@ -113,15 +113,24 @@ static void eattach(struct Ehci *,unsigned,unsigned,unsigned,unsigned,unsigned);
 static void hub_children(struct Ehci *h,struct Edev *hub,unsigned depth)
 {
     UsbInput *u=&hub->u;if(depth>=3||econtrol(u,0xa0,6,0x2900,0,9)||u->ctrl_bytes<7)return;
+    if(u->desc[0]<7||u->desc[1]!=0x29)return;
     unsigned ports=MIN(u->desc[2],15u),delay=MAX(20u,(unsigned)u->desc[5]*2);
     for(unsigned p=1;p<=ports;p++)(void)econtrol(u,0x23,3,8,p,0);
     usb_delay_ms(delay);
     for(unsigned p=1;p<=ports&&h->used<EN;p++) {
         if(econtrol(u,0xa3,0,0,p,4)||u->ctrl_bytes<4||!(u->desc[0]&1))continue;
+        usb_delay_ms(100);
         if(econtrol(u,0x23,3,4,p,0))continue;
-        usb_delay_ms(60);
-        if(econtrol(u,0xa3,0,0,p,4)||u->ctrl_bytes<4)continue;
-        unsigned s=u->desc[0]|u->desc[1]<<8;if(!(s&1)||!(s&2)||s&16)continue;
+        unsigned s=0;int ready=0;
+        for(unsigned ms=0;ms<500;ms+=10) {
+            usb_delay_ms(10);
+            if(econtrol(u,0xa3,0,0,p,4)||u->ctrl_bytes<4)break;
+            s=u->desc[0]|u->desc[1]<<8;
+            if(!(s&1)||(s&8))break;
+            if((s&2)&&!(s&16)){ready=1;break;}
+        }
+        if(!ready)continue;
+        usb_delay_ms(10);
         unsigned speed=s&1024?3:s&512?2:1;
         for(unsigned f=16;f<=20;f++)(void)econtrol(u,0x23,1,f,p,0);
         eattach(h,p,speed,u->speed==3?u->address:u->hub,u->speed==3?p:u->hub_port,depth+1);

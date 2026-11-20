@@ -82,9 +82,9 @@ La revisione OpenCore installer OC2 della ISO 2.4.5 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Levante; build 21B7.
+Safari/WebKit non e incluso. Nome release: Levante; build 21B8.
 
-2.4.5 / 21B7 — revisione input PS/2 + USB 2.0
+2.4.5 / 21B8 — revisione input PS/2 + USB 2.0
 Nessun pannello o scorciatoia di diagnostica F11 al login.
 Driver nativi: tastiera e mouse PS/2 (i8042); xHCI; EHCI USB 2.0
 e companion UHCI per mouse/tastiere low/full-speed su porte USB2.

@@ -6,6 +6,7 @@ static void test_doorbell(int,int);
 #include "../drivers/input.c"
 #include TMC_XHCI_TEST_SOURCE
 u64 ticks;
+void usb_delay_ms(unsigned ms){(void)ms;}
 static u32 fakeir[16],fakedb[256];
 static int boot_rejected,report_rejected,protocol,malformed,boot_requests,report_requests;
 static const u8 report_desc[]={

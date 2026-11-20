@@ -1,0 +1,17 @@
+PASS queue: 10000 motion reports, exact sum, buttons/wheel/key barriers, absolute newest, full-queue counter
+PASS completion: signed boot motion, button decoding, success/short packet rearm, aligned DMA
+PASS endpoint halt: deferred reset, clear-halt, new dequeue, rearm; bounded repeated-failure cap
+PASS control stall on Setup/Data: consume error, reset EP0, set dequeue, next protocol request succeeds
+PASS timeout: no unsafe recycling of potentially live control DMA
+PASS diagnostic snapshot ABI; no keyboard content or DMA pointers exposed
+PASS normal boot mouse: explicit Boot selected and boot decoder kept
+PASS boot STALL: EP0 reset, report descriptor parsed, Report protocol set or GET_PROTOCOL verified
+PASS fail closed: unconfirmed Report protocol or malformed descriptor never decoded as boot bytes
+PASS: composite HID keyboard/mouse/report interfaces, independent endpoints, 512-byte endpoint, bounds and alternate-setting rejection.
+PASS: report-protocol relative mouse, signed 16-bit deltas, report ID, buttons, wheel and truncated-report rejection.
+PASS xHCI HS hub -> FS mouse: distinct reserved slots, root port, route string, TT slot/port and think-time, delayed hub reset polling
+PASS nested USB2 hub: route nibbles and nearest high-speed TT inherited through full-speed hub
+PASS xHCI 0.95 Evaluate vs 1.0 Configure hub command; low-speed child with TT, reserved child think-time bits zero
+PASS malformed zero-port hub rejected; no child enumeration and slot released
+PASS Intel Bay Trail: mask-limited USB3 then USB2 routing, preserves preexisting ports, bounded settling
+PASS routing guard: unknown/foreign/non-xHCI/all-ones registers and known non-switchable subsystem receive no writes

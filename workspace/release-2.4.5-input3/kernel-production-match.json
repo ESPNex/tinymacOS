@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "kernel_elf_sha256": "9c38f54fb5627713ca18c0e3eff9dcd6342809d8148cb4ab8884defc389015cf",
+  "matching_probe_builds": [
+    "network",
+    "vm",
+    "sync",
+    "tls",
+    "threads"
+  ],
+  "note": "same kernel executable, separate QA command volumes; not browser tests"
+}

@@ -24,14 +24,27 @@ try:
     if source:
         assert source.startswith('/var/tmp/');state=w/'disk';state.mkdir();disk=state/'system.raw';shutil.copyfile(source,disk);os.environ['DISK']=str(disk)
     with InputGuest(iso,w,ev,'input',live=not bool(source),disk='disk' if source else 'vars',boot_disk=bool(source),launcher=ROOT/'tools/run-input-qa.sh') as g:
-        usb=g.hmp('info usb');record['usb']=usb;record['mice']=g.req('query-mice');record['pci']=g.req('query-pci')
-        if profile=='ps2':assert 'USB Mouse' not in usb and record['mice'][0]['name']=='QEMU PS/2 Mouse'
+        usb=g.hmp('info usb');record['usb']=usb;record['mice_before_selection']=g.req('query-mice');record['pci']=g.req('query-pci')
+        # PS/2 initialization can reactivate QEMU's fallback mouse, especially
+        # if the native USB driver never configured the device. Never let a
+        # visible USB topology be mistaken for the actual input transport.
+        target='QEMU PS/2 Mouse' if profile=='ps2' else 'QEMU HID Mouse'
+        mice=g.req('query-mice');matches=[m for m in mice if m['name']==target];assert len(matches)==1
+        g.hmp('mouse_set '+str(matches[0]['index']));record['mice']=g.req('query-mice')
+        assert [m['name'] for m in record['mice'] if m['current']]==[target]
+        record['selected_pointer_transport']=target
+        if profile=='ps2':assert 'USB Mouse' not in usb
         else:
             assert 'QEMU USB Mouse' in usb
             if profile.startswith('ehci'):assert '480 Mb/s' in usb
             if profile.startswith('companion') or profile=='uhci':assert '12 Mb/s' in usb
-            assert 'qemu-xhci' not in g.hmp('info qtree') or profile=='xhci'
-        if profile.endswith('-kbd'):assert 'QEMU USB Keyboard' in usb
+            assert 'qemu-xhci' not in g.hmp('info qtree') or profile.startswith('xhci')
+            if 'hub' in profile:
+                assert 'QEMU USB Hub' in usb and 'usb-hub' in g.hmp('info qtree')
+        if profile.endswith('-kbd'):
+            assert 'QEMU USB Keyboard' in usb
+            assert 'isa-i8042' not in g.hmp('info qtree'),'USB keyboard acceptance must not fall back to PS/2'
+            record['ps2_controller_present']=False
         else:assert 'USB Keyboard' not in usb
         passed('Exact topology: '+('PS/2 keyboard and mouse; no USB pointing device' if profile=='ps2' else ('USB keyboard' if profile.endswith('-kbd') else 'PS/2-only keyboard')+' and '+profile+' USB mouse'))
         blocks=g.req('query-block')
@@ -52,8 +65,8 @@ try:
         g.move(1005,502);g.button('right',True);g.button('right',False);g.visible('Apri Scrivania in Finder');g.key('esc')
         passed('Desktop sprite, exact Finder drag/release and right-click menu')
         g.key('f2');g.visible('Sessione locale');g.cmd('echo PS2_USB2_INPUT_OK','PS2_USB2_INPUT_OK')
-        g.cmd('sw_vers','ProductVersion:    2.4.5');g.visible('BuildVersion:      21B7')
-        passed('Native keyboard F2, uppercase/underscore command typing and version 21B7')
+        g.cmd('sw_vers','ProductVersion:    2.4.5');g.visible('BuildVersion:      21B8')
+        passed('Native keyboard F2, uppercase/underscore command typing and version 21B8')
         # PS/2 negotiates a wheel packet; EHCI/UHCI prefer validated Report protocol.
         # The unchanged xHCI boot-mouse profile is not used to claim wheel support.
         if profile!='xhci':
@@ -62,6 +75,8 @@ try:
             g.button('wheel-down',True);g.button('wheel-down',False);g.visible('Sessione locale',8,faces=(0,))
             passed('Mouse wheel up opens terminal history; down closes it')
         if source:g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');passed('Installed disk document preserved, ISO absent')
-        g.shot('desktop-terminal');record['passed']=True
+        g.shot('desktop-terminal');record['final_mice']=g.req('query-mice')
+        assert [m['name'] for m in record['final_mice'] if m['current']]==[target]
+        record['passed']=True
 finally:
     target=Path(os.environ.get('TMC_INPUT_RESULT',str(w/'result.json')));target.parent.mkdir(parents=True,exist_ok=True);target.write_text(json.dumps(record,indent=2)+'\n');print(w,flush=True)

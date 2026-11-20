@@ -351,7 +351,7 @@ static void menubar(void)
             x, 1, wid, BAR - 2
         };
         if (ov == OV_MENU && want && menuId == k)roundr(x, 3, wid, 27, 8, 0xffffff, 54);
-        if (k == 0)icon(x + 3, 5, 24, 31);
+        if (k == 0)icon(x + 3, 3, 24, 31);
         white(x + 8 + ex, 7, s, f);
         x += wid;
     }

@@ -1,3 +1,17 @@
+# Aggiornamento: Q1900M / revisione 21B8
+
+**Riscontro fisico dell’utente sulla 21B7:** tastiera funzionante, mouse USB ancora fermo; scheda madre indicata ASRock Q1900M. Non considerare la release 21B7 una soluzione hardware confermata per il mouse.
+
+Implementati hub USB2 xHCI con route/TT e figli annidati, routing PCI per Intel switchable incluso Bay Trail 8086:0f35, attese native temporizzate, reset porte più robusti. Nessun driver legato al nome della motherboard. GUI: chiave cache chrome include oscuramento Mission Control, mela spostata di due pixel verso l’alto.
+
+Vecchia ISO 21B7: riprodotto mouse USB dietro hub fermo con tastiera PS/2 funzionante. QEMU può scegliere il fallback PS/2 e nascondere questo difetto; il nuovo harness forza e verifica il dispositivo puntatore, spegne i8042 nei profili tastiera USB. I receipt input precedenti a tale irrigidimento sono stati esclusi e la matrice rieseguita. Vecchia GUI: riprodotto alone, nuova GUI zero pixel diversi in sei cicli Dock orizzontale/verticale; mela/File centro 14,5 px. Regressione kernel/runtime 29/29 PASS sul kernel finale; build dualboot riprodotta byte-identica.
+
+Candidato: 2.4.5/21B8, SHA `fd24fc89e28e4cbb20a05738e2ccfc29ad7597ddb742afe26ab85f1375cf47e2`. **Gate finale PASS: 27 profili input (17 live + 10 installati), 197 verifiche raggruppate, installer/Recovery, GUI e 29/29 regressioni.** Sostituzione della stessa release autorizzata; consultare `release-2.4.5-input3/final-qa.json` e `github-release-verification.json` per gate/deploy completati. Nessuna nuova verifica sul PC fisico; OHCI, hotplug e hub SuperSpeed non implementati. Browser genuino Safari/WebKit ancora da riprendere dopo la manutenzione.
+
+---
+
+## Storico 21B7 e revisioni precedenti
+
 # Aggiornamento: revisione input 21B7
 
 Sono ora implementati i driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion. I dieci profili live del candidato finale su BIOS/UEFI sono passati, incluse configurazioni senza alcuna tastiera USB e mouse a 480/12 Mb/s; anche la suite kernel/runtime è 29/29 PASS. Installazione, sei profili login installati e ripristino locale sono passati; gate completo finale PASS. Release online sostituita con 21B7 e riscaricata/verificata: gate e receipt definitivi in `release-2.4.5-input2/`. Nessuna conferma sul PC fisico. OHCI, hotplug e general-purpose USB bulk/isochronous restano fuori dal supporto implementato.

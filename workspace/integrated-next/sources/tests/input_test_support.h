@@ -29,3 +29,6 @@ static inline void uhci_init(void){}
 static inline void uhci_poll(void){}
 
 static inline void ps2_setleds(int value){(void)value;}
+
+void usb_delay_ms(unsigned);
+static inline void usb_route_intel_xhci(u32 dev){(void)dev;}
