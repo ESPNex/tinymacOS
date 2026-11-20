@@ -1,4 +1,4 @@
-> **2.4.5 / 21B9 — collaudo completo, sostituzione in corso:** tastiera esclusivamente ITA, accenti/AltGr/euro e UTF-8; lettura indipendente degli assi mouse dai Report HID. 27 profili input, 236 verifiche e 29/29 regressioni kernel PASS. [Note e ricevute](../workspace/release-2.4.5-input4/RELEASE.md). La pubblicazione remota è attestata soltanto da `github-release-verification.json`.
+> **ISO corrente pubblicata e verificata: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** Unico layout ITA, accenti/AltGr/euro e UTF-8 anche nel Recupero; decoder mouse con assi X/Y indipendenti e descrittore HID. 27 profili input, 236 verifiche, 4 profili italiano app + 4 Recupero e 29/29 regressioni kernel PASS. [Note, checksum e ricevuta del download remoto](../workspace/release-2.4.5-input4/RELEASE.md). Nessuna conferma del risultato sul PC fisico è implicita nei PASS.
 
 > **Storico, precedente ISO: [2.4.5 / 21B8](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5):** xHCI ora enumera gli hub USB2 e i figli; quirk di routing porte Intel/Bay Trail; risolti alone Dock e allineamento mela. [Revisione sostitutiva 2.4.5](../workspace/release-2.4.5-input3/RELEASE.md). Sostituzione completata: download riscaricato e checksum verificato; 27 profili input, 197 verifiche raggruppate e 29/29 regressioni PASS. La prova fisica 21B7 confermava la tastiera, non il mouse; nessuna garanzia di compatibilità universale.
 
@@ -18,9 +18,9 @@ Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nat
 
 ## Release corrente
 
-**Levante 2.4.5, build 21B8**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
+**Levante 2.4.5, build 21B9**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. La ISO corrente è stata riscaricata e verificata dopo la sostituzione.
 
-Questa manutenzione è stata richiesta con priorità per mouse fermo al login e lag, prima di riprendere i grandi blocchi WebKit. **Non include Safari o WebKit funzionante.** La precedente riserva del numero 2.4.5 al browser è superata. Il browser reale resta da completare: HTTPS/HTML/CSS/JavaScript, UI classica e integrazione con i temi. [Note input 2.4.5, prove e limiti](../workspace/release-2.4.5/RELEASE.md).
+Questa manutenzione è stata richiesta con priorità per mouse fermo al login e lag, prima di riprendere i grandi blocchi WebKit. **Non include Safari o WebKit funzionante.** La manutenzione corrente aggiunge tastiera esclusivamente italiana e correzione del decoder degli assi mouse. La precedente riserva del numero 2.4.5 al browser è superata. Il browser reale resta da completare: HTTPS/HTML/CSS/JavaScript, UI classica e integrazione con i temi. [Note input 2.4.5, prove e limiti](../workspace/release-2.4.5/RELEASE.md).
 
 Novità input 2.4.5:
 

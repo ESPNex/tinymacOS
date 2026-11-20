@@ -2,7 +2,7 @@
 
 Sostituzione della stessa release `v2.4.5`, richiesta per **tastiera solo italiana** e mouse USB che sul PC fisico si muove soltanto in verticale. Safari/WebKit resta fuori da questa ISO.
 
-**COLLAUDO COMPLETO — sostituzione GitHub in corso.** Tutti i gate sono PASS; lo stato remoto sarà attestato dalla ricevuta `github-release-verification.json`. Le ricevute 21B8 restano storiche.
+**DEPLOY COMPLETATO E VERIFICATO:** stessa release ID `453129451`, build **21B9**. ISO riscaricata da GitHub sotto il nome definitivo e checksum confrontato. Tag `v2.4.5` al commit sorgenti `bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7`; sorgenti precedenti conservati nel tag `v2.4.5-21B8`. Ricevuta `github-release-verification.json`. Le ricevute 21B8 restano storiche.
 
 ## Tastiera: ITA, non un’etichetta sopra la mappa US
 
@@ -58,3 +58,5 @@ SHA-256:
 ```
 
 `final-qa.json` è il gate eseguibile per questa precisa ISO. Nessuna conferma fisica del PC dell'utente è implicita nei PASS.
+
+[Scarica la nuova ISO](https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso) · [SHA256SUMS.txt](https://github.com/ESPNex/tinymacOS/releases/download/v2.4.5/SHA256SUMS.txt). Repository e download privati: serve accesso GitHub autorizzato.
