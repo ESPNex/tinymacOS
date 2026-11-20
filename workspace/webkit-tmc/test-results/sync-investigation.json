@@ -1,0 +1,8 @@
+{
+  "initial_8cpu_probe_failed": true,
+  "diagnosed_failure_line": 62,
+  "diagnosed_cpu_mask": 4,
+  "serialized_updates_were_correct": 240,
+  "finding": "Coverage assertion failed: lock-handoff convoy sampled every critical section on one CPU. Not a demonstrated lock failure or deadlock.",
+  "probe_change": "Sleep one tick outside each critical section, retaining yield inside the lock and requiring a multi-CPU mask. Do not count earlier failed profiles as passing SMP evidence."
+}

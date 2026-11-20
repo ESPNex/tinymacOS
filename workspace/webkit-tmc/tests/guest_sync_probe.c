@@ -24,6 +24,9 @@ static void worker(u64 id)
  while(!go)if(tmc_condition_wait(&condition,&mutex,sc(S_TICKS,0,0,0,0)+12000)){bad();break;}
  if(tmc_mutex_unlock(&mutex))bad();
  for(unsigned j=0;j<60;j++){
+  /* Break the lock-handoff convoy so the probe actually exercises multiple
+   * CPUs, not 240 correct serialized sections all on one scheduler CPU. */
+  slp(1);
   if(tmc_mutex_lock(&mutex)){bad();break;}
   if(inside)bad();
   inside=1;u32 old=counter;
