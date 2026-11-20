@@ -2,7 +2,7 @@
 
 ## Stato reale
 
-**Aggiornamento sviluppo integrato:** SMP VM non è più limitato a una CPU. Stress nativo concorrente PASS con 4 e 8 vCPU (4 worker, 400 round, 1.600 chiamate buffer S_INFO), evidenze in `../integrated-next/evidence/smp-stress-{4,8}/`. Suite backend/runtime completa 15/15 PASS; non sono test JSC/WebCore. Le note di milestone precedenti conservate altrove possono descrivere il vecchio rifiuto SMP. Repository privata di backup: https://github.com/ESPNex/tinymacOS .
+**Aggiornamento sviluppo integrato:** SMP VM non è più limitato a una CPU. Stress nativo concorrente PASS con 4 e 8 vCPU (4 worker, 400 round, 1.600 chiamate buffer S_INFO), evidenze in `../integrated-next/evidence/smp-stress-{4,8}/`. Suite backend/runtime completa **24/24 PASS**, ora con attesa/risveglio atomici nativi, mutex/condition e FS/errno su 1/4/8 vCPU; non sono test JSC/WebCore. Le note di milestone precedenti conservate altrove possono descrivere il vecchio rifiuto SMP. Repository privata di backup: https://github.com/ESPNex/tinymacOS .
 
 **Non è ancora un browser e non è ancora un port WebKit compilabile.**
 
@@ -11,13 +11,15 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 
 È stato iniziato il backend nativo che servirà allo shim POSIX: DNS IPv4, apertura/lettura/scrittura/chiusura TCP, clock monotono e un punto d'ingresso per la casualità sicura che al momento fallisce esplicitamente con ENOSYS. Non è una libc POSIX completa. Le API sono volutamente prefissate `tmc_`: non sostituiscono ancora socket, getaddrinfo o pthread nel motore.
 
+**Sincronizzazione nativa:** `posix/src/sync.c` usa S_WORDWAIT per mutex e condition reali, con timeout e riacquisizione del mutex. Non è pthread completo; startup/join/TSD restano da integrare. [Contratti, prove e confronto con le interfacce WTF reali](THREADING.md). Nessuna nuova ISO pubblicata in questo passo.
+
 ### File
 
 - `posix/src/network.c`: DNS/TCP, nuove operazioni S_NET/8–9 con EOF distinto dagli errori e lettura dello stato. Richiede il kernel aggiornato nell’overlay.
 - `posix/src/poll.c`: attesa su handle TCP con timeout.
 - `posix/src/descriptors.c`: namespace comune file read-only/TCP, dup/offset condiviso, lifetime e poll misto. Contratto backend, non ancora API libc POSIX; chiamante serializzato.
 - `posix/src/vm.c`: nuova VM nativa con riserva/commit/protezioni/guard/decommit, validata sul guest a 1/2 vCPU e stress concorrente a 4/8 vCPU; EXEC resta rifiutato, non è mmap POSIX.
-- `kernel-overlay/`: dieci file di integrazione sincronizzati con TinymacOS, inclusa la correzione della backpressure TCP.
+- `kernel-overlay/`: diciannove file di integrazione sincronizzati con TinymacOS, inclusa la correzione della backpressure TCP.
 - `platform/src/appearance.c`: lettura reale S_INFO, palette condivisa con il compositor, rilevamento cambiamenti. Non ancora collegato a un’interfaccia browser.
 - `posix/src/native_syscall.c`: ponte syscall x86-64 nativo, non syscall Linux.
 - `posix/src/clock_entropy.c`: clock 100 Hz; nessuna falsa entropia per TLS.
@@ -26,7 +28,7 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 - `tools/test-backend.sh`: test con AddressSanitizer e UndefinedBehaviorSanitizer.
 - `tools/compile-backend.sh`: compilazione freestanding dei soli oggetti; non esegue link di una libc, JSC o WebCore. Usa soltanto i nove header necessari al backend attuale, in `posix/libc-headers/`, con la licenza musl conservata; percorso configurabile con TMC_LIBC_HEADERS. L'implementazione libc è ancora mancante.
 - `upstream.lock.json`: commit upstream fissato per l'analisi, non una versione già portata.
-- `upstream-reference/`: solo cinque file di riferimento upstream scaricati in forma espansa con i copyright originali; NON un checkout completo di WebKit.
+- `upstream-reference/`: piccolo sottoinsieme di riferimento upstream, inclusi i veri header threading WTF, scaricato in forma espansa con i copyright originali; NON un checkout completo di WebKit.
 - `LIMITATIONS.md`: blocchi noti e tappe necessarie.
 
 ## Verifiche eseguite

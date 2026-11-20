@@ -6,10 +6,12 @@
   "/home/user/workspace/webkit-tmc/posix/src/native_syscall.c": "cee10890443c330916613550e5d0dde357c83f296213b7ecdec05847894dfb82",
   "/home/user/workspace/webkit-tmc/posix/src/network.c": "528557fe53062963de546bc0543bbf616c838c8e4730a1f6261505f229607e69",
   "/home/user/workspace/webkit-tmc/posix/src/poll.c": "528086329bf83481f70425f4fe5e476ce1226b3c70fb0ef858ea82de6b5f2b82",
+  "/home/user/workspace/webkit-tmc/posix/src/sync.c": "6d34069e412018518f625fb2f1724339d537ca40b919698c5dc0701cb2717164",
   "/home/user/workspace/webkit-tmc/posix/src/tls.c": "9c137a2a129183732cdf3af80aeacd73ca868aabf8f5db8b0dd2f34b92785e3a",
   "/home/user/workspace/webkit-tmc/posix/src/vm.c": "0b5cccbc5b9fb32b5e501f57ef592f3de5b34fc18cd8afdd2d91de34cbbb98c6",
   "/home/user/workspace/webkit-tmc/posix/include/tmc_backend.h": "ebbc84fb7acaa5fb737a7c170351b7634401a2da96a4801467152f13085a4458",
   "/home/user/workspace/webkit-tmc/posix/include/tmc_descriptors.h": "13be3c49d603743ca109f1fe5feb7ac3bd9797e0dbea51aec8168ad5111792cb",
+  "/home/user/workspace/webkit-tmc/posix/include/tmc_sync.h": "24175904d62dac2dbc47969ad841f420c78a61534be9a1b498f5e0d1036c7380",
   "/home/user/workspace/webkit-tmc/posix/include/tmc_tls.h": "1d17a213075ea81c607de12e84ae554d0ea2cd66c348ba07fb6e6d13acd4da40",
   "/home/user/workspace/webkit-tmc/posix/include/tmc_vm.h": "e47d29797de4c806a2263e44ed93547221447d34079b4867866e870804fb1878",
   "/home/user/workspace/webkit-tmc/posix/libc-headers/bits/alltypes.h": "a8990c268ef62ec2e6963e757a0efad856ed4fd3611f6c28e7df17962697cc4c",
@@ -27,8 +29,8 @@
   "/home/user/tinymacOS/kernel/string.c": "1497e7406e82fc62ddc2d87a7cbc054dea2386e05f5ee167d242d44c31774102",
   "/home/user/tinymacOS/crypto/sha256.c": "3d622361428b4fee7bec8b1c1d6fb452d2920b8a8beeafe5623539febf8b2078",
   "/home/user/tinymacOS/kernel/net.c": "78bce0805b4205ae8e77c234250f732afa1be2fe536ea761f19d7df6d6f5918a",
-  "/home/user/tinymacOS/kernel/syscall.c": "3a384552be18270fcb08b9868ff7b0a20b898743a42f00b10e3bfd0f1bec9d52",
-  "/home/user/tinymacOS/include/abi.h": "f57b634e1aa38d671326461631639323524e8011f8c90ba482a0a51888d98962",
+  "/home/user/tinymacOS/kernel/syscall.c": "a96abb789c70fff75ab2dc3f5bf22d096bf56b2aa1672620d3399d5bc093bd1a",
+  "/home/user/tinymacOS/include/abi.h": "0816ebbbbfb6401926479dddacc3b8e5351d933285bc05d7764e0c737f3745a4",
   "/home/user/tinymacOS/include/base.h": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30",
   "/home/user/tinymacOS/include/biosboot.h": "efa9ac515cfd6f04d75f60bb191ed075e3c524b04e7fb539632a3ca8dae53999",
   "/home/user/tinymacOS/include/bootconfig.h": "dd7762ef54024af032634a9e30ded0434a45fca728d403af6a62eefdb094da09",
@@ -50,5 +52,6 @@
   "/home/user/tinymacOS/include/tlsabi.h": "0e359cfd099b6c917021c0aec33b3e5249224ecde08311f292d2d01feda55f0a",
   "/home/user/tinymacOS/include/uaccess_gate.h": "d5c3bc6e9234cdd3fc80148cc376b3dce7dddde726295c8c6399087257d227e0",
   "/home/user/tinymacOS/include/vmabi.h": "1205319381faad851048e57ed1e81fc5929e2515dab661c5caa7b1eb93351315",
-  "/home/user/tinymacOS/include/window_chrome.h": "0ba0b1e33dd6e7d5996e1f606175af12ab5bb2bdc5be73f76536012be84e9ffa"
+  "/home/user/tinymacOS/include/window_chrome.h": "0ba0b1e33dd6e7d5996e1f606175af12ab5bb2bdc5be73f76536012be84e9ffa",
+  "/home/user/tinymacOS/include/wordwaitabi.h": "2981c4867071f01eef7e692af06bc6596b5b3fecc38095f15777a26785c8f806"
 }

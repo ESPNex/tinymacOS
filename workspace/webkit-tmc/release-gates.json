@@ -23,7 +23,8 @@
     "single_cpu_native_vm_and_hardware_guard_tests": true,
     "compact_password_dots_and_reported_white_line_guest_regression": true,
     "real_multi_cpu_vm_support_and_stress_tests": true,
-    "native_thread_pointer_and_explicit_errno_cells_guest_tested": true
+    "native_thread_pointer_and_explicit_errno_cells_guest_tested": true,
+    "native_private_word_parking_mutex_condition_guest_tested": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -122,5 +123,23 @@
     "legacy_usb_dd": false,
     "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2",
     "github_download_verified": true
+  },
+  "native_sync_scope": {
+    "shipped_in_oc2": false,
+    "abi": "S_WORDWAIT v1, private process/virtual-word identity",
+    "guest_cpus": [
+      1,
+      4,
+      8
+    ],
+    "workers": 4,
+    "serialized_updates_per_profile": 240,
+    "host_serialized_updates": 8000,
+    "full_runtime_suite_passed": 24,
+    "pthread": false,
+    "join_detach": false,
+    "thread_specific_destructors": false,
+    "validated_walltime_bridge": false,
+    "descriptor_shared_synchronization": false
   }
 }

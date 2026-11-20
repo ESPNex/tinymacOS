@@ -6,8 +6,8 @@
 | TCP | S_NET/4–9, polling, descriptor backend comuni file/TCP; test guest locale 1/2 vCPU PASS | API descriptor libc POSIX, ownership kernel per processo, attese interrompibili e carico concorrente |
 | Integrità TCP | stress host 35.539.167 byte; guest lwIP/e1000 reale 1.048.893 byte + SHA256 con pausa consumatore e half-close PASS | carico concorrente, condizioni di rete diverse, DNS reale e rete non-QEMU |
 | EOF/errori | FIN/half-close, reset non-EOF, timeout/EAGAIN e handle invalidi ora testati anche sul guest | altri errori e concorrenza; la manutenzione 2.4.1 include le ABI, la 2.4.0 no |
-| Threading | S_THREAD presente, nessuna API pthread completa | pthread, join, mutex/condvar, TLS, errno per thread; non far riuscire funzioni vuote |
-| Memoria virtuale | nuova S_VM: riserva/commit/protezioni/NONE/guard/decommit/release, test MMU guest 1 CPU e 7 fault PASS | SMP rifiutato; arena 240 MiB, 32 riserve, max64 MiB; niente EXEC/JIT, mapping file o fixed; adattamento WTF/JSC non ancora eseguito |
+| Threading | S_THREAD, FS/errno per-task, S_WORDWAIT privato e mutex/condition reali, guest 1/4/8 CPU PASS | Startup automatica, join/detach sicuri, TSD con distruttori, pthread e gestione lifetime; nessuna funzione vuota che riporti successo |
+| Memoria virtuale | nuova S_VM: riserva/commit/protezioni/NONE/guard/decommit/release, test MMU guest 1/2 CPU e 7 fault PASS, stress concorrente 4/8 CPU | arena 240 MiB, 32 riserve, max64 MiB; niente EXEC/JIT, mapping file o fixed; adattamento WTF/JSC non ancora eseguito |
 | C++ | nessun runtime target WebKit validato | C++ standard library, atomiche, ABI/runtime e toolchain compatibili col commit |
 | Clock | tick kernel a 100 Hz e data/ora via SysInfo | realtime UTC validato per certificati, clock_gettime, timer/event loop |
 | Entropia | sorgenti di entropia kernel usate per credenziali; nessuna syscall generale per byte casuali sicuri | CSPRNG kernel con API utenti e gestione fallimenti; niente PRNG basati sul tempo |
@@ -18,7 +18,7 @@
 
 ## Limiti del codice iniziale
 
-Le funzioni di rete base ricevono handle nativi; la nuova tabella descriptor li distingue dagli handle file. Entrambe richiedono serializzazione del chiamante. Non dichiarano conformità POSIX e non sono ancora collegate al motore. La nuova lettura distingue gli errori; connect/send e DNS espongono ancora errori poco dettagliati. Non esiste ancora ownership degli handle per processo, quindi non è una rete isolata per contenuti non fidati. La compilazione freestanding degli oggetti non dimostra il link di una libc. La nuova probe QA è invece linkata/eseguita sul guest, ma solo con errno globale e un chiamante, non con un runtime completo.
+Le funzioni di rete base ricevono handle nativi; la nuova tabella descriptor li distingue dagli handle file. Entrambe richiedono serializzazione del chiamante. Non dichiarano conformità POSIX e non sono ancora collegate al motore. La nuova lettura distingue gli errori; connect/send e DNS espongono ancora errori poco dettagliati. Non esiste ancora ownership degli handle per processo, quindi non è una rete isolata per contenuti non fidati. La compilazione freestanding degli oggetti non dimostra il link di una libc. La nuova probe QA è invece linkata/eseguita sul guest, con errno per-thread ma chiamante descriptor serializzato, non con un runtime completo.
 
 `tmc_secure_random` rifiuta ogni richiesta non vuota con ENOSYS: è un blocco intenzionale. Un backend TLS non deve proseguire se questa funzione fallisce. Non sono stati implementati fallback insicuri.
 

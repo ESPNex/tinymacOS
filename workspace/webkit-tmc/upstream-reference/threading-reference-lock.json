@@ -1,0 +1,11 @@
+{
+  "commit": "23a3d9001767ddc9a4b120b6d7db33ca21230ab8",
+  "scope": "real upstream threading interface reference only, not a compiled WTF or complete source checkout",
+  "directory": "Source/WTF/wtf",
+  "sha256": {
+    "ThreadingPrimitives.h": "435ec3f6da14564bb09171229dc1108f6e3781d5519e98f7cd41d9bd34fa0ac9",
+    "ThreadSpecific.h": "d8478403efaacc70967f8b35fe850acb34476e38230c43c91d4900a3a9657c42",
+    "Threading.h": "ab1b2bb6baea9d41e222920256610ad7a449fd11f3a299ad13e31dd1f64dfe9a",
+    "StackBounds.h": "ca0582cffd46c1d6f878badfb2068145810e898b5f3b7cfe9b358c834366e18a"
+  }
+}

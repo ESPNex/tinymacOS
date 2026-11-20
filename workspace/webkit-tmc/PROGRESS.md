@@ -123,10 +123,10 @@ Test descriptor host con ASan/UBSan: percorsi di errore, saturazione tabella, al
 ## Suite ripetibile
 
 ```sh
-# 9 controlli host/oggetti target, senza avvio VM
+# 10 controlli host/oggetti target, senza avvio VM
 python3 /home/user/workspace/webkit-tmc/tools/run-tests.py
 
-# 15 controlli: stessi 9 + due build QA + quattro avvii guest
+# 24 controlli: stessi 10 + quattro build QA + dieci profili guest
 # Prerequisiti da sorgenti: toolchain local-tools.py, QEMU/OVMF, numpy e Pillow.
 chmod u+x /home/user/tinymacOS/tools/run-qemu.sh
 python3 /home/user/workspace/webkit-tmc/tools/run-tests.py --guest
@@ -155,3 +155,12 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 - Guest TLS su **1/4/8 vCPU PASS**, 4 worker × 150 iterazioni per profilo: `&errno` uguale alla cella FS, errori reali EFAULT/EBADF negli adattatori VM/descriptor, valori distinti preservati dopo yield. Le tabelle descriptor condivise non diventano per questo thread-safe.
 - Regressione completa fresca **15/15 PASS**: contratti host, compilazione target, build guest rete/VM, rete/read-only-file e VM reali su 1/2 vCPU. Log e hash sotto `test-results/`.
 - Mancano ancora startup/libc/C++/pthread/attese, veri WTF/JSC/WebCore, rendering/font, HTTPS validato e interfaccia Safari collegata a tutti i temi. La futura release browser resta 2.4.5 Levante.
+
+## Passo successivo eseguito — primitive di sincronizzazione per WTF
+
+- S_WORDWAIT privato: compare-and-park, wake, mismatch e deadline assoluta a 100 Hz; implementazione nel kernel/scheduler reale, non polling vuoto.
+- Mutex con atomiche acquire/release, trylock/timedlock e condition con broadcast; il timeout della condition ritorna con mutex riacquisito.
+- Host ASan/UBSan: 8.000 aggiornamenti serializzati su quattro worker PASS. Native guest 1/4/8 vCPU: 240 sezioni critiche con yield interno, timeout e predicate loop PASS; la copertura richiede più di una CPU nei profili SMP.
+- Ripetuta la suite estesa completa: **24/24 PASS**, compresi rete/VM su 1/2 CPU e nuovi test sync/FS-errno su 1/4/8 CPU. Si conserva l’indagine sul precedente fallimento della sola copertura CPU prima della correzione del workload: `test-results/sync-investigation.json`.
+- Aggiunti i veri header upstream Threading/ThreadSpecific/StackBounds al piccolo sottoinsieme di riferimento, con hash e copyright. **Non significa che WTF sia stato compilato.** Confronto API e prossimi blocchi concreti in `THREADING.md`.
+- Nessun nuovo deploy o upload ISO. Le immagini diagnostiche sono esterne e non distribuibili; OC2 resta immutata. Prossimo confine: startup/lifetime/join e TSD con cleanup, runtime C/C++ e build WTF/JSC reale.
