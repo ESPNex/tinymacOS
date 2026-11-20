@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "iso_sha256": "a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34",
+  "iso_bytes": 221100032,
+  "external_evidence": "/var/tmp/tmc-oc1-qa-w3ml_uu6/evidence",
+  "bios_installer": false,
+  "bios": {
+    "passed": true,
+    "only_optical_iso": true,
+    "native_setup_and_login": true,
+    "native_cpus_online": 2,
+    "terminal_version": "2.4.4 (21B5)",
+    "verbose": true
+  },
+  "uefi": {
+    "passed": true,
+    "only_optical_iso": true,
+    "native_setup_and_login": true,
+    "native_cpus_online": 2,
+    "terminal_version": "2.4.4 (21B5)",
+    "verbose": false
+  }
+}

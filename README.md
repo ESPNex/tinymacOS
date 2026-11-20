@@ -1,3 +1,5 @@
+> **Aggiornamento supporto OpenCore:** ISO dual-boot ottica BIOS/OpenDuet/OpenCore + UEFI: [v2.4.4-oc1](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1). Installer ancora UEFI; non immagine DD USB. [Dettagli e prove](workspace/release-2.4.4/opencore-media/RELEASE.md).
+
 # tinymacOS — sorgenti e workspace di sviluppo
 
 Repository privata: https://github.com/ESPNex/tinymacOS

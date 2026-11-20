@@ -71,5 +71,17 @@
     "evidence": "../release-2.4.4/RELEASE.md",
     "tag_commit": "9e7c83c58f0452e6d2d5f00768862cab339de2ca",
     "remote_download_verified": true
+  },
+  "maintenance_244_opencore_media": {
+    "tag": "v2.4.4-oc1",
+    "version": "2.4.4",
+    "build": "21B5",
+    "codename": "Levante",
+    "bios_optical_iso_guest_passed": true,
+    "direct_uefi_same_iso_guest_passed": true,
+    "bios_installer": false,
+    "legacy_usb_dd": false,
+    "browser_included": false,
+    "sha256": "a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34"
   }
 }
