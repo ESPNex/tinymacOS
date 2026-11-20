@@ -34,8 +34,10 @@ void app_main(void)
  CHECK(sc(S_THREADFINISH,TMC_THREAD_FINISH,1,0,0)==-1);
  CHECK(sc(S_THREADFINISH,TMC_THREAD_FINISH,(u64)app_main,0,0)==-1);
  CHECK(sc(S_THREADFINISH,99,0,0,0)==-1);
+ u32 untouched=1;
+ CHECK(sc(S_THREADFINISH,TMC_THREAD_FINISH,(u64)&untouched,1,0)==-1 && untouched==1);
  run_thread_cases();SysInfo s;sc(S_INFO,&s,0,0,0);
- CHECK(created==86+resource_capacity);
+ CHECK(created==90+resource_capacity);
  if(s.ncpu>1)CHECK(cpu_mask&(cpu_mask-1));
  int result=(int)first_failure;
  say(result?"THREAD RUNTIME FAIL\n":"THREAD RUNTIME SMP PASS\n");

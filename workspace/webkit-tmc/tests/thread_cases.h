@@ -68,6 +68,8 @@ static void *fast_worker(void *argument)
  CHECK(tmc_getspecific(own_key)==0 && tmc_getspecific(reentrant_key)==0);
  CHECK(!tmc_setspecific(reentrant_key,d));return argument;
 }
+static void *value_worker(void *argument){return argument;}
+static void *exit_null_worker(void *argument){(void)argument;tmc_thread_exit(0);}
 static void *resource_worker(void *argument)
 {
  (void)argument;CHECK(tmc_thread_current()!=0);CHECK(!tmc_mutex_lock(&resource_lock));
@@ -101,7 +103,9 @@ static int run_thread_cases(void)
  for(unsigned j=0;j<4;j++){data[j].id=j+1;create(&workers[j],worker,&data[j]);}
  CHECK(!tmc_mutex_lock(&test_lock));
  while(ready!=4){int r=tmc_condition_wait(&test_condition,&test_lock,tick()+2000);CHECK(!r);if(r)break;}
- CHECK(tmc_thread_join_until(&workers[0],0,tick()+3)==ETIMEDOUT);
+ void *timeout_result=(void *)0x987;
+ CHECK(tmc_thread_join_until(&workers[0],&timeout_result,tick()+3)==ETIMEDOUT);
+ CHECK(timeout_result==(void *)0x987);
  create(&joiner,join_worker,0);
  uint64_t deadline=tick()+1000;
  while(!__atomic_load_n(&workers[0].join_claim,__ATOMIC_ACQUIRE) && tick()<deadline)nap();
@@ -139,6 +143,13 @@ static int run_thread_cases(void)
   result=0;CHECK(!tmc_thread_join_until(&reused,&result,tick()+1000));
   CHECK(result==&reuse_data && reuse_data.reentrant==1 && !__atomic_load_n(&reused.alive,__ATOMIC_ACQUIRE));
  }
+ void *values[]={0,(void *)(uintptr_t)UINTPTR_MAX,(void *)7};
+ for(unsigned j=0;j<3;j++){
+  create(&reused,value_worker,values[j]);result=(void *)0x987;
+  CHECK(!tmc_thread_join_until(&reused,&result,tick()+1000));CHECK(result==values[j]);
+ }
+ create(&reused,exit_null_worker,0);result=(void *)0x987;
+ CHECK(!tmc_thread_join_until(&reused,&result,tick()+1000));CHECK(!result);
  CHECK(!tmc_cpp_thread_smoke());created++;
  int vm=test_vm_lifetime();CHECK(vm>=0);if(vm>0)created+=(unsigned)vm;
  CHECK(!tmc_setspecific(repeat_key,&initial_data));CHECK(!tmc_runtime_leave());

@@ -38,6 +38,10 @@ if args.guest:
   ('guest-tls-smp1',['env','TMC_SMP=1','python3',str(root/'tools/test-guest-tls.py')]),
   ('guest-tls-smp4',['env','TMC_SMP=4','python3',str(root/'tools/test-guest-tls.py')]),
   ('guest-tls-smp8',['env','TMC_SMP=8','python3',str(root/'tools/test-guest-tls.py')]),
+  ('guest-threads-probe-build',['env','TMC_PROBE_KIND=threads','TMC_PROBE_BASE=/var/tmp/tmc-webkit-vm-system','TMC_PROBE_BUILD=/var/tmp/tmc-threads-guest','bash',str(root/'tools/build-guest-network-probe.sh')]),
+  ('guest-threads-smp1',['env','TMC_SMP=1','python3',str(root/'tools/test-guest-threads.py')]),
+  ('guest-threads-smp4',['env','TMC_SMP=4','python3',str(root/'tools/test-guest-threads.py')]),
+  ('guest-threads-smp8',['env','TMC_SMP=8','python3',str(root/'tools/test-guest-threads.py')]),
  ]
 results=[]
 for name,cmd in cases:
@@ -50,6 +54,6 @@ for name,cmd in cases:
  # Never boot stale probe artifacts if the build failed.
  if name.endswith('probe-build') and results[-1]['exit_code']!=0:break
 (root/'test-results/milestone-tests.json').write_text(json.dumps({
- 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization and per-thread errno probes' if args.guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
+ 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
  'guest_requested':args.guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
 sys.exit(0 if all(r['exit_code']==0 for r in results) else 1)
