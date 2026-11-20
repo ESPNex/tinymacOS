@@ -16,6 +16,7 @@
     "README.upstream.md": "56c58007a4d45c723bc2a885188e94ab819f6b15f3c97d2d429b72ecaa16adb3",
     "XhciDxe.efi": "09dcd72825c01be3ad524d81bb0cf7b6913dfd6942f73f453038547a1756a178",
     "OpenUsbKbDxe.efi": "62aba2c97b0a422304e71fb59bb0013e9198fe07acd40b725abc7894a4fe7262",
-    "UsbMouseDxe.efi": "e063522f895dd227bdc85d42f24a9ba0e9517d6457d7ecad37bc5f9ba44d103d"
+    "UsbMouseDxe.efi": "e063522f895dd227bdc85d42f24a9ba0e9517d6457d7ecad37bc5f9ba44d103d",
+    "BOOTx64.efi": "d0163dfbe5d2ea46aececd7d7349acfa5b75dfed2993e8489816f3dda71914c8"
   }
 }

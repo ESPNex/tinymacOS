@@ -35,7 +35,7 @@ mkesp "$D/install.esp" 24M LEVANTE System-disk.vol
 mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
-mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/BOOT/BOOTX64.EFI
+mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
 for driver in BiosVideo XhciDxe OpenUsbKbDxe UsbMouseDxe;do
  mcopy -i "$D/install.esp" "vendor/opencore-1.0.8/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
 done

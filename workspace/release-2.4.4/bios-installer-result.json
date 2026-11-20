@@ -1,17 +1,6 @@
 {
-  "passed": true,
-  "iso_sha256": "93c6979b0f8c51a6215d32f08a0cc86f2ad5da682683f373a5372d96c6271747",
-  "external_work": "/var/tmp/tmc-bios-install-qa-xm3qrz44",
-  "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU",
-  "bios_live_installer": true,
-  "bios_hdd_only_login": true,
-  "bios_cold_reboot": true,
-  "persistent_document": true,
-  "bios_verbose_setting_persisted": true,
-  "same_disk_native_uefi_boot": true,
-  "gpt_primary_backup_verified": true,
-  "mbr_bridge_readback_verified": true,
-  "official_duet_reserved_gap_verified": true,
-  "installed_cpus_online": 2,
-  "cd_removed": true
+  "passed": false,
+  "iso_sha256": "2760fb93ac756dc0f213e1b487be780fca87870ec0cb634c1f80eaee266029f7",
+  "external_work": "/var/tmp/tmc-bios-install-qa-5uuue_9r",
+  "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU"
 }
