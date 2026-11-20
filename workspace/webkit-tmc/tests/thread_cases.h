@@ -32,6 +32,7 @@ static void reentrant_destructor(void *p)
  CHECK(!tmc_key_create(&temporary,0));CHECK(!tmc_setspecific(temporary,d));
  CHECK(tmc_getspecific(temporary)==d);CHECK(!tmc_key_delete(temporary));
 }
+static void test_sample_cpu(void);
 static void *worker(void *p)
 {
  struct worker_data *d=p;d->identity=tmc_thread_id();CHECK(d->identity!=0);
@@ -47,7 +48,7 @@ static void *worker(void *p)
  while(!start){int r=tmc_condition_wait(&test_condition,&test_lock,tick()+2000);CHECK(!r);if(r)break;}
  CHECK(!tmc_mutex_unlock(&test_lock));
  for(unsigned j=0;j<80;j++){
-  nap();CHECK(!tmc_mutex_lock(&test_lock));unsigned old=counter;tmc_syscall(S_SLEEP,0,0,0,0);counter=old+1;
+  nap();CHECK(!tmc_mutex_lock(&test_lock));test_sample_cpu();unsigned old=counter;tmc_syscall(S_SLEEP,0,0,0,0);counter=old+1;
   CHECK(tmc_getspecific(own_key)==d);CHECK(*error==(int)(d->id*101));CHECK(!tmc_mutex_unlock(&test_lock));
  }
  if(d->id==4)tmc_thread_exit((void *)(d->id+100));

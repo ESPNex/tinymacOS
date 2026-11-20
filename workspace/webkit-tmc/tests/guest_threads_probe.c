@@ -4,6 +4,12 @@
 #include "tmc_vm.h"
 #include "threadfinishabi.h"
 #include "thread_cases.h"
+static volatile u32 cpu_mask;
+static void test_sample_cpu(void)
+{
+ SysInfo s;CHECK(!sc(S_INFO,&s,0,0,0));
+ if(s.current_cpu<8)__atomic_fetch_or(&cpu_mask,1u<<s.current_cpu,__ATOMIC_RELAXED);else CHECK(0);
+}
 static int test_vm_lifetime(void)
 {
  if(sizeof(struct tmc_thread)>4096)return -1;
@@ -28,9 +34,12 @@ void app_main(void)
  CHECK(sc(S_THREADFINISH,TMC_THREAD_FINISH,1,0,0)==-1);
  CHECK(sc(S_THREADFINISH,TMC_THREAD_FINISH,(u64)app_main,0,0)==-1);
  CHECK(sc(S_THREADFINISH,99,0,0,0)==-1);
- int result=run_thread_cases();SysInfo s;sc(S_INFO,&s,0,0,0);
+ run_thread_cases();SysInfo s;sc(S_INFO,&s,0,0,0);
+ CHECK(created==86);
+ if(s.ncpu>1)CHECK(cpu_mask&(cpu_mask-1));
+ int result=(int)first_failure;
  say(result?"THREAD RUNTIME FAIL\n":"THREAD RUNTIME SMP PASS\n");
  say("created=");num(created);say(" cpus=");num(s.ncpu);say(" updates=");num(counter);
- say("\nstartup=TLS join=kernel-final-handoff\nTSD=generations dtors=4-bounded\nCXX=RAII/C-ABI VM-unmap=16\nfirst-failure-line=");num(first_failure);say("\n");
+ say("\nstartup=TLS join=kernel-final-handoff\nTSD=generations dtors=4-bounded\nCXX=RAII/C-ABI VM-unmap=16\nfirst-failure-line=");num(first_failure);say(" cpu-mask=");num(cpu_mask);say("\n");
  sc(S_RETURN,result?42:0,0,0,0);
 }

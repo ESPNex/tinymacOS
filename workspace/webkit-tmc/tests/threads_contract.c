@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "thread_cases.h"
 static int test_vm_lifetime(void){return 0;}
+static void test_sample_cpu(void){}
 int main(void)
 {
  int result=run_thread_cases();
