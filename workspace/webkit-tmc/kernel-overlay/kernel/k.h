@@ -66,6 +66,7 @@ typedef struct {
     Frame *f;
     int state, pi, pin, at;
     u64 wake;
+    u64 wait_word; /* private compare-and-park key; never dereferenced while asleep */
     u64 fs_base; /* user thread pointer; initialized per task, restored on migration */
     u8 fx[512] ALIGNED(16);
     u8 stack[16384] ALIGNED(16);

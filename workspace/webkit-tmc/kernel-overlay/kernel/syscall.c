@@ -1,5 +1,6 @@
 #include "k.h"
 #include "tlsabi.h"
+#include "wordwaitabi.h"
 #include "netabi.h"
 #include "uaccess_gate.h"
 static int string(u64 ptr, char *out, int cap)
@@ -411,6 +412,7 @@ static Frame *syscall_inner(Frame *f)
         spin_lock(&sched_lock, &fl);
         task[cur].state = 2;
         task[cur].wake = ticks + MIN(a, 360000ull);
+        task[cur].wait_word = 0;
         f->rax = 0;
         Frame *nf = schedule(f);
         spin_unlock(&sched_lock, fl);
@@ -441,6 +443,35 @@ static Frame *syscall_inner(Frame *f)
         else if(a==TMC_TLS_GET)r=task[cur].fs_base;
         else if(a==TMC_TLS_SET && (!b || (!(b&7) && OUT(b,8)))) {
             task[cur].fs_base=b;wrmsr(0xc0000100,b);r=0;
+        }
+        break;
+    case S_WORDWAIT:
+        if(a==TMC_WORD_QUERY){r=TMC_WORD_ABI_VERSION;break;}
+        r=TMC_WORD_INVALID;
+        /* User mappings are pinned by syscall_do during validation/compare.
+         * Sleeping retains just a numeric key, not a dereferenceable pointer. */
+        if((a!=TMC_WORD_WAIT && a!=TMC_WORD_WAKE) || (b&3) || c>0xffffffffull || !OUT(b,4))break;
+        {
+            u32 fl;spin_lock(&sched_lock,&fl);
+            if(a==TMC_WORD_WAIT){
+                if(__atomic_load_n((u32 *)b,__ATOMIC_ACQUIRE)!=(u32)c)r=TMC_WORD_CHANGED;
+                else if(d && ticks>=d)r=TMC_WORD_TIMEOUT;
+                else {
+                    task[cur].wait_word=b;task[cur].wake=d?d:~0ull;
+                    task[cur].state=2;f->rax=TMC_WORD_TIMEOUT;
+                    Frame *next=schedule(f);spin_unlock(&sched_lock,fl);return next;
+                }
+            } else {
+                r=0;
+                for(int j=1;j<NTASK && (u64)r<c;j++){
+                    Task *t=task+j;
+                    if(t->pi!=task[cur].pi || t->state!=2 || t->wait_word!=b)continue;
+                    t->wait_word=0;t->state=1;
+                    if(t->wake<=ticks)t->f->rax=TMC_WORD_TIMEOUT;
+                    else {t->f->rax=0;r++;}
+                }
+            }
+            spin_unlock(&sched_lock,fl);
         }
         break;
     case S_THREAD:

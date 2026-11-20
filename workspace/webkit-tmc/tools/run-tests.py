@@ -13,6 +13,7 @@ cases=[
  ('workspace-budget',['python3',str(root.parent/'check-snapshot-budget.py')]),
  ('source-sync',['python3',str(root/'tools/sync-system-sources.py'),'--check']),
  ('backend-contract',['sh',str(root/'tools/test-backend.sh')]),
+ ('sync-contract',['sh',str(root/'tools/test-sync.sh')]),
  ('vm-contract',['python3',str(root/'tools/test-vm.py')]),
  ('descriptor-contract',['sh',str(root/'tools/test-descriptors.sh')]),
  ('kernel-stream',['python3',str(root/'tools/test-kernel-stream.py')]),

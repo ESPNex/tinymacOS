@@ -1,5 +1,9 @@
 [
   {
+    "path": "include/wordwaitabi.h",
+    "sha256": "2981c4867071f01eef7e692af06bc6596b5b3fecc38095f15777a26785c8f806"
+  },
+  {
     "path": "include/tlsabi.h",
     "sha256": "0e359cfd099b6c917021c0aec33b3e5249224ecde08311f292d2d01feda55f0a"
   },
@@ -13,7 +17,7 @@
   },
   {
     "path": "kernel/sched.c",
-    "sha256": "36b0ae1feb441d7eb9c32c5efe619069af170f5089b566b08be60a6222d812fe"
+    "sha256": "5b148e1afd4c4a212b089b1098ee669d090cbf2c7ec99ec61aff6ba3121343e6"
   },
   {
     "path": "include/uaccess_gate.h",
@@ -45,11 +49,11 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "3a384552be18270fcb08b9868ff7b0a20b898743a42f00b10e3bfd0f1bec9d52"
+    "sha256": "a96abb789c70fff75ab2dc3f5bf22d096bf56b2aa1672620d3399d5bc093bd1a"
   },
   {
     "path": "kernel/k.h",
-    "sha256": "bcbfeb1d0ab39131a8f4a59708d327a43a26e02b77714d5a40bc37a88c3169f7"
+    "sha256": "2c0ead47b91fd4d26e14063694d075b24e5400f38d532c4aeceb151ed4bf8342"
   },
   {
     "path": "desktop/gfx.c",
@@ -65,7 +69,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "f57b634e1aa38d671326461631639323524e8011f8c90ba482a0a51888d98962"
+    "sha256": "0816ebbbbfb6401926479dddacc3b8e5351d933285bc05d7764e0c737f3745a4"
   },
   {
     "path": "include/vmabi.h",

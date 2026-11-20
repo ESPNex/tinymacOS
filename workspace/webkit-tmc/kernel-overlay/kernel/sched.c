@@ -1,4 +1,5 @@
 #include "k.h"
+#include "wordwaitabi.h"
 extern volatile u32 *lapic_mmio(void);
 #include "../boot/splash.h"
 Process proc[NPROC];
@@ -15,6 +16,7 @@ static Frame *mkframe(int ti, int pi, u64 ip, u64 sp, int user)
     t->pin = -1;
     t->at = -1;
     t->wake = 0;
+    t->wait_word = 0;
     t->fs_base = 0;
     t->f = (Frame *)((u8 *)t->stack + sizeof t->stack - sizeof(Frame));
     memset(t->f, 0, sizeof(Frame));
@@ -320,8 +322,12 @@ Frame *schedule(Frame *f)
             continue;
         if (task[j].at >= 0 && task[j].at != me && j != cur)
             continue;
-        if (task[j].state == 2 && ticks >= task[j].wake)
+        if (task[j].state == 2 && ticks >= task[j].wake) {
+            /* WAIT prepared the timeout result before parking. Wake may
+             * override it only while holding the same scheduler lock. */
+            task[j].wait_word = 0;
             task[j].state = 1;
+        }
         if (task[j].state != 1)continue;
         int app = proc[task[j].pi].app;
         if (task[j].pi && app != DESKTOP && !session_open())continue;
