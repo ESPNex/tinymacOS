@@ -4,8 +4,16 @@
     "sha256": "3c4caffe46f76825beb34fa480acde7006034fbfc57abcc7fe17428006d6a895"
   },
   {
+    "path": "arch/biosdisk.S",
+    "sha256": "00d07bc3b34855d4c7dd8cd4cd480102e7fc55d5f8ca650bba5779e7b49d4c0b"
+  },
+  {
     "path": "arch/cpu.c",
     "sha256": "22ecf08a993a43abb48ac564265e6fcbdab0558c6fe82cfd717cffc889bf9c54"
+  },
+  {
+    "path": "boot/bios-mbr.S",
+    "sha256": "c72dbfe2c5438c8605b36280314c2db80b0d7165ccfeb888648730b033186630"
   },
   {
     "path": "boot/loader.c",
@@ -20,8 +28,12 @@
     "sha256": "ef8dda891bb47967adb13f20036cf830524d46da0e4394df37696d3890e0b528"
   },
   {
+    "path": "build.sh",
+    "sha256": "386eb116d8ed45c138533b35b8091fe9e83ccd6cd8b0b8e8d338f58463375b51"
+  },
+  {
     "path": "docs/QUICKSTART.txt",
-    "sha256": "926ba564be0bbc95bc8b188eee7db87ac888cf7641823d572b00b6d695238cb1"
+    "sha256": "3354af6c342be1cfb7379aeab15b95cf638073f01875eb1f0e9886ba6dc5ba61"
   },
   {
     "path": "fs/btrfs.c",
@@ -29,11 +41,15 @@
   },
   {
     "path": "fs/install.c",
-    "sha256": "fc16bcb723050096ad58d46d784f1f233ba50da52b5a65b79aa009a72f8171f1"
+    "sha256": "b5f2c14b697429fda9a40b6dac9853e0f4dff662d6294683565942d46bea341c"
   },
   {
     "path": "include/abi.h",
     "sha256": "f57b634e1aa38d671326461631639323524e8011f8c90ba482a0a51888d98962"
+  },
+  {
+    "path": "include/biosboot.h",
+    "sha256": "efa9ac515cfd6f04d75f60bb191ed075e3c524b04e7fb539632a3ca8dae53999"
   },
   {
     "path": "include/bootconfig.h",
@@ -152,6 +168,10 @@
     "sha256": "21d0c3b37055986aaf45627f7b749aca7593e4cc99a580de2e43a2520e87e5b8"
   },
   {
+    "path": "tools/bios-image.py",
+    "sha256": "2b3a237a132c8b457a8c260593d4c15b42b12af1be3e9b82c882ff1421e5f3fa"
+  },
+  {
     "path": "tools/build-legacy.py",
     "sha256": "91c7014ca8765fb342efed3a8f9d08cbf63496f818f49dfe220a2c9e86bd7ae2"
   },
@@ -165,7 +185,7 @@
   },
   {
     "path": "tools/dualboot-iso.py",
-    "sha256": "d79e4451afa0ff63c33782da1872085f0d25559fba79ab17146a97931a2cc1f6"
+    "sha256": "f14af34c222a35a699277b2742dae5b8c5d97db43f33ddee22eb4c934ca4b0ab"
   },
   {
     "path": "tools/env.sh",
@@ -173,7 +193,11 @@
   },
   {
     "path": "tools/iso.sh",
-    "sha256": "87756ae3406e52736f5cfac4d2997c3e11e1e66895441f9b6bee0529d0714a22"
+    "sha256": "d199e88d9b38769b0386095026a8e5039774673dc8a5d91d60cf35a1e84302ed"
+  },
+  {
+    "path": "tools/run-bios-installed.sh",
+    "sha256": "ca8ab884420debf30f4cb961af62ec7ed4c9b4d5c057b868d4fff58a2768706d"
   },
   {
     "path": "tools/run-bios-iso.sh",

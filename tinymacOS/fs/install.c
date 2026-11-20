@@ -1,6 +1,7 @@
 #include "../kernel/k.h"
 #include "sha256.h"
 #include "disklayout.h"
+#include "biosboot.h"
 static int iszero(const void *p, u32 n)
 {
     const u64 *q = p;
@@ -160,6 +161,7 @@ static void layout(u32 n)
     backup.crc = crc32(&backup, 92);
     primary.crc = crc32(&primary, 92);
     memset(mbr, 0, 512);
+    memcpy(mbr,bios_boot_mbr,440);
     mbr[450] = 0xee;
     mbr[448] = 2;
     mbr[451] = mbr[452] = mbr[453] = 255;
@@ -171,6 +173,17 @@ static void layout(u32 n)
 static int commit(int d, u32 l, u32 n, void *p)
 {
     return sata_io(d, l, n, p, 1) || sata_flush(d) || sata_io(d, l, n, io, 0) || memcmp(io, p, n * 512);
+}
+static int install_bios(int d)
+{
+    u64 bytes=bios_duet_end-bios_duet;
+    if(!bytes || bytes%512 || TMC_DUET_LBA<34 || bytes/512>LESP-TMC_DUET_LBA)return -1;
+    for(u32 j=0;j<bytes/512;){
+        u32 n=MIN(CHUNK,(u32)(bytes/512)-j);
+        if(commit(d,TMC_DUET_LBA+j,n,(void *)(bios_duet+(u64)j*512)))return -1;
+        j+=n;
+    }
+    return 0;
 }
 int install_step_i()
 {
@@ -224,7 +237,8 @@ int install_step_i()
             memcpy(seal.magic, "TMCSYS20", 8);
             memcpy(seal.disk, primary.guid, 16);
             sha_bytes((void *)boot.install_esp, boot.install_len, seal.digest);
-            if (commit(d, RESTORE_AT(z), 1, &seal) || commit(d, z - 33, 32, parts) || commit(d, z - 1, 1, &backup) ||
+            /* BIOS payload is read-back verified BEFORE GPT activation and MBR. */
+            if (install_bios(d) || commit(d, RESTORE_AT(z), 1, &seal) || commit(d, z - 33, 32, parts) || commit(d, z - 1, 1, &backup) ||
                 commit(d, 2, 32, parts) || commit(d, 1, 1, &primary)
                 || commit(d, 0, 1, mbr))
                 return err("Finalizzazione GPT non riuscita. Non usare questo disco.");

@@ -78,6 +78,8 @@ Verbose: premi V durante la mela. Nel Terminale del sistema installato:
   bootverbose off
   bootverbose log
 On/off si applicano al prossimo avvio. La live non salva questa preferenza.
-La ISO 2.4.4 e l’installer sono UEFI; BIOS/OpenDuet/OpenCore e solo un
-bootstrap QA separato, non un supporto BIOS garantito da questa ISO.
+La revisione OpenCore installer OC2 della ISO 2.4.4 avvia la live da CD
+su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
+verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
+al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
 Safari/WebKit non e incluso. Nome release: Levante; build 21B5.

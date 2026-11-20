@@ -3,7 +3,8 @@
 BIOS uses ISOLINUX/MEMDISK to expose a NEW MBR/FAT32 OpenDuet volume
 as a reserved RAM disk, then enters OpenDuet/OpenCore. El Torito HDD
 emulation alone is not sufficient on SeaBIOS (boot0af read failure). No physical devices.
-The installed OS layout remains UEFI; no BIOS installation claim is made.
+Installed disks use the unchanged GPT/FAT16 layout plus a reserved-gap
+OpenDuet MBR bridge, written and verified by the native installer.
 """
 import argparse,hashlib,json,os,shutil,subprocess,tempfile
 from pathlib import Path
@@ -32,8 +33,8 @@ with tempfile.TemporaryDirectory(prefix='tmc-dual-iso-',dir='/var/tmp') as work:
  shutil.copyfile(tree/'EFI/BOOT/BOOTX64.EFI',native/'BOOTX64.EFI')
  shutil.copyfile(v/'OpenCore.efi',oc/'OpenCore.efi');shutil.copyfile(v/'BiosVideo.efi',oc/'Drivers/BiosVideo.efi');shutil.copyfile(root/'boot/opencore.plist',oc/'config.plist')
  shutil.copyfile(v/'LICENSE.txt',tree/'LICENSES/OpenCore.txt')
- (tree/'BIOS-README.TXT').write_text('tinymacOS 2.4.4 Levante — OpenCore media revision 1\nBIOS optical: ISOLINUX/MEMDISK RAM disk -> OpenDuet 1.0.8 BlockIO -> OpenCore -> native loader.\nUEFI: original direct EFI image/native loader; OpenCore also at EFI/OC/OpenCore.efi.\nInstaller/installed disk remain UEFI. No legacy USB/DD or physical hardware guarantee.\nSafari/WebKit not included.\n')
+ (tree/'BIOS-README.TXT').write_text('tinymacOS 2.4.4 Levante — OpenCore installer media revision 2\nBIOS optical: ISOLINUX/MEMDISK RAM disk -> OpenDuet 1.0.8 BlockIO -> OpenCore -> native loader.\nUEFI: original direct EFI image/native loader; OpenCore also at EFI/OC/OpenCore.efi.\nInstalled disk: GPT/FAT16 + MBR reserved-gap OpenDuet bridge, BIOS and UEFI. No legacy USB/DD or physical hardware guarantee.\nSafari/WebKit not included.\n')
  for q in tree.rglob('*'):os.utime(q,(1735689600,1735689600))
- run('xorriso','-as','mkisofs','-r','-J','-V','TMC_2_4_4_OC1','--modification-date=2025010100000000','--set_all_file_dates','2025010100000000','-b','boot/isolinux/isolinux.bin','-no-emul-boot','-boot-load-size','4','-boot-info-table','-eltorito-alt-boot','-e','EFI.IMG','-no-emul-boot','-o',dst,tree)
-metadata={'native_iso_sha256':hashlib.file_digest(src.open('rb'),'sha256').hexdigest(),'filename':dst.name,'bytes':dst.stat().st_size,'sha256':hashlib.file_digest(dst.open('rb'),'sha256').hexdigest(),'bios':'El Torito ISOLINUX/MEMDISK RAM disk, OpenDuet BlockIO 1.0.8 -> OpenCore 1.0.8 -> native loader','uefi':'original direct El Torito EFI.IMG','bios_installer':False,'legacy_usb_dd_supported':False,'browser':False}
+ run('xorriso','-as','mkisofs','-r','-J','-V','TMC_2_4_4_OC2','--modification-date=2025010100000000','--set_all_file_dates','2025010100000000','-b','boot/isolinux/isolinux.bin','-no-emul-boot','-boot-load-size','4','-boot-info-table','-eltorito-alt-boot','-e','EFI.IMG','-no-emul-boot','-o',dst,tree)
+metadata={'native_iso_sha256':hashlib.file_digest(src.open('rb'),'sha256').hexdigest(),'filename':dst.name,'bytes':dst.stat().st_size,'sha256':hashlib.file_digest(dst.open('rb'),'sha256').hexdigest(),'bios':'El Torito ISOLINUX/MEMDISK RAM disk, OpenDuet BlockIO 1.0.8 -> OpenCore 1.0.8 -> native loader','uefi':'original direct El Torito EFI.IMG','bios_installer':True,'legacy_usb_dd_supported':False,'browser':False}
 dst.with_suffix('.json').write_text(json.dumps(metadata,indent=2)+'\n');print(json.dumps(metadata,indent=2))

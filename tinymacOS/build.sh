@@ -29,6 +29,8 @@ for a in "${APPS[@]}"; do
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"
  (cd "$D" && ld "${L[@]}" -T "$ROOT/userspace/layout.ld" u-start.S.o u-string.c.o "u-$a.o" "${objects[@]}" -o "$a.debug" && objcopy --strip-all "$a.debug" "$a.elf")
 done
+python3 tools/bios-image.py "$D"
+C+=(-DTMC_MBR_PATH=\""$D/bios-mbr.bin"\")
 KOBJ=()
 # lwIP (IPv4 core) + in-kernel network glue
 LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/lwip/core/ip.c

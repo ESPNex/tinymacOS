@@ -29,7 +29,16 @@ assert all(digest in (build/name).read_bytes() for name in ("BOOTX64.EFI","RECBO
 h.write_bytes(raw[:i])
 PYF
 mkesp(){ : > "$1";truncate -s "$2" "$1";mkfs.fat --invariant -R32 -F16 -n "$3" "$1" >/dev/null;mmd -i "$1" ::/EFI ::/EFI/BOOT ::/System ::/System/Library ::/System/Library/CoreServices ::/System/Library/KernelCollections;mcopy -i "$1" "$D/KernelCache" ::/System/Library/KernelCollections/KernelCache;mcopy -i "$1" "$D/$4" ::/System/Library/CoreServices/System.vol;mcopy -i "$1" "$D/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI;mcopy -i "$1" "$D/BootConfig.bin" ::/BOOTCFG.BIN; }
-mkesp "$D/install.esp" 24M LEVANTE System-disk.vol;mkesp "$R/EFI.IMG" 64M LEVANTECD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
+mkesp "$D/install.esp" 24M LEVANTE System-disk.vol
+# The installed FAT16 ESP is readable by OpenDuet: preserve native UEFI fallback,
+# and add the native TMC target plus OpenCore at OpenDuet's BDS default path.
+mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES
+mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
+mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
+mcopy -i "$D/install.esp" vendor/opencore-1.0.8/BiosVideo.efi ::/EFI/OC/Drivers/BiosVideo.efi
+mcopy -i "$D/install.esp" boot/opencore.plist ::/EFI/OC/config.plist
+mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
+mkesp "$R/EFI.IMG" 64M LEVANTECD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,
 # not the FAT El Torito image: carry the same payload files there too, or the
 # loader finds no System.vol / Install.esp and can only fall back to Recupero.
