@@ -11,8 +11,8 @@ extern "C" {
  * Commit requires an entirely uncommitted subrange; protect requires an entirely
  * committed subrange, including retained PROT_NONE pages. Decommit is idempotent,
  * releases physical backing and recommit reads zeroes. Release must be exact.
- * v1 only supports 1 online CPU, 32 reservations, 64 MiB per region and 240 MiB
- * arena; mutations fail ENOTSUP on SMP. READ or READ|WRITE or NONE only, NO EXEC.
+ * v1 supports native SMP with mapping serialization/TLB shootdown, 32
+ * reservations, 64 MiB per region and a 240 MiB arena. READ or READ|WRITE or NONE only, NO EXEC.
  * Callers must serialize their own accesses while protections/lifetimes change. */
 int tmc_vm_info(struct TmcVMInfo *);
 void *tmc_vm_reserve(size_t bytes,size_t alignment,unsigned guard_pages_each_end);

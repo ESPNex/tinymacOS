@@ -45,7 +45,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "0816ebbbbfb6401926479dddacc3b8e5351d933285bc05d7764e0c737f3745a4"
+    "sha256": "42026f8870e864bbcf6eef60a111ffe28d1bc2db9187adae3ff7d59b9e4e9b2a"
   },
   {
     "path": "include/biosboot.h",
@@ -70,6 +70,10 @@
   {
     "path": "include/percpu.h",
     "sha256": "8056b2ba304b7eb6a206adf2ad641818b5eb2f5615bb8d01ae92f3ed7c090f89"
+  },
+  {
+    "path": "include/threadfinishabi.h",
+    "sha256": "44e639af148fd1424d5eb0e1ebc76f4e9115f89109c924e600264544927cb78a"
   },
   {
     "path": "include/tlsabi.h",
@@ -109,7 +113,7 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "a96abb789c70fff75ab2dc3f5bf22d096bf56b2aa1672620d3399d5bc093bd1a"
+    "sha256": "aa0b74e95e5fcefa07aac72361323988be7a789b677494642a82961673be6413"
   },
   {
     "path": "kernel/uservm.c",

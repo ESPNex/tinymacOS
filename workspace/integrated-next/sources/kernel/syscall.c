@@ -1,6 +1,7 @@
 #include "k.h"
 #include "tlsabi.h"
 #include "wordwaitabi.h"
+#include "threadfinishabi.h"
 #include "netabi.h"
 #include "uaccess_gate.h"
 static int string(u64 ptr, char *out, int cap)
@@ -126,6 +127,20 @@ static i64 alloc(Process *p, u64 n)
     p->alloc[slot].addr = a;
     p->alloc[slot].n = n;
     return a;
+}
+/* sched_lock held. Keys are numeric and private to this address space; never
+ * dereference a sleeping task's user address. Also shared by final handoff. */
+static i64 wake_word_locked(int pi,u64 address,u64 count)
+{
+    i64 awakened=0;
+    for(int j=1;j<NTASK && (u64)awakened<count;j++){
+        Task *t=task+j;
+        if(t->pi!=pi || t->state!=2 || t->wait_word!=address)continue;
+        t->wait_word=0;t->state=1;
+        if(t->wake<=ticks)t->f->rax=TMC_WORD_TIMEOUT;
+        else {t->f->rax=0;awakened++;}
+    }
+    return awakened;
 }
 static Frame *syscall_inner(Frame *f)
 {
@@ -462,16 +477,24 @@ static Frame *syscall_inner(Frame *f)
                     Frame *next=schedule(f);spin_unlock(&sched_lock,fl);return next;
                 }
             } else {
-                r=0;
-                for(int j=1;j<NTASK && (u64)r<c;j++){
-                    Task *t=task+j;
-                    if(t->pi!=task[cur].pi || t->state!=2 || t->wait_word!=b)continue;
-                    t->wait_word=0;t->state=1;
-                    if(t->wake<=ticks)t->f->rax=TMC_WORD_TIMEOUT;
-                    else {t->f->rax=0;r++;}
-                }
+                r=wake_word_locked(task[cur].pi,b,c);
             }
             spin_unlock(&sched_lock,fl);
+        }
+        break;
+    case S_THREADFINISH:
+        if(a==TMC_THREAD_FINISH_QUERY){r=TMC_THREAD_FINISH_VERSION;break;}
+        if(a==TMC_THREAD_FINISH && !c && !d && !(b&3) && OUT(b,4)){
+            u32 fl;spin_lock(&sched_lock,&fl);
+            /* The user stack/TCB will never be used again by this thread.
+             * Its kernel stack is separately protected by Task.at/reaping.
+             * User mapping writes remain pinned until syscall_do leaves. */
+            task[cur].fs_base=0;wrmsr(0xc0000100,0);
+            __atomic_store_n((u32 *)b,0,__ATOMIC_RELEASE);
+            wake_word_locked(task[cur].pi,b,0xffffffffull);
+            if(p->tasks>1){task[cur].state=3;p->tasks--;}
+            else terminate(task[cur].pi);
+            Frame *next=schedule(f);spin_unlock(&sched_lock,fl);return next;
         }
         break;
     case S_THREAD:
