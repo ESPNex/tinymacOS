@@ -64,6 +64,10 @@
     "build": "21B5",
     "codename": "Levante",
     "browser_included": false,
-    "built_tested_uploaded": false
+    "built_tested_uploaded": false,
+    "built_and_tested": true,
+    "github_release": "https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4",
+    "sha256": "a01d95c4f33a68e11b002f37e3ec52472b9d927b3f8c4326ea01ac8d8bdf5a51",
+    "evidence": "../release-2.4.4/RELEASE.md"
   }
 }

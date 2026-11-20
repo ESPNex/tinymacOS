@@ -4,9 +4,11 @@ Repository privata: https://github.com/ESPNex/tinymacOS
 
 Questo repository conserva i file del workspace necessari a riprendere lo sviluppo senza dipendere dal limite di 128 MiB degli snapshot della conversazione. Non contiene credenziali, ISO, archivi di sorgenti o directory di build. I file vendor selezionati sono conservati estratti, con licenze e lock disponibili nei rispettivi alberi.
 
+**Release 2.4.4 Levante (21B5):** [download privato e note](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4). [QA e checksum](workspace/release-2.4.4/RELEASE.md). ISO UEFI, senza browser; bootstrap BIOS soltanto QA separato.
+
 ## Mappa
 
-- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Versione corrente in preparazione per release esplicitamente autorizzata: **2.4.4 Levante, build 21B5**, senza browser. Successiva patch browser prevista: 2.4.5 Levante.
+- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release intermedia esplicitamente autorizzata: **2.4.4 Levante, build 21B5**, senza browser. Successiva patch browser prevista: 2.4.5 Levante.
 - `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
 - `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
 - `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.

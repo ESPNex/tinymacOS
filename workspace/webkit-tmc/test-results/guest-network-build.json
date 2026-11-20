@@ -3,8 +3,8 @@
   "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
   "sha256": {
     "command.elf": "d26d1c14add12bdf0227e51429ae064e7be3f929db6aa2a442990835afc97ce9",
-    "kernel.elf": "5a3c2e0a262fe883fb886d4e1927d5f2a31496422ea861024d50a2ffc7514247",
-    "KernelCache": "9b18fbf663a98a3f1c01289bb2884df6b2ea072344e1847e4efb6bd0b3f7f17f",
-    "tinymacOS-2.4.3-x86_64.iso": "91a4bcb78a5649ee12ac847dbbe71c2d248045f68284cc354d7bc092169739fc"
+    "kernel.elf": "9f66839b8649a787c968cb0c898a5b0db8cfbca24d2592330b3ffb470e508437",
+    "KernelCache": "3460a13479d9ed39b6a5f57b431aadab6241e01d5e7056d8988d59ef7a0cae02",
+    "tinymacOS-2.4.4-x86_64.iso": "a1e3c09dfb3d84e9ad698806e2510360487c3bc077743ac77c13d0ab5afbbb07"
   }
 }

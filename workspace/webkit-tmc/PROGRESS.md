@@ -6,6 +6,10 @@ Applicazione **Safari**, UI desktop classica, integrazione con tutti i temi di t
 
 Le manutenzioni 2.4.1/2.4.2 e l’**ultima 2.4.3 esplicitamente richiesta** sono state distribuite senza browser. Dopo la 2.4.3 niente altre ISO intermedie salvo nuova autorizzazione. Prossima release browser solo con vero HTTPS/HTML/CSS/JavaScript, temi e sicurezza collaudati.
 
+## Release intermedia 2.4.4 autorizzata dopo il backup
+
+L'utente ha esplicitamente chiesto di pubblicare la ISO corrente prima di proseguire con Safari. Versione **2.4.4 Levante, build 21B5**, senza browser, con ISO UEFI. Regressioni fresche: identità disegnata/plist/Terminale/Recovery, installer e verbose off/on/off, mouse/tablet/Recupero, suite backend/runtime 15/15 e stress SMP 4/8 vCPU PASS. Report `../release-2.4.4/RELEASE.md`. Questa autorizzazione supera il precedente divieto di ulteriori ISO intermedie per questa sola release. Prossima patch browser concordata nel piano: **2.4.5 Levante**, subordinata a motore reale e temi verificati.
+
 ## Stato corrente: SMP positivo e backup GitHub
 
 - VM/MMU reale su 1 e 2 vCPU: operazioni positive e sette fault intenzionali per profilo; suite backend/runtime 15/15 PASS.

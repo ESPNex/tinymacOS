@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "version": "2.4.4",
+  "build": "21B5",
+  "codename": "Levante",
+  "iso_sha256": "a01d95c4f33a68e11b002f37e3ec52472b9d927b3f8c4326ea01ac8d8bdf5a51",
+  "evidence_external": "/var/tmp/tmc244-identity-wsdp53hk/evidence",
+  "media_checks": [
+    "Un solo CD: DMG visibile, file di avvio El Torito e file nella sorgente Recovery HD identici; SHA-256 nei due loader e manifest installazione verificati",
+    "KernelCache: vero payload ELF64, dimensione e SHA-256 corretti; stesso file su live e installato",
+    "Il solo delta del catalogo live è il bundle installatore; il suo eseguibile non è nei byte dell’ESP installato",
+    "15 bundle installati con Info.plist (13 app Mach-O x86-64, senza browser + 2 kext ELF64 ET_REL); 40 percorsi Unix eseguibili; segmenti W^X e LC_MAIN verificati",
+    "Nessun sorgente o eseguibile di diagnostica nei cataloghi; assenti le note firme di tracing del vecchio guest",
+    "BaseSystem UDIF contiene solo il runtime UEFI di Recupero, niente installer o applicazioni desktop"
+  ],
+  "all_app_plists": true,
+  "system_version_plists": true,
+  "recovery_binary_version": true,
+  "welcome_version": true,
+  "terminal_version": true,
+  "drawn_about_installer_levante": true,
+  "old_243_build_strings_absent_in_system_volumes": true
+}

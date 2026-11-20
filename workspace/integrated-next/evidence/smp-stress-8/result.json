@@ -5,7 +5,7 @@
   "workers": 4,
   "worker_rounds": 400,
   "uaccess_buffer_syscalls": 1600,
-  "elapsed_seconds": 145.52,
+  "elapsed_seconds": 109.22,
   "verified_markers": [
     "VM SMP STRESS PASS",
     "uaccess-races=1600",

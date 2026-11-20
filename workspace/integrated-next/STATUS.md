@@ -1,3 +1,5 @@
+> **Aggiornamento release:** l'utente ha autorizzato una nuova ISO intermedia dopo il backup. È stata preparata e collaudata **2.4.4 Levante (21B5)**; note/QA/hash in `../release-2.4.4/RELEASE.md`. Il vecchio paragrafo sottostante che indicava nessun nuovo deploy descriveva lo stato precedente. La futura patch Safari resta 2.4.5 Levante e richiede browser reale e temi.
+
 # Sviluppo integrato — stato di ripresa
 
 ## Backup verificato
@@ -12,7 +14,7 @@ Il database Git Arena si trova in `/var/tmp/tmc-github-git/tinymacOS.git`, la CL
 |---|---|---|
 | Backend/runtime | Suite completa 15/15 PASS rieseguita sul codice corrente; `../webkit-tmc/test-results/milestone-tests.json` | Non è accettazione browser |
 | VM/MMU | Operazioni positive reali con 1/2 vCPU, sette fault intenzionali per profilo | NX, arena 240 MiB, 32 riserve, massimo 64 MiB per riserva; non mmap POSIX completo |
-| SMP concorrente | Quattro worker × 400 round; 1.600 syscall buffer in gara con VM/allocazioni; PASS 4 e 8 vCPU; `evidence/smp-stress-{4,8}/result.json` | Queste prove precedono le ultime modifiche alla sola console/verbose; non provano libc pthread/TLS |
+| SMP concorrente | Quattro worker × 400 round; 1.600 syscall buffer in gara con VM/allocazioni; PASS 4 e 8 vCPU; `evidence/smp-stress-{4,8}/result.json` | Ripetute su build 2.4.4 dopo console/verbose/versione; non provano libc pthread/TLS |
 | Verbose UEFI diretto | V durante la mela; framebuffer testuale osservato, stato/log Terminale, due CPU online; `evidence/verbose-direct/result.json` | Su live la scrittura persistente è correttamente rifiutata |
 | BIOS/OpenDuet/OpenCore | Disco QA FAT32/MBR: SeaBIOS → OpenDuet 1.0.8 BlockIO → OpenCore 1.0.8 → loader nativo → account/desktop/Terminale; due CPU online; `evidence/bios-current/bios-duet.json` | Verbose verificato da BOOTCFG, **non** da `boot-args`/LoadOptions. Non è ancora ISO ibrida né installazione BIOS autonoma |
 | Verbose su installato | Installer reale su SATA usa-e-getta, avvio senza ISO; off → Terminale on → riavvio verbose → Terminale off → riavvio quieto; `evidence/verbose-installed/result.json` | Provato UEFI/QEMU; nessuna prova hardware fisico |
