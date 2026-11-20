@@ -15,6 +15,7 @@
 #include "threadfinishabi.h"
 #include "tmc_tls.h"
 static _Thread_local struct tmc_tls_block *host_tcb;
+static unsigned active_children;
 long tmc_tls_install(struct tmc_tls_block *p)
 {
  if(!p || ((uintptr_t)p&7))return -1;
@@ -32,14 +33,16 @@ long tmc_syscall(long n,uint64_t a,uint64_t b,uint64_t c,uint64_t d)
  if(n==S_SLEEP){struct timespec t={(time_t)(a/100),(long)(a%100)*10000000};nanosleep(&t,0);return 0;}
  if(n==S_EXIT)abort();
  if(n==S_THREAD){
-  struct start *s=malloc(sizeof *s);if(!s)return -1;s->entry=(void *)(uintptr_t)a;s->argument=b;
+  if(__atomic_fetch_add(&active_children,1,__ATOMIC_ACQ_REL)>=8){__atomic_fetch_sub(&active_children,1,__ATOMIC_RELEASE);return -1;}
+  struct start *s=malloc(sizeof *s);if(!s){__atomic_fetch_sub(&active_children,1,__ATOMIC_RELEASE);return -1;}s->entry=(void *)(uintptr_t)a;s->argument=b;
   pthread_attr_t attr;pthread_t thread;pthread_attr_init(&attr);pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
-  int error=pthread_create(&thread,&attr,host_start,s);pthread_attr_destroy(&attr);if(error){free(s);return -1;}return 1;
+  int error=pthread_create(&thread,&attr,host_start,s);pthread_attr_destroy(&attr);if(error){free(s);__atomic_fetch_sub(&active_children,1,__ATOMIC_RELEASE);return -1;}return 1;
  }
  if(n==S_THREADFINISH){
   if(a==TMC_THREAD_FINISH_QUERY)return TMC_THREAD_FINISH_VERSION;
   if(a!=TMC_THREAD_FINISH || !b || (b&3) || c || d)return -1;
-  host_tcb=0;__atomic_store_n((uint32_t *)(uintptr_t)b,0,__ATOMIC_RELEASE);
+  host_tcb=0;__atomic_fetch_sub(&active_children,1,__ATOMIC_RELEASE);
+  __atomic_store_n((uint32_t *)(uintptr_t)b,0,__ATOMIC_RELEASE);
   syscall(SYS_futex,(void *)(uintptr_t)b,FUTEX_WAKE_PRIVATE,INT_MAX,0,0,0);
   pthread_exit(0);
  }

@@ -11,7 +11,11 @@ static void nap(void){tmc_syscall(S_SLEEP,1,0,0,0);}
 static struct tmc_thread initial,workers[4],joiner,reused;
 static struct tmc_mutex test_lock=TMC_MUTEX_INITIALIZER;
 static struct tmc_condition test_condition=TMC_CONDITION_INITIALIZER;
-static unsigned ready,start,counter,created;
+static unsigned ready,start,counter,created,resource_capacity;
+static struct tmc_thread resource_threads[32];
+static struct tmc_mutex resource_lock=TMC_MUTEX_INITIALIZER;
+static struct tmc_condition resource_condition=TMC_CONDITION_INITIALIZER;
+static unsigned resource_release;
 static tmc_key_t own_key,repeat_key,always_key,reentrant_key;
 struct worker_data {uintptr_t id;unsigned repeats,always,reentrant;uint64_t identity;};
 static struct worker_data data[4],initial_data,reuse_data;
@@ -64,6 +68,12 @@ static void *fast_worker(void *argument)
  CHECK(tmc_getspecific(own_key)==0 && tmc_getspecific(reentrant_key)==0);
  CHECK(!tmc_setspecific(reentrant_key,d));return argument;
 }
+static void *resource_worker(void *argument)
+{
+ (void)argument;CHECK(tmc_thread_current()!=0);CHECK(!tmc_mutex_lock(&resource_lock));
+ while(!resource_release){int r=tmc_condition_wait(&resource_condition,&resource_lock,tick()+3000);CHECK(!r);if(r)break;}
+ CHECK(!tmc_mutex_unlock(&resource_lock));return (void *)99;
+}
 static int create(struct tmc_thread *t,void *(*entry)(void *),void *argument)
 {
  int r=tmc_thread_create(t,entry,argument);CHECK(!r);if(!r)created++;return r;
@@ -109,6 +119,19 @@ static int run_thread_cases(void)
   for(unsigned k=0;k<j;k++)CHECK(data[j].identity!=data[k].identity);
  }
  CHECK(tmc_getspecific(own_key)==&initial_data && *tmc_tls_errno_location()==777);
+ /* Exhaust real task slots with live blocked children, require a real error
+  * and a reset failed object, then reclaim everything and continue creating. */
+ for(unsigned j=0;j<32;j++){
+  int r=tmc_thread_create(&resource_threads[j],resource_worker,0);
+  if(r){CHECK(r==EAGAIN);CHECK(!resource_threads[j].alive && !resource_threads[j].state);break;}
+  resource_capacity++;created++;
+ }
+ CHECK(resource_capacity>0 && resource_capacity<32);
+ CHECK(!tmc_mutex_lock(&resource_lock));resource_release=1;
+ CHECK(!tmc_condition_broadcast(&resource_condition));CHECK(!tmc_mutex_unlock(&resource_lock));
+ for(unsigned j=0;j<resource_capacity;j++){
+  result=0;CHECK(!tmc_thread_join_until(&resource_threads[j],&result,tick()+3000));CHECK(result==(void *)99);
+ }
  uint64_t previous=0;
  for(unsigned j=0;j<64;j++){
   reuse_data.reentrant=0;create(&reused,fast_worker,&reuse_data);
@@ -123,5 +146,8 @@ static int run_thread_cases(void)
  CHECK(tmc_setspecific(own_key,&initial_data)==EINVAL);
  CHECK(!tmc_key_delete(own_key));CHECK(!tmc_key_delete(repeat_key));CHECK(!tmc_key_delete(always_key));CHECK(!tmc_key_delete(reentrant_key));
  CHECK(tmc_runtime_leave()==EINVAL);
+ uint64_t previous_main=initial_data.identity;
+ CHECK(!tmc_runtime_enter(&initial));CHECK(tmc_thread_id()>previous_main);
+ CHECK(!tmc_getspecific(own_key));CHECK(!tmc_runtime_leave());
  return (int)first_failure;
 }
