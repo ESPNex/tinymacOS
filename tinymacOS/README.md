@@ -1,3 +1,5 @@
+> **ISO corrente: [2.4.5 Levante / 21B7](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), sostituzione verificata della 21B6.** Driver PS/2 tastiera/mouse ed EHCI/UHCI per input HID; nessun pannello F11 al login. [Note e ricevuta](../workspace/release-2.4.5-input2/RELEASE.md). Le citazioni 21B6 sotto sono storiche.
+
 > **Revisione 21B7:** PS/2 tastiera/mouse, EHCI per input HID e UHCI companion; pannello F11 eliminato. [QA della sostituzione 2.4.5](../workspace/release-2.4.5-input2/RELEASE.md): 16 profili input e 29/29 regressioni PASS. Le note 21B6 immediatamente sotto sono della revisione precedente. Nessuna garanzia hardware universale; OHCI/hotplug non implementati.
 
 > **Corrente: manutenzione input 2.4.5 Levante / 21B6, [pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
@@ -12,7 +14,7 @@ Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nat
 
 ## Release corrente
 
-**Levante 2.4.5, build 21B6**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
+**Levante 2.4.5, build 21B7**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
 
 Questa manutenzione è stata richiesta con priorità per mouse fermo al login e lag, prima di riprendere i grandi blocchi WebKit. **Non include Safari o WebKit funzionante.** La precedente riserva del numero 2.4.5 al browser è superata. Il browser reale resta da completare: HTTPS/HTML/CSS/JavaScript, UI classica e integrazione con i temi. [Note input 2.4.5, prove e limiti](../workspace/release-2.4.5/RELEASE.md).
 

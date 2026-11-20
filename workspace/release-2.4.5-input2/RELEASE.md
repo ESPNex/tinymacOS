@@ -2,6 +2,8 @@
 
 **Build 21B7 · revisione input 2 · stessa release v2.4.5, ISO sostitutiva**
 
+**Sostituzione completata e verificata:** release ID `453129451` invariato; nuova ISO riscaricata sotto il nome definitivo e SHA-256 verificato. Receipt: `github-release-verification.json`. Sorgenti del nuovo asset al tag `v2.4.5`, commit `1cc3e8423a3ba8b3021d0d87675415e3cce06709`; sorgenti 21B6 conservati al tag `v2.4.5-21B6`.
+
 Questa revisione è stata richiesta dopo la prova fisica negativa della 21B6: tastiera PS/2 e mouse USB funzionavano in Recovery ma non al login. Il firmware e il kernel usano driver distinti. I precedenti test con tastiera USB/xHCI non coprivano quella configurazione.
 
 ## Implementato

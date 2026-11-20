@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "88d2f4d90d0a3f990ef8cc5070d6115e46450b5a23e94297bb48b132c4ea77fc"
+    "sha256": "ac1f8cfb9e0182b355110f406895c4d0bdbf0dbc915156c67e6ca7db777cd053"
   },
   {
     "path": "arch/biosdisk.S",

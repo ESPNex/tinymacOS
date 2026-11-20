@@ -1,6 +1,6 @@
 # Aggiornamento: revisione input 21B7
 
-Sono ora implementati i driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion. I dieci profili live del candidato finale su BIOS/UEFI sono passati, incluse configurazioni senza alcuna tastiera USB e mouse a 480/12 Mb/s; anche la suite kernel/runtime è 29/29 PASS. Installazione, sei profili login installati e ripristino locale sono passati; gate completo finale PASS. Non ancora sostituita la release online: il gate e il receipt definitivi sono in `release-2.4.5-input2/`. Nessuna conferma sul PC fisico. OHCI, hotplug e general-purpose USB bulk/isochronous restano fuori dal supporto implementato.
+Sono ora implementati i driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion. I dieci profili live del candidato finale su BIOS/UEFI sono passati, incluse configurazioni senza alcuna tastiera USB e mouse a 480/12 Mb/s; anche la suite kernel/runtime è 29/29 PASS. Installazione, sei profili login installati e ripristino locale sono passati; gate completo finale PASS. Release online sostituita con 21B7 e riscaricata/verificata: gate e receipt definitivi in `release-2.4.5-input2/`. Nessuna conferma sul PC fisico. OHCI, hotplug e general-purpose USB bulk/isochronous restano fuori dal supporto implementato.
 
 ---
 

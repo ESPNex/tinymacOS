@@ -1,3 +1,5 @@
+> **Corrente e pubblicata: [tinymacOS 2.4.5 Levante / 21B7](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** Sostituita la ISO nella stessa release su richiesta. PS/2 tastiera/mouse, EHCI HID e UHCI companion; diagnostica F11 rimossa. 16 profili input, 117 verifiche e 29/29 regressioni PASS; download verificato. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md).
+
 > **Revisione input 2.4.5 / 21B7:** driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion; nessuna diagnostica F11 al login. 16 profili input e 29/29 regressioni PASS. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md); il receipt di sostituzione conferma l’avvenuto deploy nella stessa release. Le indicazioni 21B6 sotto sono storiche.
 
 > **Manutenzione input 2.4.5 Levante / 21B6:** [Pubblicata su GitHub](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), riscaricata e verificata; manutenzione richiesta per mouse fermo al login e lag. Note, collaudi e limiti: [release 2.4.5](workspace/release-2.4.5/RELEASE.md). Nessuna prova sul PC fisico dell’utente; Safari/WebKit ancora non incluso.
@@ -14,7 +16,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 
 ## Mappa
 
-- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release manutenzione input esplicitamente autorizzata: **2.4.5 Levante, build 21B6**, senza browser. La richiesta di anticipare questa manutenzione sostituisce la precedente riserva del numero 2.4.5 al browser.
+- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release manutenzione input esplicitamente autorizzata: **2.4.5 Levante, build 21B7**, senza browser. La richiesta di anticipare questa manutenzione sostituisce la precedente riserva del numero 2.4.5 al browser.
 - `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
 - `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
 - `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.
