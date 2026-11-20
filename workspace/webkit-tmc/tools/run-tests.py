@@ -53,6 +53,9 @@ for name,cmd in cases:
  print(('PASS' if results[-1]['exit_code']==0 else 'FAIL')+': '+name,flush=True)
  # Never boot stale probe artifacts if the build failed.
  if name.endswith('probe-build') and results[-1]['exit_code']!=0:break
+# Save complete original frames externally, then retain lossless terminal crops
+# in the small shared workspace. Does not affect a guest assertion or its result.
+subprocess.run(['python3',str(root/'tools/compact-qa-evidence.py')],check=True)
 (root/'test-results/milestone-tests.json').write_text(json.dumps({
  'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
  'guest_requested':args.guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))

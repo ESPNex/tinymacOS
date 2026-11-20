@@ -69,3 +69,7 @@ Il successivo macroblocco deve coprire in modo coerente:
 Restano esplicitamente mancanti: pthread completo, detach/cancel, suspend/resume e stack scanning per il collector, segnali, robust/PI/process-shared mutex, ELF/DTV/compiler TLS, eccezioni/unwind e la standard library C++ target. I descriptor condivisi richiedono ancora sincronizzazione e ownership appropriate. Il bootstrap iniziale non è automatico per tutte le applicazioni OS preesistenti.
 
 Nessun nuovo deploy/ISO upload in questo macroblocco. Le immagini diagnostiche sono esterne e non distribuibili; la release OC2 resta immutata. La futura release browser rimane **2.4.5 Levante**, subordinata ai gate reali del motore e dell’interfaccia.
+
+### Budget evidenze
+
+Per mantenere margine agli snapshot, le sole schermate dei test backend VM/rete vengono ora conservate come ritagli lossless del Terminale, senza ridimensionamento o modifica dei pixel. Le schermate desktop/Recovery delle release congelate non sono toccate. Le originali complete di questo ciclo restano nel commit verificato `46bba1621db79576c8dceaf4d4f9dd73fd2c046b`; hash/crop e riferimenti in `test-results/terminal-crops.json`. Il runner salva prima le originali dei cicli futuri in scratch esterno e compatta alla fine; lo scratch non è dichiarato persistente.
