@@ -1,0 +1,9 @@
+{
+  "drag_pixels": [
+    20,
+    20
+  ],
+  "content_translation_pixel_exact": true,
+  "red_close_opens_power_confirmation": true,
+  "disk_writes_requested": false
+}

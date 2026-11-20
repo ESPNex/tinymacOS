@@ -1,0 +1,43 @@
+# tinymacOS — sorgenti e workspace di sviluppo
+
+Repository privata: https://github.com/ESPNex/tinymacOS
+
+Questo repository conserva i file del workspace necessari a riprendere lo sviluppo senza dipendere dal limite di 128 MiB degli snapshot della conversazione. Non contiene credenziali, ISO, archivi di sorgenti o directory di build. I file vendor selezionati sono conservati estratti, con licenze e lock disponibili nei rispettivi alberi.
+
+## Mappa
+
+- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. La numerazione resta provvisoriamente 2.4.3: **le modifiche di sviluppo non sono una nuova release distribuita**.
+- `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
+- `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
+- `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.
+- Gli altri alberi `workspace/maintenance-*`, `workspace/smp-next` e i documenti alla radice conservano contesto, test e revisioni precedenti.
+- `uploads/`: allegati originali della conversazione, conservati in questa repository privata.
+
+## Stato e limiti reali
+
+- VM/MMU nativa: verifiche positive su 1/2 vCPU e stress concorrente su 4/8 vCPU documentati. Non sono prove di pthread/POSIX completo o WebKit.
+- Bootstrap BIOS di prova: SeaBIOS → OpenDuet 1.0.8 BlockIO → OpenCore → loader nativo e desktop, con verbose tramite `BOOTCFG.BIN`, verificati in QEMU. Il bootstrap è una **immagine disco QA separata**, non ancora un'ISO ibrida distribuita e non un installer BIOS completo.
+- Verbose UEFI diretto selezionato con `V`, comandi `bootverbose status`, `on`, `off`, `log [pagina]` implementati. Verificati selezione live, stato, log e rifiuto di scrittura persistente sulla live. Il test completo della preferenza installata è in `workspace/integrated-next/qa/verbose_installed.py`; controllarne il risultato prima di dichiararlo superato.
+- `workspace/webkit-tmc/test-results/milestone-tests.json` riporta la suite backend/runtime. Date e commit delle prove contano: un risultato precedente non valida automaticamente modifiche successive.
+- **Safari/WebKit reale non è completato. Nessuna nuova ISO integrata è stata pubblicata.**
+- Nessuna validazione su hardware fisico; i risultati QEMU non garantiscono compatibilità BIOS/USB universale.
+
+## Ricostruzione
+
+Clonare normalmente la repository. Consultare prima `tinymacOS/README.md`, `workspace/webkit-tmc/README.md`, i lock vendor e i relativi strumenti di provisioning. Il checkout è portabile: non richiede il vecchio contenuto di `/var/tmp`; toolchain e output temporanei vanno ricreati seguendo gli strumenti presenti. Il repository non include un checkout completo di WebKit: il sottoinsieme `upstream-reference/` è esplicitamente solo di riferimento.
+
+Esempio per il sistema, dalla radice del clone, una volta installati/ripristinati i prerequisiti:
+
+```sh
+python3 tinymacOS/tools/local-tools.py /var/tmp/tmc/tools/root
+python3 workspace/integrated-next/qa/sync_sources.py
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-integrated-system bash tinymacOS/build.sh
+```
+
+Gli script QA storici possono contenere `/home/user` come percorso del workspace originale: adattarlo se si clona altrove. Le ISO restano **fuori dal checkout**, anche temporaneamente. Non eseguire comandi di scrittura su dischi fisici usando gli strumenti QA: essi sono pensati per file nuovi e dischi virtuali usa-e-getta.
+
+## Git e autenticazione
+
+Nell'ambiente Arena il database Git locale è mantenuto sotto `/var/tmp/tmc-github-git/` per non raddoppiare il consumo degli snapshot. Questo database e l'autenticazione CLI non sono il backup: **il backup è il commit effettivamente inviato e verificato su GitHub**. Fuori da Arena usare un normale `git clone`.
+
+Le credenziali OAuth sono separate sotto `/var/tmp`, non sono salvate qui e possono dover essere nuovamente autorizzate in una futura sessione. Non inserire token in URL, script, documenti o messaggi.

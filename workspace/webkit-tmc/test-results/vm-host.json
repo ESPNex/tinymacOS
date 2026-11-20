@@ -1,0 +1,18 @@
+{
+  "scope": "host page table/lock model and syscall contract; not real MMU protection",
+  "passed": true,
+  "cases": [
+    {
+      "name": "kernel-model",
+      "exit_code": 0,
+      "stdout": "PASS: kernel VM model, guards/ranges, permission prevalidation, OOM rollback, 50000 reservation operations, multi-CPU reservation path (host model, not MMU proof).\n",
+      "stderr": ""
+    },
+    {
+      "name": "backend",
+      "exit_code": 0,
+      "stdout": "PASS: VM native ABI forwarding, feature query, pointer sanity and errno mapping.\n",
+      "stderr": ""
+    }
+  ]
+}

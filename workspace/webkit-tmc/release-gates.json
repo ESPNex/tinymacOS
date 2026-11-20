@@ -1,0 +1,59 @@
+{
+  "application_name": "Safari",
+  "target_os_release": "next integrated Safari release after final maintenance 2.4.3",
+  "visual_reference": "Safari desktop classico, tutti i temi di TinymacOS",
+  "release_policy": "Final maintenance 2.4.3 explicitly authorized and uploaded. Next release requires actual multi-CPU VM support, working WebKit/Safari and representative HTTPS/HTML/CSS/JavaScript/theme/security acceptance. No backend-only image may be uploaded as a browser.",
+  "compatibility_goal": "Ampia compatibilità con siti moderni; universal compatibility is not a guarantee or a finite testable criterion.",
+  "gates": {
+    "authored_sources_saved_in_workspace": true,
+    "current_milestone_host_contract_tests": true,
+    "current_milestone_target_object_compilation": true,
+    "kernel_changes_guest_network_integration": true,
+    "complete_target_libc_cpp_runtime": false,
+    "pthread_tls_virtual_memory_support": false,
+    "secure_random_api_and_validated_tls": false,
+    "javascriptcore_target_build_and_guest_tests": false,
+    "webcore_target_build_and_rendering_tests": false,
+    "browser_https_html_css_javascript_acceptance": false,
+    "safari_classic_ui_with_tabs_navigation_downloads": false,
+    "appearance_adapter_wired_into_browser_and_guest_theme_tests": false,
+    "process_isolation_security_tests": false,
+    "browser_release_built_tested_uploaded": false,
+    "descriptor_backend_host_and_single_caller_guest_tests": true,
+    "single_cpu_native_vm_and_hardware_guard_tests": true,
+    "compact_password_dots_and_reported_white_line_guest_regression": true,
+    "real_multi_cpu_vm_support_and_stress_tests": false
+  },
+  "release_ready": false,
+  "maintenance_241": {
+    "built_tested_uploaded": true,
+    "browser_included": false,
+    "drive_id": "1AkKo1USI3fTQbA9G2OE47yolmSwo6TuG",
+    "sha256": "e95428b77ca257f83636844d2dffdac6759a6305c9272ca67c2f8b3fcba660e6"
+  },
+  "guest_network_scope": "Controlled peer via lwIP/e1000/slirp, 1 and 2 vCPUs; TCP/readonly files, not DNS/HTTPS/JSC/WebCore or concurrent caller/security acceptance.",
+  "vm_scope": {
+    "abi": "S_VM v1 experimental; included in maintenance 2.4.2, mutations single CPU only",
+    "guest_single_cpu": true,
+    "guest_smp_mutations": "explicitly unsupported",
+    "arena_mib": 240,
+    "max_region_mib": 64,
+    "max_regions": 32,
+    "executable_mapping": false,
+    "posix_mmap_complete": false,
+    "wtf_jsc_allocator_integrated": false,
+    "intentional_user_fault_tests": 7
+  },
+  "maintenance_242": {
+    "built_tested_uploaded": true,
+    "browser_included": false,
+    "drive_id": "1W68tT8mUeS964heba5SWY4jpwjBbfxC-",
+    "sha256": "36654e5a92e8c60d5f012003f2b7f6cd19fbab8cc5bef060773816f7226dcbd0"
+  },
+  "maintenance_243": {
+    "built_tested_uploaded": true,
+    "browser_included": false,
+    "drive_id": "1xpSCzs3WpJqzVbWzxp3C5XnfOJ_bjCJ4",
+    "sha256": "65b0191f0932e2ba3bdf815bac5da1a9d962b45a8baa2515b52bab90a21fefd1"
+  }
+}

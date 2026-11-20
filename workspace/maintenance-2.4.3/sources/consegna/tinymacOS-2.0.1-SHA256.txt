@@ -1,0 +1,2 @@
+0c48424f70ab6d385eac27d8f0e8504d9513618e69751a554a8d27481cb96422  tinymacOS-2.0.1-x86_64.iso
+19dbb3fe57bd8f74f29ddb3df84b7fd126836e0d5903aa68a9b7e0ebf2ed7ceb  tinymacOS-2.0.1-BaseSystem.img

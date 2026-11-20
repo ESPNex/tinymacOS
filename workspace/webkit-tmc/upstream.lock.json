@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/WebKit/WebKit.git",
+  "commit": "23a3d9001767ddc9a4b120b6d7db33ca21230ab8",
+  "commit_date": "2026-11-20T12:25:02Z",
+  "scope": "reference subset only; NOT a full WebKit source checkout"
+}

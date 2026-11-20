@@ -1,0 +1,32 @@
+{
+  "before": {
+    "version": "2.4.2",
+    "iso_sha256": "36654e5a92e8c60d5f012003f2b7f6cd19fbab8cc5bef060773816f7226dcbd0",
+    "injected_actual_emulated_framebuffer": true,
+    "band_box": [
+      529,
+      487,
+      753,
+      491
+    ],
+    "repaired_without_mouse_or_keys": false,
+    "white_pixels_remaining": 896,
+    "cpu_count": 2,
+    "note": "Synthetic scanout corruption; does not prove original physical cause."
+  },
+  "after": {
+    "version": "2.4.3",
+    "iso_sha256": "65b0191f0932e2ba3bdf815bac5da1a9d962b45a8baa2515b52bab90a21fefd1",
+    "injected_actual_emulated_framebuffer": true,
+    "band_box": [
+      529,
+      487,
+      753,
+      491
+    ],
+    "repaired_without_mouse_or_keys": true,
+    "white_pixels_remaining": 0,
+    "cpu_count": 2,
+    "note": "Synthetic scanout corruption; does not prove original physical cause."
+  }
+}

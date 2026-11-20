@@ -1,0 +1,8 @@
+tinymacOS 2.0.1 Riviera · build 20A2 · USB Tablet per QEMU
+
+ISO avviabile: https://drive.google.com/uc?id=1-Ja9qcEr34D8eSdNr9vsUULIwaleUHoI&export=download
+Solo Recupero: https://drive.google.com/uc?id=12HFtgI4Ma8_AkWs44Cg-UzTyC3ZK0QEg&export=download
+Per installare serve soltanto la ISO. BaseSystem.img è già incluso.
+Dimensioni e comandi: Riviera-2.0.1.md. Digest: tinymacOS-2.0.1-SHA256.txt.
+Le ISO 2.0 e 1.3 su Drive non sono state sostituite.
+Nessuna ISO o ZIP viene creata nel workspace.

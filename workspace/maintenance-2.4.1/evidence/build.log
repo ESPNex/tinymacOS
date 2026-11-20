@@ -1,0 +1,31 @@
+BaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 9b3ba7deae10d23debc1f54a4f402da761d04598fa699e76f54c231093c8241d
+userspace/settings.c: In function 'row2':
+userspace/settings.c:76:37: warning: unused parameter 'w' [-Wunused-parameter]
+   76 | static void row2(int x, int ry, int w, const char *l, const char *v)
+      |                                 ~~~~^
+kernel/kext.c: In function 'kext_log':
+kernel/kext.c:502:34: warning: unused parameter 't' [-Wunused-parameter]
+  502 | static void kext_log(const char *t)
+      |                      ~~~~~~~~~~~~^
+kernel/net.c: In function 'lwip_tx':
+kernel/net.c:59:22: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+   59 |                 char b[110];
+      |                      ^
+kernel/net.c: In function 'net_ping':
+kernel/net.c:239:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  239 |             char b[28];
+      |                  ^
+kernel/net.c:255:25: warning: unused variable 'hx' [-Wunused-variable]
+  255 |             const char *hx = "0123456789abcdef";
+      |                         ^~
+kernel/net.c:254:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  254 |             char b[24];
+      |                  ^
+kernel/net.c: In function 'dns_recv':
+kernel/net.c:456:14: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  456 |         char b[72];
+      |              ^
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600
+ISO (outside source): /var/tmp/tmc-maintenance-241/tinymacOS-2.4.1-x86_64.iso

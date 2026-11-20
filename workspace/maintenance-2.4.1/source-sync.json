@@ -1,0 +1,150 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "face431f23d29b5f62af7ffeb7b249dd7fbdf0ac7855f85c357f08b38bc5eaee"
+  },
+  {
+    "path": "include/hidtablet.h",
+    "sha256": "38b7b6d0c4c7a98bfb9295b2117b7d5a55af654eed827c5b77fd060998bbffe7"
+  },
+  {
+    "path": "include/window_chrome.h",
+    "sha256": "0ba0b1e33dd6e7d5996e1f606175af12ab5bb2bdc5be73f76536012be84e9ffa"
+  },
+  {
+    "path": "boot/loader.c",
+    "sha256": "af8ae572765f5d02c1f89c78767ae180f60e685b131bdc970ded60e460d3dde2"
+  },
+  {
+    "path": "kernel/k.h",
+    "sha256": "89327a77700769fc8e9c8f64f7f346786a1294cf1c1ecfe8ccd6fdca4864d3bd"
+  },
+  {
+    "path": "desktop/main.c",
+    "sha256": "4cdef828ce29e26c8148f967891e8cbd8a816e5f249897153d96384cd9b888c0"
+  },
+  {
+    "path": "desktop/login.c",
+    "sha256": "526be2dfc399d514e9c6decf979acae2d4f47a45e358e7b31cd5715b9eb61a99"
+  },
+  {
+    "path": "desktop/desk.h",
+    "sha256": "28274f925a2a4c956b09c3a306cc51a9779a6a4c542d3fba50e54d17f8945559"
+  },
+  {
+    "path": "drivers/xhci.c",
+    "sha256": "da4ca7c098586dc00c4ad89beec92fe9f342f29fc8af3d86820bc9570b8ac454"
+  },
+  {
+    "path": "drivers/hidtablet.c",
+    "sha256": "091c4f925589900fa5d9a9064895ef4767c61e356e162c0b554960173e7c9b25"
+  },
+  {
+    "path": "drivers/input.c",
+    "sha256": "c4bc56a52c0014951872296c61c5e7cfb8db789e3cafd2696d92bce78761a1fb"
+  },
+  {
+    "path": "recovery/usbhid.c",
+    "sha256": "e2217387f85038107b17cc311fc7131979609014c3e02d54c5e0a93bd09abde1"
+  },
+  {
+    "path": "recovery/main.c",
+    "sha256": "db20e41dafac7936ba5caddb37891fd5a4cac10a78a323c61a41f9c4109bfbdd"
+  },
+  {
+    "path": "recovery/screen.c",
+    "sha256": "35afe4530020976195d6be40d6e39faf6efdae7abebc09dde610484f4f3bbedb"
+  },
+  {
+    "path": "recovery/screen.h",
+    "sha256": "dd037b683eda4da6c60acc5543302ea6be1df1a06f4d4086d873a4a48ae02c91"
+  },
+  {
+    "path": "tools/system_volume.py",
+    "sha256": "b53511bf6d8c116c1186cb7d9603500cb8322076ec64aebab2cc081d3256da4a"
+  },
+  {
+    "path": "tools/run-qemu.sh",
+    "sha256": "cda52315dfa6bcf6ed6132c343cf7d15f74fe7244c24dda456670e6dc19fc5ca"
+  },
+  {
+    "path": "tools/env.sh",
+    "sha256": "736292ad1f8c4554c2ddb1b7e81a021bc893570142bdb2432f91d6c7264e2829"
+  },
+  {
+    "path": "tests/legacy_1_3.py",
+    "sha256": "88e1060a3a96f759365f7ad77a0c4b7eebc95877eaa6e5e45fe0052f57fe8812"
+  },
+  {
+    "path": "tests/settings_gui.py",
+    "sha256": "ed08217749e45522c71f56f2a0082dbeb3d66c437ccb1868b4042e4fb615811c"
+  },
+  {
+    "path": "tests/orizzonte.py",
+    "sha256": "9bb8826cc88d37095dd4aa6d5378473d1776d548ec5269ee7bd9398806b924e5"
+  },
+  {
+    "path": "tests/integration.py",
+    "sha256": "47425026db4c0c72b8b8c15126181ca6493986c95ee6875ae9fcb4f6ef26ff41"
+  },
+  {
+    "path": "tests/account_reset.py",
+    "sha256": "c3d298dd1bd9154f4b9a71570a66fb598715d83ed175cad55cf8519c637d2575"
+  },
+  {
+    "path": "tests/riviera_contained.py",
+    "sha256": "03154909394456e01652c80d3b83a4aedbef66fb88c2e83d5aecfa3e26909a51"
+  },
+  {
+    "path": "tests/riviera_live.py",
+    "sha256": "21bef3fbc4d6894e3cb54c725295d6be77eab72be1269b4f79da9c067b175e05"
+  },
+  {
+    "path": "tests/riviera_apps.py",
+    "sha256": "78d35743dab7a927e00e248f060f2cf7cd61b247e7d0dfe881a5e6160462862a"
+  },
+  {
+    "path": "tests/riviera_guard.py",
+    "sha256": "77ece6f8385ebce3805a50feb82ab99f5dc0668d1c5782c7cd0f325077fd65c7"
+  },
+  {
+    "path": "tests/relative_pointer.c",
+    "sha256": "4984ea41ec5aee03f2e9faf3b2e982501c24ae69a79a5bfaf8e161bd87730766"
+  },
+  {
+    "path": "tests/riviera_pointer.py",
+    "sha256": "f400359349b002a507caae36677b0d31c338f86ed1575c4b1808df55e64f860c"
+  },
+  {
+    "path": "tests/riviera_console.py",
+    "sha256": "79df53c9c839c9f0da1db5235a5ad1d64a12522f7dca536e6d9dcfe6802aae22"
+  },
+  {
+    "path": "tests/cli_matrix.py",
+    "sha256": "fceecdbe7fc1a4d6ef0ab140a77fa38a57fb36d582be96ebfc0a6f9c9e208e62"
+  },
+  {
+    "path": "tests/riviera_disk.py",
+    "sha256": "ad55feab6c8c8aa0056730bde7bac91c5685d79e829d987947884b3252eacebd"
+  },
+  {
+    "path": "userspace/settings.c",
+    "sha256": "be15611a8a72bf662b89f2c1ec7699c953e705d1a99e0b58c079c5da36f26eaf"
+  },
+  {
+    "path": "userspace/about.c",
+    "sha256": "d58f64883739124df39dd92ac4dd807acf55a556303bf73808cc02ef4e541d5e"
+  },
+  {
+    "path": "userspace/command.c",
+    "sha256": "c7b199f9ddcae88d6812ed2b1ad67c5b6ab2882bf55479373e4201d4fb9ae246"
+  },
+  {
+    "path": "userspace/installer.c",
+    "sha256": "94902d44c95baf6829fb2a5b73fab90c8d089ff669df3be6c65d8eb9ac1e479b"
+  },
+  {
+    "path": "tools/console/server.py",
+    "sha256": "4ca991886e6daeb9374709cfa8544285994bc2b6f7d9dbe1966fca476cd13cb1"
+  }
+]

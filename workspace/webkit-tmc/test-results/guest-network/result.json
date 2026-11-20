@@ -1,0 +1,25 @@
+{
+  "scope": "actual QEMU guest with target backend, lwIP/e1000/slirp and controlled loopback peer; NOT WebKit/HTTPS acceptance",
+  "iso_qa_only": true,
+  "iso_sha256": "4f4cefafaf5069a1bedafaf694163a873abd132b1e96ae5e97f7893b05834e05",
+  "payload_bytes": 1048893,
+  "expected_sha256": "37c257a3a8dac6f78f1961e5e22198a45cab413463981513df57c772adb69503",
+  "server": [
+    {
+      "request": "STREAM",
+      "server_FIN_sent": true,
+      "guest_digest_after_FIN": "37c257a3a8dac6f78f1961e5e22198a45cab413463981513df57c772adb69503",
+      "payload_and_half_close_verified": true
+    },
+    {
+      "request": "WAIT",
+      "guest_closed_without_data": true
+    },
+    {
+      "request": "RESET",
+      "abortive_close_requested": true
+    }
+  ],
+  "passed": true,
+  "server_errors": []
+}

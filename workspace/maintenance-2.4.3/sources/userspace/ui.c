@@ -1,0 +1,214 @@
+#include "ui.h"
+int aw, ah;
+SysInfo si;
+char wintitle[48];
+static Draw list[NCMDS];
+static int count, fx;
+void ui_motion(int kind)
+{
+    fx = kind;
+}
+void win(int w, int h, const char *s)
+{
+    aw = w - 2;
+    ah = h;
+    strset(wintitle, s, 48);
+    if (sc(S_WOPEN, w, h, s, 0) < 0)
+        quit();
+    sc(S_INFO, &si, 0, 0, 0);
+}
+void begin(void)
+{
+    count = 0;
+}
+void finish(void)
+{
+    sc(S_WDRAW, list, count, wintitle, fx);
+    fx = 0;
+}
+static Draw *op(int kind, int x, int y, int w, int h, int style, u32 col, int r)
+{
+    static Draw sink;
+    Draw *q = count < NCMDS ? list + count++ : &sink;
+    *q = (Draw) {
+        x, y, w, h, kind, style, r, col, {0}
+    };
+    return q;
+}
+void Box(int x, int y, int w, int h, int r, u32 c)
+{
+    op(C_RECT, x, y, w, h, 0, c, r);
+}
+void Text(int x, int y, const char *s, int f, u32 c)
+{
+    Draw *q = op(C_TEXT, x, y, 0, 0, f, c, 0);
+    strset(q->text, s, 100);
+}
+void Center(int x, int y, const char *s, int f, u32 c)
+{
+    Text(x, y, s, f | 128, c);
+}
+void Icon(int x, int y, int size, int id)
+{
+    op(C_ICON, x, y, size, size, id, 0, 0);
+}
+void Line(int x, int y, int X, int Y, u32 c)
+{
+    op(C_LINE, x, y, X, Y, 0, c, 0);
+}
+void button(int x, int y, int w, const char *s, int strong)
+{
+    op(C_BUTTON, x, y, w, 26, strong != 0, 0, 0);
+    Center(x + w / 2, y + 4, s, F_SMALL, strong ? (si.dark ? 0x12284a : 0xffffff) : TX);
+}
+void modal(const char *name, const char *value, const char *hint)
+{
+    int w = MIN(aw - 46, 430), x = (aw - w) / 2, y = (ah - 143) / 2;
+
+    Sheet(x, y, w, 143, 15);
+    Text(x + 16, y + 12, name, F_BOLD, TX);
+    Box(x + 16, y + 43, w - 32, 35, 5, PANEL);
+    int l = strlen(value);
+    Text(x + 25, y + 52, value + MAX(0, l - (w - 59) / 9), F_MONO, TX);
+    Text(x + 16, y + 91, hint, F_SMALL, SUB);
+    Text(x + 16, y + 115, "Invio per confermare  ·  Esc per annullare", F_MICRO, EMP);
+}
+int baseevent(Event *e)
+{
+    if (e->type == EV_THEME) {
+        sc(S_INFO, &si, 0, 0, 0);
+        return 1;
+    }
+    if (e->type == EV_RESIZE) {
+        aw = e->a;
+        ah = e->b;
+        return 1;
+    }
+    return 0;
+}
+void quit(void)
+{
+    sc(S_EXIT, 0, 0, 0, 0);
+    for (;;)
+        ;
+}
+void addnum(char *s, u64 a, int cap)
+{
+    char n[24];
+    number(n, a);
+    append(s, n, cap);
+}
+void parentpath(char *p)
+{
+    int len = strlen(p);
+    while (len > 1 && p[len - 1] != '/')
+        len--;
+    if (len > 1)
+        len--;
+    p[len] = 0;
+}
+const char *leaf(const char *p)
+{
+    const char *s = p;
+    while (*p) {
+        if (*p == '/')
+            s = p + 1;
+        p++;
+    }
+    return s;
+}
+int absolutepath(char *out, const char *cwd, const char *name)
+{
+    if (!name || !*name)
+        return -1;
+    char s[PATHLEN * 2];
+    if (*name == '/')
+        strset(s, name, sizeof s);
+    else {
+        strset(s, cwd, sizeof s);
+        append(s, "/", sizeof s);
+        append(s, name, sizeof s);
+    }
+    int at = 0;
+    out[0] = '/';
+    out[1] = 0;
+    while (s[at]) {
+        while (s[at] == '/')
+            at++;
+        int j = at;
+        while (s[j] && s[j] != '/')
+            j++;
+        if (j == at)
+            break;
+        int n = j - at;
+        if (n > 47)
+            return -1;
+        char part[48];
+        memcpy(part, s + at, n);
+        part[n] = 0;
+        at = j;
+        if (eq(part, "."))
+            continue;
+        if (eq(part, "..")) {
+            parentpath(out);
+            continue;
+        }
+        if (strlen(out) + n + 2 >= PATHLEN)
+            return -1;
+        if (!eq(out, "/"))
+            append(out, "/", PATHLEN);
+        append(out, part, PATHLEN);
+    }
+    return 0;
+}
+int readfile(const char *p, char *b, int cap)
+{
+    int d = sc(S_OPEN, p, 0, 0, 0);
+    if (d < 0)
+        return -1;
+    int n = sc(S_READ, d, b, cap, 0);
+    sc(S_CLOSE, d, 0, 0, 0);
+    return n;
+}
+int writefile(const char *p, const char *b, int n)
+{
+    int d = sc(S_OPEN, p, 1, 0, 0);
+    if (d < 0) {
+        if (sc(S_CREATE, p, 0, 0, 0) < 0)
+            return -1;
+        d = sc(S_OPEN, p, 1, 0, 0);
+    }
+    if (d < 0)
+        return -1;
+    int r = sc(S_WRITE, d, b, n, 0);
+    sc(S_CLOSE, d, 0, 0, 0);
+    return r;
+}
+int copyfile(const char *p, const char *q)
+{
+    char buf[MAXFILE];
+    Dirent to, from;
+    if (sc(S_STAT, p, &from, 0, 0) < 0 || from.dir || from.size > MAXFILE)return -1;
+    if (sc(S_STAT, q, &to, 0, 0) == 0)
+        return -1;
+    int n = readfile(p, buf, MAXFILE);
+    return n < 0 ? -1 : writefile(q, buf, n);
+}
+void title(const char *s, const char *t)
+{
+    strset(wintitle, s, 48);
+    append(wintitle, t, 48);
+}
+
+void Photo(int x, int y, int w, int h, int id, int r)
+{
+    op(C_IMAGE, x, y, w, h, id, 0, r);
+}
+void Sheet(int x, int y, int w, int h, int r)
+{
+    op(C_GLASS, x, y, w, h, 0, 0, r);
+}
+void Keyface(int x, int y, int w, int h, int on)
+{
+    op(C_BUTTON, x, y, w, h, on != 0, 0, 0);
+}

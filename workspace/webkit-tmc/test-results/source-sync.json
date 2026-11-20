@@ -1,0 +1,58 @@
+[
+  {
+    "path": "include/uaccess_gate.h",
+    "sha256": "d5c3bc6e9234cdd3fc80148cc376b3dce7dddde726295c8c6399087257d227e0"
+  },
+  {
+    "path": "arch/smp.c",
+    "sha256": "dfe2826579995bdc6a6756d9169346f7f265da1f7b3394890411c0dd57d45707"
+  },
+  {
+    "path": "include/spinlock.h",
+    "sha256": "eecd8b0f247cc7fae94f7081788c457f5ccfc181b441d9d1d1c6fdf4cc419e11"
+  },
+  {
+    "path": "include/tlb_mailbox.h",
+    "sha256": "b40485d1ddba337d4fe35fa29eb2af08075dcea7f97ee34d7ab35cdb63b3f808"
+  },
+  {
+    "path": "include/netabi.h",
+    "sha256": "aee2496859105113cc27c4f29ca4d96a608f4fdd17d8291a43e8c7c15d38ffd6"
+  },
+  {
+    "path": "include/system_palette.h",
+    "sha256": "81ee2b6b2b0ce86542f2ee2771ebf5d019fb8cc6a1c082ed6c4aa8934cda3616"
+  },
+  {
+    "path": "kernel/net.c",
+    "sha256": "78bce0805b4205ae8e77c234250f732afa1be2fe536ea761f19d7df6d6f5918a"
+  },
+  {
+    "path": "kernel/syscall.c",
+    "sha256": "82039fe390d5660da01f4518f3a1be5ba4e6dd93308858b5f6f8e8b12f9b6673"
+  },
+  {
+    "path": "kernel/k.h",
+    "sha256": "38f23b9a4c8bc20da700c7515426115191416b2681940a90ea30cb411761862e"
+  },
+  {
+    "path": "desktop/gfx.c",
+    "sha256": "a54b7a5322810c8be546410a9d63e1d17fa5b2b851a549327d8cc4550b1cebce"
+  },
+  {
+    "path": "kernel/memory.c",
+    "sha256": "5068207b9986e5a4e30c5ecf803921df20a7dfc7ae2a32bcdd6d3679ab483dbc"
+  },
+  {
+    "path": "kernel/uservm.c",
+    "sha256": "e001cac3ac7872a781f151e114b87bebd7e7da7611bac7628728acd27e2b090c"
+  },
+  {
+    "path": "include/abi.h",
+    "sha256": "4e434278e2117d14c487d133c181466ea4eb030c2e17c86c355f5418e419568d"
+  },
+  {
+    "path": "include/vmabi.h",
+    "sha256": "1205319381faad851048e57ed1e81fc5929e2515dab661c5caa7b1eb93351315"
+  }
+]

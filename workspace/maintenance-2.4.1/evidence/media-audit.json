@@ -1,0 +1,8 @@
+[
+  "Un solo CD: DMG visibile, file di avvio El Torito e file nella sorgente Recovery HD identici; SHA-256 nei due loader e manifest installazione verificati",
+  "KernelCache: vero payload ELF64, dimensione e SHA-256 corretti; stesso file su live e installato",
+  "Il solo delta del catalogo live è il bundle installatore; il suo eseguibile non è nei byte dell’ESP installato",
+  "15 bundle installati con Info.plist (13 app Mach-O x86-64, senza browser + 2 kext ELF64 ET_REL); 40 percorsi Unix eseguibili; segmenti W^X e LC_MAIN verificati",
+  "Nessun sorgente o eseguibile di diagnostica nei cataloghi; assenti le note firme di tracing del vecchio guest",
+  "BaseSystem UDIF contiene solo il runtime UEFI di Recupero, niente installer o applicazioni desktop"
+]

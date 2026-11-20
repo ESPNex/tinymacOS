@@ -1,0 +1,134 @@
+[
+  {
+    "path": "boot/loader.c",
+    "sha256": "e0d77899b6325e7d322dcabdfaaf4c26d320d468bb9bf917a6dac82c8f6b5359"
+  },
+  {
+    "path": "boot/opencore.plist",
+    "sha256": "8c714a156cdda360a230592f145203a89b27cc383bd5fdf33ec79c88420ea638"
+  },
+  {
+    "path": "boot/splash.h",
+    "sha256": "ef8dda891bb47967adb13f20036cf830524d46da0e4394df37696d3890e0b528"
+  },
+  {
+    "path": "fs/install.c",
+    "sha256": "fc16bcb723050096ad58d46d784f1f233ba50da52b5a65b79aa009a72f8171f1"
+  },
+  {
+    "path": "include/abi.h",
+    "sha256": "4e434278e2117d14c487d133c181466ea4eb030c2e17c86c355f5418e419568d"
+  },
+  {
+    "path": "include/bootconfig.h",
+    "sha256": "dd7762ef54024af032634a9e30ded0434a45fca728d403af6a62eefdb094da09"
+  },
+  {
+    "path": "include/bootconsole.h",
+    "sha256": "b0662071047bd46cb89a801c9909314287488f5417d668a7fc4779143f6ed753"
+  },
+  {
+    "path": "include/commands.def",
+    "sha256": "0e187bd4469a37bca1e1d60f677a237a348986aba79f92ea8d4c239163ac6a24"
+  },
+  {
+    "path": "include/handoff.h",
+    "sha256": "25c6854a6f0c0d43773d371caed5fd4f04715ffe6bf1ff15295dc50b57846a4b"
+  },
+  {
+    "path": "include/uaccess_gate.h",
+    "sha256": "d5c3bc6e9234cdd3fc80148cc376b3dce7dddde726295c8c6399087257d227e0"
+  },
+  {
+    "path": "include/vmabi.h",
+    "sha256": "1205319381faad851048e57ed1e81fc5929e2515dab661c5caa7b1eb93351315"
+  },
+  {
+    "path": "kernel/k.h",
+    "sha256": "64d301d3fac13bf08b7c2281b5e1d92827e48b34c31437e0ece6f3f58f4d002c"
+  },
+  {
+    "path": "kernel/log.c",
+    "sha256": "8a4edc76b4b525202172522b0ee5fb36eab55b70160ad84e3644896671eebed5"
+  },
+  {
+    "path": "kernel/main.c",
+    "sha256": "c8385c51e1a3bdaf560305750206720391f25648fc35ebf9eec0471b96027b4a"
+  },
+  {
+    "path": "kernel/memory.c",
+    "sha256": "5068207b9986e5a4e30c5ecf803921df20a7dfc7ae2a32bcdd6d3679ab483dbc"
+  },
+  {
+    "path": "kernel/sched.c",
+    "sha256": "df8d0264d31585d969da86144bc5476e2538cccfb1e9fdf68c361585f3e39ef8"
+  },
+  {
+    "path": "kernel/syscall.c",
+    "sha256": "82039fe390d5660da01f4518f3a1be5ba4e6dd93308858b5f6f8e8b12f9b6673"
+  },
+  {
+    "path": "kernel/uservm.c",
+    "sha256": "e001cac3ac7872a781f151e114b87bebd7e7da7611bac7628728acd27e2b090c"
+  },
+  {
+    "path": "tools/build-legacy.py",
+    "sha256": "91c7014ca8765fb342efed3a8f9d08cbf63496f818f49dfe220a2c9e86bd7ae2"
+  },
+  {
+    "path": "tools/iso.sh",
+    "sha256": "d584b4f46bc8b76cd98a5215e56fcc6e6033c0b5d26225d7c39839a278d138cd"
+  },
+  {
+    "path": "tools/run-bios-qemu.sh",
+    "sha256": "db1f964a07293cfa5a6c7c0480cb9e2723242de5fe32c2e46865cdc5c2a8072e"
+  },
+  {
+    "path": "userspace/command.c",
+    "sha256": "967d4d7505f9279a44f23311de7d1bc4c38bf1e9e49e97f3ef56770686c72cb8"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/BiosVideo.efi",
+    "sha256": "3dcae45c0dc8f4e597162e8500d70d4a140c1c99b763681997c4673bce0e30f6"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/LICENSE.txt",
+    "sha256": "4ca709aac88e7b297e794f464d6557203b23a4e92e792b579bb968fef2bce4c4"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/OpenCore.efi",
+    "sha256": "9ef21f9d846a992c030fa5858736a6d9efa70a3b4ad88b8d747338bb457b14d4"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/OpenRuntime.efi",
+    "sha256": "c67be56660047237360df5eb7f080a2b13129d68e829bee9ad0230e45d516be8"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/README.upstream.md",
+    "sha256": "56c58007a4d45c723bc2a885188e94ab819f6b15f3c97d2d429b72ecaa16adb3"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/Sample.plist",
+    "sha256": "a58ca93ee0e2ac199469b696606ba96bfaafb0a7902e57de6d557548a0c96a58"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/boot0",
+    "sha256": "6b73131518f31fc204e8b228481e75905de30835d348d0aa7407023f05ec168e"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/boot1f32",
+    "sha256": "7fc1cc76becc70d45c663e423c4773c760c20974bb89e2679ffffa6ac323d5ac"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/bootX64",
+    "sha256": "c5abb22461509624d04e2206fd0232ed3430eb8799f58ffbf994f029c5ced1eb"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/bootX64-blockio",
+    "sha256": "b170189ba3615b3aacab77d2bec1d20d6c82058ef7948041f1ed08b4e9bd4f69"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/vendor-lock.json",
+    "sha256": "7df7ac0888001fd55e261f4e7713fa69a4101bb372eadb041283e123d616dff9"
+  }
+]

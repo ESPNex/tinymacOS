@@ -1,0 +1,18 @@
+{
+  "version": "1.0.8",
+  "release_url": "https://github.com/acidanthera/OpenCorePkg/releases/download/1.0.8/OpenCore-1.0.8-RELEASE.zip",
+  "release_sha256": "2011e8b7216ecb2645d97ea710df965947edd406846e92050b9bc4190be6d27b",
+  "scope": "extracted redistribution artifacts, not complete OpenCore sources",
+  "source_repository": "https://github.com/acidanthera/OpenCorePkg/tree/1.0.8",
+  "files": {
+    "boot0": "6b73131518f31fc204e8b228481e75905de30835d348d0aa7407023f05ec168e",
+    "boot1f32": "7fc1cc76becc70d45c663e423c4773c760c20974bb89e2679ffffa6ac323d5ac",
+    "bootX64": "c5abb22461509624d04e2206fd0232ed3430eb8799f58ffbf994f029c5ced1eb",
+    "bootX64-blockio": "b170189ba3615b3aacab77d2bec1d20d6c82058ef7948041f1ed08b4e9bd4f69",
+    "OpenCore.efi": "9ef21f9d846a992c030fa5858736a6d9efa70a3b4ad88b8d747338bb457b14d4",
+    "BiosVideo.efi": "3dcae45c0dc8f4e597162e8500d70d4a140c1c99b763681997c4673bce0e30f6",
+    "OpenRuntime.efi": "c67be56660047237360df5eb7f080a2b13129d68e829bee9ad0230e45d516be8",
+    "Sample.plist": "a58ca93ee0e2ac199469b696606ba96bfaafb0a7902e57de6d557548a0c96a58",
+    "README.upstream.md": "56c58007a4d45c723bc2a885188e94ab819f6b15f3c97d2d429b72ecaa16adb3"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "scope": "actual QEMU guest with target backend, lwIP/e1000/slirp and controlled loopback peer; NOT WebKit/HTTPS acceptance",
+  "iso_qa_only": true,
+  "iso_sha256": "a03dfe287b742a4ff6d86369bd20ae096871e47c11e772a0f2e22c13d630f442",
+  "requested_vcpus": 1,
+  "font_bytes": 2215962,
+  "font_sha256": "ca99fceb218091816dfbc0f2dfaef7fef846599806d620c3f2c6302c1d1d0b8c",
+  "payload_bytes": 1048893,
+  "expected_sha256": "37c257a3a8dac6f78f1961e5e22198a45cab413463981513df57c772adb69503",
+  "server": [
+    {
+      "request": "STREAM",
+      "server_FIN_sent": true,
+      "guest_digest_after_FIN": "37c257a3a8dac6f78f1961e5e22198a45cab413463981513df57c772adb69503",
+      "payload_and_half_close_verified": true
+    },
+    {
+      "request": "WAIT",
+      "guest_closed_without_data": true
+    },
+    {
+      "request": "RESET",
+      "abortive_close_requested": true
+    }
+  ],
+  "passed": true,
+  "qmp_vcpu_count": 1,
+  "network_devices": "e1000.0: index=0,type=nic,model=e1000,macaddr=52:54:00:12:34:56\r\n \\ net0: index=0,type=user,net=10.0.2.0,restrict=off\r\n",
+  "framebuffer_test_markers_verified": true,
+  "server_errors": []
+}

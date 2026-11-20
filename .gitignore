@@ -1,0 +1,44 @@
+# Credentials, machine-local state and caches (never part of the backup).
+/.local/
+/.cache/
+/.config/
+/.npm/
+/.sudo_as_admin_successful
+**/.env
+**/.env.*
+**/.netrc
+**/.git-credentials
+**/credentials.json
+**/hosts.yml
+**/id_rsa*
+**/id_ed25519*
+**/__pycache__/
+**/*.pyc
+**/node_modules/
+**/.venv/
+**/.pytest_cache/
+
+# Generated build/media belong under /var/tmp, not in this repository.
+*.iso
+*.ISO
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.raw
+*.qcow2
+*.vmdk
+*.vdi
+*.fat
+*.fd
+*.dmg
+*.o
+*.elf
+*.so
+*.debug
+*.map
+**/build/
+**/dist/
+
+# Keep source assets, extracted vendor EFI/boot artifacts, original attachments,
+# screenshots, test results and frozen release source trees.

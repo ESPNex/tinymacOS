@@ -1,0 +1,89 @@
+{
+  "iso_sha256": "e95428b77ca257f83636844d2dffdac6759a6305c9272ca67c2f8b3fcba660e6",
+  "devices": {
+    "tablet-live": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Tablet",
+          "current": true,
+          "absolute": true
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Tablet, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    },
+    "tablet-recovery": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Tablet",
+          "current": true,
+          "absolute": true
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Tablet, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    },
+    "mouse-live": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Mouse",
+          "current": true,
+          "absolute": false
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    },
+    "mouse-recovery": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Mouse",
+          "current": true,
+          "absolute": false
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    }
+  },
+  "checks": [
+    "tablet / ISO: unico puntatore QMP. Cursore nativo confrontato con lo sprite di distribuzione su 8 posizioni del setup: [(0, 0), (1279, 799), (1279, 0), (0, 799), (639, 398), (65, 731), (1217, 82), (639, 398)]",
+    "tablet / account: focus sui tre campi e pulsante di creazione azionati con clic; accesso alla scrivania senza Tab né Invio",
+    "tablet / scrivania: cursore verificato in due punti; trascinamento Finder di (+87,+41) pixel esatti e rilascio: la finestra resta ferma mentre il puntatore si sposta",
+    "tablet / app: menu contestuale da clic destro; doppio clic sull’icona apre l’installer; rotella su/giù attiva e chiude la cronologia di Terminale",
+    "tablet / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 2.4.1 letta sulla shell UEFI",
+    "mouse / ISO: unico puntatore QMP. Cursore nativo confrontato con lo sprite di distribuzione su 2 posizioni del setup: [(762, 482), (142, 613)]",
+    "mouse / account: focus sui tre campi e pulsante di creazione azionati con clic; accesso alla scrivania senza Tab né Invio",
+    "mouse / scrivania: cursore verificato in due punti; trascinamento Finder di (+87,+41) pixel esatti e rilascio: la finestra resta ferma mentre il puntatore si sposta",
+    "mouse / scrivania: il clic destro apre il menu contestuale con il solo usb-mouse",
+    "mouse / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 2.4.1 letta sulla shell UEFI"
+  ]
+}

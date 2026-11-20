@@ -1,0 +1,5 @@
+Fixture generata avviando TinyOS 1.0 con OVMF/QEMU e un disco TinyFS vuoto.
+ISO SHA-256: 1f77c5c6f66f7e5492f23afa4062a66f173b36354bfa655d7b85f806d6faaf00
+Dal Terminal: write Documents/legacy.txt Conservare questo documento.
+In Settings: d, w, p. Spegnimento dal Terminal: off.
+SHA-256 user.img non compresso: 9f99e5ef34c7a4f76b55c9b019cc60b57df5a55b0a0272fefb088753acb305ce

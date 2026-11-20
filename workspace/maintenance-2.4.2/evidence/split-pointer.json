@@ -1,0 +1,48 @@
+{
+  "iso_sha256": "36654e5a92e8c60d5f012003f2b7f6cd19fbab8cc5bef060773816f7226dcbd0",
+  "devices": {
+    "mouse-live": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Mouse",
+          "current": true,
+          "absolute": false
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 1.1, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    },
+    "mouse-recovery": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU HID Mouse",
+          "current": true,
+          "absolute": false
+        }
+      ],
+      "info usb": [
+        "Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Keyboard",
+        "  Device 1.1, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    }
+  },
+  "checks": [
+    "mouse / ISO: unico puntatore QMP. Cursore nativo confrontato con lo sprite di distribuzione su 2 posizioni del setup: [(762, 482), (142, 613)]",
+    "mouse / account: focus sui tre campi e pulsante di creazione azionati con clic; accesso alla scrivania senza Tab né Invio",
+    "mouse / scrivania: cursore verificato in due punti; trascinamento Finder di (+87,+41) pixel esatti e rilascio: la finestra resta ferma mentre il puntatore si sposta",
+    "mouse / scrivania: il clic destro apre il menu contestuale con il solo usb-mouse",
+    "mouse / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 2.4.2 letta sulla shell UEFI"
+  ]
+}

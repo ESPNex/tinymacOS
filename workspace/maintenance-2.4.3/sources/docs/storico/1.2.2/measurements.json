@@ -1,0 +1,233 @@
+{
+  "iso_sha256": "e763fe876314cac5b69caa5675bdec35d221c127a1ec74a5b1f5b39b5ea5a2e1",
+  "optical_files": {
+    "kernel": {
+      "bytes": 7512504,
+      "sha256": "012747038b937433c1e51bdb10b0bde11b75b1683e3597e488a7445939657015"
+    },
+    "loader": {
+      "bytes": 196772,
+      "sha256": "a309a0faa795ce968909bda3cb412fd99939a3970ead9e0466363a81ecc6d2c0"
+    },
+    "catalog": {
+      "bytes": 240604,
+      "sha256": "338139653f480c87782b8f7df35e8885b7e9f62cf9e3e8836c8f7ff0b8fab9c0"
+    },
+    "kernel.map": {
+      "bytes": 37569,
+      "sha256": "88da283d9e70aa7f24d12205a059177411da336ed1255c7f7e2dbd549d4c079e"
+    },
+    "Sorgenti/kernel/main.c": {
+      "bytes": 756,
+      "sha256": "24881375f769a3a654e3e518360bd214333de8e6caef9d3deb75ae2004437f5d"
+    }
+  },
+  "pixel_exact_boot_marks": 36,
+  "apple_path_sha256": "5672ddd18332f4abf76e90c2a53f4c80d0c279082948eef65212199a2bc29963",
+  "splash_filled_pixels_out_of_192": [
+    1,
+    5,
+    7,
+    11,
+    13,
+    17,
+    19,
+    23,
+    26,
+    28,
+    32,
+    34,
+    38,
+    40,
+    44,
+    48,
+    49,
+    53,
+    57,
+    59,
+    63,
+    67,
+    69,
+    72,
+    76,
+    78,
+    82,
+    86,
+    90,
+    96,
+    101,
+    103,
+    109,
+    115,
+    155,
+    180,
+    192
+  ],
+  "login_activity": {
+    "creazione": {
+      "GOP_samples": 37,
+      "peak_spokes_clockwise_from_top": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1,
+        2,
+        3
+      ],
+      "observed_span_ms": 650
+    },
+    "rifiuto": {
+      "GOP_samples": 36,
+      "peak_spokes_clockwise_from_top": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1,
+        2
+      ],
+      "observed_span_ms": 637
+    },
+    "accesso": {
+      "GOP_samples": 36,
+      "peak_spokes_clockwise_from_top": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        0,
+        1,
+        2
+      ],
+      "observed_span_ms": 629
+    },
+    "movimento_ridotto": {
+      "GOP_samples": 28,
+      "peak_spokes_clockwise_from_top": [
+        0
+      ],
+      "observed_span_ms": 478
+    }
+  },
+  "distinct_gop_states_in_minimize": 7,
+  "calculator_input_to_serial_ms": 16.4,
+  "sheet_patch_unique_rgb": [
+    8,
+    1
+  ],
+  "full_motion_samples": {
+    "open": [
+      {
+        "frames": 8,
+        "pit_ticks": 32
+      },
+      {
+        "frames": 6,
+        "pit_ticks": 35
+      },
+      {
+        "frames": 8,
+        "pit_ticks": 33
+      },
+      {
+        "frames": 5,
+        "pit_ticks": 36
+      },
+      {
+        "frames": 9,
+        "pit_ticks": 36
+      },
+      {
+        "frames": 8,
+        "pit_ticks": 34
+      },
+      {
+        "frames": 8,
+        "pit_ticks": 34
+      },
+      {
+        "frames": 5,
+        "pit_ticks": 34
+      },
+      {
+        "frames": 8,
+        "pit_ticks": 37
+      },
+      {
+        "frames": 8,
+        "pit_ticks": 36
+      },
+      {
+        "frames": 7,
+        "pit_ticks": 53
+      }
+    ],
+    "close": [
+      {
+        "frames": 8,
+        "pit_ticks": 24
+      },
+      {
+        "frames": 7,
+        "pit_ticks": 23
+      },
+      {
+        "frames": 6,
+        "pit_ticks": 23
+      },
+      {
+        "frames": 5,
+        "pit_ticks": 22
+      }
+    ],
+    "zoom": [
+      {
+        "frames": 7,
+        "pit_ticks": 42
+      },
+      {
+        "frames": 7,
+        "pit_ticks": 33
+      }
+    ],
+    "minimize": [
+      {
+        "frames": 13,
+        "pit_ticks": 46
+      }
+    ],
+    "restore": [
+      {
+        "frames": 11,
+        "pit_ticks": 42
+      }
+    ]
+  }
+}

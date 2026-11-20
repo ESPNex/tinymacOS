@@ -1,0 +1,10 @@
+tinymacOS 2.0 Riviera · build 20A1
+
+ISO avviabile: https://drive.google.com/uc?id=1IpyKR0xBkJZBW7ftAFV7MkPeymaNA9cA&export=download
+Solo Recupero: https://drive.google.com/uc?id=1B1cdGg1jKvDGr_Hzy4gxgacbQfABg0IH&export=download
+
+Per installare, scarica solo la ISO. BaseSystem.img è già incluso nel CD.
+Usa una VM UEFI x86-64 con Secure Boot spento, SATA AHCI, USB xHCI e disco
+virtuale dedicato interamente vuoto. Vedi ../docs/QUICKSTART.txt.
+Verifica gli hash in tinymacOS-2.0-SHA256.txt. Nessuna ISO o ZIP nel workspace.
+Gli altri file di questa cartella documentano le precedenti release.

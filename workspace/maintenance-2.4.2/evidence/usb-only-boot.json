@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "iso_sha256": "36654e5a92e8c60d5f012003f2b7f6cd19fbab8cc5bef060773816f7226dcbd0",
+  "boot_medium": "fresh GPT/FAT32 USB with extracted ISO root",
+  "readonly": true,
+  "cd_attached": false,
+  "gop_setup_marker_verified": true,
+  "physical_hardware_test": false,
+  "rufus_executed": false
+}

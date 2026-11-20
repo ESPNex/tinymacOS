@@ -1,0 +1,53 @@
+tinymacOS 2.0 Riviera — avvio, installazione e recupero offline
+
+Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
+SATA AHCI, tastiera e mouse USB HID su xHCI. Configurazione collaudata: QEMU
+Q35 con OVMF. Collega l’ISO al lettore e un DISCO VIRTUALE VUOTO dedicato:
+96 MiB consigliati; da 64 MiB a 128 GiB, con settori logici da 512 byte.
+Non usare un disco fisico né un disco con file da conservare.
+
+1. Avvia dalla ISO. Crea l’account locale: nome, password di almeno 8 caratteri,
+   conferma. Non esiste una password di fabbrica. Il desktop live è temporaneo.
+2. Fai doppio clic su «Installa tinymacOS» sulla scrivania. In alternativa
+   premi F11. Scegli il disco, controlla la capacità e conferma la destinazione.
+   L’assistente verifica TUTTO il disco prima di scrivere: se contiene dati si ferma.
+3. Attendi «Il disco è pronto», scegli Spegni, scollega la ISO e riaccendi la VM
+   con lo stesso disco. Accedi con la tua password. Account, documenti e preferenze
+   sono quelli copiati durante l’installazione. L’app di installazione non fa parte
+   del sistema installato né della sorgente di reinstallazione.
+
+Terminale: F2. Esempi (i percorsi Unix non sono tradotti):
+  sw_vers
+  ls /Applications/Utilities
+  echo "La mia nota" > Desktop/nota.txt
+  cat Desktop/nota.txt | wc -w
+  shasum -a 256 /System/Library/KernelCollections/KernelCache
+  open -a "Disk Utility"
+  diskutil list
+Usa ↑/↓ per la cronologia, Tab per completare un nome, Ctrl+L per pulire.
+La shell nativa non è zsh. Niente programmi o framework Apple.
+
+Utility Disco: aprila da Applicazioni/Utilities, dal menu mela o con Cerca.
+Sul disco installato: «Copia dati» salva una copia verificata del volume utente.
+È locale, sullo STESSO disco: non protegge da un guasto del disco fisico.
+
+Recupero: in Utility Disco scegli «Recupero…», oppure premi R mentre appare
+la mela all’avvio. Recupero usa una partizione autonoma; non richiede la ISO
+né la rete. Offre ripristino della copia locale, reinstallazione del sistema
+senza cancellare i documenti, SOS, inizializzazione dei dati, terminale di
+recupero e scelta del disco per il prossimo avvio UEFI (BootNext).
+Inizializzare cancella anche la copia
+locale e richiede la parola INIZIALIZZA. Non supporta APFS o Time Machine Apple.
+Il supporto include /Recovery/BaseSystem.img, FAT16 da 4 MiB: puoi collegarlo
+come unità USB rimovibile UEFI e avviarlo indipendentemente, anche senza disco.
+
+Con il sorgente: ./build.sh ; STATE=/var/tmp/riviera-vm ./run.sh
+Dopo l’installazione: STATE=/var/tmp/riviera-vm BOOT_DISK=1 ./run.sh
+Solo recupero: RECOVERY_IMG=/percorso/BaseSystem.img LIVE=1 ./run.sh
+Per collegare anche il disco: usa BOOT_DISK=1 DISK=/percorso/system.raw
+al posto di LIVE=1. Il launcher non sovrascrive file disco esistenti.
+
+Se la creazione dell’account richiede un codice casuale (hardware senza
+sorgenti utilizzabili), esegui openssl rand -hex 16 sul computer host e
+trascrivi le 32 cifre appena generate. Non è la password; non riusarlo.
+Un account esistente non richiede questo codice. Il disco non è cifrato.

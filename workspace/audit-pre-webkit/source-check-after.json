@@ -1,0 +1,10 @@
+{
+  "baseline_files_checked": 463,
+  "missing_files": [],
+  "changed_files": [
+    "build.sh",
+    "tests/riviera_media.py",
+    "tools/system_volume.py"
+  ],
+  "historical_completeness": "No historic pristine manifest available; original shim C sources remain missing."
+}

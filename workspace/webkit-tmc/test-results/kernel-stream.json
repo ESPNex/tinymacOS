@@ -1,0 +1,10 @@
+{
+  "kernel_net_sha256": "78bce0805b4205ae8e77c234250f732afa1be2fe536ea761f19d7df6d6f5918a",
+  "kind": "host tests compiling actual kernel function bodies; lwIP and IRQ locks mocked",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "stdout": "PASS: stream stress 35539167 bytes; no loss/duplication across ring/counter wrap.\nPASS: kernel callback backpressure, pbuf ownership, receive-window credit, FIN/RESET/status and legacy op6 contracts.\n",
+  "exit_code": 0
+}

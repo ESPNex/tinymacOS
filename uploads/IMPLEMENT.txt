@@ -1,0 +1,619 @@
+# PROJECT: TinyOS 1.0 — A REAL x86-64 DESKTOP OPERATING SYSTEM
+
+You are an elite operating-system architect, senior kernel engineer, x86-64 assembly developer, UEFI developer, C systems programmer, graphics engineer, and desktop environment designer.
+
+Your mission is to DESIGN AND BUILD AN ENTIRE OPERATING SYSTEM FROM SCRATCH.
+
+The project is called **TinyOS 1.0**.
+
+It must be a genuine, native, bootable x86-64 operating system with its own kernel, hardware abstraction, memory management, process isolation, filesystem, device drivers, graphical desktop, and native applications.
+
+This is NOT a browser-based operating system simulation.
+
+This is NOT an HTML/CSS/JavaScript desktop.
+
+This is NOT a Linux distribution.
+
+This is NOT a graphical application pretending to be an operating system.
+
+It must boot independently inside QEMU through UEFI firmware.
+
+# 1. START FROM ZERO — NEW ARCHITECTURE
+
+Build a new operating-system architecture from scratch.
+
+Do not simply extend the existing 32-bit TinyOS kernel.
+
+The existing TinyOS source code can be inspected for reference, but the new implementation must use a clean x86-64 architecture.
+
+Preserve the original project in a backup directory before making substantial changes.
+
+Establish a clean project structure with independent kernel, bootloader, architecture, driver, filesystem, userspace, and desktop components.
+
+Use:
+- C for the kernel and system components.
+- x86-64 assembly for low-level CPU initialization and context switching.
+- UEFI for booting.
+- A documented executable and object-file format.
+- A modular architecture.
+
+Avoid unnecessary dependencies.
+
+# 2. NATIVE UEFI BOOT
+
+TinyOS must support native UEFI boot on x86-64.
+
+Requirements:
+
+- Build a UEFI-compatible bootloader.
+- Generate a valid EFI executable.
+- Use the UEFI Boot Services to initialize the machine.
+- Obtain the framebuffer through UEFI GOP.
+- Obtain the memory map through UEFI.
+- Read the ACPI tables when available.
+- Load the TinyOS kernel into its intended physical and virtual memory locations.
+- Exit UEFI Boot Services correctly.
+- Transfer control to the x86-64 kernel entry point.
+
+Create a bootable ISO with the standard UEFI removable-media boot path:
+
+EFI/BOOT/BOOTX64.EFI
+
+Also provide a QEMU-compatible OVMF configuration.
+
+Do not assume that a BIOS bootloader is sufficient.
+
+The kernel must continue independently after UEFI Boot Services have been exited.
+
+# 3. x86-64 KERNEL
+
+Implement a genuine 64-bit kernel.
+
+Use a modular kernel architecture.
+
+The kernel must provide:
+
+- CPU initialization.
+- GDT.
+- IDT.
+- TSS.
+- Interrupt handling.
+- Exception handling.
+- Hardware abstraction layer.
+- Physical memory manager.
+- Virtual memory manager.
+- Kernel heap allocator.
+- Scheduler.
+- Process management.
+- Thread management.
+- System call interface.
+- Device driver framework.
+- Filesystem interface.
+- Kernel logging.
+
+Use long mode throughout normal kernel execution.
+
+Implement proper page-table management and memory protection.
+
+Support supervisor and user memory permissions.
+
+Handle CPU exceptions gracefully instead of silently crashing.
+
+Provide a kernel panic screen with useful debugging information.
+
+# 4. RING 0 AND RING 3 — REAL PRIVILEGE SEPARATION
+
+This is a mandatory architectural requirement.
+
+Implement genuine CPU privilege separation.
+
+## Ring 0
+
+Ring 0 is reserved for the TinyOS kernel.
+
+It handles:
+- Hardware access.
+- Interrupts.
+- Memory management.
+- Scheduling.
+- Process management.
+- System calls.
+- Device drivers.
+- Filesystem kernel interfaces.
+
+## Ring 3
+
+Ring 3 is reserved for userspace applications.
+
+Native applications must run in unprivileged CPU mode.
+
+Applications must not directly access kernel memory or hardware.
+
+Implement:
+
+- User-mode execution.
+- User-mode stack initialization.
+- Per-process address spaces.
+- Kernel/user memory protection.
+- Safe transitions between Ring 3 and Ring 0.
+- System call entry and return.
+- Process termination.
+- Process isolation.
+
+Use an appropriate x86-64 system call mechanism, such as SYSCALL/SYSRET, with correct privilege and register handling.
+
+Configure the required CPU MSRs and kernel entry stack correctly.
+
+Implement a well-defined syscall ABI.
+
+Examples of system calls:
+
+- write
+- read
+- open
+- close
+- create
+- delete
+- allocate
+- free
+- spawn
+- exit
+- sleep
+- get_time
+- get_process_info
+- window_create
+- window_destroy
+
+Do not implement fake Ring 3 by merely labeling kernel functions as userspace applications.
+
+Demonstrate actual execution at CPL 3.
+
+Create a small native userspace test application that invokes a system call and returns to Ring 3 successfully.
+
+# 5. PROCESS AND THREAD SCHEDULER
+
+Implement a preemptive multitasking scheduler.
+
+Requirements:
+
+- Process creation.
+- Thread creation.
+- Context switching.
+- Kernel threads.
+- User threads.
+- Process termination.
+- Thread states.
+- Scheduling queues.
+- Timer interrupts.
+- Separate address spaces.
+
+Implement a reasonable initial scheduling policy, such as round-robin.
+
+Keep the scheduler modular so that more sophisticated policies can be added later.
+
+# 6. macOS-INSPIRED GRAPHICAL EXPERIENCE
+
+The visual identity of TinyOS must be strongly inspired by modern macOS.
+
+This is one of the most important requirements.
+
+The desktop should feel polished, elegant, minimalist, modern, and coherent.
+
+Use macOS as a design reference, not as a source of proprietary code, assets, or branding.
+
+Do not copy Apple's logo or represent TinyOS as macOS.
+
+Create an original TinyOS visual identity.
+
+## Desktop
+
+Implement:
+
+- A beautiful desktop wallpaper.
+- A translucent top menu bar.
+- A centered application Dock at the bottom.
+- Smooth window borders and rounded corners.
+- Subtle shadows.
+- A consistent icon system.
+- A desktop cursor.
+- Window animations where technically feasible.
+- A modern typography system.
+- A coherent color palette.
+- Light and dark appearance modes.
+
+## Menu Bar
+
+Include:
+
+- TinyOS menu.
+- Application menu.
+- File menu.
+- Edit menu.
+- View menu.
+- Window menu.
+- Help menu.
+- Clock.
+- System status icons.
+
+## Dock
+
+Implement a macOS-inspired application Dock.
+
+Features:
+
+- Application icons.
+- Launching applications.
+- Running-application indicators.
+- Basic hover effects.
+- Application switching.
+- Dock positioning.
+
+## Window Manager
+
+Implement a native window manager with:
+
+- Window creation.
+- Window destruction.
+- Window focus.
+- Window movement.
+- Window resizing.
+- Minimize.
+- Maximize.
+- Close.
+- Z-order management.
+- Multiple open windows.
+- Input routing.
+- Redrawing.
+
+Applications must use the native windowing API.
+
+Do not implement windows as static drawings.
+
+# 7. NATIVE GRAPHICS SUBSYSTEM
+
+Implement a real kernel/userspace graphics architecture.
+
+Use UEFI GOP to obtain the initial framebuffer.
+
+Build a graphics subsystem that supports:
+
+- Pixel drawing.
+- Rectangle drawing.
+- Image rendering.
+- Text rendering.
+- Font loading.
+- Alpha blending.
+- Double buffering.
+- Clipping.
+- Surface management.
+- Window composition.
+
+Create a userspace graphics server or desktop compositor.
+
+Applications should submit drawing operations or graphical surfaces through a documented interface.
+
+The compositor should manage windows and produce the final desktop framebuffer.
+
+Avoid making every application directly manipulate the physical framebuffer.
+
+# 8. NATIVE APPLICATIONS
+
+Build actual native userspace applications.
+
+They must execute in Ring 3 and use TinyOS system calls and graphical APIs.
+
+## Finder — File Manager
+
+Create a macOS Finder-inspired application.
+
+Features:
+- Sidebar.
+- File and directory browsing.
+- Icons and list views.
+- Directory navigation.
+- File creation.
+- File deletion.
+- Rename.
+- Copy and paste.
+- File properties.
+- Opening files.
+
+## Terminal
+
+Create a native terminal application.
+
+Support commands:
+
+help
+clear
+about
+ls
+cd
+pwd
+mkdir
+touch
+cat
+write
+rm
+mv
+cp
+echo
+mem
+cpu
+ps
+kill
+restart
+off
+
+Commands must use actual kernel interfaces.
+
+## TextEdit
+
+Create a native text editor.
+
+Features:
+- Create documents.
+- Edit text.
+- Save.
+- Open.
+- Basic keyboard shortcuts.
+- Unsaved changes indicator.
+
+## System Settings
+
+Create a native settings application.
+
+Include:
+- Appearance.
+- Wallpaper.
+- Display information.
+- System information.
+- Date and time.
+- Sound settings when audio support exists.
+
+## About TinyOS
+
+Display:
+- OS name.
+- Version.
+- Architecture.
+- Kernel version.
+- CPU information.
+- Available memory.
+- Filesystem information.
+- Running process count.
+
+# 9. FILESYSTEM
+
+Implement a real filesystem.
+
+Start with a filesystem abstraction and a simple persistent filesystem.
+
+Use a QEMU virtual disk.
+
+Implement a block-device interface that can eventually support multiple storage devices.
+
+A custom filesystem is acceptable, provided its on-disk format is documented.
+
+Implement:
+
+- Directories.
+- Files.
+- File descriptors.
+- File creation.
+- File deletion.
+- Reading.
+- Writing.
+- Renaming.
+- Moving.
+- Directory traversal.
+- Metadata.
+- File permissions.
+- Error handling.
+
+The filesystem must be shared by all userspace applications.
+
+Files created through Terminal must appear in Finder.
+
+Documents saved through TextEdit must remain available after reboot.
+
+Do not claim persistent storage if the implementation is only RAM-backed.
+
+## Initial directory structure
+
+/
+├── System/
+│   ├── Kernel/
+│   ├── Libraries/
+│   └── Configuration/
+├── Applications/
+│   ├── Finder.app
+│   ├── Terminal.app
+│   ├── TextEdit.app
+│   └── Settings.app
+├── Users/
+│   └── User/
+│       ├── Desktop/
+│       ├── Documents/
+│       ├── Downloads/
+│       └── Pictures/
+└── Volumes/
+
+# 10. HARDWARE SUPPORT
+
+Build a modular driver architecture.
+
+Prioritize QEMU virtual hardware.
+
+Implement support where feasible for:
+
+- Serial ports.
+- Programmable interrupt controller or APIC.
+- Local APIC.
+- I/O APIC.
+- HPET or another suitable timer.
+- PS/2 keyboard.
+- PS/2 mouse.
+- PCI device enumeration.
+- VirtIO devices.
+- Virtual disk.
+- Display framebuffer.
+- ACPI power management.
+
+Use modern x86-64 interrupt and timer infrastructure.
+
+Document hardware features that are not yet supported.
+
+Do not fabricate hardware information.
+
+# 11. MEMORY MANAGEMENT
+
+Implement:
+
+- Physical page allocator.
+- Virtual memory manager.
+- Kernel heap.
+- User-space memory allocation.
+- Page protection.
+- Address-space isolation.
+- Memory mapping.
+- Allocation tracking.
+
+Use appropriate page-table permissions.
+
+Prevent userspace processes from accessing kernel pages.
+
+Provide actual memory statistics.
+
+# 12. AUDIO AND POWER MANAGEMENT
+
+Where feasible, implement:
+
+- Basic audio device support.
+- System volume interface.
+- Reboot.
+- ACPI shutdown.
+- Power-off.
+- Sleep support only if hardware and firmware permit it.
+
+Do not pretend unsupported functionality works.
+
+# 13. DEVELOPMENT ENVIRONMENT
+
+Use a reproducible, unprivileged build environment.
+
+Inspect the existing environment first.
+
+Prefer available cross-compilation tools.
+
+If additional tools are required, use local user-space installations where possible.
+
+Do not require sudo or system-wide package installation.
+
+Provide:
+
+- Build script.
+- UEFI bootloader build.
+- Kernel build.
+- Userspace application build.
+- Disk image creation.
+- ISO generation.
+- QEMU launch script.
+- QEMU serial debugging script.
+
+Use OVMF firmware for UEFI testing.
+
+Support a QEMU x86-64 machine configuration.
+
+# 14. TESTING AND VALIDATION
+
+Test each subsystem independently.
+
+Mandatory validation:
+
+1. UEFI executable builds successfully.
+2. QEMU boots through OVMF.
+3. Kernel enters x86-64 long mode.
+4. Kernel initializes its own GDT and IDT.
+5. Interrupts work.
+6. Physical and virtual memory management work.
+7. A real Ring 3 process executes.
+8. Ring 3 invokes a syscall successfully.
+9. Two independent processes execute.
+10. The scheduler switches contexts.
+11. The graphical desktop appears.
+12. Keyboard input works.
+13. Windows can be opened and closed.
+14. Terminal works.
+15. Finder accesses the filesystem.
+16. TextEdit saves a document.
+17. Files survive a reboot when persistent storage is enabled.
+18. Shutdown and restart work.
+
+For Ring 3, explicitly verify the current privilege level using the appropriate CPU mechanism.
+
+Do not claim tests passed unless actually performed.
+
+# 15. IMPLEMENTATION STRATEGY
+
+This is a large project. Work incrementally and prioritize a functioning architecture over superficial feature completeness.
+
+Phase 1 — New x86-64 UEFI bootloader and kernel entry.
+
+Phase 2 — CPU initialization, GDT, IDT, TSS, exceptions, interrupts.
+
+Phase 3 — Physical and virtual memory management.
+
+Phase 4 — Ring 3 execution and syscall interface.
+
+Phase 5 — Processes, threads, and scheduler.
+
+Phase 6 — Device abstraction and virtual storage.
+
+Phase 7 — Filesystem and persistent disk support.
+
+Phase 8 — Graphics subsystem and framebuffer.
+
+Phase 9 — Window manager and desktop compositor.
+
+Phase 10 — macOS-inspired desktop interface.
+
+Phase 11 — Native userspace applications.
+
+Phase 12 — Integration, testing, debugging, and bootable ISO.
+
+At each phase:
+- Build the project.
+- Run the relevant tests.
+- Boot QEMU when appropriate.
+- Fix regressions.
+- Document architectural decisions.
+
+Do not attempt to implement everything in one giant source file.
+
+Do not create nonfunctional placeholders and report them as completed features.
+
+If a feature cannot be completed, state precisely what remains.
+
+# 16. FINAL GOAL
+
+The final product must be a bootable, standalone x86-64 operating system.
+
+When I start QEMU with OVMF and the TinyOS disk or ISO, I should see a polished macOS-inspired desktop.
+
+I should be able to:
+- Launch native applications.
+- Open and move windows.
+- Use a Dock and menu bar.
+- Open Finder.
+- Create directories.
+- Create and edit files.
+- Use Terminal.
+- Run independent Ring 3 processes.
+- Experience real kernel/userspace privilege separation.
+- Save files persistently.
+- Restart the machine and find my files still there.
+
+The system must use a real x86-64 kernel running in Ring 0, native userspace applications running in Ring 3, and a genuine UEFI boot process.
+
+**Build TinyOS as an actual operating system, not a visual imitation of one.**

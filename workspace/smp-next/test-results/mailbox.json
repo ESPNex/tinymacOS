@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "scope": "host pthread concurrency and simulated TLB callback; NOT guest/MMU validation",
+  "worker_cpus": 8,
+  "requests": 10001,
+  "acknowledgements": 80008,
+  "checks": [
+    "poll while sender holds simulated lock",
+    "release/acquire publication and ACK",
+    "delayed last ACK blocks reclamation",
+    "one invalidate per CPU per request"
+  ],
+  "sanitizers": [
+    "ASan",
+    "UBSan"
+  ],
+  "host_fixture_yields_to_avoid_cpu_quota_starvation": true,
+  "initial_busy_spin_host_run": "inconclusive timeout; process stopped, yielding fixture then passed",
+  "target_arch_smp_object_compilation": true,
+  "svm_multi_cpu_enabled": false
+}
