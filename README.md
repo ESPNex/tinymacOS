@@ -1,4 +1,6 @@
-> **Manutenzione OpenCore aggiornata:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2): live ottica BIOS+UEFI e **disco installato autonomo BIOS/OpenDuet/OpenCore+UEFI**. Prove con ISO rimossa, riavvio e Recupero locale. Non immagine USB DD. [Note e QA](workspace/release-2.4.4/installer-media/RELEASE.md).
+> **Manutenzione input 2.4.5 Levante / 21B6:** nuova priorità richiesta per mouse fermo al login e lag. Note, collaudi e limiti: [release 2.4.5](workspace/release-2.4.5/RELEASE.md). Nessuna prova sul PC fisico dell’utente; Safari/WebKit ancora non incluso.
+
+> **Precedente manutenzione OpenCore:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2): live ottica BIOS+UEFI e **disco installato autonomo BIOS/OpenDuet/OpenCore+UEFI**. Prove con ISO rimossa, riavvio e Recupero locale. Non immagine USB DD. [Note e QA](workspace/release-2.4.4/installer-media/RELEASE.md).
 
 # tinymacOS — sorgenti e workspace di sviluppo
 
@@ -10,7 +12,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 
 ## Mappa
 
-- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release intermedia esplicitamente autorizzata: **2.4.4 Levante, build 21B5**, senza browser. Successiva patch browser prevista: 2.4.5 Levante.
+- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release manutenzione input esplicitamente autorizzata: **2.4.5 Levante, build 21B6**, senza browser. La richiesta di anticipare questa manutenzione sostituisce la precedente riserva del numero 2.4.5 al browser.
 - `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
 - `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
 - `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.
@@ -23,7 +25,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 - Supporto OC2: CD BIOS via MEMDISK/OpenDuet BlockIO/OpenCore; installato BIOS via ponte MBR → OpenDuet completo USB/AHCI → OpenCore → loader/kernel nativi. Il medesimo disco avvia anche in UEFI tramite il launcher OpenCore ufficiale. GPT/FAT16 invariata; Recupero e sorgente sigillata verificati. OC1 resta una revisione precedente solo ottica.
 - Verbose UEFI diretto selezionato con `V`, comandi `bootverbose status`, `on`, `off`, `log [pagina]` implementati. Verificati selezione live, stato, log e rifiuto di scrittura persistente sulla live. Il test completo della preferenza installata in `workspace/integrated-next/qa/verbose_installed.py` è passato: off → on da Terminale → riavvio verbose → off → riavvio quieto; ESP sigillata e payload Recovery invariati. Evidenze in `workspace/integrated-next/evidence/verbose-installed/`.
 - `workspace/webkit-tmc/test-results/milestone-tests.json` riporta la suite backend/runtime. Date e commit delle prove contano: un risultato precedente non valida automaticamente modifiche successive.
-- **Safari/WebKit reale non è completato. La 2.4.4 è una release intermedia senza browser, non la futura ISO Safari.**
+- **Safari/WebKit reale non è completato. La 2.4.5 è una release manutenzione senza browser, non la futura ISO Safari.**
 - Nessuna validazione su hardware fisico; i risultati QEMU non garantiscono compatibilità BIOS/USB universale.
 
 ## Ricostruzione

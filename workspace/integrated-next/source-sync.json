@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "9e6b856dc5d9b2d7b2341508a741eb1662bccecfe13ab62379d7b9be0179d38c"
+    "sha256": "86510461db50c596a2a54359dad1d8fd0f3cef35707e11a334dfb93d145d940f"
   },
   {
     "path": "arch/biosdisk.S",
@@ -32,12 +32,32 @@
     "sha256": "386eb116d8ed45c138533b35b8091fe9e83ccd6cd8b0b8e8d338f58463375b51"
   },
   {
+    "path": "desktop/desk.h",
+    "sha256": "d38d8a320285a51163bc0fe4581eddc93a67ffd00883935adb8f088b37fd4d5d"
+  },
+  {
+    "path": "desktop/login.c",
+    "sha256": "36a0d1955dfa22ac62fa5f4a29cb25057d6109f02d70e25eb70811726ee27512"
+  },
+  {
+    "path": "desktop/main.c",
+    "sha256": "dce10fd92621eca51478ffb3992492704b8b054eb09e9ab824016446083a6bf8"
+  },
+  {
     "path": "docs/QUICKSTART.txt",
-    "sha256": "3354af6c342be1cfb7379aeab15b95cf638073f01875eb1f0e9886ba6dc5ba61"
+    "sha256": "31cefadfc26d1201e5af5fa1d96f904e35e7bedb7141d27a4ab27e8bb2c50497"
+  },
+  {
+    "path": "drivers/input.c",
+    "sha256": "b1d04d3726b1bfad2096605e0140e2a5389ea458742b668d856218db53d199c9"
+  },
+  {
+    "path": "drivers/xhci.c",
+    "sha256": "cb45ce32cc60cd455f919d67f3784d518f0b077ba3e5ed3c2d713dc31a2b58bd"
   },
   {
     "path": "fs/btrfs.c",
-    "sha256": "ce844131b0185ef8559bb78a4da22e990c4f35327baa0203254a8bf2e425fe3f"
+    "sha256": "94f5a66f17dc0ae485c0b174c6068b2309ecf1b8a90784c6cde8e5c75cce6dbb"
   },
   {
     "path": "fs/install.c",
@@ -45,7 +65,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "42026f8870e864bbcf6eef60a111ffe28d1bc2db9187adae3ff7d59b9e4e9b2a"
+    "sha256": "30c603d95991b2b6080cbfcc1795ea10b045227aeb2cd6c401cbcca4b6c1d0b7"
   },
   {
     "path": "include/biosboot.h",
@@ -66,6 +86,10 @@
   {
     "path": "include/handoff.h",
     "sha256": "25c6854a6f0c0d43773d371caed5fd4f04715ffe6bf1ff15295dc50b57846a4b"
+  },
+  {
+    "path": "include/inputdiag.h",
+    "sha256": "2007d9b06cf6dd469700707149efea0b3dc1e318672d56e215a9ce655b3417ba"
   },
   {
     "path": "include/percpu.h",
@@ -93,7 +117,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "2c0ead47b91fd4d26e14063694d075b24e5400f38d532c4aeceb151ed4bf8342"
+    "sha256": "c52bd769d190e92561167f425d211c16367b005a6e2629f44052a6c058d89fa2"
   },
   {
     "path": "kernel/log.c",
@@ -113,7 +137,7 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "aa0b74e95e5fcefa07aac72361323988be7a789b677494642a82961673be6413"
+    "sha256": "37d36a8b15fb460e81ede40b809a9c25ed6d707676ebfd21a326d90a6845d622"
   },
   {
     "path": "kernel/uservm.c",
@@ -121,7 +145,7 @@
   },
   {
     "path": "recovery/main.c",
-    "sha256": "c7cca16ce584f793c70f701346df8645427b2c5de3f141bf1f56ab80c994b35a"
+    "sha256": "eec242f278290ab4a0b74740c32ae0f60ecc1ecf7c8d50887cbe84bb5e85a1ef"
   },
   {
     "path": "tests/account_reset.py",
@@ -132,12 +156,36 @@
     "sha256": "0258d14980aeb3c62fc3f28fca4f4dbdae2672b14ed3dc7026e4e7bc192e2bbe"
   },
   {
+    "path": "tests/guest.py",
+    "sha256": "5840473312323999a6111fe3e9c68b0b9baf30badb9afb05b5ad4bc9082a177d"
+  },
+  {
+    "path": "tests/input_enumeration.c",
+    "sha256": "d262c9bd0b2c73d6614e4af5c75325bbdb2e43107fbfe18466980d70e9ac0722"
+  },
+  {
+    "path": "tests/input_maintenance.c",
+    "sha256": "b28943541d108adedbbf7b9397b333964f8fb8460c0e5e81c388cbeca1f66951"
+  },
+  {
+    "path": "tests/input_test_support.h",
+    "sha256": "a9c82c1c397490df7c9b248ec3048e9f74acbe54b70893a5bd29500ae6b41656"
+  },
+  {
     "path": "tests/integration.py",
     "sha256": "f7ae62be1d320f434493ad200738d5736e8adf25540a5de0666e208c037d8718"
   },
   {
     "path": "tests/legacy_1_3.py",
     "sha256": "7b2d252789bbc5b26c51dbdfdabc8f86ac6c4673587a9d7970f6f757223fc592"
+  },
+  {
+    "path": "tests/levante_installed_pointer.py",
+    "sha256": "35c227311483fbc8a3c6c496d718a65297f3ac27325cb808ef3690ee831cbe7a"
+  },
+  {
+    "path": "tests/levante_pointer.py",
+    "sha256": "7b819a0f949f33a29b8f5a8058e3ab1604ee37e0c4380d110b03d6a5d7e7737c"
   },
   {
     "path": "tests/orizzonte.py",
@@ -180,6 +228,10 @@
     "sha256": "21d0c3b37055986aaf45627f7b749aca7593e4cc99a580de2e43a2520e87e5b8"
   },
   {
+    "path": "tests/test-input-maintenance.sh",
+    "sha256": "03aeee6129e9d8408d35f5f53606eb9cee4dbf4fee3b62624508870841390e0d"
+  },
+  {
     "path": "tools/bios-image.py",
     "sha256": "6193948b7b49cd64addaedcd2a273b838fcd9770e8f62f423d53af96c5bc5076"
   },
@@ -189,23 +241,23 @@
   },
   {
     "path": "tools/console/integrata.html",
-    "sha256": "c32788f9dbab54ffbcd6006edfe2ff3d72d36be088390877b22488e97390316c"
+    "sha256": "3bd39278f6a2586772591642f12e6671b44e3b2e4497e8bcb068c065eec36887"
   },
   {
     "path": "tools/console/server.py",
-    "sha256": "4aead08c18f721d1454898a53bfdc5e1f977e988fce5e6235fa1701054649fc5"
+    "sha256": "4d763e24f18637767933d5f15a337dc875789b86608297602c95b8101a030a34"
   },
   {
     "path": "tools/dualboot-iso.py",
-    "sha256": "15569dd5a5ea7324f2de35b14543fcc3806fc2d1a4c277232feb534f448e826b"
+    "sha256": "67a3b40c79cba079d69f33fc904fd1125af2d2177d0306b551a3625acf1ff7b9"
   },
   {
     "path": "tools/env.sh",
-    "sha256": "0c269b50f1db644087a477aceca0cc87044cca2de22ade07db56d570b73d4c91"
+    "sha256": "ea8b4db72e56a6d642a6ce47a415d0de1d797e9eb0dc4b1821f90033131333f0"
   },
   {
     "path": "tools/iso.sh",
-    "sha256": "1d1a45fbe865aed38f5525d9a1a7d1011c34f59f83461f73d8e7d4ba09fc2950"
+    "sha256": "447a3a46532486e506f5553e9b3ab65afd59b37fc318ac225a77502cd6a8cfb3"
   },
   {
     "path": "tools/run-bios-installed.sh",
@@ -213,7 +265,7 @@
   },
   {
     "path": "tools/run-bios-iso.sh",
-    "sha256": "95160ce3b7ed4295baf4636f31a89f1696d1ba30ce4bfb3d9a32fead5efab23d"
+    "sha256": "3ece44f56b3d9aef856872f99c266ed28a99217909253a2a2abcdaf84fb8808d"
   },
   {
     "path": "tools/run-bios-qemu.sh",
@@ -221,27 +273,27 @@
   },
   {
     "path": "tools/run-qemu.sh",
-    "sha256": "8a87fed3e4bb831b5f3cdc14c842362490ab5119c310110893e586683bd627d9"
+    "sha256": "e3b67b2d446638257630de7e687f972ca27cad6df2bc193cadcd1bae6fc6bffe"
   },
   {
     "path": "tools/system_volume.py",
-    "sha256": "2c2638d4711d837698b76e1f5e93c473449f4f59b440d2d64bff1724b03d9d29"
+    "sha256": "7ffab5111fc2d74f783d5c899b19895652c27489fab105b164c496d3943904bf"
   },
   {
     "path": "userspace/about.c",
-    "sha256": "d2ffbe8e6c2f764ae3300b6e266114f445e4fe111a61d1cd8b20c31bd622f783"
+    "sha256": "517e93ee890fee874d3b9060c963b892144e69892d1fa46ca0e2259563820961"
   },
   {
     "path": "userspace/command.c",
-    "sha256": "1bcc9d6371088cc0283ba03964a15b1525ef62df246ffea22e9e32cc8b22a4d4"
+    "sha256": "4faf601a9d922da5314b82db19feffe674bc09520a44167c8cc2decc9f2e8fda"
   },
   {
     "path": "userspace/installer.c",
-    "sha256": "a96dadaed3a872f44743baeebf16ae8bd6720b805367ff462d9191b2c85fee56"
+    "sha256": "b0d9b630d6c7dce2930f9e90fc773146d28a3918fe12da70d15235d8e3f2ac01"
   },
   {
     "path": "userspace/settings.c",
-    "sha256": "00e0d8510f87592947660da75f22f8975493f536a2240544ea131f4aacba39ca"
+    "sha256": "660a4f44baa7e27c9093205a7e746bfebe7e43bf823454ba07300c07e58a6e8e"
   },
   {
     "path": "vendor/opencore-1.0.8/BOOTx64.efi",

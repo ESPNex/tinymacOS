@@ -8,7 +8,8 @@ static int pend = -1, drag = -1, mode, ax, ay, clickPid, cx, cy, wallEpoch;
 static Rect drag0;
 static u64 clickTime;
 static u32 undo[1920 * 1080];
-static int cursorDirty = 1, curx, cury, curw, curh;
+int cursorDirty = 1;
+static int curx, cury, curw, curh;
 static u32 undercursor[28 * 28];
 static int cursorValid;
 static PointerScale pointer_scale;
@@ -778,6 +779,11 @@ void app_main(void)
                 drawcursor();
                 sc(S_PRESENT, canvas, 0, 0, ((u64)(u32)W << 32) | (u32)H);
                 cursorDirty = 0;
+            } else if (cursorDirty) {
+                int X=curx,Y=cury,ww=curw,hh=curh;
+                undocursor(); drawcursor();
+                scanrect(X,Y,ww,hh); scanrect(curx,cury,curw,curh);
+                cursorDirty=0;
             }
             slp(1);
             continue;

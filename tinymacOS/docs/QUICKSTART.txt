@@ -1,4 +1,4 @@
-tinymacOS 2.4.4 Levante — avvio, installazione e recupero offline
+tinymacOS 2.4.5 Levante — avvio, installazione e recupero offline
 
 Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
 SATA AHCI, tastiera USB e puntatore assoluto QEMU usb-tablet su xHCI. Configurazione collaudata: QEMU
@@ -78,8 +78,17 @@ Verbose: premi V durante la mela. Nel Terminale del sistema installato:
   bootverbose off
   bootverbose log
 On/off si applicano al prossimo avvio. La live non salva questa preferenza.
-La revisione OpenCore installer OC2 della ISO 2.4.4 avvia la live da CD
+La revisione OpenCore installer OC2 della ISO 2.4.5 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Levante; build 21B5.
+Safari/WebKit non e incluso. Nome release: Levante; build 21B6.
+
+2.4.5 — manutenzione input
+Al login premi F11 (o clicca Diagnostica USB) per i contatori del driver
+nativo. Il pannello non mostra password o tasti digitati. Se il puntatore
+resta fermo, fotografa il pannello e indica modello PC e porta USB usata.
+Il driver nativo supporta xHCI e HID sulle porte radice; hub esterni e
+controller EHCI/OHCI/UHCI non sono implementati. Recovery usa driver
+firmware indipendenti: il suo funzionamento non prova quello del driver
+nativo. Le verifiche automatiche BIOS/UEFI sono in QEMU, non sul tuo PC.

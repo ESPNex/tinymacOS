@@ -25,7 +25,7 @@ typedef struct {
 } View;
 extern View views[NPROC];
 extern u32 *desk_ras;        /* C_RASTER payload fetched with each window */
-extern int order[NPROC], nz, dirty, mx, my, buttons;
+extern int order[NPROC], nz, dirty, cursorDirty, mx, my, buttons;
 // Raw relative reports and absolute framebuffer positions must never be mixed.
 static inline void pointer_position(const Event *e) {
     mx=clampi(e->type==EV_POINTER_ABS ? e->a : mx+e->a,0,W-1);

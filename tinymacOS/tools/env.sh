@@ -4,5 +4,5 @@ if [ -n "${TOOLROOT:-}" ]; then
 fi
 export EFIINC="${EFIINC:-${TOOLROOT:-}/usr/include/efi}" EFILIB="${EFILIB:-${TOOLROOT:-}/usr/lib}"
 # Keep generated media outside the source workspace. TMC_BUILD is an absolute path.
-export TMC_BUILD="${TMC_BUILD:-/var/tmp/tinymacos-$(id -u)/2.4.4}"
-export TMC_ISO=tinymacOS-2.4.4-x86_64.iso
+export TMC_BUILD="${TMC_BUILD:-/var/tmp/tinymacos-$(id -u)/2.4.5}"
+export TMC_ISO=tinymacOS-2.4.5-x86_64.iso

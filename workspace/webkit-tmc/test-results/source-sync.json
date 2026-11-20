@@ -1,5 +1,9 @@
 [
   {
+    "path": "include/inputdiag.h",
+    "sha256": "2007d9b06cf6dd469700707149efea0b3dc1e318672d56e215a9ce655b3417ba"
+  },
+  {
     "path": "include/threadfinishabi.h",
     "sha256": "44e639af148fd1424d5eb0e1ebc76f4e9115f89109c924e600264544927cb78a"
   },
@@ -53,11 +57,11 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "aa0b74e95e5fcefa07aac72361323988be7a789b677494642a82961673be6413"
+    "sha256": "37d36a8b15fb460e81ede40b809a9c25ed6d707676ebfd21a326d90a6845d622"
   },
   {
     "path": "kernel/k.h",
-    "sha256": "2c0ead47b91fd4d26e14063694d075b24e5400f38d532c4aeceb151ed4bf8342"
+    "sha256": "c52bd769d190e92561167f425d211c16367b005a6e2629f44052a6c058d89fa2"
   },
   {
     "path": "desktop/gfx.c",
@@ -73,7 +77,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "42026f8870e864bbcf6eef60a111ffe28d1bc2db9187adae3ff7d59b9e4e9b2a"
+    "sha256": "30c603d95991b2b6080cbfcc1795ea10b045227aeb2cd6c401cbcca4b6c1d0b7"
   },
   {
     "path": "include/vmabi.h",

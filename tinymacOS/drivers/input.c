@@ -1,4 +1,8 @@
+#ifdef TMC_INPUT_TEST
+#include "../tests/input_test_support.h"
+#else
 #include "../kernel/k.h"
+#endif
 // Validated USB HID reports -> native input events. No 8042 or BIOS input calls.
 static Event q[128];
 static int head, tail, caps;
@@ -7,15 +11,43 @@ static u8 prior[8];
 static int repeat, mods;
 static u64 due;
 static Spin input_lock;
+static int mergeable_tail, pointer_buttons;
+InputDiag input_diag = {.version=TMC_INPUTDIAG_VERSION,.bytes=sizeof(InputDiag)};
+void input_diagnostics(InputDiag *out)
+{
+    u32 fl; spin_lock(&input_lock,&fl);
+    *out=input_diag;
+    spin_unlock(&input_lock,fl);
+}
 static void put(Event e)
 {
     u32 fl;
     spin_lock(&input_lock, &fl);
+    int mergeable=0;
+    if(e.type==EV_MOUSE||e.type==EV_POINTER_ABS) {
+        mergeable=e.c==pointer_buttons && !e.d;
+        pointer_buttons=e.c;
+        input_diag.delivered++;
+        input_diag.last_x=e.a;input_diag.last_y=e.b;input_diag.last_buttons=e.c;
+        /* Collapse only consecutive motion, never a button transition, wheel
+         * or key. Preserve the sum (relative) or newest position (absolute). */
+        int last=(head+127)%128;
+        if(mergeable && mergeable_tail && head!=tail && q[last].type==e.type && q[last].c==e.c &&
+           !q[last].d && !e.d) {
+            i64 x=(i64)q[last].a+e.a,y=(i64)q[last].b+e.b;
+            if(e.type==EV_POINTER_ABS || (x>=-2147483647 && x<=2147483647 && y>=-2147483647 && y<=2147483647)) {
+                q[last].a=e.type==EV_MOUSE?(int)x:e.a;
+                q[last].b=e.type==EV_MOUSE?(int)y:e.b;
+                input_diag.merged++;
+                spin_unlock(&input_lock,fl);return;
+            }
+        }
+    }
     int n = (head + 1) % 128;
     if (n != tail) {
         q[head] = e;
-        head = n;
-    }
+        head = n;mergeable_tail=mergeable;
+    } else {input_diag.dropped++;mergeable_tail=0;}
     spin_unlock(&input_lock, fl);
 }
 int input_pop(Event *e)

@@ -1,4 +1,8 @@
+#ifdef TMC_INPUT_TEST
+#include "../tests/input_test_support.h"
+#else
 #include "../kernel/k.h"
+#endif
 #include "hidtablet.h"
 #include "hidconfig.h"
 // Root-port HID: boot keyboard, boot relative mouse, and report-protocol absolute tablet.
@@ -21,22 +25,25 @@ typedef struct {
 #define NCONTROLLERS 4
 struct Hid {
     Ring in;
-    u8 report[1024] ALIGNED(64);
+    u8 report[1024] ALIGNED(1024); /* a Normal TRB must not cross a 64 KiB boundary */
     TabletLayout tablet;
-    int ep,proto,mps,armed,iface,report_len;
+    int ep,proto,mps,armed,iface,report_len,failures,pending;
+    u64 retry_at;
 };
 struct Usb {
     Ring ctrl;
-    u8 outctx[32*64] ALIGNED(64),ic[33*64] ALIGNED(64),desc[1024] ALIGNED(64);
+    u8 outctx[32*64] ALIGNED(64),ic[33*64] ALIGNED(64);
+    u8 desc[1024] ALIGNED(1024); /* Data Stage TRBs have the same 64 KiB boundary rule */
     struct Hid hid[NHID];
-    int id,port,speed,nhid;
+    int id,port,speed,nhid,diag,ctrl_dead;
 };
 static struct Xhci {
     u64 dcbaa[256] ALIGNED(64),sptr[32] ALIGNED(64);
     TRB events[NE] ALIGNED(4096);
     struct {u64 base;u32 size,res;} erst ALIGNED(64);
     Ring commands;
-    int evpos,evcycle,cs,connected,active;
+    int evpos,evcycle,cs,connected,active,lastcode;
+    u32 pci;
     volatile u32 *op,*db,*ir;
     struct Usb usb[NS];
 } controllers[NCONTROLLERS],*hc;
@@ -102,19 +109,24 @@ static void ringbell(int s, int ep)
     asm volatile("mfence":::"memory");
     db[s]=ep;
 }
-static int result(TRB*t, int ty, int slot)
+static int waitresult(TRB*t, int ty, int slot,TRB *setup,TRB *data,int control_slot)
 {
     TRB e;
+    hc->lastcode=0;
     for (int i = 0; i < 1500000; i++) {
         if (!event(&e)) {
             asm volatile("pause");
             continue;
         }
-        if (((e.ctl>>10)&63)!=(u32)ty||e.ptr!=(u64)t) {
+        int control_error=ty==32 && (e.len>>24)!=1 && (e.len>>24)!=13 &&
+            (e.ctl>>24)==(u32)control_slot && ((e.ctl>>16)&31)==1 &&
+            (e.ptr==(u64)setup || (data && e.ptr==(u64)data));
+        if (((e.ctl>>10)&63)!=(u32)ty || (e.ptr!=(u64)t && !control_error)) {
             if(((e.ctl>>10)&63)==32)transferred(&e);
             continue;
         }
         int c=e.len>>24;
+        hc->lastcode=c;
         if (c!=1&&c!=13) {
             logstr("[usb] completion ");
             lognum(c);
@@ -125,22 +137,45 @@ static int result(TRB*t, int ty, int slot)
     }
     return -1;
 }
+static int result(TRB *t,int ty,int slot)
+{
+    return waitresult(t,ty,slot,0,0,0);
+}
 static int command(int ty, u64 ptr, int slot)
 {
     TRB*t = push(&commands, ptr, 0, TY(ty) | ((u32)slot << 24));
     ringbell(0, 0);
     return result(t, 33, 1);
 }
+static int epcommand(int ty,struct Usb *u,int ep,u64 ptr)
+{
+    TRB *t=push(&commands,ptr,0,TY(ty)|((u32)ep<<16)|((u32)u->id<<24));
+    ringbell(0,0);return result(t,33,0);
+}
 static int control(struct Usb*u, int rt, int rq, int val, int ix, int n)
 {
+    if(u->ctrl_dead)return -1;
     u64 s = (u64)rt | ((u64)rq << 8) | ((u64)val << 16) | ((u64)ix << 32) | ((u64)n << 48);
     int in = rt & 128;
-    push(&u->ctrl, s, 8, TY(2) | 64 | ((n ? (in ? 3u : 2u) : 0u) << 16));
+    TRB *setup=push(&u->ctrl, s, 8, TY(2) | 64 | ((n ? (in ? 3u : 2u) : 0u) << 16));
+    TRB *data=0;
     if (n)
-        push(&u->ctrl, (u64)u->desc, n, TY(3) | (in ? 1 << 16 : 0));
+        data=push(&u->ctrl, (u64)u->desc, n, TY(3) | (in ? 1 << 16 : 0));
     TRB*t = push(&u->ctrl, 0, 0, TY(4) | 32 | ((n && in) ? 0 : 1 << 16));
     ringbell(u->id, 1);
-    return result(t, 32, 0);
+    int ret=waitresult(t,32,0,setup,data,u->id);
+    if(ret<0) {
+        int code=hc->lastcode;input_diag.control_errors++;
+        /* A rejected optional HID request stalls EP0. Recover the halted
+         * control endpoint before issuing any fallback descriptor request.
+         * A timeout has unknown ownership: do NOT recycle DMA still in use. */
+        if(code!=6 || epcommand(14,u,1,0)<0)u->ctrl_dead=1;
+        else {
+            ringinit(&u->ctrl);
+            if(epcommand(16,u,1,(u64)u->ctrl.tr|1)<0)u->ctrl_dead=1;
+        }
+    }
+    return ret;
 }
 static u32 *ctx(struct Usb*u, int n)
 {
@@ -183,6 +218,13 @@ static int configure(struct Usb*u, int port, int speed)
         if (command(13, (u64)u->ic, id) < 0)
             return 0;
     }
+    if(control(u,128,6,0x100,0,18))return 0;
+    if(input_diag.device_count<TMC_INPUTDIAG_DEVICES) {
+        u->diag=++input_diag.device_count;
+        InputDeviceDiag *d=&input_diag.device[u->diag-1];
+        *d=(InputDeviceDiag){.pci=hc->pci,.port=(u32)port,
+            .vid=u->desc[8]|u->desc[9]<<8,.pid=u->desc[10]|u->desc[11]<<8,.status=1};
+    }
     if (control(u, 128, 6, 0x200, 0, 9))
         return 0;
     int len = u->desc[2] | (u->desc[3] << 8);
@@ -221,14 +263,31 @@ static int configure(struct Usb*u, int port, int speed)
                    !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
             }
         } else {
-            if(control(u,0x21,11,0,h->iface,0))ok=0;
+            if(control(u,0x21,11,0,h->iface,0)) {
+                ok=0;
+                /* Some mice advertise Boot but reject it. Never decode a
+                 * report-ID/16-bit layout as three boot bytes. Require a
+                 * valid report descriptor AND confirmed Report protocol. */
+                if(h->proto==2 && !u->ctrl_dead && h->report_len>0 && h->report_len<=1024 &&
+                   !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
+                   pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
+                    int report=!control(u,0x21,11,1,h->iface,0);
+                    if(!report && !u->ctrl_dead) {
+                        report=!control(u,0xa1,3,0,h->iface,1) && u->desc[0]==1;
+                    }
+                    if(report){h->proto=3;ok=1;input_diag.report_fallbacks++;}
+                }
+            }
             if(ok&&h->proto==1) {u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
         const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":
             h->tablet.relative?"USB HID report mouse":"USB HID tablet";
         device_add(name,"input",0);usable++;
+        if(h->proto==1)input_diag.keyboards++;else input_diag.pointers++;
+        if(u->diag)input_diag.device[u->diag-1].protocols|=1u<<h->proto;
     }
+    if(u->diag)input_diag.device[u->diag-1].status=usable?2:1;
     return usable!=0;
 }
 static void arm(struct Usb *u,struct Hid *h)
@@ -248,6 +307,7 @@ static int waitbit(volatile u32*p, u32 m, int set)
 }
 static void controller_init(u32 dev)
 {
+    hc->pci=dev;
     volatile u32*c = dev ? pci_mmio(dev, 0) : 0;
     if (!c) {
         logstr("[usb] xHCI absent\n");
@@ -306,6 +366,7 @@ static void controller_init(u32 dev)
         u32 v = *p;
         if (!(v & 1))
             continue;
+        input_diag.root_devices++;
         int speed = (v >> 10) & 15;
         if (speed <= 3 || !(v & 2)) {
             *p = (v & (1u << 9)) | (1u << 4);
@@ -325,16 +386,22 @@ static void controller_init(u32 dev)
             memset(usb + connected, 0, sizeof usb[0]);
         }
     }
-    hc->active=1;
+    hc->active=1;input_diag.active_xhci++;
     for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++)
         if(usb[i].hid[j].proto)arm(usb+i,&usb[i].hid[j]);
 }
 void input_init(void)
 {
     u32 dev=0;
-    while(ncontrollers<NCONTROLLERS && (dev=pci_find_after(0x0c0330,dev))) {
-        hc=&controllers[ncontrollers++];controller_init(dev);
+    while((dev=pci_find_after(0x0c0330,dev))) {
+        input_diag.xhci++;
+        if(ncontrollers<NCONTROLLERS){hc=&controllers[ncontrollers++];controller_init(dev);}
     }
+    const u32 classes[]={0x0c0320,0x0c0310,0x0c0300};
+    u32 *counts[]={&input_diag.ehci,&input_diag.ohci,&input_diag.uhci};
+    for(int i=0;i<3;i++){dev=0;while((dev=pci_find_after(classes[i],dev)))(*counts[i])++;}
+    logstr("[usb] native pointers ");lognum(input_diag.pointers);
+    logstr("; active xHCI ");lognum(input_diag.active_xhci);logstr("\n");
 }
 // Control waits also dispatch unrelated input completions instead of losing them.
 void kbd_setleds(int on)
@@ -358,9 +425,18 @@ static void transferred(const TRB *e)
             struct Hid *h=&u->hid[j];
             if(h->ep!=ep||!h->armed)continue;
             h->armed=0;
-            if(code!=1&&code!=13)return; /* stalled/halted endpoints need recovery, not endless rearm */
+            if(code!=1&&code!=13) {
+                input_diag.transfer_errors++;
+                /* Only known halted states are recoverable here. Defer the
+                 * bounded reset to the drain, never recurse inside result(). */
+                if((code==3||code==4||code==6) && h->failures<3) {
+                    h->pending=1;h->retry_at=ticks+100;h->failures++;
+                }
+                return;
+            }
+            input_diag.reports++;
             int n=h->mps-(int)(e->len&0xffffff);
-            if(n<0||n>h->mps)return;
+            if(n<0||n>h->mps){input_diag.bad_reports++;arm(u,h);return;}
             if(h->proto==1&&n>=8)hid_keys(h->report);
             if(h->proto==2&&n>=3)hid_relative((int8_t)h->report[1],(int8_t)h->report[2],h->report[0]&7,n>3?(int8_t)h->report[3]:0);
             if(h->proto==3&&n>0) {
@@ -374,12 +450,29 @@ static void transferred(const TRB *e)
         }
     }
 }
+static void recover_pending(void)
+{
+    for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++) {
+        struct Usb *u=usb+i;struct Hid *h=&u->hid[j];
+        if(!h->pending || ticks<h->retry_at)continue;
+        h->pending=0;
+        if(epcommand(14,u,h->ep,0)<0)continue;
+        /* CLEAR_FEATURE(ENDPOINT_HALT), then discard the failed ring and
+         * program its new dequeue/cycle before accepting further reports. */
+        int addr=0x80|((unsigned)h->ep>>1);
+        if(control(u,2,1,0,addr,0))continue;
+        ringinit(&h->in);
+        if(epcommand(16,u,h->ep,(u64)h->in.tr|1)<0)continue;
+        arm(u,h);
+    }
+}
 void input_irq(void)
 {
     for(unsigned c=0;c<ncontrollers;c++) {
         hc=&controllers[c];if(!hc->active)continue;
         TRB e;
-        for(int k=0;k<32&&event(&e);k++)if(((e.ctl>>10)&63)==32)transferred(&e);
+        for(int k=0;k<128&&event(&e);k++)if(((e.ctl>>10)&63)==32)transferred(&e);
+        recover_pending();
     }
     input_repeat();int leds=input_led_take();if(leds>=0)kbd_setleds(leds);
 }

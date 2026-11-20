@@ -84,6 +84,9 @@ void irq_init(void);
 void eoi(int);
 void input_init(void);
 void input_irq(void);
+#include "inputdiag.h"
+extern InputDiag input_diag;
+void input_diagnostics(InputDiag *);
 int input_pop(Event *);
 void rtc(SysInfo *);
 void platform_init(void);

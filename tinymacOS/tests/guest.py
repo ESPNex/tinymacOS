@@ -23,7 +23,15 @@ class Guest:
             while not self.sock.exists() and time.monotonic()<until:
                 if self.p.poll() is not None:raise RuntimeError(self.p.stdout.read().decode())
                 time.sleep(.025)
-            self.s=socket.socket(socket.AF_UNIX);self.s.settimeout(8);self.s.connect(str(self.sock));self.f=self.s.makefile('rwb',buffering=0);self.f.readline();self.req('qmp_capabilities')
+            self.s=socket.socket(socket.AF_UNIX);self.s.settimeout(8)
+            # QEMU can create its Unix socket just before listen(). Retry the
+            # connection race, not guest assertions or failed OS boots.
+            while True:
+                try:self.s.connect(str(self.sock));break
+                except (ConnectionRefusedError,FileNotFoundError):
+                    if self.p.poll() is not None or time.monotonic()>=until:raise
+                    time.sleep(.025)
+            self.f=self.s.makefile('rwb',buffering=0);self.f.readline();self.req('qmp_capabilities')
             self.reset_pointer();self.boot_samples=[]
             if capture_boot:self.capture_stages()
             self.wait('[gop] first userspace frame presented',timeout=55,mark=0)

@@ -1,6 +1,7 @@
 #include "desk.h"
 #include "date.h"
 #include "activity.h"
+#include "inputdiag.h"
 // The login surface is drawn directly by the compositor, before asking for any
 // client window. The login loop never forwards raw keyboard events to clients.
 static SessionInfo account;
@@ -10,6 +11,8 @@ static int field, confirmPower, blink = -1, minute = -1, lastPhase = -1, shake, 
 static u64 spinStart;
 static u32 glow[1920 * 1080];
 int gate;
+static int show_inputdiag;
+static u64 diag_tick;
 static void wipe(void *p, int n)
 {
     volatile u8 *q = p;
@@ -144,6 +147,41 @@ static Rect powerbox(int j)
         W / 2 - 70 + j * 82, H - 71, 57, 58
     };
 }
+static Rect diagbox(void) { return (Rect){16,H-47,220,30}; }
+static unsigned hovermask(void)
+{
+    unsigned m=inside(mx,my,diagbox());
+    for(int j=0;j<2;j++)m|=(unsigned)inside(mx,my,powerbox(j))<<(j+1);
+    m|=(unsigned)inside(mx,my,submitbox())<<3;
+    m|=(unsigned)inside(mx,my,resetbox())<<4;
+    return m;
+}
+static void diagline(int y,const char *label,u64 value)
+{
+    char b[100],n[24];strset(b,label,sizeof b);number(n,value);append(b,n,sizeof b);
+    text(30,y,b,F_MONO,0xffffff);
+}
+static void draw_inputdiag(void)
+{
+    Rect b=diagbox();roundr(b.x,b.y,b.w,b.h,10,0x18334c,230);
+    text(b.x+10,b.y+7,"F11 · Diagnostica USB",F_SMALL,0xffffff);
+    if(!show_inputdiag)return;
+    InputDiag d={0};sc(S_INPUTDIAG,&d,sizeof d,0,0);
+    roundr(16,20,490,342,12,0x102035,250);
+    text(30,32,"Input nativo · 2.4.5 / 21B6",F_CAPTION,0xffffff);
+    diagline(61,"xHCI rilevati: ",d.xhci);diagline(82,"xHCI attivi: ",d.active_xhci);
+    diagline(103,"EHCI/OHCI/UHCI non supportati: ",d.ehci+d.ohci+d.uhci);
+    diagline(124,"Puntatori configurati: ",d.pointers);
+    diagline(145,"Report USB ricevuti: ",d.reports);
+    diagline(166,"Eventi puntatore: ",d.delivered);
+    diagline(187,"Movimenti accorpati: ",d.merged);
+    diagline(208,"Eventi persi (coda piena): ",d.dropped);
+    diagline(229,"Errori trasferimento: ",d.transfer_errors);
+    diagline(250,"Errori controllo USB: ",d.control_errors);
+    diagline(271,"Fallback report HID: ",d.report_fallbacks);
+    text(30,299,"Solo xHCI, dispositivi sulle porte radice.",F_SMALL,0xffffff);
+    text(30,322,"Fotografa questo pannello se il mouse resta fermo.",F_SMALL,0xffffff);
+}
 static void field_draw(int i)
 {
     Rect r = inputbox(i);
@@ -235,6 +273,7 @@ void login_draw(void)
             center(b.x + 72, b.y + 7, j ? "Conferma" : "Annulla", F_SMALL, j ? (night ? 0x102040 : 0xffffff) : TX);
         }
     }
+    draw_inputdiag();
 }
 static void submit(void)
 {
@@ -288,10 +327,13 @@ static void do_reset(void)
 void login_input(Event *e)
 {
     if (e->type == EV_MOUSE || e->type == EV_POINTER_ABS) {
+        unsigned hover=hovermask();
         pointer_position(e);
+        cursorDirty=1;
         int down = (e->c & 1) && !(buttons & 1);
         buttons = e->c;
-        dirty = 1;
+        if(hover!=hovermask() || down)dirty=1;
+        if(down && inside(mx,my,diagbox())) {show_inputdiag=!show_inputdiag;return;}
         if (!down || account.working)return;
         if (confirmPower) {
             int x = W / 2, y = H / 2;
@@ -330,6 +372,7 @@ void login_input(Event *e)
         return;
     }
     if (e->type != EV_KEY)return;
+    if(e->a==K_F11){show_inputdiag=!show_inputdiag;dirty=1;return;}
 #ifdef TMC_DEBUG
     {   /* key forensics: fires even when a volume job swallows the key */
         char _b[40], _n[12];
@@ -400,6 +443,7 @@ void login_input(Event *e)
 }
 int login_step(void)
 {
+    if(show_inputdiag && sys.ticks-diag_tick>=100) {diag_tick=sys.ticks;dirty=1;}
     u32 waited = account.wait_seconds;
     int old = account.working;
     if (account.working && lastPhase >= 0) {

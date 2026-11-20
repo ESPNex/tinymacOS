@@ -22,8 +22,8 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'2.4.4'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'2.4.4','ProductBuildVersion':'21B5'}));add('/System/Library/KernelCollections',None)
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'2.4.5'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'2.4.5','ProductBuildVersion':'21B6'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path('assets/type.tfn').read_bytes())
 # No browser resources in this baseline image. WebKit is developed separately.
 for name,src in zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza')):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())

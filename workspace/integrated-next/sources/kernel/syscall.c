@@ -653,6 +653,11 @@ static Frame *syscall_inner(Frame *f)
         spin_unlock(&sched_lock, fl);
         break;
     }
+    case S_INPUTDIAG:
+        if (desktop && b == sizeof(InputDiag) && OUT(a, sizeof(InputDiag))) {
+            input_diagnostics((void *)a); r = 0;
+        }
+        break;
     case S_INPUT:
         if (desktop && OUT(a, sizeof(Event)))
             r = input_pop((void *)a);

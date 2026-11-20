@@ -73,3 +73,7 @@ Nessun nuovo deploy/ISO upload in questo macroblocco. Le immagini diagnostiche s
 ### Budget evidenze
 
 Per mantenere margine agli snapshot, le sole schermate dei test backend VM/rete vengono ora conservate come ritagli lossless del Terminale, senza ridimensionamento o modifica dei pixel. Le schermate desktop/Recovery delle release congelate non sono toccate. Le originali complete di questo ciclo restano nel commit verificato `46bba1621db79576c8dceaf4d4f9dd73fd2c046b`; hash/crop e riferimenti in `test-results/terminal-crops.json`. Il runner salva prima le originali dei cicli futuri in scratch esterno e compatta alla fine; lo scratch non è dichiarato persistente.
+
+### Regressione manutenzione input 2.4.5 / 21B6
+
+Suite completa `run-tests.py --guest` rieseguita dopo le modifiche input: **29/29 PASS**, compresi i profili thread/TSD/C++ 1/4/8 CPU. I build diagnostici correnti usano il nome 2.4.5, restano QA-only e non sono distribuiti. I cinque probe condividono lo stesso kernel ELF della ISO manutenzione: `../../workspace/release-2.4.5/kernel-production-match.json`. Non è iniziato un nuovo macroblocco allocator/WTF/JSC e non viene dichiarato un browser compilato.

@@ -1,18 +1,27 @@
+> **Corrente: manutenzione input 2.4.5 Levante / 21B6.** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
+
 > **Revisione installatore OC2:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2) aggiorna la manutenzione **2.4.4 Levante / 21B5**, senza browser. Live CD BIOS+UEFI, disco installato BIOS/OpenDuet/OpenCore e UEFI/OpenCore; installazione grafica, ISO rimossa, login, riavvio, documento persistente e Recupero offline verificati in QEMU. [Note, limiti, checksum e screenshot](../workspace/release-2.4.4/installer-media/RELEASE.md).
 
 > OC2 include anche il TLS nativo per-thread già verificato con 1/4/8 vCPU, non pthread/libc completa né WebKit/HTTPS. Le note storiche UEFI-only sotto descrivono la ISO originale `v2.4.4`, non OC2. Usare il tag OC2 per ricostruire questa revisione.
 
-# tinymacOS 2.4.4 · Levante
+# tinymacOS 2.4.5 · Levante
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
 
 ## Release corrente
 
-**Levante 2.4.4, build 21B5**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
+**Levante 2.4.5, build 21B6**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
 
-Questa ISO intermedia è stata esplicitamente richiesta dopo il backup GitHub. **Non include Safari o WebKit funzionante.** Prossima patch prevista: **2.4.5 Levante**, solo dopo motore browser reale, HTTPS/HTML/CSS/JavaScript, UI classica e integrazione verificata con tutti i temi. Il nome resta Levante.
+Questa manutenzione è stata richiesta con priorità per mouse fermo al login e lag, prima di riprendere i grandi blocchi WebKit. **Non include Safari o WebKit funzionante.** La precedente riserva del numero 2.4.5 al browser è superata. Il browser reale resta da completare: HTTPS/HTML/CSS/JavaScript, UI classica e integrazione con i temi. [Note input 2.4.5, prove e limiti](../workspace/release-2.4.5/RELEASE.md).
 
-Novità rispetto alla manutenzione 2.4.3:
+Novità input 2.4.5:
+
+- Movimento al login con due rettangoli di danno del cursore, non ridisegno completo per ogni report; hover e pulsanti mantengono il ridisegno della scena.
+- Accorpamento movimenti in coda con barriere per transizioni pulsanti, ruota e tasti.
+- Recupero limitato degli endpoint xHCI in halt, recupero EP0 e fallback mouse Report solo con protocollo confermato e descriptor valido; buffer DMA allineati.
+- F11 al login: diagnostica input nativo senza contenuto dei tasti o password. Driver nativo xHCI su porte radice; niente supporto promesso per hub o EHCI/OHCI/UHCI.
+
+Funzionalità mantenute dalla 2.4.4:
 
 - VM multi-CPU con invalidazione TLB e coordinamento degli accessi utente; prove VM/MMU e stress concorrente separati dai test browser.
 - Verbose selezionabile con V durante la mela; `bootverbose status`, `on`, `off`, `log [pagina]` dal Terminale. La preferenza persistente richiede un sistema installato e viene letta al prossimo riavvio.
@@ -27,8 +36,8 @@ Usare una VM x86-64 con OVMF/UEFI, Secure Boot disattivato, Q35/AHCI, almeno 512
 
 ```sh
 python3 tools/local-tools.py /var/tmp/tmc/tools/root
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-244 bash build.sh
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-244 STATE=/var/tmp/levante-vm LIVE=1 bash run.sh
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-245 bash build.sh
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-245 STATE=/var/tmp/levante-vm LIVE=1 bash run.sh
 ```
 
 Per installare, collegare un **nuovo disco virtuale SATA vuoto** dedicato, almeno 96 MiB consigliati. Creare l’account sulla live, aprire *Installa tinymacOS*, controllare la destinazione e confermare. A «Il disco è pronto», spegnere, rimuovere l’ISO e riavviare dal disco con la stessa password. Non usare dischi fisici o dati importanti. Un semplice riavvio dalla nuova ISO non aggiorna un sistema già installato.
@@ -39,7 +48,7 @@ Su USB/Rufus usare modalità **ISO**, schema GPT/UEFI senza CSM, FAT32 e Secure 
 
 F2 apre il Terminale; F1–F9 aprono app. Ctrl+Spazio apre Cerca; Ctrl+Maiusc+Q blocca la sessione. Finder mostra i veri file/bundle di sistema; il desktop include editor, Note/Memo, Galleria, Monitor, Impostazioni e Utility Disco. I temi e gli sfondi storici chiamati Riviera/Sirocco non sono il nome della release e non vanno rinominati retroattivamente.
 
-Premere ripetutamente **R o F12 durante la mela** per aprire `/Recovery/BaseSystem.dmg`, presente nella stessa ISO e copiato nella partizione Recovery dall’installer. Nessun messaggio Recovery viene sovrapposto al normale avvio. Recovery è un runtime UEFI distinto, non Internet Recovery o un ambiente Apple. `sw_vers` nella Shell di Recupero riporta 2.4.4 (21B5).
+Premere ripetutamente **R o F12 durante la mela** per aprire `/Recovery/BaseSystem.dmg`, presente nella stessa ISO e copiato nella partizione Recovery dall’installer. Nessun messaggio Recovery viene sovrapposto al normale avvio. Recovery è un runtime UEFI distinto, non Internet Recovery o un ambiente Apple. `sw_vers` nella Shell di Recupero riporta 2.4.5 (21B6).
 
 ```text
 bootverbose status
