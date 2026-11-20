@@ -153,7 +153,7 @@
   },
   {
     "path": "tools/dualboot-iso.py",
-    "sha256": "21bba1a8517da922a168ce91a9b5366e6986807d12bc1c5bde3ecaab4e6000d7"
+    "sha256": "d79e4451afa0ff63c33782da1872085f0d25559fba79ab17146a97931a2cc1f6"
   },
   {
     "path": "tools/env.sh",
@@ -238,5 +238,37 @@
   {
     "path": "vendor/opencore-1.0.8/vendor-lock.json",
     "sha256": "7df7ac0888001fd55e261f4e7713fa69a4101bb372eadb041283e123d616dff9"
+  },
+  {
+    "path": "vendor/syslinux-6.04/COPYRIGHT.txt",
+    "sha256": "4fdce5dfb16e2d0cc8b3b84c94ed410fb6c85d93af2922744370e112c99e5151"
+  },
+  {
+    "path": "vendor/syslinux-6.04/GPL-2.txt",
+    "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+  },
+  {
+    "path": "vendor/syslinux-6.04/SOURCE.md",
+    "sha256": "2b6889560d078f98a5cdea2beb51336585913e10a01fe78a1c7dd150704682da"
+  },
+  {
+    "path": "vendor/syslinux-6.04/debian-source-index.txt",
+    "sha256": "808495b8752d6751caab90498ce7107c2fc16a9422d2f580b8aca112b5f29391"
+  },
+  {
+    "path": "vendor/syslinux-6.04/isolinux.bin",
+    "sha256": "f3e2c1786564e148fb394e2321666ddccccedc18f7cf9db3e2416d45d13ea492"
+  },
+  {
+    "path": "vendor/syslinux-6.04/ldlinux.c32",
+    "sha256": "26cbd44c3a3dacbf3971cfbc04db539da07767fa00797f505044e2f68dcfae89"
+  },
+  {
+    "path": "vendor/syslinux-6.04/memdisk",
+    "sha256": "86b1d121e43cb3256d1e70b93dc073038b1401b9eb25eb21a6a11e4ab9620351"
+  },
+  {
+    "path": "vendor/syslinux-6.04/vendor-lock.json",
+    "sha256": "a4ca7fb7dcfc3eff408995c6d824a82faac98fc38a668f3554914fe5f7289395"
   }
 ]

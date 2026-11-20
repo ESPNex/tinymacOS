@@ -1,0 +1,48 @@
+{
+  "packages": [
+    {
+      "package": "isolinux",
+      "version": "3:6.04~git20190206.bf6db5b4+dfsg1-3",
+      "url": "https://deb.debian.org/debian/pool/main/s/syslinux/isolinux_6.04~git20190206.bf6db5b4+dfsg1-3_all.deb",
+      "sha256": "cb14af88adc2c3844976cd2de61571d2af94d2fb65c277fe4acf3dc8a5d25aae"
+    },
+    {
+      "package": "syslinux-common",
+      "version": "3:6.04~git20190206.bf6db5b4+dfsg1-3",
+      "url": "https://deb.debian.org/debian/pool/main/s/syslinux/syslinux-common_6.04~git20190206.bf6db5b4+dfsg1-3_all.deb",
+      "sha256": "f7e4ead7fdfe5cb6117d8d2485d75e53570a8cf680c81a432f92c1774f878875"
+    }
+  ],
+  "files": {
+    "memdisk": "86b1d121e43cb3256d1e70b93dc073038b1401b9eb25eb21a6a11e4ab9620351",
+    "isolinux.bin": "f3e2c1786564e148fb394e2321666ddccccedc18f7cf9db3e2416d45d13ea492",
+    "ldlinux.c32": "26cbd44c3a3dacbf3971cfbc04db539da07767fa00797f505044e2f68dcfae89",
+    "GPL-2.txt": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6",
+    "debian-source-index.txt": "808495b8752d6751caab90498ce7107c2fc16a9422d2f580b8aca112b5f29391",
+    "COPYRIGHT.txt": "4fdce5dfb16e2d0cc8b3b84c94ed410fb6c85d93af2922744370e112c99e5151",
+    "SOURCE.md": "2b6889560d078f98a5cdea2beb51336585913e10a01fe78a1c7dd150704682da"
+  },
+  "scope": "ISOLINUX + MEMDISK optical-to-OpenDuet RAM-disk transport, not the native OS or an alternate UEFI firmware",
+  "corresponding_source": {
+    "branch": "vendor/syslinux-6.04",
+    "commit": "53791ac78b90525b81bd5b7ae692a681c4c3e12a",
+    "url": "https://github.com/ESPNex/tinymacOS/tree/53791ac78b90525b81bd5b7ae692a681c4c3e12a",
+    "source_packages": [
+      {
+        "url": "https://deb.debian.org/debian/pool/main/s/syslinux/syslinux_6.04~git20190206.bf6db5b4+dfsg1-3.dsc",
+        "sha256": "765034fa4e33a9585931258b4ade92b24ff65ba5a2be79d0e7b7963026b0e366",
+        "bytes": 2615
+      },
+      {
+        "url": "https://deb.debian.org/debian/pool/main/s/syslinux/syslinux_6.04~git20190206.bf6db5b4+dfsg1.orig.tar.xz",
+        "sha256": "46169f43dabb5f6cb33a3f6fb79a61008179326756481845c0a42d429d0c5bee",
+        "bytes": 3164384
+      },
+      {
+        "url": "https://deb.debian.org/debian/pool/main/s/syslinux/syslinux_6.04~git20190206.bf6db5b4+dfsg1-3.debian.tar.xz",
+        "sha256": "ee68e669b061c7b6887bc4d82b3c6c719e3db9d12ea7d034d4d62149161c5305",
+        "bytes": 42884
+      }
+    ]
+  }
+}
