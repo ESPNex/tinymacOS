@@ -1,7 +1,8 @@
 /* QA native ABI SMP stress: real threads, no fake pthread/errno implementation. */
 #include "lib.h"
+#include "tmc_tls.h"
+static struct tmc_tls_block probe_tls ALIGNED(16);
 #include "vmabi.h"
-int errno; /* Linked adapters require it; stress workers use native calls only. */
 static volatile u32 ready,go,done,failed,mask,reads;
 static volatile u64 shared;
 static u32 ncpu;
@@ -41,6 +42,7 @@ static void worker(u64 id)
 }
 void app_main(void)
 {
+ if(tmc_tls_install(&probe_tls)){sc(S_RETURN,42,0,0,0);return;}
  SysInfo info;sc(S_INFO,&info,0,0,0);ncpu=info.ncpu;
  shared=vm(TMC_VM_RESERVE,4096,4096,1);
  if((i64)shared<0||vm(TMC_VM_COMMIT,shared,4096,3)){say("SMP FAIL initial\n");sc(S_RETURN,42,0,0,0);return;}

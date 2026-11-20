@@ -2,11 +2,12 @@
  * shipped as a browser or copied into the production source tree's command.c.
  * Exercises the actual target backend and kernel/lwIP with a controlled peer. */
 #include "lib.h"
+#include "tmc_tls.h"
+static struct tmc_tls_block probe_tls ALIGNED(16);
 #include "tmc_backend.h"
 #include "tmc_descriptors.h"
 #include "sha256.h"
 #include <errno.h>
-int errno; /* Deliberately single-thread probe; not a replacement for libc/TLS. */
 static char output[2048];
 static unsigned used;
 static struct tmc_fd_table descriptors;
@@ -125,6 +126,7 @@ static int run(void) {
     return 0;
 }
 void app_main(void) {
+ if(tmc_tls_install(&probe_tls)){sc(S_RETURN,42,0,0,0);return;}
     int r=run();
     if(used)sc(S_STDOUT,output,used,0,0);
     sc(S_RETURN,r,0,0,0);

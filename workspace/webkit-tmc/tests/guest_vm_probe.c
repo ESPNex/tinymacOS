@@ -2,9 +2,10 @@
  * Real user-mode MMU tests, including deliberately killed child processes.
  * NOT a browser, libc, mmap compatibility layer or production command program. */
 #include "lib.h"
+#include "tmc_tls.h"
+static struct tmc_tls_block probe_tls ALIGNED(16);
 #include "tmc_vm.h"
 #include <errno.h>
-int errno; /* One caller, not thread-local errno. */
 static ExecArgs args;
 static volatile unsigned char sink;
 static void say(const char *s){unsigned n=0;while(s[n])n++;sc(S_STDOUT,s,n,0,0);}
@@ -78,6 +79,7 @@ static int fault(const char *kind){
  say("VM UNEXPECTED SURVIVAL\n");return 77;
 }
 void app_main(void){
+ if(tmc_tls_install(&probe_tls)){sc(S_RETURN,42,0,0,0);return;}
  if(sc(S_ARGV,&args,0,0,0)){say("VM FAIL argv\n");sc(S_RETURN,42,0,0,0);return;}
  int result;
  if(args.argc>=4 && eqs(args.argv[1],"status")) {

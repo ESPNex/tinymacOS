@@ -2,7 +2,9 @@
 #include "lib.h"
 #include "tlsabi.h"
 #include "tmc_tls.h"
-int errno; /* Existing unrelated network adapters still have their old ABI. */
+#include "tmc_vm.h"
+#include "tmc_descriptors.h"
+#include <errno.h>
 static struct tmc_tls_block tcbs[5] ALIGNED(16);
 static volatile u32 ready,go,done,failed,mask,checks;
 static void bad(void){__atomic_store_n(&failed,1,__ATOMIC_RELEASE);}
@@ -17,7 +19,10 @@ static void worker(u64 id)
  while(!__atomic_load_n(&go,__ATOMIC_ACQUIRE))slp(1);
  for(unsigned j=0;j<150;j++){
   int *e=tmc_tls_errno_location();if(!e){bad();break;}
-  *e=(int)(id*100000+j);sample();slp(1);
+  if(&errno!=e)bad();
+  if(id&1){if(tmc_vm_info(0)!=-1 || errno!=EFAULT)bad();}
+  else {if(tmc_fd_close(0,-1)!=-1 || errno!=EBADF)bad();}
+  errno=(int)(id*100000+j);sample();slp(1);
   if(tmc_tls_current()!=&tcbs[id]||tmc_tls_errno_location()!=e||*e!=(int)(id*100000+j))bad();
   __atomic_add_fetch(&checks,1,__ATOMIC_RELAXED);
  }
@@ -39,6 +44,6 @@ void app_main(void)
  while(done!=4){sample();if(tmc_tls_current()!=&tcbs[0]||!main_error||*main_error!=777)bad();slp(1);sc(S_INFO,&s,0,0,0);if(s.ticks>until){bad();break;}}
  if(s.ncpu>1 && !(mask&(mask-1)))bad();
  if(done!=4||checks!=600||tmc_tls_uninstall()||tmc_tls_errno_location())bad();
- say(failed?"TLS FS FAIL\n":"TLS FS SMP PASS\n");say("checks=");num(checks);say(" workers=4 cpus=");num(s.ncpu);say("\nerrno-per-thread=isolated\n");
+ say(failed?"TLS FS FAIL\n":"TLS FS SMP PASS\n");say("checks=");num(checks);say(" workers=4 cpus=");num(s.ncpu);say("\nerrno-per-thread=isolated\nadapter-errno=thread-local\n");
  sc(S_RETURN,failed?42:0,0,0,0);
 }

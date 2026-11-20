@@ -114,8 +114,10 @@
     "recovery_mouse_tablet_offline_restore": true,
     "sealed_esp_byte_identical": true,
     "dirty_target_zero_writes": true,
-    "published": false,
+    "published": true,
     "browser_included": false,
-    "legacy_usb_dd": false
+    "legacy_usb_dd": false,
+    "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2",
+    "github_download_verified": true
   }
 }

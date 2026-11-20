@@ -24,7 +24,7 @@ if [ ! -f "$BASE/kernel.elf" ];then
 fi
 for f in "$BASE/"*.elf "$BASE/"*.EFI "$BASE/"kext-*.o "$BASE/KernelCache"; do cp "$f" "$OUT/"; done
 C=(-std=gnu11 -O2 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fpie -fno-plt -nostdinc -isystem "$(gcc -print-file-name=include)" -I"$ROOT/posix/libc-headers" -I"$ROOT/posix/include" -Iinclude -Iuserspace -Wall -Wextra -Werror)
-for f in native_syscall network clock_entropy poll descriptors vm tls; do
+for f in native_syscall network clock_entropy poll descriptors vm tls errno; do
  gcc "${C[@]}" -c "$ROOT/posix/src/$f.c" -o "$OUT/probe-$f.o"
 done
 gcc "${C[@]}" -c "$ROOT/tests/guest_${KIND}_probe.c" -o "$OUT/probe-main.o"

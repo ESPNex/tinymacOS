@@ -17,7 +17,8 @@ long tmc_tls_install(struct tmc_tls_block *);
 long tmc_tls_uninstall(void);
 struct tmc_tls_block *tmc_tls_current(void);
 /* NULL when the native thread has no valid installed TCB; no shared fallback.
- * Existing global-errno adapters are not silently made thread-safe by this API. */
+ * Target errno.h now resolves through this cell and traps if no TCB exists.
+ * Startup/thread attachment remains caller-owned, not a pthread runtime. */
 int *tmc_tls_errno_location(void);
 #ifdef __cplusplus
 }
