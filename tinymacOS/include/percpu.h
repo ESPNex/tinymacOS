@@ -2,7 +2,7 @@
 #include "base.h"
 // Per-CPU control block. In 64-bit mode the kernel never swaps GS: the base
 // stays on this block from cpu_init/AP entry through ring-3 execution (user
-// code of tinymacOS does not use GS/FS as TLS).
+// code must never use GS; user FS is the task-owned TLS thread pointer).
 struct PerCpu;
 typedef struct PerCpu {
     struct PerCpu *self; // gs:0

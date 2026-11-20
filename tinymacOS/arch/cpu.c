@@ -54,6 +54,11 @@ void cpu_tables(int c)
     wrmsr(0xc0000082, (u64)sys_entry);
     wrmsr(0xc0000084, 0x44700);
     wrmsr(0xc0000080, rdmsr(0xc0000080) | 1);
+    /* User FS is a task-owned thread pointer; do not inherit firmware/AP state.
+     * FSGSBASE must remain disabled: users must never rewrite our per-CPU GS. */
+    u64 cr4;asm volatile("mov %%cr4,%0":"=r"(cr4));
+    cr4&=~(1ull<<16);asm volatile("mov %0,%%cr4"::"r"(cr4):"memory");
+    wrmsr(0xc0000100,0);
     PerCpu *P = cpus + c;
     P->self = P;
     P->cpu = c;

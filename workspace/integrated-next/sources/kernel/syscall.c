@@ -1,4 +1,5 @@
 #include "k.h"
+#include "tlsabi.h"
 #include "netabi.h"
 #include "uaccess_gate.h"
 static int string(u64 ptr, char *out, int cap)
@@ -434,6 +435,13 @@ static Frame *syscall_inner(Frame *f)
     case S_DEVICES:
         if (b <= 16 && OUT(a, b * sizeof(DeviceInfo)))
             r = device_list((DeviceInfo *)a, b);
+        break;
+    case S_TLS:
+        if(a==TMC_TLS_QUERY)r=TMC_TLS_ABI_VERSION;
+        else if(a==TMC_TLS_GET)r=task[cur].fs_base;
+        else if(a==TMC_TLS_SET && (!b || (!(b&7) && OUT(b,8)))) {
+            task[cur].fs_base=b;wrmsr(0xc0000100,b);r=0;
+        }
         break;
     case S_THREAD:
         r = newthread(a, b);

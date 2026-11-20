@@ -1,3 +1,5 @@
+> **Ultimo stato:** ISO ottica dual-boot [v2.4.4-oc1](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1) pubblicata e riscaricata/checksum verificato. SeaBIOS → ISOLINUX/MEMDISK → OpenDuet/OpenCore → desktop, e OVMF diretto dalla stessa ISO, senza HDD bootstrap, PASS. Installer ancora UEFI. Subito dopo è iniziato il runtime WebKit: S_TLS/FS base per task e TCB/cella errno esplicita, guest 1/4/8 vCPU PASS (600 verifiche per profilo), regressione completa 15/15 PASS. Queste ultime modifiche TLS sono su main, NON nella release taggata. Nessun JSC/WebCore/Safari compilato.
+
 > **Aggiornamento release:** l'utente ha autorizzato una nuova ISO intermedia dopo il backup. È stata preparata, collaudata e pubblicata su GitHub **2.4.4 Levante (21B5)**; note/QA/hash in `../release-2.4.4/RELEASE.md`. Il vecchio paragrafo sottostante che indicava nessun nuovo deploy descriveva lo stato precedente. La futura patch Safari resta 2.4.5 Levante e richiede browser reale e temi.
 
 # Sviluppo integrato — stato di ripresa

@@ -54,3 +54,13 @@ WebKit è il motore, non l'applicazione Safari. Il port non eredita automaticame
 ## Pulizia del progetto
 
 Su richiesta, eliminati NetSurf, librerie del vecchio port, registro storico, backup vendor e oggetti precompilati. Nessuna dipendenza dal vecchio albero. Sono stati conservati soltanto i nove header effettivamente usati dal backend, con la licenza musl, in `posix/libc-headers/`. Non contengono il motore NetSurf né la vecchia implementazione shim. `errno.h` è l'adattamento provvisorio TinymacOS: errno globale, non ancora per-thread.
+
+## Dopo il redeploy OpenDuet/OpenCore: TLS per-thread nativo
+
+Release del supporto dual-boot ottico pubblicata: [v2.4.4-oc1](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1). BIOS e UEFI verificati collegando soltanto la stessa ISO, senza HDD bootstrap; installer ancora UEFI. I sorgenti completi corrispondenti Syslinux sono conservati estratti nel branch vendor separato della repository, non nel piccolo workspace.
+
+**Sviluppo successivo, NON incluso in quella ISO:** aggiunta S_TLS accodata all'ABI, con query/get/set del thread pointer FS nativo. Ogni task ha il proprio FS base, inizializzato a zero per un nuovo thread e ripristinato nelle migrazioni/context switch. GS resta riservato al kernel e FSGSBASE disabilitato. Basi disallineate/non-user/non-canoniche vengono rifiutate senza cambiare il puntatore corrente. `posix/src/tls.c` fornisce un piccolo TCB caller-owned e una cella errno distinta per thread, senza fallback globale condiviso quando non inizializzata.
+
+Probe reale guest **PASS a 1/4/8 vCPU**: quattro worker, **600 verifiche dopo yield** per profilo, TCB/celle errno distinti, valore del thread principale preservato, basi invalide rifiutate e reset FS verificato. Su SMP è richiesta esecuzione su più di una CPU (mask), non necessariamente migrazione di ogni singolo thread. Risultati `test-results/guest-tls-smp{1,4,8}.json`; ritagli del vero Terminale in `test-results/tls/`. Dopo le modifiche, suite backend/runtime completa **15/15 PASS** rieseguita.
+
+**Non è ancora il TLS di rete HTTPS, una libc completa, ELF/C++ TLS (`__thread`/DTV), pthread o JavaScriptCore.** Gli adattatori legacy continuano a usare il vecchio errno globale finché startup/creazione thread e API libc non saranno collegati al nuovo TCB. Non dichiararli ora thread-safe. Restano attese/futex e join, runtime C/C++, integrazione reale WTF/JSC, grafica/font e WebCore, HTTPS validato, UI e temi. La patch browser resta subordinata a questi gate.

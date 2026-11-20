@@ -22,7 +22,8 @@
     "descriptor_backend_host_and_single_caller_guest_tests": true,
     "single_cpu_native_vm_and_hardware_guard_tests": true,
     "compact_password_dots_and_reported_white_line_guest_regression": true,
-    "real_multi_cpu_vm_support_and_stress_tests": true
+    "real_multi_cpu_vm_support_and_stress_tests": true,
+    "native_thread_pointer_and_explicit_errno_cells_guest_tested": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -82,6 +83,22 @@
     "bios_installer": false,
     "legacy_usb_dd": false,
     "browser_included": false,
-    "sha256": "a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34"
+    "sha256": "a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34",
+    "published": true,
+    "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1"
+  },
+  "native_tls_scope": {
+    "shipped_in_oc1": false,
+    "guest_cpus": [
+      1,
+      4,
+      8
+    ],
+    "workers": 4,
+    "checks_per_profile": 600,
+    "global_errno_adapters_converted": false,
+    "pthread": false,
+    "elf_cpp_tls_loader": false,
+    "https_tls": false
   }
 }

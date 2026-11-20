@@ -1,7 +1,11 @@
 [
   {
     "path": "README.md",
-    "sha256": "2c306570f019bfbe50b92df885668cfcf58ab6e3f25fbf1a1a3457a1b5885d6b"
+    "sha256": "3c4caffe46f76825beb34fa480acde7006034fbfc57abcc7fe17428006d6a895"
+  },
+  {
+    "path": "arch/cpu.c",
+    "sha256": "22ecf08a993a43abb48ac564265e6fcbdab0558c6fe82cfd717cffc889bf9c54"
   },
   {
     "path": "boot/loader.c",
@@ -29,7 +33,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "4e434278e2117d14c487d133c181466ea4eb030c2e17c86c355f5418e419568d"
+    "sha256": "f57b634e1aa38d671326461631639323524e8011f8c90ba482a0a51888d98962"
   },
   {
     "path": "include/bootconfig.h",
@@ -48,6 +52,14 @@
     "sha256": "25c6854a6f0c0d43773d371caed5fd4f04715ffe6bf1ff15295dc50b57846a4b"
   },
   {
+    "path": "include/percpu.h",
+    "sha256": "8056b2ba304b7eb6a206adf2ad641818b5eb2f5615bb8d01ae92f3ed7c090f89"
+  },
+  {
+    "path": "include/tlsabi.h",
+    "sha256": "0e359cfd099b6c917021c0aec33b3e5249224ecde08311f292d2d01feda55f0a"
+  },
+  {
     "path": "include/uaccess_gate.h",
     "sha256": "d5c3bc6e9234cdd3fc80148cc376b3dce7dddde726295c8c6399087257d227e0"
   },
@@ -57,7 +69,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "64d301d3fac13bf08b7c2281b5e1d92827e48b34c31437e0ece6f3f58f4d002c"
+    "sha256": "bcbfeb1d0ab39131a8f4a59708d327a43a26e02b77714d5a40bc37a88c3169f7"
   },
   {
     "path": "kernel/log.c",
@@ -73,11 +85,11 @@
   },
   {
     "path": "kernel/sched.c",
-    "sha256": "df8d0264d31585d969da86144bc5476e2538cccfb1e9fdf68c361585f3e39ef8"
+    "sha256": "36b0ae1feb441d7eb9c32c5efe619069af170f5089b566b08be60a6222d812fe"
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "82039fe390d5660da01f4518f3a1be5ba4e6dd93308858b5f6f8e8b12f9b6673"
+    "sha256": "3a384552be18270fcb08b9868ff7b0a20b898743a42f00b10e3bfd0f1bec9d52"
   },
   {
     "path": "kernel/uservm.c",

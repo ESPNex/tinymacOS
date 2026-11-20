@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "requested_cpus": 4,
+  "scope": "native FS base + caller-owned TCB/errno cell, not pthread/C++ ELF TLS/JSC/HTTPS",
+  "iso_sha256": "0075371f3d5eabd8a0364dfabc62c98bf64cd14767619c11e86771acd414d8fc",
+  "external_evidence": "/var/tmp/tmc-tls-qa-jpikv6qn/evidence",
+  "workers": 4,
+  "post_yield_isolation_checks": 600,
+  "invalid_base_rejected": true,
+  "unset_thread_starts_with_zero_fs": true,
+  "child_does_not_inherit_parent_tcb": true,
+  "main_errno_preserved": true,
+  "thread_cleanup_clears_fs": true,
+  "cross_cpu_execution_required": true
+}

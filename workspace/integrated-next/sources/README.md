@@ -1,3 +1,7 @@
+> **Redeploy ottico:** [v2.4.4-oc1 OpenDuet/OpenCore + UEFI](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc1) è ora pubblicato e verificato da CD su SeaBIOS/OVMF. È una revisione del supporto 2.4.4, non una nuova versione OS: il vecchio limite UEFI-only delle note 2.4.4 sottostanti vale per la ISO originale, non per l'avvio ottico della nuova revisione. L'installer rimane UEFI. [Note complete](../workspace/release-2.4.4/opencore-media/RELEASE.md).
+
+> **Sorgenti main dopo il tag:** includono il primo TLS per-thread FS nativo, verificato con 1/4/8 vCPU; è sviluppo WebKit non ancora distribuito, non pthread/libc completa o HTTPS. Per ricostruire esattamente la ISO OpenCore usare il tag `v2.4.4-oc1`, non main.
+
 # tinymacOS 2.4.4 · Levante
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.

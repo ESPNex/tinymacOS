@@ -15,6 +15,7 @@ static Frame *mkframe(int ti, int pi, u64 ip, u64 sp, int user)
     t->pin = -1;
     t->at = -1;
     t->wake = 0;
+    t->fs_base = 0;
     t->f = (Frame *)((u8 *)t->stack + sizeof t->stack - sizeof(Frame));
     memset(t->f, 0, sizeof(Frame));
     t->f->rip = ip;
@@ -346,6 +347,7 @@ Frame *schedule(Frame *f)
         asm volatile("fxsave64 %0":"=m"(task[cur].fx));
         asm volatile("fxrstor64 %0"::"m"(task[next].fx));
         cur = next;
+        wrmsr(0xc0000100,task[cur].fs_base);
         switches++;
         Process *p = current();
         p->switches++;
