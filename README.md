@@ -6,7 +6,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 
 ## Mappa
 
-- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. La numerazione resta provvisoriamente 2.4.3: **le modifiche di sviluppo non sono una nuova release distribuita**.
+- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Versione corrente in preparazione per release esplicitamente autorizzata: **2.4.4 Levante, build 21B5**, senza browser. Successiva patch browser prevista: 2.4.5 Levante.
 - `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
 - `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
 - `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.
@@ -19,7 +19,7 @@ Questo repository conserva i file del workspace necessari a riprendere lo svilup
 - Bootstrap BIOS di prova: SeaBIOS → OpenDuet 1.0.8 BlockIO → OpenCore → loader nativo e desktop, con verbose tramite `BOOTCFG.BIN`, verificati in QEMU. Il bootstrap è una **immagine disco QA separata**, non ancora un'ISO ibrida distribuita e non un installer BIOS completo.
 - Verbose UEFI diretto selezionato con `V`, comandi `bootverbose status`, `on`, `off`, `log [pagina]` implementati. Verificati selezione live, stato, log e rifiuto di scrittura persistente sulla live. Il test completo della preferenza installata in `workspace/integrated-next/qa/verbose_installed.py` è passato: off → on da Terminale → riavvio verbose → off → riavvio quieto; ESP sigillata e payload Recovery invariati. Evidenze in `workspace/integrated-next/evidence/verbose-installed/`.
 - `workspace/webkit-tmc/test-results/milestone-tests.json` riporta la suite backend/runtime. Date e commit delle prove contano: un risultato precedente non valida automaticamente modifiche successive.
-- **Safari/WebKit reale non è completato. Nessuna nuova ISO integrata è stata pubblicata.**
+- **Safari/WebKit reale non è completato. La 2.4.4 è una release intermedia senza browser, non la futura ISO Safari.**
 - Nessuna validazione su hardware fisico; i risultati QEMU non garantiscono compatibilità BIOS/USB universale.
 
 ## Ricostruzione

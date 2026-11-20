@@ -36,5 +36,5 @@ files=audit_bytes(gpt(disk)['data']);home='/Users/User/';sub=home+'Library/Appli
 assert files[sub+'Notes/1.txt']==b'Viaggio a Levante\nPrenotare il treno' and sub+'Notes/2.txt' not in files
 assert files[sub+'Stickies/1.txt']==b'Biglietti e orari' and files[sub+'Stickies/1.txt.color']==b'3'
 ok('A VM spenta: solo la nota eliminata con conferma è assente; memo, colore e documento originale sono integri nelle rispettive directory')
-for k,v in {'completato':'2.4.3\n','storia':'x\nx\n','status':'127\n','tempo libero':'con spazi\n'}.items():assert files[home+'Documents/'+k]==v.encode(),(k,files.get(home+'Documents/'+k))
+for k,v in {'completato':'2.4.4\n','storia':'x\nx\n','status':'127\n','tempo libero':'con spazi\n'}.items():assert files[home+'Documents/'+k]==v.encode(),(k,files.get(home+'Documents/'+k))
 ok('Shell interattiva: completamento Tab, ripetizione dalla cronologia, stato 127, esecuzione per percorso assoluto e nome file con spazi controllati nei byte su disco')

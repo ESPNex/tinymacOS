@@ -26,7 +26,7 @@ with DiskRecovery('/not-attached',out,e,'local',disk='cold-nvram',boot_disk=True
     media(g)
     for word in ('Terminale','Continua'):
         x,y=g.visible(word);g.click(x+7,y+6)
-    g.visible('Shell di recupero locale');g.cmd('sw_vers','tinymacOS Recovery 2.4.3');g.cmd('diskutil info /','Origine: disco interno, partizione Recovery');g.visible(str(len(raw))+' byte verificati');g.shot('origine-disco')
+    g.visible('Shell di recupero locale');g.cmd('sw_vers','tinymacOS Recovery 2.4.4');g.cmd('diskutil info /','Origine: disco interno, partizione Recovery');g.visible(str(len(raw))+' byte verificati');g.shot('origine-disco')
     ok('NVRAM nuova; solo il disco SATA installato, tastiera e tablet. R alla mela apre il DMG locale. Due clic aprono la shell: tipo, partizione e misura derivano dall’effettivo volume UEFI sorgente')
 # Change only a byte in XML whitespace (not a FAT sector and not an executable).
 # The desktop loader must reject the damaged disk image, not run another copy.

@@ -1,8 +1,8 @@
 {
   "application_name": "Safari",
-  "target_os_release": "next integrated Safari release after final maintenance 2.4.3",
+  "target_os_release": "2.4.5 Levante after explicitly authorized intermediate 2.4.4",
   "visual_reference": "Safari desktop classico, tutti i temi di TinymacOS",
-  "release_policy": "Final maintenance 2.4.3 explicitly authorized and uploaded. Next release requires actual multi-CPU VM support, working WebKit/Safari and representative HTTPS/HTML/CSS/JavaScript/theme/security acceptance. No backend-only image may be uploaded as a browser.",
+  "release_policy": "User explicitly authorized current non-browser ISO as GitHub release 2.4.4 Levante after source backup. Later 2.4.5 Levante requires working real WebKit/Safari, representative HTTPS/HTML/CSS/JavaScript/theme/security acceptance. No backend-only image may be called Safari.",
   "compatibility_goal": "Ampia compatibilità con siti moderni; universal compatibility is not a guarantee or a finite testable criterion.",
   "gates": {
     "authored_sources_saved_in_workspace": true,
@@ -57,5 +57,13 @@
     "drive_id": "1xpSCzs3WpJqzVbWzxp3C5XnfOJ_bjCJ4",
     "sha256": "65b0191f0932e2ba3bdf815bac5da1a9d962b45a8baa2515b52bab90a21fefd1"
   },
-  "private_source_backup": "https://github.com/ESPNex/tinymacOS"
+  "private_source_backup": "https://github.com/ESPNex/tinymacOS",
+  "maintenance_244": {
+    "explicitly_authorized": true,
+    "version": "2.4.4",
+    "build": "21B5",
+    "codename": "Levante",
+    "browser_included": false,
+    "built_tested_uploaded": false
+  }
 }

@@ -54,7 +54,7 @@ async def main():
             body=await res.text();assert res.status==200 and 'Invia R' in body and 'Riviera' in body and 'base-system' not in body
         async with cl.get(base+'/base-system') as res:assert res.status==404
         checks.append('La console offre un unico download ISO: nessun link o endpoint BaseSystem separato')
-        for url,fn in [('cd-di-avvio','tinymacOS-2.4.3-x86_64.iso')]:
+        for url,fn in [('cd-di-avvio','tinymacOS-2.4.4-x86_64.iso')]:
             h=hashlib.sha256();n=0
             async with cl.get(base+'/'+url) as res:
                 assert res.status==200

@@ -24,7 +24,7 @@ a=gpt(disk);data=audit_bytes(a['data']);assert data['/Users/User/Desktop/riva.tx
 p=W/'repair.raw';shutil.copyfile(disk,p);os.environ['DISK']=str(p)
 with p.open('r+b') as f:f.seek(512+16);v=f.read(1);f.seek(-1,1);f.write(bytes([v[0]^32]))
 class KeyRec(RecoveryKey,Retail):pass
-with KeyRec(D/'tinymacOS-2.4.3-x86_64.iso',W,E,'repair',disk='repair-vars') as g:
+with KeyRec(D/'tinymacOS-2.4.4-x86_64.iso',W,E,'repair',disk='repair-vars') as g:
  keyseq(g,'down','down','ret','ret');g.visible('SOS: controlla e ripara');g.key('ret');g.visible('SOS completato.',45);g.shot('19-sos-gpt')
 repaired=gpt(p);assert repaired['parts']==a['parts'] and repaired['id']==a['id'] and repaired['data']==a['data'];ok('BaseSystem interno alla ISO: SOS ha ricostruito la GPT primaria danneggiata dalla secondaria; CRC corretti e dati identici')
 # Corrupt a recoverable area of the installed kernel payload, leaving Recovery and its clean source unaffected.

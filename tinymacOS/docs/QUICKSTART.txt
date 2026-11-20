@@ -1,4 +1,4 @@
-tinymacOS 2.1.0 Riviera — avvio, installazione e recupero offline
+tinymacOS 2.4.4 Levante — avvio, installazione e recupero offline
 
 Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
 SATA AHCI, tastiera USB e puntatore assoluto QEMU usb-tablet su xHCI. Configurazione collaudata: QEMU
@@ -38,8 +38,7 @@ byte per byte, nella cartella /Recovery della partizione Recovery del disco.
 È distinta dalla sorgente locale usata per reinstallare la scrivania.
 
 Per entrare in Recupero: premi più volte R (oppure F12) durante la mela.
-L’indicazione «Premi R per Recupero» resta visibile sotto la barra di avanzamento
-per tutto il tempo del caricamento. Funziona dal CD, dalla chiavetta USB e,
+Non viene mostrato un messaggio Recovery durante l’avvio normale. Funziona dal CD, dalla chiavetta USB e,
 dopo l’installazione, dal disco, senza CD e senza rete.
 Dal sistema installato puoi anche scegliere Utility Disco → Recupero… .
 Nel Terminale di Recupero digita: diskutil info /
@@ -57,8 +56,8 @@ dal CD e mostra la stessa schermata di installazione. La scrittura in modalità
 DD non è supportata: la chiavetta non risulterà avviabile. Non occorre nessun
 altro strumento: la ISO contiene già tutto (Install.esp, System.vol, Recovery).
 
-Con il sorgente: ./build.sh ; STATE=/var/tmp/riviera-vm ./run.sh
-Dopo l’installazione: STATE=/var/tmp/riviera-vm BOOT_DISK=1 ./run.sh
+Con il sorgente: ./build.sh ; STATE=/var/tmp/levante-vm ./run.sh
+Dopo l’installazione: STATE=/var/tmp/levante-vm BOOT_DISK=1 ./run.sh
 Per provare soltanto il Recupero dal CD, usa LIVE=1 e premi R alla mela.
 
 Se la creazione dell’account richiede un codice casuale (hardware senza
@@ -72,3 +71,13 @@ Puntatore in QEMU (impostazione consigliata di questa versione):
 Non aggiungere un secondo controller se la VM ha già xHCI. Nel launcher
 TMC_POINTER=tablet è il default; TMC_POINTER=mouse usa il mouse relativo.
 Il tablet QEMU è un puntatore assoluto, non uno schermo multitouch.
+
+Verbose: premi V durante la mela. Nel Terminale del sistema installato:
+  bootverbose status
+  bootverbose on
+  bootverbose off
+  bootverbose log
+On/off si applicano al prossimo avvio. La live non salva questa preferenza.
+La ISO 2.4.4 e l’installer sono UEFI; BIOS/OpenDuet/OpenCore e solo un
+bootstrap QA separato, non un supporto BIOS garantito da questa ISO.
+Safari/WebKit non e incluso. Nome release: Levante; build 21B5.

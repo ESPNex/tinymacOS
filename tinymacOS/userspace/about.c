@@ -10,11 +10,11 @@ static void paint(void)
     int left = 139;
     Photo(4, 1, left - 2, ah - 9, 7, 11);
     Icon(39, 45, 65, 31);
-    Center(71, 127, "RIVIERA", F_MICRO, 0xf7f8ff);
+    Center(71, 127, "LEVANTE", F_MICRO, 0xf7f8ff);
     int x = left + 17;
     Text(x, 13, "Informazioni sul sistema", F_SMALL, SUB);
     Text(x - 2, 32, "tinymacOS", F_DISPLAY, TX);
-    Text(x, 91, "Versione 2.4.3  ·  Levante", F_CAPTION, SUB);
+    Text(x, 91, "Versione 2.4.4  ·  Levante", F_CAPTION, SUB);
     Box(x, 130, aw - x - 17, 1, 0, EDGE);
     pair(x, 145, "Processore", si.cpu);
     char s[90] = "";
@@ -26,7 +26,7 @@ static void paint(void)
     pair(x, 243, "Volume dati", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
     s[0] = 0;
     addnum(s, si.procs, 90);
-    append(s, " processi attivi  ·  Build 21B4", 90);
+    append(s, " processi attivi  ·  Build 21B5", 90);
     Text(x, ah - 30, s, F_SMALL, EMP);
     finish();
 }

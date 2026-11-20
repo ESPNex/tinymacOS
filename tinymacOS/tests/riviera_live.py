@@ -3,7 +3,7 @@ import os,sys,time,json,hashlib
 from pathlib import Path
 from retail_guest import Retail,locate
 from riviera_media import medium,gpt,audit_bytes,DATA,H
-W=Path(sys.argv[1]).resolve();W.mkdir(parents=True,exist_ok=True);E=W/'evidence';E.mkdir();D=Path(os.environ['TMC_BUILD']);iso=D/'tinymacOS-2.4.3-x86_64.iso';results=[]
+W=Path(sys.argv[1]).resolve();W.mkdir(parents=True,exist_ok=True);E=W/'evidence';E.mkdir();D=Path(os.environ['TMC_BUILD']);iso=D/'tinymacOS-2.4.4-x86_64.iso';results=[]
 def ok(s):results.append(s);(E/'live.json').write_text(json.dumps(results,indent=2,ensure_ascii=False));print('OK:',s,flush=True)
 m=medium(iso,W/'catalog',ok)
 class Live(Retail):
@@ -44,7 +44,7 @@ with Post(None,W,E,'backup',disk='sata',boot_disk=True) as g:
  g.key('f2');g.visible('su console');g.type('off');g.key('ret');g.p.wait(timeout=15);assert g.p.returncode==0
  ok('Sistema installato riavviato dal disco: Disk Utility crea la copia locale (TMCSNAP2) che i test offline verificano')
 disk=W/'sata/system.raw';d=gpt(disk);assert d['esp']==d['src']==m['esp'] and d['rec']==m['rec'];assert m['install'] not in disk.read_bytes();ok('Lettura a VM spenta: GPT primaria e secondaria valide, ESP e sorgente locale identiche alla distribuzione installata, partizione Recovery con il file BaseSystem.dmg, identica alla sorgente verificata, nessun eseguibile dell’installer sul disco intero')
-b=audit_bytes(d['data']);p='/Users/User/Documents/prova/';expected={'saluto.txt':b'Ciao Riviera\nAlba\n','sposta.txt':b'Ciao Riviera\n','conta':b'2\n','primo':b'Alba\n','ultimo':b'Alba\n','base':b'Preferences\n','dir':b'/Library\n','where':b'/usr/sbin/diskutil\n','chi':b'Elena\n','nome':b'Elena\n','luogo':b'/Users/User/Documents/prova\n','arch':b'x86_64\n','versione':b'2.4.3\n'}
+b=audit_bytes(d['data']);p='/Users/User/Documents/prova/';expected={'saluto.txt':b'Ciao Riviera\nAlba\n','sposta.txt':b'Ciao Riviera\n','conta':b'2\n','primo':b'Alba\n','ultimo':b'Alba\n','base':b'Preferences\n','dir':b'/Library\n','where':b'/usr/sbin/diskutil\n','chi':b'Elena\n','nome':b'Elena\n','luogo':b'/Users/User/Documents/prova\n','arch':b'x86_64\n','versione':b'2.4.4\n'}
 for key,v in expected.items():assert b[p+key]==v,(key,b.get(p+key),v)
 assert p+'vuoto' not in b and p+'cartella' not in b and p+'copia.txt' not in b and b['/Users/User/Desktop/riva.txt']==b'Riviera\n';assert b[p+'sha1'].split()[0]==hashlib.sha1(expected['sposta.txt']).hexdigest().encode() and b[p+'hash'].split()[0]==m['ks'].encode();assert b'ps' in b[p+'processi'] and b'Elena' not in b[p+'processi'] and b'2026' in b[p+'data'] and b'/dev/disk0' in b[p+'dischi'];assert set(b[p+'root'].decode().splitlines())==set('Applications Library System Users Volumes bin sbin usr'.split());ok('Dati TinyFS: byte esatti per redirezione, append, stdin, pipeline, mv/cp/rm/mkdir/rmdir, ls, pwd, whoami, ps/date, SHA-1 e SHA-256 del KernelCache uguali a hashlib')
 assert b['/Users/User/Library/Application Support/Notes/1.txt']==b'Viaggio a Levante\nPrenotare il treno' and b['/Users/User/Library/Application Support/Stickies/1.txt']==b'Biglietti' and b['/Users/User/Library/Application Support/Stickies/1.txt.color']==b'2';ok('Note e Memo: contenuto modificato nelle app, colore e testo persistenti in Library/Application Support; nessun mock della UI')

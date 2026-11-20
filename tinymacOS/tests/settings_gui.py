@@ -7,7 +7,7 @@ from retail_guest import Retail
 
 Retail.ocr = lambda self, box=None, psm=11: '(ocr non disponibile)'
 
-iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.3-x86_64.iso'
+iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.4-x86_64.iso'
 assert iso.exists(), iso
 work = Path('/var/tmp/tmc210/settingsgui')
 if work.exists():
@@ -91,10 +91,10 @@ with User(iso, work, ev, 'setgui', disk='persistent') as g:
 
     g.click(X + 100, Y + 43 + 238)     # sidebar: Generali
     g.visible('Levante')
-    g.visible('2.4.3 (21B4)')
+    g.visible('2.4.4 (21B5)')
     g.visible('SPAZIO SU DISCO')
     g.shot('05-generali')
-    ok('Generali: versione 2.4.3 (21B4) Levante e spazio su disco.')
+    ok('Generali: versione 2.4.4 (21B5) Levante e spazio su disco.')
 
     # live search: focus the field, type, the sidebar narrows to the match
     g.click(X + 110, Y + 43 + 26)

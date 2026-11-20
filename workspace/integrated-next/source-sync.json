@@ -1,5 +1,9 @@
 [
   {
+    "path": "README.md",
+    "sha256": "2c306570f019bfbe50b92df885668cfcf58ab6e3f25fbf1a1a3457a1b5885d6b"
+  },
+  {
     "path": "boot/loader.c",
     "sha256": "e0d77899b6325e7d322dcabdfaaf4c26d320d468bb9bf917a6dac82c8f6b5359"
   },
@@ -10,6 +14,14 @@
   {
     "path": "boot/splash.h",
     "sha256": "ef8dda891bb47967adb13f20036cf830524d46da0e4394df37696d3890e0b528"
+  },
+  {
+    "path": "docs/QUICKSTART.txt",
+    "sha256": "926ba564be0bbc95bc8b188eee7db87ac888cf7641823d572b00b6d695238cb1"
+  },
+  {
+    "path": "fs/btrfs.c",
+    "sha256": "ce844131b0185ef8559bb78a4da22e990c4f35327baa0203254a8bf2e425fe3f"
   },
   {
     "path": "fs/install.c",
@@ -72,20 +84,108 @@
     "sha256": "e001cac3ac7872a781f151e114b87bebd7e7da7611bac7628728acd27e2b090c"
   },
   {
+    "path": "recovery/main.c",
+    "sha256": "544f9fb80e7b526108d4c64091a5ca3ded2c7dc4e81a365e3e75b984db14a5f1"
+  },
+  {
+    "path": "tests/account_reset.py",
+    "sha256": "a8929d95a707703b6dfb305a92c5ba0fcc0160c48df6600cd1f78e0d40c09055"
+  },
+  {
+    "path": "tests/cli_matrix.py",
+    "sha256": "0258d14980aeb3c62fc3f28fca4f4dbdae2672b14ed3dc7026e4e7bc192e2bbe"
+  },
+  {
+    "path": "tests/integration.py",
+    "sha256": "f7ae62be1d320f434493ad200738d5736e8adf25540a5de0666e208c037d8718"
+  },
+  {
+    "path": "tests/legacy_1_3.py",
+    "sha256": "7b2d252789bbc5b26c51dbdfdabc8f86ac6c4673587a9d7970f6f757223fc592"
+  },
+  {
+    "path": "tests/orizzonte.py",
+    "sha256": "e30fba5c65271892e879f921f04b49b619d39253c8da951751a58f98d0e09d43"
+  },
+  {
+    "path": "tests/riviera_apps.py",
+    "sha256": "e64c434f7b865866a985660661642b559222952649871f7e25e65de4bdf32f63"
+  },
+  {
+    "path": "tests/riviera_console.py",
+    "sha256": "14ebd1165468100238314553dfb1c2f1124169cbf5eb037cd3512ab874fa9fa7"
+  },
+  {
+    "path": "tests/riviera_contained.py",
+    "sha256": "b27b5cd436d7494ed8acbf5e95149b012a5147a03fa178a8fbde79dd9fb5192c"
+  },
+  {
+    "path": "tests/riviera_disk.py",
+    "sha256": "5c7da19e36514e394ddf462fb33244d5b5a81235f5bfec30907812df3102b381"
+  },
+  {
+    "path": "tests/riviera_guard.py",
+    "sha256": "a3476442059df81ec65dd4d5705e1da260d82734cd55f1ce918645d252ad6b96"
+  },
+  {
+    "path": "tests/riviera_live.py",
+    "sha256": "5eef5c49150c90006de8208c587501b70e1bea0e90e9f71de7f3a31244cf6210"
+  },
+  {
+    "path": "tests/riviera_pointer.py",
+    "sha256": "36f9efa35d1ebfcc6bd95e73e65ef04add1e7303bb9a3068982a3a953a0525e4"
+  },
+  {
+    "path": "tests/settings_gui.py",
+    "sha256": "21d0c3b37055986aaf45627f7b749aca7593e4cc99a580de2e43a2520e87e5b8"
+  },
+  {
     "path": "tools/build-legacy.py",
     "sha256": "91c7014ca8765fb342efed3a8f9d08cbf63496f818f49dfe220a2c9e86bd7ae2"
   },
   {
+    "path": "tools/console/integrata.html",
+    "sha256": "c32788f9dbab54ffbcd6006edfe2ff3d72d36be088390877b22488e97390316c"
+  },
+  {
+    "path": "tools/console/server.py",
+    "sha256": "4aead08c18f721d1454898a53bfdc5e1f977e988fce5e6235fa1701054649fc5"
+  },
+  {
+    "path": "tools/env.sh",
+    "sha256": "0c269b50f1db644087a477aceca0cc87044cca2de22ade07db56d570b73d4c91"
+  },
+  {
     "path": "tools/iso.sh",
-    "sha256": "d584b4f46bc8b76cd98a5215e56fcc6e6033c0b5d26225d7c39839a278d138cd"
+    "sha256": "87756ae3406e52736f5cfac4d2997c3e11e1e66895441f9b6bee0529d0714a22"
   },
   {
     "path": "tools/run-bios-qemu.sh",
     "sha256": "db1f964a07293cfa5a6c7c0480cb9e2723242de5fe32c2e46865cdc5c2a8072e"
   },
   {
+    "path": "tools/run-qemu.sh",
+    "sha256": "8a87fed3e4bb831b5f3cdc14c842362490ab5119c310110893e586683bd627d9"
+  },
+  {
+    "path": "tools/system_volume.py",
+    "sha256": "2c2638d4711d837698b76e1f5e93c473449f4f59b440d2d64bff1724b03d9d29"
+  },
+  {
+    "path": "userspace/about.c",
+    "sha256": "d2ffbe8e6c2f764ae3300b6e266114f445e4fe111a61d1cd8b20c31bd622f783"
+  },
+  {
     "path": "userspace/command.c",
-    "sha256": "967d4d7505f9279a44f23311de7d1bc4c38bf1e9e49e97f3ef56770686c72cb8"
+    "sha256": "1bcc9d6371088cc0283ba03964a15b1525ef62df246ffea22e9e32cc8b22a4d4"
+  },
+  {
+    "path": "userspace/installer.c",
+    "sha256": "a96dadaed3a872f44743baeebf16ae8bd6720b805367ff462d9191b2c85fee56"
+  },
+  {
+    "path": "userspace/settings.c",
+    "sha256": "00e0d8510f87592947660da75f22f8975493f536a2240544ea131f4aacba39ca"
   },
   {
     "path": "vendor/opencore-1.0.8/BiosVideo.efi",

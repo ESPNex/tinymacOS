@@ -321,7 +321,7 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 2.4.3 (21B4)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 2.4.4 (21B5)");
         row2(x, r0 + 40, w, "NOME", "Levante");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the 2.4.3 retail acceptance suites with fresh, dedicated external storage."""
+"""Run the 2.4.4 retail acceptance suites with fresh, dedicated external storage."""
 import argparse
 import os
 from pathlib import Path
@@ -19,8 +19,8 @@ if args.work:
 else:
     work = Path(tempfile.mkdtemp(prefix='qa-riviera-', dir='/var/tmp'))
 env = os.environ.copy()
-env.setdefault('TMC_BUILD', '/var/tmp/tinymacos-%d/2.4.3' % os.getuid())
-iso = Path(env['TMC_BUILD'])/'tinymacOS-2.4.3-x86_64.iso'
+env.setdefault('TMC_BUILD', '/var/tmp/tinymacos-%d/2.4.4' % os.getuid())
+iso = Path(env['TMC_BUILD'])/'tinymacOS-2.4.4-x86_64.iso'
 if not iso.is_file():
     parser.error('Build the ISO first: ./build.sh (same TMC_BUILD).')
 for key in ('ISO', 'DISK', 'LEGACY_DATA', 'RECOVERY_IMG', 'STATE', 'BOOT_DISK', 'LIVE'):

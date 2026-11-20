@@ -80,7 +80,7 @@ static void paint(void)
         Box(0, 0, r, ah, 0, PANEL);
         Box(r - 1, 0, 1, ah, 0, EDGE);
         Icon(15, 16, 45, 38);
-        Text(17, 70, "RIVIERA", F_MICRO, SUB);
+        Text(17, 70, "LEVANTE", F_MICRO, SUB);
         Text(16, 90, "Installazione", F_CAPTION, TX);
         const char *lab[] = {"Introduzione", "Destinazione", "Riepilogo", "Installazione", "Fine"};
         for (int i = 0; i < 5; i++) {
@@ -90,7 +90,7 @@ static void paint(void)
             Box(17, y + 5, 8, 8, 4, active ? ACC : EDGE);
             Text(35, y, lab[i], F_SMALL, active ? EMP : SUB);
         }
-        Text(17, ah - 29, "tinymacOS 2.4.3", F_MICRO, SUB);
+        Text(17, ah - 29, "tinymacOS 2.4.4", F_MICRO, SUB);
     }
     if (!page) {
         Photo(x, 16, w, MAX(65, foot - 161), 7, 12);

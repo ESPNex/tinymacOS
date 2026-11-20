@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0,'/home/user/tinymacOS/tests')
 from retail_guest import Retail
 from pixels import locate
-w=Path(tempfile.mkdtemp(prefix='tmc-verbose-direct-',dir='/var/tmp'));ev=Path(__file__).resolve().parents[1]/'evidence';out=ev/'verbose-direct';out.mkdir(exist_ok=True)
+w=Path(tempfile.mkdtemp(prefix='tmc-verbose-direct-',dir='/var/tmp'));ev=Path(__file__).resolve().parents[1]/'evidence';out=Path(os.environ.get('TMC_QA_EVIDENCE',str(ev/'verbose-direct')));out.mkdir(exist_ok=True)
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD='/var/tmp/tmc-integrated-system',TMC_SMP='2',TMC_POINTER='mouse')
 class Direct(Retail):
  def wait(self,*a,**k):
@@ -21,7 +21,7 @@ class Direct(Retail):
    time.sleep(.08)
 record={'passed':False,'scope':'direct UEFI V-key and retail command/log; not installed persistence'}
 try:
- with Direct('/var/tmp/tmc-integrated-system/tinymacOS-2.4.3-x86_64.iso',w,out,'direct',live=True) as g:
+ with Direct('/var/tmp/tmc-integrated-system/tinymacOS-2.4.4-x86_64.iso',w,out,'direct',live=True) as g:
   g.key('backspace');g.key('backspace');g.enroll(name='Direct');g.key('f2');g.visible('Sessione locale');g.cmd('bootverbose status','Verbose avvio corrente: attivo');g.shot('status');g.cmd('bootverbose log');g.visible('[boot] tinymacOS native kernel');g.visible('[boot] CPUs online: 2');g.shot('log-page0');g.cmd('bootverbose on','Preferenza non scritta');g.shot('live-write-refusal');record.update(passed=True)
 finally:(out/'result.json').write_text(json.dumps(record,indent=2))
 print('PASS direct UEFI V-key verbose + status/log + live immutable medium write refusal')

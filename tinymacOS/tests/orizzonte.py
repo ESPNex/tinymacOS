@@ -40,7 +40,7 @@ def medium(work,iso,check,metrics):
 
 def hardware(g,check):
     pci=g.req('query-pci');items=[x for bus in pci for x in bus['devices']];classes={x['class_info']['class'] for x in items};assert 0x0106 in classes and 0x0c03 in classes and 0x0101 not in classes,classes
-    # The 2.4.3 kernel does not narrate successful USB enumeration on the serial console (only the xHCI-absent failure path logs).
+    # The 2.4.4 kernel does not narrate successful USB enumeration on the serial console (only the xHCI-absent failure path logs).
     # Verify host topology (Q35, i8042 compiled out, xHCI with keyboard/pointer) and the guest-registered AHCI/SATA line instead.
     tree=g.hmp('info qtree');assert 'i8042' not in tree and 'qemu-xhci' in tree and 'usb-kbd' in tree and ('usb-tablet' in tree or 'usb-mouse' in tree),tree
     assert '[ahci] SATA 0' in g.text() and '[usb] xHCI absent' not in g.text()

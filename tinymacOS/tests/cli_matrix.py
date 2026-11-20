@@ -11,7 +11,7 @@ from retail_guest import Retail
 Retail.ocr = lambda self, box=None, psm=11: '(ocr non disponibile)'
 
 # Debug build: retail compiles out COM1 QA logs; the screen assertions hold on both.
-iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.3-x86_64.iso'
+iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.4-x86_64.iso'
 assert iso.exists(), iso
 work = Path('/var/tmp/tmc210/cli')
 if work.exists():
@@ -97,9 +97,9 @@ with User(iso, work, ev, 'cli', disk='persistent') as g:
     ok('fsck_apfs / mount_apfs / newfs_apfs: percorsi dedicati presenti e onesti '
        '(nessun volume formattato su disco vuoto).')
 
-    # --- SIP, kext e rete simulata (2.4.3 «Levante») ------------------------
-    g.cmd('sw_vers', '2.4.3')
-    ok('sw_vers: ProductVersion 2.4.3 (build 21B4).')
+    # --- SIP, kext e rete simulata (2.4.4 «Levante») ------------------------
+    g.cmd('sw_vers', '2.4.4')
+    ok('sw_vers: ProductVersion 2.4.4 (build 21B5).')
 
     g.cmd('csrutil status', 'System Integrity Protection: attiva.')
     g.cmd('csrutil disable', 'Shell di Recupero')

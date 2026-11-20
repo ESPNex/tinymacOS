@@ -8,7 +8,7 @@ from retail_guest import Retail
 
 Retail.ocr = lambda self, box=None, psm=11: '(ocr non disponibile)'
 
-iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.3-x86_64.iso'
+iso = Path(os.environ.get('TMC_BUILD', '/var/tmp/tmc210/debug')) / 'tinymacOS-2.4.4-x86_64.iso'
 assert iso.exists(), iso
 work = Path('/var/tmp/tmc210/accreset')
 if work.exists():
@@ -46,7 +46,7 @@ def crc32c(data):
 
 NSLOTS, DATA, SUPER, SNAPCAT, NODE0 = 384, 144, 128, 136, 64
 LESP, LDATA, Z = 2048, 51200, 196608          # 96 MiB target, type-1 layout (ESP 24M)
-WELCOME = ("Benvenuti in tinymacOS 2.4.3 Levante.\n\nQuesta cartella personale è condivisa dalle app. "
+WELCOME = ("Benvenuti in tinymacOS 2.4.4 Levante.\n\nQuesta cartella personale è condivisa dalle app. "
            "Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\n"
            "Ctrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n")
 SYSTEM_PLIST = ('<?xml version="1.0"?><plist version="1.0"><dict><key>ComputerName</key>'
@@ -217,7 +217,7 @@ with User(iso, work, ev, 'accreset', disk='corrupt') as g:
 
     # installed-style volume is really mounted: real fs read + Disk Utility pair
     g.spawn('f2', 'Terminale')
-    g.cmd('cat /Users/User/Welcome.txt', 'Benvenuti in tinymacOS 2.4.3 Levante')
+    g.cmd('cat /Users/User/Welcome.txt', 'Benvenuti in tinymacOS 2.4.4 Levante')
     ok('Volume montato: Terminal legge Welcome.txt dal disco installato.')
     g.cmd('diskutil apfs list', 'Crittografia: disattiva')
     ok('WS-E: diskutil apfs list vede il volume con la coppia di stato crittografia.')

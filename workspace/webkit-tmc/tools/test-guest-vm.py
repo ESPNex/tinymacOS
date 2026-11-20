@@ -10,7 +10,7 @@ sys.path.insert(0,str(system/'tests'))
 from retail_guest import Retail
 from pixels import locate
 cpus=int(os.environ.get('TMC_SMP','1'));assert cpus in (1,2,4,8)
-image=Path(os.environ.get('TMC_VM_PROBE_BUILD','/var/tmp/tmc-webkit-vm-guest'))/'tinymacOS-2.4.3-x86_64.iso'
+image=Path(os.environ.get('TMC_VM_PROBE_BUILD','/var/tmp/tmc-webkit-vm-guest'))/'tinymacOS-2.4.4-x86_64.iso'
 work=Path(tempfile.mkdtemp(prefix='tmc-vm-guest-',dir='/var/tmp'))
 evidence=r/f'test-results/guest-vm-smp{cpus}';evidence.mkdir(exist_ok=True)
 record={'scope':'real user-mode VM and MMU; NOT JSC/WebCore/browser acceptance','passed':False,'requested_vcpus':cpus,'iso_qa_only':True,'iso_sha256':hashlib.sha256(image.read_bytes()).hexdigest(),'faults':[]}

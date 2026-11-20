@@ -1,69 +1,54 @@
-# tinymacOS 2.4.3 · Levante
+# tinymacOS 2.4.4 · Levante
 
-Sistema desktop sperimentale x86-64, con kernel proprio, processi in Ring 3, driver USB/SATA e tre ambienti distinti. Non usa Linux o XNU. Le app hanno un contenitore Mach-O e una **ABI nativa tinymacOS**: non c’è compatibilità generale con app per macOS o con hardware Apple.
+Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
 
-**[Scarica la ISO 2.4.3 di manutenzione da Drive](https://drive.google.com/file/d/1xpSCzs3WpJqzVbWzxp3C5XnfOJ_bjCJ4/view)** · [Test e istruzioni](../workspace/maintenance-2.4.3/CONSEGNA.md)
+## Release corrente
 
-**Build 21B4 manutenzione:** corretti i piccoli delta del mouse relativo persi alle risoluzioni scalate; framebuffer GOP UC e riparazione periodica dei pixel anche da fermo; password con puntini compatti (passo 9 px). Confronti 2.4.2/2.4.3: mouse a 1080p e banda bianca iniettata nel GOP falliscono prima/passano dopo. Mouse/tablet, Recovery, USB GPT/FAT32 e installazione/no-CD PASS. La causa precisa sul PC fisico resta da verificare. **Safari non incluso; SMP VM ancora da risolvere nella release browser.**
+**Levante 2.4.4, build 21B5**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4 . La repository e i download sono privati: occorre accesso GitHub autorizzato. Prima della pubblicazione la pagina potrebbe non essere ancora disponibile.
 
+Questa ISO intermedia è stata esplicitamente richiesta dopo il backup GitHub. **Non include Safari o WebKit funzionante.** Prossima patch prevista: **2.4.5 Levante**, solo dopo motore browser reale, HTTPS/HTML/CSS/JavaScript, UI classica e integrazione verificata con tutti i temi. Il nome resta Levante.
 
-**Novità della build 21B1 «Levante»:** **Impostazioni completa** — lo *Scuro* ricolora finestre, barre e pulsanti (non più solo sfondo e Dock) e **ogni colore di accento ha la sua variante chiara e scura**; **sistema kext** con driver caricati da `/System/Library/Extensions` e comandi `kextstat`/`kextload`/`kextunload`; **protezione di sistema alla macOS** (`csrutil status/enable/disable`, modifiche solo dalla Shell di Recupero, percorsi di sistema protetti); **rete con lwIP 2.2.1** — driver **e1000** (DHCP e ping reali con `-netdev user -device e1000`) e **Wi‑Fi simulato** (`wifi scan/connect/status`, `ifconfig`, `ping`, MAC visibili, disclaimer onesto); **DPI costante** e leggibile a tutte le risoluzioni fino a **1920×1080**; identità **Levante** ovunque (`sw_vers` 2.4.0, build 21B1). Restano dalla 20C2 Mission Control (F10), i dodici sfondi generati e il ripristino dell’account inaccessibile in due passi dal login. Resta il supporto unico: `BaseSystem.dmg` è un **file reale dentro la ISO**, in `/Recovery/`, identico byte per byte dopo l’installazione nella partizione Recovery, e si avvia anche senza CD e senza rete — un’unica ISO per provare, installare e ripristinare. Il puntatore predefinito resta il `usb-tablet` QEMU. [Dettagli della consegna](consegna/Sirocco-2.3.0.md).
+Novità rispetto alla manutenzione 2.4.3:
 
-**Albero sorgenti in sviluppo WebKit:** include S_VM sperimentale, ora presente anche nella manutenzione 2.4.2: modifiche VM solo a 1 CPU, rifiutate con più CPU, niente JIT. I test di rete/VM non dimostrano un browser funzionante. Non presentare queste build come release Safari.
+- VM multi-CPU con invalidazione TLB e coordinamento degli accessi utente; prove VM/MMU e stress concorrente separati dai test browser.
+- Verbose selezionabile con V durante la mela; `bootverbose status`, `on`, `off`, `log [pagina]` dal Terminale. La preferenza persistente richiede un sistema installato e viene letta al prossimo riavvio.
+- Versione/build aggiornate nelle app, `sw_vers`, `uname`, metadati bundle, installer, Recupero e documento iniziale. Corrette anche le etichette disegnate dell’Info e dell’installer: **LEVANTE**, non RIVIERA.
+- Restano puntini password compatti, gestione dei piccoli movimenti USB relativi e correzioni GOP della 2.4.3.
 
-**Dopo il deploy 2.4.3:** l’albero corrente prosegue nello sviluppo SMP (mailbox TLB); non riproduce più necessariamente il digest distribuito. Per ricostruire esattamente la manutenzione usa la copia estratta `../workspace/maintenance-2.4.3/sources/`. La VM rimane single-CPU per le mutazioni finché il fix completo non è validato.
+**La ISO e l’installer rimangono UEFI.** Il bootstrap MBR/FAT32 SeaBIOS → OpenDuet/OpenCore → sistema nativo è stato collaudato su un disco QA separato. Non è integrato come boot BIOS dell’ISO e non rende BIOS l’installazione GPT/FAT16. Nessuna promessa di compatibilità hardware universale.
 
-Per una prima installazione basta la ISO. Non aggiorna automaticamente un vecchio disco di sistema.
+## Avvio e installazione
 
-| Avvio | A cosa serve | Contenuto |
-|---|---|---|
-| **ISO live** | Provare le app e installare | Scrivania completa, account live, app **Installa tinymacOS**, `/Recovery/BaseSystem.dmg` |
-| **Disco SATA installato** | Lavorare e conservare i dati | 12 app, documenti e account permanenti. **Nessuna app di installazione** |
-| **Recupero** | Manutenzione senza rete e senza CD | Runtime UEFI contenuto nel DMG: ricostruzione del sistema, copia dati, SOS, inizializzazione, shell e disco di avvio. Nessun WindowServer, Dock o app del desktop |
-
-## Come avviare e installare
-
-Configura QEMU/OVMF **Q35 x86-64**, un vCPU, almeno 512 MiB di RAM, Secure Boot spento, AHCI con disco virtuale vuoto dedicato (96 MiB consigliati), xHCI con tastiera USB e puntatore assoluto QEMU `usb-tablet`. Per il mouse relativo avvia il launcher con `TMC_POINTER=mouse`. Avvia dalla ISO. **Crea un account**: nessuna password preimpostata. Per il disco permanente apri *Installa tinymacOS* dalla **scrivania live**. Controlla la destinazione e confermala. L’assistente scrive il sistema **e copia `/Recovery/BaseSystem.dmg` nella partizione Recovery**, leggendo ogni settore prima della prima scrittura; non forza mai l’installazione su un disco non vuoto.
-
-Alla schermata **Il disco è pronto** spegni, **rimuovi la ISO**, lascia collegato il disco SATA e riaccendi. Accedi con la stessa password. Non usare dischi fisici o unici esemplari di dati importanti. Il sistema non cifra i dati. Vedi [guida di avvio](docs/QUICKSTART.txt).
-
-## Cosa usare
-
-- **Finder:** cartelle `/Applications`, `/System/Library`, `/Library`, `~/Library`, `/Users` e `/Volumes`. I bundle sono vere directory: clic destro → *Mostra contenuto pacchetto*. `Ctrl+Maiusc+K` apre la cartella del **KernelCache effettivamente avviato**; selezionalo e premi Spazio per leggerne i byte e il digest. La Libreria di sistema contiene anche il font e gli sfondi letti dal compositor.
-- **Terminale (F2):** esegue programmi dai veri percorsi `/bin`, `/usr/bin`, `/usr/sbin`. La shell gestisce virgolette, `~`, `$PWD`/`$HOME`/`$USER`/`$?`, cronologia, completamento, `|`, `<`, `>` e `>>`. Ad esempio `echo 'Alba sul mare' > Documents/nota.txt`, poi `cat Documents/nota.txt | wc -w`. `help` mostra i comandi; `open -a 'Disk Utility'` apre l’app. È una shell locale nativa, non una copia di zsh.
-- **Utility Disco:** visualizza i dispositivi reali e i volumi; SOS controlla struttura TinyFS, GPT e integrità del volume di sistema Riviera. Può ripristinare una delle GPT da una copia valida. Dal disco installato *Copia dati* e *Recupero…* accedono ai flussi di salvataggio e manutenzione. Le scritture distruttive richiedono Recupero.
-- **Note e Memo:** creazione, modifica, salvataggio automatico, ricerca, eliminazione con conferma e colore per i memo. I file si trovano in `~/Library/Application Support/{Notes,Stickies}`. Sono affiancati da Finder, Impostazioni, Terminale, TextEdit, Calendario, Calcolatrice, Galleria, Monitor Attività, Info e Utility Disco.
-- **Scrivania e accesso:** logo fornito dall’utente e barra all’avvio, indicatore a 12 tratti al login, menu contestuali, dodici sfondi (inclusi *Riviera* e *Levante*) e sette temi. `Ctrl+Spazio` apre Cerca, `Ctrl+Maiusc+A` la libreria app e `Ctrl+Maiusc+Q` blocca lo schermo.
-
-## Recupero integrato, come sul Mac
-
-Premi **R durante la mela** (oppure F12): il loader apre il file `/Recovery/BaseSystem.dmg` dal supporto che sta già avviando. Dopo l’installazione lo stesso gesto, **senza CD e senza rete**, apre il file dalla partizione Recovery del disco: è lo stesso DMG, verificato per intero con il suo SHA-256. Puoi anche scegliere **Utility Disco → Recupero…** dal sistema installato.
-
-La partizione Recovery è un volume FAT16 da 4 MiB con un piccolo bootstrap UEFI e il file `BaseSystem.dmg` in `/Recovery/`, esattamente come il file visibile sulla ISO. Nella shell di Recupero il comando `diskutil info /` mostra il percorso, la provenienza (CD o disco interno) e i byte verificati dell’immagine. Il messaggio di rifiuto per un DMG mancante o alterato non attiva mai una reinstallazione automatica.
-
-Il modello di riferimento è la recoveryOS degli Intel Mac, descritta da Apple in [RecoveryOS and Diagnostics Environments](https://support.apple.com/guide/security/recoveryos-and-diagnostics-environments-sec2512a0c09/web): l’immagine di recupero risiede nella partizione interna e viene verificata prima dell’avvio. Qui non c’è né firmware Apple né firma Apple: i loader di tinymacOS accettano soltanto il profilo UDIF prodotto da questa build.
-
-La reinstallazione legge la **sorgente locale verificata** sul disco già installato; non scarica un sistema e non inizializza i documenti. Il ripristino dati richiede una copia creata in precedenza. La copia è sullo **stesso disco**, non è un backup esterno né un’implementazione di Time Machine. Per una prima installazione su disco vuoto usa la ISO.
-
-## Compilare senza lasciare media nel workspace
-
-**Divieto permanente: nessuna ISO o ZIP sotto `/home/user`, nemmeno temporaneamente per l’upload.** `build.sh`, `tools/iso.sh` e `tools/sourcekit.py` validano la destinazione risolta. Il percorso di build predefinito è `/var/tmp/tinymacos-<uid>/2.4.3`. Anche il `BaseSystem.dmg` intermedio viene creato in una cartella temporanea **esterna** al workspace: solo la ISO finita viene copiata come artefatto. In questo progetto restano i sorgenti; sul guest non vengono distribuiti.
-
-Su Debian 13 amd64 servono GCC, binutils, GNU-EFI, dosfstools, mtools, xorriso e Python 3. Per l’avvio QEMU e OVMF. In alternativa `python3 tools/local-tools.py /var/tmp/tmc-tools` prepara la toolchain bloccata con SHA-256; imposta `TOOLROOT=/var/tmp/tmc-tools`. Gli asset finali sono inclusi nei sorgenti, niente download durante la build ordinaria.
+Usare una VM x86-64 con OVMF/UEFI, Secure Boot disattivato, Q35/AHCI, almeno 512 MiB di RAM (1 GiB consigliato), tastiera USB e mouse USB o tablet QEMU su xHCI.
 
 ```sh
-export TMC_BUILD=/var/tmp/tinymacos-levante
-./build.sh
-STATE=/var/tmp/tinymac-vm ./run.sh
-# Dopo l’installazione e lo spegnimento (solo disco, NVRAM nuova):
-STATE=/var/tmp/tinymac-vm BOOT_DISK=1 ./run.sh
-# Recupero dal solo disco installato: premi R durante la mela.
+python3 tools/local-tools.py /var/tmp/tmc/tools/root
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-244 bash build.sh
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-244 STATE=/var/tmp/levante-vm LIVE=1 bash run.sh
 ```
 
-`DISK` può indicare un disco raw esistente. Per importare un vecchio volume TinyFS usa una copia offline come `LEGACY_DATA` sul CD live e una nuova destinazione vuota. `LIVE=1` non collega dischi dati; `BOOT_DISK=1` non crea un disco e non collega la ISO. La [console opzionale](tools/console/README.md) offre un unico download della ISO ed è solo un display per la VM sul computer host, non il sistema operativo.
+Per installare, collegare un **nuovo disco virtuale SATA vuoto** dedicato, almeno 96 MiB consigliati. Creare l’account sulla live, aprire *Installa tinymacOS*, controllare la destinazione e confermare. A «Il disco è pronto», spegnere, rimuovere l’ISO e riavviare dal disco con la stessa password. Non usare dischi fisici o dati importanti. Un semplice riavvio dalla nuova ISO non aggiorna un sistema già installato.
 
-[Architettura](docs/ARCHITECTURE.md) · [Layout del disco](docs/TINYFS.md) · [Collaudo della release](docs/VALIDATION.md). La documentazione delle release precedenti è in `docs/storico/`.
+Su USB/Rufus usare modalità **ISO**, schema GPT/UEFI senza CSM, FAT32 e Secure Boot disattivato; la modalità DD non è supportata da questa ISO non ibrida. La scrittura cancella la chiavetta selezionata. Non sono stati eseguiti test Windows/Rufus o su hardware fisico.
 
-**Limiti:** un solo core, nessun driver di rete/audio, NVMe o accelerazione GPU. USB HID con mappa tasti USA; niente hot-plug o driver universali per PC/Mac. Il DMG accettato dai loader è quello costruito da questa build: non è un decodificatore UDIF generico, non monta DMG Apple e non verifica firme Apple. TinyFS offre 96 voci e fino a 8 KiB per documento. Il profilo verificato è la VM descritta sopra.
+## Desktop e Recupero
 
-Lo sfondo Riviera è stato generato per il progetto. Logo, caratteri e altri asset: vedi `licenses/`. tinymacOS è indipendente da Apple.
+F2 apre il Terminale; F1–F9 aprono app. Ctrl+Spazio apre Cerca; Ctrl+Maiusc+Q blocca la sessione. Finder mostra i veri file/bundle di sistema; il desktop include editor, Note/Memo, Galleria, Monitor, Impostazioni e Utility Disco. I temi e gli sfondi storici chiamati Riviera/Sirocco non sono il nome della release e non vanno rinominati retroattivamente.
+
+Premere ripetutamente **R o F12 durante la mela** per aprire `/Recovery/BaseSystem.dmg`, presente nella stessa ISO e copiato nella partizione Recovery dall’installer. Nessun messaggio Recovery viene sovrapposto al normale avvio. Recovery è un runtime UEFI distinto, non Internet Recovery o un ambiente Apple. `sw_vers` nella Shell di Recupero riporta 2.4.4 (21B5).
+
+```text
+bootverbose status
+bootverbose on
+bootverbose off
+bootverbose log
+bootverbose log 1
+```
+
+On/off non cambiano retroattivamente l’avvio corrente. Sulla live in sola lettura sono rifiutati; V consente comunque un avvio verbose. I log del loader sono visibili durante l’avvio; il comando log legge il ring di avvio kernel dopo autenticazione. Il tracing diagnostico dettagliato resta escluso dalla build retail.
+
+## Sorgenti, backup e limiti
+
+**Nessuna ISO o ZIP sotto `/home/user`, nemmeno temporaneamente.** Build/media/toolchain devono restare sotto `/var/tmp` o altra destinazione esterna validata. Il checkout conserva sorgenti e vendor selezionati estratti con licenze; le credenziali non sono sorgenti. GitHub conserva commit/tag verificati; la directory temporanea non è il backup.
+
+La precedente manutenzione 2.4.3 resta congelata in `../workspace/maintenance-2.4.3/sources/` e documentata in `CONSEGNA.md` nella stessa directory. Non modificarla per simulare un aggiornamento retroattivo. Per 2.4.4 usare il tag GitHub `v2.4.4` e la manifestazione dei test della nuova release. Per stato di sviluppo e limiti browser: `../workspace/integrated-next/STATUS.md`, `../workspace/webkit-tmc/README.md` e `../workspace/webkit-tmc/release-gates.json`.

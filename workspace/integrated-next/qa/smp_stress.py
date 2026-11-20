@@ -5,7 +5,7 @@ sys.path.insert(0,'/home/user/tinymacOS/tests')
 from retail_guest import Retail
 from pixels import locate
 w=Path(__file__).resolve().parents[1];cpus=int(os.environ.get('TMC_SMP','4'));e=w/'evidence'/f'smp-stress-{cpus}';e.mkdir(exist_ok=True)
-iso=Path('/var/tmp/tmc-smp-stress/tinymacOS-2.4.3-x86_64.iso');run=Path(tempfile.mkdtemp(prefix='tmc-smp-stress-',dir='/var/tmp'))
+iso=Path('/var/tmp/tmc-smp-stress/tinymacOS-2.4.4-x86_64.iso');run=Path(tempfile.mkdtemp(prefix='tmc-smp-stress-',dir='/var/tmp'))
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=str(iso.parent),TMC_SMP=str(cpus))
 record={'passed':False,'requested_cpus':cpus,'scope':'Native ABI VM/uaccess/thread stress, not pthread/WebKit acceptance'}
 try:

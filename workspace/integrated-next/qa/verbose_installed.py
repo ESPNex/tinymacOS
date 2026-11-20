@@ -5,8 +5,8 @@ from pathlib import Path
 sys.path.insert(0,'/home/user/tinymacOS/tests')
 from retail_guest import Retail
 from riviera_media import medium,gpt
-w=Path(tempfile.mkdtemp(prefix='tmc-verbose-installed-',dir='/var/tmp'));e=Path(__file__).resolve().parents[1]/'evidence/verbose-installed';e.mkdir(exist_ok=True)
-iso=Path('/var/tmp/tmc-integrated-system/tinymacOS-2.4.3-x86_64.iso')
+w=Path(tempfile.mkdtemp(prefix='tmc-verbose-installed-',dir='/var/tmp'));e=Path(os.environ.get('TMC_QA_EVIDENCE',str(Path(__file__).resolve().parents[1]/'evidence/verbose-installed')));e.mkdir(exist_ok=True)
+iso=Path('/var/tmp/tmc-integrated-system/tinymacOS-2.4.4-x86_64.iso')
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=str(iso.parent),TMC_USB_LAYOUT='standard',TMC_POINTER='mouse')
 checks=[];record={'passed':False,'scope':'native installed UEFI verbose preference, not BIOS installer support'}
 def media_state():

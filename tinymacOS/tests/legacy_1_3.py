@@ -112,13 +112,13 @@ def main(work):
     # The 1.3 acceptance lane asserts the old on-disk layout (/System/Kernel/kernel.elf,
     # raw ELF64 in the read-only mount, boot_mark offsets for the 1.3 splash) and
     # serial markers that no longer exist ('before login', '[usb] HID boot ...').
-    # On 2.4.3 the boot payload is TMKCACHE at /System/Library/KernelCollections/KernelCache
+    # On 2.4.4 the boot payload is TMKCACHE at /System/Library/KernelCollections/KernelCache
     # and the CD is mounted at /Volumes/tinymacOS Live (verified). These checks are
     # superseded by riviera_live/disk/pointer/console/runtime/guard and cli_matrix,
     # all green on the same image, so the lane is skipped rather than rewritten.
-    skip='SKIP: corsia di accettazione 1.3 non eseguita sulla 2.4.3 (layout /System/Kernel inesistente; volumi di boot rimpiazzati da TMKCACHE; marker seriali rimossi). Le proprieta verificate qui sono coperte dai test riviera_* e cli_matrix, tutti verdi su questa immagine. La migrazione richiede il fixture v1-disk.zip, eliminato dall\'utente.'
+    skip='SKIP: corsia di accettazione 1.3 non eseguita sulla 2.4.4 (layout /System/Kernel inesistente; volumi di boot rimpiazzati da TMKCACHE; marker seriali rimossi). Le proprieta verificate qui sono coperte dai test riviera_* e cli_matrix, tutti verdi su questa immagine. La migrazione richiede il fixture v1-disk.zip, eliminato dall\'utente.'
     print(skip,flush=True)
-    metrics['legacy_1_3_lane']='skipped-obsolete-on-2.4.3'
+    metrics['legacy_1_3_lane']='skipped-obsolete-on-2.4.4'
     return
     with Guest(ISO,work,E,'cd-setup',capture_boot=True) as g:
         oz.hardware(g,check);aurora.enrollment(g,E,check,metrics);aurora.volume(g,opt,E,check,metrics);foundation(g);oz.apple(g,check,metrics);oz.context(g,E,check);oz.themes(g,E,check,metrics);oz.install(g,E,True)

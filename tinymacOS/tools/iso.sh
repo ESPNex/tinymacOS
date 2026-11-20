@@ -29,7 +29,7 @@ assert all(digest in (build/name).read_bytes() for name in ("BOOTX64.EFI","RECBO
 h.write_bytes(raw[:i])
 PYF
 mkesp(){ : > "$1";truncate -s "$2" "$1";mkfs.fat --invariant -R32 -F16 -n "$3" "$1" >/dev/null;mmd -i "$1" ::/EFI ::/EFI/BOOT ::/System ::/System/Library ::/System/Library/CoreServices ::/System/Library/KernelCollections;mcopy -i "$1" "$D/KernelCache" ::/System/Library/KernelCollections/KernelCache;mcopy -i "$1" "$D/$4" ::/System/Library/CoreServices/System.vol;mcopy -i "$1" "$D/BOOTX64.EFI" ::/EFI/BOOT/BOOTX64.EFI;mcopy -i "$1" "$D/BootConfig.bin" ::/BOOTCFG.BIN; }
-mkesp "$D/install.esp" 24M RIVIERA System-disk.vol;mkesp "$R/EFI.IMG" 64M RIVIERACD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
+mkesp "$D/install.esp" 24M LEVANTE System-disk.vol;mkesp "$R/EFI.IMG" 64M LEVANTECD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,
 # not the FAT El Torito image: carry the same payload files there too, or the
 # loader finds no System.vol / Install.esp and can only fall back to Recupero.
@@ -41,4 +41,4 @@ cp "$P/Volume.hdr" "$R/Recovery/Volume.hdr"
 cp "$D/Payload.sha" "$R/Recovery/Payload.sha"
 if [ "$P" = "$R/work" ];then rm -rf "$P";fi
 find "$R" -exec touch -h -d @1735689600 {} +
-xorriso -as mkisofs -quiet -r -J -V TINYMACOS_2_4_3 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
+xorriso -as mkisofs -quiet -r -J -V TINYMACOS_2_4_4 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
