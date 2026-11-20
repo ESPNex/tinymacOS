@@ -400,6 +400,9 @@ void input_init(void)
     const u32 classes[]={0x0c0320,0x0c0310,0x0c0300};
     u32 *counts[]={&input_diag.ehci,&input_diag.ohci,&input_diag.uhci};
     for(int i=0;i<3;i++){dev=0;while((dev=pci_find_after(classes[i],dev)))(*counts[i])++;}
+    ehci_init(); /* route low/full-speed USB2 ports to their companions first */
+    uhci_init();
+    ps2_init();
     logstr("[usb] native pointers ");lognum(input_diag.pointers);
     logstr("; active xHCI ");lognum(input_diag.active_xhci);logstr("\n");
 }
@@ -474,5 +477,6 @@ void input_irq(void)
         for(int k=0;k<128&&event(&e);k++)if(((e.ctl>>10)&63)==32)transferred(&e);
         recover_pending();
     }
-    input_repeat();int leds=input_led_take();if(leds>=0)kbd_setleds(leds);
+    ehci_poll();uhci_poll();ps2_poll();
+    input_repeat();int leds=input_led_take();if(leds>=0){kbd_setleds(leds);ps2_setleds(leds&2);}
 }

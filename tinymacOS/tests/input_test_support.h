@@ -20,3 +20,12 @@ void hid_relative(int,int,int,int);
 void hid_absolute(int,int,int,int);
 void input_repeat(void);
 int input_led_take(void);
+
+static inline void ps2_init(void){}
+static inline void ps2_poll(void){}
+static inline void ehci_init(void){}
+static inline void ehci_poll(void){}
+static inline void uhci_init(void){}
+static inline void uhci_poll(void){}
+
+static inline void ps2_setleds(int value){(void)value;}

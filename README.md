@@ -1,3 +1,5 @@
+> **Revisione input 2.4.5 / 21B7:** driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion; nessuna diagnostica F11 al login. 16 profili input e 29/29 regressioni PASS. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md); il receipt di sostituzione conferma l’avvenuto deploy nella stessa release. Le indicazioni 21B6 sotto sono storiche.
+
 > **Manutenzione input 2.4.5 Levante / 21B6:** [Pubblicata su GitHub](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), riscaricata e verificata; manutenzione richiesta per mouse fermo al login e lag. Note, collaudi e limiti: [release 2.4.5](workspace/release-2.4.5/RELEASE.md). Nessuna prova sul PC fisico dell’utente; Safari/WebKit ancora non incluso.
 
 > **Precedente manutenzione OpenCore:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2): live ottica BIOS+UEFI e **disco installato autonomo BIOS/OpenDuet/OpenCore+UEFI**. Prove con ISO rimossa, riavvio e Recupero locale. Non immagine USB DD. [Note e QA](workspace/release-2.4.4/installer-media/RELEASE.md).

@@ -152,9 +152,9 @@ static int run(void)
         if (n == 1) {
             ln("ProductName:       tinymacOS");
             ln("ProductVersion:    2.4.5");
-            ln("BuildVersion:      21B6");
+            ln("BuildVersion:      21B7");
         } else if (n == 2 && eq(V(1), "-productVersion"))ln("2.4.5");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("21B6");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("21B7");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -163,7 +163,7 @@ static int run(void)
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
         else if (eq(V(1), "-r"))ln("2.4.5");
-        else if (eq(V(1), "-a"))ln("tinymacOS levante 2.4.5 21B6 x86_64");
+        else if (eq(V(1), "-a"))ln("tinymacOS levante 2.4.5 21B7 x86_64");
         else return 2;
         return 0;
     }

@@ -82,12 +82,15 @@ La revisione OpenCore installer OC2 della ISO 2.4.5 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Levante; build 21B6.
+Safari/WebKit non e incluso. Nome release: Levante; build 21B7.
 
-2.4.5 — manutenzione input
-La diagnostica F11 al login è stata rimossa dal sorgente di sviluppo.
-La ISO 2.4.5 già pubblicata resta invariata; non contiene questa rimozione.
-Il driver nativo supporta xHCI e HID sulle porte radice; hub esterni e
-controller EHCI/OHCI/UHCI non sono implementati. Recovery usa driver
-firmware indipendenti: il suo funzionamento non prova quello del driver
-nativo. Le verifiche automatiche BIOS/UEFI sono in QEMU, non sul tuo PC.
+2.4.5 / 21B7 — revisione input PS/2 + USB 2.0
+Nessun pannello o scorciatoia di diagnostica F11 al login.
+Driver nativi: tastiera e mouse PS/2 (i8042); xHCI; EHCI USB 2.0
+e companion UHCI per mouse/tastiere low/full-speed su porte USB2.
+EHCI include controllo, interrupt periodici HID e codice split per hub USB2;
+il percorso hub/TT richiede ulteriore verifica hardware. OHCI non implementato.
+Enumerazione a freddo, limiti statici e parser HID limitato ai layout supportati;
+non e una certificazione USB universale e non supporta tutte le classi USB.
+Recovery usa driver firmware indipendenti. Le prove automatiche BIOS/UEFI
+non sostituiscono la verifica sul PC fisico.

@@ -3,7 +3,7 @@
 #else
 #include "../kernel/k.h"
 #endif
-// Validated USB HID reports -> native input events. No 8042 or BIOS input calls.
+// Validated USB HID and native PS/2 decoders -> input events. No BIOS input calls.
 static Event q[128];
 static int head, tail, caps;
 static volatile int ledpend = -1;
@@ -92,10 +92,19 @@ static void emit(int k, int m)
         v = K_DOWN;
     else if (k == 82)
         v = K_UP;
+    else if(k>=84&&k<=88)v="/*-+\n"[k-84];
+    else if(k>=89&&k<=97)v='1'+k-89;
+    else if(k==98)v='0';
+    else if(k==99)v='.';
     if (v)
         put((Event) {
         .type = EV_KEY, .a = v, .b = ctrl, .c = shift
     });
+}
+void input_key_usage(int usage,int modifiers)
+{
+    if(usage==57){caps=!caps;ledpend=caps?2:0;}
+    else emit(usage,modifiers);
 }
 void hid_keys(const u8 r[8])
 {

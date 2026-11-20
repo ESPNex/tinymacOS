@@ -1,3 +1,9 @@
+# Aggiornamento: revisione input 21B7
+
+Sono ora implementati i driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion. I dieci profili live del candidato finale su BIOS/UEFI sono passati, incluse configurazioni senza alcuna tastiera USB e mouse a 480/12 Mb/s; anche la suite kernel/runtime è 29/29 PASS. Installazione, sei profili login installati e ripristino locale sono passati; gate completo finale PASS. Non ancora sostituita la release online: il gate e il receipt definitivi sono in `release-2.4.5-input2/`. Nessuna conferma sul PC fisico. OHCI, hotplug e general-purpose USB bulk/isochronous restano fuori dal supporto implementato.
+
+---
+
 # Follow-up dopo la prova fisica della 2.4.5
 
 L’utente conferma: tastiera PS/2 e mouse USB funzionano in Recovery, non al login. I test di accettazione precedenti usavano tastiera USB su xHCI e NON coprivano la sua tastiera PS/2. Il driver nativo PS/2/i8042 manca: questa è una lacuna confermata del sistema, non un errore di configurazione dimostrato dell’utente. La causa esatta del mouse USB sul PC resta sconosciuta; i driver firmware del Recovery e quello xHCI nativo sono distinti.

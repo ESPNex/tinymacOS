@@ -1,0 +1,19 @@
+PASS live uefi ps2
+PASS live uefi ehci
+PASS live uefi companion
+PASS live uefi uhci
+PASS live uefi ehci-kbd
+PASS live uefi companion-kbd
+PASS live uefi xhci
+PASS live bios ps2
+PASS live bios ehci
+PASS live bios companion
+PASS identity
+PASS installer BIOS and installed UEFI crossboot
+PASS installed no ISO bios ps2
+PASS installed no ISO bios ehci
+PASS installed no ISO bios companion
+PASS installed no ISO uefi ps2
+PASS installed no ISO uefi ehci
+PASS installed no ISO uefi companion
+PASS local sealed Recovery

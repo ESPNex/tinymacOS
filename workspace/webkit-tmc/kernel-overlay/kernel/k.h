@@ -82,6 +82,10 @@ static inline Process *current(void)
 void cpu_init(void);
 void irq_init(void);
 void eoi(int);
+void ps2_init(void);void ps2_poll(void);void ps2_setleds(int);
+void ehci_init(void);void ehci_poll(void);
+void uhci_init(void);void uhci_poll(void);
+void input_key_usage(int,int);
 void input_init(void);
 void input_irq(void);
 #include "inputdiag.h"

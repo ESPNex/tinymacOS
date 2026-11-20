@@ -1,3 +1,5 @@
+> **Revisione 21B7:** PS/2 tastiera/mouse, EHCI per input HID e UHCI companion; pannello F11 eliminato. [QA della sostituzione 2.4.5](../workspace/release-2.4.5-input2/RELEASE.md): 16 profili input e 29/29 regressioni PASS. Le note 21B6 immediatamente sotto sono della revisione precedente. Nessuna garanzia hardware universale; OHCI/hotplug non implementati.
+
 > **Corrente: manutenzione input 2.4.5 Levante / 21B6, [pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
 
 > **Revisione installatore OC2:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2) aggiorna la manutenzione **2.4.4 Levante / 21B5**, senza browser. Live CD BIOS+UEFI, disco installato BIOS/OpenDuet/OpenCore e UEFI/OpenCore; installazione grafica, ISO rimossa, login, riavvio, documento persistente e Recupero offline verificati in QEMU. [Note, limiti, checksum e screenshot](../workspace/release-2.4.4/installer-media/RELEASE.md).
@@ -19,7 +21,7 @@ Novità input 2.4.5:
 - Movimento al login con due rettangoli di danno del cursore, non ridisegno completo per ogni report; hover e pulsanti mantengono il ridisegno della scena.
 - Accorpamento movimenti in coda con barriere per transizioni pulsanti, ruota e tasti.
 - Recupero limitato degli endpoint xHCI in halt, recupero EP0 e fallback mouse Report solo con protocollo confermato e descriptor valido; buffer DMA allineati.
-- Nel sorgente di sviluppo il pannello e la scorciatoia F11 al login sono stati rimossi su richiesta: la ISO pubblicata resta invariata. Driver nativo xHCI su porte radice; PS/2 ed EHCI/OHCI/UHCI non implementati.
+- Revisione di sviluppo **21B7**: pannello/scorciatoia diagnostica F11 rimossi; driver PS/2 tastiera/mouse, EHCI HID e UHCI companion implementati. OHCI e hotplug non implementati. Vedi [revisione input 2](../workspace/release-2.4.5-input2/RELEASE.md); la sostituzione online è confermata solo dal relativo receipt.
 
 Funzionalità mantenute dalla 2.4.4:
 

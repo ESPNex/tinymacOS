@@ -603,6 +603,16 @@ static void down(void)
         return;
     }
 }
+static void input_wheel(int amount)
+{
+    if(!amount || buttons || my<BAR || shell_overlay_open())return;
+    for(int j=nz;j--;) {
+        int id=order[j];View *v=views+id;
+        if(v->dead || v->mini || !inside(mx,my,v->box))continue;
+        if(my>=v->box.y+TITLE)eventto(id,(Event){.type=EV_SCROLL,.a=clampi(amount,-16,16)});
+        break;
+    }
+}
 static void input(Event *e)
 {
     if (e->type == EV_KEY) {
@@ -663,15 +673,8 @@ static void input(Event *e)
             drag = -1;
         }
         buttons = e->c;
-        if (e->d && !buttons && my>=BAR && !shell_overlay_open()) {
-            for (int j=nz; j--;) {
-                int id=order[j]; View *v=views+id;
-                if (v->dead || v->mini || !inside(mx,my,v->box)) continue;
-                if (my>=v->box.y+TITLE) eventto(id,(Event){.type=EV_SCROLL,.a=clampi(e->d,-16,16)});
-                break;
-            }
-        }
-    }
+        input_wheel(e->d);
+    } else if(e->type==EV_SCROLL)input_wheel(e->a);
 }
 void app_main(void)
 {
