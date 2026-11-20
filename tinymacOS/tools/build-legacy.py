@@ -24,7 +24,7 @@ with tempfile.TemporaryDirectory(prefix='tmc-legacy-',dir='/var/tmp') as scratch
   if p.exists():p.unlink()
  oc=root/'EFI/OC';(oc/'Drivers').mkdir(parents=True,exist_ok=True)
  for name in ['OpenCore.efi'] :shutil.copyfile(v/name,oc/name)
- shutil.copyfile(v/'BiosVideo.efi',oc/'Drivers/BiosVideo.efi')
+ [shutil.copyfile(v/n,oc/'Drivers'/n) for n in ['BiosVideo.efi','XhciDxe.efi','OpenUsbKbDxe.efi','UsbMouseDxe.efi']]
  shutil.copyfile(r/'boot/opencore.plist',oc/'config.plist')
  # Both OpenDuet BDS and removable UEFI entry MUST enter OpenCore, never bypass
  # it through the native fallback. Native loader lives at a distinct path.

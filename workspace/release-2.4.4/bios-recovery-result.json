@@ -1,0 +1,5 @@
+{
+  "passed": false,
+  "external_evidence": "/var/tmp/tmc-bios-recovery-6g3q_cm5/evidence",
+  "scope": "BIOS HDD-only tampered KernelCache rejection -> local Recovery -> sealed offline OS restore -> same BIOS desktop"
+}

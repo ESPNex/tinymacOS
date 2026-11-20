@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix='tmc-dual-iso-',dir='/var/tmp') as work:
  # explicit path. Native EFI/BOOT and EFI.IMG stay byte-identical/direct UEFI.
  v=root/'vendor/opencore-1.0.8';oc=tree/'EFI/OC';(oc/'Drivers').mkdir(parents=True,exist_ok=True);native=tree/'EFI/TMC';native.mkdir(exist_ok=True)
  shutil.copyfile(tree/'EFI/BOOT/BOOTX64.EFI',native/'BOOTX64.EFI')
- shutil.copyfile(v/'OpenCore.efi',oc/'OpenCore.efi');shutil.copyfile(v/'BiosVideo.efi',oc/'Drivers/BiosVideo.efi');shutil.copyfile(root/'boot/opencore.plist',oc/'config.plist')
+ shutil.copyfile(v/'OpenCore.efi',oc/'OpenCore.efi');[shutil.copyfile(v/n,oc/'Drivers'/n) for n in ['BiosVideo.efi','XhciDxe.efi','OpenUsbKbDxe.efi','UsbMouseDxe.efi']];shutil.copyfile(root/'boot/opencore.plist',oc/'config.plist')
  shutil.copyfile(v/'LICENSE.txt',tree/'LICENSES/OpenCore.txt')
  (tree/'BIOS-README.TXT').write_text('tinymacOS 2.4.4 Levante — OpenCore installer media revision 2\nBIOS optical: ISOLINUX/MEMDISK RAM disk -> OpenDuet 1.0.8 BlockIO -> OpenCore -> native loader.\nUEFI: original direct EFI image/native loader; OpenCore also at EFI/OC/OpenCore.efi.\nInstalled disk: GPT/FAT16 + MBR reserved-gap OpenDuet bridge, BIOS and UEFI. No legacy USB/DD or physical hardware guarantee.\nSafari/WebKit not included.\n')
  for q in tree.rglob('*'):os.utime(q,(1735689600,1735689600))

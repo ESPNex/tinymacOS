@@ -21,7 +21,7 @@
   },
   {
     "path": "boot/opencore.plist",
-    "sha256": "8c714a156cdda360a230592f145203a89b27cc383bd5fdf33ec79c88420ea638"
+    "sha256": "ae629faa66e7e033508459ac62aeb79749ae07913c1b2f4ac37e62925c569209"
   },
   {
     "path": "boot/splash.h",
@@ -173,7 +173,7 @@
   },
   {
     "path": "tools/build-legacy.py",
-    "sha256": "91c7014ca8765fb342efed3a8f9d08cbf63496f818f49dfe220a2c9e86bd7ae2"
+    "sha256": "07d57fca7e92da9024e8d494a73b3ce3b191289d3640cb4227f2257233a0dd28"
   },
   {
     "path": "tools/console/integrata.html",
@@ -185,7 +185,7 @@
   },
   {
     "path": "tools/dualboot-iso.py",
-    "sha256": "f14af34c222a35a699277b2742dae5b8c5d97db43f33ddee22eb4c934ca4b0ab"
+    "sha256": "15569dd5a5ea7324f2de35b14543fcc3806fc2d1a4c277232feb534f448e826b"
   },
   {
     "path": "tools/env.sh",
@@ -193,7 +193,7 @@
   },
   {
     "path": "tools/iso.sh",
-    "sha256": "d199e88d9b38769b0386095026a8e5039774673dc8a5d91d60cf35a1e84302ed"
+    "sha256": "a35a82f73b5977e964190afd0fa45f9a7728c4a0f88779738c3cef3a367eb718"
   },
   {
     "path": "tools/run-bios-installed.sh",
@@ -248,12 +248,24 @@
     "sha256": "c67be56660047237360df5eb7f080a2b13129d68e829bee9ad0230e45d516be8"
   },
   {
+    "path": "vendor/opencore-1.0.8/OpenUsbKbDxe.efi",
+    "sha256": "62aba2c97b0a422304e71fb59bb0013e9198fe07acd40b725abc7894a4fe7262"
+  },
+  {
     "path": "vendor/opencore-1.0.8/README.upstream.md",
     "sha256": "56c58007a4d45c723bc2a885188e94ab819f6b15f3c97d2d429b72ecaa16adb3"
   },
   {
     "path": "vendor/opencore-1.0.8/Sample.plist",
     "sha256": "a58ca93ee0e2ac199469b696606ba96bfaafb0a7902e57de6d557548a0c96a58"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/UsbMouseDxe.efi",
+    "sha256": "e063522f895dd227bdc85d42f24a9ba0e9517d6457d7ecad37bc5f9ba44d103d"
+  },
+  {
+    "path": "vendor/opencore-1.0.8/XhciDxe.efi",
+    "sha256": "09dcd72825c01be3ad524d81bb0cf7b6913dfd6942f73f453038547a1756a178"
   },
   {
     "path": "vendor/opencore-1.0.8/boot0",
@@ -273,7 +285,7 @@
   },
   {
     "path": "vendor/opencore-1.0.8/vendor-lock.json",
-    "sha256": "7df7ac0888001fd55e261f4e7713fa69a4101bb372eadb041283e123d616dff9"
+    "sha256": "2a92cce6d8b13cbfb3bad41ad305075a7d2190b7105eb31efa5f9021cdceae7b"
   },
   {
     "path": "vendor/syslinux-6.04/COPYRIGHT.txt",

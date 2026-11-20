@@ -35,7 +35,9 @@ mkesp "$D/install.esp" 24M LEVANTE System-disk.vol
 mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
-mcopy -i "$D/install.esp" vendor/opencore-1.0.8/BiosVideo.efi ::/EFI/OC/Drivers/BiosVideo.efi
+for driver in BiosVideo XhciDxe OpenUsbKbDxe UsbMouseDxe;do
+ mcopy -i "$D/install.esp" "vendor/opencore-1.0.8/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
+done
 mcopy -i "$D/install.esp" boot/opencore.plist ::/EFI/OC/config.plist
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
 mkesp "$R/EFI.IMG" 64M LEVANTECD System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
