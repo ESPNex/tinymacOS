@@ -1,7 +1,7 @@
 [
   {
     "path": "README.md",
-    "sha256": "004d9247e7636642feaff2532293bb8b3ca038e856a59f48b6b218a8f0ca10c5"
+    "sha256": "6b096dc825bbab45769e99317e200f29676773e649370305c03ababc93d87dff"
   },
   {
     "path": "arch/biosdisk.S",
@@ -37,7 +37,7 @@
   },
   {
     "path": "desktop/login.c",
-    "sha256": "36a0d1955dfa22ac62fa5f4a29cb25057d6109f02d70e25eb70811726ee27512"
+    "sha256": "3b2407d18c80816ea3790dd3d23c2ec5eb1fefeaddeecb860e277dc471ffb1f9"
   },
   {
     "path": "desktop/main.c",
@@ -45,7 +45,7 @@
   },
   {
     "path": "docs/QUICKSTART.txt",
-    "sha256": "31cefadfc26d1201e5af5fa1d96f904e35e7bedb7141d27a4ab27e8bb2c50497"
+    "sha256": "763fe7b1e823db4e2565d536263e52c50074e317a712d7f93eaa6da758fc2b05"
   },
   {
     "path": "drivers/input.c",
@@ -181,11 +181,11 @@
   },
   {
     "path": "tests/levante_installed_pointer.py",
-    "sha256": "35c227311483fbc8a3c6c496d718a65297f3ac27325cb808ef3690ee831cbe7a"
+    "sha256": "5d6ecd6edb1b70166a7da0cc7493a7a40200a9c07f146bc9855e46a4a3b27b09"
   },
   {
     "path": "tests/levante_pointer.py",
-    "sha256": "7b819a0f949f33a29b8f5a8058e3ab1604ee37e0c4380d110b03d6a5d7e7737c"
+    "sha256": "5fc2a7c1e3aed8937d82d892bbd8a7440323bdf5d052c90750f6e114b76f5c55"
   },
   {
     "path": "tests/orizzonte.py",

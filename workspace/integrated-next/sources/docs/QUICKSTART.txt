@@ -85,9 +85,8 @@ al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
 Safari/WebKit non e incluso. Nome release: Levante; build 21B6.
 
 2.4.5 — manutenzione input
-Al login premi F11 (o clicca Diagnostica USB) per i contatori del driver
-nativo. Il pannello non mostra password o tasti digitati. Se il puntatore
-resta fermo, fotografa il pannello e indica modello PC e porta USB usata.
+La diagnostica F11 al login è stata rimossa dal sorgente di sviluppo.
+La ISO 2.4.5 già pubblicata resta invariata; non contiene questa rimozione.
 Il driver nativo supporta xHCI e HID sulle porte radice; hub esterni e
 controller EHCI/OHCI/UHCI non sono implementati. Recovery usa driver
 firmware indipendenti: il suo funzionamento non prova quello del driver

@@ -19,7 +19,7 @@ Novità input 2.4.5:
 - Movimento al login con due rettangoli di danno del cursore, non ridisegno completo per ogni report; hover e pulsanti mantengono il ridisegno della scena.
 - Accorpamento movimenti in coda con barriere per transizioni pulsanti, ruota e tasti.
 - Recupero limitato degli endpoint xHCI in halt, recupero EP0 e fallback mouse Report solo con protocollo confermato e descriptor valido; buffer DMA allineati.
-- F11 al login: diagnostica input nativo senza contenuto dei tasti o password. Driver nativo xHCI su porte radice; niente supporto promesso per hub o EHCI/OHCI/UHCI.
+- Nel sorgente di sviluppo il pannello e la scorciatoia F11 al login sono stati rimossi su richiesta: la ISO pubblicata resta invariata. Driver nativo xHCI su porte radice; PS/2 ed EHCI/OHCI/UHCI non implementati.
 
 Funzionalità mantenute dalla 2.4.4:
 

@@ -33,10 +33,9 @@ try:
    blocks=g.req('query-block');assert str(disk) in str(blocks) and '.iso' not in str(blocks)
    mice=g.req('query-mice');assert any(m['current'] and not m['absolute'] and 'HID' in m['name'] for m in mice)
    cursor(g,762,482);cursor(g,142,613);g.shot(fw+'-locked-cursor')
-   g.key('f11');g.visible('Puntatori configurati: 1',faces=(5,));g.shot(fw+'-login-diagnostics');g.key('f11')
    g.click(600,626);g.type('local-test-285');g.click(746,628);g.visible('Preferiti',40)
    cursor(g,1003,361);g.shot(fw+'-mouse-unlocked');g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    2.4.5');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT')
-   record['profiles'][fw]={'passed':True,'no_iso_attached':True,'mouse_sprite_at_locked_login':True,'diagnostics_before_auth':True,'password_field_and_arrow_clicked':True,'desktop_sprite':True,'version':'2.4.5','persistent_document':True}
+   record['profiles'][fw]={'passed':True,'no_iso_attached':True,'mouse_sprite_at_locked_login':True,'password_field_and_arrow_clicked':True,'desktop_sprite':True,'version':'2.4.5','persistent_document':True}
  record['passed']=True
 finally:(release/'installed-pointer-result.json').write_text(json.dumps(record,indent=2)+'\n')
 print('PASS installed locked login: USB mouse pixel checks, password-field/arrow clicks, BIOS and UEFI without ISO')

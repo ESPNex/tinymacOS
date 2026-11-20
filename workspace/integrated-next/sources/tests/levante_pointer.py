@@ -89,8 +89,6 @@ for profile in (['tablet','mouse'] if args.profile=='both' else [args.profile]):
         points=[(0,0),(w-1,h-1),(w-1,0),(0,h-1),(639,398),(65,731),(1217,82),(639,398)] if profile=='tablet' else [(762,482),(142,613)]
         for x,y in points:cursor(g,x,y)
         ok(f'{profile} / ISO: unico puntatore USB attivo. Cursore nativo confrontato con lo sprite di distribuzione su {len(points)} posizioni del setup: {points}')
-        g.key('f11');g.visible('Input nativo');g.visible('Puntatori configurati: 1',faces=(5,));g.move(100,110);time.sleep(1.2);g.shot(profile+'-native-diagnostics');g.key('f11')
-        ok(f'{profile} / login: pannello F11 nativo accessibile prima dell’account, un puntatore configurato, movimento con pannello aperto')
         enroll_by_click(g);ok(f'{profile} / account: focus sui tre campi e pulsante di creazione azionati con clic; accesso alla scrivania senza Tab né Invio')
         cursor(g,1003,361);cursor(g,308,115)
         x,y=g.visible('Preferiti',faces=(0,));g.move(x+200,y-40);g.mouse(True);g.move(x+287,y+1);g.mouse(False);g.move(1050,605)
