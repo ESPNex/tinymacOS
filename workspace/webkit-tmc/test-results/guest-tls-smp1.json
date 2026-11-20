@@ -1,9 +1,9 @@
 {
   "passed": true,
   "requested_cpus": 1,
-  "scope": "native FS base + caller-owned TCB/errno cell, not pthread/C++ ELF TLS/JSC/HTTPS",
-  "iso_sha256": "0075371f3d5eabd8a0364dfabc62c98bf64cd14767619c11e86771acd414d8fc",
-  "external_evidence": "/var/tmp/tmc-tls-qa-w0cdv496/evidence",
+  "scope": "native FS + caller-owned TCB + real target errno macro in VM/descriptor adapters, not pthread/C++ ELF TLS/JSC/HTTPS",
+  "iso_sha256": "3a7973ca96f4b79a80af099a0bd2fbc5501c8dba6d9f6f52ce5207ba965fad28",
+  "external_evidence": "/var/tmp/tmc-tls-qa-v1ab52el/evidence",
   "workers": 4,
   "post_yield_isolation_checks": 600,
   "invalid_base_rejected": true,
@@ -11,5 +11,7 @@
   "child_does_not_inherit_parent_tcb": true,
   "main_errno_preserved": true,
   "thread_cleanup_clears_fs": true,
+  "target_errno_macro_and_adapter_errors_isolated": true,
+  "global_errno_symbol_absent": true,
   "cross_cpu_execution_required": false
 }

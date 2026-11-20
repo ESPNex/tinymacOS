@@ -96,11 +96,14 @@
     ],
     "workers": 4,
     "checks_per_profile": 600,
-    "global_errno_adapters_converted": false,
+    "global_errno_adapters_converted": true,
     "pthread": false,
     "elf_cpp_tls_loader": false,
     "https_tls": false,
-    "shipped_in_oc2": true
+    "shipped_in_oc2": true,
+    "errno_adapter_wiring_shipped_in_oc2": false,
+    "errno_startup": "explicit caller-owned TCB required in every native thread; missing TCB traps, no global fallback",
+    "descriptor_table_concurrent_synchronization": false
   },
   "maintenance_244_opencore_installer": {
     "tag": "v2.4.4-oc2",
