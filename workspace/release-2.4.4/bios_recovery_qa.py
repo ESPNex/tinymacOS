@@ -19,7 +19,7 @@ try:
   def clicktext(text):
    x,y=g.visible(text);g.click(x+10,y+6)
   clicktext('Reinstalla tinymacOS');clicktext('Continua');g.visible('Seleziona un disco');clicktext('Continua')
-  g.visible('Conferma l’operazione');clicktext('Continua');g.visible('tinymacOS è stato reinstallato.',70);g.shot('bios-sealed-restore');clicktext('Continua');g.visible('Scegli come proseguire.')
+  g.visible('Conferma l’operazione');clicktext('Conferma');g.visible('tinymacOS è stato reinstallato.',70);g.shot('bios-sealed-restore');clicktext('Fine');g.visible('Scegli come proseguire.')
   clicktext('Disco di avvio');clicktext('Continua');g.visible('Seleziona un disco');clicktext('Continua')
   g.visible('BiosDisk',60);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.shot('bios-restored-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
  after=gpt(disk);assert after['esp']==before['esp']==before['src'];assert after['data']==before['data']

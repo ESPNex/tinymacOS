@@ -426,10 +426,21 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     disks();
     mx = rw - 48;
     my = rh - 55;
-    EFI_SIMPLE_POINTER_PROTOCOL *pointer = 0;
+    /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
+     * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
+    EFI_SIMPLE_POINTER_PROTOCOL *pointers[16]={0};
+    int pointer_down[16]={0};UINTN npointers=0;
     EFI_GUID pg = EFI_SIMPLE_POINTER_PROTOCOL_GUID;
-    bs->LocateProtocol(&pg, 0, (void **)&pointer);
-    if (pointer)pointer->Reset(pointer, 0);
+    EFI_HANDLE *ph=0;UINTN pn=0;
+    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&pg,0,&pn,&ph))){
+        for(UINTN i=0;i<pn && npointers<16;i++){
+            EFI_SIMPLE_POINTER_PROTOCOL *p=0;
+            if(!EFI_ERROR(bs->HandleProtocol(ph[i],&pg,(void **)&p)) && p){
+                p->Reset(p,FALSE);pointers[npointers++]=p;
+            }
+        }
+        bs->FreePool(ph);
+    }
     EFI_ABSOLUTE_POINTER_PROTOCOL *absolute = 0;
     EFI_GUID ag = EFI_ABSOLUTE_POINTER_PROTOCOL_GUID;
     EFI_HANDLE *handles; UINTN count;
@@ -445,18 +456,6 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     }
     if (absolute) absolute->Reset(absolute,FALSE);
     int direct = rec_pointer_start(bs,mx,my);
-#ifdef TMC_DEBUG
-    EFI_GUID ug={0x2b2f68d6,0x0cd2,0x44cf,{0x8e,0x8b,0xbb,0xa2,0x0b,0x1b,0x5b,0x75}};
-    EFI_GUID *gs[]={&ug,&pg,&ag};
-    for(int j=0;j<3;j++){
-        UINTN num=0;EFI_HANDLE *hs=0;bs->LocateHandleBuffer(ByProtocol,gs[j],0,&num,&hs);
-        const char *msg=j==0?"USB_IO=":j==1?"SIMPLE_PTR=":"ABS_PTR=";
-        for(;*msg;msg++)__asm__ volatile("outb %0,$0xe9"::"a"(*msg));
-        char c='0'+num;__asm__ volatile("outb %0,$0xe9"::"a"(c));
-        __asm__ volatile("outb %0,$0xe9"::"a"((char)10));
-        if(hs)bs->FreePool(hs);
-    }
-#endif
 
     for (;;) {
         if (dirty) {
@@ -503,12 +502,15 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
                 pointer_button(down);got_abs=1;
             }
         }
-        if (pointer && !direct && !got_abs) {
-            EFI_SIMPLE_POINTER_STATE p;
+        if (!direct && !got_abs) for(UINTN i=0;i<npointers;i++) {
+            EFI_SIMPLE_POINTER_STATE p;EFI_SIMPLE_POINTER_PROTOCOL *pointer=pointers[i];
             if (!EFI_ERROR(pointer->GetState(pointer, &p))) {
+                int down=!!p.LeftButton;
+                if(!p.RelativeMovementX && !p.RelativeMovementY && down==pointer_down[i])continue;
+                pointer_down[i]=down;
                 mx = MAX(0, MIN(rw - 1, mx + p.RelativeMovementX));
                 my = MAX(0, MIN(rh - 1, my + p.RelativeMovementY));
-                pointer_button(p.LeftButton);
+                pointer_button(down);
             }
         }
         bs->Stall(12000);
