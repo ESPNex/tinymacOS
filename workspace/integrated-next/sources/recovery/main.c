@@ -445,6 +445,19 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     }
     if (absolute) absolute->Reset(absolute,FALSE);
     int direct = rec_pointer_start(bs,mx,my);
+#ifdef TMC_DEBUG
+    EFI_GUID ug={0x2b2f68d6,0x0cd2,0x44cf,{0x8e,0x8b,0xbb,0xa2,0x0b,0x1b,0x5b,0x75}};
+    EFI_GUID *gs[]={&ug,&pg,&ag};
+    for(int j=0;j<3;j++){
+        UINTN num=0;EFI_HANDLE *hs=0;bs->LocateHandleBuffer(ByProtocol,gs[j],0,&num,&hs);
+        const char *msg=j==0?"USB_IO=":j==1?"SIMPLE_PTR=":"ABS_PTR=";
+        for(;*msg;msg++)__asm__ volatile("outb %0,$0xe9"::"a"(*msg));
+        char c='0'+num;__asm__ volatile("outb %0,$0xe9"::"a"(c));
+        __asm__ volatile("outb %0,$0xe9"::"a"((char)10));
+        if(hs)bs->FreePool(hs);
+    }
+#endif
+
     for (;;) {
         if (dirty) {
             paint();

@@ -113,7 +113,7 @@
   },
   {
     "path": "recovery/main.c",
-    "sha256": "544f9fb80e7b526108d4c64091a5ca3ded2c7dc4e81a365e3e75b984db14a5f1"
+    "sha256": "a1bcb3ce21ccf626506b82a235cb297382158d2bf4ea12c186714bd232a301ca"
   },
   {
     "path": "tests/account_reset.py",
@@ -197,7 +197,7 @@
   },
   {
     "path": "tools/run-bios-installed.sh",
-    "sha256": "ca8ab884420debf30f4cb961af62ec7ed4c9b4d5c057b868d4fff58a2768706d"
+    "sha256": "2ea29a85fa0aff154adb903cc36fcb3c3f1cf67198e97bf2f0abf348545060c4"
   },
   {
     "path": "tools/run-bios-iso.sh",

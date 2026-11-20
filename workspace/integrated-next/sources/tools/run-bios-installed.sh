@@ -19,4 +19,5 @@ if [[ ${BOOT_DISK:-0} == 0 ]];then
  [[ -f "$TMC_BIOS_ISO" ]] || exit 2
  Q+=(-drive "if=none,media=cdrom,id=cd,format=raw,readonly=on,file=$TMC_BIOS_ISO" -device ide-cd,drive=cd,bus=ide.1,bootindex=1)
 fi
+if [[ ${TMC_REC_DEBUG:-0} == 1 ]];then Q+=(-debugcon "file:$STATE/recovery-debug.log");fi
 exec qemu-system-x86_64 "${Q[@]}" "$@"
