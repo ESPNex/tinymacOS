@@ -21,7 +21,7 @@
   },
   {
     "path": "boot/opencore.plist",
-    "sha256": "ae629faa66e7e033508459ac62aeb79749ae07913c1b2f4ac37e62925c569209"
+    "sha256": "d43cad0b4885998b35874a5f192ba02fb707f2b8ea58776659661a3074c64647"
   },
   {
     "path": "boot/splash.h",
@@ -158,6 +158,10 @@
   {
     "path": "tests/riviera_live.py",
     "sha256": "5eef5c49150c90006de8208c587501b70e1bea0e90e9f71de7f3a31244cf6210"
+  },
+  {
+    "path": "tests/riviera_media.py",
+    "sha256": "b9cec41fadabb92c4ea4e1cba59fc5ad7c4d29af91a025798355a2e0596e9627"
   },
   {
     "path": "tests/riviera_pointer.py",

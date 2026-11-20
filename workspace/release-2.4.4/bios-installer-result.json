@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "iso_sha256": "94a355a39e7cab441a147386659df354166767b08cc0a795f263c74ceb652b14",
-  "external_work": "/var/tmp/tmc-bios-install-qa-p3h_uum6",
+  "iso_sha256": "8337ad8ba644812970d9a2306291e8d2ef13993be8b0869e082a9bdd42dc7157",
+  "external_work": "/var/tmp/tmc-bios-install-qa-3kxwplu3",
   "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU",
   "bios_live_installer": true,
   "bios_hdd_only_login": true,

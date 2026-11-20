@@ -24,7 +24,13 @@ def medium(iso,work,check):
  assert fat('rec-hd.fat','/Recovery/BaseSystem.dmg','source.dmg')==dmg and hashlib.sha256(dmg).digest() in efi and hashlib.sha256(dmg).digest() in fat('rec-hd.fat','/EFI/BOOT/BOOTX64.EFI','inner-loader.efi')
  assert fat('opt.fat','/Recovery/Payload.sha','payload.sha')==hashlib.sha256(esp).digest()+hashlib.sha256(rec).digest();check('Un solo CD: DMG visibile, file di avvio El Torito e file nella sorgente Recovery HD identici; SHA-256 nei due loader e manifest installazione verificati')
  for f in ('opt.fat','disk.esp'):
-  assert fat(f,'/EFI/BOOT/BOOTX64.EFI',f+'.efi')==efi and fat(f,'/System/Library/KernelCollections/KernelCache',f+'.kc')==kc
+  entry=fat(f,'/EFI/BOOT/BOOTX64.EFI',f+'.efi')
+  if f=='disk.esp' and entry!=efi:
+   assert entry==(ROOT/'vendor/opencore-1.0.8/BOOTx64.efi').read_bytes()
+   assert fat(f,'/EFI/TMC/BOOTX64.EFI','installed-native.efi')==efi
+   assert fat(f,'/EFI/OC/OpenCore.efi','installed-opencore.efi')==(ROOT/'vendor/opencore-1.0.8/OpenCore.efi').read_bytes()
+  else:assert entry==efi
+  assert fat(f,'/System/Library/KernelCollections/KernelCache',f+'.kc')==kc
  assert kc[:8]==b'TMKCACHE' and struct.unpack_from('<IIQQ',kc,8)==(2,62,64,len(kc)-64) and kc[32:64]==hashlib.sha256(kc[64:]).digest() and kc[64:68]==b'\x7fELF';check('KernelCache: vero payload ELF64, dimensione e SHA-256 corretti; stesso file su live e installato')
  def catalog(f):
   raw=fat(f,'/System/Library/CoreServices/System.vol',f+'.vol');v,h=raw[:-32],raw[-32:];assert h==hashlib.sha256(v).digest();magic,n,st=struct.unpack_from('<8sII',v);assert magic==b'TMVOL2\0\0' and st==64;paths=[];out={}
