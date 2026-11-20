@@ -6,7 +6,19 @@ Applicazione **Safari**, UI desktop classica, integrazione con tutti i temi di t
 
 Le manutenzioni 2.4.1/2.4.2 e l’**ultima 2.4.3 esplicitamente richiesta** sono state distribuite senza browser. Dopo la 2.4.3 niente altre ISO intermedie salvo nuova autorizzazione. Prossima release browser solo con vero HTTPS/HTML/CSS/JavaScript, temi e sicurezza collaudati.
 
-## Dopo il deploy 2.4.3: primo blocco SMP (sviluppo)
+## Stato corrente: SMP positivo e backup GitHub
+
+- VM/MMU reale su 1 e 2 vCPU: operazioni positive e sette fault intenzionali per profilo; suite backend/runtime 15/15 PASS.
+- Stress concorrente: quattro worker, 400 round e 1.600 syscall con buffer in gara con mutazioni VM; template del framebuffer verificati, PASS con 4 e 8 vCPU. Risultati in `../integrated-next/evidence/smp-stress-{4,8}/result.json`. Non è una libc pthread o un test di WebKit.
+- Verbose nativo UEFI con V e comando Terminale, bootstrap BIOS/OpenDuet/OpenCore con BOOTCFG, verificati separatamente. Test installato off/on/off con riavvii e controllo byte ESP/Recovery PASS, in `../integrated-next/evidence/verbose-installed/`.
+- Backup privato effettivamente caricato: https://github.com/ESPNex/tinymacOS ; database Git e credenziali fuori dal workspace. Sorgenti, evidenze e strumenti conservati estratti.
+- Nessuna nuova ISO pubblicata. WTF/JSC/WebCore/Safari non compilati. Tutti i gate browser rimangono bloccanti.
+
+## Storico delle milestone precedenti
+
+Le sezioni seguenti registrano lo stato al momento dei rispettivi test. In particolare **il vecchio rifiuto SMP non descrive più il kernel di sviluppo corrente**; resta corretto per le vecchie release distribuite.
+
+### Dopo il deploy 2.4.3: primo blocco SMP (sviluppo)
 
 La manutenzione è congelata in `../maintenance-2.4.3/sources/` e su Drive. L'albero OS di sviluppo ora differisce: mailbox TLB release/acquire e servizio dei pending shootdown negli spinlock IRQ-off, senza lock nell'handler. Compilazione target PASS; 8 worker host, 10.001 richieste e 80.008 ACK con ASan/UBSan PASS. Suite ricostruita e guest rete/VM 1/2 vCPU **15/15 PASS**.
 

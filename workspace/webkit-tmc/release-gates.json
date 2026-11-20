@@ -22,7 +22,7 @@
     "descriptor_backend_host_and_single_caller_guest_tests": true,
     "single_cpu_native_vm_and_hardware_guard_tests": true,
     "compact_password_dots_and_reported_white_line_guest_regression": true,
-    "real_multi_cpu_vm_support_and_stress_tests": false
+    "real_multi_cpu_vm_support_and_stress_tests": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -33,16 +33,17 @@
   },
   "guest_network_scope": "Controlled peer via lwIP/e1000/slirp, 1 and 2 vCPUs; TCP/readonly files, not DNS/HTTPS/JSC/WebCore or concurrent caller/security acceptance.",
   "vm_scope": {
-    "abi": "S_VM v1 experimental; included in maintenance 2.4.2, mutations single CPU only",
+    "abi": "S_VM v1 experimental; shipped maintenance 2.4.2/2.4.3 was single-CPU, development adds multi-CPU mutations",
     "guest_single_cpu": true,
-    "guest_smp_mutations": "explicitly unsupported",
+    "guest_smp_mutations": "positive VM/MMU on 2 vCPUs; four-worker VM/legacy/uaccess stress passed on 4 and 8 vCPUs",
     "arena_mib": 240,
     "max_region_mib": 64,
     "max_regions": 32,
     "executable_mapping": false,
     "posix_mmap_complete": false,
     "wtf_jsc_allocator_integrated": false,
-    "intentional_user_fault_tests": 7
+    "intentional_user_fault_tests": 7,
+    "smp_evidence": "../integrated-next/evidence/smp-stress-{4,8}/result.json"
   },
   "maintenance_242": {
     "built_tested_uploaded": true,
@@ -55,5 +56,6 @@
     "browser_included": false,
     "drive_id": "1xpSCzs3WpJqzVbWzxp3C5XnfOJ_bjCJ4",
     "sha256": "65b0191f0932e2ba3bdf815bac5da1a9d962b45a8baa2515b52bab90a21fefd1"
-  }
+  },
+  "private_source_backup": "https://github.com/ESPNex/tinymacOS"
 }

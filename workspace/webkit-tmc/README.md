@@ -2,6 +2,8 @@
 
 ## Stato reale
 
+**Aggiornamento sviluppo integrato:** SMP VM non è più limitato a una CPU. Stress nativo concorrente PASS con 4 e 8 vCPU (4 worker, 400 round, 1.600 chiamate buffer S_INFO), evidenze in `../integrated-next/evidence/smp-stress-{4,8}/`. Suite backend/runtime completa 15/15 PASS; non sono test JSC/WebCore. Le note di milestone precedenti conservate altrove possono descrivere il vecchio rifiuto SMP. Repository privata di backup: https://github.com/ESPNex/tinymacOS .
+
 **Non è ancora un browser e non è ancora un port WebKit compilabile.**
 
 Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: Safari desktop classico con tutti i temi del sistema. **La ISO 2.4.1 di manutenzione è stata autorizzata e distribuita prima del browser. Non include Safari/WebKit funzionante.** Il criterio browser resta HTTPS e test HTML/CSS/JavaScript reali. Criteri in `release-gates.json`; avanzamento in `PROGRESS.md`. La 2.4.1 include le nuove ABI kernel ma non il motore. La baseline 2.4.0 precedente non contiene quelle ABI.
@@ -14,7 +16,7 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 - `posix/src/network.c`: DNS/TCP, nuove operazioni S_NET/8–9 con EOF distinto dagli errori e lettura dello stato. Richiede il kernel aggiornato nell’overlay.
 - `posix/src/poll.c`: attesa su handle TCP con timeout.
 - `posix/src/descriptors.c`: namespace comune file read-only/TCP, dup/offset condiviso, lifetime e poll misto. Contratto backend, non ancora API libc POSIX; chiamante serializzato.
-- `posix/src/vm.c`: nuova VM nativa con riserva/commit/protezioni/guard/decommit, validata sul guest a 1 CPU; SMP ed EXEC esplicitamente rifiutati, non è mmap POSIX.
+- `posix/src/vm.c`: nuova VM nativa con riserva/commit/protezioni/guard/decommit, validata sul guest a 1/2 vCPU e stress concorrente a 4/8 vCPU; EXEC resta rifiutato, non è mmap POSIX.
 - `kernel-overlay/`: dieci file di integrazione sincronizzati con TinymacOS, inclusa la correzione della backpressure TCP.
 - `platform/src/appearance.c`: lettura reale S_INFO, palette condivisa con il compositor, rilevamento cambiamenti. Non ancora collegato a un’interfaccia browser.
 - `posix/src/native_syscall.c`: ponte syscall x86-64 nativo, non syscall Linux.
@@ -33,7 +35,7 @@ Nome applicazione concordato: **Safari** (progetto indipendente). Riferimento: S
 python3 tools/run-tests.py
 ```
 
-La suite base contiene **9 verifiche** host/compilazione oggetti. La suite completa di questo blocco si avvia con `python3 tools/run-tests.py --guest`: **15 verifiche** includendo due build diagnostiche, rete/file sul nuovo kernel e VM/MMU. Probe reale linkata ed eseguita sul guest: TCP 1.048.893 byte con SHA256, FIN/half-close, timeout/EAGAIN/reset; descriptor/dup/seek e font reale 2.215.962 byte con SHA256. VM reale su 1 CPU, 7 fault intenzionali verificati, rifiuto VM su SMP; limiti di arena/mapping documentati. Nessun test JSC/WebCore/HTTPS è ancora disponibile.
+La suite base contiene **9 verifiche** host/compilazione oggetti. La suite completa di questo blocco si avvia con `python3 tools/run-tests.py --guest`: **15 verifiche** includendo due build diagnostiche, rete/file sul nuovo kernel e VM/MMU. Probe reale linkata ed eseguita sul guest: TCP 1.048.893 byte con SHA256, FIN/half-close, timeout/EAGAIN/reset; descriptor/dup/seek e font reale 2.215.962 byte con SHA256. VM reale su 1/2 vCPU, 7 fault intenzionali verificati per profilo, stress multi-CPU separato; limiti di arena/mapping documentati. Nessun test JSC/WebCore/HTTPS è ancora disponibile.
 
 La probe linka un errno globale provvisorio per un solo chiamante; non è una libc multithread. La build QA sostituisce gli alias command soltanto nel volume diagnostico esterno e **non va distribuita**. Gli oggetti standalone conservano dipendenze non risolte finché non vengono linkati con un runtime. Screenshot, hash e limiti in `PROGRESS.md`.
 
