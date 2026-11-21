@@ -780,7 +780,7 @@ static void libraries(void)
     for (u32 j = 0; j < COUNT(dirs); j++)if (resolve(dirs[j]) < 0)fs_create(dirs[j], 1);
     if (resolve("/Library/Preferences/com.tinymacos.system.plist") < 0) {
         const char *s =
-            "<?xml version=\"1.0\"?><plist version=\"1.0\"><dict><key>ComputerName</key><string>Levante</string></dict></plist>\n";
+            "<?xml version=\"1.0\"?><plist version=\"1.0\"><dict><key>ComputerName</key><string>Tramontana</string></dict></plist>\n";
         int i = fs_create("/Library/Preferences/com.tinymacos.system.plist", 0);
         if (i > 0 && bytes(i, 0, (void *)s, strlen(s), 1) == (int)strlen(s)) {
             nodes[i].size = strlen(s);
@@ -801,7 +801,7 @@ static void libraries(void)
 }
 void fs_init(void)
 {
-    wall = 7;
+    wall = 12;theme = 7;
     int imported = 0;
     u8 h[512], factory[512];
     Block disk;
@@ -953,7 +953,7 @@ void fs_init(void)
     seed(HOME "/Downloads", 1, 0, 0);
     seed(HOME "/Pictures", 1, 0, 0);
     seed(HOME "/Welcome.txt", 0, 0,
-         "Benvenuti in tinymacOS 2.4.5 Levante.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
+         "Benvenuti in tinymacOS 10.0 Tramontana.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
     seed("/Volumes", 1, 1, 0);
     libraries();
     seeding = 0;

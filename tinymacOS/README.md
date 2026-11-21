@@ -1,75 +1,58 @@
-> **ISO corrente pubblicata e verificata: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** Unico layout ITA, accenti/AltGr/euro e UTF-8 anche nel Recupero; decoder mouse con assi X/Y indipendenti e descrittore HID. 27 profili input, 236 verifiche, 4 profili italiano app + 4 Recupero e 29/29 regressioni kernel PASS. [Note, checksum e ricevuta del download remoto](../workspace/release-2.4.5-input4/RELEASE.md). Nessuna conferma del risultato sul PC fisico è implicita nei PASS.
-
-> **Storico, precedente ISO: [2.4.5 / 21B8](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5):** xHCI ora enumera gli hub USB2 e i figli; quirk di routing porte Intel/Bay Trail; risolti alone Dock e allineamento mela. [Revisione sostitutiva 2.4.5](../workspace/release-2.4.5-input3/RELEASE.md). Sostituzione completata: download riscaricato e checksum verificato; 27 profili input, 197 verifiche raggruppate e 29/29 regressioni PASS. La prova fisica 21B7 confermava la tastiera, non il mouse; nessuna garanzia di compatibilità universale.
-
-> **Storico, ISO precedente: [2.4.5 Levante / 21B7](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), sostituzione verificata della 21B6.** Driver PS/2 tastiera/mouse ed EHCI/UHCI per input HID; nessun pannello F11 al login. [Note e ricevuta](../workspace/release-2.4.5-input2/RELEASE.md). Le citazioni 21B6 sotto sono storiche.
-
-> **Revisione 21B7:** PS/2 tastiera/mouse, EHCI per input HID e UHCI companion; pannello F11 eliminato. [QA della sostituzione 2.4.5](../workspace/release-2.4.5-input2/RELEASE.md): 16 profili input e 29/29 regressioni PASS. Le note 21B6 immediatamente sotto sono della revisione precedente. Nessuna garanzia hardware universale; OHCI/hotplug non implementati.
-
-> **Storico: manutenzione input 2.4.5 Levante / 21B6, [pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** [Note, checksum, prove e limiti](../workspace/release-2.4.5/RELEASE.md). Le note OC2 immediatamente sotto sono il riferimento storico dei percorsi di avvio conservati; non la versione corrente. Nessuna conferma sul PC fisico.
-
-> **Revisione installatore OC2:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2) aggiorna la manutenzione **2.4.4 Levante / 21B5**, senza browser. Live CD BIOS+UEFI, disco installato BIOS/OpenDuet/OpenCore e UEFI/OpenCore; installazione grafica, ISO rimossa, login, riavvio, documento persistente e Recupero offline verificati in QEMU. [Note, limiti, checksum e screenshot](../workspace/release-2.4.4/installer-media/RELEASE.md).
-
-> OC2 include anche il TLS nativo per-thread già verificato con 1/4/8 vCPU, non pthread/libc completa né WebKit/HTTPS. Le note storiche UEFI-only sotto descrivono la ISO originale `v2.4.4`, non OC2. Usare il tag OC2 per ricostruire questa revisione.
-
-# tinymacOS 2.4.5 · Levante
+# tinymacOS 10 · Tramontana
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
 
-## Release corrente
+**Versione 10.0, build 30A1: collaudo finale PASS, deploy in corso tramite GitHub CLI autorizzata.** Il risultato del deploy sarà registrato in [`workspace/release-10.0`](../workspace/release-10.0/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
 
-**Levante 2.4.5, build 21B9**. Pagina release: https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5 . La repository e i download sono privati: occorre accesso GitHub autorizzato. La ISO corrente è stata riscaricata e verificata dopo la sostituzione.
+## Tramontana
 
-Questa manutenzione è stata richiesta con priorità per mouse fermo al login e lag, prima di riprendere i grandi blocchi WebKit. **Non include Safari o WebKit funzionante.** La manutenzione corrente aggiunge tastiera esclusivamente italiana e correzione del decoder degli assi mouse. La precedente riserva del numero 2.4.5 al browser è superata. Il browser reale resta da completare: HTTPS/HTML/CSS/JavaScript, UI classica e integrazione con i temi. [Note input 2.4.5, prove e limiti](../workspace/release-2.4.5/RELEASE.md).
+- Nuovo sfondo non procedurale realizzato con generazione nativa di immagini; sorgente conservata in `assets/tramontana-generated.jpg`. Wallpaper QOI 1280×800 installato nel filesystem.
+- Icone PNG dall'archivio fornito dall'utente: variante datata più recente per ciascun nome esatto. Provenienza e SHA-256 in `assets/icons/manifest.json`.
+- Atlas nativo a 16/24/32/48/64/128 px; il compositore sceglie il livello adeguato a Dock, Finder, libreria, scrivania e altre superfici. Originali PNG e varianti per app realmente installati nei bundle. Cursore e glifi dei controlli restano risorse UI dedicate.
+- Eccezione esplicita: icona installer originale procedurale dedicata a Tramontana, rigenerata deterministicamente dal packer.
+- Tema Tramontana e tredicesimo sfondo predefiniti. Blu, Azzurro e Riviera hanno palette complete distinte in chiaro e scuro, non soltanto un accento diverso.
+- Informazioni: “tiny” conserva integralmente il vecchio carattere regolare; “macOS” usa una faccia autentica di peso 600, non un grassetto simulato. Licenza OFL inclusa. Le dieci vecchie facce sono conservate bit per bit.
+- Recupero: mela nativa 24 px allineata al testo della barra e titolo finestra più piccolo.
+- Identità 10.0 / 30A1 in app, metadati, shell, installer, Recupero e documenti iniziali.
 
-Novità input 2.4.5:
+**Safari/WebKit reale resta sospeso e non è incluso.** I test backend/runtime non costituiscono prove di un browser funzionante.
 
-- Movimento al login con due rettangoli di danno del cursore, non ridisegno completo per ogni report; hover e pulsanti mantengono il ridisegno della scena.
-- Accorpamento movimenti in coda con barriere per transizioni pulsanti, ruota e tasti.
-- Recupero limitato degli endpoint xHCI in halt, recupero EP0 e fallback mouse Report solo con protocollo confermato e descriptor valido; buffer DMA allineati.
-- Revisione di sviluppo **21B7**: pannello/scorciatoia diagnostica F11 rimossi; driver PS/2 tastiera/mouse, EHCI HID e UHCI companion implementati. OHCI e hotplug non implementati. Vedi [revisione input 2](../workspace/release-2.4.5-input2/RELEASE.md); la sostituzione online è confermata solo dal relativo receipt.
+## Input e limiti
 
-Funzionalità mantenute dalla 2.4.4:
+Conservati i decoder della 21B9: tastiera fisica esclusivamente italiana ISO, UTF-8, accenti, euro e AltGr fra login, app e Recupero; PS/2, EHCI HID, UHCI companion e xHCI con hub USB2. Gli assi mouse sono estratti dal descrittore validato e gestiti indipendentemente. Nessun pannello diagnostico F11 al login. F11 sul desktop live apre l'installer, come il collegamento sulla scrivania.
 
-- VM multi-CPU con invalidazione TLB e coordinamento degli accessi utente; prove VM/MMU e stress concorrente separati dai test browser.
-- Verbose selezionabile con V durante la mela; `bootverbose status`, `on`, `off`, `log [pagina]` dal Terminale. La preferenza persistente richiede un sistema installato e viene letta al prossimo riavvio.
-- Versione/build aggiornate nelle app, `sw_vers`, `uname`, metadati bundle, installer, Recupero e documento iniziale. Corrette anche le etichette disegnate dell’Info e dell’installer: **LEVANTE**, non RIVIERA.
-- Restano puntini password compatti, gestione dei piccoli movimenti USB relativi e correzioni GOP della 2.4.3.
+I test QEMU non verificano il PC fisico ASRock Q1900M/J1900 né garantiscono compatibilità universale. Non sono implementati OHCI, hotplug generale, hub SuperSpeed o HID universale. Nessuna nuova conferma fisica è implicita nei PASS. Il supporto conserva gli standard/controller generali, non una soluzione riservata a una scheda.
 
-**La ISO OC2 e il disco installato supportano BIOS e UEFI nei profili QEMU documentati.** Il ponte MBR legge OpenDuet dallo spazio riservato prima dell’ESP; la GPT/FAT16 e le copie Recovery/sistema restano invariate. Non è una migrazione automatica dei dischi installati con versioni precedenti. Nessuna promessa di compatibilità hardware universale.
+## Build e avvio
 
-## Avvio e installazione
-
-Usare una VM x86-64 con OVMF/UEFI, Secure Boot disattivato, Q35/AHCI, almeno 512 MiB di RAM (1 GiB consigliato), tastiera USB e mouse USB o tablet QEMU su xHCI.
+Output, ISO, toolchain e archivi voluminosi vanno fuori dal workspace. Esempio dalla directory `tinymacOS`:
 
 ```sh
 python3 tools/local-tools.py /var/tmp/tmc/tools/root
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-245 bash build.sh
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-build-245 STATE=/var/tmp/levante-vm LIVE=1 bash run.sh
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 bash build.sh
+TOOLROOT=/var/tmp/tmc/tools/root python3 tools/dualboot-iso.py \
+  /var/tmp/tmc10/tinymacOS-10.0-x86_64.iso \
+  /var/tmp/tmc10/tinymacOS-10.0-OpenCore-Installer-x86_64.iso
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 STATE=/var/tmp/tramontana-vm LIVE=1 bash run.sh
 ```
 
-Per installare, collegare un **nuovo disco virtuale SATA vuoto** dedicato, almeno 96 MiB consigliati. Creare l’account sulla live, aprire *Installa tinymacOS*, controllare la destinazione e confermare. A «Il disco è pronto», spegnere, rimuovere l’ISO e riavviare dal disco con la stessa password. Non usare dischi fisici o dati importanti. Un semplice riavvio dalla nuova ISO non aggiorna un sistema già installato.
+Richiesti Python/Pillow e gli strumenti descritti dai lock. La normale build usa il font già rasterizzato; `tools/tramontana-font.py` serve a rigenerare la faccia semibold con la sorgente TTF inclusa. Non occorre riscaricare lo ZIP delle icone.
 
-Su USB/Rufus usare modalità **ISO**, schema GPT/UEFI senza CSM, FAT32 e Secure Boot disattivato; la modalità DD non è supportata da questa ISO non ibrida. La scrittura cancella la chiavetta selezionata. Non sono stati eseguiti test Windows/Rufus o su hardware fisico.
+Il media distribuito aggiunge al percorso UEFI nativo un avvio CD BIOS via ISOLINUX/MEMDISK → OpenDuet/OpenCore → loader nativo. I dischi installati usano GPT/FAT16 con ponte MBR nello spazio riservato e avviano sia in BIOS sia in UEFI nei profili collaudati. Il media non è un'immagine USB DD ibrida.
+
+Usare una VM Q35/AHCI x86-64, Secure Boot spento e almeno 512 MiB RAM (1 GiB consigliato). Per installare collegare un **nuovo disco virtuale SATA vuoto dedicato**, almeno 96 MiB consigliati. Creare l'account live, aprire *Installa tinymacOS*, controllare e confermare la destinazione. Dopo “Il disco è pronto”, spegnere, rimuovere l'ISO e avviare dal disco con la stessa password. Non usare dischi fisici o dati importanti. Avviare la nuova ISO non aggiorna un vecchio sistema installato.
 
 ## Desktop e Recupero
 
-F2 apre il Terminale; F1–F9 aprono app. Ctrl+Spazio apre Cerca; Ctrl+Maiusc+Q blocca la sessione. Finder mostra i veri file/bundle di sistema; il desktop include editor, Note/Memo, Galleria, Monitor, Impostazioni e Utility Disco. I temi e gli sfondi storici chiamati Riviera/Sirocco non sono il nome della release e non vanno rinominati retroattivamente.
+F1–F9 aprono le app; F2 apre Terminale. Ctrl+Spazio apre Cerca; Ctrl+Maiusc+Q blocca la sessione. Finder mostra i file e i bundle reali. I temi e sfondi storici conservano il loro nome e non identificano la release attuale.
 
-Premere ripetutamente **R o F12 durante la mela** per aprire `/Recovery/BaseSystem.dmg`, presente nella stessa ISO e copiato nella partizione Recovery dall’installer. Nessun messaggio Recovery viene sovrapposto al normale avvio. Recovery è un runtime UEFI distinto, non Internet Recovery o un ambiente Apple. `sw_vers` nella Shell di Recupero riporta 2.4.5 (21B6).
+Premere ripetutamente R o F12 durante la mela per il Recupero UEFI ottico. L'installer copia anche BaseSystem nella partizione Recovery: il recupero locale può partire senza ISO. Il Recupero è un runtime distinto, non Internet Recovery né un ambiente Apple; `sw_vers` riporta `tinymacOS Recovery 10.0 (30A1)`.
 
-```text
-bootverbose status
-bootverbose on
-bootverbose off
-bootverbose log
-bootverbose log 1
-```
+Verbose durante l'avvio con V; comandi `bootverbose status`, `on`, `off`, `log [pagina]`. La preferenza persistente richiede un sistema installato. VM/MMU multi-CPU, TLS per-thread e sincronizzazione nativa restano funzionalità sperimentali, non una libc/POSIX/pthread completa.
 
-On/off non cambiano retroattivamente l’avvio corrente. Sulla live in sola lettura sono rifiutati; V consente comunque un avvio verbose. I log del loader sono visibili durante l’avvio; il comando log legge il ring di avvio kernel dopo autenticazione. Il tracing diagnostico dettagliato resta escluso dalla build retail.
+## Prove e storico
 
-## Sorgenti, backup e limiti
-
-**Nessuna ISO o ZIP sotto `/home/user`, nemmeno temporaneamente.** Build/media/toolchain devono restare sotto `/var/tmp` o altra destinazione esterna validata. Il checkout conserva sorgenti e vendor selezionati estratti con licenze; le credenziali non sono sorgenti. GitHub conserva commit/tag verificati; la directory temporanea non è il backup.
-
-La precedente manutenzione 2.4.3 resta congelata in `../workspace/maintenance-2.4.3/sources/` e documentata in `CONSEGNA.md` nella stessa directory. Non modificarla per simulare un aggiornamento retroattivo. Per 2.4.4 usare il tag GitHub `v2.4.4` e la manifestazione dei test della nuova release. Per stato di sviluppo e limiti browser: `../workspace/integrated-next/STATUS.md`, `../workspace/webkit-tmc/README.md` e `../workspace/webkit-tmc/release-gates.json`.
+- Nuove ricevute: [`workspace/release-10.0`](../workspace/release-10.0/).
+- Precedente 21B9: [`workspace/release-2.4.5-input4`](../workspace/release-2.4.5-input4/).
+- Prove runtime/kernel: [`workspace/webkit-tmc`](../workspace/webkit-tmc/), con limiti espliciti e kernel delle sonde confrontato con la produzione.
+- Storia architetturale: `docs/` e `docs/storico/`; i numeri di versione nei documenti storici non sono l'identità corrente.

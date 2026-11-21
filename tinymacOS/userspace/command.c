@@ -151,10 +151,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    2.4.5");
-            ln("BuildVersion:      21B9");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("2.4.5");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("21B9");
+            ln("ProductVersion:    10.0");
+            ln("BuildVersion:      30A1");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.0");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30A1");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -162,8 +162,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("2.4.5");
-        else if (eq(V(1), "-a"))ln("tinymacOS levante 2.4.5 21B9 x86_64");
+        else if (eq(V(1), "-r"))ln("10.0");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.0 30A1 x86_64");
         else return 2;
         return 0;
     }
@@ -404,7 +404,7 @@ static int run(void)
         }
         memcpy(req + ri, host, (size_t)hi); ri += hi;
         {
-            const char *tail = "\r\nUser-Agent: tinymacOS/2.4.5\r\nConnection: close\r\n\r\n";
+            const char *tail = "\r\nUser-Agent: tinymacOS/10.0\r\nConnection: close\r\n\r\n";
             int tl = (int)strlen(tail);
             memcpy(req + ri, tail, (size_t)tl); ri += tl;
         }

@@ -1,12 +1,12 @@
-"""2.4.5: real USB mouse -> installed login clicks, both firmwares, no ISO.
-Fixture must be the disposable 2.4.5 bios_installer_qa.py disk, cloned per profile.
+"""10.0: real USB mouse -> installed login clicks, both firmwares, no ISO.
+Fixture must be the disposable 10.0 bios_installer_qa.py disk, cloned per profile.
 """
 import hashlib,json,os,shutil,tempfile,time
 from pathlib import Path
 import numpy as np
 from guest import ROOT
 from retail_guest import Retail
-home=ROOT.parent;release=home/'workspace/release-2.4.5'
+home=ROOT.parent;release=home/'workspace/release-10.0'
 receipt=json.loads((release/'bios-installer-result.json').read_text());assert receipt['passed']
 src=Path(receipt['external_work'])/'target/system.raw';assert str(src).startswith('/var/tmp/')
 w=Path(tempfile.mkdtemp(prefix='tmc245-installed-pointer-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
@@ -34,8 +34,8 @@ try:
    mice=g.req('query-mice');assert any(m['current'] and not m['absolute'] and 'HID' in m['name'] for m in mice)
    cursor(g,762,482);cursor(g,142,613);g.shot(fw+'-locked-cursor')
    g.click(600,626);g.type('local-test-285');g.click(746,628);g.visible('Preferiti',40)
-   cursor(g,1003,361);g.shot(fw+'-mouse-unlocked');g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    2.4.5');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT')
-   record['profiles'][fw]={'passed':True,'no_iso_attached':True,'mouse_sprite_at_locked_login':True,'password_field_and_arrow_clicked':True,'desktop_sprite':True,'version':'2.4.5','persistent_document':True}
+   cursor(g,1003,361);g.shot(fw+'-mouse-unlocked');g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    10.0');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT')
+   record['profiles'][fw]={'passed':True,'no_iso_attached':True,'mouse_sprite_at_locked_login':True,'password_field_and_arrow_clicked':True,'desktop_sprite':True,'version':'10.0','persistent_document':True}
  record['passed']=True
 finally:(release/'installed-pointer-result.json').write_text(json.dumps(record,indent=2)+'\n')
 print('PASS installed locked login: USB mouse pixel checks, password-field/arrow clicks, BIOS and UEFI without ISO')

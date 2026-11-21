@@ -129,15 +129,15 @@ static void paint(void)
     x0=MAX(8,MIN(rw-ww-8,x0));y0=MAX(42,MIN(rh-hh-8,y0));
     fill(0, 0, rw, rh, 0, 0xe9eaf0);
     fill(0, 0, rw, 34, 0, 0x34353a);
-    glyph(15, 6, 20, 0);
-    label(50, 6, 2, "Recupero tinymacOS — Tastiera ITA", 0xffffff);
+    menu_apple(12,3);
+    label(50, 6, 1, "Recupero tinymacOS — Tastiera ITA", 0xffffff);
     label(rw - 109, 9, 0, "Spegni…", 0xf2f2f5);
     const char *head = page == HOME_MENU ? "Recupero tinymacOS" : page == DEST ? "Seleziona un disco" : page ==
                        TOOLS ? "Utility Disco" : page == TERM ? "Terminale" : page == CONFIRM ? "Conferma l’operazione" : page ==
                        POWER ? "Spegnere il computer?" : "Recupero";
     window_frame(x0,y0,ww,hh);
     dots();
-    label(x0 + (ww - tw(3, head)) / 2, y0 + 11, 3, head, 0x2e2f36);
+    label(x0 + (ww - tw(2, head)) / 2, y0 + 7, 2, head, 0x2e2f36);
     int x = x0 + 30, y = y0 + TH + 18;
     const int BY = y0 + hh - 46;         /* bottom button row */
     fill(x0 + 1, BY - 8, ww - 2, 1, 0, 0xe3e3e8);
@@ -274,7 +274,7 @@ static void enter(void)
     }
     if (page == DEST) {
         if (!num || types[sel] != 2) {
-            result("Seleziona un disco Levante con Recupero locale.");
+            result("Seleziona un disco Tramontana con Recupero locale.");
             return;
         }
         if (op == START) {
@@ -354,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 2.4.5 (21B9)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.0 (30A1)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {

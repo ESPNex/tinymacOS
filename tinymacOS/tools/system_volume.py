@@ -22,11 +22,26 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'2.4.5'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'2.4.5','ProductBuildVersion':'21B9'}));add('/System/Library/KernelCollections',None)
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.0','CFBundleVersion':'30A1','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.0','ProductBuildVersion':'30A1'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path('assets/type.tfn').read_bytes())
+# Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
+import json
+atlas=json.loads((D/'icon-atlas.json').read_text());slots={int(k):v for k,v in atlas['slots'].items()}
+for slot,name in slots.items():
+    source=D/name if slot==38 else Path('assets/icons')/name
+    add('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/'+name,source.read_bytes())
+appslots={'finder':1,'terminal':2,'textedit':3,'settings':4,'about':5,'calculator':16,'calendar':17,'monitor':18,'gallery':19,'installer':38,'diskutility':39,'notes':40,'stickies':41,'timemachine':42}
+for src,name,loc in apps:
+    icon=slots[appslots[src]];source=D/icon if src=='installer' else Path('assets/icons')/icon
+    resources=loc+'/'+name+'.app/Contents/Resources/'
+    add(resources+'AppIcon.png',source.read_bytes())
+    for size in atlas['sizes']:add(resources+f'Icon{size}.png',(D/'icon-png'/icon.removesuffix('.png')/f'Icon{size}.png').read_bytes())
+add('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/IconsManifest.json',Path('assets/icons/manifest.json').read_bytes())
+add('/System/Library/Fonts/Display-Semibold-OFL.txt',Path('assets/font-source/OFL.txt').read_bytes())
+
 # No browser resources in this baseline image. WebKit is developed separately.
-for name,src in zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza')):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())
+for name,src in zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza','Tramontana'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza','tramontana')):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())
 commands=(Path('include/commands.def').read_text().splitlines());tool=macho(D/'command.elf')
 for path in commands:
     if path:add(path,tool)

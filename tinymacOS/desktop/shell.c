@@ -640,7 +640,7 @@ static void paintoverlay(void)
         }
         return;
     }
-    text(x + 23, y + 15, "tinymacOS  /  Levante", F_MICRO, INK(I_ACC_TXT));
+    text(x + 23, y + 15, "tinymacOS  /  Tramontana", F_MICRO, INK(I_ACC_TXT));
     text(x + 22, y + 39, ov == OV_HELP ? "Scorciatoie" : ov == OV_OFF ? "Spegnere il sistema?" : "Riavviare il sistema?",
          F_TITLE, TX);
     text(x + 23, y + 91, ov == OV_HELP ? "Ctrl+Spazio: Cerca  ·  F10: Mission Control" :

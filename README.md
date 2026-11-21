@@ -1,3 +1,22 @@
+# tinymacOS — sorgenti e workspace
+
+**tinymacOS 10 Tramontana / 30A1: collaudo finale PASS; deploy in corso tramite GitHub CLI autorizzata.**
+Nuove icone importate a più risoluzioni, sfondo non procedurale, tema Tramontana,
+palette distinte e vero semibold nel wordmark.
+
+- [Sistema corrente, build e limiti](tinymacOS/README.md)
+- [Prove e note Tramontana](workspace/release-10.0/RELEASE.md)
+- [Ultima release precedente pubblicata: 2.4.5 / 21B9](workspace/release-2.4.5-input4/RELEASE.md)
+- [Backend sperimentale WebKit, non browser funzionante](workspace/webkit-tmc/README.md)
+
+Il repository privato non contiene credenziali né ISO. Output e toolchain vanno
+fuori dal workspace. L'archivio lossless dei vecchi asset duplicati è documentato
+in `workspace/maintenance-2.4.3/sources/HISTORICAL-ASSETS.md`.
+
+## Documentazione storica
+
+Le sezioni seguenti sono conservate come storico e non identificano la candidata corrente.
+
 > **Corrente e pubblicata: [2.4.5 / 21B8](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5):** hub USB2 nativi xHCI, routing Intel switchable/Bay Trail, alone Dock dopo Mission Control e allineamento mela corretti. [Note, limiti e gate](workspace/release-2.4.5-input3/RELEASE.md). 27 profili input e 29/29 regressioni PASS, con test anti-fallback. Sostituzione nella stessa release completata; ISO riscaricata e SHA-256 verificato, receipt incluso. Le voci 21B7 e 21B6 sotto sono storiche; la 21B7 non risolveva il mouse sul PC dell’utente.
 
 > **Storico, revisione precedente: [tinymacOS 2.4.5 Levante / 21B7](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** Sostituita la ISO nella stessa release su richiesta. PS/2 tastiera/mouse, EHCI HID e UHCI companion; diagnostica F11 rimossa. 16 profili input, 117 verifiche e 29/29 regressioni PASS; download verificato. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md).

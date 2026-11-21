@@ -17,7 +17,8 @@ enum {EV_KEY = 1, EV_MOUSE, EV_CLICK, EV_RESIZE, EV_THEME, EV_ACTION, EV_CLOSE, 
 enum {ACT_NEW = 1, ACT_OPEN, ACT_SAVE, ACT_COPY, ACT_PASTE, ACT_RENAME, ACT_DELETE, ACT_VIEW, ACT_PARENT, ACT_PROPS, ACT_PREVIEW, ACT_SYSTEM, ACT_FILE, ACT_PACKAGE};
 enum {K_UP = 128, K_DOWN, K_LEFT, K_RIGHT, K_DEL, K_HOME, K_END, K_F1 = 145, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7, K_F8, K_F9, K_F10, K_F11};
 enum {C_RECT = 1, C_TEXT, C_ICON, C_LINE, C_IMAGE, C_BUTTON, C_GLASS, C_RASTER};
-enum {F_SMALL, F_BODY, F_BOLD, F_TITLE, F_DISPLAY, F_MONO, F_MICRO, F_HERO, F_CAPTION, F_CLOCK};
+enum {F_SMALL, F_BODY, F_BOLD, F_TITLE, F_DISPLAY, F_MONO, F_MICRO, F_HERO, F_CAPTION, F_CLOCK, F_DISPLAY_SEMIBOLD};
+#define NFONTS 11
 // High-bit inks are semantic palette tokens; ordinary inks are 0x00RRGGBB.
 #define INK(x) (0x80000000u+(x))
 enum {I_BG = 0, I_PANEL, I_TXT, I_SUB, I_LINE, I_ACC, I_SEL, I_ACC_TXT, I_CARD, I_SOFT};
@@ -125,11 +126,11 @@ typedef struct {
     char note[44];               /* honest label of the simulated radio */
 } WifiStatus;
 
-#define NWALL 12
-#define NTHEME 7
+#define NWALL 13
+#define NTHEME 8
 static inline const char *wallname(unsigned v)
 {
-    static const char *const a[] = {"Prisma", "Alba", "Laguna", "Aurora", "Prisma glaciale", "Aurora boreale", "Rame vespertino", "Riviera", "Levante", "Meriggio", "Notturno", "Brezza"};
+    static const char *const a[] = {"Prisma", "Alba", "Laguna", "Aurora", "Prisma glaciale", "Aurora boreale", "Rame vespertino", "Riviera", "Levante", "Meriggio", "Notturno", "Brezza", "Tramontana"};
     return a[v % NWALL];
 }
 
@@ -154,12 +155,12 @@ static inline int darktheme(unsigned t)
 static inline const char *themename(unsigned t)
 {
     /* Each theme is an accent colour; light/dark is the separate `dark` pref. */
-    static const char *const n[] = {"Blu", "Azzurro", "Teal", "Menta", "Rame", "Riviera", "Levante"};
+    static const char *const n[] = {"Blu", "Azzurro", "Teal", "Menta", "Rame", "Riviera", "Levante", "Tramontana"};
     return n[t % NTHEME];
 }
 static inline u32 accent(unsigned t)
 {
-    static const u32 c[] = {0x1677ea, 0x8ab9ff, 0x006d94, 0x80ebc6, 0xf2ac80, 0x1f8a8a, 0xe0973f};
+    static const u32 c[] = {0x2446c7, 0x00a8d2, 0x006d58, 0x80ebc6, 0xf2ac80, 0xc35f32, 0xe0973f, 0x176c63};
     return c[t % NTHEME];
 }
 // A client can supply only a mask of its own file actions, never a shell command.

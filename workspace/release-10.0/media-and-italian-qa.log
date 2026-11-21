@@ -1,0 +1,39 @@
+PASS live uefi ps2
+PASS live uefi ehci
+PASS live uefi companion
+PASS live uefi xhci
+PASS live uefi xhci-hub
+PASS live uefi xhci-hub-kbd
+PASS live uefi xhci-nested-hub
+PASS live uefi uhci
+PASS live uefi ehci-kbd
+PASS live uefi companion-kbd
+PASS live bios ps2
+PASS live bios ehci
+PASS live bios companion
+PASS live bios xhci
+PASS live bios xhci-hub
+PASS live bios xhci-hub-kbd
+PASS live bios xhci-nested-hub
+PASS identity (photo micro-caption harness corrected)
+PASS installer BIOS and installed UEFI crossboot
+PASS installed no ISO bios ps2
+PASS installed no ISO bios ehci
+PASS installed no ISO bios companion
+PASS installed no ISO bios xhci-hub
+PASS installed no ISO bios xhci-nested-hub
+PASS installed no ISO uefi ps2
+PASS installed no ISO uefi ehci
+PASS installed no ISO uefi companion
+PASS installed no ISO uefi xhci-hub
+PASS installed no ISO uefi xhci-nested-hub
+PASS local sealed Recovery
+PASS Italian apps uefi ps2 (current ISO hash verified)
+PASS Italian Recovery uefi ps2 (current ISO hash verified)
+PASS Italian apps uefi xhci-hub-kbd (current ISO hash verified)
+PASS Italian Recovery uefi xhci-hub-kbd (current ISO hash verified)
+PASS Italian apps bios ps2 (current ISO hash verified)
+PASS Italian Recovery bios ps2 (current ISO hash verified)
+PASS Italian apps bios xhci-hub-kbd (current ISO hash verified)
+PASS Italian Recovery bios xhci-hub-kbd (current ISO hash verified)
+PASS Mission Control and menubar regression

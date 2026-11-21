@@ -18,7 +18,7 @@ static const int pglyph[] = {28, 9, 31, 33, 27, 29};
 #define NP 6
 
 typedef struct { int x, y, w, h; } R;
-static R hsearch, hpane[NP], hlight[2], hcol[NTHEME], hwall[12], hsw[4], henc[4], hbk[4], hsnap[5], hres;
+static R hsearch, hpane[NP], hlight[2], hcol[NTHEME], hwall[NWALL], hsw[4], henc[4], hbk[4], hsnap[5], hres;
 static int nhpane, nenc, nbk, nsnapshow, hitpane[NP];
 static const char *enclab[4];
 static int encact[4], encpass[4];
@@ -195,13 +195,13 @@ static void paint(void)
             Box(rx, ry, 26, 26, 13, accent(j));
             hcol[j] = (R) {rx - 4, ry - 4, 34, 34};
         }
-        Text(x + 330, 232, themename(si.theme), F_BOLD, TX);
+        Text(x + 352, 232, themename(si.theme), F_BOLD, TX);
         Text(x, 274, "SFONDO", F_MICRO, SUB);
         Text(x + 64, 271, wallname(si.wall), F_BOLD, TX);
         Box(x, 292, w, 110, 10, PANEL);
-        int ww = 90, wh = 38;
+        int ww = 77, wh = 38;
         for (int j = 0; j < NWALL; j++) {
-            int xx = x + 18 + (j % 6) * (ww + 8), yy = 302 + (j / 6) * 50;
+            int xx = x + 18 + (j % 7) * (ww + 6), yy = 302 + (j / 7) * 50;
             Photo(xx, yy, ww, wh, j, 6);
             if (si.wall == (u32)j)Box(xx + 3, yy + wh + 3, ww - 6, 2, 1, ACC);
             hwall[j] = (R) {xx, yy, ww, wh + 7};
@@ -321,8 +321,8 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 2.4.5 (21B9)");
-        row2(x, r0 + 40, w, "NOME", "Levante");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.0 (30A1)");
+        row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
         Text(x, 274, "SPAZIO SU DISCO", F_MICRO, SUB);

@@ -1,0 +1,127 @@
+{
+  "source_url": "https://onlyfiles.com/w1wMwMbBmcEf/lxcueyi9qnicdfmris5zhji26onh_pmkipxlikauiew.zip",
+  "archive_sha256": "2f10ae7988bdaa721c0c5311892e731e3236e8e347fcf9a4229c4b22402e89ec",
+  "archive_retained_outside_workspace": true,
+  "icons": [
+    {
+      "slot": 1,
+      "file": "finder-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/finder-2026-09-23.png",
+      "sha256": "3dd106f33125bfa628ee70779577dff5f0e49b2732a73c9b178ad0274bd93e0f",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 2,
+      "file": "terminal-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/terminal-2026-09-23.png",
+      "sha256": "dcb565e26ef66ac249113482f9152a07546de748e7f5ccc80f325b92a2f2420a",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 3,
+      "file": "textedit-2025-11-14.png",
+      "archive_path": "macos-icons-256x256/textedit-2025-11-14.png",
+      "sha256": "41886a4061a8ba235326300e0fb493daa50e9d22dd1b57410919f1d6a15776a9",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 4,
+      "file": "system-settings-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/system-settings-2026-09-23.png",
+      "sha256": "b8f8f59e3d2e05fa287d926f807e07644694471d68909d112744036616921308",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 5,
+      "file": "system-settings-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/system-settings-2026-09-23.png",
+      "sha256": "b8f8f59e3d2e05fa287d926f807e07644694471d68909d112744036616921308",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 16,
+      "file": "calculator-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/calculator-2026-09-23.png",
+      "sha256": "707a7dffa2111ed015080c0d94e4ceb79c380f3d65943aeb3c1e1f6ea3856733",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 17,
+      "file": "calendar-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/calendar-2026-09-23.png",
+      "sha256": "adc4b9f78440fa6a784527bc80b2dd4b363a79522a2fc2c9997410b8364e441b",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 18,
+      "file": "activity-monitor-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/activity-monitor-2026-09-23.png",
+      "sha256": "da9cf895bf62512090ff49e88b5b854be28a9394aa5062e4df151a2d840234e6",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 19,
+      "file": "photos-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/photos-2026-09-23.png",
+      "sha256": "b586e79087ca2cf97e378e0012e5bddd57affbd00da139f72521e4478081abf2",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 39,
+      "file": "disk-utility-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/disk-utility-2026-09-23.png",
+      "sha256": "715ef8c582b419c1423bca2b14226173baf96f33afa38ec7b898de877af2cc4d",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 40,
+      "file": "notes-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/notes-2026-09-23.png",
+      "sha256": "3993d3bf89866fedb2ad25fc8128b88398eb00d5331ba81e8071e569fa387583",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 41,
+      "file": "stickies-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/stickies-2026-09-23.png",
+      "sha256": "f4ffa4b371d7133e2053067ff7bc72531932531931ce119b01cbc51921ab15dc",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 42,
+      "file": "time-machine-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/time-machine-2026-09-23.png",
+      "sha256": "251dd41a363aa5aca81f9fbda9e145774318e72438a86e4685d395c8b661cd5a",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 7,
+      "file": "textedit-2025-11-14.png",
+      "archive_path": "macos-icons-256x256/textedit-2025-11-14.png",
+      "sha256": "41886a4061a8ba235326300e0fb493daa50e9d22dd1b57410919f1d6a15776a9",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 6,
+      "file": "folder-preview-2025-11-20.png",
+      "archive_path": "macos-icons-256x256/folder-preview-2025-11-20.png",
+      "sha256": "19fe5958852be79f1251bad0ebd7cdd685da2d5d98532f1dd543c47bfc8cb15a",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 13,
+      "file": "app-store-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/app-store-2026-09-23.png",
+      "sha256": "c18a3df890a7f44641f06bd44c422317710d4d792e9dd0ceae2225dc977959dc",
+      "selection": "latest date for exact icon name"
+    },
+    {
+      "slot": 27,
+      "file": "clock-2026-09-23.png",
+      "archive_path": "macos-icons-256x256/clock-2026-09-23.png",
+      "sha256": "4fc63e6e3e05d28ebbe5c727bddaef51fa302ff0053938c760512a482d796bb3",
+      "selection": "latest date for exact icon name"
+    }
+  ],
+  "installer_exception": "New original procedural Tramontana installer icon, explicitly requested"
+}

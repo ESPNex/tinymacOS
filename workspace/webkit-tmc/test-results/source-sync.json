@@ -49,7 +49,7 @@
   },
   {
     "path": "include/system_palette.h",
-    "sha256": "81ee2b6b2b0ce86542f2ee2771ebf5d019fb8cc6a1c082ed6c4aa8934cda3616"
+    "sha256": "ee9b82606528b7cbd9035e64fcc02007fdcd1e1a3f2fa6f460565d1bdafa9bf0"
   },
   {
     "path": "kernel/net.c",
@@ -65,7 +65,7 @@
   },
   {
     "path": "desktop/gfx.c",
-    "sha256": "a54b7a5322810c8be546410a9d63e1d17fa5b2b851a549327d8cc4550b1cebce"
+    "sha256": "8e564d0412edab6b508bfd0af22ef3593fbac627aca9dc2d0c9c28c21ae59513"
   },
   {
     "path": "kernel/memory.c",
@@ -77,7 +77,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "30c603d95991b2b6080cbfcc1795ea10b045227aeb2cd6c401cbcca4b6c1d0b7"
+    "sha256": "b5e6867bc419d640bf63f9ba05a818c01ee1139ef6e400acbb09e81e2abcb132"
   },
   {
     "path": "include/vmabi.h",

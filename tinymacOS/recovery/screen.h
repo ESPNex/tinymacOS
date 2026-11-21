@@ -11,3 +11,5 @@ void show(int, int);
 int tw(int, const char *);
 
 void window_frame(int,int,int,int);
+
+void menu_apple(int,int);

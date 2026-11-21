@@ -16,7 +16,7 @@ typedef struct PACK {
 static struct {
     u32 h;
     const Glyph *g;
-} font[10];
+} font[NFONTS];
 static const u32 *symbols;
 static int ng;
 static u32 films[NWALL][1280 * 800];
@@ -50,7 +50,7 @@ void initgfx(int w, int h)
     ng = *(const u32 *)(fontdata + 8);
     symbols = (const u32 *)(fontdata + 12);
     const u8 *p = (const u8 *)(symbols + ng);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < NFONTS; i++) {
         memcpy(&font[i].h, p, 4);
         p += 4;
         font[i].g = (const void *)p;
@@ -241,10 +241,14 @@ void icon(int x, int y, int size, int id)
             }
         return;
     }
-    const u8 *base = icons + id * 64 * 64 * 4;
+    static const unsigned sizes[]={16,24,32,48,64,128};
+    unsigned tier=0;while(tier+1<COUNT(sizes)&&sizes[tier]<(unsigned)size)tier++;
+    u32 entry=((const u32 *)icons)[id*COUNT(sizes)+tier];
+    unsigned source_size=(entry&0x80000000u)?64:sizes[tier];
+    const u8 *base=icons+(entry&0x7fffffffu);
     for (int j = MAX(0, y1 - y); j < MIN(size, y2 - y); j++)
         for (int i = MAX(0, x1 - x); i < MIN(size, x2 - x); i++) {
-            const u8 *p = base + 4 * ((j * 64 / size) * 64 + i * 64 / size);
+            const u8 *p = base + 4 * ((j * source_size / size) * source_size + i * source_size / size);
             if (p[3])
                 pix(x + i, y + j, (p[0] << 16) | (p[1] << 8) | p[2], p[3]);
         }
@@ -274,14 +278,14 @@ static int glyph(const char **s)
 }
 int textw(const char *s, int f)
 {
-    if (f < 0 || f > 9)f = 1;
+    if (f < 0 || f >= NFONTS)f = 1;
     int n = 0;
     while (*s)n += font[f].g[glyph(&s)].adv;
     return n;
 }
 void text(int x, int y, const char *s, int f, u32 col)
 {
-    if (f < 0 || f > 9)f = 1;
+    if (f < 0 || f >= NFONTS)f = 1;
     u32 ink = color(col);
     while (*s && x < x2) {
         const Glyph *g = font[f].g + glyph(&s);

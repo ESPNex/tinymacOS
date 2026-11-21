@@ -1,7 +1,8 @@
 #include "ui.h"
 static int idx;
 
-static const char *const desc[] = {"Vetro scolpito · Studio ottico", "Pieghe di luce · Studio cromatico", "Acque di marea · Studio aereo", "Ultima luce sulla costa · Paesaggio digitale", "Lamine di ghiaccio · Studio minerale", "Luci polari · Paesaggio notturno", "Ultima luce · Studio di rame e dune", "Riviera ligure · Luci del crepuscolo", "Vento caldo dal sud · Studio sabbioso", "Luce di mezzogiorno · Studio marino", "Notte sul mare · Studio lunare", "Aria di mare · Studio luminoso"};
+static const char *const desc[] = {"Vetro scolpito · Studio ottico", "Pieghe di luce · Studio cromatico", "Acque di marea · Studio aereo", "Ultima luce sulla costa · Paesaggio digitale", "Lamine di ghiaccio · Studio minerale", "Luci polari · Paesaggio notturno", "Ultima luce · Studio di rame e dune", "Riviera ligure · Luci del crepuscolo", "Vento caldo dal sud · Studio sabbioso", "Luce di mezzogiorno · Studio marino", "Notte sul mare · Studio lunare", "Aria di mare · Studio luminoso", "Vento del nord · Costa minerale"};
+_Static_assert(COUNT(desc)==NWALL, "wallpaper description count");
 static void selecti(int i)
 {
     idx = (i + NWALL) % NWALL;
@@ -27,7 +28,8 @@ static void paint(void)
         int step=MAX(23,MIN(49,(ah-43)/NWALL)),y=36+j*step;
         if(j==idx)Box(5,y,side-10,step-2,8,SEL);
         Photo(12,y+5,39,step-12,j,6);
-        const char *shorts[]={"Prisma","Alba","Laguna","Aurora","Glaciale","Boreale","Vespertino","Riviera","Levante","Meriggio","Notturno","Brezza"};
+        const char *shorts[]={"Prisma","Alba","Laguna","Aurora","Glaciale","Boreale","Vespertino","Riviera","Levante","Meriggio","Notturno","Brezza","Tramontana"};
+        _Static_assert(COUNT(shorts)==NWALL, "wallpaper label count");
         Text(58,y+step/2-8,shorts[j],F_SMALL,j==idx?EMP:TX);
     }
     int pw = aw - x - 13, ph = ah - 104;

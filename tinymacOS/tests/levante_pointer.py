@@ -1,4 +1,4 @@
-"""2.4.5 black-box acceptance: QMP -> emulated USB -> native rendered pixels.
+"""10.0 black-box acceptance: QMP -> emulated USB -> native rendered pixels.
 Run: python tests/levante_pointer.py NEW_EXTERNAL_DIR --firmware uefi|bios
 Installed locked login has a separate levante_installed_pointer.py test.
 These QEMU tests are not physical-hardware verification.
@@ -14,7 +14,7 @@ ap=argparse.ArgumentParser(description=__doc__)
 ap.add_argument('--skip-recovery',action='store_true');ap.add_argument('--firmware',choices=['uefi','bios'],default='uefi');ap.add_argument('out',type=Path);ap.add_argument('--profile',choices=['both','tablet','mouse'],default='both');args=ap.parse_args()
 out=args.out.resolve();assert not out.is_relative_to('/home/user')
 out.mkdir(parents=True,exist_ok=False);ev=out/'evidence';ev.mkdir()
-media=Path(os.environ['TMC_BUILD']);iso=Path(os.environ.get('TMC_TEST_ISO',str(media/'tinymacOS-2.4.5-x86_64.iso')))
+media=Path(os.environ['TMC_BUILD']);iso=Path(os.environ.get('TMC_TEST_ISO',str(media/'tinymacOS-10.0-x86_64.iso')))
 os.environ['TMC_BIOS_ISO']=str(iso)
 def digest(p):
     with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
@@ -109,7 +109,7 @@ for profile in (['tablet','mouse'] if args.profile=='both' else [args.profile]):
         g.devices(profile);assert any(str(iso) in str(b) for b in g.req('query-block')) and 'USB MSD' not in g.hmp('info usb');g.mx,g.my=1280-48,800-55
         if profile=='tablet':
             for x,y in [(1279,799),(0,0),(350,489)]:cursor(g,x,y,True)
-        help_click(g,'Terminale');help_click(g,'Continua');g.visible('Shell di recupero locale',8);g.cmd('sw_vers','tinymacOS Recovery 2.4.5');g.shot(profile+'-rec-terminale');ok(f'{profile} / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 2.4.5 letta sulla shell firmware di Recupero')
+        help_click(g,'Terminale');help_click(g,'Continua');g.visible('Shell di recupero locale',8);g.cmd('sw_vers','tinymacOS Recovery 10.0');g.shot(profile+'-rec-terminale');ok(f'{profile} / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 10.0 letta sulla shell firmware di Recupero')
 
 records['passed']=True
 (ev/'pointer.json').write_text(json.dumps(records,indent=2,ensure_ascii=False))

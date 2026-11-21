@@ -123,3 +123,11 @@ void show(int x, int y)
     glyph(x - 3, y - 2, 23, 6);
     go->Blt(go, (void *)pix, EfiBltBufferToVideo, 0, 0, 0, 0, rw, rh, 0);
 }
+
+void menu_apple(int x,int y)
+{
+    static const u8 mask[24*24]={
+#include "../assets/apple-menu.inc"
+    };
+    for(int j=0;j<24;j++)for(int i=0;i<24;i++){int a=mask[j*24+i];if(a){u32 *p=pix+(y+j)*rw+x+i;*p=blend(*p,0xffffff,a);}}
+}

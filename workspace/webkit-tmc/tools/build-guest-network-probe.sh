@@ -8,7 +8,7 @@ KIND=${TMC_PROBE_KIND:-network}
 case "$KIND" in network|vm|smp|tls|sync|threads) ;; *) echo 'Unknown probe kind' >&2;exit 2;; esac
 BASE=${TMC_PROBE_BASE:-/var/tmp/tmc-maintenance-241}
 OUT=${TMC_PROBE_BUILD:-/var/tmp/tmc-webkit-network-guest}
-python3 "$OS/tools/media_path.py" "$OUT" "$OUT/tinymacOS-2.4.5-x86_64.iso"
+python3 "$OS/tools/media_path.py" "$OUT" "$OUT/tinymacOS-10.0-x86_64.iso"
 mkdir -p "$OUT"
 # Preserve exactly the source hashes used BEFORE any target compilation.
 python3 - "$ROOT" "$OS" "$OUT" "$KIND" <<'PY'
@@ -42,14 +42,15 @@ for f in userspace/start.S kernel/string.c crypto/sha256.c;do
 done
 ld -nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000 -T userspace/layout.ld "${OBJS[@]}" -o "$OUT/command.debug"
 objcopy --strip-all "$OUT/command.debug" "$OUT/command.elf"
+python3 tools/tramontana-assets.py "$OUT"
 python3 tools/system_volume.py "$OUT" disk
 python3 tools/system_volume.py "$OUT" live
 TOOLROOT=${TOOLROOT:-/var/tmp/tmc/tools/root} TMC_BUILD="$OUT" bash tools/iso.sh
 python3 - "$ROOT" "$OUT" "$KIND" <<'PY'
 from pathlib import Path
 import hashlib,json,sys,subprocess
-r,d=map(Path,sys.argv[1:3]);kind=sys.argv[3];manifest={'qa_only':True,'gcc':subprocess.check_output(['gcc','--version'],text=True).splitlines()[0],'sha256':{name:hashlib.sha256((d/name).read_bytes()).hexdigest() for name in ('command.elf','kernel.elf','KernelCache','tinymacOS-2.4.5-x86_64.iso')}}
+r,d=map(Path,sys.argv[1:3]);kind=sys.argv[3];manifest={'qa_only':True,'gcc':subprocess.check_output(['gcc','--version'],text=True).splitlines()[0],'sha256':{name:hashlib.sha256((d/name).read_bytes()).hexdigest() for name in ('command.elf','kernel.elf','KernelCache','tinymacOS-10.0-x86_64.iso')}}
 if kind=='threads':manifest['g++']=subprocess.check_output(['g++','--version'],text=True).splitlines()[0]
 (r/('test-results/guest-'+kind+'-build.json')).write_text(json.dumps(manifest,indent=2))
 PY
-printf '\nQA ONLY - DO NOT DISTRIBUTE: %s\n' "$OUT/tinymacOS-2.4.5-x86_64.iso"
+printf '\nQA ONLY - DO NOT DISTRIBUTE: %s\n' "$OUT/tinymacOS-10.0-x86_64.iso"

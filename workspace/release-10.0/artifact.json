@@ -1,0 +1,14 @@
+{
+  "native_iso_sha256": "cc84764014b98a8cf150a72e6d7274ea8d42e15dffd18f60ef775aa6ac112325",
+  "filename": "tinymacOS-10.0-OpenCore-Installer-x86_64.iso",
+  "bytes": 224966656,
+  "sha256": "a1d9e28d31bbb5c2c29c858d633ac7b411eafb1a466d186c0f0dd4cf22f60461",
+  "bios": "El Torito ISOLINUX/MEMDISK RAM disk, OpenDuet BlockIO 1.0.8 -> OpenCore 1.0.8 -> native loader",
+  "uefi": "original direct El Torito EFI.IMG",
+  "bios_installer": true,
+  "legacy_usb_dd_supported": false,
+  "browser": false,
+  "version": "10.0",
+  "build": "30A1",
+  "codename": "Tramontana"
+}

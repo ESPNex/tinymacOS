@@ -53,7 +53,7 @@ static void note(const char *s)
 static void prompt(char *q, int cap)
 {
     strset(q, si.user[0] ? si.user : "user", cap);
-    append(q, "@levante ", cap);
+    append(q, "@tramontana ", cap);
     append(q, eq(cwd, HOME) ? "~" : eq(cwd, "/") ? "/" : leaf(cwd), cap);
     append(q, " % ", cap);
 }
@@ -182,7 +182,7 @@ static int builtin(void)
         for (int i = MAX(0, nh - NH); i < nh; i++)output(history[i % NH], strlen(history[i % NH]), 0);
     } else {
         const char *h =
-            "Comandi: ls, cd, pwd, cat, echo, mkdir, rmdir, touch, rm, cp, mv, date, ps,\nwhoami, which, wc, head, tail, grep, sort, shasum, basename, dirname, open,\nuname, sw_vers, diskutil, fsck_apfs, mount_apfs,\nnewfs_apfs, apfs_unlockfv.   Interni: clear, history, exit, kill, off, restart.\nEsempi: ls /Applications | sort   ·   echo Levante > Desktop/nota.txt\nUsa Tab per completare, ↑ e ↓ per la cronologia, Shift+↑ per scorrere.";
+            "Comandi: ls, cd, pwd, cat, echo, mkdir, rmdir, touch, rm, cp, mv, date, ps,\nwhoami, which, wc, head, tail, grep, sort, shasum, basename, dirname, open,\nuname, sw_vers, diskutil, fsck_apfs, mount_apfs,\nnewfs_apfs, apfs_unlockfv.   Interni: clear, history, exit, kill, off, restart.\nEsempi: ls /Applications | sort   ·   echo Tramontana > Desktop/nota.txt\nUsa Tab per completare, ↑ e ↓ per la cronologia, Shift+↑ per scorrere.";
         output(h, strlen(h), 0);
     }
     return 1;

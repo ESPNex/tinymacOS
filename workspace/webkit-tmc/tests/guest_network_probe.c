@@ -118,10 +118,10 @@ static int run(void) {
         file_bytes+=(unsigned long)z;sha_update(&sha,buffer,(unsigned)z);
     }
     sha_final(&sha,digest);
-    const char expected_font_hash[]="f8c1b1b5b598d97eedd1765040076f516c8522a7dc8250febd3f914544e6d174";
+    const char expected_font_hash[]="17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6";
     for(unsigned i=0;i<32;i++)
         if(hex[digest[i]>>4]!=expected_font_hash[i*2] || hex[digest[i]&15]!=expected_font_hash[i*2+1])return bad("file-SHA256");
-    if(file_bytes!=2226987 || tmc_fd_close(&descriptors,alias))return bad("file-length-close");
+    if(file_bytes!=2453335 || tmc_fd_close(&descriptors,alias))return bad("file-length-close");
     text("FILE PASS bytes=");decimal(file_bytes);text(" dup/seek/SHA256\nWKNET PASS\n");
     return 0;
 }

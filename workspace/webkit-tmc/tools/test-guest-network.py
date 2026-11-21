@@ -14,12 +14,12 @@ if os.environ.get('TMC_PROBE_RUN'):
 else:WORK=Path(tempfile.mkdtemp(prefix='tmc-webkit-network-',dir='/var/tmp'))
 cpus=int(os.environ.get('TMC_SMP','2'));assert cpus in (1,2),'Test profiles are 1 or 2 vCPUs'
 EVIDENCE=ROOT/('test-results/guest-network-smp'+str(cpus));EVIDENCE.mkdir(exist_ok=True)
-IMAGE=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-webkit-network-guest'))/'tinymacOS-2.4.5-x86_64.iso'
+IMAGE=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-webkit-network-guest'))/'tinymacOS-10.0-x86_64.iso'
 BODY=bytes((i*37+(i>>8)*11+17)&255 for i in range(1048893))
 DIGEST=hashlib.sha256(BODY).hexdigest()
 records={'scope':'actual QEMU guest with target backend, lwIP/e1000/slirp and controlled loopback peer; NOT WebKit/HTTPS acceptance',
          'iso_qa_only':True,'iso_sha256':hashlib.sha256(IMAGE.read_bytes()).hexdigest(),
-         'requested_vcpus':cpus,'font_bytes':2226987,'font_sha256':'f8c1b1b5b598d97eedd1765040076f516c8522a7dc8250febd3f914544e6d174','payload_bytes':len(BODY),'expected_sha256':DIGEST,'server':[], 'passed':False}
+         'requested_vcpus':cpus,'font_bytes':2453335,'font_sha256':'17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6','payload_bytes':len(BODY),'expected_sha256':DIGEST,'server':[], 'passed':False}
 errors=[];done=threading.Event()
 listener=socket.socket();listener.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
 listener.bind(('127.0.0.1',18791));listener.listen(4);listener.settimeout(100)
@@ -78,7 +78,7 @@ try:
   else:raise AssertionError('No probe result appeared in framebuffer')
   g.shot('guest-network-result')
   assert passed,'Probe reported WKNET FAIL; inspect guest-network-result.png'
-  for marker in ('STREAM PASS bytes=1048893','WAIT PASS','RESET PASS ECONNRESET','FILE PASS bytes=2226987'):
+  for marker in ('STREAM PASS bytes=1048893','WAIT PASS','RESET PASS ECONNRESET','FILE PASS bytes=2453335'):
    assert locate(im,marker,faces=(0,1,2,3,5,6,8)),marker
   records['framebuffer_test_markers_verified']=True
   assert done.wait(5),'Peer server did not complete'
