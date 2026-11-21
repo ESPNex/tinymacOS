@@ -38,7 +38,9 @@ with tempfile.TemporaryDirectory(prefix='tmc-legacy-',dir='/var/tmp') as scratch
   p=oc/'config.plist';d=plistlib.loads(p.read_bytes());d['NVRAM']['Add']={};p.write_bytes(plistlib.dumps(d,sort_keys=False))
  if a.verbose_config:
   q=root/'BOOTCFG.BIN';q.unlink(missing_ok=True);head=struct.pack('<8sII',b'TMCBOOT1',1,1);q.write_bytes(head+hashlib.sha256(head).digest()+bytes(464))
- shutil.copyfile(v/'bootX64-blockio',root/'boot')
+ # Keep MEMDISK's BIOS Block I/O, but restore the matching upstream USB bus
+ # modules omitted by the Block I/O-only firmware. No module code is patched.
+ subprocess.run(['python3',str(r/'tools/openduet-input.py'),str(root/'boot')],check=True)
  (root/'LICENSES').mkdir(exist_ok=True);shutil.copyfile(v/'LICENSE.txt',root/'LICENSES/OpenCore.txt')
  fat=w/'esp.fat';part_sectors=196608 # 96 MiB FAT32, clean bootstrap volume
  with fat.open('xb') as f:f.truncate(part_sectors*512)

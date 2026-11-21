@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "iso_sha256": "2e4a2c84d66a87d081483da9f22b351b43dce0ff563fe0f5e5d8410fee96cc7b",
+  "cases": [
+    {
+      "bus": "xhci",
+      "key": "r",
+      "passed": true,
+      "result": "recovery-pointer-bios-xhci-r.json",
+      "result_sha256": "84bf8947f1bf0dcc8d9a9802c1eb5ce1502666c080dbc49cb5f73113663cf26b",
+      "log": "optical-bios-xhci-r.log",
+      "log_sha256": "3dcdd23da8a09d359703dfbcd069c9d27e2f4280be1b45a9ea22c97319ea1424",
+      "captures": [
+        {
+          "file": "evidence/optical-bios-xhci-r-tablet.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        },
+        {
+          "file": "evidence/optical-bios-xhci-r-mouse.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        }
+      ]
+    },
+    {
+      "bus": "xhci",
+      "key": "f12",
+      "passed": true,
+      "result": "recovery-pointer-bios-xhci-f12.json",
+      "result_sha256": "9f829d5287223b7e8c7eb30caa209464f082c1c3c253d863bdb8efd675686c80",
+      "log": "optical-bios-xhci-f12.log",
+      "log_sha256": "7dadd31eadeed9fb263d50df1d2b8e0b6ba98c0aad1b9709aa56e19e7f0313c8",
+      "captures": [
+        {
+          "file": "evidence/optical-bios-xhci-f12-tablet.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        },
+        {
+          "file": "evidence/optical-bios-xhci-f12-mouse.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        }
+      ]
+    },
+    {
+      "bus": "ehci",
+      "key": "r",
+      "passed": true,
+      "result": "recovery-pointer-bios-ehci-r.json",
+      "result_sha256": "c2f5d473681dd86647f978c52b771762246ca889a431fa615106bf8acb4b0343",
+      "log": "optical-bios-ehci-r.log",
+      "log_sha256": "ba563835b7bdf1c1a1d72d05a058299ee111ba25b6410f57f67735e9e20e953d",
+      "captures": [
+        {
+          "file": "evidence/optical-bios-ehci-r-tablet.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        },
+        {
+          "file": "evidence/optical-bios-ehci-r-mouse.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        }
+      ]
+    },
+    {
+      "bus": "ehci",
+      "key": "f12",
+      "passed": true,
+      "result": "recovery-pointer-bios-ehci-f12.json",
+      "result_sha256": "28100f06bff8efe6d22ea6a374a7ce23c111b388947eb47aa33375146b59a94f",
+      "log": "optical-bios-ehci-f12.log",
+      "log_sha256": "396973ec3706f13ec1a7283adafc73400ea6d273935875d0f3b1e4ae87e87d46",
+      "captures": [
+        {
+          "file": "evidence/optical-bios-ehci-f12-tablet.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        },
+        {
+          "file": "evidence/optical-bios-ehci-f12-mouse.png",
+          "sha256": "5815e6c3423dfc2026592e08b7342fd704f0846a84bb32c7d93870b9e713ee58"
+        }
+      ]
+    }
+  ],
+  "cold_boot_pointer_cases": 8,
+  "keyboard_buses": [
+    "ehci",
+    "xhci"
+  ],
+  "native_selector_keys": [
+    "r",
+    "f12"
+  ],
+  "no_installed_disk_or_external_Recovery_attached": true,
+  "actual_shell_checks": [
+    "sw_vers",
+    "diskutil info /"
+  ],
+  "source_image_verified": "/Recovery/BaseSystem.dmg",
+  "BIOS_MEMDISK_origin_note": "The optical BIOS firmware exposes its embedded FAT as a UEFI volume. Its textual origin label is not proof of the host backing; QMP query-block verifies only this ISO is attached.",
+  "harness_sha256": "7a7293ec11d31bc5d799d9e35922891e3bd5c7fe6e0ac6aa95b7c8155d1521de",
+  "launcher_sha256": "c00d77acb535c0922d8303ac44dad0767406c08fe6490886770b959f2be407a7",
+  "ordinary_key_hold_ms": 300,
+  "loader_key_hold_ms": 120,
+  "keyboard_throughput_tested": false,
+  "negative_original_30A2_control": {
+    "passed": false,
+    "selector_failure_reproduced": true,
+    "same_final_harness": true,
+    "iso_sha256": "f6144153f7732af388310bab78e0947f89044fe11a64e209aa238ea0a611d87e",
+    "harness_sha256": "7a7293ec11d31bc5d799d9e35922891e3bd5c7fe6e0ac6aa95b7c8155d1521de",
+    "log": "negative-original-30A2.log",
+    "log_sha256": "94b4e98ef28b9f29039559cdc7b8d8feb1372d3411234f2f1f548a97fefa3193",
+    "external_work": "/var/tmp/tmc30a3-negative-original-final-fixture",
+    "returncode": 1,
+    "expected_failure": "Native loader Recovery key did not reach menu",
+    "physical_hardware_tested": false
+  },
+  "physical_hardware_tested": false,
+  "physical_USB_mouse_resolution_confirmed": false
+}

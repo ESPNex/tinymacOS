@@ -62,7 +62,13 @@ int rec_keyboard_start(EFI_BOOT_SERVICES *bs)
             if(EFI_ERROR(bs->HandleProtocol(handles[i],&usb,(void **)&io)))continue;
             KRequest req={0x21,11,0,f.number,0};UINT32 err=0;
             if(EFI_ERROR(io->control(io,&req,2,250,0,0,&err))||err)continue;
-            req.request=10;(void)io->control(io,&req,2,250,0,0,&err);
+            /* HID SET_IDLE duration is in 4 ms units. Refresh the full Boot
+             * report every 32 ms, including key releases: change-only reports
+             * can otherwise leave a stale state after firmware handoff.
+             * Duplicate reports are filtered below; repeat remains local.
+             * Optional on devices that STALL SET_IDLE (keep change reports). */
+            req.request=10;req.value=8u<<8;
+            (void)io->control(io,&req,2,250,0,0,&err);
             for(unsigned j=0;j<f.eps;j++){
                 KEndpoint e;if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.address&128)||e.packet<8||e.packet>64)continue;
                 if(!EFI_ERROR(io->async(io,e.address,TRUE,8,e.packet,keyboard_report,previous[count]))){keyboards[count]=io;interfaces[count]=f.number;count++;nkeyboards=count;break;}

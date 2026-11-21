@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "version": "10",
+  "build": "30A3",
+  "codename": "Tramontana",
+  "iso_sha256": "2e4a2c84d66a87d081483da9f22b351b43dce0ff563fe0f5e5d8410fee96cc7b",
+  "evidence_external": "/var/tmp/tmc245-identity-onp1y99x/evidence",
+  "media_checks": [
+    "Un solo CD: DMG visibile, file di avvio El Torito e file nella sorgente Recovery HD identici; SHA-256 nei due loader e manifest installazione verificati",
+    "KernelCache: vero payload ELF64, dimensione e SHA-256 corretti; stesso file su live e installato",
+    "Il solo delta del catalogo live è il bundle installatore; il suo eseguibile non è nei byte dell’ESP installato",
+    "15 bundle installati con Info.plist (13 app Mach-O x86-64, senza browser + 2 kext ELF64 ET_REL); 40 percorsi Unix eseguibili; segmenti W^X e LC_MAIN verificati",
+    "Nessun sorgente o eseguibile di diagnostica nei cataloghi; assenti le note firme di tracing del vecchio guest",
+    "BaseSystem UDIF contiene solo il runtime UEFI di Recupero, niente installer o applicazioni desktop"
+  ],
+  "all_app_plists": true,
+  "system_version_plists": true,
+  "recovery_binary_version": true,
+  "welcome_version": true,
+  "terminal_version": true,
+  "drawn_about_installer_tramontana": true,
+  "old_21B6_build_strings_absent_in_system_volumes": true
+}

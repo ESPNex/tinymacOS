@@ -1,0 +1,12 @@
+
+[diag] loader enter ConIn=00000000396340f0
+[diag] PCI_IO count=0000000000000009 status=0000000000000000
+[diag] USBIO count=0000000000000003
+[diag] connect USBIO status=800000000000000e
+[diag] connect USBIO status=800000000000000e
+[diag] connect USBIO status=800000000000000e
+[diag] input handles=0000000000000003
+[diag] input EX handles=0000000000000003
+[diag] start recovery_key
+[diag] window key scan=0000000000000000 unicode=0000000000000072
+[diag] initial rec=0000000000000001

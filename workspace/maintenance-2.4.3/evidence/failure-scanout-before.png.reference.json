@@ -1,0 +1,8 @@
+{
+  "lossless_duplicate_reference": true,
+  "canonical_file": "workspace/maintenance-2.4.3/evidence/before-clean-setup.png",
+  "sha256": "074775fc7d7f5026523c7907fc3806087bfe9d1b14677df53ce4c022c57280ec",
+  "bytes": 647564,
+  "original_file": "workspace/maintenance-2.4.3/evidence/failure-scanout-before.png",
+  "restore": "Copy canonical_file to original_file; bytes are identical."
+}

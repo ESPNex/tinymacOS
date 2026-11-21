@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "selector_failure_reproduced": true,
+  "same_final_harness": true,
+  "iso_sha256": "f6144153f7732af388310bab78e0947f89044fe11a64e209aa238ea0a611d87e",
+  "harness_sha256": "7a7293ec11d31bc5d799d9e35922891e3bd5c7fe6e0ac6aa95b7c8155d1521de",
+  "log": "negative-original-30A2.log",
+  "log_sha256": "94b4e98ef28b9f29039559cdc7b8d8feb1372d3411234f2f1f548a97fefa3193",
+  "external_work": "/var/tmp/tmc30a3-negative-original-final-fixture",
+  "returncode": 1,
+  "expected_failure": "Native loader Recovery key did not reach menu",
+  "physical_hardware_tested": false
+}

@@ -30,3 +30,17 @@ gcc $C tests/keyboard_it.c -o "$out/keyboard-it";"$out/keyboard-it"
 
 gcc $C tests/recovery_usb.c drivers/hidtablet.c -o "$out/recovery-usb"
 "$out/recovery-usb"
+
+python3 tests/openduet_input.py
+
+# Execute the real Recovery keyboard code with only firmware/PS2 imports stubbed.
+python3 - "$out/recovery-keyboard.c" <<'PY'
+from pathlib import Path
+import sys
+p=Path('recovery/keyboard.c').resolve();s=p.read_text()
+s=s.replace('#include "screen.h"','#include "'+str(p.parents[1]/'tests/recovery_keyboard_support.h')+'"')
+s=s.replace('#include "../drivers/ps2.c"','/* PS/2 port imports supplied by the fixture. */')
+Path(sys.argv[1]).write_text(s)
+PY
+gcc $C -Wno-misleading-indentation -DTMC_REC_KBD_TEST_SOURCE=\""$out/recovery-keyboard.c"\" tests/recovery_keyboard.c -o "$out/recovery-keyboard"
+"$out/recovery-keyboard"

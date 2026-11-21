@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "iso_sha256": "2e4a2c84d66a87d081483da9f22b351b43dce0ff563fe0f5e5d8410fee96cc7b",
+  "external_work": "/var/tmp/tmc-bios-install-qa-m3p5ya86",
+  "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU",
+  "bios_live_installer": true,
+  "bios_hdd_only_login": true,
+  "bios_cold_reboot": true,
+  "persistent_document": true,
+  "bios_verbose_setting_persisted": true,
+  "same_disk_native_uefi_boot": true,
+  "gpt_primary_backup_verified": true,
+  "mbr_bridge_readback_verified": true,
+  "official_duet_reserved_gap_verified": true,
+  "installed_cpus_online": 2,
+  "cd_removed": true
+}
