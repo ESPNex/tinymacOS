@@ -15,15 +15,14 @@ void usb_route_intel_xhci(u32 dev)
     if((pci_reg(dev,8)>>8)!=0x0c0330)return;
     u32 sub=pci_reg(dev,0x2c);if((sub&65535)==0x104d&&(sub>>16)==0x90a8)return;
     u32 usb2=pci_reg(dev,0xd4),usb3=pci_reg(dev,0xdc);
-    int companion=!!pci_find_after(0x0c0320,0);
     /* Absent/locked config registers must not become an all-ports write. */
     if(usb2==0xffffffffu||usb3==0xffffffffu)return;
     if(usb3){outl(0xcf8,dev|0xd8);outl(0xcfc,pci_reg(dev,0xd8)|usb3);}
-    /* If an EHCI exists, keep firmware's USB2 mux. Forcing all shared
-     * sockets to xHCI loses an otherwise-working UEFI EHCI/RMH path. */
-    if(companion)usb2=0;
+    /* Restore the 21B9 cold-boot route on documented switchable families.
+     * Presence of an EHCI does not prove that its ports enumerate this mouse.
+     * Do this before any USB HID exists; never remux a live input endpoint. */
     if(usb2){outl(0xcf8,dev|0xd0);outl(0xcfc,pci_reg(dev,0xd0)|usb2);}
-    if(usb2||usb3){usb_delay_ms(100);logstr("[usb] Intel USB ownership: firmware USB2 routing preserved when EHCI exists\n");}
+    if(usb2||usb3){usb_delay_ms(100);logstr("[usb] Intel shared ports routed to running xHCI (21B9 cold-boot policy)\n");}
 }
 /* Cold-boot recovery only, after BOTH xHCI and USB2 host scans. Preserve a
  * functioning USB keyboard/mouse route; never run as hotplug or board matching.

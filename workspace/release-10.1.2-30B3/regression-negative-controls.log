@@ -1,0 +1,4 @@
+PASS negative control: drivers/xhci.c previous 10.1.1 fails the new assertion
+PASS negative control: drivers/usbinput.c previous 10.1.1 fails the new assertion
+PASS negative control: recovery/usbhid.c previous 10.1.1 fails the new assertion
+PASS negative control: drivers/usbroute.c previous 10.1.1 fails the new assertion

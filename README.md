@@ -1,20 +1,24 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10.1.1 Tramontana / 30B2 pubblicata e verificata — normale/Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.1).** 10 e 10.1 archiviate come **Pre-release**, asset storici invariati. Sorgenti sincronizzati prima degli upload al commit `50e310af4dd360818b5a6e15816116db90676d1f`; entrambe le ISO 10.1/10.1.1 riscaricate e verificate. Ricevuta: `workspace/release-10.1.1-30B2/github-release-verification.json`.
+**tinymacOS 10.1.2 Tramontana / 30B3 — manutenzione corrente.** Pubblicazione normale/Latest prevista dopo QA e sync sorgenti. Lo stato effettivo è attestato dalla ricevuta `workspace/release-10.1.2-30B3/github-release-verification.json`, presente solo a pubblicazione completata.
 
-Titolo Recovery centrato, arbitraggio fra puntatore diretto e firmware corretto, recupero prudente dell’instradamento USB2 Intel quando manca qualsiasi HID USB nativo. Centro di Controllo completo 10.1 conservato. **Il funzionamento del mouse sul PC fisico non è confermato.** Ricerca storica: ritrovato il riscontro Recovery funzionante nella 2.4.3, non identificato con certezza il soprannome «mouse fix».
+Riferimento fisico precisato dall’utente: **2.4.5 Levante / 21B9**, con mouse funzionante in Recovery e solo verticale al login. La 10.1.2 ripristina il routing USB2 iniziale di quella revisione sui controller già supportati, verifica il readback della modalità HID e impedisce che un AbsolutePointer inattivo mascheri il mouse USB in Recovery. Centro di Controllo 10.1 completo e titolo Recovery centrato conservati. **La nuova ISO non è ancora verificata sul PC fisico dell’utente.**
+
+Repository **pubblico** per richiesta dell’utente. Le ISO sono negli asset delle release, non nella cronologia Git. Credenziali cifrate solo nel workspace escluso da Git, chiave separata.
 
 Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Sfondo non procedurale, semibold nel wordmark, temi e associazioni sfondi conservati. Safari/WebKit non incluso.
 
 - [Sistema, build e limiti](tinymacOS/README.md)
-- [Note 10.1.1, QA e limiti](workspace/release-10.1.1-30B2/RELEASE.md)
-- [Ricerca storica e correzioni](workspace/release-10.1.1-30B2/HISTORY-AND-CHANGES.md)
+- [Note 10.1.2, QA e limiti](workspace/release-10.1.2-30B3/RELEASE.md)
+- [Preview reale Centro di Controllo 10.1.2](workspace/release-10.1.2-30B3/evidence/control-center-detail.png)
+- [Archivio precedente 10.1.1](workspace/release-10.1.1-30B2/RELEASE.md)
+- [Confronto 21B9 e correzioni](workspace/release-10.1.2-30B3/HISTORY-AND-CHANGES.md)
 - [Ripristino accesso cifrato, chiave separata](workspace/ACCESSO-CIFRATO.md)
 - [Archivio precedente 10.1 / 30B1](workspace/release-10.1-30B1/RELEASE.md)
 - [Archivio 10 / 30A4](workspace/release-10-30A4/RELEASE.md)
 - [Backend sperimentale WebKit, non browser funzionante](workspace/webkit-tmc/README.md)
 
-Il repository privato non contiene credenziali né ISO. Output e toolchain vanno
+Il repository pubblico non contiene credenziali né ISO nel checkout. Output e toolchain vanno
 fuori dal workspace. L'archivio lossless dei vecchi asset duplicati è documentato
 in `workspace/maintenance-2.4.3/sources/HISTORICAL-ASSETS.md`.
 Le evidenze storiche 2.4.2 e integrated-next sono consolidate in archivi lossless con manifest SHA-256: vedere i rispettivi `EVIDENCE-ARCHIVE.md` per ripristinare tutti i percorsi originali. Nessun sorgente o risultato storico è perso.
@@ -77,13 +81,13 @@ Gli script QA storici possono contenere `/home/user` come percorso del workspace
 
 Nell'ambiente Arena il database Git locale è mantenuto sotto `/var/tmp/tmc-github-git/` per non raddoppiare il consumo degli snapshot. Questo database e l'autenticazione CLI non sono il backup: **il backup è il commit effettivamente inviato e verificato su GitHub**. Fuori da Arena usare un normale `git clone`.
 
-Le credenziali OAuth sono separate sotto `/var/tmp`, non sono salvate qui e possono dover essere nuovamente autorizzate in una futura sessione. Non inserire token in URL, script, documenti o messaggi.
+Le credenziali OAuth in uso sono separate sotto `/var/tmp`. Il backup autenticato cifrato resta soltanto nel workspace escluso da Git, con chiave fornita separatamente: [guida al ripristino](workspace/ACCESSO-CIFRATO.md). Possono richiedere nuova autorizzazione se il token viene revocato o scade. Non inserire token o chiavi in URL, script, documenti, repository o ISO.
 
 Per i successivi backup nell'ambiente Arena:
 
 ```sh
 python3 workspace/github_sync.py                 # stato, senza commit/push
-python3 workspace/github_sync.py --push -m "Descrizione delle modifiche"
+python3 workspace/github_sync.py --push --allow-public -m "Descrizione delle modifiche"
 ```
 
-Lo script verifica visibilità privata e commit remoto, non fa force-push, rifiuta cancellazioni implicite da snapshot incompleti e cerca pattern comuni di credenziali prima di pubblicare. Non è un secret scanner esaustivo: serve comunque revisione. Se CLI/autenticazione sono scadute o perse, autorizzarle nuovamente senza salvare token nel checkout.
+Lo script verifica visibilità e commit remoto, richiede `--allow-public` per il repository pubblico, non fa force-push, rifiuta cancellazioni implicite da snapshot incompleti e cerca pattern comuni di credenziali prima di pubblicare. Non è un secret scanner esaustivo: serve comunque revisione. Se CLI/autenticazione sono scadute o perse, autorizzarle nuovamente senza salvare token nel checkout.

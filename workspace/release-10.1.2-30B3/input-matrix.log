@@ -1,0 +1,36 @@
+PASS actual title centering
+PASS Control Center regression
+PASS actual ISO identity/payloads
+PASS BIOS install, HDD reboot, UEFI crossboot
+PASS live uefi ps2
+PASS live uefi ehci
+PASS live uefi companion
+PASS live uefi xhci
+PASS live uefi xhci-hub
+PASS live uefi xhci-hub-kbd
+PASS live uefi xhci-nested-hub
+PASS live uefi uhci
+PASS live uefi ehci-kbd
+PASS live uefi companion-kbd
+PASS live bios ps2
+PASS live bios ehci
+PASS live bios companion
+PASS live bios xhci
+PASS live bios xhci-hub
+PASS live bios xhci-hub-kbd
+PASS live bios xhci-nested-hub
+PASS HDD only uefi ps2
+PASS HDD only uefi ehci
+PASS HDD only uefi companion
+PASS HDD only uefi xhci-hub
+PASS HDD only uefi xhci-nested-hub
+PASS HDD only bios ps2
+PASS HDD only bios ehci
+PASS HDD only bios companion
+PASS HDD only bios xhci-hub
+PASS HDD only bios xhci-nested-hub
+PASS local sealed Recovery restore
+PASS Italian Recovery uefi ps2
+PASS Italian Recovery uefi xhci-hub-kbd
+PASS Italian Recovery bios ps2
+PASS Italian Recovery bios xhci-hub-kbd

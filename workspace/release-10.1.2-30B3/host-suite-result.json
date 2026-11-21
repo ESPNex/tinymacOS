@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "host-input",
+      "exit_code": 0
+    },
+    {
+      "name": "host-legacy",
+      "exit_code": 0
+    },
+    {
+      "name": "pointer-contract",
+      "exit_code": 0
+    },
+    {
+      "name": "regression-negative-controls",
+      "exit_code": 0
+    },
+    {
+      "name": "control-contract",
+      "exit_code": 0
+    }
+  ],
+  "source_manifest_sha256": "b949796ce29f7e4fb6523df491ed88df7f58daa402cb7c55db9c077a89472f05"
+}

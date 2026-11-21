@@ -18,8 +18,8 @@ int main(void)
  init(0x0f358086);usb_route_intel_xhci(0x8000a000);
  assert(nw==2&&writes[0]==0xd8&&values[0]==6&&writes[1]==0xd0&&values[1]==0x95&&delay==100);
  has_ehci=1;init(0x0f358086);usb_route_intel_xhci(0x8000a000);
- assert(nw==1&&writes[0]==0xd8&&regs[0xd0/4]==0x80&&delay==100);
- puts("PASS shared Intel USB2: firmware routing preserved with native EHCI, only masked SuperSpeed enable written");
+ assert(nw==2&&writes[0]==0xd8&&writes[1]==0xd0&&regs[0xd0/4]==0x95&&delay==100);
+ puts("PASS 21B9 regression: shared Intel USB2 routed before enumeration even when EHCI exists; only documented mask bits changed");
  has_ehci=0;
  puts("PASS Intel Bay Trail: mask-limited USB3 then USB2 routing, preserves preexisting ports, bounded settling");
  const u32 skip[]={0x00011b36,0x0f351234,0xffff8086};

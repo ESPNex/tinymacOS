@@ -47,6 +47,7 @@ static void test_doorbell(int slot,int ep)
   if(ix==3){u->desc[0]=1|((reset_poll++>1)?2:16);if(mode==4)u->desc[1]=2;}
  }else if(rq==3&&rt==0x23){assert(val==8||val==4);if(val==4)reset_poll=0;}
  else if(rq==1&&rt==0x23)assert(val>=16&&val<=20);
+ else if(rq==3&&rt==0xa1)u->desc[0]=0; /* Boot-mode readback. */
  else assert(rq==9||rq==11);
  complete(t,32,1,1,slot);
 }

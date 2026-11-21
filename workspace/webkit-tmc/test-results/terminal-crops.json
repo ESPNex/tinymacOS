@@ -8,7 +8,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-after-faults.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-after-faults.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-decommitted.png": {
@@ -20,7 +20,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-decommitted.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-decommitted.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-left.png": {
@@ -32,19 +32,19 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-left.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-left.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-none.png": {
-    "full_frame_sha256": "27e024192e57a6aa28dd35a9af6038ac80780b33da125cd9a72fd90c79e94ffd",
-    "crop_sha256": "2353ca39d5bc88c9fec1648e028df947053086f55c476980ccadfeac29780252",
+    "full_frame_sha256": "15e8ad7eea4621bc6aaa05baa565786951820e4a1582dc2f6750a19e3bf2033a",
+    "crop_sha256": "ef668c0083b947e8e1e6fde941fd768c6c34a62832f32094f17a75d06fef2a42",
     "crop_box": [
       297,
       160,
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-none.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-none.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-nx.png": {
@@ -56,7 +56,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-nx.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-nx.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-readonly.png": {
@@ -68,19 +68,19 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-readonly.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-readonly.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-released.png": {
-    "full_frame_sha256": "48326b6014c2b536150d3d59c62cd88524e67c42cab12580febef753fd012222",
-    "crop_sha256": "8bebf0b0bfaffdc0420da87e4260ec4a983d5c7c4f00ef0a1e7a0aab631817a5",
+    "full_frame_sha256": "a0e04a8e32db65c074b2b788cf6b9f5048b3861decd5c4a5b0f3d8f0de96c31b",
+    "crop_sha256": "c94cde51ffab805563a127e0a44d8a776436581cd22b8439e192713f536d78e6",
     "crop_box": [
       297,
       160,
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-released.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-released.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-fault-right.png": {
@@ -92,7 +92,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-fault-right.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-fault-right.png",
     "original_github_commit": null
   },
   "guest-vm-smp1/vm-positive.png": {
@@ -104,7 +104,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp1/vm-positive.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp1/vm-positive.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-after-faults.png": {
@@ -116,7 +116,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-after-faults.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-after-faults.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-decommitted.png": {
@@ -128,7 +128,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-decommitted.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-decommitted.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-left.png": {
@@ -140,7 +140,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-left.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-left.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-none.png": {
@@ -152,31 +152,31 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-none.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-none.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-nx.png": {
-    "full_frame_sha256": "adcd46fc0870c0b0987c0c40a087459538564829b28f05466738c46ea233de94",
-    "crop_sha256": "75b8b758c269cc1e0e63eb9574530ab52d9d320749d372c371fc0db968b64603",
+    "full_frame_sha256": "452d8b1ef3ca007145f88764e14c9f15aa362aad7086ca7713a1291753a0e523",
+    "crop_sha256": "192512b33bf897c149cc86eac40f5932296ed1d2f46b7ce8a436c7bbcc1b6f9b",
     "crop_box": [
       297,
       160,
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-nx.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-nx.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-readonly.png": {
-    "full_frame_sha256": "dd72c23d1a1f496f97dff7f70ecd78c08610034035153220ec8c7ad99fa439aa",
-    "crop_sha256": "1cd2ee8067ee936f7c58ef2e4584672538239c9dac0a3a22feb673d0eab6319f",
+    "full_frame_sha256": "b753a0b6594919eb5ac6fb58a5769d93371fe69be97e01409f0a2413a5acb8a2",
+    "crop_sha256": "2195e514e5ebc3829707f8a4ead65bd223235faf1e7fb16e2f556955b9f8cb67",
     "crop_box": [
       297,
       160,
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-readonly.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-readonly.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-released.png": {
@@ -188,7 +188,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-released.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-released.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-fault-right.png": {
@@ -200,7 +200,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-fault-right.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-fault-right.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-positive.png": {
@@ -212,7 +212,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-vm-smp2/vm-positive.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-vm-smp2/vm-positive.png",
     "original_github_commit": null
   },
   "guest-vm-smp2/vm-smp-refusal.png": {
@@ -228,6 +228,18 @@
     "original_github_commit": "46bba1621db79576c8dceaf4d4f9dd73fd2c046b"
   },
   "guest-network-smp1/guest-network-result.png": {
+    "full_frame_sha256": "533bfc075dc7d5302e6a5fd787258da2176db01a6db61fe3179d48f2c7920b65",
+    "crop_sha256": "c62389022f94dde9d4c4bf411012cf75809b0cbba452d42646be5b17deb24664",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-network-smp1/guest-network-result.png",
+    "original_github_commit": null
+  },
+  "guest-network-smp2/guest-network-result.png": {
     "full_frame_sha256": "c29c40eb063de60caae8aa07efc2cd3ba7c95213c409ecdb9b68cbd21916329f",
     "crop_sha256": "e844070d22f0c93c95d3045dfb9891caed145b2dca8eb891fe2b1ef4c516a2e8",
     "crop_box": [
@@ -236,19 +248,7 @@
       1030,
       630
     ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-network-smp1/guest-network-result.png",
-    "original_github_commit": null
-  },
-  "guest-network-smp2/guest-network-result.png": {
-    "full_frame_sha256": "0ee1d31f157c67968c3ffbed6b20ae1f7aa6829a1973aeb13a4d575652a6b697",
-    "crop_sha256": "3e2bf2661ac8de6c7d4153de41c88c47ca73953a1ed3c68aae539fb5fa47a9c3",
-    "crop_box": [
-      297,
-      160,
-      1030,
-      630
-    ],
-    "external_full_frame": "/var/tmp/tmc-qa-full-frames-5zbs5tjs/guest-network-smp2/guest-network-result.png",
+    "external_full_frame": "/var/tmp/tmc-qa-full-frames-f30ittnc/guest-network-smp2/guest-network-result.png",
     "original_github_commit": null
   },
   "guest-network-smp1/failure-network-probe.png": {

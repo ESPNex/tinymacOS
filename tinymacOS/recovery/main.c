@@ -354,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.1 (30B2)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.2 (30B3)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -419,6 +419,8 @@ static void pointer_button(int down)
 static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
     EFI_SIMPLE_POINTER_PROTOCOL **pointers,int *pointer_down,UINTN npointers)
 {
+        static EFI_ABSOLUTE_POINTER_PROTOCOL *last_absolute;
+        static int abs_valid,abs_x,abs_y,abs_down;
         int got_abs = 0;
         if (direct) {
             TabletState s;
@@ -431,10 +433,16 @@ static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absol
             EFI_ABSOLUTE_POINTER_STATE p;
             if (!EFI_ERROR(absolute->GetState(absolute,&p))) {
                 EFI_ABSOLUTE_POINTER_MODE *m=absolute->Mode;
-                mx=pointer_pixel(p.CurrentX,m->AbsoluteMinX,m->AbsoluteMaxX,rw);
-                my=pointer_pixel(p.CurrentY,m->AbsoluteMinY,m->AbsoluteMaxY,rh);
+                int x=pointer_pixel(p.CurrentX,m->AbsoluteMinX,m->AbsoluteMaxX,rw);
+                int y=pointer_pixel(p.CurrentY,m->AbsoluteMinY,m->AbsoluteMaxY,rh);
                 int down=!!(p.ActiveButtons & EFI_ABSP_TouchActive);
-                pointer_button(down);got_abs=1;
+                /* A firmware absolute device can return EFI_SUCCESS forever
+                 * without fresh activity. It must not hide SimplePointer USB.
+                 * Compare against that source, not the shared on-screen cursor. */
+                if(last_absolute!=absolute || !abs_valid || x!=abs_x || y!=abs_y || down!=abs_down) {
+                    mx=x;my=y;pointer_button(down);got_abs=1;
+                }
+                last_absolute=absolute;abs_valid=1;abs_x=x;abs_y=y;abs_down=down;
             }
         }
         if (!got_abs) for(UINTN i=0;i<npointers;i++) {

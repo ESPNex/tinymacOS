@@ -1,5 +1,12 @@
 #include "../kernel/k.h"
 #include "usbhost.h"
+static int select_protocol(UsbInput *u,unsigned iface,unsigned expected)
+{
+    int set=!u->control(u,0x21,11,expected,iface,0);
+    u->desc[0]=255;
+    int get=!u->control(u,0xa1,3,0,iface,1);
+    return get ? u->ctrl_bytes==1 && u->desc[0]==expected : set;
+}
 /* PIT channel 2, independent of channel-0 scheduler tick and pre-IRQ startup.
  * Bounded fallback on machines without a functioning legacy timer. */
 void usb_delay_ms(unsigned ms)
@@ -42,23 +49,16 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length};
         if((u->speed==2&&p->packet>8)||(u->speed==1&&p->packet>64))continue;
         int report_ready=0;
-        /* Prefer a validated Report layout for mice (wheel/report IDs), but
-         * retain genuine Boot fallback for devices without a usable parser. */
-        if(p->proto==2 && p->report_length && p->report_length<=sizeof u->desc &&
-           !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes>=p->report_length &&
-           pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout) &&
-           !c(u,0x21,11,1,p->iface,0)) {p->proto=3;report_ready=1;}
-        if(p->proto==1||p->proto==2) {
-            int r=c(u,0x21,11,0,p->iface,0);
-            if(r)u->desc[0]=255;
-            if(r && !(c(u,0xa1,3,0,p->iface,1)==0 && u->ctrl_bytes==1 && u->desc[0]==0)) {
-                if(p->proto!=2)continue;
-                p->proto=3; /* descriptor + verified Report protocol required below */
-                if(c(u,0x21,11,1,p->iface,0)) {
-                    if(c(u,0xa1,3,0,p->iface,1)||u->ctrl_bytes!=1||u->desc[0]!=1)continue;
-                }
-            }
-        }
+        /* Keep descriptor-first Report decoding, but verify mode readback
+         * even when SET_PROTOCOL acknowledged success. Never decode Report-ID
+         * bytes as Boot X/Y, or three Boot bytes at Report offsets. */
+        if(p->proto==2) {
+            if(p->report_length && p->report_length<=sizeof u->desc &&
+               !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes>=p->report_length &&
+               pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout) &&
+               select_protocol(u,p->iface,1)) {p->proto=3;report_ready=1;}
+            else if(!select_protocol(u,p->iface,0))continue;
+        } else if(p->proto==1 && !select_protocol(u,p->iface,0))continue;
         if(p->proto==3 && !report_ready) {
             n=p->report_length;
             if(!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n||

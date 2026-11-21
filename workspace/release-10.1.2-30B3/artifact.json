@@ -1,0 +1,10 @@
+{
+  "version": "10.1.2",
+  "build": "30B3",
+  "codename": "Tramontana",
+  "filename": "tinymacOS-10.1.2-x86_64.iso",
+  "bytes": 225650688,
+  "sha256": "caec5d2e5680e082baeec78b39ea48f5c7f64b83b80e8c7da74a1efa8d46e5f5",
+  "independent_identical_rebuild": true,
+  "source_files": 575
+}

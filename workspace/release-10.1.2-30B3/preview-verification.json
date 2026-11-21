@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "iso_sha256": "caec5d2e5680e082baeec78b39ea48f5c7f64b83b80e8c7da74a1efa8d46e5f5",
+  "real_framebuffer": true,
+  "generated_mockup": false,
+  "full_frame_sha256": "3a3e3645bf953f4796fb8e413f6b010f71b9cf3dd9bd104917727ec3ef958a25",
+  "crop_box": [
+    886,
+    46,
+    1262,
+    674
+  ],
+  "panel_implementation_unchanged_since_10_1_1": true
+}

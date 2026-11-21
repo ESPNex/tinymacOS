@@ -76,14 +76,15 @@ static int get_desc(EfiUsb *io, u8 rt, u16 type, u16 iface, void *dst, u16 n)
     memset(dst, 0, n);
     return !EFI_ERROR(io->control(io, &q, 0, 250, dst, n, &err)) && !err;
 }
-/* SET_PROTOCOL may STALL when a device already uses the requested mode.
- * Accept only a successful GET_PROTOCOL confirmation, never assumed layout. */
+/* Check readback even after an acknowledged SET. Unsupported GET may use a
+ * successful SET, but an explicit different/short mode must never be ignored. */
 static int protocol(EfiUsb *io, unsigned iface, unsigned expected)
 {
     UsbRequest req={0x21,11,expected,iface,0};UINT32 err=0;
-    if(!EFI_ERROR(io->control(io,&req,2,250,0,0,&err))&&!err)return 1;
+    int set=!EFI_ERROR(io->control(io,&req,2,250,0,0,&err))&&!err;
     u8 current=255;req=(UsbRequest){0xa1,3,0,iface,1};err=0;
-    return !EFI_ERROR(io->control(io,&req,0,250,&current,1,&err))&&!err&&current==expected;
+    int get=!EFI_ERROR(io->control(io,&req,0,250,&current,1,&err))&&!err;
+    return get ? current==expected : set;
 }
 static int probe(EfiUsb *io)
 {

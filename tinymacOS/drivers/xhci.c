@@ -183,10 +183,18 @@ static int control(struct Usb*u, int rt, int rq, int val, int ix, int n)
     }
     return ret;
 }
-static int protocol_is(struct Usb *u,int iface,unsigned expected)
+/* A successful SET status must not override a contradictory GET_PROTOCOL.
+ * Some boot mice acknowledge SET without changing their packet mode. Keep
+ * descriptor offsets only when Report really is selected. Unsupported GET is
+ * optional after a successful SET; STALL/short replies never confirm stale data. */
+static int select_protocol(struct Usb *u,int iface,unsigned expected)
 {
-    u->desc[0]=255; /* A short/zero-length response must not confirm stale bytes. */
-    return !control(u,0xa1,3,0,iface,1) && u->desc[0]==expected;
+    int set=!control(u,0x21,11,expected,iface,0);
+    if(u->ctrl_dead)return 0;
+    u->desc[0]=255;
+    int get=!control(u,0xa1,3,0,iface,1);
+    if(u->ctrl_dead)return 0;
+    return get ? u->desc[0]==expected : set;
 }
 static u32 *ctx(struct Usb*u, int n)
 {
@@ -300,8 +308,7 @@ static int configure(struct Usb*u, int port, int speed)
         if(h->proto==2 && h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
            !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
            pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
-            int confirmed=!control(u,0x21,11,1,h->iface,0);
-            if(!confirmed && !u->ctrl_dead)confirmed=protocol_is(u,h->iface,1);
+            int confirmed=select_protocol(u,h->iface,1);
             if(confirmed){h->proto=3;report_ready=1;}
         }
         if(h->proto==3) {
@@ -314,9 +321,7 @@ static int configure(struct Usb*u, int port, int speed)
                 }
             }
         } else {
-            if(control(u,0x21,11,0,h->iface,0)) {
-                if(u->ctrl_dead || !protocol_is(u,h->iface,0))ok=0;
-            }
+            if(!select_protocol(u,h->iface,0))ok=0;
             if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}

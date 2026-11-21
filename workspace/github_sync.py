@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Back up the workspace to its private repo without storing Git/auth in snapshots.
+"""Back up the workspace without storing Git/auth in snapshots.
+Public repositories require explicit --allow-public after a secret review.
 Default is status only. Use --push -m '...' to commit and push. Never force-push.
 If local Git metadata was lost, fetches the existing remote without checking out
 or overwriting workspace files. Missing files block the commit unless deletion
@@ -10,7 +11,9 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 ap=argparse.ArgumentParser(description=__doc__)
 ap.add_argument('--push',action='store_true');ap.add_argument('-m','--message',default='Synchronize tinymacOS development workspace')
-ap.add_argument('--allow-delete',action='store_true');args=ap.parse_args()
+ap.add_argument('--allow-delete',action='store_true')
+ap.add_argument('--allow-public',action='store_true',help='Explicitly authorize sync to the user-approved public repository; secret checks still apply')
+args=ap.parse_args()
 gitdir=Path(os.environ.get('TMC_GIT_DIR','/var/tmp/tmc-github-git/tinymacOS.git')).resolve()
 if gitdir.is_relative_to(root):raise SystemExit('Git metadata must be outside the workspace to preserve snapshot budget.')
 gh=os.environ.get('GH_BIN') or shutil.which('gh') or '/var/tmp/tmc-github-cli/gh'
@@ -34,15 +37,23 @@ if actual!=remote:raise SystemExit('Unexpected origin; refusing to publish to an
 if not args.push:
  run(base+['status','--short']);raise SystemExit(0)
 privacy=output([gh,'repo','view',repo,'--json','isPrivate','--jq','.isPrivate']).strip()
-if privacy!=b'true':raise SystemExit('Repository is not private; refusing to publish.')
+if privacy not in [b'true',b'false']:raise SystemExit('Cannot verify repository visibility.')
+if privacy==b'false' and not args.allow_public:raise SystemExit('Repository is public. Review secrets, then explicitly --allow-public if authorized.')
 run(base+['add','--all'])
 deleted=output(base+['diff','--cached','--name-only','--diff-filter=D','-z'])
 if deleted and not args.allow_delete:raise SystemExit('Staged deletions found. Check missing snapshot files; restore from GitHub, or explicitly --allow-delete for intended deletions.')
 patterns=[rb'gh[pousr]_[A-Za-z0-9]{30,}',rb'github_pat_[A-Za-z0-9_]{40,}',rb'AKIA[A-Z0-9]{16}',rb'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',rb'https://[^\s/@:]+:[^\s/@]+@github\.com']
+# Check exact active OAuth/key material as well as generic token patterns.
+exact=[]
+for config in Path(env.get('GH_CONFIG_DIR','/var/tmp/tmc-github-auth')).glob('*.yml'):
+ exact += re.findall(rb'oauth_token:\s*(\S+)',config.read_bytes())
+keyfile=Path('/var/tmp/tmc-workspace-vault-key.txt')
+if keyfile.is_file():exact.append(keyfile.read_bytes().strip())
+assert not output(base+['ls-files','private-backup/']), 'Encrypted credentials must never be tracked, even on a private remote'
 changed=output(base+['diff','--cached','--name-only','--diff-filter=ACMR','-z']).decode().strip('\0').split('\0')
 for name in filter(None,changed):
  data=output(base+['show',':'+name])
- if any(re.search(pattern,data) for pattern in patterns):raise SystemExit('Possible credential in staged file: '+name+'; review before publishing.')
+ if any(re.search(pattern,data) for pattern in patterns) or any(secret and secret in data for secret in exact):raise SystemExit('Possible credential in staged file: '+name+'; review before publishing.')
  if len(data)>95*1024*1024:raise SystemExit('Oversize staged file: '+name)
 run(base+['config','user.name','Arena workspace backup']);run(base+['config','user.email','arena-workspace@users.noreply.github.com'])
 if output(base+['diff','--cached','--name-only']).strip():run(base+['commit','-m',args.message])
@@ -50,4 +61,4 @@ run(base+helper+['push','--set-upstream','origin','main'])
 local=output(base+['rev-parse','HEAD']).decode().strip()
 remote_sha=output([gh,'api','repos/'+repo+'/commits/main','--jq','.sha']).decode().strip()
 if local!=remote_sha:raise SystemExit('Remote verification mismatch; do not claim a completed backup.')
-print('Verified private backup: https://github.com/'+repo+'/commit/'+local)
+print('Verified '+('private' if privacy==b'true' else 'public')+' source sync: https://github.com/'+repo+'/commit/'+local)

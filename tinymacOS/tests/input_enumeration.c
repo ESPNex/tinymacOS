@@ -8,6 +8,7 @@ static void test_doorbell(int,int);
 u64 ticks;
 void usb_delay_ms(unsigned ms){(void)ms;}
 static u32 fakeir[16],fakedb[256];
+static int acknowledge_without_switch;
 static int boot_rejected,report_rejected,protocol,malformed,boot_requests,report_requests;
 static const u8 report_desc[]={
  5,1,9,2,0xa1,1,0x85,4,9,1,0xa1,0,
@@ -40,7 +41,7 @@ static void test_doorbell(int slot,int ep)
         else assert(0);
     } else if(rq==11) {
         if(!val){boot_requests++;if(boot_rejected)code=6;else protocol=0;}
-        else {report_requests++;if(report_rejected)code=6;else protocol=1;}
+        else {report_requests++;if(report_rejected)code=6;else if(!acknowledge_without_switch)protocol=1;}
     } else if(rq==3)u->desc[0]=protocol; /* GET_PROTOCOL */
     else assert(rq==9);
     complete(code==6?setup:t,32,code,1,slot);
@@ -84,6 +85,15 @@ int main(void)
     assert(!run(1,0,1,1));assert(!report_requests&&!input_diag.pointers);
     assert(run(0,0,1,1));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
     puts("PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed");
+    acknowledge_without_switch=1;
+    assert(run(0,0,0,0));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
+    h=&usb[0].hid[0];memcpy(h->report,(u8[]){0,37,0},3);h->armed=1;
+    event.len=(13u<<24)|5;transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==37&&e.b==0);
+    memcpy(h->report,(u8[]){0,0,251},3);transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==-5);
+    puts("PASS xHCI acknowledged-but-unchanged Report mode: GET=Boot selects verified Boot offsets, horizontal and vertical completions intact");
+    acknowledge_without_switch=0;
     assert(run(0,0,1,0));hc->active=1;hc->ports=1;op=0;
     unsigned before=commands.at;int slots=connected;
     scan_root_ports(); /* owned root: NULL MMIO must never be touched/reset */

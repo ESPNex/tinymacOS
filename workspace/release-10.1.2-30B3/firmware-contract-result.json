@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "iso_sha256": "caec5d2e5680e082baeec78b39ea48f5c7f64b83b80e8c7da74a1efa8d46e5f5",
+  "release_zip_sha256": "2011e8b7216ecb2645d97ea710df965947edd406846e92050b9bc4190be6d27b",
+  "driver_code_unmodified": true,
+  "checks": [
+    {
+      "path": "optical BIOS",
+      "ps2_keyboard_enabled": true,
+      "official_driver_sha256": "1eb1aff3b18553be02403ff47d1588a215a73d27d9f0552cba68db9fb1441a32",
+      "competing_usb_mouse_driver_disabled": true
+    },
+    {
+      "path": "installed BIOS/UEFI ESP",
+      "ps2_keyboard_enabled": true,
+      "official_driver_sha256": "1eb1aff3b18553be02403ff47d1588a215a73d27d9f0552cba68db9fb1441a32",
+      "competing_usb_mouse_driver_disabled": true
+    },
+    {
+      "path": "ISO root OpenCore",
+      "ps2_keyboard_enabled": true,
+      "official_driver_sha256": "1eb1aff3b18553be02403ff47d1588a215a73d27d9f0552cba68db9fb1441a32",
+      "competing_usb_mouse_driver_disabled": true
+    }
+  ]
+}

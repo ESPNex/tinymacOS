@@ -1,0 +1,4 @@
+PASS PS/2 keyboard + direct USB mouse/tablet uefi ehci
+PASS PS/2 keyboard + direct USB mouse/tablet uefi xhci
+PASS PS/2 keyboard + direct USB mouse/tablet bios ehci
+PASS PS/2 keyboard + direct USB mouse/tablet bios xhci

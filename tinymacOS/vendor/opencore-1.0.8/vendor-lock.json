@@ -17,6 +17,7 @@
     "XhciDxe.efi": "09dcd72825c01be3ad524d81bb0cf7b6913dfd6942f73f453038547a1756a178",
     "OpenUsbKbDxe.efi": "62aba2c97b0a422304e71fb59bb0013e9198fe07acd40b725abc7894a4fe7262",
     "UsbMouseDxe.efi": "e063522f895dd227bdc85d42f24a9ba0e9517d6457d7ecad37bc5f9ba44d103d",
-    "BOOTx64.efi": "d0163dfbe5d2ea46aececd7d7349acfa5b75dfed2993e8489816f3dda71914c8"
+    "BOOTx64.efi": "d0163dfbe5d2ea46aececd7d7349acfa5b75dfed2993e8489816f3dda71914c8",
+    "Ps2KeyboardDxe.efi": "1eb1aff3b18553be02403ff47d1588a215a73d27d9f0552cba68db9fb1441a32"
   }
 }

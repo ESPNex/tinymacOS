@@ -22,8 +22,8 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.1.1','CFBundleVersion':'30B2','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.1.1','ProductBuildVersion':'30B2'}));add('/System/Library/KernelCollections',None)
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.1.2','CFBundleVersion':'30B3','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.1.2','ProductBuildVersion':'30B3'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path('assets/type.tfn').read_bytes())
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json
