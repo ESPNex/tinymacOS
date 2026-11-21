@@ -1,3 +1,5 @@
+> **Storico 30A1:** questa revisione è stata sostituita nella stessa release v10 dalla manutenzione **30A2**. [Note e collaudi correnti](../release-10-30A2/RELEASE.md), [ricevuta deploy](../release-10-30A2/github-release-verification.json). Hash e PASS sotto sono storici, non la ISO attualmente distribuita.
+
 # tinymacOS 10 · Tramontana — 30A1
 
 **PUBBLICATA E VERIFICATA:** [v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10), build **30A1**, Release normale e Latest. ISO riscaricata dopo la pubblicazione e SHA-256 verificato. Tutte le quattro release precedenti sono ora Pre-release. Ricevuta: `github-release-verification.json`. Tutte le prove seguenti sono nuove e legate alla SHA della 30A1, non ricevute riutilizzate della 21B9. Il tag sorgenti `v10` punta al commit `9a7bcd6984f3bad83112736b3f7cc68091ae2f77`; nessun tag precedente è stato spostato.

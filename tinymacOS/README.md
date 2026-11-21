@@ -2,7 +2,7 @@
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
 
-**[Versione 10, build 30A2 — manutenzione della stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le precedenti Pre-release.** Ricevuta e collaudi in [`workspace/release-10-30A2`](../workspace/release-10-30A2/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
+**[Versione 10, build 30A2 pubblicata e verificata — stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le precedenti Pre-release.** Ricevuta e collaudi in [`workspace/release-10-30A2`](../workspace/release-10-30A2/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
 
 ## Tramontana
 

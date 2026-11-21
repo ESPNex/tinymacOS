@@ -1,0 +1,18 @@
+{
+  "release_id": 453337659,
+  "tag": "v10",
+  "tag_commit": "9a7bcd6984f3bad83112736b3f7cc68091ae2f77",
+  "iso_sha256": "a1d9e28d31bbb5c2c29c858d633ac7b411eafb1a466d186c0f0dd4cf22f60461",
+  "assets": [
+    {
+      "id": 773932630,
+      "name": "tinymacOS-10-x86_64.iso",
+      "size": 224966656
+    },
+    {
+      "id": 773940192,
+      "name": "SHA256SUMS.txt",
+      "size": 90
+    }
+  ]
+}

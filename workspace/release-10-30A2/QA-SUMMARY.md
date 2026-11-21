@@ -15,4 +15,4 @@ Gate principale superato sulla ISO `tinymacOS-10-x86_64.iso`.
 
 **Non verificato:** soluzione del mouse fisico sull'ASRock Q1900M/J1900. L'ultimo riscontro utente è mouse fermo anche in Recovery.
 
-Lo stato del deploy è separato: vedere `github-release-verification.json`. Nessun nuovo rilascio/versione da creare; sostituire solo la release v10 esistente.
+**Deploy completato e verificato:** stessa release v10, ID 453337659, normale/Latest; quattro precedenti Pre-release. ISO e checksum riscaricati sotto i nomi finali e verificati. Sorgente del tag: `62e76b437c8abc6c2610fefb8f4ff5e8dd5ba81a`. Ricevuta: `github-release-verification.json`. Nessuna nuova release creata.

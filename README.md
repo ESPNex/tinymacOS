@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10 Tramontana / 30A2 — manutenzione della stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le quattro precedenti Pre-release.**
+**[tinymacOS 10 Tramontana / 30A2 pubblicata e verificata — stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le quattro precedenti Pre-release.**
 Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Versione interna 10, Teal/Tramontana distinti, associazioni sfondi esplicite e manutenzione USB generale. **La soluzione del mouse sul PC fisico non è confermata.**
 Sfondo non procedurale e vero semibold nel wordmark conservati.
 
