@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**tinymacOS 10.1.3 Tramontana / 30B4 — nuova manutenzione richiesta.** Pubblicazione normale/Latest solo dopo QA e sync sorgenti. La ricevuta `workspace/release-10.1.3-30B4/github-release-verification.json` conferma il deploy soltanto quando presente. Tutte le release precedenti sono pre-release su richiesta, senza sostituzione dei loro asset o tag.
+**[tinymacOS 10.1.3 Tramontana / 30B4 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.3).** [Scarica la nuova ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.3/tinymacOS-10.1.3-x86_64.iso). Sorgenti sincronizzati prima degli upload (`77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df`); download anonimo completo verificato. Ricevuta: `workspace/release-10.1.3-30B4/github-release-verification.json`. Tutte le otto release precedenti sono pre-release su richiesta, senza sostituzione dei loro asset o tag.
 
 **10.1.2 non ha risolto il mouse sul PC dell’utente:** fermo al login e movimento breve seguito da blocco in Recovery. La 10.1.3 cambia la scelta Boot/Report dei mouse Boot, prende in carico il solo figlio USB mouse in Recovery, applica delte alla posizione corrente e recupera i trasferimenti asincroni dopo errore. I contatori di errori nativi non si esauriscono per tutta la sessione dopo errori separati da traffico valido. Riferimento storico esatto: 2.4.5 Levante / 21B9.
 
