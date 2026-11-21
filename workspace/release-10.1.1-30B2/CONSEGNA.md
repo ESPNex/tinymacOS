@@ -33,4 +33,11 @@ Per mantenere margine negli snapshot, le evidenze storiche 2.4.2 e integrated-ne
 **ASRock Q1900M/J1900 fisico non provato:** il problema mouse segnalato dall’utente non può essere dichiarato definitivamente risolto. Nessuna nuova foto F11 necessaria. La 2.4.3 contiene il riscontro storico Recovery funzionante, ma l’identità esatta della versione soprannominata «mouse fix» resta incerta. Safari/WebKit non incluso.
 
 ## Pubblicazione source-first
-Disposizione autorizzata: **10.1.1 normale/Latest; 10 e 10.1 Pre-release**. La 10.1 è archivio degli stessi byte già compilati, non una ricompilazione. I sorgenti e queste prove vengono sincronizzati prima degli upload. La conferma effettiva, con commit sorgente, asset riscaricati e integrità delle vecchie release, viene aggiunta in `github-release-verification.json` solo dopo la pubblicazione.
+**Pubblicazione completata e verificata:** [10.1.1 normale/Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.1); [10.1 Pre-release](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1) e [10 Pre-release](https://github.com/ESPNex/tinymacOS/releases/tag/v10).
+
+- Sync sorgenti PRIMA degli upload: commit [`50e310af4dd360818b5a6e15816116db90676d1f`](https://github.com/ESPNex/tinymacOS/commit/50e310af4dd360818b5a6e15816116db90676d1f).
+- La 10.1 è archivio degli stessi byte già compilati, non una ricompilazione: SHA-256 `32e8ba640c4ba45e8df01db56ad69dfe27bed30497c0ea512a2cb51140b00275`, tag al commit storico `0965f921147062721fed7e7adea9a750cd0beceb`.
+- Entrambe le ISO e i checksum riscaricati da GitHub; dimensioni, SHA-256 e digest API corrispondenti.
+- Tutti gli asset storici conservati; nuova 10.1.1 unica release normale/Latest, nessuna bozza rimasta.
+- Ricevuta completa: [github-release-verification.json](github-release-verification.json). Le ricevute sono sincronizzate nel commit successivo, senza spostare i tag dei sorgenti.
+- [Download ISO 10.1.1](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.1/tinymacOS-10.1.1-x86_64.iso) · [SHA256SUMS.txt](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.1/SHA256SUMS.txt). Il repository è privato: serve l’account autorizzato.

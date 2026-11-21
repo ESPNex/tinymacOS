@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**tinymacOS 10.1.1 Tramontana / 30B2 — manutenzione corrente.** Destinazione autorizzata: [v10.1.1 normale/Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.1), con 10 e 10.1 archiviate come Pre-release. Lo stato effettivo della pubblicazione è attestato solo da `workspace/release-10.1.1-30B2/github-release-verification.json`, aggiunto dopo il sync dei sorgenti e la verifica degli asset scaricati.
+**[tinymacOS 10.1.1 Tramontana / 30B2 pubblicata e verificata — normale/Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.1).** 10 e 10.1 archiviate come **Pre-release**, asset storici invariati. Sorgenti sincronizzati prima degli upload al commit `50e310af4dd360818b5a6e15816116db90676d1f`; entrambe le ISO 10.1/10.1.1 riscaricate e verificate. Ricevuta: `workspace/release-10.1.1-30B2/github-release-verification.json`.
 
 Titolo Recovery centrato, arbitraggio fra puntatore diretto e firmware corretto, recupero prudente dell’instradamento USB2 Intel quando manca qualsiasi HID USB nativo. Centro di Controllo completo 10.1 conservato. **Il funzionamento del mouse sul PC fisico non è confermato.** Ricerca storica: ritrovato il riscontro Recovery funzionante nella 2.4.3, non identificato con certezza il soprannome «mouse fix».
 
