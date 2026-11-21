@@ -183,6 +183,11 @@ static int control(struct Usb*u, int rt, int rq, int val, int ix, int n)
     }
     return ret;
 }
+static int protocol_is(struct Usb *u,int iface,unsigned expected)
+{
+    u->desc[0]=255; /* A short/zero-length response must not confirm stale bytes. */
+    return !control(u,0xa1,3,0,iface,1) && u->desc[0]==expected;
+}
 static u32 *ctx(struct Usb*u, int n)
 {
     return (u32*)(u->ic + n * cs);
@@ -296,7 +301,7 @@ static int configure(struct Usb*u, int port, int speed)
            !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
            pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
             int confirmed=!control(u,0x21,11,1,h->iface,0);
-            if(!confirmed && !u->ctrl_dead)confirmed=!control(u,0xa1,3,0,h->iface,1)&&u->desc[0]==1;
+            if(!confirmed && !u->ctrl_dead)confirmed=protocol_is(u,h->iface,1);
             if(confirmed){h->proto=3;report_ready=1;}
         }
         if(h->proto==3) {
@@ -309,7 +314,9 @@ static int configure(struct Usb*u, int port, int speed)
                 }
             }
         } else {
-            if(control(u,0x21,11,0,h->iface,0))ok=0;
+            if(control(u,0x21,11,0,h->iface,0)) {
+                if(u->ctrl_dead || !protocol_is(u,h->iface,0))ok=0;
+            }
             if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}

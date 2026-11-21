@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "iso_sha256": "f6144153f7732af388310bab78e0947f89044fe11a64e209aa238ea0a611d87e",
+  "work": "/var/tmp/tmc10-extra-apps-ef_7uqu7",
+  "checks": [
+    "Notes: Italian accents/AltGr/euro, UTF-8 caret/delete and saved bytes SHA-256",
+    "Stickies: Italian accents/AltGr/euro, UTF-8 caret/delete and saved bytes SHA-256",
+    "Calendar memo: UTF-8 bytes verified by another process",
+    "Settings search accepts accented text and removes whole UTF-8 scalars",
+    "Desktop search finds an accented filename with Italian physical keys"
+  ]
+}

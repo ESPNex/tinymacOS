@@ -90,7 +90,7 @@ static void paint(void)
             Box(17, y + 5, 8, 8, 4, active ? ACC : EDGE);
             Text(35, y, lab[i], F_SMALL, active ? EMP : SUB);
         }
-        Text(17, ah - 29, "tinymacOS 10.0", F_MICRO, SUB);
+        Text(17, ah - 29, "tinymacOS 10", F_MICRO, SUB);
     }
     if (!page) {
         Photo(x, 16, w, MAX(65, foot - 161), 12, 12);

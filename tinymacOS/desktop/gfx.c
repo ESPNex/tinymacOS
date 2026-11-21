@@ -228,6 +228,7 @@ void line(int x, int y, int X, int Y, u32 col)
 }
 void icon(int x, int y, int size, int id)
 {
+    int procedural=id<0;if(procedural)id=-id;
     if (size < 1 || size > 128 || id < 1 || id > 42)
         return;
     // Native-size menu glyph avoids nearest-neighbor edges when shrinking the 64px icon.
@@ -241,9 +242,14 @@ void icon(int x, int y, int size, int id)
             }
         return;
     }
+    /* Negative IDs request the procedural system symbol in mixed contexts. */
     static const unsigned sizes[]={16,24,32,48,64,128};
     unsigned tier=0;while(tier+1<COUNT(sizes)&&sizes[tier]<(unsigned)size)tier++;
     u32 entry=((const u32 *)icons)[id*COUNT(sizes)+tier];
+    if(procedural){extern const u8 systemicons[];
+        const u8 *base=systemicons+id*64*64*4;
+        for(int j=MAX(0,y1-y);j<MIN(size,y2-y);j++)for(int i=MAX(0,x1-x);i<MIN(size,x2-x);i++){const u8*p=base+4*((j*64/size)*64+i*64/size);if(p[3])pix(x+i,y+j,(p[0]<<16)|(p[1]<<8)|p[2],p[3]);}return;
+    }
     unsigned source_size=(entry&0x80000000u)?64:sizes[tier];
     const u8 *base=icons+(entry&0x7fffffffu);
     for (int j = MAX(0, y1 - y); j < MIN(size, y2 - y); j++)
@@ -326,7 +332,7 @@ void client(int x, int y, int w, int h, Draw *d, int n)
             else
                 text(X, Y, q->text, q->style, q->ink);
         } else if (q->type == C_ICON)
-            icon(X, Y, q->w, q->style);
+            icon(X, Y, q->w, (int8_t)q->style);
         else if (q->type == C_LINE)
             line(X, Y, x + q->w, y + q->h, q->ink);
         else if (q->type == C_RASTER && desk_ras) {

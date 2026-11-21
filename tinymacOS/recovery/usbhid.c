@@ -1,7 +1,11 @@
 /* Some OVMF builds enumerate the tablet on EFI_USB_IO without installing a
  * physical AbsolutePointer protocol. Use that HID interface only if unclaimed;
  * never reset the controller or detach the keyboard / boot storage driver. */
+#ifdef TMC_REC_USB_TEST
+#include "../tests/recovery_usb_support.h"
+#else
 #include "screen.h"
+#endif
 #include "hidtablet.h"
 
 typedef struct PACK {
@@ -67,6 +71,15 @@ static int get_desc(EfiUsb *io, u8 rt, u16 type, u16 iface, void *dst, u16 n)
     memset(dst, 0, n);
     return !EFI_ERROR(io->control(io, &q, 0, 250, dst, n, &err)) && !err;
 }
+/* SET_PROTOCOL may STALL when a device already uses the requested mode.
+ * Accept only a successful GET_PROTOCOL confirmation, never assumed layout. */
+static int protocol(EfiUsb *io, unsigned iface, unsigned expected)
+{
+    UsbRequest req={0x21,11,expected,iface,0};UINT32 err=0;
+    if(!EFI_ERROR(io->control(io,&req,2,250,0,0,&err))&&!err)return 1;
+    u8 current=255;req=(UsbRequest){0xa1,3,0,iface,1};err=0;
+    return !EFI_ERROR(io->control(io,&req,0,250,&current,1,&err))&&!err&&current==expected;
+}
 static int probe(EfiUsb *io)
 {
     UsbInterface f;
@@ -93,8 +106,10 @@ static int probe(EfiUsb *io)
         unsigned packet=e.packet&2047;if(packet<3||packet>64)continue;
         relative=0;
         if(!(report&&pointer_layout(desc,wanted,packet,&layout))){if(!boot)continue;relative=1;}
-        if(boot){UsbRequest req={0x21,11,relative?0:1,f.number,0};UINT32 err=0;
-            if(EFI_ERROR(io->control(io,&req,2,250,0,0,&err))||err)continue;}
+        if(boot&&!protocol(io,f.number,relative?0:1)){
+            if(relative||!protocol(io,f.number,0))continue;
+            relative=1; /* Validated Boot fallback, not report bytes decoded as Boot. */
+        }
         if(!EFI_ERROR(io->async(io,e.addr,TRUE,8,packet,received,0)))return 1;
     }
     return 0;

@@ -93,35 +93,8 @@
       "archive_path": "macos-icons-256x256/time-machine-2026-09-23.png",
       "sha256": "251dd41a363aa5aca81f9fbda9e145774318e72438a86e4685d395c8b661cd5a",
       "selection": "latest date for exact icon name"
-    },
-    {
-      "slot": 7,
-      "file": "textedit-2025-11-14.png",
-      "archive_path": "macos-icons-256x256/textedit-2025-11-14.png",
-      "sha256": "41886a4061a8ba235326300e0fb493daa50e9d22dd1b57410919f1d6a15776a9",
-      "selection": "latest date for exact icon name"
-    },
-    {
-      "slot": 6,
-      "file": "folder-preview-2025-11-20.png",
-      "archive_path": "macos-icons-256x256/folder-preview-2025-11-20.png",
-      "sha256": "19fe5958852be79f1251bad0ebd7cdd685da2d5d98532f1dd543c47bfc8cb15a",
-      "selection": "latest date for exact icon name"
-    },
-    {
-      "slot": 13,
-      "file": "app-store-2026-09-23.png",
-      "archive_path": "macos-icons-256x256/app-store-2026-09-23.png",
-      "sha256": "c18a3df890a7f44641f06bd44c422317710d4d792e9dd0ceae2225dc977959dc",
-      "selection": "latest date for exact icon name"
-    },
-    {
-      "slot": 27,
-      "file": "clock-2026-09-23.png",
-      "archive_path": "macos-icons-256x256/clock-2026-09-23.png",
-      "sha256": "4fc63e6e3e05d28ebbe5c727bddaef51fa302ff0053938c760512a482d796bb3",
-      "selection": "latest date for exact icon name"
     }
   ],
-  "installer_exception": "New original procedural Tramontana installer icon, explicitly requested"
+  "installer_exception": "New original procedural Tramontana installer icon, explicitly requested",
+  "scope": "application artwork only; filesystem and system UI symbols use procedural originals"
 }

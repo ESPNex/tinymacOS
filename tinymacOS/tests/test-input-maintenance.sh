@@ -27,3 +27,6 @@ gcc $C tests/usbroute.c -o "$out/route"
 "$out/route"
 
 gcc $C tests/keyboard_it.c -o "$out/keyboard-it";"$out/keyboard-it"
+
+gcc $C tests/recovery_usb.c drivers/hidtablet.c -o "$out/recovery-usb"
+"$out/recovery-usb"

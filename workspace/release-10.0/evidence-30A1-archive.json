@@ -1,0 +1,86 @@
+{
+  "lossless": true,
+  "revision": "30A1",
+  "archive": "evidence-30A1.tar.xz",
+  "archive_sha256": "b090e5d88c09a26281a35d029902c6d4a4b10be58945df9c287e2470ff1c29a6",
+  "archive_bytes": 2285632,
+  "members": {
+    "Azzurro-dark.png": {
+      "sha256": "077835d605bea2a3896663e172a3ee406b06d1f53d74b32523132e77b628b180",
+      "bytes": 93058
+    },
+    "Azzurro-light.png": {
+      "sha256": "bf7916ddad3ea212065ae3483507be7dea207eb17160d5232c6f194e22a2ba19",
+      "bytes": 93837
+    },
+    "Blu-dark.png": {
+      "sha256": "cbca784b2016d1e242f6d8903b3bc16dbcff83e4979cc40e42510d9174e74c8a",
+      "bytes": 92791
+    },
+    "Blu-light.png": {
+      "sha256": "2bb6e82064b31aab7a2d2a9c8fa29cba3f3904852d60ceb6faf0d844f0c5d49b",
+      "bytes": 92902
+    },
+    "Riviera-dark.png": {
+      "sha256": "8ab751479190900b98b3ea0826fd85a3c31ea712d71c1328ebd037f1d20f461f",
+      "bytes": 92990
+    },
+    "Riviera-light.png": {
+      "sha256": "280607a2e40836171d43ad332db3fd1256ce322a16aeb1fa3bffc3ef4c9e224f",
+      "bytes": 93092
+    },
+    "Tramontana-dark.png": {
+      "sha256": "070dc6e630562e7bb9e3d93a66816d57104c925ff5d8a84cfc15fd250a6a4cac",
+      "bytes": 93120
+    },
+    "Tramontana-light.png": {
+      "sha256": "1b0c6b51cf13b999ad3e04239a7eb5b30db44dddf574f2e5b05ace66f197993a",
+      "bytes": 93418
+    },
+    "about-semibold.png": {
+      "sha256": "8670a1eed72af58a1941697f0a0c383e2295b02be4b6eeba10156877630481d1",
+      "bytes": 98963
+    },
+    "bottom-after.png": {
+      "sha256": "2f3c09ad8f054337481e844de69be749e0a853c9fde08be9db3688fc4cdff546",
+      "bytes": 185924
+    },
+    "bottom-before.png": {
+      "sha256": "2f3c09ad8f054337481e844de69be749e0a853c9fde08be9db3688fc4cdff546",
+      "bytes": 185924
+    },
+    "default-desktop.jpg.png": {
+      "sha256": "5b124ea7616a6b244db563a8d4565b36a4c22b797af8114ea8628ea3303825c8",
+      "bytes": 930939
+    },
+    "italian-physical-keys.png": {
+      "sha256": "c8bfdcc3c535cd653da1843ff78c829d6506d4481a8fc700432253ad551adcfb",
+      "bytes": 15884
+    },
+    "left-after.png": {
+      "sha256": "19a5044e88180f3db296ecdd9b1f0d9b2312b0229365024c7f488e5b11e1e754",
+      "bytes": 74052
+    },
+    "left-before.png": {
+      "sha256": "19a5044e88180f3db296ecdd9b1f0d9b2312b0229365024c7f488e5b11e1e754",
+      "bytes": 74052
+    },
+    "menu-alignment.png": {
+      "sha256": "fd467bfdf7fddd44dfdeb11b2f300862b15529b41ae8c55c9ecdb44a7aae0aa1",
+      "bytes": 8246
+    },
+    "recovery-menu-alignment.png": {
+      "sha256": "0b86a92493d25306224f9dd114b2fd021de2138e83e614ba1b020a2721b425f7",
+      "bytes": 3619
+    },
+    "recovery-title.png": {
+      "sha256": "1c681d1a08b7eeb7e1129c201fb69e2f6e50a0228ba3b15820013e9035ff0606",
+      "bytes": 10552
+    },
+    "textedit-italian.png": {
+      "sha256": "405d9fdd04ab648b342c0f80b307c888ec170ad9fee4ea3e28d9bb29b4e538e9",
+      "bytes": 280844
+    }
+  },
+  "restore": "cd workspace/release-10.0 && tar -xJf evidence-30A1.tar.xz"
+}

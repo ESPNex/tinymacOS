@@ -953,7 +953,7 @@ void fs_init(void)
     seed(HOME "/Downloads", 1, 0, 0);
     seed(HOME "/Pictures", 1, 0, 0);
     seed(HOME "/Welcome.txt", 0, 0,
-         "Benvenuti in tinymacOS 10.0 Tramontana.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
+         "Benvenuti in tinymacOS 10 Tramontana.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
     seed("/Volumes", 1, 1, 0);
     libraries();
     seeding = 0;

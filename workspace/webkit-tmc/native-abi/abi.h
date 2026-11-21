@@ -160,7 +160,7 @@ static inline const char *themename(unsigned t)
 }
 static inline u32 accent(unsigned t)
 {
-    static const u32 c[] = {0x2446c7, 0x00a8d2, 0x006d58, 0x80ebc6, 0xf2ac80, 0xc35f32, 0xe0973f, 0x176c63};
+    static const u32 c[] = {0x2446c7, 0x00a8d2, 0x006d58, 0x80ebc6, 0xf2ac80, 0xc35f32, 0xe0973f, 0x526c86};
     return c[t % NTHEME];
 }
 // A client can supply only a mask of its own file actions, never a shell command.
@@ -220,3 +220,9 @@ typedef struct {
 typedef struct {
     u32 state, locked, files;
 } EncInfo;
+
+static inline unsigned theme_wallpaper(unsigned t)
+{
+    static const unsigned ids[NTHEME]={0,11,4,5,6,7,8,12};
+    return ids[t%NTHEME];
+}

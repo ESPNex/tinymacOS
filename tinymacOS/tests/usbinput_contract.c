@@ -32,8 +32,9 @@ int main(void)
  assert(input_pop(&e)&&e.type==EV_SCROLL&&e.a==-1);assert(!input_pop(&e));
  puts("PASS USB2 shared HID: address/config, validated Report preference, report-ID/16-bit motion/wheel; SET_IDLE STALL tolerated");
  bad_report=1;assert(enumerate()==1&&u.pipe[0].proto==2);
- reject_boot=1;assert(!enumerate()&&!u.npipe);bad_report=0;reject_report=1;protocol=1;
- assert(enumerate()==1&&u.pipe[0].proto==3);protocol=0;assert(!enumerate());
+ reject_boot=1;protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);
+ protocol=2;assert(!enumerate()&&!u.npipe);bad_report=0;reject_report=1;protocol=1;
+ assert(enumerate()==1&&u.pipe[0].proto==3);protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);protocol=2;assert(!enumerate());
  puts("PASS USB2 shared HID: genuine Boot fallback, confirmed Report fallback and fail-closed on malformed/unconfirmed reports");
  reject_boot=reject_report=0;short_config=1;assert(!enumerate());short_config=0;is_hub=1;
  assert(enumerate()==2&&!u.npipe);

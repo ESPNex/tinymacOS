@@ -1,25 +1,15 @@
 #!/usr/bin/env python3
 """Pack user-supplied PNG artwork into a multi-resolution runtime atlas outside
 of the source workspace. Original PNGs and generated size-specific PNGs are also
-installed as ordinary filesystem resources. Only the Tramontana installer is procedurally authored.
+installed as ordinary filesystem resources. Application artwork is imported; system symbols remain procedural.
 Only unchanged UI controls/cursor/branding use the legacy control sprite sheet.
 """
 from pathlib import Path
 from PIL import Image,ImageDraw
 import hashlib,json,struct,sys
-D=Path(sys.argv[1]);a=Path('assets');source=a/'icons';m=json.loads((source/'manifest.json').read_text());mapping={x['slot']:x['file'] for x in m['icons']}
-# Reuse actual image assets for filesystem folders, drives and library entries.
-for slot in [14,23,24,25,26,37]:mapping[slot]=mapping[6]
-for slot in [9,33]:mapping[slot]=mapping[39]
-for slot in [32,34]:mapping[slot]=mapping[4]
-mapping[8]=mapping[6]
-mapping[7]=mapping[3]
-mapping[10]=mapping[25]
-mapping[11]=mapping[19]
-mapping[12]=mapping[39]
-mapping[20]=mapping[13]
-mapping[28]=mapping[4]
-mapping[29]=mapping[18]
+D=Path(sys.argv[1]);a=Path('assets');source=a/'icons';m=json.loads((source/'manifest.json').read_text());APP_SLOTS={1,2,3,4,5,16,17,18,19,39,40,41,42}
+mapping={x['slot']:x['file'] for x in m['icons'] if x['slot'] in APP_SLOTS}
+# All folder/file/drive/library/settings/control symbols use the original sheet.
 # Installer is the explicit procedural exception: an original Tramontana badge.
 S=4;im=Image.new('RGBA',(256*S,256*S));draw=ImageDraw.Draw(im)
 def xy(v):return tuple(round(a*S) for a in v)

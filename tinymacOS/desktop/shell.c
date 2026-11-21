@@ -611,7 +611,7 @@ static void paintoverlay(void)
     if (ov == OV_CONTROL) {
         text(x + 19, y + 11, "Scrivania", F_SMALL, SUB);
         text(x + 17, y + 29, "Centro di Controllo", F_TITLE, TX);
-        int ico[] = {14, 19, 28, 27};
+        int ico[] = {-14, -19, -28, -27};
         const char *name[] = {"Aspetto", "Sfondo", "Materiale", "Movimento"}, *state[] = {themename(sys.theme), wallname(sys.wall), lite ? "Opaco" : "Trasparente", sys.reduce_motion ? "Ridotto" : "Completo"};
         for (int j = 0; j < 4; j++) {
             Rect b = ccell(q, j);
@@ -622,7 +622,7 @@ static void paintoverlay(void)
             text(b.x + 12, b.y + 54, state[j], F_SMALL, INK(I_ACC_TXT));
         }
         roundr(x + 16, y + 255, q.w - 32, 51, 12, INK(I_CARD), 184);
-        icon(x + 26, y + 266, 27, 4);
+        icon(x + 26, y + 266, 27, -4);
         text(x + 65, y + 270, "Apri Impostazioni di Sistema", F_BODY, TX);
         return;
     }

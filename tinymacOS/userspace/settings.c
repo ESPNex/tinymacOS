@@ -165,7 +165,7 @@ static void paint(void)
         if (i == pane)Box(7, y - 3, S - 14, 30, 8, SEL);
         static const u32 chip[6] = {0xd9e6fb, 0xcfe3fb, 0x5b6472, 0x6ea8e8, 0xfae8cf, 0xe4e5ec};
         Box(13, y + 1, 20, 20, 6, chip[i]);
-        Icon(14, y + 2, 18, pglyph[i]);
+        Icon(14, y + 2, 18, -pglyph[i]);
         Text(40, y + 4, pname[i], F_SMALL, i == pane ? EMP : TX);
         y += 34;
     }
@@ -321,7 +321,7 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.0 (30A1)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10 (30A2)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");

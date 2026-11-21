@@ -4,6 +4,8 @@
 #include <string.h>
 #include "base.h"
 #define TMC_USBROUTE_TEST 1
+static int has_ehci;
+static u32 pci_find_after(u32 cls,u32 after){assert(cls==0x0c0320&&!after);return has_ehci?0x8000e800u:0;}
 static u32 regs[64],selected,writes[8],values[8];static unsigned nw,delay;
 static u32 pci_reg(u32 dev,int off){(void)dev;return regs[off/4];}
 static void outl(unsigned port,u32 v){if(port==0xcf8)selected=v&255;else {assert(port==0xcfc&&nw<8);writes[nw]=selected;values[nw++]=v;regs[selected/4]=v;}}
@@ -15,6 +17,10 @@ int main(void)
 {
  init(0x0f358086);usb_route_intel_xhci(0x8000a000);
  assert(nw==2&&writes[0]==0xd8&&values[0]==6&&writes[1]==0xd0&&values[1]==0x95&&delay==100);
+ has_ehci=1;init(0x0f358086);usb_route_intel_xhci(0x8000a000);
+ assert(nw==1&&writes[0]==0xd8&&regs[0xd0/4]==0x80&&delay==100);
+ puts("PASS shared Intel USB2: firmware routing preserved with native EHCI, only masked SuperSpeed enable written");
+ has_ehci=0;
  puts("PASS Intel Bay Trail: mask-limited USB3 then USB2 routing, preserves preexisting ports, bounded settling");
  const u32 skip[]={0x00011b36,0x0f351234,0xffff8086};
  for(unsigned i=0;i<3;i++){init(skip[i]);usb_route_intel_xhci(0x8000a000);assert(!nw&&!delay);}

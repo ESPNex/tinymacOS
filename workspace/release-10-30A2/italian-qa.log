@@ -1,0 +1,9 @@
+PASS Italian apps uefi ps2 (current ISO hash verified)
+PASS Italian Recovery uefi ps2 (current ISO hash verified)
+PASS Italian apps uefi xhci-hub-kbd (current ISO hash verified)
+PASS Italian Recovery uefi xhci-hub-kbd (current ISO hash verified)
+PASS Italian apps bios ps2 (current ISO hash verified)
+PASS Italian Recovery bios ps2 (current ISO hash verified)
+PASS Italian apps bios xhci-hub-kbd (current ISO hash verified)
+PASS Italian Recovery bios xhci-hub-kbd (current ISO hash verified)
+PASS Mission Control and menubar regression

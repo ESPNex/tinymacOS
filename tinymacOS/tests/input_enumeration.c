@@ -78,7 +78,9 @@ int main(void)
     assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&!boot_requests);
     assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==1);
     puts("PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL");
-    assert(!run(1,1,0,0));assert(!input_diag.pointers);
+    assert(run(1,1,0,0));assert(usb[0].hid[0].proto==2&&input_diag.pointers==1);
+    assert(!run(1,1,2,0));assert(!input_diag.pointers);
+    puts("PASS Boot SET_PROTOCOL STALL: existing Boot protocol accepted only after GET_PROTOCOL=0; unknown state rejected");
     assert(!run(1,0,1,1));assert(!report_requests&&!input_diag.pointers);
     assert(run(0,0,1,1));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
     puts("PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed");

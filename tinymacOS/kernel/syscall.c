@@ -769,7 +769,7 @@ static Frame *syscall_inner(Frame *f)
             u32 old[6] = {theme, wall, dock, reduce_motion, opaque, dark};
             if (a == 0) {
                 theme = b % NTHEME;
-                if (theme >= 2)wall = theme + 2;
+                wall = theme_wallpaper(theme);
             } else if (a == 1)
                 wall = b % NWALL;
             else if (a == 2)

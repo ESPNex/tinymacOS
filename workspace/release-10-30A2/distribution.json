@@ -1,0 +1,16 @@
+{
+  "version_label": "10",
+  "build": "30A2",
+  "tag": "v10",
+  "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10",
+  "filename": "tinymacOS-10-x86_64.iso",
+  "bytes": 225599488,
+  "sha256": "f6144153f7732af388310bab78e0947f89044fe11a64e209aa238ea0a611d87e",
+  "release_id": 453337659,
+  "replacement_authorized": true,
+  "deployment_verified": false,
+  "build_receipt": "artifact.json",
+  "qa_receipt": "final-qa.json",
+  "deployment_receipt": "github-release-verification.json",
+  "physical_USB_mouse_resolution_confirmed": false
+}

@@ -50,7 +50,8 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
            !c(u,0x21,11,1,p->iface,0)) {p->proto=3;report_ready=1;}
         if(p->proto==1||p->proto==2) {
             int r=c(u,0x21,11,0,p->iface,0);
-            if(r) {
+            if(r)u->desc[0]=255;
+            if(r && !(c(u,0xa1,3,0,p->iface,1)==0 && u->ctrl_bytes==1 && u->desc[0]==0)) {
                 if(p->proto!=2)continue;
                 p->proto=3; /* descriptor + verified Report protocol required below */
                 if(c(u,0x21,11,1,p->iface,0)) {

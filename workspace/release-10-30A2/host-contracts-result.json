@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "checks": [
+    {
+      "log": "host-maintenance.log",
+      "sha256": "ae3ebe554e69c9614b33b137f21bcab141c47004544849a8ee82df3300411e3b",
+      "passed": true
+    },
+    {
+      "log": "host-legacy.log",
+      "sha256": "072ab2ec8f935d0fbf69afba9b6de249a7bc7e89e8c74f5e67dff7d363dec1e1",
+      "passed": true
+    }
+  ],
+  "source_sha256": {
+    "drivers/xhci.c": "6e574431b24a682fb5f9edf0e33223e4f65e1daf76add87df2057d5a85c3a4e1",
+    "drivers/usbroute.c": "bb92828e313ca001a00d7d625cb747cbd17357f3d91886a339605e467a555936",
+    "drivers/usbinput.c": "608c6641b35200ba61d50da15c5d65373ee7876308a7e1399522fc1e85368c70",
+    "drivers/ps2.c": "79bb0f46fd2b44dd07c88f3ac14251cb26f4937e2dbf7793eb763f179ebf1537",
+    "drivers/input.c": "f22fe64dcd88d4def0f958f1574eb607f9277d7e0c17fc1a1b18acfb06d254e7",
+    "include/keyboard_it.h": "bbb2a545bece4893f5dd3f7a858f746a00cbc0c8e45bb0c5f14f128b916f6d55",
+    "include/text_input.h": "443c5236fb0d8d283ab3b212037d9d3d998d1a9419be135b1cba0d61257187ae",
+    "drivers/hidconfig.c": "8e95eb3d2b91c50a887fa9f04f0aa309340a2fbaa55fdee6e373eb43a4da5fdf",
+    "drivers/hidtablet.c": "d664987905ebeaedb5fbf7e5e5f72218b73c2de19652a7b59db26d737e065758",
+    "recovery/usbhid.c": "0b56c2e58eeac84c3790f1ca0a25ca1a9708207034d020354f4aecf118cf3c39",
+    "tools/recoveryart.py": "7f2b432e22cc1f8faa229ba8613eecd90bde0c67002dc88924f8a2b1e064b280"
+  },
+  "vertical_only_negative_control_passed": true,
+  "firmware_USB2_route_preserved_with_EHCI_tested": true,
+  "SET_PROTOCOL_stall_verified_Boot_recovery_tested": true,
+  "physical_hardware_tested": false,
+  "recovery_protocol_STALL_and_independent_axes_tested": true
+}

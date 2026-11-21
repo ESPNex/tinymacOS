@@ -1,4 +1,4 @@
-tinymacOS 10.0 Tramontana — avvio, installazione e recupero offline
+tinymacOS 10 Tramontana — avvio, installazione e recupero offline
 
 Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
 SATA AHCI, tastiera USB e puntatore assoluto QEMU usb-tablet su xHCI. Configurazione collaudata: QEMU
@@ -78,13 +78,13 @@ Verbose: premi V durante la mela. Nel Terminale del sistema installato:
   bootverbose off
   bootverbose log
 On/off si applicano al prossimo avvio. La live non salva questa preferenza.
-La revisione OpenCore installer OC2 della ISO 10.0 avvia la live da CD
+La revisione OpenCore installer OC2 della ISO 10 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Tramontana; build 30A1.
+Safari/WebKit non e incluso. Nome release: Tramontana; build 30A2.
 
-10.0 / 30A1 — revisione input PS/2 + USB 2.0
+10 / 30A2 — revisione input PS/2 + USB 2.0
 Nessun pannello o scorciatoia di diagnostica F11 al login.
 Driver nativi: tastiera e mouse PS/2 (i8042); xHCI; EHCI USB 2.0
 e companion UHCI per mouse/tastiere low/full-speed su porte USB2.
@@ -98,7 +98,7 @@ Nessuna traduzione dipendente dal layout Unicode impostato nel firmware.
 Le prove automatiche BIOS/UEFI
 non sostituiscono la verifica sul PC fisico.
 
-10.0 / 30A1 — tastiera solo italiana e assi del mouse
+10 / 30A2 — tastiera solo italiana e assi del mouse
 Unico layout ITA ISO: lettere accentate, Maiusc, Bloc Maiusc, AltGr e tasto <>.
 AltGr+E = euro; AltGr+ò = @; AltGr+à = #; AltGr+è/+ = parentesi quadre;
 Maiusc+AltGr+è/+ = parentesi graffe. Nessun selettore o fallback US.
@@ -110,7 +110,7 @@ X/Y firmati, Report ID e larghezze reali; gli altri Report ID non spostano gli a
 Conservati hub USB2, routing Intel/Bay Trail, EHCI/UHCI e correzioni Dock/menu.
 La prova QEMU e i contratti host non garantiscono il risultato sul PC fisico.
 
-TINYM​​ACOS 10 TRAMONTANA / 30A1
+TINYM​​ACOS 10 TRAMONTANA / 30A2
 Nuovo sfondo generato, non procedurale. Tema Tramontana predefinito.
 Blu, Azzurro e Riviera hanno superfici e accenti distinti in chiaro e scuro.
 Icone fornite dall'utente: data piu recente per ciascun nome, risorse PNG

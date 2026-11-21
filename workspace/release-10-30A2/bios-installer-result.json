@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "iso_sha256": "f6144153f7732af388310bab78e0947f89044fe11a64e209aa238ea0a611d87e",
+  "external_work": "/var/tmp/tmc-bios-install-qa-ur3fh4qy",
+  "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU",
+  "bios_live_installer": true,
+  "bios_hdd_only_login": true,
+  "bios_cold_reboot": true,
+  "persistent_document": true,
+  "bios_verbose_setting_persisted": true,
+  "same_disk_native_uefi_boot": true,
+  "gpt_primary_backup_verified": true,
+  "mbr_bridge_readback_verified": true,
+  "official_duet_reserved_gap_verified": true,
+  "installed_cpus_online": 2,
+  "cd_removed": true
+}
