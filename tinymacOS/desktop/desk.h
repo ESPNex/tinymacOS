@@ -44,6 +44,7 @@ int shell_key(Event *);
 int shell_step(int);
 void shell_pop(int);
 void shell_mouse(void);
+void shell_control_pointer(int);
 int shell_overlay_open(void);
 void shell_base(void);
 void shell_draw(void);

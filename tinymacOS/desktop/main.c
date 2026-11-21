@@ -655,6 +655,7 @@ static void input(Event *e)
             dirty = 1;
         }
         shell_mouse();
+        shell_control_pointer(e->c & 1);
         if ((e->c & 2) && !(buttons & 2)){drag=-1;shell_context();}
         else if ((e->c & 1) && !(buttons & 1))down();
         else if ((e->c & 1) && drag >= 0) {

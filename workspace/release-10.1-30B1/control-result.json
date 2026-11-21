@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "iso_sha256": "32e8ba640c4ba45e8df01db56ad69dfe27bed30497c0ea512a2cb51140b00275",
+  "work": "/var/tmp/tmc101-control-k_4smiwe",
+  "checks": [
+    "Modular panel, actual labels and Settings action visible in retail framebuffer",
+    "No enclosing slab: inter-module gap is byte-identical to underlying desktop",
+    "Actual light/dark preference toggles and reflects authoritative state",
+    "Reduced transparency toggle and real Dock glass material exercised",
+    "Reduce-motion preference toggled both ways",
+    "Dock orientation both ways",
+    "Theme slider real drag to last theme",
+    "Theme slider Home/Right/End keyboard adjustments",
+    "Wallpaper slider actual endpoint selection, drag and keyboard",
+    "Released slider does not change on hover",
+    "Wallpaper preview tile advances same real preference",
+    "Mission Control shortcut opens and returns",
+    "Calculator, Calendar, Terminal shortcuts launch actual applications",
+    "Tab / Shift+Tab / Enter activates Settings footer",
+    "Lock Session shortcut locks and actual password unlocks",
+    "Footer opens actual System Settings"
+  ]
+}

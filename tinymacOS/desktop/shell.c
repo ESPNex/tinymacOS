@@ -1,5 +1,6 @@
 #include "text_input.h"
 #include "desk.h"
+#include "control.h"
 #include "date.h"
 #define NS 9
 static const int pins[NS] = {FINDER, 0, CALENDAR, GALLERY, TEXTEDIT, CALC, TERMINAL, MONITOR, SETTINGS};
@@ -80,6 +81,7 @@ static void hits(void)
 }
 void overlay_show(int n)
 {
+    control_cancel();
     if (n == OV_NONE) {
         if (ov && want) {
             want = 0;
@@ -182,6 +184,11 @@ void shell_pop(int a)
 {
     bounceA = a;
     bounceTime = sys.reduce_motion ? 0 : 30;
+}
+void shell_control_pointer(int down)
+{
+    if(ov==OV_CONTROL&&want)control_pointer(panel,down);
+    else control_cancel();
 }
 void shell_mouse(void)
 {
@@ -523,9 +530,7 @@ static Rect targetpanel(void)
             barhit[menuId].x, BAR + 5, 209, menus(menuId, l, a) * 31 + 12
         };
     }
-    if (ov == OV_CONTROL)return (Rect) {
-        W - 349, BAR + 9, 332, 326
-    };
+    if (ov == OV_CONTROL)return control_bounds(W,H);
     int w = ov == OV_LIBRARY ? 688 : ov == OV_SEARCH ? 510 : 434,
         h = ov == OV_SEARCH ? 94 + MIN(6, MAX(1, count)) * 46 : ov == OV_LIBRARY ? 469 : 188;
     return (Rect) {
@@ -547,12 +552,6 @@ static int libapp(int j)
 static int libcount(void)
 {
     return lastapp(sys.live_cd) - (sys.live_cd ? 0 : 1);
-}
-static Rect ccell(Rect p, int j)
-{
-    return (Rect) {
-        p.x + 16 + (j % 2) * 152, p.y + 76 + (j / 2) * 86, 145, 77
-    };
 }
 static void itemchoice(int a)
 {
@@ -577,6 +576,7 @@ static void paintoverlay(void)
     panel = q;
     popFrames++;
     if (ov == OV_LIBRARY)roundr(0, BAR, W, H - BAR, 0, 0x191b22, t * 65 / 256);
+    if(ov==OV_CONTROL){control_draw(q);return;}
     shadow(q, 20, 54);
     glass(q, ov == OV_MENU ? 13 : 22, ov == OV_MENU ? MAT_MENU : MAT_SHEET);
     int x = q.x, y = q.y;
@@ -606,24 +606,6 @@ static void paintoverlay(void)
             text(x + 63, yy + 22, results[j].a ? "Applicazione" : "Documenti", F_SMALL, SUB);
             if (j == pick)text(x + q.w - 49, yy + 14, "Apri", F_SMALL, INK(I_ACC_TXT));
         }
-        return;
-    }
-    if (ov == OV_CONTROL) {
-        text(x + 19, y + 11, "Scrivania", F_SMALL, SUB);
-        text(x + 17, y + 29, "Centro di Controllo", F_TITLE, TX);
-        int ico[] = {-14, -19, -28, -27};
-        const char *name[] = {"Aspetto", "Sfondo", "Materiale", "Movimento"}, *state[] = {themename(sys.theme), wallname(sys.wall), lite ? "Opaco" : "Trasparente", sys.reduce_motion ? "Ridotto" : "Completo"};
-        for (int j = 0; j < 4; j++) {
-            Rect b = ccell(q, j);
-            roundr(b.x, b.y, b.w, b.h, 13, INK(I_CARD), 184);
-            stroke(b, 13, 0xffffff, 113);
-            icon(b.x + 10, b.y + 9, 23, ico[j]);
-            text(b.x + 12, b.y + 34, name[j], F_BOLD, TX);
-            text(b.x + 12, b.y + 54, state[j], F_SMALL, INK(I_ACC_TXT));
-        }
-        roundr(x + 16, y + 255, q.w - 32, 51, 12, INK(I_CARD), 184);
-        icon(x + 26, y + 266, 27, -4);
-        text(x + 65, y + 270, "Apri Impostazioni di Sistema", F_BODY, TX);
         return;
     }
     if (ov == OV_LIBRARY) {
@@ -711,14 +693,7 @@ int shell_click(int x, int y)
                     break;
                 }
         } else if (ov == OV_CONTROL) {
-            for (int j = 0; j < 4; j++)if (inside(x, y, ccell(q, j))) {
-                    const int s[] = {0, 1, 4, 3};
-                    togglepref(s[j]);
-                }
-            if (y >= q.y + 255 && y < q.y + 306) {
-                overlay_show(0);
-                launch(SETTINGS);
-            }
+            control_click(q,x,y);
         } else if (y > q.y + 139 && x > q.x + q.w - 116)doconfirm();
         return 1;
     }
@@ -791,6 +766,7 @@ int shell_key(Event *e)
         launch(k - K_F1 + 1);
         return 1;
     }
+    if (ov == OV_CONTROL)return control_key(panel,e);
     if (ov == OV_SEARCH) {
         if (k == '\n') {
             choose(pick);

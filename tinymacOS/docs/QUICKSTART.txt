@@ -1,4 +1,4 @@
-tinymacOS 10 Tramontana — avvio, installazione e recupero offline
+tinymacOS 10.1 Tramontana — avvio, installazione e recupero offline
 
 Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
 SATA AHCI, tastiera USB e puntatore assoluto QEMU usb-tablet su xHCI. Configurazione collaudata: QEMU
@@ -82,7 +82,7 @@ La revisione OpenCore installer OC2 della ISO 10 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Tramontana; build 30A4.
+Safari/WebKit non e incluso. Nome release: Tramontana; versione 10.1; build 30B1.
 
 10 / 30A4 — revisione input PS/2 + USB 2.0
 Nessun pannello o scorciatoia di diagnostica F11 al login.
@@ -118,3 +118,13 @@ nel filesystem e varianti 16/24/32/48/64/128 px per il loro uso.
 Eccezione: icona installer originale procedurale dedicata a Tramontana.
 In Informazioni, tiny resta regolare e macOS usa un vero font semibold (600).
 Tastiera solo ITA e fix input della 21B9 conservati.
+
+
+10.1 / 30B1 — Centro di Controllo modulare
+Moduli separati nello stesso vetro rifrattivo del Dock, senza pannello opaco.
+Aspetto chiaro/scuro, trasparenza, movimento e posizione Dock; anteprima sfondo.
+Due cursori a scatti per i temi e gli sfondi realmente disponibili, trascinabili.
+Tab/Maiusc+Tab selezionano il controllo; Invio/Spazio attivano i pulsanti.
+Nei cursori: frecce sinistra/destra, Home/End. Esc chiude.
+Scorciatoie: Mission Control, blocco sessione, Calcolatrice, Calendario,
+Terminale e Impostazioni di Sistema. Nessun controllo audio/luminosita fittizio.

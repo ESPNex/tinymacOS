@@ -23,7 +23,7 @@ for f in userspace/start.S kernel/string.c userspace/ui.c crypto/sha256.c; do gc
 APPS=(desktop finder terminal textedit settings about calculator calendar monitor gallery diskutility notes stickies timemachine installer command)
 for a in "${APPS[@]}"; do
  src=userspace/$a.c; units=(); objects=(); case "$a" in
- desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/shell.c desktop/motion.c desktop/assets.S);;
+ desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/assets.S);;
  finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c);;
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
  *) objects=(u-ui.c.o);; esac
