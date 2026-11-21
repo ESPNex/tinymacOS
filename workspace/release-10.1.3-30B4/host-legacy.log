@@ -1,0 +1,5 @@
+PASS PS/2 keyboard: make/break, both Ctrl, Shift release 0xAA, Caps XOR Shift, autorepeat-safe Caps, E0 arrows, F2, PrintScreen and Pause fragments
+PASS PS/2 mouse: packet synchronization, signed 9-bit X/Y, Y inversion, three buttons, overflow discard, negotiated wheel; absent-controller guard
+PASS USB2 Boot-first, independent X/Y and buttons despite valid Report-ID descriptor
+PASS USB2 descriptor Report fallback, ID/16-bit axes/wheel, confirmed mode despite STALL and unknown modes fail closed; optional SET_IDLE rejected safely
+PASS truncated configuration rejected; hub distinguished from HID

@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "case": "boot-first-xhci",
+      "previous_source": "drivers/xhci.c",
+      "previous_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "previous_sha256": "58a6a8b08ed21e3996242224fcf44bf2e647e0ef28faad3e7855b17ed3f3b099",
+      "assertion_failed_as_expected": true,
+      "exit_code": -6,
+      "assertion": "boot-first-xhci.test: /var/tmp/tmc1013-negative-7i2dr3ah/boot-first-xhci-test.c:62: main: Assertion `h->proto==2&&protocol==0&&boot_requests==1&&!report_requests' failed."
+    },
+    {
+      "case": "boot-first-usb2",
+      "previous_source": "drivers/usbinput.c",
+      "previous_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "previous_sha256": "b359f4b439ced5e813b106913030e3fdefbc3d5b0eda21afd07c047984aa5b75",
+      "assertion_failed_as_expected": true,
+      "exit_code": -6,
+      "assertion": "boot-first-usb2.test: /var/tmp/tmc1013-negative-7i2dr3ah/boot-first-usb2-test.c:30: main: Assertion `enumerate()==1&&u.address==7&&u.npipe==1&&u.pipe[0].proto==2' failed."
+    },
+    {
+      "case": "relative-deltas",
+      "previous_source": "recovery/usbhid.c",
+      "previous_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "previous_sha256": "602dfb5b0ffa25f4bcf30f29f7dbecb17a2162e77c706d41c02e4acc4e7d33e8",
+      "assertion_failed_as_expected": true,
+      "exit_code": -6,
+      "assertion": "relative-deltas.test: /var/tmp/tmc1013-negative-7i2dr3ah/relative-deltas-test.c:32: main: Assertion `rec_pointer_next(&bs,&s)&&s.x==1&&s.y==0' failed."
+    },
+    {
+      "case": "async-error-restart",
+      "previous_source": "recovery/usbhid.c",
+      "previous_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "previous_sha256": "602dfb5b0ffa25f4bcf30f29f7dbecb17a2162e77c706d41c02e4acc4e7d33e8",
+      "assertion_failed_as_expected": true,
+      "exit_code": -6,
+      "assertion": "async-error-restart.test: /var/tmp/tmc1013-negative-7i2dr3ah/async-error-restart-test.c:32: main: Assertion `armed==before+1' failed."
+    },
+    {
+      "case": "mouse-child-ownership",
+      "previous_source": "recovery/usbhid.c",
+      "previous_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "previous_sha256": "602dfb5b0ffa25f4bcf30f29f7dbecb17a2162e77c706d41c02e4acc4e7d33e8",
+      "assertion_failed_as_expected": true,
+      "exit_code": -6,
+      "assertion": "mouse-child-ownership.test: /var/tmp/tmc1013-negative-7i2dr3ah/mouse-child-ownership-test.c:32: main: Assertion `rec_pointer_start(&bs,100,100)&&disconnects==1' failed."
+    }
+  ],
+  "physical_hardware_tested": false
+}

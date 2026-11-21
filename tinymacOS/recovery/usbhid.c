@@ -1,6 +1,6 @@
-/* Some OVMF builds enumerate the tablet on EFI_USB_IO without installing a
- * physical AbsolutePointer protocol. Use that HID interface only if unclaimed;
- * never reset the controller or detach the keyboard / boot storage driver. */
+/* Recovery USB pointer ownership: detach only a Boot-mouse interface child,
+ * never its host, hub, keyboard or boot storage. Non-Boot unclaimed HID uses
+ * descriptor parsing. Error recovery runs at application TPL, not callbacks. */
 #ifdef TMC_REC_USB_TEST
 #include "../tests/recovery_usb_support.h"
 #else
@@ -35,32 +35,40 @@ static TabletLayout layout;
 static TabletState queue[32];
 static volatile unsigned head, tail;
 static int relative, rx, ry, last_buttons;
+static EfiUsb *active_io;
+static int submitted;
+static unsigned active_ep,active_packet,active_interval,cooldown,consecutive_errors;
+static volatile UINT32 pending_error;
+int rec_pointer_relative(void){return relative || layout.relative;}
 static EFI_STATUS EFIAPI received(VOID *data, UINTN n, VOID *unused, UINT32 error)
 {
     (void)unused;
     TabletState s;int oldx=rx,oldy=ry;
-    if (error || !data || n > 64) return EFI_SUCCESS;
+    if(error){pending_error=error;cooldown=8;return EFI_SUCCESS;}
+    if (!data || n > 64) return EFI_SUCCESS;
+    consecutive_errors=0;
     if (relative) {
         if (n < 3) return EFI_SUCCESS;
         const u8 *p = data;
-        rx = MAX(0, MIN(rw - 1, rx + (int8_t)p[1]));
-        ry = MAX(0, MIN(rh - 1, ry + (int8_t)p[2]));
-        s = (TabletState) {
-            rx, ry, p[0] & 7, 0
-        };
+        s = (TabletState){(int8_t)p[1],(int8_t)p[2],p[0]&7,0};
     } else {
         if (!pointer_read(&layout, data, n, rw, rh, &s)) return EFI_SUCCESS;
-        if (layout.relative) {
-            rx=MAX(0,MIN(rw-1,rx+s.x));ry=MAX(0,MIN(rh-1,ry+s.y));s.x=rx;s.y=ry;
-        }
     }
     /* Idle/duplicate reports are not activity and must not starve firmware
      * SimplePointer / AbsolutePointer fallbacks in the main loop. */
-    rx=s.x;ry=s.y;
-    if(rx==oldx && ry==oldy && s.buttons==last_buttons && !s.wheel)return EFI_SUCCESS;
+    int rel=rec_pointer_relative();
+    if((rel ? !s.x&&!s.y : s.x==oldx&&s.y==oldy) && s.buttons==last_buttons && !s.wheel)return EFI_SUCCESS;
+    if(!rel){rx=s.x;ry=s.y;}
     last_buttons=s.buttons;
     unsigned h = head, last = (h + 31) % 32;
-    if (h != tail && s.buttons == queue[last].buttons) queue[last] = s;
+    if (h != tail && s.buttons == queue[last].buttons) {
+        if(rel){
+            s.x=MAX(-1048576,MIN(1048576,(i64)queue[last].x+s.x));
+            s.y=MAX(-1048576,MIN(1048576,(i64)queue[last].y+s.y));
+            s.wheel=MAX(-1048576,MIN(1048576,(i64)queue[last].wheel+s.wheel));
+        }
+        queue[last]=s;
+    }
     else {
         unsigned next = (h + 1) % 32;
         if (next == tail) tail = (tail + 1) % 32;
@@ -110,20 +118,25 @@ static int probe(EfiUsb *io)
         UsbEndpoint e;
         if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.addr&128)||!(e.addr&15))continue;
         unsigned packet=e.packet&2047;if(packet<3||packet>64)continue;
-        relative=0;
-        if(!(report&&pointer_layout(desc,wanted,packet,&layout))){if(!boot)continue;relative=1;}
-        if(boot&&!protocol(io,f.number,relative?0:1)){
-            if(relative||!protocol(io,f.number,0))continue;
-            relative=1; /* Validated Boot fallback, not report bytes decoded as Boot. */
+        relative=0;memset(&layout,0,sizeof layout);
+        /* Standard Boot mode first, same in the native drivers. Fall back to
+         * Report only after Boot is rejected, never guess Report-ID offsets. */
+        if(boot && protocol(io,f.number,0))relative=1;
+        else {
+            if(!(report&&pointer_layout(desc,wanted,packet,&layout)))continue;
+            if(boot && !protocol(io,f.number,1))continue;
         }
-        if(!EFI_ERROR(io->async(io,e.addr,TRUE,8,packet,received,0)))return 1;
+        unsigned interval=MAX(1,MIN(255,e.interval));
+        if(!EFI_ERROR(io->async(io,e.addr,TRUE,interval,packet,received,0))){
+            active_io=io;submitted=1;active_ep=e.addr;active_packet=packet;active_interval=interval;return 1;
+        }
     }
     return 0;
 }
 int rec_pointer_start(EFI_BOOT_SERVICES *bs, int x, int y)
 {
     rx = x;
-    ry = y;head=tail=0;last_buttons=0;
+    ry = y;head=tail=0;last_buttons=0;active_io=0;submitted=0;pending_error=cooldown=consecutive_errors=0;
     EFI_GUID guid = {0x2b2f68d6, 0x0cd2, 0x44cf, {0x8e, 0x8b, 0xbb, 0xa2, 0x0b, 0x1b, 0x5b, 0x75}};
     UINTN n;
     EFI_HANDLE *handles;
@@ -136,15 +149,44 @@ int rec_pointer_start(EFI_BOOT_SERVICES *bs, int x, int y)
         int claimed = 0;
         for (UINTN j = 0; j < count;
                 j++) if (users[j].Attributes & (EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE)) claimed = 1;
+        EfiUsb *io=0;UsbInterface f;int detached=0;
+        if(!EFI_ERROR(bs->HandleProtocol(handles[i],&guid,(void **)&io)) && io &&
+           !EFI_ERROR(io->interface_desc(io,&f)) && f.cls==3 && !f.alt && f.sub==1 && f.proto==2 && claimed){
+            int ok=1,drivers=0;
+            for(UINTN j=0;j<count;j++)if(users[j].Attributes&EFI_OPEN_PROTOCOL_BY_DRIVER){
+                drivers++;if(EFI_ERROR(bs->DisconnectController(handles[i],users[j].AgentHandle,0)))ok=0;
+            }
+            if(ok&&drivers){claimed=0;detached=1;}
+        }
         if (users) bs->FreePool(users);
-        EfiUsb *io = 0;
         if (!claimed && !EFI_ERROR(bs->HandleProtocol(handles[i], &guid, (void **)&io)) && io) active = probe(io);
+        if(detached&&!active)bs->ConnectController(handles[i],0,0,FALSE);
     }
     bs->FreePool(handles);
     return active;
 }
 int rec_pointer_next(EFI_BOOT_SERVICES *bs, TabletState *s)
 {
+    /* A single async USB error used to leave the endpoint dead forever.
+     * Quiesce, clear an actual STALL, and resubmit without touching host/hub.
+     * Limit work per poll; repeated failures back off instead of an IRQ loop. */
+    if(active_io && pending_error && (!cooldown || !--cooldown)){
+        UINT32 error=pending_error;EFI_STATUS status=submitted?active_io->async(active_io,active_ep,FALSE,0,0,0,0):EFI_SUCCESS;
+        if(!EFI_ERROR(status)){
+            submitted=0;
+            if(error&2){UsbRequest req={2,1,0,active_ep,0};UINT32 err=0;
+                status=active_io->control(active_io,&req,2,250,0,0,&err);
+                if(err)status=1;
+            }
+            if(!EFI_ERROR(status)){
+                pending_error=0;
+                status=active_io->async(active_io,active_ep,TRUE,active_interval,active_packet,received,0);
+                if(!EFI_ERROR(status))submitted=1;
+            }
+        }
+        if(EFI_ERROR(status))pending_error=error;
+        if(pending_error)cooldown=++consecutive_errors<3?8:85;
+    }
     EFI_TPL old = bs->RaiseTPL(TPL_NOTIFY);
     int ready = head != tail;
     if (ready) {

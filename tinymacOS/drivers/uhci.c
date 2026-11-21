@@ -127,6 +127,7 @@ void uhci_poll(void)
                 if(p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
                 continue;
             }
+            p->failures=0; /* successful traffic resets the consecutive-error budget */
             unsigned bytes=actual(d->td+j);if(bytes<=p->packet)usb_input_report(&d->u,j,bytes);
             p->toggle^=1;upipe_arm(d,j);
         }

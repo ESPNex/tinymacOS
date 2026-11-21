@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "iso_sha256": "07bbd324c607f3520349b940d0a7b262e276c5a078e8c39d2bce8a1c6b296ade",
+  "firmware": "bios",
+  "profile": "xhci",
+  "physical_hardware_tested": false,
+  "work": "/var/tmp/tmc1013-sustained-bios-xhci-2z0p3qik",
+  "exact_cursor_checks": 50,
+  "cycles": 12,
+  "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n"
+}

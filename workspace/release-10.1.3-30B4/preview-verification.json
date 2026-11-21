@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "iso_sha256": "07bbd324c607f3520349b940d0a7b262e276c5a078e8c39d2bce8a1c6b296ade",
+  "real_framebuffer": true,
+  "generated_mockup": false,
+  "full_frame_sha256": "22b7e8a60e7475552c34bb633eeb10ba4e41523bb70a90fe2323dd20e3084b9a",
+  "crop_box": [
+    886,
+    46,
+    1262,
+    596
+  ],
+  "duplicate_wallpaper_slider_removed": true,
+  "duplicate_settings_icon_removed": true
+}

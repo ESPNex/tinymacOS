@@ -303,13 +303,18 @@ static int configure(struct Usb*u, int port, int speed)
     int usable=0;
     for(int k=0;k<count;k++) {
         struct Hid *h=&u->hid[k];int ok=1,report_ready=0;
-        /* Boot-capable does not mean current packets are boot-shaped. Prefer
-         * the advertised descriptor, independently extracting X and Y. */
-        if(h->proto==2 && h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
-           !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
-           pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
-            int confirmed=select_protocol(u,h->iface,1);
-            if(confirmed){h->proto=3;report_ready=1;}
+        /* Boot mice have a standard, independently negotiated 3-byte XY
+         * format. Use it first; a successful Report switch is not proof the
+         * device actually emits its advertised descriptor. Non-Boot mice keep
+         * descriptor parsing, Report IDs and wide axes. */
+        if(h->proto==2) {
+            if(!select_protocol(u,h->iface,0)) {
+                if(h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
+                   !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
+                   pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet) &&
+                   select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
+                else ok=0;
+            }
         }
         if(h->proto==3) {
             if(!report_ready) {
@@ -321,7 +326,7 @@ static int configure(struct Usb*u, int port, int speed)
                 }
             }
         } else {
-            if(!select_protocol(u,h->iface,0))ok=0;
+            if(h->proto==1 && !select_protocol(u,h->iface,0))ok=0;
             if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
@@ -545,6 +550,7 @@ static void transferred(const TRB *e)
                 }
                 return;
             }
+            h->failures=0; /* recovery budget is consecutive errors, not lifetime */
             input_diag.reports++;
             int n=h->mps-(int)(e->len&0xffffff);
             if(n<0||n>h->mps){input_diag.bad_reports++;arm(u,h);return;}

@@ -54,6 +54,11 @@ int main(void)
     assert((commands.tr[0].ctl>>10&63)==14 && (commands.tr[1].ctl>>10&63)==16);
     assert((commands.tr[0].ctl>>16&31)==3);
     assert((u->ctrl.tr[0].ptr&0xffffffffull)==0x00000102); /* CLEAR_FEATURE, recipient endpoint */
+    /* Independent intermittent errors must not exhaust a lifetime budget. */
+    for(int episode=0;episode<12;episode++){
+        h->failures=3;ok.len=13u<<24|5;transferred(&ok);take(EV_MOUSE,0,0,0);
+        assert(h->armed&&!h->failures);
+    }
     h->failures=3;transferred(&stall);assert(!h->armed&&!h->pending);
     puts("PASS endpoint halt: deferred reset, clear-halt, new dequeue, rearm; bounded repeated-failure cap");
     for(int data=0;data<2;data++) {

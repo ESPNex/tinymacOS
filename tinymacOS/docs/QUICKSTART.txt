@@ -1,4 +1,4 @@
-tinymacOS 10.1.2 Tramontana — avvio, installazione e recupero offline
+tinymacOS 10.1.3 Tramontana — avvio, installazione e recupero offline
 
 Usa una VM x86-64 UEFI (Secure Boot spento), 512 MiB di RAM, controller
 SATA AHCI, tastiera USB e puntatore assoluto QEMU usb-tablet su xHCI. Configurazione collaudata: QEMU
@@ -82,7 +82,7 @@ La revisione OpenCore installer OC2 della ISO 10 avvia la live da CD
 su BIOS e UEFI; il disco installato usa GPT/FAT16 con ponte MBR riservato
 verso OpenDuet/OpenCore, oltre al percorso UEFI nativo. Rimuovi la ISO
 al termine e riavvia dal disco SATA. Non e una immagine USB DD ibrida.
-Safari/WebKit non e incluso. Nome release: Tramontana; versione 10.1.2; build 30B3.
+Safari/WebKit non e incluso. Nome release: Tramontana; versione 10.1.3; build 30B4.
 
 10 / 30A4 — revisione input PS/2 + USB 2.0
 Nessun pannello o scorciatoia di diagnostica F11 al login.
@@ -130,7 +130,7 @@ Scorciatoie: Mission Control, blocco sessione, Calcolatrice, Calendario,
 Terminale e Impostazioni di Sistema. Nessun controllo audio/luminosita fittizio.
 
 
-10.1.2 / 30B3 — Recupero puntatore e titolo finestra
+10.1.3 / 30B4 — Recupero puntatore e titolo finestra
 Titolo Recovery allineato alla medesima geometria del WindowServer.
 Un trasporto USB diretto inattivo non esclude piu i puntatori del firmware;
 i report duplicati/inattivi non contano come movimento.

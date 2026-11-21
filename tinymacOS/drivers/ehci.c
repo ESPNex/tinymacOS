@@ -206,6 +206,7 @@ void ehci_poll(void)
                 if(p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
                 continue;
             }
+            p->failures=0; /* successful traffic resets the consecutive-error budget */
             unsigned remaining=(st>>16)&0x7fff;
             if(remaining<=p->packet)usb_input_report(&d->u,j,p->packet-remaining);
             p->toggle^=1;epipe_arm(d,j);

@@ -3,7 +3,7 @@
 /* Real system preferences only: no synthetic brightness, radio or audio state. */
 static int focus=-1,dragging=-1,last=-1;
 static u32 ink=0xf9fcff,muted=0xcde8f4;
-static int sz(Rect p,int n){return MAX(1,n*p.h/628);}
+static int sz(Rect p,int n){return MAX(1,n*p.h/550);}
 static void setpref(int key,int value){if(sc(S_PREF,key,value,0,0)==0)dirty=1;}
 void control_cancel(void){focus=dragging=last=-1;}
 static int value(int id){return id==CC_THEME_SLIDER?sys.theme:sys.wall;}
@@ -24,14 +24,14 @@ static void activate(int id){
     case CC_CALC:overlay_show(0);launch(CALC);break;
     case CC_CALENDAR:overlay_show(0);launch(CALENDAR);break;
     case CC_TERMINAL:overlay_show(0);launch(TERMINAL);break;
-    case CC_SETTINGS:case CC_ALL_SETTINGS:overlay_show(0);launch(SETTINGS);break;
+    case CC_ALL_SETTINGS:overlay_show(0);launch(SETTINGS);break;
     }
     dirty=1;
 }
 void control_click(Rect p,int x,int y){
     for(int id=0;id<CC_COUNT;id++)if(control_hit(p,x,y,id)){
         focus=id;
-        if(id==CC_THEME_SLIDER||id==CC_WALL_SLIDER){dragging=id;last=-1;select_at(p,id,x);}
+        if(id==CC_THEME_SLIDER){dragging=id;last=-1;select_at(p,id,x);}
         else activate(id);
         return;
     }
@@ -47,7 +47,7 @@ int control_key(Rect p,Event *e){
         focus=(focus+(back?CC_COUNT-1:1)+CC_COUNT)%CC_COUNT;dirty=1;return 1;
     }
     if(focus<0)focus=0;
-    if((focus==CC_THEME_SLIDER||focus==CC_WALL_SLIDER)&&
+    if((focus==CC_THEME_SLIDER||focus==CC_WALL)&&
         (k==K_LEFT||k==K_RIGHT||k==K_HOME||k==K_END)){
         int n=count(focus),v=k==K_HOME?0:k==K_END?n-1:clampi(value(focus)+(k==K_LEFT?-1:1),0,n-1);
         setpref(focus==CC_THEME_SLIDER?0:1,v);return 1;
@@ -133,15 +133,14 @@ void control_draw(Rect p){
     tile(p,CC_MISSION,0);glyph(p,control_rect(p,CC_MISSION),SYM_MISSION,0);
     tile(p,CC_LOCK,0);glyph(p,control_rect(p,CC_LOCK),SYM_LOCK,0);
     slider(p,CC_THEME_SLIDER,"Tema",themename(sys.theme));
-    slider(p,CC_WALL_SLIDER,"Sfondo",wallname(sys.wall));
-    const int ids[]={CC_CALC,CC_CALENDAR,CC_TERMINAL,CC_SETTINGS},icons[]={SYM_CALC,SYM_CALENDAR,SYM_TERMINAL,SYM_SETTINGS};
-    for(int j=0;j<4;j++){tile(p,ids[j],0);glyph(p,control_rect(p,ids[j]),icons[j],0);}
+    const int ids[]={CC_CALC,CC_CALENDAR,CC_TERMINAL},icons[]={SYM_CALC,SYM_CALENDAR,SYM_TERMINAL};
+    for(int j=0;j<3;j++){tile(p,ids[j],0);glyph(p,control_rect(p,ids[j]),icons[j],0);}
     b=control_rect(p,CC_ALL_SETTINGS);tile(p,CC_ALL_SETTINGS,0);
     center(b.x+b.w/2,b.y+(b.h-14)/2,"Tutte le impostazioni",F_SMALL,ink);
     /* Space below circles is reserved for a real, live hover/focus description. */
     int hit=-1;for(int id=0;id<CC_COUNT;id++)if(control_hit(p,mx,my,id)){hit=id;break;}
     if(hit<0)hit=focus;
-    const char *tips[]={"Aspetto chiaro / scuro","Trasparenza del vetro","Riduci movimento","Posizione del Dock","Sfondo successivo","Mission Control","Blocca sessione","Tema · trascina o usa le frecce","Sfondo · trascina o usa le frecce","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema","Impostazioni di Sistema"};
+    const char *tips[]={"Aspetto chiaro / scuro","Trasparenza del vetro","Riduci movimento","Posizione del Dock","Sfondo · clic o frecce","Mission Control","Blocca sessione","Tema · trascina o usa le frecce","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema"};
     const char *s=hit>=0?tips[hit]:"Vetro · movimento · scrivania";
-    center(p.x+p.w/2,p.y+sz(p,580),s,F_MICRO,muted);
+    center(p.x+p.w/2,p.y+sz(p,490),s,F_MICRO,muted);
 }

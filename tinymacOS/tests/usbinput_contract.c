@@ -27,24 +27,22 @@ static UsbInput u;
 static int enumerate(void){memset(&u,0,sizeof u);u.speed=1;u.control=transport;return usb_input_enumerate(&u,7);}
 int main(void)
 {
- assert(enumerate()==1&&u.address==7&&u.npipe==1&&u.pipe[0].proto==3&&u.pipe[0].layout.id==4);
- u8 data[]={4,5,0x34,0x12,0xfe,0xff,255};memcpy(u.pipe[0].report,data,sizeof data);usb_input_report(&u,0,7);
- Event e;assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0x1234&&e.b==-2&&e.c==5);
- assert(input_pop(&e)&&e.type==EV_SCROLL&&e.a==-1);assert(!input_pop(&e));
- puts("PASS USB2 shared HID: address/config, validated Report preference, report-ID/16-bit motion/wheel; SET_IDLE STALL tolerated");
- bad_report=1;assert(enumerate()==1&&u.pipe[0].proto==2);
- reject_boot=1;protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);
- protocol=2;assert(!enumerate()&&!u.npipe);bad_report=0;reject_report=1;protocol=1;
- assert(enumerate()==1&&u.pipe[0].proto==3);protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);protocol=2;assert(!enumerate());
- puts("PASS USB2 shared HID: genuine Boot fallback, confirmed Report fallback and fail-closed on malformed/unconfirmed reports");
- reject_boot=reject_report=0;protocol=0;acknowledge_without_switch=1;
- assert(enumerate()==1&&u.pipe[0].proto==2);
+ Event e;assert(enumerate()==1&&u.address==7&&u.npipe==1&&u.pipe[0].proto==2);
  memcpy(u.pipe[0].report,(u8[]){0,29,0},3);usb_input_report(&u,0,3);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==29&&e.b==0);
- memcpy(u.pipe[0].report,(u8[]){0,0,249},3);usb_input_report(&u,0,3);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==-7);
- puts("PASS USB2 success/readback mismatch: verified Boot fallback, independent horizontal and vertical reports");
- acknowledge_without_switch=0;short_config=1;assert(!enumerate());short_config=0;is_hub=1;
- assert(enumerate()==2&&!u.npipe);
- puts("PASS USB2 shared HID: truncated configuration rejected; hub distinguished from a usable input device");
+ assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==29&&!e.b);
+ memcpy(u.pipe[0].report,(u8[]){1,0,249},3);usb_input_report(&u,0,3);
+ assert(input_pop(&e)&&e.type==EV_MOUSE&&!e.a&&e.b==-7&&e.c==1);
+ puts("PASS USB2 Boot-first, independent X/Y and buttons despite valid Report-ID descriptor");
+ reject_boot=1;protocol=1;assert(enumerate()==1&&u.pipe[0].proto==3&&u.pipe[0].layout.id==4);
+ u8 data[]={4,5,0x34,0x12,0xfe,0xff,255};memcpy(u.pipe[0].report,data,sizeof data);usb_input_report(&u,0,7);
+ assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0x1234&&e.b==-2&&e.c==5);
+ assert(input_pop(&e)&&e.type==EV_SCROLL&&e.a==-1);assert(!input_pop(&e));
+ reject_report=1;protocol=1;assert(enumerate()==1&&u.pipe[0].proto==3);
+ protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);
+ protocol=2;assert(!enumerate());bad_report=1;assert(!enumerate());
+ reject_boot=reject_report=0;protocol=1;assert(enumerate()==1&&u.pipe[0].proto==2);
+ bad_report=0;acknowledge_without_switch=1;protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);
+ puts("PASS USB2 descriptor Report fallback, ID/16-bit axes/wheel, confirmed mode despite STALL and unknown modes fail closed; optional SET_IDLE rejected safely");
+ acknowledge_without_switch=0;short_config=1;assert(!enumerate());short_config=0;is_hub=1;assert(enumerate()==2&&!u.npipe);
+ puts("PASS truncated configuration rejected; hub distinguished from HID");
 }

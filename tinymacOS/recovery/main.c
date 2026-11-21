@@ -8,6 +8,7 @@ int rec_keyboard_start(EFI_BOOT_SERVICES *);
 int rec_keyboard_next(EFI_BOOT_SERVICES *,int *);
 int rec_pointer_start(EFI_BOOT_SERVICES *,int,int);
 int rec_pointer_next(EFI_BOOT_SERVICES *, TabletState *);
+int rec_pointer_relative(void);
 // This EFI application is the entire recovery runtime: no user session, compositor, Dock or desktop app archive.
 static struct RecoveryOrigin origin;
 static EFI_SYSTEM_TABLE *st;
@@ -354,7 +355,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.2 (30B3)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.3 (30B4)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -425,7 +426,10 @@ static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absol
         if (direct) {
             TabletState s;
             while (rec_pointer_next(bs,&s)) {
-                mx=s.x; my=s.y;
+                if(rec_pointer_relative()){
+                    mx=MAX(0,MIN(rw-1,(i64)mx+s.x));
+                    my=MAX(0,MIN(rh-1,(i64)my+s.y));
+                }else {mx=s.x;my=s.y;}
                 pointer_button(s.buttons&1);got_abs=1;
             }
         }
@@ -451,8 +455,8 @@ static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absol
                 int down=!!p.LeftButton;
                 if(!p.RelativeMovementX && !p.RelativeMovementY && down==pointer_down[i])continue;
                 pointer_down[i]=down;
-                mx = MAX(0, MIN(rw - 1, mx + p.RelativeMovementX));
-                my = MAX(0, MIN(rh - 1, my + p.RelativeMovementY));
+                mx = MAX(0, MIN(rw - 1, (i64)mx + p.RelativeMovementX));
+                my = MAX(0, MIN(rh - 1, (i64)my + p.RelativeMovementY));
                 pointer_button(down);
             }
         }
@@ -474,6 +478,9 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     my = rh - 55;
     int keyboards=rec_keyboard_start(bs);
     if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
+    /* Own USB pointer children before taking firmware protocol snapshots:
+     * disconnecting a mouse driver invalidates its old SimplePointer object. */
+    int direct = rec_pointer_start(bs,mx,my);
     /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
      * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
     EFI_SIMPLE_POINTER_PROTOCOL *pointers[16]={0};
@@ -503,7 +510,6 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
         bs->FreePool(handles);
     }
     if (absolute) absolute->Reset(absolute,FALSE);
-    int direct = rec_pointer_start(bs,mx,my);
 
     for (;;) {
         if (dirty) {

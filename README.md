@@ -1,20 +1,21 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10.1.2 Tramontana / 30B3 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.2).** [Download ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.2/tinymacOS-10.1.2-x86_64.iso). Sorgenti sincronizzati prima degli upload (`fd74c7cc08a06f009806058682490a6fd89225bc`); download anonimo completo verificato. Ricevuta: `workspace/release-10.1.2-30B3/github-release-verification.json`. Tutti i tag e gli asset precedenti conservati senza modifiche.
+**tinymacOS 10.1.3 Tramontana / 30B4 — nuova manutenzione richiesta.** Pubblicazione normale/Latest solo dopo QA e sync sorgenti. La ricevuta `workspace/release-10.1.3-30B4/github-release-verification.json` conferma il deploy soltanto quando presente. Tutte le release precedenti sono pre-release su richiesta, senza sostituzione dei loro asset o tag.
 
-QA finale: 27 profili input live/HDD, 236 asserzioni native, 18 avvii Recovery con mouse/tablet (8 con sola tastiera PS/2 e mouse USB diretto), 4 profili Recovery italiani e 29 regressioni kernel PASS. Due build indipendenti identiche, 575 sorgenti verificati. Aggiunto il driver firmware PS/2 ufficiale per la selezione Recovery BIOS senza tastiere USB; pannello Centro di Controllo completo invariato.
+**10.1.2 non ha risolto il mouse sul PC dell’utente:** fermo al login e movimento breve seguito da blocco in Recovery. La 10.1.3 cambia la scelta Boot/Report dei mouse Boot, prende in carico il solo figlio USB mouse in Recovery, applica delte alla posizione corrente e recupera i trasferimenti asincroni dopo errore. I contatori di errori nativi non si esauriscono per tutta la sessione dopo errori separati da traffico valido. Riferimento storico esatto: 2.4.5 Levante / 21B9.
 
-Riferimento fisico precisato dall’utente: **2.4.5 Levante / 21B9**, con mouse funzionante in Recovery e solo verticale al login. La 10.1.2 ripristina il routing USB2 iniziale di quella revisione sui controller già supportati, verifica il readback della modalità HID e impedisce che un AbsolutePointer inattivo mascheri il mouse USB in Recovery. Centro di Controllo 10.1 completo e titolo Recovery centrato conservati. **La nuova ISO non è ancora verificata sul PC fisico dell’utente.**
+Centro di Controllo più compatto: **un solo Sfondo e un solo accesso alle Impostazioni**, senza rinunciare al vetro o alle altre funzioni. Preview catturata dalla vera ISO. **Nessuna verifica fisica ASRock Q1900M/J1900: i test QEMU non costituiscono conferma del fix sul PC.**
 
 Repository **pubblico** per richiesta dell’utente. Le ISO sono negli asset delle release, non nella cronologia Git. Credenziali cifrate solo nel workspace escluso da Git, chiave separata.
 
 Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Sfondo non procedurale, semibold nel wordmark, temi e associazioni sfondi conservati. Safari/WebKit non incluso.
 
 - [Sistema, build e limiti](tinymacOS/README.md)
-- [Note 10.1.2, QA e limiti](workspace/release-10.1.2-30B3/RELEASE.md)
-- [Preview reale Centro di Controllo 10.1.2](workspace/release-10.1.2-30B3/evidence/control-center-detail.png)
+- [Note 10.1.3, QA e limiti](workspace/release-10.1.3-30B4/RELEASE.md)
+- [Archivio precedente 10.1.2](workspace/release-10.1.2-30B3/RELEASE.md)
+- [Preview reale Centro di Controllo 10.1.3](workspace/release-10.1.3-30B4/evidence/control-center-detail.png)
 - [Archivio precedente 10.1.1](workspace/release-10.1.1-30B2/RELEASE.md)
-- [Confronto 21B9 e correzioni](workspace/release-10.1.2-30B3/HISTORY-AND-CHANGES.md)
+- [Correzioni 10.1.3, riproduzioni e limiti](workspace/release-10.1.3-30B4/HISTORY-AND-CHANGES.md)
 - [Ripristino accesso cifrato, chiave separata](workspace/ACCESSO-CIFRATO.md)
 - [Archivio precedente 10.1 / 30B1](workspace/release-10.1-30B1/RELEASE.md)
 - [Archivio 10 / 30A4](workspace/release-10-30A4/RELEASE.md)

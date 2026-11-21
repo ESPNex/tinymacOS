@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "profile": "ps2",
+  "firmware": "uefi",
+  "iso_sha256": "07bbd324c607f3520349b940d0a7b262e276c5a078e8c39d2bce8a1c6b296ade",
+  "work": "/var/tmp/tmc10-rec-kbd-siouhvok",
+  "local_installed_recovery": false,
+  "i8042_present": true,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

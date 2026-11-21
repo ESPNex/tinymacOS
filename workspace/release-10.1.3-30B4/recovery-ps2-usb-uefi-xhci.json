@@ -1,0 +1,65 @@
+{
+  "iso_sha256": "07bbd324c607f3520349b940d0a7b262e276c5a078e8c39d2bce8a1c6b296ade",
+  "devices": {
+    "tablet-recovery": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU PS/2 Mouse",
+          "current": false,
+          "absolute": false
+        },
+        {
+          "index": 3,
+          "name": "QEMU HID Tablet",
+          "current": true,
+          "absolute": true
+        }
+      ],
+      "info usb": [
+        "Device 1.1, Port 1, Speed 480 Mb/s, Product QEMU USB Tablet, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    },
+    "mouse-recovery": {
+      "query-mice": [
+        {
+          "index": 2,
+          "name": "QEMU PS/2 Mouse",
+          "current": false,
+          "absolute": false
+        },
+        {
+          "index": 3,
+          "name": "QEMU HID Mouse",
+          "current": true,
+          "absolute": false
+        }
+      ],
+      "info usb": [
+        "Device 1.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer"
+      ],
+      "framebuffer": [
+        1280,
+        800
+      ]
+    }
+  },
+  "checks": [
+    "tablet / exact USB cursor: separate horizontal and vertical movement with PS/2 keyboard, no hub or USB keyboard",
+    "tablet / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 10 letta sulla shell firmware di Recupero",
+    "Relative USB mouse / 12 repeated X/Y reversal cycles (48 exact cursor checks), idle and resume; no one-event-only PASS",
+    "mouse / exact USB cursor: separate horizontal and vertical movement with PS/2 keyboard, no hub or USB keyboard",
+    "mouse / Recupero autonomo: selezione di Terminale e Continua con due clic, solo ISO, nessun disco o immagine esterna, versione 10 letta sulla shell firmware di Recupero"
+  ],
+  "firmware": "uefi",
+  "physical_hardware_tested": false,
+  "ps2_keyboard_direct_usb_pointer": true,
+  "pointer_bus": "xhci",
+  "ordinary_key_hold_ms": 40,
+  "sustained_mouse_cycles": 12,
+  "passed": true
+}

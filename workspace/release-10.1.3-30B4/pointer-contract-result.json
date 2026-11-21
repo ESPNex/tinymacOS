@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "negative_control_failed_as_expected": true,
+  "negative_returncode": -6,
+  "previous_10_1_1_idle_absolute_failed": true,
+  "log": "PASS actual Recovery arbitration: idle direct + idle first firmware pointer cannot hide active second mouse; separate X/Y, press/release, AbsolutePointer fallback, fresh direct priority and no phantom idle activity; repeated EFI_SUCCESS AbsolutePointer cannot hide SimplePointer\n",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "sha256": {
+    "recovery/main.c": "2da09996f1fc443cd5ed252d836ee579dbacdf04263298dfd76a9940e1af14df",
+    "recovery/usbhid.c": "c5f1ccf8e32dea22004c7c58cc9c8ddfe343407d72f84d0feb2e2b96ac153614",
+    "drivers/xhci.c": "60c5c4ffde5bda9749cce859906fa6e867314ad88a9adbd536730b40f65f6d3a",
+    "drivers/usbroute.c": "c8121ba24268048efea857aabbb1090a114a632266db6cea1d8275b54d96e2f2"
+  }
+}

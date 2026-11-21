@@ -1,0 +1,6 @@
+PASS optical BIOS ehci r
+PASS optical BIOS ehci f12
+PASS optical BIOS xhci r
+PASS optical BIOS xhci f12
+PASS optical UEFI
+PASS extra PS/2 keyboard + direct USB pointer matrix
