@@ -24,3 +24,7 @@ OpenDuet espone il FAT ottico BIOS come volume UEFI: l'etichetta testuale di ori
 **ASRock fisico non riprovato: mouse fermo nel live e in Recovery nell'ultimo riscontro; soluzione hardware non confermata.** Nessuna certificazione implicita del selettore firmware con PS/2 fisica. Safari/WebKit sospeso e non incluso.
 
 L'esito del deploy e dei download remoti è attestato separatamente in `github-release-verification.json`.
+
+## Deploy verificato
+
+v10 normale/Latest pubblicata, release ID 453337659 invariato. Tag sorgente `b5c053ea34fd36681b9cfec7cc549698b744bede`. ISO e checksum scaricati nuovamente e confrontati: identici ai file collaudati. Due soli asset finali, nome ISO pulito; quattro release storiche ancora Pre-release. Ricevuta completa in `github-release-verification.json`.
