@@ -1,6 +1,8 @@
 # tinymacOS — sorgenti e workspace
 
-**tinymacOS 10.1.2 Tramontana / 30B3 — manutenzione corrente.** Pubblicazione normale/Latest prevista dopo QA e sync sorgenti. Lo stato effettivo è attestato dalla ricevuta `workspace/release-10.1.2-30B3/github-release-verification.json`, presente solo a pubblicazione completata.
+**[tinymacOS 10.1.2 Tramontana / 30B3 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.2).** [Download ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.2/tinymacOS-10.1.2-x86_64.iso). Sorgenti sincronizzati prima degli upload (`fd74c7cc08a06f009806058682490a6fd89225bc`); download anonimo completo verificato. Ricevuta: `workspace/release-10.1.2-30B3/github-release-verification.json`. Tutti i tag e gli asset precedenti conservati senza modifiche.
+
+QA finale: 27 profili input live/HDD, 236 asserzioni native, 18 avvii Recovery con mouse/tablet (8 con sola tastiera PS/2 e mouse USB diretto), 4 profili Recovery italiani e 29 regressioni kernel PASS. Due build indipendenti identiche, 575 sorgenti verificati. Aggiunto il driver firmware PS/2 ufficiale per la selezione Recovery BIOS senza tastiere USB; pannello Centro di Controllo completo invariato.
 
 Riferimento fisico precisato dall’utente: **2.4.5 Levante / 21B9**, con mouse funzionante in Recovery e solo verticale al login. La 10.1.2 ripristina il routing USB2 iniziale di quella revisione sui controller già supportati, verifica il readback della modalità HID e impedisce che un AbsolutePointer inattivo mascheri il mouse USB in Recovery. Centro di Controllo 10.1 completo e titolo Recovery centrato conservati. **La nuova ISO non è ancora verificata sul PC fisico dell’utente.**
 
