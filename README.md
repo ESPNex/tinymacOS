@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**10.1.5 Tramontana / 30B6: collaudi completati, pubblicazione source-first in corso.** Gate di 80 ricevute software superato. Stato effettivo di pubblicazione nella ricevuta `workspace/release-10.1.5-30B6/github-release-verification.json`, quando presente. Le dieci release precedenti sono pre-release, con ISO, note e tag preservati.
+**[tinymacOS 10.1.5 Tramontana / 30B6 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.5).** [Scarica la ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.5/tinymacOS-10.1.5-x86_64.iso). Sorgenti sincronizzati prima degli upload (`52a75e132fc8d655ca26d5ee2329cf6bee0a0274`); download anonimo completo e SHA-256 verificati. Ricevuta: `workspace/release-10.1.5-30B6/github-release-verification.json`. Dieci release precedenti pre-release, con ISO, note e tag preservati. Il gate di 80 ricevute riguarda il software, non il PC fisico.
 
 **Riscontro fisico 10.1.4: mouse fermo sia al login sia in Recovery.** La 10.1.4 non ha risolto il problema e ha peggiorato il precedente riscontro Recovery solo verticale della 10.1.3. I vecchi PASS virtuali non prevalgono su questo risultato.
 
