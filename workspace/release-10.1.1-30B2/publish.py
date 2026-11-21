@@ -2,7 +2,7 @@
 """Source-first publication; new 10.1.1 Latest, archive unchanged 10.1 and 10 as prereleases.
 Never logs credentials, replaces old ISO bytes or force-updates an existing tag.
 """
-import argparse,hashlib,json,os,subprocess,tempfile
+import argparse,hashlib,json,os,subprocess,tempfile,time
 from pathlib import Path
 q=Path(__file__).resolve().parent;home=q.parents[1];repo='ESPNex/tinymacOS'
 gh='/var/tmp/tmc-github-cli/gh';env={**os.environ,'GH_CONFIG_DIR':'/var/tmp/tmc-github-auth','GODEBUG':'http2client=0'}
@@ -13,6 +13,14 @@ def api(path,data=None):
  if data is not None:a+=['--method','PATCH','--input','-']
  return json.loads(run(a,input=json.dumps(data).encode() if data is not None else None,stdout=subprocess.PIPE).stdout)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
+def find_release(tag,required=False):
+ # GitHub list responses may briefly lag a successful draft creation.
+ for attempt in range(6 if required else 1):
+  match=next((r for r in api('releases?per_page=100') if r['tag_name']==tag),None)
+  if match:return match
+  if required:time.sleep(min(2**attempt,8))
+ if required:raise RuntimeError('Created draft not visible after bounded retries: '+tag)
+ return None
 qa=json.loads((q/'final-qa.json').read_text());assert qa['passed']
 assert api('')['private'] is True
 source=api('commits/main')['sha'];assert source==args.source_commit
@@ -39,12 +47,12 @@ for tag,ver,iso,checksum,commit,notes,pre in [
  ('v10.1','10.1',oldiso,oldq/'SHA256SUMS.txt',oldsource,notesold,True),
  ('v10.1.1','10.1.1',newiso,q/'SHA256SUMS.txt',source,q/'RELEASE.md',False)]:
  expected=sha(iso);assert checksum.read_text().strip()==expected+'  '+iso.name
- current=next((r for r in api('releases?per_page=100') if r['tag_name']==tag),None)
+ current=find_release(tag)
  if not current:
   cmd=['release','create',tag,'--repo',repo,'--target',commit,'--title','tinymacOS '+ver+' Tramontana','--notes-file',str(notes),'--draft']
   if pre:cmd+=['--prerelease']
   run(cmd)
- current=next(r for r in api('releases?per_page=100') if r['tag_name']==tag)
+ current=find_release(tag,required=True)
  # An unexpected existing published release must never be overwritten by retries.
  if not current['draft']:
   tagref=api('git/ref/tags/'+tag)['object'];assert tagref['sha']==commit,(tag,tagref)
