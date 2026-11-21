@@ -1,0 +1,57 @@
+{
+  "published": true,
+  "version": "10.0",
+  "build": "30A1",
+  "release_id": 453337659,
+  "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.0",
+  "tag": "v10.0",
+  "tag_commit": "9a7bcd6984f3bad83112736b3f7cc68091ae2f77",
+  "normal_release": true,
+  "all_older_releases_prerelease": true,
+  "older_releases": [
+    {
+      "id": 453129451,
+      "tag": "v2.4.5",
+      "was_prerelease": false,
+      "prerelease": true
+    },
+    {
+      "id": 453058481,
+      "tag": "v2.4.4-oc2",
+      "was_prerelease": false,
+      "prerelease": true
+    },
+    {
+      "id": 453006571,
+      "tag": "v2.4.4-oc1",
+      "was_prerelease": false,
+      "prerelease": true
+    },
+    {
+      "id": 452996851,
+      "tag": "v2.4.4",
+      "was_prerelease": false,
+      "prerelease": true
+    }
+  ],
+  "iso_sha256": "a1d9e28d31bbb5c2c29c858d633ac7b411eafb1a466d186c0f0dd4cf22f60461",
+  "bytes": 224966656,
+  "remote_download_verified": true,
+  "draft_download_verified": true,
+  "published_final_name_download_verified": true,
+  "remote_download_external": "/var/tmp/tmc10-remote-verified-xq2ds3fn/published",
+  "assets": [
+    {
+      "id": 773932622,
+      "name": "SHA256SUMS.txt",
+      "size": 111,
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.0/SHA256SUMS.txt"
+    },
+    {
+      "id": 773932630,
+      "name": "tinymacOS-10.0-OpenCore-Installer-x86_64.iso",
+      "size": 224966656,
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.0/tinymacOS-10.0-OpenCore-Installer-x86_64.iso"
+    }
+  ]
+}

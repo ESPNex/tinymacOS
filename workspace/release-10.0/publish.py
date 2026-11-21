@@ -29,7 +29,9 @@ if matches:assert len(matches)==1 and matches[0]['object']['type']=='commit' and
 else:api('repos/'+repo+'/git/refs','--method','POST','-f','ref=refs/tags/'+tag,'-f','sha='+source)
 run(gh,'release','create',tag,'--repo',repo,'--verify-tag','--draft','--title','tinymacOS 10 Tramontana — 30A1','--notes-file',r/'RELEASE.md')
 run(gh,'release','upload',tag,iso,r/'SHA256SUMS.txt','--repo',repo)
-j=api('repos/'+repo+'/releases/tags/'+tag);assert j['draft'] and not j['prerelease'];assets={x['name']:x for x in j['assets']}
+# Draft releases can return 404 through the by-tag REST endpoint.
+created=json.loads(run(gh,'api','--paginate','--slurp','repos/'+repo+'/releases?per_page=100'))
+j=next(x for page in created for x in page if x['tag_name']==tag);assert j['draft'] and not j['prerelease'];assets={x['name']:x for x in j['assets']}
 assert set(assets)=={iso.name,'SHA256SUMS.txt'} and assets[iso.name]['digest']=='sha256:'+a['sha256'] and assets[iso.name]['size']==a['bytes']
 w=Path(tempfile.mkdtemp(prefix='tmc10-remote-release-',dir='/var/tmp'))
 run(gh,'release','download',tag,'--repo',repo,'--dir',w)

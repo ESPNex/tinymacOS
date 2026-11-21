@@ -1,6 +1,6 @@
 # tinymacOS 10 · Tramontana — 30A1
 
-**Collaudo finale PASS.** Tutte le prove seguenti sono nuove e legate alla SHA della 30A1, non ricevute riutilizzate della 21B9. La distribuzione è prevista come nuova Release normale `v10.0`, con tutte le release anteriori impostate come Pre-release. Lo stato effettivo del deploy è attestato dalla ricevuta `github-release-verification.json`.
+**PUBBLICATA E VERIFICATA:** [v10.0](https://github.com/ESPNex/tinymacOS/releases/tag/v10.0), build **30A1**, Release normale e Latest. ISO riscaricata dopo la pubblicazione e SHA-256 verificato. Tutte le quattro release precedenti sono ora Pre-release. Ricevuta: `github-release-verification.json`. Tutte le prove seguenti sono nuove e legate alla SHA della 30A1, non ricevute riutilizzate della 21B9. Il tag sorgenti `v10.0` punta al commit `9a7bcd6984f3bad83112736b3f7cc68091ae2f77`; nessun tag precedente è stato spostato.
 
 ## Aspetto e risorse
 
@@ -53,4 +53,4 @@ File: `tinymacOS-10.0-OpenCore-Installer-x86_64.iso`
 Dimensione: **224.966.656 byte**  
 SHA-256: `a1d9e28d31bbb5c2c29c858d633ac7b411eafb1a466d186c0f0dd4cf22f60461`
 
-Il PASS non equivale a pubblicazione. Finché manca `github-release-verification.json`, non è dichiarato alcun deploy della 10.0 o cambio di stato delle vecchie release. Nessun hardware fisico è stato verificato.
+Deploy completato: Release ID `453337659`, asset verificati sotto il nome definitivo dopo la pubblicazione. Tutte le release anteriori (`v2.4.5`, `v2.4.4-oc2`, `v2.4.4-oc1`, `v2.4.4`) sono Pre-release. Nessun hardware fisico è stato verificato.
