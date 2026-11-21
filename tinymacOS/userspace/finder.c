@@ -48,6 +48,9 @@ static int idico(Dirent *f)
     if (a)return appicon(a);
     if (bootpath(cwd))return f->dir ? 37 : eq(f->name, "KernelCache") || eq(f->name, "boot.efi") ? 32 : 7;
     if (!f->dir)return 7;
+    /* Applications at the volume root uses its dedicated sidebar symbol too;
+     * do not mislabel an unrelated user folder with the same name. */
+    if (eq(cwd, "/") && eq(f->name, "Applications"))return 13;
     if (eq(f->name, "Desktop"))return 23;
     if (eq(f->name, "Documents"))return 24;
     if (eq(f->name, "Downloads"))return 25;

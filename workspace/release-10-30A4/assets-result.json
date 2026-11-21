@@ -1,0 +1,32 @@
+{
+  "Recovery_installer_identical_to_desktop": true,
+  "Recovery_title_exact_and_no_ITA_badge": true,
+  "passed": true,
+  "build": "30A4",
+  "latest_exact_name_icon_entries": 13,
+  "mapped_image_slots": 14,
+  "resolutions": [
+    16,
+    24,
+    32,
+    48,
+    64,
+    128
+  ],
+  "runtime_atlas_pixels_verified": true,
+  "filesystem_original_and_sized_pngs_verified": true,
+  "installer_original_procedural_exception": true,
+  "font_faces": 11,
+  "unchanged_original_ten_faces_sha256": "f8c1b1b5b598d97eedd1765040076f516c8522a7dc8250febd3f914544e6d174",
+  "tiny_regular_advance": 72,
+  "macOS_weight": 600,
+  "euro_all_faces": true,
+  "wallpaper_generator": "native image generation; nonprocedural source retained",
+  "all_palette_slots_distinct_Blu_Azzurro_Riviera_both_modes": true,
+  "only_application_art_imported": true,
+  "Recovery_only_Terminal_imported_byte_exact": true,
+  "procedural_system_symbols_byte_exact": true,
+  "Teal_Tramontana_all_slots_distinct": true,
+  "font_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
+  "font_bytes": 2453335
+}

@@ -1,0 +1,61 @@
+{
+  "passed": true,
+  "iso_sha256": "660bd4f2656ccbce70fe53d878015f0dae993d9ff16d55f5488d9fd2b2a2b65e",
+  "work": "/var/tmp/tmc-chrome-ap6xit_g",
+  "checks": [
+    {
+      "orientation": "bottom",
+      "cycle": 0,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    },
+    {
+      "orientation": "bottom",
+      "cycle": 1,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    },
+    {
+      "orientation": "bottom",
+      "cycle": 2,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    },
+    {
+      "orientation": "left",
+      "cycle": 0,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    },
+    {
+      "orientation": "left",
+      "cycle": 1,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    },
+    {
+      "orientation": "left",
+      "cycle": 2,
+      "changed_pixels_after_exit": 0,
+      "maximum_channel_delta": 0,
+      "exterior_halo_pixels": 0
+    }
+  ],
+  "old_halo_reproduction": false,
+  "selected_pointer_transport": "QEMU HID Mouse",
+  "menu_alignment": {
+    "glyph_origin": [
+      12,
+      3
+    ],
+    "apple_visible_center_y": 14.5,
+    "File_visible_center_y": 14.5,
+    "difference_px": 0.0
+  },
+  "reproduced": false
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "profile": "xhci-hub-kbd",
+  "firmware": "uefi",
+  "iso_sha256": "660bd4f2656ccbce70fe53d878015f0dae993d9ff16d55f5488d9fd2b2a2b65e",
+  "work": "/var/tmp/tmc10-rec-kbd-iooqqypw",
+  "local_installed_recovery": false,
+  "i8042_present": false,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

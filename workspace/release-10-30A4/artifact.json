@@ -1,0 +1,14 @@
+{
+  "native_iso_sha256": "b959c9f3453f4786319e145659d480c5f790349c5bf5a1b4184f273ed8176d6d",
+  "filename": "tinymacOS-10-x86_64.iso",
+  "bytes": 225599488,
+  "sha256": "660bd4f2656ccbce70fe53d878015f0dae993d9ff16d55f5488d9fd2b2a2b65e",
+  "bios": "El Torito ISOLINUX/MEMDISK RAM disk, OpenDuet BlockIO 1.0.8 -> OpenCore 1.0.8 -> native loader",
+  "uefi": "original direct El Torito EFI.IMG",
+  "bios_installer": true,
+  "legacy_usb_dd_supported": false,
+  "browser": false,
+  "version": "10",
+  "build": "30A4",
+  "codename": "Tramontana"
+}

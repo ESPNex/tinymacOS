@@ -130,9 +130,9 @@ static void paint(void)
     fill(0, 0, rw, rh, 0, 0xe9eaf0);
     fill(0, 0, rw, 34, 0, 0x34353a);
     menu_apple(12,3);
-    label(50, 6, 1, "Recupero tinymacOS — Tastiera ITA", 0xffffff);
+    label(50, 6, 1, "tinymacOS Recovery", 0xffffff);
     label(rw - 109, 9, 0, "Spegni…", 0xf2f2f5);
-    const char *head = page == HOME_MENU ? "Recupero tinymacOS" : page == DEST ? "Seleziona un disco" : page ==
+    const char *head = page == HOME_MENU ? "tinymacOS Recovery" : page == DEST ? "Seleziona un disco" : page ==
                        TOOLS ? "Utility Disco" : page == TERM ? "Terminale" : page == CONFIRM ? "Conferma l’operazione" : page ==
                        POWER ? "Spegnere il computer?" : "Recupero";
     window_frame(x0,y0,ww,hh);
@@ -354,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10 (30A3)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10 (30A4)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -460,7 +460,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     if (absolute) absolute->Reset(absolute,FALSE);
     int direct = rec_pointer_start(bs,mx,my);
     int keyboards=rec_keyboard_start(bs);
-    if(!keyboards)strset(info,"Tastiera ITA: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
+    if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
 
     for (;;) {
         if (dirty) {

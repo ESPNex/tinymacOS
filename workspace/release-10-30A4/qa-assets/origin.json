@@ -1,0 +1,6 @@
+{
+  "source": "/var/tmp/30a3-hybrid-boot.png",
+  "source_sha256": "e572848c5034c6a4f4e025d8bca1edd45f153f142185eb06285bf67c3495f772",
+  "source_is_real_QEMU_frame": true,
+  "scope": "Only detect the earlier firmware picker; not a reference image for a production success assertion"
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "source": "/var/tmp/tmc10-appearance-rdm1toyl/evidence/recovery-smaller-title.png",
+    "original_sha256": "743d186adbc17a8c7b8e7ef82da7b3d9ff7652d44be047e7754c061ff7b4f4da",
+    "crop": [
+      0,
+      0,
+      690,
+      370
+    ],
+    "file": "recovery-title-and-installer.png",
+    "sha256": "78c3aa909dbd50f783e278fb0c02277c1e13151c7a1519bef1d69cc41bd12972"
+  },
+  {
+    "source": "/var/tmp/tmc10-appearance-rdm1toyl/evidence/finder-applications-grid.png",
+    "original_sha256": "a157159982179db6113b853a3eb2c803cdab60bbb5d25485987f69153d668b8c",
+    "crop": [
+      563,
+      305,
+      637,
+      407
+    ],
+    "file": "finder-applications-grid.png",
+    "sha256": "3898491c1f0c3ab896072a9d8cd7d7cdd91cc04b6bdc3430e144b4597db567cd"
+  },
+  {
+    "source": "/var/tmp/tmc10-appearance-rdm1toyl/evidence/finder-applications-list.png",
+    "original_sha256": "17f80ca43f5fb66318a857d8c0b05bb8edd2d0e51c93912f1aaed9d573d36382",
+    "crop": [
+      309,
+      367,
+      353,
+      439
+    ],
+    "file": "finder-applications-list.png",
+    "sha256": "63bb93d684c8498cf496bacc5fd325c1aadcd9320ca4d6c26adca385da976ee7"
+  }
+]
