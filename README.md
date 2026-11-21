@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**10.1.4 Tramontana / 30B5: collaudi completati, pubblicazione source-first in corso.** Lo stato effettivo sarà nella ricevuta `workspace/release-10.1.4-30B5/github-release-verification.json`. Le nove release precedenti, inclusa la [10.1.3](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.3), sono pre-release con asset, note e tag preservati.
+**[tinymacOS 10.1.4 Tramontana / 30B5 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.4).** [Scarica la ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.4/tinymacOS-10.1.4-x86_64.iso). Sorgenti sincronizzati prima degli upload (`f4360c9c366efb74ea48e9d02bf06f31e64da832`); download anonimo completo e SHA-256 verificati. Ricevuta: `workspace/release-10.1.4-30B5/github-release-verification.json`. Le nove release precedenti sono pre-release, con asset, note e tag preservati.
 
 **Riscontro fisico 10.1.3: Recovery funziona ma il mouse si muove solo verticalmente.** La 10.1.4 corregge un framing Report-ID/Boot che riproduce esattamente un movimento X letto come Y nei tre percorsi xHCI, USB2 e Recovery. Tre controlli negativi eseguono gli stessi byte sul vero sorgente 10.1.3. È un difetto riprodotto, non la prova del traffico USB del mouse fisico.
 
