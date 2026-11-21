@@ -1,0 +1,7 @@
+PASS actual control.c: 5 resolutions, shared rounded hit geometry, disjoint targets, monotonic slider quantization, real six-preference dispatch, drag/capture/release, keyboard endpoints/tab, actual app actions, failed syscall has no optimistic state; all tiles MAT_DOCK, all symbols from SVG alpha masks
+ 
+In file included from /home/user/tinymacOS/desktop/desk.h:2,
+                 from /var/tmp/tmc101-contract-sa7v_yzj/test.c:4:
+/home/user/tinymacOS/desktop/gfx.h:20:16: warning: built-in function ‘y1’ declared as non-function [-Wbuiltin-declaration-mismatch]
+   20 | extern int x1, y1, x2, y2;
+      |                ^~

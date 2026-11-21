@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "image": "/var/tmp/tmc-threads-guest/tinymacOS-qa-probe-x86_64.iso",
+  "iso_sha256": "868082687084b58480903564adfdb7c774dfc73b2d2bff754e93ee58ec41a885",
+  "production_build": "/var/tmp/tmc-10.1.5/build",
+  "kernel_sha256": "5e066a94b2bd46a344d16053b6c112ba8a07628e652ae138b552374cb44dafe5",
+  "kernelcache_sha256": "4e2563cb9f4eddfb29a13b79be8b4b6549144292e7aa953d80240932cae9b6f5",
+  "actual_iso_kernel_equals_current_production": true,
+  "source_files_verified": 419,
+  "source_manifest_sha256": "d70114838475cffae1c2694a6184575a052bba2ab19daae4022c414568f3f2b8"
+}

@@ -1,5 +1,5 @@
-/* Recovery USB pointer ownership: detach only a Boot-mouse interface child,
- * never its host, hub, keyboard or boot storage. Non-Boot unclaimed HID uses
+/* Recovery USB pointer ownership: never detach a firmware-owned mouse.
+ * Its existing SimplePointer remains the live input path. Non-Boot unclaimed HID uses
  * descriptor parsing. Error recovery runs at application TPL, not callbacks. */
 #ifdef TMC_REC_USB_TEST
 #include "../tests/recovery_usb_support.h"
@@ -118,12 +118,12 @@ static int probe(EfiUsb *io)
         if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.addr&128)||!(e.addr&15))continue;
         unsigned packet=e.packet&2047;if(packet<3||packet>64)continue;
         relative=0;memset(&layout,0,sizeof layout);
-        /* A Boot label is not a packet layout. Use the descriptor like
-         * Linux usbhid; fallback only after explicit Boot negotiation. Keep
-         * the parsed layout for the Report-ID framing guard even in Boot. */
+        /* Do not force a Boot mouse into Report just because a descriptor
+         * parses. Keep Report for non-Boot devices or verified Boot rejection. */
         int parsed=report&&pointer_layout(desc,wanted,packet,&layout);
-        if(parsed && (!boot || protocol(io,f.number,1)))relative=0;
-        else {if(!boot||!protocol(io,f.number,0))continue;relative=1;}
+        if(boot && protocol(io,f.number,0))relative=1;
+        else if(parsed && (!boot || protocol(io,f.number,1)))relative=0;
+        else continue;
         unsigned interval=MAX(1,MIN(255,e.interval));
         if(!EFI_ERROR(io->async(io,e.addr,TRUE,interval,packet,received,0))){
             active_io=io;submitted=1;active_ep=e.addr;active_packet=packet;active_interval=interval;return 1;
@@ -147,18 +147,12 @@ int rec_pointer_start(EFI_BOOT_SERVICES *bs, int x, int y)
         int claimed = 0;
         for (UINTN j = 0; j < count;
                 j++) if (users[j].Attributes & (EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE)) claimed = 1;
-        EfiUsb *io=0;UsbInterface f;int detached=0;
-        if(!EFI_ERROR(bs->HandleProtocol(handles[i],&guid,(void **)&io)) && io &&
-           !EFI_ERROR(io->interface_desc(io,&f)) && f.cls==3 && !f.alt && f.sub==1 && f.proto==2 && claimed){
-            int ok=1,drivers=0;
-            for(UINTN j=0;j<count;j++)if(users[j].Attributes&EFI_OPEN_PROTOCOL_BY_DRIVER){
-                drivers++;if(EFI_ERROR(bs->DisconnectController(handles[i],users[j].AgentHandle,0)))ok=0;
-            }
-            if(ok&&drivers){claimed=0;detached=1;}
-        }
-        if (users) bs->FreePool(users);
-        if (!claimed && !EFI_ERROR(bs->HandleProtocol(handles[i], &guid, (void **)&io)) && io) active = probe(io);
-        if(detached&&!active)bs->ConnectController(handles[i],0,0,FALSE);
+        /* A claimed HID may already expose a fully working firmware
+         * SimplePointer. Do not destroy that input path to run our decoder.
+         * Unclaimed EFI_USB_IO interfaces remain eligible for direct input. */
+        EfiUsb *io=0;
+        if(users)bs->FreePool(users);
+        if(!claimed && !EFI_ERROR(bs->HandleProtocol(handles[i],&guid,(void **)&io)) && io)active=probe(io);
     }
     bs->FreePool(handles);
     return active;

@@ -317,25 +317,27 @@ static int configure(struct Usb*u, int port, int speed)
     int usable=0;
     for(int k=0;k<count;k++) {
         struct Hid *h=&u->hid[k];int ok=1,report_ready=0;
-        /* Linux usbhid uses the report descriptor, not fixed byte offsets.
-         * Prefer verified Report mode; Boot is only a negotiated fallback. */
-        if(h->proto==2 && h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
-           !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
-           pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
-            if(select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
-        }
-        if(h->proto==3) {
-            if(!report_ready) {
-                if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
-                else {
-                    memset(u->desc,0,sizeof u->desc);
-                    if(control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len||
-                       !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
-                }
+        /* Boot-capable mice start in the mandatory Boot format. A parsed
+         * descriptor is retained but is not permission to force Report mode.
+         * Report SET/GET success alone did not prove a usable IN stream. */
+        if(h->proto==2){
+            int boot_ok=select_protocol(u,h->iface,0);
+            int parsed=h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
+                !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
+                pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet);
+            if(!boot_ok){
+                if(parsed && select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
+                else ok=0;
             }
-        } else {
+        }
+        if(h->proto==3 && !report_ready){
+            if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
+            else if(control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len||
+                    !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
+        }
+        if(h->proto==1){
             if(!select_protocol(u,h->iface,0))ok=0;
-            if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
+            if(ok){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
         const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":

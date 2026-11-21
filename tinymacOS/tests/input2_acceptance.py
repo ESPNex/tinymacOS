@@ -67,8 +67,8 @@ try:
         g.move(1005,502);g.button('right',True);g.button('right',False);g.visible('Apri Scrivania in Finder');g.key('esc')
         passed('Desktop sprite, exact Finder drag/release and right-click menu')
         g.key('f2');g.visible('Sessione locale');g.cmd('echo PS2_USB2_INPUT_OK','PS2_USB2_INPUT_OK')
-        g.cmd('sw_vers','ProductVersion:    10.1.4');g.visible('BuildVersion:      30B5')
-        passed('Native keyboard F2, uppercase/underscore command typing and version 30B5')
+        g.cmd('sw_vers','ProductVersion:    10.1.5');g.visible('BuildVersion:      30B6')
+        passed('Native keyboard F2, uppercase/underscore command typing and version 30B6')
         # PS/2 negotiates a wheel packet; EHCI/UHCI prefer validated Report protocol.
         # xHCI now prefers the validated Report layout, including wheel.
         if True:

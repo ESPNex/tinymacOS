@@ -39,13 +39,13 @@ static EFI_TPL raise(EFI_TPL t){assert(t==TPL_NOTIFY);return 4;}
 static void restore(EFI_TPL t){assert(t==4);}
 static EFI_BOOT_SERVICES bs={locate,info,freepool,handle,raise,restore,detach,connect};
 int main(void){
- assert(probe(&io)&&!relative&&state==1);
- deny_report=1;state=1;assert(probe(&io)&&!relative);
+ assert(probe(&io)&&relative&&state==0);
+ deny_report=1;state=1;assert(probe(&io)&&relative&&state==0);
  state=0;assert(probe(&io)&&relative);deny_boot=1;state=2;assert(!probe(&io));
  short_reply=1;assert(!probe(&io));short_reply=0;deny_boot=deny_report=0;
  bad_report=1;assert(probe(&io)&&relative);bad_report=0;
  deny_report=1;state=0;
- puts("PASS Recovery descriptor Report preference, verified Boot fallback, mode mismatch rejected");
+ puts("PASS Recovery verified Boot first, strict Report fallback, mode mismatch rejected");
  assert(rec_pointer_start(&bs,100,100));TabletState s;
  u8 r[]={1,12,0};received(r,3,0,0);r[1]=0;r[2]=-9;received(r,3,0,0);
  assert(rec_pointer_next(&bs,&s)&&rec_pointer_relative()&&s.x==12&&s.y==-9&&s.buttons==1);
@@ -69,9 +69,9 @@ int main(void){
  id_report[0]=5;received(id_report,7,0,0);assert(!rec_pointer_next(&bs,&s));
  puts("PASS actual Recovery vertical-only reproduction: ID/16-bit report despite Boot indication, X=64/Y=0 then X=0/Y=64; foreign ID ignored");
  wide=0;state=0;
- exclusive=1;assert(rec_pointer_start(&bs,100,100)&&disconnects==1&&!connected_back);
- exclusive=1;device_proto=1;assert(!rec_pointer_start(&bs,100,100)&&disconnects==1);
+ exclusive=1;assert(!rec_pointer_start(&bs,100,100)&&!disconnects&&!connected_back);
+ exclusive=1;device_proto=1;assert(!rec_pointer_start(&bs,100,100)&&!disconnects);
  device_proto=2;exclusive=1;deny_boot=deny_report=1;state=2;
- assert(!rec_pointer_start(&bs,100,100)&&disconnects==2&&connected_back==1);
- puts("PASS Recovery takes over only the Boot-mouse child; leaves keyboard driver alone and reconnects firmware on failed takeover");
+ assert(!rec_pointer_start(&bs,100,100)&&!disconnects&&!connected_back);
+ puts("PASS Recovery never disconnects a firmware-owned mouse or keyboard; existing firmware pointer remains available");
 }

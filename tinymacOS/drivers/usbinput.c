@@ -49,15 +49,19 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length};
         if((u->speed==2&&p->packet>8)||(u->speed==1&&p->packet>64))continue;
         int report_ready=0;
-        /* Descriptor-first like Linux usbhid, Boot only as verified fallback. */
-        if(p->proto==2) {
-            if(p->report_length && p->report_length<=sizeof u->desc &&
-               !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes==p->report_length &&
-               pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout) &&
-               select_protocol(u,p->iface,1)){p->proto=3;report_ready=1;}
-            else if(!select_protocol(u,p->iface,0))continue;
-        } else if(p->proto==1 && !select_protocol(u,p->iface,0))continue;
-        if(p->proto==3 && !report_ready) {
+        /* Boot support is a compatibility promise, not an instruction to
+         * switch a working mouse into descriptor Report mode. */
+        if(p->proto==2){
+            int boot_ok=select_protocol(u,p->iface,0);
+            int parsed=p->report_length && p->report_length<=sizeof u->desc &&
+                !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes==p->report_length &&
+                pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout);
+            if(!boot_ok){
+                if(parsed && select_protocol(u,p->iface,1)){p->proto=3;report_ready=1;}
+                else continue;
+            }
+        }else if(p->proto==1 && !select_protocol(u,p->iface,0))continue;
+        if(p->proto==3 && !report_ready){
             n=p->report_length;
             if(!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n||
                !pointer_layout(u->desc,n,MIN(p->packet,64),&p->layout))continue;

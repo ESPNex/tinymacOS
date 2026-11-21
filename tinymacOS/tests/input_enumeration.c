@@ -60,7 +60,7 @@ int main(void)
      * produces X=0, Y=64 from a horizontal-only motion. */
     u8 horizontal[]={4,0,64,0,0,0,0};
     assert((int8_t)horizontal[1]==0&&(int8_t)horizontal[2]==64);
-    assert(run(0,0,1,0));assert(usb[0].hid[0].proto==3&&protocol==1&&!boot_requests&&report_requests==1);
+    assert(run(0,0,1,0));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1&&!report_requests);
     TabletState s;assert(pointer_read(&usb[0].hid[0].tablet,horizontal,7,1280,800,&s));
     assert(s.x==64&&s.y==0&&!s.buttons);
     horizontal[2]=0;horizontal[4]=64;
@@ -73,11 +73,11 @@ int main(void)
     horizontal[2]=0;horizontal[4]=64;memcpy(h->report,horizontal,7);
     transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==64&&!e.c&&h->armed);
     assert(!input_pop(&e));
-    puts("PASS vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64");
+    puts("PASS verified Boot does not force Report; vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64");
     assert(input_diag.pointers==1&&!input_diag.control_errors);
     assert(input_diag.device[0].vid==0x1234&&input_diag.device[0].pid==0x5678);
-    assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&!boot_requests);
-    assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==1);
+    assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&boot_requests==1);
+    assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==2);
     puts("PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL");
     assert(run(1,1,0,0));assert(usb[0].hid[0].proto==2&&input_diag.pointers==1);
     assert(!run(1,1,2,0));assert(!input_diag.pointers);

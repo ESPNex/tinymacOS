@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "log": "PASS actual Recovery async recovery: failed clear-halt or resubmit retries without double-cancelling; failed cancellation retries safely; subsequent movement preserved\n",
+  "source_sha256": "1b4d12fe5c88d6f472dc7786e611898158a21fbd445645a848980808b883168f",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ]
+}

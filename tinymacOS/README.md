@@ -1,24 +1,27 @@
-# tinymacOS 10.1.4 · Tramontana / 30B5
+# tinymacOS 10.1.5 · Tramontana / 30B6
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS. Repository pubblico, ISO negli asset delle release, non in Git.
 
-[Note 10.1.4, risultati e limiti](../workspace/release-10.1.4-30B5/RELEASE.md) · [Confronto sorgente Linux v6.12](../workspace/release-10.1.4-30B5/LINUX-REVIEW.md). Lo stato di pubblicazione effettivo è nella ricevuta `github-release-verification.json`, quando presente; fino alla pubblicazione resta disponibile la precedente 10.1.3.
+[Note 10.1.5, risultati e limiti](../workspace/release-10.1.5-30B6/RELEASE.md) · [Confronto sorgente Linux v6.12](../workspace/release-10.1.5-30B6/LINUX-REVIEW.md). Lo stato di pubblicazione effettivo è nella ricevuta `github-release-verification.json`, quando presente; fino alla pubblicazione resta disponibile la precedente 10.1.3.
 
 ## Input: situazione reale
 
-**10.1.3: l’utente segnala Recovery funzionante ma movimento soltanto verticale. La correzione sul PC fisico non è confermata.** Riferimento storico esatto: 2.4.5 Levante / 21B9, Recovery funzionante e login solo verticale.
+**10.1.4: sul PC dell’utente il mouse è fermo sia al login sia in Recovery. Regressione fisica confermata dall’utente; la 10.1.5 non è ancora verificata su quel PC.** La 10.1.3 muoveva soltanto in verticale in Recovery; il riferimento 2.4.5 Levante / 21B9 aveva Recovery funzionante e login verticale.
 
-La 10.1.4 corregge il framing dei pacchetti numerati interpretati come Boot, preferisce il descriptor e il protocollo Report verificato, conservando un fallback Boot negoziato. Tre test identici sul vero codice precedente riproducono la conversione errata X=64/Y=0 → X=0/Y=64; il nuovo codice mantiene entrambi gli assi indipendenti. Questo è un difetto riprodotto, non un’acquisizione USB del mouse dell’utente.
+La 10.1.5 interviene sui seguenti difetti di compatibilità introdotte o aggravate dalla 10.1.4:
 
-Confronto ingegneristico con Linux v6.12: xHCI pubblica il primo TRB soltanto dopo l’intero TD, attende Status dopo Short Data e controlla la lunghezza effettiva; EHCI quiesce la schedule periodica prima delle modifiche all’overlay e lascia il toggle interrupt all’hardware. Nessun driver Linux importato. La Recovery usa EFI_USB_IO e condivide il decoder; non avvia gli HCD nativi mentre il firmware possiede i controller.
+- Mouse Boot: negozia prima Boot, senza forzare Report solo perché il descriptor è leggibile e SET/GET_PROTOCOL risponde. Report rimane il percorso per dispositivi non-Boot o quando Boot è rifiutato e Report è verificato. Il descriptor relativo rimane disponibile per i pacchetti numerati già coperti dai test X/Y.
+- I frame Boot di 8 byte con padding riservato zero e pulsanti validi non vengono più scartati tutti; i report numerati completi con padding zero sono accettati. ID estranei e frame incompleti restano esclusi fuori da queste forme esplicite. Non si scambiano gli assi e non si sceglie il formato dal verso del movimento. In caso di byte intrinsecamente ambigui tra Boot e Report la compatibilità universale non è garantita.
+- Recovery: non disconnette più il driver firmware che possiede il mouse. Conserva SimplePointer e usa il trasporto diretto soltanto sulle interfacce USB non reclamate, ripristinando la proprietà non invasiva della 21B9. Poll di tutti i puntatori e ripresa asincrona diretta conservati.
+- EHCI: osserva prima le TD; ferma la schedule periodica soltanto se occorre davvero modificare un QH o recuperare un errore, non ad ogni poll a vuoto. Conservati toggle hardware e protezione degli overlay introdotti dopo la revisione Linux.
 
-Conservati PS/2, EHCI HID, UHCI companion, xHCI con hub USB2, routing Intel, ripresa asincrona Recovery e acquisizione del solo figlio mouse. Tastiera fisica esclusivamente italiana ISO, UTF-8, accenti, euro e AltGr tra login, app e Recupero. Nessun pannello diagnostico F11 al login; F11 sul desktop live apre l’installer.
+Si tratta di difetti e casi di compatibilità software riproducibili, **non di un’acquisizione del traffico del mouse fisico né di una garanzia di soluzione per l’ASRock**. La preferenza Report della 10.1.4 non era stata giustificata da una prova fisica e viene ritirata. Restano i test sul vero codice precedente, non semplici PASS della stessa VM.
 
-**I PASS QEMU e ASan/UBSan non provano il funzionamento sull’ASRock Q1900M/J1900.** Nessuna regola riservata a quella scheda; niente promessa di compatibilità universale. Non implementati OHCI, hotplug generale, hub SuperSpeed o HID universale.
+PS/2, EHCI, UHCI companion, xHCI, routing Intel e tastiera italiana ISO conservati. Nessun nuovo pannello diagnostico F11. I test ASan/UBSan e QEMU non verificano il PC ASRock Q1900M/J1900; non implementati OHCI, hotplug generale, hub SuperSpeed o HID universale.
 
 ## Centro di Controllo e artwork
 
-13 icone originali in `assets/control-center/*.svg`, sorgenti autorevoli. `tools/control-svg.py` le compila deterministicamente in maschere alpha antialias a 64 px, tinteggiate dal renderer nativo; non è un interprete SVG/XML a runtime. Gli SVG e il manifest sono installati nel filesystem. Il codice geometrico C precedente delle icone del pannello è rimosso.
+Conservate dalla 10.1.4: 13 icone originali in `assets/control-center/*.svg`, sorgenti autorevoli. `tools/control-svg.py` le compila deterministicamente in maschere alpha antialias a 64 px, tinteggiate dal renderer nativo; non è un interprete SVG/XML a runtime. Gli SVG e il manifest sono installati nel filesystem. Il codice geometrico C precedente delle icone del pannello è rimosso.
 
 Pannello di vetro conservato; **un solo Sfondo e un solo accesso alle Impostazioni**. Contratti su hit-test e azioni effettive, preview tratta dalla vera ISO, non un mockup.
 
@@ -37,8 +40,8 @@ python3 tools/local-tools.py /var/tmp/tmc/tools/root
 TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc1014 bash build.sh
 mkdir -p /var/tmp/tmc1014-optical
 TOOLROOT=/var/tmp/tmc/tools/root python3 tools/dualboot-iso.py \
-  /var/tmp/tmc1014/tinymacOS-10.1.4-x86_64.iso \
-  /var/tmp/tmc1014-optical/tinymacOS-10.1.4-x86_64.iso
+  /var/tmp/tmc1014/tinymacOS-10.1.5-x86_64.iso \
+  /var/tmp/tmc1014-optical/tinymacOS-10.1.5-x86_64.iso
 TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc1014 \
   STATE=/var/tmp/tramontana-vm LIVE=1 bash run.sh
 ```
@@ -53,13 +56,13 @@ VM Q35/AHCI x86-64, Secure Boot disattivato, almeno 512 MiB RAM (1 GiB consiglia
 
 F1–F9 app; F2 Terminale; Ctrl+Spazio Cerca; Ctrl+Maiusc+Q blocco sessione. Finder mostra i bundle e file reali. Temi e wallpaper storici non identificano la release attuale.
 
-Premere ripetutamente R o F12 durante la mela per Recovery ottica. L’installer copia BaseSystem nella partizione Recovery per recupero locale senza ISO. `sw_vers`: `tinymacOS Recovery 10.1.4 (30B5)`. Runtime distinto da macOS/Internet Recovery Apple.
+Premere ripetutamente R o F12 durante la mela per Recovery ottica. L’installer copia BaseSystem nella partizione Recovery per recupero locale senza ISO. `sw_vers`: `tinymacOS Recovery 10.1.5 (30B6)`. Runtime distinto da macOS/Internet Recovery Apple.
 
 V abilita verbose; `bootverbose status`, `on`, `off`, `log [pagina]`. Persistenza richiede sistema installato. VM/MMU multi-CPU, TLS e sincronizzazione nativa sperimentali, non libc/POSIX/pthread completa.
 
 ## Prove e storico
 
-- [`workspace/release-10.1.4-30B5`](../workspace/release-10.1.4-30B5/): nuove ricevute, confronto Linux, controlli negativi e pixel reali.
+- [`workspace/release-10.1.5-30B6`](../workspace/release-10.1.5-30B6/): nuove ricevute, confronto Linux, controlli negativi e pixel reali.
 - [`workspace/release-10.1.3-30B4`](../workspace/release-10.1.3-30B4/): release precedente; i suoi PASS non annullano il riscontro fisico negativo.
 - [`workspace/release-2.4.5-input4`](../workspace/release-2.4.5-input4/): riferimento 21B9.
 - [`workspace/webkit-tmc`](../workspace/webkit-tmc/): regressioni kernel/runtime e sonde QA separate, non da pubblicare.

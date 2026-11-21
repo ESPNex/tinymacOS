@@ -27,11 +27,11 @@ static UsbInput u;
 static int enumerate(void){memset(&u,0,sizeof u);u.speed=1;u.control=transport;return usb_input_enumerate(&u,7);}
 int main(void)
 {
- assert(enumerate()==1&&u.address==7&&u.npipe==1&&u.pipe[0].proto==3&&u.pipe[0].layout.id==4);
+ assert(enumerate()==1&&u.address==7&&u.npipe==1&&u.pipe[0].proto==2&&protocol==0&&u.pipe[0].layout.id==4);
  u8 data[]={4,5,0x34,0x12,0xfe,0xff,255};memcpy(u.pipe[0].report,data,sizeof data);usb_input_report(&u,0,7);
  Event e;assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0x1234&&e.b==-2&&e.c==5);
  assert(input_pop(&e)&&e.type==EV_SCROLL&&e.a==-1);assert(!input_pop(&e));
- puts("PASS USB2 shared HID: address/config, validated Report preference, report-ID/16-bit motion/wheel; SET_IDLE STALL tolerated");
+ puts("PASS USB2 shared HID: address/config, verified Boot first, descriptor retained, report-ID/16-bit motion/wheel; SET_IDLE STALL tolerated");
  bad_report=1;assert(enumerate()==1&&u.pipe[0].proto==2);
  reject_boot=1;protocol=0;assert(enumerate()==1&&u.pipe[0].proto==2);
  protocol=2;assert(!enumerate()&&!u.npipe);bad_report=0;reject_report=1;protocol=1;

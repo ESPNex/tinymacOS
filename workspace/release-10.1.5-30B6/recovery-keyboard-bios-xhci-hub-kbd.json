@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "profile": "xhci-hub-kbd",
+  "firmware": "bios",
+  "iso_sha256": "0021de17c27fc0b23417ef015542adde7b773ed89a1f9028a769ee2724b64653",
+  "work": "/var/tmp/tmc10-rec-kbd-xd90z9_4",
+  "local_installed_recovery": true,
+  "i8042_present": false,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

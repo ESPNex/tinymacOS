@@ -355,7 +355,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.4 (30B5)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.5 (30B6)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -478,8 +478,8 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     my = rh - 55;
     int keyboards=rec_keyboard_start(bs);
     if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
-    /* Own USB pointer children before taking firmware protocol snapshots:
-     * disconnecting a mouse driver invalidates its old SimplePointer object. */
+    /* Direct input only for unclaimed USB interfaces. Never invalidate a
+     * firmware-owned mouse or its existing SimplePointer protocol. */
     int direct = rec_pointer_start(bs,mx,my);
     /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
      * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */

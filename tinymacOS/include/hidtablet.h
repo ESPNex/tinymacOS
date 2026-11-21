@@ -17,7 +17,7 @@ typedef struct {
 /* Report-protocol absolute tablet OR signed relative USB mouse. */
 int pointer_layout(const u8 *, unsigned, unsigned, TabletLayout *);
 int pointer_read(const TabletLayout *, const u8 *, unsigned, unsigned, unsigned, TabletState *);
-/* Decode standard Boot, guarding against an exactly descriptor-framed,
+/* Decode standard Boot, guarding against an descriptor-framed (including zero padding),
  * numbered relative Report received despite claimed Boot protocol. No axis
  * direction, VID/PID, packet-motion guessing or unknown-ID reinterpretation. */
 int pointer_boot_read(const TabletLayout *,const u8 *,unsigned,unsigned,unsigned,TabletState *);

@@ -122,13 +122,19 @@ int tablet_read(const TabletLayout *t, const u8 *report, unsigned received, unsi
 int pointer_boot_read(const TabletLayout *t,const u8 *p,unsigned n,unsigned w,unsigned h,TabletState *s)
 {
     if(!p||!s||n<3||n>64)return 0;
-    /* A complete, numbered relative descriptor has stronger framing than
-     * blindly treating its ID as buttons and its button byte as horizontal X.
-     * This exact mismatch turns horizontal motion into vertical-only motion.
-     * Short, unknown or unnumbered reports never trigger this guard. */
+    /* A descriptor-framed numbered report still outranks Boot offsets.
+     * Accept a complete frame with zero transport padding, never a foreign
+     * ID or a truncated numbered report. This is byte framing, not motion. */
     if(t && t->relative && t->id && t->bytes>4 && n>4){
-        if(n!=t->bytes||p[0]!=t->id)return 0;
-        return pointer_read(t,p,n,w,h,s);
+        if(n>=t->bytes && p[0]==t->id){
+            unsigned j=t->bytes;while(j<n && !p[j])j++;
+            if(j==n)return pointer_read(t,p,n,w,h,s);
+        }
+        /* Some Boot interfaces deliver an 8-byte, zero-padded Boot packet.
+         * In 10.1.4 these were ALL dropped solely because n exceeded four.
+         * Standard buttons and all reserved padding must be valid. */
+        if(n!=8 || (p[0]&~7u))return 0;
+        for(unsigned j=4;j<n;j++)if(p[j])return 0;
     }
     *s=(TabletState){(int8_t)p[1],(int8_t)p[2],p[0]&7,n>3?(int8_t)p[3]:0};
     return 1;

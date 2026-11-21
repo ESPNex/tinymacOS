@@ -195,7 +195,16 @@ void ehci_poll(void)
 {
     for(unsigned c=0;c<nehci;c++) {
         struct Ehci *h=ehcis+c;if(!h->active)continue;
-        if(!periodic_stop(h))continue;
+        /* Observe DMA first. Stopping/restarting on every idle input poll can
+         * starve real periodic endpoints; quiesce only before an actual edit. */
+        asm volatile("lfence":::"memory");
+        int work=0;
+        for(unsigned i=0;i<h->used;i++)for(unsigned j=0;j<h->dev[i].u.npipe;j++){
+            struct Edev *d=h->dev+i;UsbInputPipe *p=d->u.pipe+j;
+            if((p->armed<0 && ticks>=p->retry_at) ||
+               (p->armed>0 && !(*(volatile u32 *)&d->td[j].token&EACTIVE)))work=1;
+        }
+        if(!work || !periodic_stop(h))continue;
         asm volatile("lfence":::"memory");
         for(unsigned i=0;i<h->used;i++)for(unsigned j=0;j<h->dev[i].u.npipe;j++) {
             struct Edev *d=h->dev+i;UsbInputPipe *p=d->u.pipe+j;if(!p->armed)continue;

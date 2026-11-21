@@ -6,7 +6,10 @@ r=Path(__file__).resolve().parents[1];sys.path.insert(0,str(r.parent.parent/'tin
 from retail_guest import Retail
 from pixels import locate
 cpus=int(os.environ.get('TMC_SMP','2'));assert cpus in (1,2,4,8)
-iso=Path('/var/tmp/tmc-sync-guest/tinymacOS-10.1.2-x86_64.iso');w=Path(tempfile.mkdtemp(prefix='tmc-sync-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
+iso=Path('/var/tmp/tmc-sync-guest/tinymacOS-qa-probe-x86_64.iso')
+from probe_media import verify_probe_media
+verify_probe_media(iso,"sync")
+w=Path(tempfile.mkdtemp(prefix='tmc-sync-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=str(iso.parent),TMC_SMP=str(cpus),TMC_POINTER='mouse')
 record={'passed':False,'requested_cpus':cpus,'scope':'native private compare-and-park/wake and target mutex/condition algorithms; no pthread/join/PI/process-shared/cancellation or WebKit claim','iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'external_evidence':str(ev)}
 try:

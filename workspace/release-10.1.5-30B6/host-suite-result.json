@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "host-input",
+      "exit_code": 0
+    },
+    {
+      "name": "host-legacy",
+      "exit_code": 0
+    },
+    {
+      "name": "pointer-contract",
+      "exit_code": 0
+    },
+    {
+      "name": "regression-negative-controls",
+      "exit_code": 0
+    },
+    {
+      "name": "control-contract",
+      "exit_code": 0
+    },
+    {
+      "name": "linux-hcd",
+      "exit_code": 0
+    }
+  ],
+  "source_manifest_sha256": "961749791220fb94433c0bf13e849a2ef751bffbc2d3fe43487e8b9e4e86d7a6"
+}

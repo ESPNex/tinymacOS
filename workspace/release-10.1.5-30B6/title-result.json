@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "iso_sha256": "0021de17c27fc0b23417ef015542adde7b773ed89a1f9028a769ee2724b64653",
+  "work": "/var/tmp/tmc1011-title-f3eg4cqc",
+  "checks": [
+    {
+      "title": "tinymacOS Recovery",
+      "window": [
+        134,
+        120,
+        1012,
+        560
+      ],
+      "font": 2,
+      "shared_text_y": 12,
+      "opaque_text_error": 0,
+      "ink_center": [
+        639.5,
+        140.5
+      ],
+      "window_title_center": [
+        639.5,
+        141.0
+      ]
+    },
+    {
+      "title": "tinymacOS Recovery",
+      "window": [
+        204,
+        155,
+        1012,
+        560
+      ],
+      "font": 2,
+      "shared_text_y": 12,
+      "opaque_text_error": 0,
+      "ink_center": [
+        709.5,
+        175.5
+      ],
+      "window_title_center": [
+        709.5,
+        176.0
+      ]
+    },
+    {
+      "title": "Terminale",
+      "window": [
+        204,
+        155,
+        1012,
+        560
+      ],
+      "font": 2,
+      "shared_text_y": 12,
+      "opaque_text_error": 0,
+      "ink_center": [
+        708.5,
+        174.0
+      ],
+      "window_title_center": [
+        709.5,
+        176.0
+      ]
+    }
+  ]
+}
