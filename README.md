@@ -1,30 +1,30 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10.1.3 Tramontana / 30B4 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.3).** [Scarica la nuova ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.3/tinymacOS-10.1.3-x86_64.iso). Sorgenti sincronizzati prima degli upload (`77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df`); download anonimo completo verificato. Ricevuta: `workspace/release-10.1.3-30B4/github-release-verification.json`. Tutte le otto release precedenti sono pre-release su richiesta, senza sostituzione dei loro asset o tag.
+**10.1.4 Tramontana / 30B5: collaudi completati, pubblicazione source-first in corso.** Lo stato effettivo sarà nella ricevuta `workspace/release-10.1.4-30B5/github-release-verification.json`. Le nove release precedenti, inclusa la [10.1.3](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.3), sono pre-release con asset, note e tag preservati.
 
-**10.1.2 non ha risolto il mouse sul PC dell’utente:** fermo al login e movimento breve seguito da blocco in Recovery. La 10.1.3 cambia la scelta Boot/Report dei mouse Boot, prende in carico il solo figlio USB mouse in Recovery, applica delte alla posizione corrente e recupera i trasferimenti asincroni dopo errore. I contatori di errori nativi non si esauriscono per tutta la sessione dopo errori separati da traffico valido. Riferimento storico esatto: 2.4.5 Levante / 21B9.
+**Riscontro fisico 10.1.3: Recovery funziona ma il mouse si muove solo verticalmente.** La 10.1.4 corregge un framing Report-ID/Boot che riproduce esattamente un movimento X letto come Y nei tre percorsi xHCI, USB2 e Recovery. Tre controlli negativi eseguono gli stessi byte sul vero sorgente 10.1.3. È un difetto riprodotto, non la prova del traffico USB del mouse fisico.
 
-Centro di Controllo più compatto: **un solo Sfondo e un solo accesso alle Impostazioni**, senza rinunciare al vetro o alle altre funzioni. Preview catturata dalla vera ISO. **Nessuna verifica fisica ASRock Q1900M/J1900: i test QEMU non costituiscono conferma del fix sul PC.**
+Confronto sorgente **Linux v6.12**: pubblicazione dell’intero TD e Short Data/Status xHCI, quiescenza overlay e toggle hardware EHCI. Quattro contratti HCD con controlli negativi; nessun codice Linux importato. Recovery usa EFI_USB_IO, non prende i controller al firmware con gli HCD nativi.
 
-Repository **pubblico** per richiesta dell’utente. Le ISO sono negli asset delle release, non nella cronologia Git. Credenziali cifrate solo nel workspace escluso da Git, chiave separata.
+Centro di Controllo: **13 icone originali SVG**, compilate deterministicamente in alpha antialias per il renderer nativo; SVG/manifest installati nei volumi reali. Vetro e deduplicazione conservati: **un solo Sfondo e un solo accesso alle Impostazioni**. Preview catturata dalla vera ISO, non generata.
 
-Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Sfondo non procedurale, semibold nel wordmark, temi e associazioni sfondi conservati. Safari/WebKit non incluso.
+**Nessuna verifica fisica ASRock Q1900M/J1900: i test QEMU non confermano il funzionamento sul PC.** Riferimento storico esatto: 2.4.5 Levante / 21B9. La 10.1.2 precedente aveva mouse fermo al login e breve movimento/blocco in Recovery.
+
+Repository **pubblico** su richiesta. ISO solo negli asset delle release; credenziali cifrate nel workspace escluso da Git, chiave separata. Le release precedenti vengono mantenute pre-release, con ISO, note e tag conservati.
+
+Artwork importato solo per le applicazioni; altri simboli di sistema procedurali salvo il nuovo Centro di Controllo SVG. Recovery procedurale salvo Terminale. Wallpaper non procedurale, semibold del wordmark e palette dei temi conservati. Safari/WebKit non incluso.
 
 - [Sistema, build e limiti](tinymacOS/README.md)
-- [Note 10.1.3, QA e limiti](workspace/release-10.1.3-30B4/RELEASE.md)
+- [Note 10.1.4 e verifiche](workspace/release-10.1.4-30B5/RELEASE.md)
+- [Confronto Linux, difetti e limiti](workspace/release-10.1.4-30B5/LINUX-REVIEW.md)
+- [Icone SVG originali](tinymacOS/assets/control-center/)
+- [Preview reale Centro di Controllo 10.1.4](workspace/release-10.1.4-30B5/evidence/control-center-detail.png)
+- [Archivio precedente 10.1.3](workspace/release-10.1.3-30B4/RELEASE.md)
 - [Archivio precedente 10.1.2](workspace/release-10.1.2-30B3/RELEASE.md)
-- [Preview reale Centro di Controllo 10.1.3](workspace/release-10.1.3-30B4/evidence/control-center-detail.png)
-- [Archivio precedente 10.1.1](workspace/release-10.1.1-30B2/RELEASE.md)
-- [Correzioni 10.1.3, riproduzioni e limiti](workspace/release-10.1.3-30B4/HISTORY-AND-CHANGES.md)
 - [Ripristino accesso cifrato, chiave separata](workspace/ACCESSO-CIFRATO.md)
-- [Archivio precedente 10.1 / 30B1](workspace/release-10.1-30B1/RELEASE.md)
-- [Archivio 10 / 30A4](workspace/release-10-30A4/RELEASE.md)
-- [Backend sperimentale WebKit, non browser funzionante](workspace/webkit-tmc/README.md)
+- [Backend WebKit sperimentale, non browser funzionante](workspace/webkit-tmc/README.md)
 
-Il repository pubblico non contiene credenziali né ISO nel checkout. Output e toolchain vanno
-fuori dal workspace. L'archivio lossless dei vecchi asset duplicati è documentato
-in `workspace/maintenance-2.4.3/sources/HISTORICAL-ASSETS.md`.
-Le evidenze storiche 2.4.2 e integrated-next sono consolidate in archivi lossless con manifest SHA-256: vedere i rispettivi `EVIDENCE-ARCHIVE.md` per ripristinare tutti i percorsi originali. Nessun sorgente o risultato storico è perso.
+Output e toolchain vanno fuori dal workspace. Archivi storici lossless e manifest in `workspace/maintenance-2.4.3/sources/HISTORICAL-ASSETS.md` e nei rispettivi `EVIDENCE-ARCHIVE.md`; gli elementi seguenti non identificano la versione corrente.
 
 ## Documentazione storica
 

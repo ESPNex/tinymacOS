@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "log": "PASS actual control.c: 5 resolutions, shared rounded hit geometry, disjoint targets, monotonic slider quantization, real six-preference dispatch, drag/capture/release, keyboard endpoints/tab, actual app actions, failed syscall has no optimistic state; all tiles MAT_DOCK, all symbols from SVG alpha masks\n",
+  "source_sha256": {
+    "desktop/control.h": "6ba7af87dbfb5b5bb5ab63a8929076bbf4fc37e8aa016972d87d2df5885b57c0",
+    "desktop/control.c": "780aa885b768795da8b1711d4cc270f35915ad13e3dfb7485048f0ff2d06838d"
+  }
+}

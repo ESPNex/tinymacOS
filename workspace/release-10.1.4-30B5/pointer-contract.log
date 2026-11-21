@@ -1,0 +1,4 @@
+PASS actual Recovery arbitration: idle direct + idle first firmware pointer cannot hide active second mouse; separate X/Y, press/release, AbsolutePointer fallback, fresh direct priority and no phantom idle activity; repeated EFI_SUCCESS AbsolutePointer cannot hide SimplePointer
+ 
+PASS negative control: previous exclusive gates fail the same idle-direct/firmware-mouse assertion
+PASS negative control: actual 10.1.1 arbitration fails the repeated-idle-absolute assertion

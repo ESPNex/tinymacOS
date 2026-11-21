@@ -32,8 +32,8 @@ static unsigned nehci;
 static u32 epchar(UsbInput *u,unsigned ep,unsigned packet)
 {
     unsigned speed=u->speed==3?2:u->speed==2?1:0;
-    return u->address|(ep<<8)|(speed<<12)|(1u<<14)|(packet<<16)|
-        ((!ep&&u->speed!=3)?1u<<27:0)|(4u<<28);
+    return u->address|(ep<<8)|(speed<<12)|(!ep?1u<<14:0)|(packet<<16)|
+        ((!ep&&u->speed!=3)?1u<<27:0)|(!ep?4u<<28:0);
 }
 static u32 epcap(UsbInput *u,unsigned smask)
 {
@@ -47,6 +47,8 @@ static int async_stop(struct Ehci *h)
 {
     h->op[0]&=~(1u<<5);return ewait(h->op+1,1u<<15,0,100);
 }
+static int periodic_stop(struct Ehci *h){h->op[0]&=~(1u<<4);return ewait(h->op+1,1u<<14,0,100);}
+static void periodic_start(struct Ehci *h){asm volatile("mfence":::"memory");h->op[0]|=1u<<4;}
 static void async_start(struct Ehci *h){asm volatile("mfence":::"memory");h->op[0]|=1u<<5;}
 static void etd(struct Etd *t,u64 buf,unsigned n,unsigned pid,unsigned toggle)
 {
@@ -95,11 +97,12 @@ static void epipe_arm(struct Edev *d,unsigned j)
 {
     UsbInputPipe *p=d->u.pipe+j;struct Eqh *q=d->qh+j;struct Etd *t=d->td+j;
     memset(p->report,0,sizeof p->report);etd(t,(u64)p->report,p->packet,1,p->toggle);
-    q->current=0;q->alt=EEND;q->token=0;memset(q->buf,0,sizeof q->buf);memset(q->hi,0,sizeof q->hi);
+    q->current=0;q->alt=EEND;q->token&=1u<<31;memset(q->buf,0,sizeof q->buf);memset(q->hi,0,sizeof q->hi);
     asm volatile("mfence":::"memory");q->next=(u32)(u64)t;p->armed=1;
 }
 static void install_pipes(struct Ehci *h,struct Edev *d)
 {
+    if(!periodic_stop(h))return; /* no active QH overlay writes */
     for(unsigned j=0;j<d->u.npipe;j++) {
         UsbInputPipe *p=d->u.pipe+j;struct Eqh *q=d->qh+j;
         unsigned interval=d->u.speed==3?(p->interval>4?1u<<MIN(p->interval-4,9u):1):p->interval;
@@ -108,6 +111,7 @@ static void install_pipes(struct Ehci *h,struct Edev *d)
         q->link=h->anchors[l].link;epipe_arm(d,j);
         asm volatile("mfence":::"memory");h->anchors[l].link=(u32)(u64)q|EQH;
     }
+    periodic_start(h);
 }
 static void eattach(struct Ehci *,unsigned,unsigned,unsigned,unsigned,unsigned);
 static void hub_children(struct Ehci *h,struct Edev *hub,unsigned depth)
@@ -191,11 +195,13 @@ void ehci_poll(void)
 {
     for(unsigned c=0;c<nehci;c++) {
         struct Ehci *h=ehcis+c;if(!h->active)continue;
+        if(!periodic_stop(h))continue;
+        asm volatile("lfence":::"memory");
         for(unsigned i=0;i<h->used;i++)for(unsigned j=0;j<h->dev[i].u.npipe;j++) {
             struct Edev *d=h->dev+i;UsbInputPipe *p=d->u.pipe+j;if(!p->armed)continue;
             if(p->armed<0) {
                 if(ticks<p->retry_at)continue;p->armed=0;
-                if(!econtrol(&d->u,2,1,0,0x80|p->ep,0)){p->toggle=0;epipe_arm(d,j);}
+                if(!econtrol(&d->u,2,1,0,0x80|p->ep,0)){p->toggle=0;d->qh[j].token=0;epipe_arm(d,j);}
                 continue;
             }
             u32 st=*(volatile u32 *)&d->td[j].token;if(st&EACTIVE)continue;
@@ -209,7 +215,10 @@ void ehci_poll(void)
             p->failures=0; /* successful traffic resets the consecutive-error budget */
             unsigned remaining=(st>>16)&0x7fff;
             if(remaining<=p->packet)usb_input_report(&d->u,j,p->packet-remaining);
-            p->toggle^=1;epipe_arm(d,j);
+            /* QH hardware toggle already accounts for actual USB packets,
+             * including short/zero transfers: never flip it per software TD. */
+            epipe_arm(d,j);
         }
+        periodic_start(h);
     }
 }

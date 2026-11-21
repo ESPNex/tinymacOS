@@ -396,3 +396,14 @@ void button_face(Rect q, int on)
         q.x, q.y, q.w, q.h - 1
     }, r, on ? 0xadcaff : (night ? 0x85858a : 0xbcbcc3), 88);
 }
+
+/* SVG-derived monochrome alpha, tinted with the authoritative panel palette. */
+void alpha_symbol(const u8 *mask,int size,Rect q,u32 ink)
+{
+    if(!mask||size<1||q.w<1||q.h<1)return;
+    for(int j=MAX(0,y1-q.y);j<MIN(q.h,y2-q.y);j++)
+        for(int i=MAX(0,x1-q.x);i<MIN(q.w,x2-q.x);i++){
+            int a=mask[(j*size/q.h)*size+i*size/q.w];
+            if(a)pix(q.x+i,q.y+j,ink,a);
+        }
+}

@@ -43,6 +43,7 @@ done
 ld -nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000 -T userspace/layout.ld "${OBJS[@]}" -o "$OUT/command.debug"
 objcopy --strip-all "$OUT/command.debug" "$OUT/command.elf"
 python3 tools/tramontana-assets.py "$OUT"
+python3 tools/control-svg.py "$OUT"
 python3 tools/system_volume.py "$OUT" disk
 python3 tools/system_volume.py "$OUT" live
 TOOLROOT=${TOOLROOT:-/var/tmp/tmc/tools/root} TMC_BUILD="$OUT" bash tools/iso.sh

@@ -7,7 +7,7 @@ default_pointer=tablet
 selected_iso=${ISO:-};case ${selected_iso##*/} in tinymacOS-1.*.iso|tinymacOS-2.0-x86_64.iso) default_pointer=mouse;; esac
 case ${TMC_POINTER:-$default_pointer} in tablet) pointing=usb-tablet;; mouse) pointing=usb-mouse;; *) echo 'TMC_POINTER: scegliere tablet o mouse.' >&2;exit 2;; esac
 # Do not silently substitute an older external Recovery for the integrated CD.
-if [[ -n ${RECOVERY_IMG:-} && ${selected_iso:-$TMC_ISO} == *tinymacOS-10.1.3-x86_64.iso ]];then
+if [[ -n ${RECOVERY_IMG:-} && ${selected_iso:-$TMC_ISO} == *tinymacOS-10.1.4-x86_64.iso ]];then
  echo 'Nella 10 BaseSystem è già incluso: rimuovi RECOVERY_IMG e premi R alla mela.' >&2;exit 2
 fi
 OVMF_DIR=${OVMF_DIR:-${TOOLROOT:-}/usr/share/OVMF};OVMF_CODE=${OVMF_CODE:-$OVMF_DIR/OVMF_CODE_4M.fd};OVMF_VARS=${OVMF_VARS:-$OVMF_DIR/OVMF_VARS_4M.fd};STATE=${STATE:-state};mkdir -p "$STATE";[[ -f "$STATE/vars.fd" ]]||cp "$OVMF_VARS" "$STATE/vars.fd"

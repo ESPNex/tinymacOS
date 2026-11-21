@@ -65,7 +65,7 @@
   },
   {
     "path": "desktop/gfx.c",
-    "sha256": "36be172dd60e0cfeb064ac2550523132ca534d096a3c0edb2a6b565b8e2821e2"
+    "sha256": "486a49cc732a798ef40961883b7017c8a2c0204a78c32af0fe9d7c0085f10162"
   },
   {
     "path": "kernel/memory.c",

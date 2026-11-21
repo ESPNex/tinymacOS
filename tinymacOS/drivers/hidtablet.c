@@ -118,3 +118,18 @@ int tablet_read(const TabletLayout *t, const u8 *report, unsigned received, unsi
 {
     return t && !t->relative ? pointer_read(t,report,received,w,h,s) : 0;
 }
+
+int pointer_boot_read(const TabletLayout *t,const u8 *p,unsigned n,unsigned w,unsigned h,TabletState *s)
+{
+    if(!p||!s||n<3||n>64)return 0;
+    /* A complete, numbered relative descriptor has stronger framing than
+     * blindly treating its ID as buttons and its button byte as horizontal X.
+     * This exact mismatch turns horizontal motion into vertical-only motion.
+     * Short, unknown or unnumbered reports never trigger this guard. */
+    if(t && t->relative && t->id && t->bytes>4 && n>4){
+        if(n!=t->bytes||p[0]!=t->id)return 0;
+        return pointer_read(t,p,n,w,h,s);
+    }
+    *s=(TabletState){(int8_t)p[1],(int8_t)p[2],p[0]&7,n>3?(int8_t)p[3]:0};
+    return 1;
+}

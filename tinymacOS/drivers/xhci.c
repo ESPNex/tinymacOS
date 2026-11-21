@@ -39,7 +39,7 @@ struct Usb {
     u8 outctx[32*64] ALIGNED(64),ic[33*64] ALIGNED(64);
     u8 desc[1024] ALIGNED(1024); /* Data Stage TRBs have the same 64 KiB boundary rule */
     struct Hid hid[NHID];
-    int id,port,speed,nhid,diag,ctrl_dead;
+    int id,port,speed,nhid,diag,ctrl_dead,ctrl_bytes;
     unsigned route,depth,tt_slot,tt_port,tt_think,hub_ports,hub_think;
 };
 static struct Xhci {
@@ -81,13 +81,13 @@ static void ringinit(Ring *r)
         (u64)r->tr, 0, TY(6) | 2
     };
 }
-static TRB* push(Ring*r, u64 addr, u32 len, u32 ctrl)
+static TRB* enqueue(Ring*r, u64 addr, u32 len, u32 ctrl,int publish)
 {
     TRB*t = r->tr + r->at;
     t->ptr = addr;
     t->len = len;
     asm volatile("sfence":::"memory");
-    t->ctl=ctrl|r->cycle;
+    t->ctl=ctrl|(r->cycle^!publish);
     if (++r->at == NR - 1) {
         r->tr[NR - 1].ctl = TY(6) | 2 | r->cycle;
         r->cycle ^= 1;
@@ -95,6 +95,7 @@ static TRB* push(Ring*r, u64 addr, u32 len, u32 ctrl)
     }
     return t;
 }
+static TRB *push(Ring *r,u64 addr,u32 len,u32 ctrl){return enqueue(r,addr,len,ctrl,1);}
 static int event(TRB *e)
 {
     volatile TRB *t = events + evpos;
@@ -122,6 +123,15 @@ static int waitresult(TRB*t, int ty, int slot,TRB *setup,TRB *data,int control_s
         if(i && !(i%1000))usb_delay_ms(1);
         if (!event(&e)) {
             asm volatile("pause");
+            continue;
+        }
+        /* Linux process_ctrl_td: a short Data event sets actual_length but
+         * must NOT complete the request before its Status event. */
+        if(ty==32 && data && ((e.ctl>>10)&63)==32 && e.ptr==(u64)data &&
+           (e.ctl>>24)==(u32)control_slot && ((e.ctl>>16)&31)==1 && (e.len>>24)==13){
+            unsigned remain=e.len&0xffffff,asked=data->len&0x1ffff;
+            for(int j=0;j<connected;j++)if(usb[j].id==control_slot)
+                usb[j].ctrl_bytes=remain<=asked?(int)(asked-remain):0;
             continue;
         }
         int control_error=ty==32 && (e.len>>24)!=1 && (e.len>>24)!=13 &&
@@ -162,12 +172,16 @@ static int control(struct Usb*u, int rt, int rq, int val, int ix, int n)
 {
     if(u->ctrl_dead)return -1;
     u64 s = (u64)rt | ((u64)rq << 8) | ((u64)val << 16) | ((u64)ix << 32) | ((u64)n << 48);
-    int in = rt & 128;
-    TRB *setup=push(&u->ctrl, s, 8, TY(2) | 64 | ((n ? (in ? 3u : 2u) : 0u) << 16));
+    int in = rt & 128;u->ctrl_bytes=n;
+    if(in&&n)memset(u->desc,0,n);
+    /* Publish the Setup cycle LAST: a running controller may prefetch before
+     * the next doorbell. Linux giveback_first_trb follows this TD invariant. */
+    TRB *setup=enqueue(&u->ctrl, s, 8, TY(2) | 64 | ((n ? (in ? 3u : 2u) : 0u) << 16),0);
     TRB *data=0;
     if (n)
-        data=push(&u->ctrl, (u64)u->desc, n, TY(3) | (in ? 1 << 16 : 0));
+        data=push(&u->ctrl, (u64)u->desc, n, TY(3) | (in ? (1 << 16)|4 : 0));
     TRB*t = push(&u->ctrl, 0, 0, TY(4) | 32 | ((n && in) ? 0 : 1 << 16));
+    asm volatile("sfence":::"memory");setup->ctl^=1;
     ringbell(u->id, 1);
     int ret=waitresult(t,32,0,setup,data,u->id);
     if(ret<0) {
@@ -194,7 +208,7 @@ static int select_protocol(struct Usb *u,int iface,unsigned expected)
     u->desc[0]=255;
     int get=!control(u,0xa1,3,0,iface,1);
     if(u->ctrl_dead)return 0;
-    return get ? u->desc[0]==expected : set;
+    return get ? u->ctrl_bytes==1 && u->desc[0]==expected : set;
 }
 static u32 *ctx(struct Usb*u, int n)
 {
@@ -248,7 +262,7 @@ static int configure(struct Usb*u, int port, int speed)
     s[2] = u->tt_slot | (u->tt_port<<8); /* TTT is reserved except in HS hub contexts */
     int pkt = speed >= 4 ? 512 : speed == 3 ? 64 : 8;
     endpoint(ctx(u, 2), &u->ctrl, 4, pkt, 0);
-    if (command(11, (u64)u->ic, id) < 0 || control(u, 128, 6, 0x100, 0, 8))
+    if (command(11, (u64)u->ic, id) < 0 || control(u, 128, 6, 0x100, 0, 8) || u->ctrl_bytes<8)
         return 0;
     if (speed <= 2 && u->desc[7] != pkt) {
         pkt = u->desc[7];
@@ -261,17 +275,17 @@ static int configure(struct Usb*u, int port, int speed)
         if (command(13, (u64)u->ic, id) < 0)
             return 0;
     }
-    if(control(u,128,6,0x100,0,18))return 0;
+    if(control(u,128,6,0x100,0,18)||u->ctrl_bytes<18)return 0;
     if(input_diag.device_count<TMC_INPUTDIAG_DEVICES) {
         u->diag=++input_diag.device_count;
         InputDeviceDiag *d=&input_diag.device[u->diag-1];
         *d=(InputDeviceDiag){.pci=hc->pci,.port=(u32)port,
             .vid=u->desc[8]|u->desc[9]<<8,.pid=u->desc[10]|u->desc[11]<<8,.status=1};
     }
-    if (control(u, 128, 6, 0x200, 0, 9))
+    if (control(u, 128, 6, 0x200, 0, 9)||u->ctrl_bytes<9)
         return 0;
     int len = u->desc[2] | (u->desc[3] << 8);
-    if (len < 9 || len > 1024 || control(u, 128, 6, 0x200, 0, len))
+    if (len < 9 || len > 1024 || control(u, 128, 6, 0x200, 0, len)||u->ctrl_bytes<len)
         return 0;
     int cfg=u->desc[5];
     for(unsigned at=0;at<(unsigned)len;) {
@@ -303,30 +317,24 @@ static int configure(struct Usb*u, int port, int speed)
     int usable=0;
     for(int k=0;k<count;k++) {
         struct Hid *h=&u->hid[k];int ok=1,report_ready=0;
-        /* Boot mice have a standard, independently negotiated 3-byte XY
-         * format. Use it first; a successful Report switch is not proof the
-         * device actually emits its advertised descriptor. Non-Boot mice keep
-         * descriptor parsing, Report IDs and wide axes. */
-        if(h->proto==2) {
-            if(!select_protocol(u,h->iface,0)) {
-                if(h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
-                   !control(u,0x81,6,0x2200,h->iface,h->report_len) &&
-                   pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet) &&
-                   select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
-                else ok=0;
-            }
+        /* Linux usbhid uses the report descriptor, not fixed byte offsets.
+         * Prefer verified Report mode; Boot is only a negotiated fallback. */
+        if(h->proto==2 && h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
+           !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
+           pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet)) {
+            if(select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
         }
         if(h->proto==3) {
             if(!report_ready) {
                 if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
                 else {
                     memset(u->desc,0,sizeof u->desc);
-                    if(control(u,0x81,6,0x2200,h->iface,h->report_len)||
+                    if(control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len||
                        !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
                 }
             }
         } else {
-            if(h->proto==1 && !select_protocol(u,h->iface,0))ok=0;
+            if(!select_protocol(u,h->iface,0))ok=0;
             if(ok&&h->proto==1){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
@@ -555,7 +563,9 @@ static void transferred(const TRB *e)
             int n=h->mps-(int)(e->len&0xffffff);
             if(n<0||n>h->mps){input_diag.bad_reports++;arm(u,h);return;}
             if(h->proto==1&&n>=8)hid_keys(h->report);
-            if(h->proto==2&&n>=3)hid_relative((int8_t)h->report[1],(int8_t)h->report[2],h->report[0]&7,n>3?(int8_t)h->report[3]:0);
+            if(h->proto==2&&n>=3){TabletState pt;
+                if(pointer_boot_read(&h->tablet,h->report,n,boot.w,boot.h,&pt))hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
+            }
             if(h->proto==3&&n>0) {
                 TabletState pt;
                 if(pointer_read(&h->tablet,h->report,(unsigned)n,boot.w,boot.h,&pt)) {

@@ -56,33 +56,54 @@ static int run(int reject_boot,int reject_report,int current,int bad)
 }
 int main(void)
 {
- Event e;TabletState s;u8 horizontal[]={4,0,64,0,0,0,0};
- /* Real Boot path; a valid Report descriptor must not make us switch formats. */
- assert(run(0,0,1,0));struct Hid *h=&usb[0].hid[0];
- assert(h->proto==2&&protocol==0&&boot_requests==1&&!report_requests);
- TRB ev={0,(13u<<24)|5,TY(32)|(1u<<24)|(3u<<16)};
- memcpy(h->report,(u8[]){1,37,0},3);h->armed=1;transferred(&ev);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==37&&e.b==0&&e.c==1);
- memcpy(h->report,(u8[]){0,0,251},3);transferred(&ev);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==-5&&!e.c);
- puts("PASS xHCI Boot-first: valid Report descriptor does not change standard mouse format; X/Y and release");
- /* Report-only device / rejected Boot: retain ID, wide signed axes, wheel. */
- assert(run(1,0,1,0));h=&usb[0].hid[0];assert(h->proto==3&&boot_requests==1&&report_requests==1);
- assert(pointer_read(&h->tablet,horizontal,7,1280,800,&s)&&s.x==64&&!s.y);
- memcpy(h->report,horizontal,7);h->armed=1;ev.len=(13u<<24)|1;transferred(&ev);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==64&&!e.b);
- horizontal[2]=0;horizontal[4]=64;memcpy(h->report,horizontal,7);transferred(&ev);
- assert(input_pop(&e)&&e.type==EV_MOUSE&&!e.a&&e.b==64);
- assert(!input_pop(&e));
- assert(run(1,1,1,0)&&usb[0].hid[0].proto==3);
- assert(run(1,1,0,0)&&usb[0].hid[0].proto==2);
- assert(!run(1,1,2,0)&&!input_diag.pointers);
- assert(!run(1,0,1,1)&&!input_diag.pointers);
- assert(run(0,0,1,1)&&usb[0].hid[0].proto==2);
- acknowledge_without_switch=1;assert(run(0,0,0,0)&&usb[0].hid[0].proto==2);
- acknowledge_without_switch=0;
- puts("PASS xHCI Report fallback verified, EP0 STALL recovery, malformed/unknown rejected, actual ID/16-bit X/Y completions retained");
- assert(run(0,0,1,0));hc->active=1;hc->ports=1;op=0;
- unsigned before=commands.at;int slots=connected;scan_root_ports();assert(commands.at==before&&connected==slots);
- puts("PASS owned root ports preserve DMA contexts without MMIO reset");
+    /* Negative control: a boot-labelled ID/16-bit report decoded as bytes 1/2
+     * produces X=0, Y=64 from a horizontal-only motion. */
+    u8 horizontal[]={4,0,64,0,0,0,0};
+    assert((int8_t)horizontal[1]==0&&(int8_t)horizontal[2]==64);
+    assert(run(0,0,1,0));assert(usb[0].hid[0].proto==3&&protocol==1&&!boot_requests&&report_requests==1);
+    TabletState s;assert(pointer_read(&usb[0].hid[0].tablet,horizontal,7,1280,800,&s));
+    assert(s.x==64&&s.y==0&&!s.buttons);
+    horizontal[2]=0;horizontal[4]=64;
+    assert(pointer_read(&usb[0].hid[0].tablet,horizontal,7,1280,800,&s)&&s.x==0&&s.y==64);
+    /* Exercise the real interrupt completion -> pointer_read -> input queue,
+     * not only the descriptor helper. A short 7-of-8-byte transfer is valid. */
+    struct Hid *h=&usb[0].hid[0];Event e;TRB event={0,(13u<<24)|1,TY(32)|(1u<<24)|(3u<<16)};
+    horizontal[2]=64;horizontal[4]=0;memcpy(h->report,horizontal,7);h->armed=1;
+    transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==64&&e.b==0&&!e.c&&h->armed);
+    horizontal[2]=0;horizontal[4]=64;memcpy(h->report,horizontal,7);
+    transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==64&&!e.c&&h->armed);
+    assert(!input_pop(&e));
+    puts("PASS vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64");
+    assert(input_diag.pointers==1&&!input_diag.control_errors);
+    assert(input_diag.device[0].vid==0x1234&&input_diag.device[0].pid==0x5678);
+    assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&!boot_requests);
+    assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==1);
+    puts("PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL");
+    assert(run(1,1,0,0));assert(usb[0].hid[0].proto==2&&input_diag.pointers==1);
+    assert(!run(1,1,2,0));assert(!input_diag.pointers);
+    puts("PASS Boot SET_PROTOCOL STALL: existing Boot protocol accepted only after GET_PROTOCOL=0; unknown state rejected");
+    assert(!run(1,0,1,1));assert(!report_requests&&!input_diag.pointers);
+    assert(run(0,0,1,1));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
+    puts("PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed");
+    acknowledge_without_switch=1;
+    assert(run(0,0,0,0));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
+    h=&usb[0].hid[0];memcpy(h->report,(u8[]){0,37,0},3);h->armed=1;
+    event.len=(13u<<24)|5;transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==37&&e.b==0);
+    memcpy(h->report,(u8[]){0,0,251},3);transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==0&&e.b==-5);
+    puts("PASS xHCI acknowledged-but-unchanged Report mode: GET=Boot selects verified Boot offsets, horizontal and vertical completions intact");
+    /* The vertical-only failure: device claims Boot but emits its numbered
+     * 16-bit Report packet. Old raw offsets decode X=0,Y=64, not X=64,Y=0. */
+    memcpy(h->report,(u8[]){4,0,64,0,0,0,0},7);event.len=(13u<<24)|1;transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==64&&!e.b);
+    memcpy(h->report,(u8[]){4,0,0,0,64,0,0},7);transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&!e.a&&e.b==64);
+    puts("PASS actual xHCI vertical-only reproduction: descriptor-framed Report despite GET=Boot yields independent X/Y, not ID/button bytes as axes");
+    acknowledge_without_switch=0;
+    assert(run(0,0,1,0));hc->active=1;hc->ports=1;op=0;
+    unsigned before=commands.at;int slots=connected;
+    scan_root_ports(); /* owned root: NULL MMIO must never be touched/reset */
+    assert(commands.at==before&&connected==slots);
+    puts("PASS retry scan preserves owned root slots/contexts and never resets an enumerated HID");
 }

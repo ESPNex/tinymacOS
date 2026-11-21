@@ -72,6 +72,12 @@ int main(void)
     }
     puts("PASS control stall on Setup/Data: consume error, reset EP0, set dequeue, next protocol request succeeds");
     fixture();u=usb;
+    completion(0,&u->ctrl.tr[1],32,13,1);events[0].len|=3;
+    completion(1,&u->ctrl.tr[2],32,1,1);
+    assert(control(u,0x80,6,0x100,0,8)==0 && u->ctrl_bytes==5 && evpos==2 && !u->ctrl_dead);
+    assert(u->ctrl.tr[1].ctl&4); /* ISP: short Data event before Status */
+    puts("PASS actual xHCI short control: actual length from Data, completion only after Status, IN ISP set");
+    fixture();u=usb;
     assert(control(u,0x21,11,0,0,0)==-1 && u->ctrl_dead);
     unsigned at=u->ctrl.at;assert(control(u,0x21,11,1,0,0)==-1 && u->ctrl.at==at);
     puts("PASS timeout: no unsafe recycling of potentially live control DMA");

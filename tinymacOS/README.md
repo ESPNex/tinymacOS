@@ -1,61 +1,66 @@
-# tinymacOS 10 · Tramontana
+# tinymacOS 10.1.4 · Tramontana / 30B5
 
-Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
+Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS. Repository pubblico, ISO negli asset delle release, non in Git.
 
-**[Versione 10, build 30A2 pubblicata e verificata — stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le precedenti Pre-release.** Ricevuta e collaudi in [`workspace/release-10-30A2`](../workspace/release-10-30A2/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
+[Note 10.1.4, risultati e limiti](../workspace/release-10.1.4-30B5/RELEASE.md) · [Confronto sorgente Linux v6.12](../workspace/release-10.1.4-30B5/LINUX-REVIEW.md). Lo stato di pubblicazione effettivo è nella ricevuta `github-release-verification.json`, quando presente; fino alla pubblicazione resta disponibile la precedente 10.1.3.
 
-## Tramontana
+## Input: situazione reale
 
-- Nuovo sfondo non procedurale realizzato con generazione nativa di immagini; sorgente conservata in `assets/tramontana-generated.jpg`. Wallpaper QOI 1280×800 installato nel filesystem.
-- Icone PNG dall'archivio fornito dall'utente: variante datata più recente per ciascun nome esatto. Provenienza e SHA-256 in `assets/icons/manifest.json`.
-- Atlas applicazioni a 16/24/32/48/64/128 px; originali PNG e varianti realmente installati nei bundle. Cartelle, documenti, dischi, Libreria, controlli e categorie Impostazioni/Centro di Controllo usano i simboli procedurali originali; nessun App Store sostitutivo. Anche Recovery è procedurale, tranne Terminale.
-- Eccezione esplicita: icona installer originale procedurale dedicata a Tramontana, rigenerata deterministicamente dal packer.
-- Tema Tramontana e tredicesimo sfondo predefiniti. Teal verde e Tramontana blu ardesia distinti anche nei selettori; Blu, Azzurro e Riviera mantengono palette complete distinte. Associazioni esplicite Blu → Prisma, Azzurro → Brezza, Tramontana → Tramontana.
-- Informazioni: “tiny” conserva integralmente il vecchio carattere regolare; “macOS” usa una faccia autentica di peso 600, non un grassetto simulato. Licenza OFL inclusa. Le dieci vecchie facce sono conservate bit per bit.
-- Recupero: mela nativa 24 px allineata al testo della barra e titolo finestra più piccolo.
-- Identità 10 / 30A2 in app, metadati, shell, installer, Recupero e documenti iniziali.
+**10.1.3: l’utente segnala Recovery funzionante ma movimento soltanto verticale. La correzione sul PC fisico non è confermata.** Riferimento storico esatto: 2.4.5 Levante / 21B9, Recovery funzionante e login solo verticale.
 
-**Safari/WebKit reale resta sospeso e non è incluso.** I test backend/runtime non costituiscono prove di un browser funzionante.
+La 10.1.4 corregge il framing dei pacchetti numerati interpretati come Boot, preferisce il descriptor e il protocollo Report verificato, conservando un fallback Boot negoziato. Tre test identici sul vero codice precedente riproducono la conversione errata X=64/Y=0 → X=0/Y=64; il nuovo codice mantiene entrambi gli assi indipendenti. Questo è un difetto riprodotto, non un’acquisizione USB del mouse dell’utente.
 
-## Input e limiti
+Confronto ingegneristico con Linux v6.12: xHCI pubblica il primo TRB soltanto dopo l’intero TD, attende Status dopo Short Data e controlla la lunghezza effettiva; EHCI quiesce la schedule periodica prima delle modifiche all’overlay e lascia il toggle interrupt all’hardware. Nessun driver Linux importato. La Recovery usa EFI_USB_IO e condivide il decoder; non avvia gli HCD nativi mentre il firmware possiede i controller.
 
-Manutenzione 30A2: routing Intel USB2 del firmware mantenuto se è presente EHCI; `SET_PROTOCOL` STALL gestito tramite conferma `GET_PROTOCOL` anche in Recovery e ripiego Boot verificato. **Sul PC ASRock il mouse è stato segnalato fermo sia nel live sia in Recovery: causa fisica non accertata e soluzione non confermata.**
+Conservati PS/2, EHCI HID, UHCI companion, xHCI con hub USB2, routing Intel, ripresa asincrona Recovery e acquisizione del solo figlio mouse. Tastiera fisica esclusivamente italiana ISO, UTF-8, accenti, euro e AltGr tra login, app e Recupero. Nessun pannello diagnostico F11 al login; F11 sul desktop live apre l’installer.
 
-Conservati i decoder della 21B9: tastiera fisica esclusivamente italiana ISO, UTF-8, accenti, euro e AltGr fra login, app e Recupero; PS/2, EHCI HID, UHCI companion e xHCI con hub USB2. Gli assi mouse sono estratti dal descrittore validato e gestiti indipendentemente. Nessun pannello diagnostico F11 al login. F11 sul desktop live apre l'installer, come il collegamento sulla scrivania.
+**I PASS QEMU e ASan/UBSan non provano il funzionamento sull’ASRock Q1900M/J1900.** Nessuna regola riservata a quella scheda; niente promessa di compatibilità universale. Non implementati OHCI, hotplug generale, hub SuperSpeed o HID universale.
 
-I test QEMU non verificano il PC fisico ASRock Q1900M/J1900 né garantiscono compatibilità universale. Non sono implementati OHCI, hotplug generale, hub SuperSpeed o HID universale. Nessuna nuova conferma fisica è implicita nei PASS. Il supporto conserva gli standard/controller generali, non una soluzione riservata a una scheda.
+## Centro di Controllo e artwork
+
+13 icone originali in `assets/control-center/*.svg`, sorgenti autorevoli. `tools/control-svg.py` le compila deterministicamente in maschere alpha antialias a 64 px, tinteggiate dal renderer nativo; non è un interprete SVG/XML a runtime. Gli SVG e il manifest sono installati nel filesystem. Il codice geometrico C precedente delle icone del pannello è rimosso.
+
+Pannello di vetro conservato; **un solo Sfondo e un solo accesso alle Impostazioni**. Contratti su hit-test e azioni effettive, preview tratta dalla vera ISO, non un mockup.
+
+Icone importate soltanto per le applicazioni; cartelle, dischi, Libreria e categorie Impostazioni rimangono procedurali. Recovery procedurale salvo Terminale; installer con artwork procedurale dedicato Tramontana. PNG applicazioni dall’archivio fornito, scelta della variante datata più recente per nome esatto, provenienza/SHA in `assets/icons/manifest.json`, taglie native 16/24/32/48/64/128 px realmente nei bundle.
+
+Sfondo Tramontana non procedurale generato con immagini native; sorgente `assets/tramontana-generated.jpg`. Tema e palette distinti, incluse varianti chiare/scure Blu, Azzurro e Riviera. Teal resta distinto da Tramontana; Blu → Prisma, Azzurro → Brezza, Tramontana → Tramontana. Wordmark Informazioni: “tiny” regolare conservato, “macOS” con faccia autentica semibold 600, licenza OFL inclusa.
+
+**Safari/WebKit reale non incluso**: prove backend/runtime non equivalgono a un browser funzionante.
 
 ## Build e avvio
 
-Output, ISO, toolchain e archivi voluminosi vanno fuori dal workspace. Esempio dalla directory `tinymacOS`:
+Toolchain e output voluminosi fuori dal workspace. Dalla directory `tinymacOS`:
 
 ```sh
 python3 tools/local-tools.py /var/tmp/tmc/tools/root
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 bash build.sh
-mkdir -p /var/tmp/tmc10-optical
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc1014 bash build.sh
+mkdir -p /var/tmp/tmc1014-optical
 TOOLROOT=/var/tmp/tmc/tools/root python3 tools/dualboot-iso.py \
-  /var/tmp/tmc10/tinymacOS-10-x86_64.iso \
-  /var/tmp/tmc10-optical/tinymacOS-10-x86_64.iso
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 STATE=/var/tmp/tramontana-vm LIVE=1 bash run.sh
+  /var/tmp/tmc1014/tinymacOS-10.1.4-x86_64.iso \
+  /var/tmp/tmc1014-optical/tinymacOS-10.1.4-x86_64.iso
+TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc1014 \
+  STATE=/var/tmp/tramontana-vm LIVE=1 bash run.sh
 ```
 
-Richiesti Python/Pillow e gli strumenti descritti dai lock. La normale build usa il font già rasterizzato; `tools/tramontana-font.py` serve a rigenerare la faccia semibold con la sorgente TTF inclusa. Non occorre riscaricare lo ZIP delle icone.
+Richiesti Python/Pillow e gli strumenti dei lock. Font già rasterizzato nella normale build; `tools/tramontana-font.py` rigenera la faccia semibold dal TTF incluso. Il compilatore delle icone SVG non scarica risorse o librerie di rete.
 
-Il media distribuito aggiunge al percorso UEFI nativo un avvio CD BIOS via ISOLINUX/MEMDISK → OpenDuet/OpenCore → loader nativo. I dischi installati usano GPT/FAT16 con ponte MBR nello spazio riservato e avviano sia in BIOS sia in UEFI nei profili collaudati. Il media non è un'immagine USB DD ibrida.
+ISO ottica UEFI nativa + CD BIOS ISOLINUX/MEMDISK → OpenDuet/OpenCore → loader nativo. **Non è un’immagine USB-DD ibrida.** Sistemi installati GPT/FAT16 con ponte MBR nello spazio riservato, collaudati BIOS/UEFI in VM. Avviare la nuova ISO non aggiorna il vecchio sistema installato.
 
-Usare una VM Q35/AHCI x86-64, Secure Boot spento e almeno 512 MiB RAM (1 GiB consigliato). Per installare collegare un **nuovo disco virtuale SATA vuoto dedicato**, almeno 96 MiB consigliati. Creare l'account live, aprire *Installa tinymacOS*, controllare e confermare la destinazione. Dopo “Il disco è pronto”, spegnere, rimuovere l'ISO e avviare dal disco con la stessa password. Non usare dischi fisici o dati importanti. Avviare la nuova ISO non aggiorna un vecchio sistema installato.
+VM Q35/AHCI x86-64, Secure Boot disattivato, almeno 512 MiB RAM (1 GiB consigliato). Installare soltanto su **nuovo disco virtuale SATA vuoto dedicato**, almeno 96 MiB consigliati. Creare account live, aprire Installa tinymacOS, controllare e confermare la destinazione. Dopo “Il disco è pronto”, spegnere, rimuovere ISO e avviare da disco con la stessa password. Non usare dischi fisici o dati importanti.
 
 ## Desktop e Recupero
 
-F1–F9 aprono le app; F2 apre Terminale. Ctrl+Spazio apre Cerca; Ctrl+Maiusc+Q blocca la sessione. Finder mostra i file e i bundle reali. I temi e sfondi storici conservano il loro nome e non identificano la release attuale.
+F1–F9 app; F2 Terminale; Ctrl+Spazio Cerca; Ctrl+Maiusc+Q blocco sessione. Finder mostra i bundle e file reali. Temi e wallpaper storici non identificano la release attuale.
 
-Premere ripetutamente R o F12 durante la mela per il Recupero UEFI ottico. L'installer copia anche BaseSystem nella partizione Recovery: il recupero locale può partire senza ISO. Il Recupero è un runtime distinto, non Internet Recovery né un ambiente Apple; `sw_vers` riporta `tinymacOS Recovery 10 (30A2)`.
+Premere ripetutamente R o F12 durante la mela per Recovery ottica. L’installer copia BaseSystem nella partizione Recovery per recupero locale senza ISO. `sw_vers`: `tinymacOS Recovery 10.1.4 (30B5)`. Runtime distinto da macOS/Internet Recovery Apple.
 
-Verbose durante l'avvio con V; comandi `bootverbose status`, `on`, `off`, `log [pagina]`. La preferenza persistente richiede un sistema installato. VM/MMU multi-CPU, TLS per-thread e sincronizzazione nativa restano funzionalità sperimentali, non una libc/POSIX/pthread completa.
+V abilita verbose; `bootverbose status`, `on`, `off`, `log [pagina]`. Persistenza richiede sistema installato. VM/MMU multi-CPU, TLS e sincronizzazione nativa sperimentali, non libc/POSIX/pthread completa.
 
 ## Prove e storico
 
-- Nuove ricevute: [`workspace/release-10-30A2`](../workspace/release-10-30A2/).
-- Precedente 21B9: [`workspace/release-2.4.5-input4`](../workspace/release-2.4.5-input4/).
-- Prove runtime/kernel: [`workspace/webkit-tmc`](../workspace/webkit-tmc/), con limiti espliciti e kernel delle sonde confrontato con la produzione.
-- Storia architetturale: `docs/` e `docs/storico/`; i numeri di versione nei documenti storici non sono l'identità corrente.
+- [`workspace/release-10.1.4-30B5`](../workspace/release-10.1.4-30B5/): nuove ricevute, confronto Linux, controlli negativi e pixel reali.
+- [`workspace/release-10.1.3-30B4`](../workspace/release-10.1.3-30B4/): release precedente; i suoi PASS non annullano il riscontro fisico negativo.
+- [`workspace/release-2.4.5-input4`](../workspace/release-2.4.5-input4/): riferimento 21B9.
+- [`workspace/webkit-tmc`](../workspace/webkit-tmc/): regressioni kernel/runtime e sonde QA separate, non da pubblicare.
+- `docs/` e `docs/storico/`: documenti storici, non identità della release corrente.

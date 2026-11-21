@@ -49,8 +49,7 @@ static EFI_STATUS EFIAPI received(VOID *data, UINTN n, VOID *unused, UINT32 erro
     consecutive_errors=0;
     if (relative) {
         if (n < 3) return EFI_SUCCESS;
-        const u8 *p = data;
-        s = (TabletState){(int8_t)p[1],(int8_t)p[2],p[0]&7,0};
+        if(!pointer_boot_read(&layout,data,n,rw,rh,&s))return EFI_SUCCESS;
     } else {
         if (!pointer_read(&layout, data, n, rw, rh, &s)) return EFI_SUCCESS;
     }
@@ -119,13 +118,12 @@ static int probe(EfiUsb *io)
         if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.addr&128)||!(e.addr&15))continue;
         unsigned packet=e.packet&2047;if(packet<3||packet>64)continue;
         relative=0;memset(&layout,0,sizeof layout);
-        /* Standard Boot mode first, same in the native drivers. Fall back to
-         * Report only after Boot is rejected, never guess Report-ID offsets. */
-        if(boot && protocol(io,f.number,0))relative=1;
-        else {
-            if(!(report&&pointer_layout(desc,wanted,packet,&layout)))continue;
-            if(boot && !protocol(io,f.number,1))continue;
-        }
+        /* A Boot label is not a packet layout. Use the descriptor like
+         * Linux usbhid; fallback only after explicit Boot negotiation. Keep
+         * the parsed layout for the Report-ID framing guard even in Boot. */
+        int parsed=report&&pointer_layout(desc,wanted,packet,&layout);
+        if(parsed && (!boot || protocol(io,f.number,1)))relative=0;
+        else {if(!boot||!protocol(io,f.number,0))continue;relative=1;}
         unsigned interval=MAX(1,MIN(255,e.interval));
         if(!EFI_ERROR(io->async(io,e.addr,TRUE,interval,packet,received,0))){
             active_io=io;submitted=1;active_ep=e.addr;active_packet=packet;active_interval=interval;return 1;

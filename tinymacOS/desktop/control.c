@@ -63,34 +63,11 @@ static void tile(Rect p,int id,int active){
     stroke(b,r,0xd3f4ff,lite?82:128);
     if(id==focus)stroke((Rect){b.x-2,b.y-2,b.w+4,b.h+4},r+2,0xffffff,235);
 }
-/* Crisp monochrome symbols drawn here, never borrowed application artwork. */
-enum {SYM_APPEAR,SYM_GLASS,SYM_MOTION,SYM_DOCK,SYM_MISSION,SYM_LOCK,SYM_CALC,SYM_CALENDAR,SYM_TERMINAL,SYM_SETTINGS,SYM_THEME,SYM_WALL};
-static Rect symbolbox;static u32 symbolink;
-static int sx(int x){return symbolbox.x+x*symbolbox.w/32;}
-static int sy(int y){return symbolbox.y+y*symbolbox.h/32;}
-static void seg(int x,int y,int X,int Y){
-    line(sx(x),sy(y),sx(X),sy(Y),symbolink);
-    if(symbolbox.w>=25)line(sx(x)+1,sy(y),sx(X)+1,sy(Y),symbolink);
-}
-static void frame(int x,int y,int w,int h,int r){stroke((Rect){sx(x),sy(y),MAX(1,w*symbolbox.w/32),MAX(1,h*symbolbox.h/32)},MAX(1,r*symbolbox.w/32),symbolink,256);}
-static void dot(int x,int y,int d){int z=MAX(2,d*symbolbox.w/32);roundr(sx(x),sy(y),z,z,z/2,symbolink,256);}
-static void symbol(Rect b,int id,u32 c){
-    symbolbox=b;symbolink=c;
-    switch(id){
-    case SYM_APPEAR:frame(4,4,24,24,12);seg(16,4,16,28);seg(6,11,14,11);seg(5,16,14,16);seg(6,21,14,21);break;
-    case SYM_GLASS:seg(3,11,16,4);seg(16,4,29,11);seg(29,11,16,18);seg(16,18,3,11);seg(3,17,16,24);seg(16,24,29,17);seg(3,23,16,30);seg(16,30,29,23);break;
-    case SYM_MOTION:frame(5,5,23,23,11);seg(16,9,16,17);seg(16,17,22,20);seg(2,9,2,17);seg(2,17,9,17);break;
-    case SYM_DOCK:frame(2,5,28,22,4);frame(7,19,18,5,2);seg(8,10,24,10);break;
-    case SYM_MISSION:frame(3,5,26,22,4);seg(11,6,11,26);seg(3,13,10,13);seg(3,20,10,20);break;
-    case SYM_LOCK:frame(7,13,19,16,3);frame(11,3,11,16,6);dot(15,19,3);seg(16,21,16,25);break;
-    case SYM_CALC:frame(7,2,19,28,3);frame(10,5,13,6,1);for(int y=15;y<=25;y+=5)for(int x=10;x<=20;x+=5)dot(x,y,2);break;
-    case SYM_CALENDAR:frame(3,6,26,23,3);seg(3,13,29,13);seg(10,2,10,9);seg(23,2,23,9);for(int y=17;y<=23;y+=6)for(int x=8;x<=22;x+=7)dot(x,y,2);break;
-    case SYM_TERMINAL:frame(2,4,28,24,4);seg(7,10,13,16);seg(13,16,7,22);seg(17,22,24,22);break;
-    case SYM_SETTINGS:frame(7,7,18,18,9);frame(12,12,8,8,4);seg(16,1,16,7);seg(16,25,16,31);seg(1,16,7,16);seg(25,16,31,16);seg(5,5,9,9);seg(23,23,27,27);seg(5,27,9,23);seg(23,9,27,5);break;
-    case SYM_THEME:frame(8,8,16,16,8);seg(16,1,16,5);seg(16,27,16,31);seg(1,16,5,16);seg(27,16,31,16);seg(5,5,8,8);seg(24,24,27,27);seg(5,27,8,24);seg(24,8,27,5);break;
-    case SYM_WALL:frame(2,4,28,24,4);seg(4,25,12,15);seg(12,15,18,22);seg(18,22,23,16);seg(23,16,28,24);dot(21,9,4);break;
-    }
-}
+/* Original SVG sources compiled on the host; native tinted alpha rendering.
+ * No legacy sprite icons or hand-written C icon geometry in this panel. */
+enum {SYM_APPEAR,SYM_GLASS,SYM_MOTION,SYM_DOCK,SYM_MISSION,SYM_LOCK,SYM_CALC,SYM_CALENDAR,SYM_TERMINAL,SYM_SETTINGS,SYM_THEME,SYM_WALL,SYM_CHEVRON};
+extern const u8 control_svg_masks[];
+static void symbol(Rect b,int id,u32 c){if(id>=0&&id<=SYM_CHEVRON)alpha_symbol(control_svg_masks+id*4096,64,b,c);}
 static void glyph(Rect p,Rect b,int ico,int active){
     int s=sz(p,30);if(active){int d=sz(p,48);roundr(b.x+(b.w-d)/2,b.y+(b.h-d)/2,d,d,d/2,0xf7fcff,232);}
     symbol((Rect){b.x+(b.w-s)/2,b.y+(b.h-s)/2,s,s},ico,active?0x1678ef:ink);
@@ -129,7 +106,7 @@ void control_draw(Rect p){
     photo(thumb,sys.wall,sz(p,15));stroke(thumb,sz(p,15),0xffffff,112);
     text(b.x+sz(p,15),b.y+sz(p,105),"Sfondo",F_BOLD,ink);
     text(b.x+sz(p,15),b.y+sz(p,130),wallname(sys.wall),F_SMALL,muted);
-    text(b.x+b.w-sz(p,30),b.y+sz(p,105),">",F_BODY,ink);
+    symbol((Rect){b.x+b.w-sz(p,32),b.y+sz(p,104),sz(p,19),sz(p,19)},SYM_CHEVRON,ink);
     tile(p,CC_MISSION,0);glyph(p,control_rect(p,CC_MISSION),SYM_MISSION,0);
     tile(p,CC_LOCK,0);glyph(p,control_rect(p,CC_LOCK),SYM_LOCK,0);
     slider(p,CC_THEME_SLIDER,"Tema",themename(sys.theme));
