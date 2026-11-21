@@ -22,3 +22,7 @@ ISO: `tinymacOS-10-x86_64.iso`, 225599488 byte.
 SHA-256: `660bd4f2656ccbce70fe53d878015f0dae993d9ff16d55f5488d9fd2b2a2b65e`.
 
 Nessuna nuova prova sul PC fisico ASRock: nessuna soluzione hardware confermata. Safari/WebKit rimane sospeso e non incluso. L'esito della pubblicazione e dei download è registrato separatamente in `github-release-verification.json`.
+
+## Pubblicazione verificata
+
+v10 normale/Latest, release ID 453337659 invariato. Tag sorgente `7dd49e3a052f1b9794287128e9390eb474c02966`. ISO e checksum riscaricati e confrontati con i file collaudati. Due soli asset finali; quattro release storiche ancora Pre-release.
