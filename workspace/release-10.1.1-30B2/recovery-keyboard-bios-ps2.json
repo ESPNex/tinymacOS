@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "profile": "ps2",
+  "firmware": "bios",
+  "iso_sha256": "fbffff11eb1c0aa6856c8e6f74dbedc2fb10df5698e4fb49de9b860eac5ca508",
+  "work": "/var/tmp/tmc10-rec-kbd-i34mfpco",
+  "local_installed_recovery": true,
+  "i8042_present": true,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

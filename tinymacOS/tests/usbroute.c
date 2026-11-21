@@ -27,5 +27,16 @@ int main(void)
  init(0x0f358086);regs[0xd4/4]=~0u;usb_route_intel_xhci(0x8000a000);assert(!nw);
  init(0x0f358086);regs[2]=0x0c032000;usb_route_intel_xhci(0x8000a000);assert(!nw);
  init(0x1e318086);regs[0x2c/4]=0x90a8104d;usb_route_intel_xhci(0x8000a000);assert(!nw);
+ has_ehci=1;init(0x0f358086);assert(!usb_route_intel_xhci_recover(0x8000a000,1,0)&&!nw);
+ assert(!usb_route_intel_xhci_recover(0x8000a000,0,1)&&!nw);
+ assert(usb_route_intel_xhci_recover(0x8000a000,0,0));
+ assert(nw==1&&writes[0]==0xd0&&values[0]==0x95&&delay==100&&regs[0xd8/4]==4);
+ assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&nw==1);
+ init(0x0f351234);assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
+ init(0x0f358086);regs[0xd4/4]=~0u;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
+ init(0x0f358086);regs[0xd0/4]=~0u;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
+ init(0x0f358086);regs[0xd4/4]=0;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
+ has_ehci=0;init(0x0f358086);assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
+ puts("PASS empty-HID fallback: only switchable masked USB2 bits, one retry; any live pointer or keyboard blocks remux; unknown/all-ones/zero mask/no companion rejected");
  puts("PASS routing guard: unknown/foreign/non-xHCI/all-ones registers and known non-switchable subsystem receive no writes");
 }

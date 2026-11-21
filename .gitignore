@@ -42,3 +42,6 @@
 
 # Keep source assets, extracted vendor EFI/boot artifacts, original attachments,
 # screenshots, test results and frozen release source trees.
+
+# Encrypted machine credentials persist only in the workspace, never in Git.
+/private-backup/

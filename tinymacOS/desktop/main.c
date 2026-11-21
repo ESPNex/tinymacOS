@@ -245,7 +245,7 @@ static void wincontent(View *v, int focus)
         }, 6, 0x274060, 42);
     }
     int cx = x + w / 2;
-    center(cx, y + 12, v->s.title, F_BOLD, focus ? TX : SUB);
+    center(cx, y + TMC_CHROME_TEXT_Y, v->s.title, F_BOLD, focus ? TX : SUB);
     roundr(x + 1, y + TITLE - 1, w - 2, 1, 0, night ? 0xffffff : 0x253148, night ? 26 : 29);
     client(x + 1, y + TITLE, w - 2, q.h - TITLE - FOOT, v->cmd, MAX(0, v->n));
     stroke(q, 18, night ? 0xcaddff : 0xffffff, focus ? 152 : 87);

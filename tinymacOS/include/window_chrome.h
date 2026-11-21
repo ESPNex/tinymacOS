@@ -2,6 +2,7 @@
 #define TMC_WINDOW_CHROME_H
 /* Shared geometry for compositor windows and standalone UEFI Recovery panels. */
 #define TMC_CHROME_TITLE 43
+#define TMC_CHROME_TEXT_Y 12
 #define TMC_CHROME_RADIUS 18
 #define TMC_CHROME_LIGHT_SIZE 13
 #define TMC_CHROME_LIGHT_X 17

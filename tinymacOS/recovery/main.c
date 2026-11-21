@@ -137,7 +137,7 @@ static void paint(void)
                        POWER ? "Spegnere il computer?" : "Recupero";
     window_frame(x0,y0,ww,hh);
     dots();
-    label(x0 + (ww - tw(2, head)) / 2, y0 + 7, 2, head, 0x2e2f36);
+    label(x0 + (ww - tw(2, head)) / 2, y0 + TMC_CHROME_TEXT_Y, 2, head, 0x2e2f36);
     int x = x0 + 30, y = y0 + TH + 18;
     const int BY = y0 + hh - 46;         /* bottom button row */
     fill(x0 + 1, BY - 8, ww - 2, 1, 0, 0xe3e3e8);
@@ -354,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1 (30B1)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.1 (30B2)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -414,6 +414,41 @@ static void pointer_button(int down)
     if(!down)dragging=0;
     held=down;dirty=1;
 }
+/* Firmware pointer objects are discovered only after keyboard child ownership
+ * is settled. A registered but idle direct transport must never mask them. */
+static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
+    EFI_SIMPLE_POINTER_PROTOCOL **pointers,int *pointer_down,UINTN npointers)
+{
+        int got_abs = 0;
+        if (direct) {
+            TabletState s;
+            while (rec_pointer_next(bs,&s)) {
+                mx=s.x; my=s.y;
+                pointer_button(s.buttons&1);got_abs=1;
+            }
+        }
+        if (absolute && !got_abs) {
+            EFI_ABSOLUTE_POINTER_STATE p;
+            if (!EFI_ERROR(absolute->GetState(absolute,&p))) {
+                EFI_ABSOLUTE_POINTER_MODE *m=absolute->Mode;
+                mx=pointer_pixel(p.CurrentX,m->AbsoluteMinX,m->AbsoluteMaxX,rw);
+                my=pointer_pixel(p.CurrentY,m->AbsoluteMinY,m->AbsoluteMaxY,rh);
+                int down=!!(p.ActiveButtons & EFI_ABSP_TouchActive);
+                pointer_button(down);got_abs=1;
+            }
+        }
+        if (!got_abs) for(UINTN i=0;i<npointers;i++) {
+            EFI_SIMPLE_POINTER_STATE p;EFI_SIMPLE_POINTER_PROTOCOL *pointer=pointers[i];
+            if (!EFI_ERROR(pointer->GetState(pointer, &p))) {
+                int down=!!p.LeftButton;
+                if(!p.RelativeMovementX && !p.RelativeMovementY && down==pointer_down[i])continue;
+                pointer_down[i]=down;
+                mx = MAX(0, MIN(rw - 1, mx + p.RelativeMovementX));
+                my = MAX(0, MIN(rh - 1, my + p.RelativeMovementY));
+                pointer_button(down);
+            }
+        }
+}
 EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
 {
     EFI_GUID lg=LOADED_IMAGE_PROTOCOL;EFI_LOADED_IMAGE *li=0;
@@ -429,6 +464,8 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     disks();
     mx = rw - 48;
     my = rh - 55;
+    int keyboards=rec_keyboard_start(bs);
+    if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
     /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
      * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
     EFI_SIMPLE_POINTER_PROTOCOL *pointers[16]={0};
@@ -459,8 +496,6 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     }
     if (absolute) absolute->Reset(absolute,FALSE);
     int direct = rec_pointer_start(bs,mx,my);
-    int keyboards=rec_keyboard_start(bs);
-    if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
 
     for (;;) {
         if (dirty) {
@@ -479,35 +514,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
                 else if(page==DEST&&num)sel=(sel+num+d)%num;
             } else if(page==TERM||(page==CONFIRM&&op==ERASE))text_append_key(field,sizeof field,c);
         }
-        int got_abs = 0;
-        if (direct) {
-            TabletState s;
-            while (rec_pointer_next(bs,&s)) {
-                mx=s.x; my=s.y;
-                pointer_button(s.buttons&1);got_abs=1;
-            }
-        }
-        if (absolute && !direct) {
-            EFI_ABSOLUTE_POINTER_STATE p;
-            if (!EFI_ERROR(absolute->GetState(absolute,&p))) {
-                EFI_ABSOLUTE_POINTER_MODE *m=absolute->Mode;
-                mx=pointer_pixel(p.CurrentX,m->AbsoluteMinX,m->AbsoluteMaxX,rw);
-                my=pointer_pixel(p.CurrentY,m->AbsoluteMinY,m->AbsoluteMaxY,rh);
-                int down=!!(p.ActiveButtons & EFI_ABSP_TouchActive);
-                pointer_button(down);got_abs=1;
-            }
-        }
-        if (!direct && !got_abs) for(UINTN i=0;i<npointers;i++) {
-            EFI_SIMPLE_POINTER_STATE p;EFI_SIMPLE_POINTER_PROTOCOL *pointer=pointers[i];
-            if (!EFI_ERROR(pointer->GetState(pointer, &p))) {
-                int down=!!p.LeftButton;
-                if(!p.RelativeMovementX && !p.RelativeMovementY && down==pointer_down[i])continue;
-                pointer_down[i]=down;
-                mx = MAX(0, MIN(rw - 1, mx + p.RelativeMovementX));
-                my = MAX(0, MIN(rh - 1, my + p.RelativeMovementY));
-                pointer_button(down);
-            }
-        }
+        poll_pointer_sources(direct,absolute,pointers,pointer_down,npointers);
         bs->Stall(12000);
     }
     return EFI_SUCCESS;

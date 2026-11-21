@@ -1,1 +1,0 @@
-/var/tmp/tmc-smp-stress-xlie3w15

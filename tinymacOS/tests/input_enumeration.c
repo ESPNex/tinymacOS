@@ -84,4 +84,9 @@ int main(void)
     assert(!run(1,0,1,1));assert(!report_requests&&!input_diag.pointers);
     assert(run(0,0,1,1));assert(usb[0].hid[0].proto==2&&protocol==0&&boot_requests==1);
     puts("PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed");
+    assert(run(0,0,1,0));hc->active=1;hc->ports=1;op=0;
+    unsigned before=commands.at;int slots=connected;
+    scan_root_ports(); /* owned root: NULL MMIO must never be touched/reset */
+    assert(commands.at==before&&connected==slots);
+    puts("PASS retry scan preserves owned root slots/contexts and never resets an enumerated HID");
 }

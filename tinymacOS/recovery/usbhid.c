@@ -34,11 +34,11 @@ struct EfiUsb {
 static TabletLayout layout;
 static TabletState queue[32];
 static volatile unsigned head, tail;
-static int relative, rx, ry;
+static int relative, rx, ry, last_buttons;
 static EFI_STATUS EFIAPI received(VOID *data, UINTN n, VOID *unused, UINT32 error)
 {
     (void)unused;
-    TabletState s;
+    TabletState s;int oldx=rx,oldy=ry;
     if (error || !data || n > 64) return EFI_SUCCESS;
     if (relative) {
         if (n < 3) return EFI_SUCCESS;
@@ -54,6 +54,11 @@ static EFI_STATUS EFIAPI received(VOID *data, UINTN n, VOID *unused, UINT32 erro
             rx=MAX(0,MIN(rw-1,rx+s.x));ry=MAX(0,MIN(rh-1,ry+s.y));s.x=rx;s.y=ry;
         }
     }
+    /* Idle/duplicate reports are not activity and must not starve firmware
+     * SimplePointer / AbsolutePointer fallbacks in the main loop. */
+    rx=s.x;ry=s.y;
+    if(rx==oldx && ry==oldy && s.buttons==last_buttons && !s.wheel)return EFI_SUCCESS;
+    last_buttons=s.buttons;
     unsigned h = head, last = (h + 31) % 32;
     if (h != tail && s.buttons == queue[last].buttons) queue[last] = s;
     else {
@@ -117,7 +122,7 @@ static int probe(EfiUsb *io)
 int rec_pointer_start(EFI_BOOT_SERVICES *bs, int x, int y)
 {
     rx = x;
-    ry = y;
+    ry = y;head=tail=0;last_buttons=0;
     EFI_GUID guid = {0x2b2f68d6, 0x0cd2, 0x44cf, {0x8e, 0x8b, 0xbb, 0xa2, 0x0b, 0x1b, 0x5b, 0x75}};
     UINTN n;
     EFI_HANDLE *handles;

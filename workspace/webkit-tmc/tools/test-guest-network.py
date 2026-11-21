@@ -14,7 +14,7 @@ if os.environ.get('TMC_PROBE_RUN'):
 else:WORK=Path(tempfile.mkdtemp(prefix='tmc-webkit-network-',dir='/var/tmp'))
 cpus=int(os.environ.get('TMC_SMP','2'));assert cpus in (1,2),'Test profiles are 1 or 2 vCPUs'
 EVIDENCE=ROOT/('test-results/guest-network-smp'+str(cpus));EVIDENCE.mkdir(exist_ok=True)
-IMAGE=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-webkit-network-guest'))/'tinymacOS-10.1-x86_64.iso'
+IMAGE=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-webkit-network-guest'))/'tinymacOS-10.1.1-x86_64.iso'
 BODY=bytes((i*37+(i>>8)*11+17)&255 for i in range(1048893))
 DIGEST=hashlib.sha256(BODY).hexdigest()
 records={'scope':'actual QEMU guest with target backend, lwIP/e1000/slirp and controlled loopback peer; NOT WebKit/HTTPS acceptance',

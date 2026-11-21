@@ -47,7 +47,7 @@ static struct Xhci {
     TRB events[NE] ALIGNED(4096);
     struct {u64 base;u32 size,res;} erst ALIGNED(64);
     Ring commands;
-    int evpos,evcycle,cs,connected,active,lastcode,version;
+    int evpos,evcycle,cs,connected,active,lastcode,version,ports,ppc;
     u32 pci;
     volatile u32 *op,*db,*ir;
     struct Usb usb[NS];
@@ -394,6 +394,33 @@ static void attach(struct Usb *parent,unsigned port,unsigned speed,unsigned dept
         memset(u,0,sizeof *u);connected--;
     }
 }
+static void scan_root_ports(void)
+{
+    int first=connected;
+    for (int i = 0; i < hc->ports && connected < NS; i++) {
+        int owned=0;
+        for(int j=0;j<connected;j++)if(usb[j].id>0 && !usb[j].depth && usb[j].port==i+1)owned=1;
+        if(owned)continue; /* do not reset an enumerated hub/interface */
+        volatile u32*p = op + 0x100 + 4 * i;
+        u32 v = *p;
+        if(hc->ppc && !(v&(1u<<9))) {*p=(v&0x0e000200u)|(1u<<9);usb_delay_ms(20);v=*p;}
+        if (!(v & 1))
+            continue;
+        input_diag.root_devices++;
+        int speed = (v >> 10) & 15;
+        if (speed <= 3 || !(v & 2)) {
+            *p = (v & (1u << 9)) | (1u << 4);
+            if (!waitbit(p, 1 << 4, 0) || !(*p & 2))
+                continue;
+        }
+        usb_delay_ms(10);
+        attach(0,i+1,(*p>>10)&15,0);
+    }
+    /* Initial scan arms once at controller activation; recovery arms only
+     * newly-enumerated devices, preserving existing DMA rings and contexts. */
+    if(hc->active)for(int i=first;i<connected;i++)for(int j=0;j<usb[i].nhid;j++)
+        if(usb[i].hid[j].proto)arm(usb+i,&usb[i].hid[j]);
+}
 static void controller_init(u32 dev)
 {
     hc->pci=dev;
@@ -403,6 +430,7 @@ static void controller_init(u32 dev)
         return;
     }
     u32 h1 = c[1], h2 = c[2], cap = c[4];
+    hc->ports=h1>>24;hc->ppc=!!(cap&8);
     hc->version=c[0]>>16;
     cs = (cap & 4) ? 64 : 32;
     op = (void*)((u8*)c + (c[0] & 255));
@@ -456,22 +484,7 @@ static void controller_init(u32 dev)
      * probing EHCI. No board name matching and no writes to unknown vendors. */
     usb_route_intel_xhci(dev);
     usb_delay_ms(100);
-    for (int i = 0; i < (int)(h1 >> 24) && connected < NS; i++) {
-        volatile u32*p = op + 0x100 + 4 * i;
-        u32 v = *p;
-        if((cap&8) && !(v&(1u<<9))) {*p=(v&0x0e000200u)|(1u<<9);usb_delay_ms(20);v=*p;}
-        if (!(v & 1))
-            continue;
-        input_diag.root_devices++;
-        int speed = (v >> 10) & 15;
-        if (speed <= 3 || !(v & 2)) {
-            *p = (v & (1u << 9)) | (1u << 4);
-            if (!waitbit(p, 1 << 4, 0) || !(*p & 2))
-                continue;
-        }
-        usb_delay_ms(10);
-        attach(0,i+1,(*p>>10)&15,0);
-    }
+    scan_root_ports();
     hc->active=1;input_diag.active_xhci++;
     for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++)
         if(usb[i].hid[j].proto)arm(usb+i,&usb[i].hid[j]);
@@ -488,6 +501,10 @@ void input_init(void)
     for(int i=0;i<3;i++){dev=0;while((dev=pci_find_after(classes[i],dev)))(*counts[i])++;}
     ehci_init(); /* route low/full-speed USB2 ports to their companions first */
     uhci_init();
+    for(unsigned c=0;c<ncontrollers;c++) {
+        hc=&controllers[c];
+        if(hc->active && usb_route_intel_xhci_recover(hc->pci,input_diag.pointers,input_diag.keyboards))scan_root_ports();
+    }
     ps2_init();
     logstr("[usb] native pointers ");lognum(input_diag.pointers);
     logstr("; active xHCI ");lognum(input_diag.active_xhci);logstr("\n");

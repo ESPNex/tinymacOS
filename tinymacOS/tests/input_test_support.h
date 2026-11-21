@@ -32,3 +32,5 @@ static inline void ps2_setleds(int value){(void)value;}
 
 void usb_delay_ms(unsigned);
 static inline void usb_route_intel_xhci(u32 dev){(void)dev;}
+
+static inline int usb_route_intel_xhci_recover(u32 dev,unsigned p,unsigned k){(void)dev;(void)p;(void)k;return 0;}

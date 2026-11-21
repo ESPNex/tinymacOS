@@ -1,17 +1,23 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10 Tramontana / 30A2 pubblicata e verificata — stessa v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le quattro precedenti Pre-release.**
-Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Versione interna 10, Teal/Tramontana distinti, associazioni sfondi esplicite e manutenzione USB generale. **La soluzione del mouse sul PC fisico non è confermata.**
-Sfondo non procedurale e vero semibold nel wordmark conservati.
+**tinymacOS 10.1.1 Tramontana / 30B2 — manutenzione corrente.** Destinazione autorizzata: [v10.1.1 normale/Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.1), con 10 e 10.1 archiviate come Pre-release. Lo stato effettivo della pubblicazione è attestato solo da `workspace/release-10.1.1-30B2/github-release-verification.json`, aggiunto dopo il sync dei sorgenti e la verifica degli asset scaricati.
 
-- [Sistema corrente, build e limiti](tinymacOS/README.md)
-- [Prove e note Tramontana](workspace/release-10-30A2/RELEASE.md)
-- [Ultima release precedente pubblicata: 2.4.5 / 21B9](workspace/release-2.4.5-input4/RELEASE.md)
+Titolo Recovery centrato, arbitraggio fra puntatore diretto e firmware corretto, recupero prudente dell’instradamento USB2 Intel quando manca qualsiasi HID USB nativo. Centro di Controllo completo 10.1 conservato. **Il funzionamento del mouse sul PC fisico non è confermato.** Ricerca storica: ritrovato il riscontro Recovery funzionante nella 2.4.3, non identificato con certezza il soprannome «mouse fix».
+
+Artwork importato solo per le app; simboli di sistema procedurali e Recovery procedurale salvo Terminale. Sfondo non procedurale, semibold nel wordmark, temi e associazioni sfondi conservati. Safari/WebKit non incluso.
+
+- [Sistema, build e limiti](tinymacOS/README.md)
+- [Note 10.1.1, QA e limiti](workspace/release-10.1.1-30B2/RELEASE.md)
+- [Ricerca storica e correzioni](workspace/release-10.1.1-30B2/HISTORY-AND-CHANGES.md)
+- [Ripristino accesso cifrato, chiave separata](workspace/ACCESSO-CIFRATO.md)
+- [Archivio precedente 10.1 / 30B1](workspace/release-10.1-30B1/RELEASE.md)
+- [Archivio 10 / 30A4](workspace/release-10-30A4/RELEASE.md)
 - [Backend sperimentale WebKit, non browser funzionante](workspace/webkit-tmc/README.md)
 
 Il repository privato non contiene credenziali né ISO. Output e toolchain vanno
 fuori dal workspace. L'archivio lossless dei vecchi asset duplicati è documentato
 in `workspace/maintenance-2.4.3/sources/HISTORICAL-ASSETS.md`.
+Le evidenze storiche 2.4.2 e integrated-next sono consolidate in archivi lossless con manifest SHA-256: vedere i rispettivi `EVIDENCE-ARCHIVE.md` per ripristinare tutti i percorsi originali. Nessun sorgente o risultato storico è perso.
 
 ## Documentazione storica
 

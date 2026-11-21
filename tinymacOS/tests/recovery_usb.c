@@ -22,5 +22,9 @@ int main(void){
  assert(armed==4&&failures>=6);
  puts("PASS Recovery HID protocol: Report preferred, SET_PROTOCOL STALL confirmed by GET_PROTOCOL, verified Boot fallback, unknown/short state rejected");
  head=tail=0;rx=100;ry=100;relative=1;u8 data[]={1,12,0};received(data,3,0,0);assert(rx==112&&ry==100);data[1]=0;data[2]=-9;received(data,3,0,0);assert(rx==112&&ry==91&&queue[0].buttons==1);
+ unsigned previous_head=head;u8 idle[]={1,0,0};
+ received(idle,3,0,0);assert(head==previous_head);idle[0]=0;received(idle,3,0,0);assert(queue[(head+31)%32].buttons==0);
+ previous_head=head;received(idle,3,0,0);assert(head==previous_head);
+ puts("PASS Recovery idle reports do not starve firmware fallback; release transitions preserved");
  puts("PASS Recovery relative Boot: independent horizontal/vertical signed motion and buttons");
 }
