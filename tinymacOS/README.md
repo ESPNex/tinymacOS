@@ -2,7 +2,7 @@
 
 Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nativa e runtime UEFI di Recupero. Non usa Linux o XNU e non esegue generalmente applicazioni per macOS.
 
-**[Versione 10.0, build 30A1 pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v10.0): Release normale e Latest; tutte le precedenti Pre-release.** Ricevuta e collaudi in [`workspace/release-10.0`](../workspace/release-10.0/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
+**[Versione 10, build 30A1 pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le precedenti Pre-release.** Ricevuta e collaudi in [`workspace/release-10.0`](../workspace/release-10.0/). Ultima ISO pubblicata precedente: [2.4.5 / 21B9](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), con [prove e ricevuta](../workspace/release-2.4.5-input4/RELEASE.md). I download sono privati e richiedono accesso GitHub autorizzato.
 
 ## Tramontana
 
@@ -13,7 +13,7 @@ Sistema desktop sperimentale x86-64 con kernel proprio, processi Ring 3, ABI nat
 - Tema Tramontana e tredicesimo sfondo predefiniti. Blu, Azzurro e Riviera hanno palette complete distinte in chiaro e scuro, non soltanto un accento diverso.
 - Informazioni: “tiny” conserva integralmente il vecchio carattere regolare; “macOS” usa una faccia autentica di peso 600, non un grassetto simulato. Licenza OFL inclusa. Le dieci vecchie facce sono conservate bit per bit.
 - Recupero: mela nativa 24 px allineata al testo della barra e titolo finestra più piccolo.
-- Identità 10.0 / 30A1 in app, metadati, shell, installer, Recupero e documenti iniziali.
+- Identità 10 / 30A1 in app, metadati, shell, installer, Recupero e documenti iniziali.
 
 **Safari/WebKit reale resta sospeso e non è incluso.** I test backend/runtime non costituiscono prove di un browser funzionante.
 
@@ -32,7 +32,7 @@ python3 tools/local-tools.py /var/tmp/tmc/tools/root
 TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 bash build.sh
 TOOLROOT=/var/tmp/tmc/tools/root python3 tools/dualboot-iso.py \
   /var/tmp/tmc10/tinymacOS-10.0-x86_64.iso \
-  /var/tmp/tmc10/tinymacOS-10.0-OpenCore-Installer-x86_64.iso
+  /var/tmp/tmc10/tinymacOS-10-x86_64.iso
 TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc10 STATE=/var/tmp/tramontana-vm LIVE=1 bash run.sh
 ```
 

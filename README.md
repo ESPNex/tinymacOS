@@ -1,6 +1,6 @@
 # tinymacOS — sorgenti e workspace
 
-**[tinymacOS 10 Tramontana / 30A1 pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v10.0): Release normale e Latest; tutte le quattro precedenti Pre-release.**
+**[tinymacOS 10 Tramontana / 30A1 pubblicata e verificata](https://github.com/ESPNex/tinymacOS/releases/tag/v10): Release normale e Latest; tutte le quattro precedenti Pre-release.**
 Nuove icone importate a più risoluzioni, sfondo non procedurale, tema Tramontana,
 palette distinte e vero semibold nel wordmark.
 

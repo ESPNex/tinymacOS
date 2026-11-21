@@ -1,6 +1,6 @@
 # tinymacOS 10 · Tramontana — 30A1
 
-**PUBBLICATA E VERIFICATA:** [v10.0](https://github.com/ESPNex/tinymacOS/releases/tag/v10.0), build **30A1**, Release normale e Latest. ISO riscaricata dopo la pubblicazione e SHA-256 verificato. Tutte le quattro release precedenti sono ora Pre-release. Ricevuta: `github-release-verification.json`. Tutte le prove seguenti sono nuove e legate alla SHA della 30A1, non ricevute riutilizzate della 21B9. Il tag sorgenti `v10.0` punta al commit `9a7bcd6984f3bad83112736b3f7cc68091ae2f77`; nessun tag precedente è stato spostato.
+**PUBBLICATA E VERIFICATA:** [v10](https://github.com/ESPNex/tinymacOS/releases/tag/v10), build **30A1**, Release normale e Latest. ISO riscaricata dopo la pubblicazione e SHA-256 verificato. Tutte le quattro release precedenti sono ora Pre-release. Ricevuta: `github-release-verification.json`. Tutte le prove seguenti sono nuove e legate alla SHA della 30A1, non ricevute riutilizzate della 21B9. Il tag sorgenti `v10` punta al commit `9a7bcd6984f3bad83112736b3f7cc68091ae2f77`; nessun tag precedente è stato spostato.
 
 ## Aspetto e risorse
 
@@ -11,7 +11,7 @@
 - Tema Tramontana e tredicesimo sfondo predefiniti; Blu, Azzurro e Riviera hanno palette complete distinte sia in chiaro sia in scuro. Galleria e Impostazioni espongono tutti i tredici sfondi.
 - Informazioni: “tiny” conserva la faccia regolare e gli stessi 72 px di avanzamento; “macOS” usa una faccia autentica weight 600, non bold. Prime dieci facce conservate bit per bit; euro presente in tutte e undici. Licenza OFL inclusa.
 - Recupero: mela 24 px nativa allineata verticalmente al testo della barra e titolo finestra ridotto.
-- Identità 10.0 / 30A1 aggiornata in shell, app, bundle, volumi, installer, Recupero e documentazione iniziale.
+- Identità 10 / 30A1 aggiornata in shell, app, bundle, volumi, installer, Recupero e documentazione iniziale.
 
 ## Manutenzione conservata
 
@@ -49,8 +49,14 @@ I report `assets-result.json` e `appearance-result.json` controllano risorse rea
 | Recupero | Mela/testo centrati esattamente allo stesso pixel; titolo ridotto verificato |
 | Sorgenti di produzione | 514 file congelati confrontati dopo il collaudo |
 
-File: `tinymacOS-10.0-OpenCore-Installer-x86_64.iso`  
+File: `tinymacOS-10-x86_64.iso`  
 Dimensione: **224.966.656 byte**  
 SHA-256: `a1d9e28d31bbb5c2c29c858d633ac7b411eafb1a466d186c0f0dd4cf22f60461`
 
 Deploy completato: Release ID `453337659`, asset verificati sotto il nome definitivo dopo la pubblicazione. Tutte le release anteriori (`v2.4.5`, `v2.4.4-oc2`, `v2.4.4-oc1`, `v2.4.4`) sono Pre-release. Nessun hardware fisico è stato verificato.
+
+## Nomi di distribuzione aggiornati
+
+Su richiesta, la release è ora **v10** e la ISO è **`tinymacOS-10-x86_64.iso`**. Rimosso `OpenCore-Installer` dai nomi ISO di tutte le release; rimosso anche il solo `OpenCore` dal nome della vecchia OC1. Aggiornati i rispettivi `SHA256SUMS.txt`. Tutte e cinque le ISO sono state riscaricate e verificate: i byte e i checksum delle ISO non sono cambiati. La 10 resta Release normale/Latest e tutte le precedenti restano Pre-release.
+
+Ricevuta attuale dei nomi e dei download: `release-naming-verification.json`. La ricevuta originaria `github-release-verification.json`, i metadati di build e i test restano conservati nello stato pre-rinomina; la versione interna dei binari non è stata ricompilata. Il tag `v10` conserva esattamente il commit sorgenti originario; l'etichetta `v10.0` è stata rimossa.

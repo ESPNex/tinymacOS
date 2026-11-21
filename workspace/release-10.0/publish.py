@@ -7,6 +7,8 @@ import hashlib,json,os,subprocess,tempfile
 from pathlib import Path
 r=Path(__file__).resolve().parent;home=r.parents[1];repo='ESPNex/tinymacOS';tag='v10.0';gh='/var/tmp/tmc-github-cli/gh'
 env={**os.environ,'GH_CONFIG_DIR':'/var/tmp/tmc-github-auth'}
+if (r/'release-naming-verification.json').exists():
+ raise SystemExit('Release already published and renamed to v10. See release-naming-verification.json; do not republish.')
 def run(*args):return subprocess.check_output(list(map(str,args)),cwd=home,env=env,text=True)
 def api(p,*args):return json.loads(run(gh,'api',p,*args))
 def sha(p):
