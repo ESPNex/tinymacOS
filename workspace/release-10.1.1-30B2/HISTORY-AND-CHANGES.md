@@ -24,3 +24,6 @@ Archivio cifrato locale `private-backup/github-access.enc`, escluso da Git e dal
 Nuova **10.1.1** normale/Latest. **10 e 10.1 Pre-release**, secondo conferma esplicita dell’utente. La 10.1 (30B1) viene archiviata con gli stessi byte già compilati e collaudati, SHA-256 `32e8ba640c4ba45e8df01db56ad69dfe27bed30497c0ea512a2cb51140b00275`, sorgenti al commit `0965f921147062721fed7e7adea9a750cd0beceb`. Sync sorgenti prima del rilascio; esito effettivo attestato soltanto dalle ricevute finali di pubblicazione.
 
 Le correzioni non costituiscono una certificazione del mouse ASRock Q1900M/J1900 fisico. Non dichiarare il problema hardware definitivamente risolto prima della prova dell’utente.
+
+## Controllo source-first prima degli upload
+Il gate di pubblicazione ha rilevato nel primo inventario un file generato `tinymacOS/state/vars.fd`, stato NVRAM QEMU ignorato da Git e non usato dalla build ISO. Nessuna release era ancora stata modificata. L’inventario è stato corretto a **574 file sorgente tracciati**, con gli stessi hash originari; nessun sorgente del sistema né byte della ISO è cambiato. Il vecchio inventario è conservato nel commit 7d204993e5671839c9668f114cd55a94c6b7bcb2. Il gate ripete il confronto con ogni blob del nuovo commit prima degli upload.

@@ -7,7 +7,7 @@ def h(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 a=json.loads((q/'artifact.json').read_text());digest=a['sha256'];iso=Path('/var/tmp/tmc-10.1.1')/a['filename']
 assert h(iso)==digest and iso.stat().st_size==a['bytes']
 assert h('/var/tmp/tmc-10.1.1/repro.iso')==digest
-frozen=json.loads((q/'source-hashes.json').read_text());assert len(frozen)==575
+frozen=json.loads((q/'source-hashes.json').read_text());assert len(frozen)==574
 for name,expected in frozen.items():assert h(root/'tinymacOS'/name)==expected,name
 files=['title-result.json','control-result.json','identity-result.json','bios-installer-result.json','bios-recovery-result.json','pointer-contract-result.json','control-contract-result.json','kernel-regression-result.json']
 live=[];installed=[]

@@ -3,7 +3,7 @@
 ## Artefatto collaudato
 - ISO: `tinymacOS-10.1.1-x86_64.iso`, **225.617.920 byte**.
 - SHA-256: `fbffff11eb1c0aa6856c8e6f74dbedc2fb10df5698e4fb49de9b860eac5ca508`.
-- Due build indipendenti byte-identiche; 575 file sorgente congelati e ricontrollati.
+- Due build indipendenti byte-identiche; 574 file sorgente congelati e ricontrollati.
 - [Note di rilascio](RELEASE.md) · [QA completo](final-qa.json) · [Ricerca storica e dettagli](HISTORY-AND-CHANGES.md).
 
 ## Risultati

@@ -431,7 +431,6 @@
   "recovery/startup.h": "9139d5a5d635c2a457faf75c6ab490328cfeecdb8aa26205561b17281269503a",
   "recovery/usbhid.c": "85567f89d9769f728f5b4bcf5b79c5796eded0d77fc14f375d8300c4611b3b7e",
   "run.sh": "33a1a14cf256851db5d1db026247204fb798cae9284c424fb65439158b4675ad",
-  "state/vars.fd": "5d2ac383371b408398accee7ec27c8c09ea5b74a0de0ceea6513388b15be5d1e",
   "storage/maintenance.c": "acfa73208cf8475f0aa637bdc88c7cdb187691c8db4dd8b3b36390cc9fafd3a4",
   "tests/account_reset.py": "a8929d95a707703b6dfb305a92c5ba0fcc0160c48df6600cd1f78e0d40c09055",
   "tests/activity.py": "560de6c8bb3a2566ea3275bee44b7ee05e9a72eca73e8d13ab5d823fc8c6ae91",
