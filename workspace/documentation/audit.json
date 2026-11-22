@@ -93,5 +93,15 @@
     "whitespace": "passed",
     "negative_validator_cases": 5
   },
-  "remote_publication_verified": false
+  "remote_publication_verified": true,
+  "documentation_source_commit": "563f35851323214826a60ab087f32f1397090888",
+  "remote_checks": {
+    "release_bodies_match_canonical_files": 11,
+    "release_ids_names_dates_flags_targets_unchanged": true,
+    "all_22_assets_ids_names_sizes_digests_urls_unchanged": true,
+    "all_tag_commit_targets_unchanged": true,
+    "latest_unchanged": "v10.1.5",
+    "previous_prereleases_preserved": 10,
+    "runtime_code_binaries_evidence_and_hash_manifests_unchanged": true
+  }
 }
