@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "latest": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.6",
+  "release_id": 454670448,
+  "tag": "v10.1.6",
+  "source_commit": "16803a799059ddd3bab63df6cb9a8b9291249471",
+  "source_synced_before_publication": true,
+  "filename": "tinymacOS-10.1.6-x86_64.iso",
+  "bytes": 225818624,
+  "sha256": "88901c4359ba1418ade83a0c6712eab06b4cd7c6e21b4915cf43375a36375763",
+  "download_verified": true,
+  "anonymous_full_download_verified": true,
+  "public_repository": true,
+  "prerelease": false,
+  "historical_releases_assets_and_tags_unchanged": true,
+  "previous_10_1_1_kept_unchanged": true,
+  "all_previous_releases_prerelease": true,
+  "assets": [
+    {
+      "id": 780092790,
+      "name": "SHA256SUMS.txt",
+      "size": 94,
+      "digest": "sha256:65127c1330bc9253fec3d180e1b7b679e7cad30ad3d0504a498e0e94ff37a662",
+      "browser_download_url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.6/SHA256SUMS.txt"
+    },
+    {
+      "id": 780092833,
+      "name": "tinymacOS-10.1.6-x86_64.iso",
+      "size": 225818624,
+      "digest": "sha256:88901c4359ba1418ade83a0c6712eab06b4cd7c6e21b4915cf43375a36375763",
+      "browser_download_url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.6/tinymacOS-10.1.6-x86_64.iso"
+    }
+  ],
+  "credentials_or_key_committed": false,
+  "physical_hardware_tested": false
+}

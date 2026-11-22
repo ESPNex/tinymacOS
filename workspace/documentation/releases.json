@@ -1,5 +1,10 @@
 [
   {
+    "tag": "v10.1.6",
+    "release_id": 454670448,
+    "path": "workspace/release-10.1.6-30B7/RELEASE.md"
+  },
+  {
     "tag": "v10.1.5",
     "release_id": 453917635,
     "path": "workspace/release-10.1.5-30B6/RELEASE.md"
