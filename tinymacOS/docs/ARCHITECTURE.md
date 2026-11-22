@@ -1,47 +1,38 @@
-# Architettura di Levante · 21B1
+# Architettura
 
-## Tre catene di avvio, non tre skin dello stesso desktop
+## Avvio
 
-1. **ISO:** immagine El Torito con filesystem FAT16, loader UEFI, KernelCache e catalogo live. `/Recovery/BaseSystem.dmg` è un file reale del CD, visibile anche da ISO9660/Rock Ridge. Il file letto dal loader nella FAT di avvio è identico. Premendo R, il loader esegue l’ambiente contenuto nel DMG senza avviare il desktop.
-2. **Installazione su SATA:** l’ESP di sistema da 20 MiB contiene solo il sistema installato. Il disco conserva anche una copia verificata di questa ESP per la reinstallazione offline. La partizione GPT 3 è invece il **volume Recovery HD** da 4 MiB: contiene il piccolo bootstrap EFI e il **file** `/Recovery/BaseSystem.dmg`, non semplicemente i settori FAT dell’immagine interna. Il suo filesystem è indipendente da TinyFS e non viene mostrato come cartella di documenti sulla scrivania.
-3. **Avvio del Recupero locale:** il loader del sistema individua la terza partizione sullo *stesso* dispositivo UEFI. Apre il file da quel volume, verifica l’intero DMG e carica l’eseguibile compreso nel suo volume interno. Il bootstrap della partizione Recovery sa fare la stessa cosa se è avviato direttamente dal firmware. Il runtime non avvia WindowServer o le app desktop. Usa GOP, EFI Block I/O e la tastiera; il tablet funziona anche in questo ambiente. «Disco di avvio» usa `BootNext` per selezionare l’ESP e un reset a freddo. Nessun client di rete o download implicito.
+Il supporto nativo avvia un loader UEFI; il confezionamento ottico aggiunge il percorso BIOS ISOLINUX/MEMDISK → OpenDuet/OpenCore → loader nativo. L'installazione prepara anche il ponte MBR per l'avvio BIOS del disco GPT, mantenendo il percorso UEFI.
 
-### Come si passa da un solo file nel supporto di avvio al disco
+Il loader verifica KernelCache e catalogo di sistema, prepara memoria e framebuffer ed esegue `ExitBootServices` prima del kernel. Il desktop non continua a usare i servizi UEFI. Il formato KernelCache è proprio del progetto, non quello Apple e non una firma Secure Boot.
 
-`tools/baseimage.py` crea un **UDIF v4 non compresso**. Il data fork è un volume FAT16 da 3 MiB con il runtime di questo progetto in `/EFI/BOOT/BOOTX64.EFI`. Il file contiene una property list con la mappa `blkx`/`mish` dei settori, i CRC32 e il trailer `koly`. Il digest SHA-256 dell’intero DMG è incorporato nei loader **dopo** la costruzione del runtime. Non viene interpretata una proprietà «fidati» fornita dall’utente: questi loader accettano solo il profilo UDIF di questa build, non DMG generici, compressi o cifrati. Non sono firme Apple né Secure Boot.
+## Kernel e processi
 
-Per l’installatore il CD contiene `Volume.hdr`, il prefisso FAT con il bootstrap e le entry di directory. Il loader costruisce una Recovery HD da 4 MiB usando questo prefisso, lo **stesso DMG usato per R sul CD**, e padding zero. Controlla SHA-256 dell’intero volume rispetto al manifest prima del passaggio al kernel. L’installatore scrive e rilegge tutti i blocchi prima di pubblicare la GPT. Il boot normale da disco non carica il DMG se non si richiede Recupero.
+Il kernel gestisce paginazione x86-64, isolamento Ring 3, interrupt, scheduler e syscall native. La VM multi-CPU comprende coordinamento delle mutazioni e invalidazione TLB. La presenza delle primitive di thread non implica compatibilità POSIX/pthread completa.
 
-Nella shell di Recupero, `diskutil info /` mostra la provenienza: il loader passa i dati del *device path UEFI con cui il DMG è stato letto* e il numero di byte verificati. Non deduce l’origine dalla sola presenza di un disco SATA. Un file mancante o alterato ferma l’avvio; il messaggio invita a usare la ISO integra e non attiva una reinstallazione automatica.
+Le applicazioni sono eseguibili statici nel catalogo di sistema, organizzati in bundle. Non vengono forniti dyld, Cocoa o ABI Darwin. Il compositor accede ai servizi grafici attraverso il kernel; font e immagini sono risorse effettive del filesystem.
 
-Il percorso normale seleziona un modo GOP RGB/BGR (preferito 1280×800), conserva la mappa EFI, il framebuffer, l’RSDP e gli oggetti del sistema, carica i segmenti ELF verificati a 64 MiB e chiama `ExitBootServices`. Dopo il passaggio al kernel non viene più invocato il firmware UEFI. Il logo e la barra coprono le fasi reali di avvio. Il login è un percorso separato, con il proprio indicatore di attività.
+## Dispositivi e input
 
-## Kernel e I/O
+AHCI serve lo storage SATA. I driver nativi comprendono PS/2, xHCI, EHCI e UHCI; routing Intel e topologie USB hanno limiti espliciti. La decodifica distingue delta relativi e coordinate assolute, verifica i report HID supportati e usa una mappa italiana ISO condivisa per tastiere USB e PS/2.
 
-GDT/TSS/IDT, paginazione x86-64 a quattro livelli, NX, CR0.WP, page allocator da memoria EFI convenzionale, heap coalescente. La mappa fisica condivisa è solo supervisor. Ogni processo ha PML4, pagine e stack propri. Il caricatore rifiuta segmenti eseguibili e scrivibili insieme. Il kernel copia le richieste `SYSCALL` soltanto dopo i controlli sul range e sui permessi delle pagine. Nessun programma utente ha accesso al framebuffer fisico o ai dispositivi SATA: anche il compositor deve passare dal kernel.
+Nel desktop l'input passa dai driver kernel. In Recovery, che è un runtime UEFI separato, il puntatore usa i protocolli firmware disponibili o USB I/O sulle interfacce non reclamate. Questi percorsi non sono intercambiabili: un test del decoder o del controller nativo non certifica il firmware Recovery.
 
-Scheduler preemptive a un core; fino a 32 slot di task e 23 di processo, inclusi gli slot riservati. Il tick PIT è instradato da I/O APIC quando disponibile; thread kernel separato per campionare l’orologio. La release **non contiene il processo Probe**, il canale seriale di sviluppo o il monitor diagnostico. Un errore fatale dà all’utente istruzioni di riavvio/recupero, non un dump di registri. Eventuale testo `BdsDxe` prima del loader appartiene a OVMF, non al sistema.
+## Recupero e integrità
 
-PCI → ICH9 AHCI → SATA DMA con buffer di rimbalzo; xHCI → enumerazione USB HID → tastiera, mouse relativo o tablet assoluto. Il test disabilita i8042. L’installazione legge ogni settore della destinazione prima di cambiarla; i dati vengono sincronizzati e riletti prima di pubblicare le due GPT e il protective MBR. I limiti e la procedura in caso di interruzione sono descritti in [TINYFS.md](TINYFS.md).
+`tools/baseimage.py` crea il BaseSystem UDIF non compresso con il runtime di Recupero. I loader verificano il file prima di eseguirlo. L'installer copia lo stesso BaseSystem nella partizione Recovery; la sorgente sigillata del desktop serve invece alla reinstallazione offline.
 
-## Puntatore: posizione, non velocità
+I digest rilevano corruzione, non proteggono contro chi può riscrivere sia dati sia sigilli. La geometria corrente dei volumi è descritta in `TINYFS.md`; le vecchie dimensioni dei documenti storici non vanno applicate ai media attuali.
 
-Il driver xHCI mantiene il protocollo boot per tastiera e mouse relativi. Per un HID non-boot di classe 3, legge il descrittore di report (massimo 1024 byte) e richiede una collezione Mouse/Pointer con pulsante primario e due assi assoluti. `drivers/hidtablet.c` convalida offset, dimensioni, limiti e lunghezza prima della decodifica. Per il `usb-tablet` QEMU il report è di sei byte: pulsanti, X e Y little-endian (0–32767 ciascuno), rotella relativa con segno. Non si usa la VID/PID per indovinare il formato.
+## Riferimenti nel codice
 
-`EV_POINTER_ABS` contiene la posizione già scalata nell’intervallo chiuso `[0, larghezza−1] × [0, altezza−1]`. Il login e il compositor assegnano queste coordinate; solo `EV_MOUSE` **somma** i delta. I pulsanti continuano a usare transizioni pressione/rilascio; Finder e Terminale ricevono la rotella del tablet. Il rettangolo di aggiornamento del cursore viene ritagliato senza spostare la punta ai bordi.
+| Funzione | Sorgenti |
+| --- | --- |
+| Loader e bootstrap Recovery | `boot/` |
+| Runtime UEFI di Recupero | `recovery/` |
+| Processi, memoria e syscall | `kernel/`, `arch/`, `include/` |
+| Controller e parser HID | `drivers/` |
+| Cataloghi e volumi | `tools/system_volume.py`, `fs/`, `storage/` |
+| Compositor e applicazioni | `desktop/`, `userspace/` |
 
-Il Recupero usa lo stesso decodificatore per gli interrupt IN via EFI USB I/O, senza smontare un driver esistente e senza toccare lo storage USB. In presenza di un driver firmware può invece leggere Absolute Pointer (o Simple Pointer per il mouse). I percorsi desktop non dipendono da questi servizi dopo `ExitBootServices`. Non è un driver generico per digitalizzatori con pressione, penne, touch o multitouch.
-
-## Volume di sistema e programmi
-
-- **KernelCache:** 64 byte di intestazione `TMKCACHE`, versione, architettura, offset, lunghezza, SHA-256; seguono i byte del kernel ELF64 privato di simboli. Non è il formato Apple e non si tratta di una firma di Secure Boot.
-- **System.vol:** `TMVOL2`, tabella gerarchica di entry da 64 byte, estensioni immutabili e digest finale SHA-256. Il loader verifica il digest; il kernel controlla limiti delle entry, parentela, nomi e risorse. Il filesystem espone anche i byte reali del `KernelCache` e del loader come `/System/Library/CoreServices/boot.efi`.
-- **Bundle:** `Nome.app/Contents/Info.plist` + `MacOS/Nome`. Gli utenti vedono solo il volume avviato. Finder e Info si trovano in CoreServices; Terminal, Disk Utility e Activity Monitor in `/Applications/Utilities`. Il compositor è `/System/Library/CoreServices/WindowServer` e carica font e immagini dal catalogo, compresi prima del login i soli asset pubblici ammessi.
-- **Mach-O:** eseguibili statici x86-64 `MH_EXECUTE`, segmenti `LC_SEGMENT_64` e comando `LC_MAIN`. `tools/system_volume.py` traduce i segmenti collegati dall’host; le applicazioni lanciate nel guest sono davvero i file Mach-O nel catalogo. Il kernel risolve il percorso, mappa i segmenti, azzera il BSS e avvia il processo in Ring 3. Nessun `dyld`, framework Cocoa, ABI Darwin o compatibilità generica con binari Mac.
-- **Terminale:** i 26 percorsi dei programmi in `include/commands.def` risolvono a un eseguibile multicall deduplicato sul volume. `exec` crea un processo distinto e gli consegna `argv[0]` dal file effettivamente risolto, gli argomenti, la directory e l’input; l’output e lo stato finale tornano solo alla sessione proprietaria. Filtri e redirezioni operano sugli stessi file usati da Finder. Le pipeline sono **sequenziali e bufferizzate**, non pipe POSIX in streaming: massimo 6 stadi, 14 argomenti per stadio e 8 KiB di dati per passaggio. `cd`, `history`, `exit`, ecc. sono interni alla shell. `shasum` usa SHA-1 per default e SHA-256 con `-a 256`; SHA-1 non è usato per account o integrità della release.
-
-## Sessione e manutenzione
-
-La creazione dell’account usa PBKDF2-HMAC-SHA256 (120.000 iterazioni), sale per account e due record privati del volume dati. Il login sospende le app e blocca l’accesso ai documenti fino all’autenticazione. Nessuna password preconfigurata o credenziale inclusa nel CD. La sorgente di sale privilegia EFI RNG, RDSEED/RDRAND, quindi jitterentropy, con codice casuale di configurazione esplicito se le sorgenti non sono utilizzabili. La copia locale di Recupero include **account e dati**: è un ripristino di stato, non un archivio cifrato.
-
-`storage/maintenance.c` è lo stesso codice con due trasporti: AHCI nel kernel e EFI Block I/O in Recupero. Verifica struttura, CRC e concordanza delle GPT, alberi e limiti TinyFS; su Riviera confronta anche il digest della ESP con il sigillo locale. Può ricostruire una GPT dall’altra. Non azzarda una riparazione se entrambe sono distrutte o valide ma in disaccordo. La reinstallazione verifica l’intera sorgente offline prima di scrivere, poi rilegge la ESP. La copia dati usa un sigillo separato, legato al GUID del disco. Queste verifiche rilevano corruzione accidentale: non sono autenticazione contro chi può riscrivere l’intero disco.
+I percorsi della tabella sono relativi alla directory `tinymacOS/`.

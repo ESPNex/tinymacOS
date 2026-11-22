@@ -1,96 +1,33 @@
-# tinymacOS — sorgenti e workspace
+# tinymacOS
 
-**[tinymacOS 10.1.5 Tramontana / 30B6 — pubblicata, Latest](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.5).** [Scarica la ISO BIOS/UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.1.5/tinymacOS-10.1.5-x86_64.iso). Sorgenti sincronizzati prima degli upload (`52a75e132fc8d655ca26d5ee2329cf6bee0a0274`); download anonimo completo e SHA-256 verificati. Ricevuta: `workspace/release-10.1.5-30B6/github-release-verification.json`. Dieci release precedenti pre-release, con ISO, note e tag preservati. Il gate di 80 ricevute riguarda il software, non il PC fisico.
+Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e ambiente di Recupero UEFI. Non è basato su Linux o XNU e non offre compatibilità generale con le applicazioni macOS.
 
-**Riscontro fisico 10.1.4: mouse fermo sia al login sia in Recovery.** La 10.1.4 non ha risolto il problema e ha peggiorato il precedente riscontro Recovery solo verticale della 10.1.3. I vecchi PASS virtuali non prevalgono su questo risultato.
+**Versione pubblicata: 10.1.5 Tramontana · build 30B6.**
 
-La 10.1.5 ritira la forzatura Report per i mouse Boot, corregge lo scarto dei pacchetti con padding, **non disconnette più il proprietario firmware del mouse Recovery** e non ferma EHCI sui poll senza dati. Undici nuovi controlli negativi sul vero codice 10.1.4, oltre ai quattro contratti HCD conservati. La decodifica Report-ID che separa correttamente X/Y non viene rimossa.
+[Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 
-È corretto anche un difetto della QA: nomi ISO delle sonde rimasti obsoleti. Nuovi gate verificano il kernel realmente estratto dalle cinque ISO QA contro la produzione e associano i tredici profili guest ai nuovi media. [Analisi e limiti della pipeline](workspace/release-10.1.5-30B6/QA-NOTES.md).
+## Il progetto
 
-**Nessuna verifica fisica della 10.1.5 sull’ASRock Q1900M/J1900.** Sono corretti difetti software riproducibili, non identificata con certezza la causa del mouse dell’utente. Nessuna richiesta di altra foto F11. Riferimento storico esatto: 2.4.5 Levante / 21B9.
+- Desktop con Finder, Terminale, editor, utility e Centro di Controllo in vetro.
+- Temi chiari/scuri, sfondi e icone SVG originali per il Centro di Controllo.
+- Tastiera italiana ISO, input PS/2 e driver USB xHCI, EHCI e UHCI.
+- Avvio ottico BIOS/UEFI, installazione su SATA e ripristino locale offline.
 
-Centro di Controllo conservato: 13 SVG originali, vetro, un solo Sfondo e un solo accesso alle Impostazioni. Tastiera italiana ISO, PS/2 e artwork conservati. Safari/WebKit non incluso.
+## Stato e limiti
 
-Repository pubblico; ISO solo negli asset delle release, non in Git. Credenziali cifrate nel workspace escluso da Git, chiave separata. Tutte le release precedenti vengono mantenute pre-release con ISO, altri asset, note e tag preservati.
+Il mouse sulla ASRock Q1900M/J1900 resta un problema aperto: la 10.1.4 è risultata immobile al login e in Recovery; la 10.1.5 non è ancora stata verificata su quella macchina. I test QEMU non costituiscono una verifica hardware.
 
-- [Sistema, build e limiti](tinymacOS/README.md)
-- [Note 10.1.5 e verifiche](workspace/release-10.1.5-30B6/RELEASE.md)
-- [Regressione 10.1.4 e correzioni 10.1.5](workspace/release-10.1.5-30B6/HISTORY-AND-CHANGES.md)
-- [Correzione pipeline QA](workspace/release-10.1.5-30B6/QA-NOTES.md)
-- [Icone SVG conservate](tinymacOS/assets/control-center/)
-- [Archivio precedente 10.1.4](workspace/release-10.1.4-30B5/RELEASE.md)
-- [Archivio 10.1.3](workspace/release-10.1.3-30B4/RELEASE.md)
-- [Ripristino accesso cifrato, chiave separata](workspace/ACCESSO-CIFRATO.md)
-- [Backend WebKit sperimentale, non browser funzionante](workspace/webkit-tmc/README.md)
+Safari/WebKit non è incluso. Non sono supportati HID/USB universale, OHCI, hotplug generale o hub SuperSpeed. La ISO non è un'immagine USB-DD ibrida. Per le prove d'installazione usare soltanto dischi virtuali vuoti dedicati, senza dati da conservare.
 
-Output e toolchain fuori dal workspace. Gli elementi seguenti sono storici e non identificano la versione corrente.
+## Sorgenti
 
-## Documentazione storica
+| Percorso | Contenuto |
+| --- | --- |
+| `tinymacOS/` | Sistema operativo, risorse, build e test |
+| `workspace/webkit-tmc/` | Backend sperimentale per il futuro port WebKit; non un browser |
+| `workspace/release-*/` | Note specifiche, script e ricevute delle build pubblicate o sostituite |
+| `workspace/maintenance-*/`, `workspace/integrated-next/` | Revisioni precedenti, mirror di sviluppo ed evidenze |
 
-Le sezioni seguenti sono conservate come storico e non identificano la candidata corrente.
+Le ISO e i checksum sono negli asset delle release. Le versioni precedenti restano pre-release; i loro tag e file sono conservati.
 
-> **Corrente e pubblicata: [2.4.5 / 21B8](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5):** hub USB2 nativi xHCI, routing Intel switchable/Bay Trail, alone Dock dopo Mission Control e allineamento mela corretti. [Note, limiti e gate](workspace/release-2.4.5-input3/RELEASE.md). 27 profili input e 29/29 regressioni PASS, con test anti-fallback. Sostituzione nella stessa release completata; ISO riscaricata e SHA-256 verificato, receipt incluso. Le voci 21B7 e 21B6 sotto sono storiche; la 21B7 non risolveva il mouse sul PC dell’utente.
-
-> **Storico, revisione precedente: [tinymacOS 2.4.5 Levante / 21B7](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5).** Sostituita la ISO nella stessa release su richiesta. PS/2 tastiera/mouse, EHCI HID e UHCI companion; diagnostica F11 rimossa. 16 profili input, 117 verifiche e 29/29 regressioni PASS; download verificato. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md).
-
-> **Revisione input 2.4.5 / 21B7:** driver nativi PS/2 tastiera/mouse, EHCI HID e UHCI companion; nessuna diagnostica F11 al login. 16 profili input e 29/29 regressioni PASS. [Note e limiti](workspace/release-2.4.5-input2/RELEASE.md); il receipt di sostituzione conferma l’avvenuto deploy nella stessa release. Le indicazioni 21B6 sotto sono storiche.
-
-> **Manutenzione input 2.4.5 Levante / 21B6:** [Pubblicata su GitHub](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.5), riscaricata e verificata; manutenzione richiesta per mouse fermo al login e lag. Note, collaudi e limiti: [release 2.4.5](workspace/release-2.4.5/RELEASE.md). Nessuna prova sul PC fisico dell’utente; Safari/WebKit ancora non incluso.
-
-> **Precedente manutenzione OpenCore:** [v2.4.4-oc2](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4-oc2): live ottica BIOS+UEFI e **disco installato autonomo BIOS/OpenDuet/OpenCore+UEFI**. Prove con ISO rimossa, riavvio e Recupero locale. Non immagine USB DD. [Note e QA](workspace/release-2.4.4/installer-media/RELEASE.md).
-
-# tinymacOS — sorgenti e workspace di sviluppo
-
-Repository privata: https://github.com/ESPNex/tinymacOS
-
-Questo repository conserva i file del workspace necessari a riprendere lo sviluppo senza dipendere dal limite di 128 MiB degli snapshot della conversazione. Non contiene credenziali, ISO, archivi di sorgenti o directory di build. I file vendor selezionati sono conservati estratti, con licenze e lock disponibili nei rispettivi alberi.
-
-**Release 2.4.4 Levante (21B5):** [download privato e note](https://github.com/ESPNex/tinymacOS/releases/tag/v2.4.4). [QA e checksum](workspace/release-2.4.4/RELEASE.md). La ISO originale era UEFI; OC2 aggiunge live ottica e installazione BIOS, sempre senza browser.
-
-## Mappa
-
-- `tinymacOS/`: albero primario di sviluppo del sistema nativo x86-64, build e strumenti di test. Release manutenzione input esplicitamente autorizzata: **2.4.5 Levante, build 21B8**, senza browser. La richiesta di anticipare questa manutenzione sostituisce la precedente riserva del numero 2.4.5 al browser.
-- `workspace/webkit-tmc/`: backend nativo e lavoro preparatorio al port WebKit. **Non è ancora Safari né un motore WebKit/JSC funzionante.**
-- `workspace/integrated-next/`: sorgenti modificati sincronizzati, QA ed evidenze per SMP, verbose e bootstrap BIOS/OpenDuet/OpenCore.
-- `workspace/maintenance-2.4.3/`: consegna precedente, evidenze e copia congelata dei sorgenti distribuiti; da non confondere con lo sviluppo corrente.
-- Gli altri alberi `workspace/maintenance-*`, `workspace/smp-next` e i documenti alla radice conservano contesto, test e revisioni precedenti.
-- `uploads/`: allegati originali della conversazione, conservati in questa repository privata.
-
-## Stato e limiti reali
-
-- VM/MMU nativa: verifiche positive su 1/2 vCPU e stress concorrente su 4/8 vCPU documentati. Non sono prove di pthread/POSIX completo o WebKit.
-- Supporto OC2: CD BIOS via MEMDISK/OpenDuet BlockIO/OpenCore; installato BIOS via ponte MBR → OpenDuet completo USB/AHCI → OpenCore → loader/kernel nativi. Il medesimo disco avvia anche in UEFI tramite il launcher OpenCore ufficiale. GPT/FAT16 invariata; Recupero e sorgente sigillata verificati. OC1 resta una revisione precedente solo ottica.
-- Verbose UEFI diretto selezionato con `V`, comandi `bootverbose status`, `on`, `off`, `log [pagina]` implementati. Verificati selezione live, stato, log e rifiuto di scrittura persistente sulla live. Il test completo della preferenza installata in `workspace/integrated-next/qa/verbose_installed.py` è passato: off → on da Terminale → riavvio verbose → off → riavvio quieto; ESP sigillata e payload Recovery invariati. Evidenze in `workspace/integrated-next/evidence/verbose-installed/`.
-- `workspace/webkit-tmc/test-results/milestone-tests.json` riporta la suite backend/runtime. Date e commit delle prove contano: un risultato precedente non valida automaticamente modifiche successive.
-- **Safari/WebKit reale non è completato. La 2.4.5 è una release manutenzione senza browser, non la futura ISO Safari.**
-- Nessuna validazione su hardware fisico; i risultati QEMU non garantiscono compatibilità BIOS/USB universale.
-
-## Ricostruzione
-
-Clonare normalmente la repository. Consultare prima `tinymacOS/README.md`, `workspace/webkit-tmc/README.md`, i lock vendor e i relativi strumenti di provisioning. Il checkout è portabile: non richiede il vecchio contenuto di `/var/tmp`; toolchain e output temporanei vanno ricreati seguendo gli strumenti presenti. Il repository non include un checkout completo di WebKit: il sottoinsieme `upstream-reference/` è esplicitamente solo di riferimento.
-
-Esempio per il sistema, dalla radice del clone, una volta installati/ripristinati i prerequisiti:
-
-```sh
-python3 tinymacOS/tools/local-tools.py /var/tmp/tmc/tools/root
-python3 workspace/integrated-next/qa/sync_sources.py
-TOOLROOT=/var/tmp/tmc/tools/root TMC_BUILD=/var/tmp/tmc-integrated-system bash tinymacOS/build.sh
-```
-
-Gli script QA storici possono contenere `/home/user` come percorso del workspace originale: adattarlo se si clona altrove. Le ISO restano **fuori dal checkout**, anche temporaneamente. Non eseguire comandi di scrittura su dischi fisici usando gli strumenti QA: essi sono pensati per file nuovi e dischi virtuali usa-e-getta.
-
-## Git e autenticazione
-
-Nell'ambiente Arena il database Git locale è mantenuto sotto `/var/tmp/tmc-github-git/` per non raddoppiare il consumo degli snapshot. Questo database e l'autenticazione CLI non sono il backup: **il backup è il commit effettivamente inviato e verificato su GitHub**. Fuori da Arena usare un normale `git clone`.
-
-Le credenziali OAuth in uso sono separate sotto `/var/tmp`. Il backup autenticato cifrato resta soltanto nel workspace escluso da Git, con chiave fornita separatamente: [guida al ripristino](workspace/ACCESSO-CIFRATO.md). Possono richiedere nuova autorizzazione se il token viene revocato o scade. Non inserire token o chiavi in URL, script, documenti, repository o ISO.
-
-Per i successivi backup nell'ambiente Arena:
-
-```sh
-python3 workspace/github_sync.py                 # stato, senza commit/push
-python3 workspace/github_sync.py --push --allow-public -m "Descrizione delle modifiche"
-```
-
-Lo script verifica visibilità e commit remoto, richiede `--allow-public` per il repository pubblico, non fa force-push, rifiuta cancellazioni implicite da snapshot incompleti e cerca pattern comuni di credenziali prima di pubblicare. Non è un secret scanner esaustivo: serve comunque revisione. Se CLI/autenticazione sono scadute o perse, autorizzarle nuovamente senza salvare token nel checkout.
+[Build e guida tecnica](tinymacOS/README.md) · [Contribuire](CONTRIBUTING.md)
