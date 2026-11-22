@@ -255,7 +255,6 @@ static void paint(void)
     }
     if (ah > 250)
         Text(16, 198, "Posizioni", F_SMALL, SUB);
-    Text(x, 10, bootpath(cwd) ? "Sistema" : "Finder", F_SMALL, SUB);
     const char *head = eq(cwd, HOME) ? "Inizio" : eq(cwd, "/") ? (si.live_cd?"tinymacOS Live":"Macintosh HD") : pretty(leaf(cwd));
     Text(x, 29, head, (int)strlen(head) > 26 || aw < 570 ? F_CAPTION : F_TITLE, TX);
     button(x, 62, 28, "←", 0);
@@ -299,7 +298,7 @@ static void paint(void)
     }
     if (!n) {
         Text(x, 123, "Questa cartella è vuota.", F_BODY, SUB);
-        Text(x, 151, bootpath(cwd)?"Nessun elemento in questa posizione.":"Crea una cartella o un file qui sotto.", F_SMALL, SUB);
+        if(!bootpath(cwd))Text(x, 151, "Crea una cartella o un file qui sotto.", F_SMALL, SUB);
     }
     int fy = ah - 36;
     Box(S + 1, fy - 2, aw - S - 1, 1, 0, EDGE);
@@ -322,7 +321,6 @@ static void paint(void)
     }
     if (aw - x > 300)
         Text(bootpath(cwd) ? aw - 102 : x + 154, fy + 7, stat, F_SMALL, SUB);
-    Text(16, ah - 23, si.persistent ? "Sul mio computer" : "Sessione live", F_MICRO, EMP);
     if (dialog == 7)inspect_draw();
     else if (dialog == 6)preview_draw();
     else if (dialog) {

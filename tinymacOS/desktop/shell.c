@@ -505,8 +505,6 @@ static int menus(int k, const char **s, int *a)
             ADD("Griglia / elenco", ACT_VIEW);
         }
         ADD("Centro di Controllo", 163);
-        ADD("Cambia aspetto", 143);
-        ADD("Cambia sfondo", 144);
     } else if (k == 5) {
         ADD("Mission Control", 164);
         if (app) {
@@ -728,8 +726,8 @@ void context_ready(Event*e){if(!pending||e->a!=pending||e->d!=nonce||topwin()<0|
     const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Copia","Incolla","Rinomina…","Elimina…","Griglia / elenco"};
     for(int j=0;j<11;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
 void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;dirty=1;
-    if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Impostazioni di Sistema",104);cmadd("Centro di Controllo",163);showctx();return;}
-    int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Apri Libreria",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Libreria app",161);cmadd("Impostazioni di Sistema",104);showctx();return;}
+    if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Centro di Controllo",163);showctx();return;}
+    int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Apri Libreria",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Libreria app",161);showctx();return;}
     for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(mx,my,v->box))continue;focuswin(i);owner=v->s.pid;
         int x=mx-v->box.x-1,y=my-v->box.y-TITLE;
         if(y>=0&&v->s.app==FINDER){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
@@ -737,7 +735,7 @@ void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;di
         cmadd("Contrai finestra",141);cmadd("Zoom / ripristina",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina…",205);cmadd("Elimina…",206);}}
     else if(inside(mx,my,widget)){cmadd("Apri Calendario",100+CALENDAR);}
-    else {cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);cmadd("Cambia sfondo…",100+GALLERY);cmadd("Cambia tema…",104);if(sys.live_cd)cmadd("Installa tinymacOS…",100+INSTALLER);}showctx();}
+    else {cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd("Installa tinymacOS…",100+INSTALLER);}showctx();}
 int shell_key(Event *e)
 {
     pending=0;int k = e->a;

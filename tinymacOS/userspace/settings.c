@@ -170,12 +170,10 @@ static void paint(void)
         y += 34;
     }
     // Intestazione contenuto
-    Text(x, 14, "Impostazioni di Sistema", F_SMALL, SUB);
     Text(x - 1, 34, pname[pane], F_TITLE, TX);
 
     if (pane == 0) {
         // Apple "Appearance": Light/Dark cards, accent colour circles, wallpaper grid.
-        Text(x, 70, "ASPETTO", F_MICRO, SUB);
         Box(x, 88, w, 106, 10, PANEL);
         int tw = (w - 48) / 2, th = 64;
         for (int j = 0; j < 2; j++) {
@@ -321,7 +319,7 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.1.5 (30B6)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.1.6 (30B7)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
@@ -482,7 +480,7 @@ static void key(Event *e)
 
 void app_main(void)
 {
-    win(860, 540, "Impostazioni");
+    win(860, 540, "Impostazioni di Sistema");
     refresh();
     paint();
     for (;;) {

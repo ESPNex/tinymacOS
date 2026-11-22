@@ -6,14 +6,14 @@ I contratti host verificano parser e invarianti; le prove guest esercitano il co
 
 Ogni risultato va associato a sorgenti, kernel e media effettivi. Le immagini diagnostiche non sono le ISO distribuite. Non riutilizzare il risultato di una vecchia build per dichiarare collaudata una modifica nuova.
 
-## Ultima build pubblicata
+## Gate della 10.1.6 / 30B7
 
-La 10.1.5 / 30B6 ha un gate di 80 ricevute, con 27 profili input live/installato, 236 asserzioni native, 18 avvii Recovery e 29 regressioni kernel. Cinque media QA e tredici profili guest sono associati al kernel di produzione. Sono risultati software, non conferma del funzionamento del mouse sulla ASRock.
+Il gate richiede 82 ricevute: include 27 profili input live/installato, 236 asserzioni native, 18 avvii Recovery, 29 regressioni kernel, l'accettazione delle nuove icone e dei menu semplificati e 12 trascinamenti ripetuti con hub xHCI. Cinque media QA e tredici profili guest sono associati al kernel di produzione. Sono risultati software, non conferma del funzionamento del mouse sulla ASRock.
 
-Le evidenze sono in `workspace/release-10.1.5-30B6/` dalla radice del repository:
+Le evidenze sono in `workspace/release-10.1.6-30B7/` dalla radice del repository:
 
 - `final-qa.json`: esiti e associazione agli hash.
-- `QA-NOTES.md`: correzione della precedente associazione fra launcher e media.
+- `QA-NOTES.md`: ambito, riproduzione, controlli icone e associazione fra media QA e kernel di produzione.
 - `github-release-verification.json`: verifica della pubblicazione e del download, distinta dai test.
 
 Le ricevute restano riferite al commit sorgente e ai media registrati, anche quando `main` riceve successive correzioni documentali.

@@ -12,10 +12,9 @@ static void paint(void)
     Icon(39, 45, 65, 31);
     Center(71, 127, "TRAMONTANA", F_MICRO, 0xf7f8ff);
     int x = left + 17;
-    Text(x, 13, "Informazioni sul sistema", F_SMALL, SUB);
     Text(x - 2, 32, "tiny", F_DISPLAY, TX);
     Text(x - 2 + 72, 32, "macOS", F_DISPLAY_SEMIBOLD, TX);
-    Text(x, 91, "Versione 10.1.5  ·  Tramontana", F_CAPTION, SUB);
+    Text(x, 91, "Versione 10.1.6", F_CAPTION, SUB);
     Box(x, 130, aw - x - 17, 1, 0, EDGE);
     pair(x, 145, "Processore", si.cpu);
     char s[90] = "";
@@ -27,7 +26,7 @@ static void paint(void)
     pair(x, 243, "Volume dati", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
     s[0] = 0;
     addnum(s, si.procs, 90);
-    append(s, " processi attivi  ·  Build 30B6", 90);
+    append(s, " processi attivi  ·  Build 30B7", 90);
     Text(x, ah - 30, s, F_SMALL, EMP);
     finish();
 }

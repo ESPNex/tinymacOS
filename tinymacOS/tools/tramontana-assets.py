@@ -7,7 +7,7 @@ Only unchanged UI controls/cursor/branding use the legacy control sprite sheet.
 from pathlib import Path
 from PIL import Image,ImageDraw
 import hashlib,json,struct,sys
-D=Path(sys.argv[1]);a=Path('assets');source=a/'icons';m=json.loads((source/'manifest.json').read_text());APP_SLOTS={1,2,3,4,5,16,17,18,19,39,40,41,42}
+D=Path(sys.argv[1]);a=Path('assets');source=a/'icons';m=json.loads((source/'manifest.json').read_text());APP_SLOTS={1,2,3,4,5,13,16,17,18,19,39,40,41,42}
 mapping={x['slot']:x['file'] for x in m['icons'] if x['slot'] in APP_SLOTS}
 # All folder/file/drive/library/settings/control symbols use the original sheet.
 # Installer is the explicit procedural exception: an original Tramontana badge.

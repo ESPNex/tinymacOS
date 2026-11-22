@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "iso_sha256": "88901c4359ba1418ade83a0c6712eab06b4cd7c6e21b4915cf43375a36375763",
+  "work": "/var/tmp/tmc1016-ui-icons-o0ux42f9",
+  "checks": [
+    "Latest locally supplied exact-name App Store PNG in slot 13; Recovery Disk Utility byte-identical to OS slot 39; other filesystem symbols preserved",
+    "Both actual ISO live/installable catalogs contain exact original PNGs and linked atlas; actual Recovery EFI contains matching imported icon subset",
+    "Redundant desktop/View appearance commands absent from source and linked desktop; repeated Finder/Settings headers removed without removing appearance controls",
+    "Actual Finder sidebar and /Applications root icon match supplied App Store artwork pixel-for-pixel; actual desktop context menu no longer repeats appearance actions",
+    "Actual Recovery home renders the same imported Disk Utility artwork and opens Utility Disco"
+  ],
+  "physical_hardware_tested": false,
+  "rendered_icons": [
+    {
+      "name": "finder-applications-sidebar",
+      "position": [
+        138,
+        432
+      ],
+      "size": 19,
+      "opaque_pixels": 188,
+      "max_channel_error": 0
+    },
+    {
+      "name": "finder-applications-root",
+      "position": [
+        765,
+        323
+      ],
+      "size": 54,
+      "opaque_pixels": 1597,
+      "max_channel_error": 0
+    },
+    {
+      "name": "recovery-imported-disk-utility",
+      "position": [
+        166,
+        350
+      ],
+      "size": 39,
+      "opaque_pixels": 766,
+      "max_channel_error": 0
+    }
+  ]
+}

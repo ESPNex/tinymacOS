@@ -1,0 +1,50 @@
+PASS uefi xhci-hub-kbd Exact topology: USB keyboard and xhci-hub-kbd USB mouse
+PASS uefi xhci-hub-kbd Rendered mouse sprite at two login/setup positions
+PASS uefi xhci-hub-kbd Login executable has no F11 diagnostic panel
+type 'N' dt=0.164
+type 'a' dt=0.171
+type 't' dt=0.166
+type 'i' dt=0.173
+type 'v' dt=0.164
+type 'e' dt=0.166
+type 'I' dt=0.171
+type 'n' dt=0.164
+type 'p' dt=0.163
+type 'u' dt=0.163
+type 't' dt=0.163
+type 'l' dt=0.167
+type 'o' dt=0.168
+type 'c' dt=0.163
+type 'a' dt=0.165
+type 'l' dt=0.163
+type '-' dt=0.165
+type 't' dt=0.163
+type 'e' dt=0.163
+type 's' dt=0.163
+type 't' dt=0.163
+type '-' dt=0.164
+type '2' dt=0.166
+type '8' dt=0.163
+type '5' dt=0.163
+type 'l' dt=0.163
+type 'o' dt=0.165
+type 'c' dt=0.164
+type 'a' dt=0.165
+type 'l' dt=0.165
+type '-' dt=0.164
+type 't' dt=0.163
+type 'e' dt=0.166
+type 's' dt=0.197
+type 't' dt=0.184
+type '-' dt=0.168
+type '2' dt=0.164
+type '8' dt=0.163
+type '5' dt=0.163
+PASS uefi xhci-hub-kbd Keyboard password entry plus mouse field/submit clicks open desktop
+PASS uefi xhci-hub-kbd Independent horizontal-only X and vertical-only Y cursor sprite positions
+/var/tmp/tmc-input2-uefi-xhci-hub-kbd-bjfclzgy
+Traceback (most recent call last):
+  File "/home/user/tinymacOS/tests/input2_acceptance.py", line 66, in <module>
+    assert g.visible('Preferiti',faces=(0,))==(x+87,y+41)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

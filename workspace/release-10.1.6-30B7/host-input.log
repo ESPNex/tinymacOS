@@ -1,0 +1,36 @@
+PASS queue: 10000 motion reports, exact sum, buttons/wheel/key barriers, absolute newest, full-queue counter
+PASS completion: signed boot motion, button decoding, success/short packet rearm, aligned DMA
+PASS endpoint halt: deferred reset, clear-halt, new dequeue, rearm; bounded repeated-failure cap
+PASS control stall on Setup/Data: consume error, reset EP0, set dequeue, next protocol request succeeds
+PASS actual xHCI short control: actual length from Data, completion only after Status, IN ISP set
+PASS timeout: no unsafe recycling of potentially live control DMA
+PASS diagnostic snapshot ABI; no keyboard content or DMA pointers exposed
+PASS verified Boot does not force Report; vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64
+PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL
+PASS Boot SET_PROTOCOL STALL: existing Boot protocol accepted only after GET_PROTOCOL=0; unknown state rejected
+PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed
+PASS xHCI acknowledged-but-unchanged Report mode: GET=Boot selects verified Boot offsets, horizontal and vertical completions intact
+PASS actual xHCI vertical-only reproduction: descriptor-framed Report despite GET=Boot yields independent X/Y, not ID/button bytes as axes
+PASS retry scan preserves owned root slots/contexts and never resets an enumerated HID
+PASS: composite HID keyboard/mouse/report interfaces, independent endpoints, 512-byte endpoint, bounds and alternate-setting rejection.
+PASS independent axes with other Report IDs and bounded HID global Push/Pop
+PASS: report-protocol relative mouse, signed 16-bit deltas, report ID, buttons, wheel and truncated-report rejection.
+PASS xHCI HS hub -> FS mouse: distinct reserved slots, root port, route string, TT slot/port and think-time, delayed hub reset polling
+PASS nested USB2 hub: route nibbles and nearest high-speed TT inherited through full-speed hub
+PASS xHCI 0.95 Evaluate vs 1.0 Configure hub command; low-speed child with TT, reserved child think-time bits zero
+PASS malformed zero-port hub rejected; no child enumeration and slot released
+PASS 21B9 regression: shared Intel USB2 routed before enumeration even when EHCI exists; only documented mask bits changed
+PASS Intel Bay Trail: mask-limited USB3 then USB2 routing, preserves preexisting ports, bounded settling
+PASS empty-HID fallback: only switchable masked USB2 bits, one retry; any live pointer or keyboard blocks remux; unknown/all-ones/zero mask/no companion rejected
+PASS routing guard: unknown/foreign/non-xHCI/all-ones registers and known non-switchable subsystem receive no writes
+PASS sole Italian physical map, Shift/AltGr/accent/euro/ISO102, independent shortcuts, UTF-8 insertion/delete/caret/field validation
+PASS Recovery verified Boot first, strict Report fallback, mode mismatch rejected
+PASS Recovery relative deltas coalesce without pinning cursor to a stale source position; release and idle filtering retained
+PASS Recovery actual async error path: twelve separate STALL/cancel/clear/rearm/success cycles; no lifetime failure limit
+PASS actual Recovery vertical-only reproduction: ID/16-bit report despite Boot indication, X=64/Y=0 then X=0/Y=64; foreign ID ignored
+PASS Recovery never disconnects a firmware-owned mouse or keyboard; existing firmware pointer remains available
+PASS optical firmware: deterministic derivation, 29 original FFS and 3 earlier executables byte-exact, only 3 pinned USB modules added
+PASS fail-closed on truncated bootstrap, invalid EFILDR signature and corrupted startup page tables
+PASS pinned FFS digest rejects modified vendor module; both original vendor images remain unchanged
+PASS Recovery Boot keyboard: SET_PROTOCOL Boot + SET_IDLE 32 ms, optional SET_IDLE STALL does not reject a keyboard
+PASS Recovery keyboard refreshed identical reports: no duplicate press, Italian/AltGr intact, release cancels repeat, local held-key repeat preserved

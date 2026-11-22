@@ -1,0 +1,61 @@
+{
+  "scope": "real user-mode VM and MMU; NOT JSC/WebCore/browser acceptance",
+  "passed": true,
+  "requested_vcpus": 1,
+  "iso_qa_only": true,
+  "iso_sha256": "37a41acbf5b1a61d44c60ec1820d123f5f49c27f0e80ac4e851bc1b289f7dd67",
+  "faults": [
+    {
+      "kind": "left",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "right",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "readonly",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "none",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "decommitted",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "released",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    },
+    {
+      "kind": "nx",
+      "armed_marker_verified": true,
+      "child_exit_status": 1,
+      "status_read_via_shell_expansion": true,
+      "desktop_and_terminal_survived": true
+    }
+  ],
+  "qmp_vcpu_count": 1,
+  "positive_vm_checks": true,
+  "post_fault_vm_reuse": true
+}

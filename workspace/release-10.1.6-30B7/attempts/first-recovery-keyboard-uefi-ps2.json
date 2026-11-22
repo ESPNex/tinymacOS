@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "profile": "ps2",
+  "firmware": "uefi",
+  "iso_sha256": "88901c4359ba1418ade83a0c6712eab06b4cd7c6e21b4915cf43375a36375763",
+  "work": "/var/tmp/tmc10-rec-kbd-kezclrpb",
+  "local_installed_recovery": false,
+  "i8042_present": true
+}

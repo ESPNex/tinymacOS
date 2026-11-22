@@ -157,7 +157,6 @@ static void paint(void)
             }
         }
     }
-    Text(15, ah - 29, "Dispositivi e volumi", F_MICRO, SUB);
     button(x, 13, 57, "SOS", 0);
     button(x + 65, 13, 89, "Copia dati", 0);
     button(x + 162, 13, 92, "Recupero…", 0);

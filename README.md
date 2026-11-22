@@ -2,7 +2,7 @@
 
 Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e ambiente di Recupero UEFI. Non è basato su Linux o XNU e non offre compatibilità generale con le applicazioni macOS.
 
-**Versione pubblicata: 10.1.5 Tramontana · build 30B6.**
+**Versione: 10.1.6 Tramontana · build 30B7.**
 
 [Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 
@@ -15,7 +15,7 @@ Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e am
 
 ## Stato e limiti
 
-Il mouse sulla ASRock Q1900M/J1900 resta un problema aperto: la 10.1.4 è risultata immobile al login e in Recovery; la 10.1.5 non è ancora stata verificata su quella macchina. I test QEMU non costituiscono una verifica hardware.
+L'utente conferma avvio e USB funzionanti in VirtualBox con la 10.1.5. La 10.1.6 mantiene gli stessi driver, ma non è ancora verificata sulla ASRock Q1900M/J1900 fisica: la 10.1.4 lì aveva il mouse immobile al login e in Recovery. Il successo in macchina virtuale non garantisce quello sull'hardware reale.
 
 Safari/WebKit non è incluso. Non sono supportati HID/USB universale, OHCI, hotplug generale o hub SuperSpeed. La ISO non è un'immagine USB-DD ibrida. Per le prove d'installazione usare soltanto dischi virtuali vuoti dedicati, senza dati da conservare.
 
