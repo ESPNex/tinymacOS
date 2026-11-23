@@ -54,3 +54,8 @@ u64 tmc_lx_os_clock_ms(void)
 void *tmc_config_os_alloc(size_t n){return n&&n<=65536?kmalloc(n):0;}
 void tmc_config_os_free(void *p){kfree(p);}
 void tmc_config_os_delay(unsigned ms){usb_delay_ms(ms);}
+
+/* The isolated Linux HID parser needs >64 KiB for upstream usage tables.
+ * Its own checked allocation budget bounds all allocations to 2 MiB total. */
+void *tmc_hid_os_alloc(size_t n){return n&&n<=512*1024+16?kmalloc(n):0;}
+void tmc_hid_os_free(void *p){kfree(p);}

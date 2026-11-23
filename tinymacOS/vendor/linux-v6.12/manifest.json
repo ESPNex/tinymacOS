@@ -56,10 +56,22 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/config.c",
       "sha256": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
       "license": "GPL-2.0-only"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-core.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/hid-core.c",
+      "sha256": "c12c3f89a2e04d7ef68a80d48cfe3b30f153f6de5bc7bb095c810b2f214d603b",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-upstream.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/hid.h",
+      "sha256": "69db832572997025df301fbcf243e0bd7eb00a5dca61edfac46635efe8efe93b",
+      "license": "GPL-2.0-or-later"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
-  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers. Complete original core/config.c descriptor/configuration/BOS parser; native enumeration and HCD remain.",
+  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers. Complete original core/config.c descriptor/configuration/BOS parser; native enumeration and HCD remain. Complete hid-core parser/field/collection, signed-value, resolution multiplier and open/close report function extractions; not full hid-core bus/input event dispatch or hid-generic driver.",
   "extractions": [
     {
       "source": "ehci-q.c",
@@ -86,6 +98,51 @@
       "start_marker": "static int intellimouse_detect(",
       "end_marker": "\n/*\n * Kensington ThinkingMouse",
       "sha256": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-parser-fields.inc",
+      "function": "hid-parser-fields",
+      "start_marker": "struct hid_report *hid_register_report(",
+      "end_marker": "\n/*\n * Free a device structure,",
+      "sha256": "db2060031624cd4f8a49c513f1a07af1cdd138f4abca34602793a499dd8c87ef",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-parser-items.inc",
+      "function": "hid-parser-items",
+      "start_marker": "static const u8 *fetch_item(",
+      "end_marker": "\nstatic void hid_scan_input_usage(",
+      "sha256": "8ef11915b2cabe9d4c261d5e70a7974af2504587229af469f7587972ca1c04c0",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-parser-multipliers.inc",
+      "function": "hid-parser-multipliers",
+      "start_marker": "static int hid_calculate_multiplier(",
+      "end_marker": "\n/**\n * hid_open_report",
+      "sha256": "117bb63948b36bd03059cce91b474d1b73186742f37a6ff8eb93915f5e79be49",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-parser-open.inc",
+      "function": "hid-parser-open",
+      "start_marker": "int hid_open_report(",
+      "end_marker": "\n/*\n * Convert a signed n-bit",
+      "sha256": "cd02868f8f914c54ccd0a5f7d645dcc3220c35512e3eafad8c26520ac49d2dfa",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-parser-signed.inc",
+      "function": "hid-parser-signed",
+      "start_marker": "static s32 snto32(",
+      "end_marker": "\n/*\n * Convert a signed 32-bit",
+      "sha256": "5c12e62778f8afac3337e9618e11307851d2c40e4f1a2ded53472dfc56978543",
       "modifications": "none: complete functions and intervening comments, byte-exact"
     }
   ]

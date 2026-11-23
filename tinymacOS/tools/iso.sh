@@ -49,11 +49,13 @@ Path(sys.argv[1]).write_bytes(plistlib.dumps(p,sort_keys=False))
 PYOC
 mcopy -i "$D/install.esp" "$D/installed-opencore.plist" ::/EFI/OC/config.plist
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
-for notice in licenses/TMC-Ps2Firmware-*;do mcopy -i "$D/install.esp" "$notice" "::/LICENSES/$(basename "$notice")";done
+# Installed media must retain Linux GPL and all bundled component notices,
+# not only the firmware notices visible on the optical root.
+for notice in licenses/*;do mcopy -i "$D/install.esp" "$notice" "::/LICENSES/$(basename "$notice")";done
 mkesp "$R/EFI.IMG" 64M TRAMONTANA System-live.vol
 mmd -i "$R/EFI.IMG" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/NVRAM ::/LICENSES
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
-for notice in licenses/TMC-Ps2Firmware-*;do mcopy -i "$R/EFI.IMG" "$notice" "::/LICENSES/$(basename "$notice")";done
+for notice in licenses/*;do mcopy -i "$R/EFI.IMG" "$notice" "::/LICENSES/$(basename "$notice")";done
 mcopy -i "$R/EFI.IMG" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -o -i "$R/EFI.IMG" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi

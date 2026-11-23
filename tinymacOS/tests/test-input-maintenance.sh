@@ -5,7 +5,7 @@ out=$(mktemp -d /var/tmp/tmc-input-host.XXXXXXXX)
 trap 'rm -rf "$out"' EXIT
 C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Werror -Iinclude'
 # Execute pinned Linux Boot mouse alongside native HCD tests, with host-only OS imports.
-LX='tests/linux_usb_host_runtime.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
+LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
 C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -Wno-sign-compare"
 
 gcc $C tests/input_maintenance.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
@@ -65,3 +65,6 @@ gcc $C -fno-builtin -fno-pie -no-pie -pthread tests/linux_psmouse.c compat/linux
 
 # Complete unchanged USB configuration/endpoint/BOS core and real adapter.
 gcc $C -fno-builtin -fno-pie -no-pie tests/linux_config.c tests/linux_config_runtime.c drivers/hidconfig.c -o "$out/linux-config";"$out/linux-config"
+
+# Genuine Linux HID descriptor parser functions, isolated from Boot/HCD ABI.
+gcc $C -fno-builtin -fno-pie -no-pie -pthread tests/linux_hid_parser.c tests/linux_hid_runtime.c compat/linux/hid_parser.c drivers/hidtablet.c -o "$out/linux-hid-parser";"$out/linux-hid-parser"

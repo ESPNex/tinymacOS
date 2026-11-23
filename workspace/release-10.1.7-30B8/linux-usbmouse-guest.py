@@ -8,7 +8,7 @@ import hashlib,json,os,struct,subprocess,sys,tempfile,time
 q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';sys.path.insert(0,str(root/'tests'))
 from retail_guest import Retail
 from input_pixels import cursor
-fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-config-v10'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
+fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v11'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
 r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_mouse_driver':True,'linux_hcd_port':False,'linux_full_usb_core_port':False,'native_hcd_transport_adapter':True,'physical_hardware_tested':False}
 fields=['probes','attached','completions','frames','errors','rejected','disconnected','allocations','frees']
@@ -40,6 +40,14 @@ try:
   r['config_core']=cfg=dict(zip(['opens','failures','descriptor_reads','configs','interfaces','endpoints','bos','notices','allocations','frees'],struct.unpack('<10Q',p.read_bytes())))
   assert cfg['opens']>=1 and cfg['descriptor_reads']>=2 and cfg['configs']>=1 and cfg['interfaces']>=1 and cfg['endpoints']>=1 and cfg['allocations']==cfg['frees'] and not cfg['failures'],cfg
   r['actual_upstream_core_config_file_executed']=True
+  for name in ['hid_open_report','hid_register_report','hid_setup_resolution_multiplier','tmc_linux_hid_pointer_layout']:
+   assert any(s.endswith(' '+name) for s in symbols),name
+  hid_address=int(next(s.split()[0] for s in symbols if s.endswith(' b tmc_linux_hid_parser_counters')),16)
+  p=w/'hid-parser-stats.bin';g.req('pmemsave',val=hid_address,size=72,filename=str(p))
+  r['hid_parser']=hid=dict(zip(['opens','failures','closes','allocations','frees','live_bytes','peak_bytes','notices','busy'],struct.unpack('<9Q',p.read_bytes())))
+  assert hid['opens']>=1 and hid['opens']==hid['closes'] and hid['allocations']==hid['frees'] and not hid['live_bytes'] and not hid['failures'] and not hid['busy'],hid
+  r['actual_upstream_hid_parser_functions_executed']=True
+  r['whole_linux_hid_core_or_hid_generic_driver']=False
   if 'nested-hub' in profile:assert cfg['opens']>=3,cfg
   elif 'hub' in profile:assert cfg['opens']>=2,cfg
   r['urb_core_before']=urb_counters()

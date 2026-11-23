@@ -1,12 +1,12 @@
 {
-  "passed": true,
+  "passed": false,
   "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port",
-  "sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
-  "bytes": 225746944,
+  "sha256": "e570e952315f7ebe68d6042b5ef113bed93af4ed9609a186bfa2dacbaaf24de7",
+  "bytes": 225759232,
   "builds": [
-    "/var/tmp/tmc-10.1.7/linux-config-v10/build",
-    "/var/tmp/tmc-10.1.7/linux-ehci-independent/build"
+    "/var/tmp/tmc-10.1.7/linux-hid-v11/build",
+    "/var/tmp/tmc-10.1.7/linux-hid-independent/build"
   ],
-  "byte_comparison_exit_code": 0,
+  "byte_comparison_exit_code": 1,
   "published": false
 }

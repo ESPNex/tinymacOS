@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
-import filecmp,hashlib,json,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-config-v10');iso=base/'tinymacOS-10.1.7-x86_64.iso'
+import filecmp,hashlib,json,os,subprocess
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v11'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -11,7 +11,7 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-config-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+other=Path('/var/tmp/tmc-10.1.7/linux-hid-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
 (q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
@@ -69,4 +69,16 @@ status['current_runtime_kernel_guest_profiles_passed']=load('kernel-current-sour
 status['current_runtime_kernel_guest_profiles_expected']=13
 status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/config; native HCD/hub/report HID'
 status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; native HCD/hub/report HID'
+hid_contract=load('linux-hid-parser-contract-result.json')
+status['upstream_linux_hid_parser_functions_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['hid_open_report','hid_register_report','hid_setup_resolution_multiplier','tmc_linux_hid_pointer_layout'])
+status['linux_hid_parser_host_contract_passed']=bool(hid_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in hid_contract.get('sources',{}).items())
+status['linux_hid_parser_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_hid_parser_functions_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
+status['linux_hid_parser_current_guest_topologies_expected']=18
+status['whole_linux_hid_core_ported']=False
+status['linux_hid_generic_driver_ported']=False
+status['linux_hid_input_event_dispatch_ported']=False
+status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/config + hid-core descriptor parser functions; native HCD/hub/report packet decoder'
+status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; generic descriptor parsing host-tested, not hid-input generic keyboard events'
+status['blocking_work'][1]='Complete Linux HID bus/lifecycle, hid-input event dispatch and hid-generic driver; current increment is original descriptor-parser functions and a native pointer-layout bridge'
+status['installed_and_optical_all_component_notices_byte_exact']=current('media-contract-result.json') and load('media-contract-result.json').get('all_component_notices_in_three_fat_media',False)
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

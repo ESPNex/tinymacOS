@@ -9,7 +9,7 @@ q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';sys.path.insert(
 from retail_guest import Retail
 from input_pixels import cursor
 fw=sys.argv[1];assert fw in ['uefi','bios']
-base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-config-v10'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
+base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v11'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix=f'tmc-linux-ps2-{fw}-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT='ps2',TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
 r={'passed':False,'firmware':fw,'profile':'ps2-keyboard-and-mouse','iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_libps2':True,'full_linux_i8042_driver_port':False,'linux_atkbd_driver_port':False,'linux_psmouse_driver_port':False,'physical_hardware_tested':False,'checks':[]}

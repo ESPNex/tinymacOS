@@ -59,7 +59,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
             int boot_ok=select_protocol(u,p->iface,0);
             int parsed=p->report_length && p->report_length<=sizeof u->desc &&
                 !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes==p->report_length &&
-                pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout);
+                tmc_linux_hid_pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout);
             if(!boot_ok){
                 if(parsed && select_protocol(u,p->iface,1)){p->proto=3;report_ready=1;}
                 else continue;
@@ -68,7 +68,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         if(p->proto==3 && !report_ready){
             n=p->report_length;
             if(!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n||
-               !pointer_layout(u->desc,n,MIN(p->packet,64),&p->layout))continue;
+               !tmc_linux_hid_pointer_layout(u->desc,n,MIN(p->packet,64),&p->layout))continue;
         }
         /* SET_IDLE is optional; rejecting it must not disable a valid HID. */
         (void)c(u,0x21,10,0,p->iface,0);

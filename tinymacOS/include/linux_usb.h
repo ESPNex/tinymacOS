@@ -1,6 +1,7 @@
 #pragma once
 #include "base.h"
 #include "hidtablet.h"
+#include "linux_hid_parser.h"
 /* Real upstream Linux Boot mouse driver on a native HCD transport adapter.
  * This API does not claim a Linux xHCI/EHCI/USB-core port. */
 int tmc_linux_mouse_attach(void *key,unsigned vid,unsigned pid,unsigned packet,unsigned interval);

@@ -10,7 +10,7 @@ q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';sys.pa
 from retail_guest import Retail
 from boot_recovery import RecoveryKey
 fw=sys.argv[1];iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/tinymacOS-10.1.7-x86_64.iso'));w=Path(tempfile.mkdtemp(prefix='tmc1017-firmware-'+fw+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir();cv2.setNumThreads(1)
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-config-v10/build')),TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_MEM='512')
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-hid-v11/build')),TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_MEM='512')
 r={'passed':False,'firmware':fw,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'linux_hcd_port':False,'keyboard_adapter_native':False,'physical_hardware_tested':False,'checks':[]}
 class Rec(RecoveryKey,Retail):
  recovery_text='Ripristina da una copia locale'
@@ -22,7 +22,7 @@ class Rec(RecoveryKey,Retail):
    edge(mods,True);time.sleep(.20);edge([key],True);time.sleep(hold);edge([key],False);time.sleep(.12);edge(list(reversed(mods)),False);time.sleep(dt);return
   return super().key(k,dt,hold)
 def ok(s):r['checks'].append(s);print('PASS',fw,s,flush=True)
-raw=(Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-config-v10/build')))/'rec.icons').read_bytes()[6*16384:7*16384];a=np.frombuffer(raw,np.uint8).reshape(64,64,4);idx=np.arange(23)*64//23;sprite=a[idx[:,None],idx[None,:]];mask=np.uint8(sprite[:,:,3]==255)
+raw=(Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-hid-v11/build')))/'rec.icons').read_bytes()[6*16384:7*16384];a=np.frombuffer(raw,np.uint8).reshape(64,64,4);idx=np.arange(23)*64//23;sprite=a[idx[:,None],idx[None,:]];mask=np.uint8(sprite[:,:,3]==255)
 def position(g):
  image=np.asarray(g.snap());score=cv2.matchTemplate(image,sprite[:,:,:3].copy(),cv2.TM_SQDIFF,mask=mask);_,_,(x,y),_=cv2.minMaxLoc(score);region=image[y:y+23,x:x+23];assert np.max(np.abs(region[mask>0].astype(int)-sprite[:,:,:3][mask>0].astype(int)))==0;return x+3,y+2
 def waitpos(g,want):

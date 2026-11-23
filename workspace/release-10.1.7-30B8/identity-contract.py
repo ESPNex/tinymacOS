@@ -2,7 +2,7 @@
 """Audit current versions in actual optical/installed media; include the updated About window."""
 from pathlib import Path
 import hashlib,json,os,plistlib,struct,subprocess,tempfile,shutil,zlib
-q=Path(__file__).resolve().parent;home=q.parents[1];osroot=home/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-config-v10');iso=Path(os.environ.get('TMC_STAGE_ISO',str(base/'tinymacOS-10.1.7-x86_64.iso')));build=Path(os.environ.get('TMC_STAGE_BUILD',str(base/'build')));w=Path(tempfile.mkdtemp(prefix='tmc1017-identity-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root');env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
+q=Path(__file__).resolve().parent;home=q.parents[1];osroot=home/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-hid-v11');iso=Path(os.environ.get('TMC_STAGE_ISO',str(base/'tinymacOS-10.1.7-x86_64.iso')));build=Path(os.environ.get('TMC_STAGE_BUILD',str(base/'build')));w=Path(tempfile.mkdtemp(prefix='tmc1017-identity-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root');env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
 def run(*args):return subprocess.check_output(list(map(str,args)),env=env,stderr=subprocess.DEVNULL)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def extract(src,dest):run('xorriso','-osirrox','on','-indev',iso,'-extract',src,w/dest);return w/dest

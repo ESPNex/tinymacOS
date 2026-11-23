@@ -331,7 +331,7 @@ static int configure(struct Usb*u, int port, int speed)
             int boot_ok=select_protocol(u,h->iface,0);
             int parsed=h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
                 !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
-                pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet);
+                tmc_linux_hid_pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet);
             if(!boot_ok){
                 if(parsed && select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
                 else ok=0;
@@ -340,7 +340,7 @@ static int configure(struct Usb*u, int port, int speed)
         if(h->proto==3 && !report_ready){
             if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
             else if(control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len||
-                    !pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
+                    !tmc_linux_hid_pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
         }
         if(h->proto==1){
             if(!select_protocol(u,h->iface,0))ok=0;

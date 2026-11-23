@@ -2,7 +2,7 @@
 """Inspect three actual OpenCore media paths. This does not certify runtime boot or Linux port."""
 import hashlib,json,os,plistlib,struct,subprocess,tempfile,shutil,sys
 from pathlib import Path
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/linux-config-v10/tinymacOS-10.1.7-x86_64.iso'));build=Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'build')));v=root/'vendor/opencore-1.0.8';w=Path(tempfile.mkdtemp(prefix='tmc1017-media-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root')
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/linux-hid-v11/tinymacOS-10.1.7-x86_64.iso'));build=Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'build')));v=root/'vendor/opencore-1.0.8';w=Path(tempfile.mkdtemp(prefix='tmc1017-media-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root')
 env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
 sys.path.insert(0,str(root/'tools'))
 from firmware_drivers import driver_sources
@@ -23,11 +23,13 @@ try:
   assert drivers['TmcPs2KeyboardDxe.efi']['Enabled'] and not cfg['UEFI']['Input']['KeySupport']
   assert read('LICENSES/TMC-Ps2Firmware-NOTICE.txt')==(root/'licenses/TMC-Ps2Firmware-NOTICE.txt').read_bytes()
   assert read('LICENSES/TMC-Ps2Firmware-BSD-2-Clause-Patent.txt')==(root/'licenses/TMC-Ps2Firmware-BSD-2-Clause-Patent.txt').read_bytes()
+  for notice in sorted((root/'licenses').iterdir()):
+   assert read('LICENSES/'+notice.name)==notice.read_bytes(),(label,notice.name)
   config=read('BOOTCFG.BIN');assert config[:8]==b'TMCBOOT1' and struct.unpack_from('<II',config,8)==(1,0) and config[16:48]==hashlib.sha256(config[:16]).digest()
   r['checks'].append({'medium':label,'official_opencore_fallback':True,'official_opencore_binary':True,'native_loader_second_stage':True,'default_verbose':False,'firmware_mouse_driver_enabled':True,'enabled_drivers_byte_exact':True,'declared_derived_ps2_driver':True,'derived_license_and_notice_present':True});print('PASS',label,'OpenCore fallback, native second stage, quiet BootConfig; official USB + declared derived PS/2 drivers',flush=True)
  for src,expected in [('/EFI/BOOT/BOOTX64.EFI',v/'BOOTx64.efi'),('/EFI/TMC/BOOTX64.EFI',build/'BOOTX64.EFI'),('/EFI/OC/OpenCore.efi',v/'OpenCore.efi')]:
   p=w/('root-'+expected.name);run('xorriso','-osirrox','on','-indev',iso,'-extract',src,p);assert p.read_bytes()==expected.read_bytes()
- print('PASS ISO9660 root also enters OpenCore, not the native fallback',flush=True);r['iso_root_enters_opencore']=True;r['passed']=True
+ print('PASS ISO9660 root also enters OpenCore, not the native fallback',flush=True);r['iso_root_enters_opencore']=True;r['all_component_notices_in_three_fat_media']=True;r['passed']=True
 finally:
  (q/'media-contract-result.json').write_text(json.dumps(r,indent=2)+'\n')
  shutil.rmtree(w)
