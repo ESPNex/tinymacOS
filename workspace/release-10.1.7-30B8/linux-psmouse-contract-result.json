@@ -10,19 +10,24 @@
     "vendor/linux-v6.12/psmouse.h": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
     "vendor/linux-v6.12/psmouse-packets.inc": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
     "vendor/linux-v6.12/psmouse-detect.inc": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
-    "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef",
+    "vendor/linux-v6.12/manifest.json": "1765de0d2d1c5c41d4187de4080233540b62c70a2b296d4dc69c01db6b959f61",
     "compat/linux/psmouse_input.c": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
-    "compat/linux/usb_input.c": "bfead8508f11641d585c6691b01dd7dad5675e1be83657489d85b1f34a3155c3",
-    "compat/linux/include/linux/tmc_compat.h": "fb1371ed412a6f81bad6da79ab188e821404e7d0cfbb2b2e3de6b1957212d0b2",
+    "compat/linux/usb_input.c": "0f914067fbeafbb3c1a0f179f7d041407ec3b8c40d1089c6a93eeb54c9790026",
+    "compat/linux/include/linux/tmc_compat.h": "3af2e6e3e046e3c2c69fd6eb3c9a5d3d20398d13102f8f7b0ddc2e5129d30aa7",
     "include/linux_ps2.h": "0ce1ace1dc15ba119ab54cb82bdc7eb3ed2056739808b1cfa455298d5777077c",
     "tests/linux_psmouse.c": "3e792c2f0cdd3f1319997ccdcf37fe92cea87458fa92e5764dabe0f309083578",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
     "drivers/ps2.c": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
     "drivers/input.c": "91bedafaaba7cb80d5fe672d000f5f84adb991ac830e290a9533db509d1e9abb",
     "drivers/linux_usb.c": "95d1e6348abaf5383b77e25b8a7b7e05f43ec15b0ece44d597ee6153d1be2dae",
-    "kernel/k.h": "55c5d608647fddfb902fc981efc9a993e67bbf4adb7f38ba45bd5f843d096428"
+    "kernel/k.h": "55c5d608647fddfb902fc981efc9a993e67bbf4adb7f38ba45bd5f843d096428",
+    "compat/linux/hcd_runtime.inc": "9e245e4b310c0cbe7ec71f6632be5e3305585b75944c06b7993819cb7f1f557d",
+    "compat/linux/include/linux/tmc_hcd_core.h": "86896103e8235c3b8d6da265a6b0b774a59ef6075524821335d82c502a478a0b",
+    "vendor/linux-v6.12/hcd.c": "deeb79afb85362dfeda477e240e70b1b44bd2995b75d06aa92cf3a49d711e495",
+    "vendor/linux-v6.12/hcd-endpoint.inc": "0df675175c00483ffc201697186bb7164f90dce66091089ad725064b7e41664b",
+    "vendor/linux-v6.12/hcd-lifecycle.inc": "b4fc8f8977492de955853f5f267f7dc0efc2ead6d9b4f9ee7b53fc5fe6cb7f86"
   },
   "runs": [
     {

@@ -51,6 +51,19 @@ try:
   if 'nested-hub' in profile:assert cfg['opens']>=3,cfg
   elif 'hub' in profile:assert cfg['opens']>=2,cfg
   r['urb_core_before']=urb_counters()
+  def hcd_counters():
+   address=int(next(s.split()[0] for s in symbols if s.endswith(' b tmc_linux_hcd_counters')),16)
+   p=w/'hcd-counters.bin';g.req('pmemsave',val=address,size=56,filename=str(p))
+   return dict(zip(['links','unlinks','queued','givebacks','map_checks','map_rejected','root_rejected'],struct.unpack('<7Q',p.read_bytes())))
+  r['hcd_core_before']=hcd_counters()
+  hub_address=int(next(s.split()[0] for s in symbols if s.endswith(' b tmc_linux_hub_counters')),16)
+  p=w/'hub-counters.bin';g.req('pmemsave',val=hub_address,size=64,filename=str(p))
+  r['hub_core']=hub=dict(zip(['opens','debounced','resets','failures','status_reads','feature_writes','delayed_ms','rejected'],struct.unpack('<8Q',p.read_bytes())))
+  if 'hub' in profile:
+   expected=2 if 'nested' in profile else 1
+   assert hub['resets']>=expected and hub['debounced']>=expected and hub['status_reads']>hub['resets'] and not hub['rejected'],hub
+   r['actual_upstream_hub_debounce_reset_functions_executed']=True
+
   r['before']=before=counters();assert before['attached']>=1,before
   for x,y in [(762,482),(142,482),(142,613),(762,613),(142,613),(762,482)]:cursor(g,x,y)
   g.shot('actual-linux-boot-mouse');r['after']=after=counters()
@@ -64,6 +77,12 @@ try:
   assert core['submits']>previous['submits'] and core['givebacks']>previous['givebacks'],(previous,core)
   assert core['submits']==core['givebacks']+core['active'] and core['active']>=1 and not core['rejected'],core
   r['actual_upstream_core_urb_file_executed']=True
+  r['hcd_core_after']=hcd=hcd_counters();previous_hcd=r['hcd_core_before']
+  assert hcd['queued']>previous_hcd['queued'] and hcd['givebacks']>previous_hcd['givebacks'],(previous_hcd,hcd)
+  assert hcd['links']==hcd['queued']==core['submits'] and hcd['givebacks']==core['givebacks'] and not hcd['map_rejected'] and not hcd['root_rejected'],hcd
+  r['actual_upstream_hcd_lifecycle_functions_executed']=True
+  r['whole_linux_hcd_core_or_controller_port']=False
+
   r['exact_rendered_xy_checks']=6;r['passed']=True
  print('PASS actual Linux usbmouse IRQ + rendered XY',fw,profile,r['after'],flush=True)
 finally:(q/f'linux-usbmouse-{fw}-{profile}.json').write_text(json.dumps(r,indent=2)+'\n')

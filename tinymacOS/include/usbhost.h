@@ -29,3 +29,6 @@ void usb_input_report(UsbInput *,unsigned,unsigned);
 void ehci_init(void);void ehci_poll(void);
 void uhci_init(void);void uhci_poll(void);
 void ps2_init(void);void ps2_poll(void);
+
+/* Count-returning copied EP0 bridge shared by generic HID and hub core. */
+int usb_input_control(void *,unsigned,unsigned,unsigned,unsigned,u8 *,unsigned);

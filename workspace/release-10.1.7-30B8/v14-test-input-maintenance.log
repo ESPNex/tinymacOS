@@ -1,0 +1,68 @@
+PASS queue: 10000 motion reports, exact sum, buttons/wheel/key barriers, absolute newest, full-queue counter
+PASS completion: signed boot motion, button decoding, success/short packet rearm, aligned DMA
+PASS endpoint halt: deferred reset, clear-halt, new dequeue, rearm; bounded repeated-failure cap
+PASS actual xHCI+Linux mouse: held-button STALL release, upstream error/requeue, native reset/rearm, resumed XY, fatal retirement
+PASS control stall on Setup/Data: consume error, reset EP0, set dequeue, next protocol request succeeds
+PASS actual xHCI short control: actual length from Data, completion only after Status, IN ISP set
+PASS timeout: no unsafe recycling of potentially live control DMA
+PASS diagnostic snapshot ABI; no keyboard content or DMA pointers exposed
+PASS verified Boot does not force Report; vertical-only negative control and real xHCI completion queue: separate horizontal X=64/Y=0 and vertical X=0/Y=64
+PASS actual xHCI Report-only completion -> whole Linux generic/input -> native queue: independent 16-bit XY, button press/release and rearm
+PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL
+PASS Boot SET_PROTOCOL STALL: existing Boot protocol accepted only after GET_PROTOCOL=0; unknown state rejected
+PASS malformed descriptor: explicit successful Boot fallback only; failed negotiation fails closed
+PASS xHCI acknowledged-but-unchanged Report mode: GET=Boot selects verified Boot offsets, horizontal and vertical completions intact
+PASS actual xHCI vertical-only reproduction: descriptor-framed Report despite GET=Boot yields independent X/Y, not ID/button bytes as axes
+PASS retry scan preserves owned root slots/contexts and never resets an enumerated HID
+PASS: composite HID keyboard/mouse/report interfaces, independent endpoints, 512-byte endpoint, bounds and alternate-setting rejection.
+PASS independent axes with other Report IDs and bounded HID global Push/Pop
+PASS: report-protocol relative mouse, signed 16-bit deltas, report ID, buttons, wheel and truncated-report rejection.
+PASS xHCI HS hub -> FS mouse: distinct reserved slots, root port, route string, TT slot/port and think-time, delayed hub reset polling
+PASS nested USB2 hub: route nibbles and nearest high-speed TT inherited through full-speed hub
+PASS xHCI 0.95 Evaluate vs 1.0 Configure hub command; low-speed child with TT, reserved child think-time bits zero
+PASS malformed zero-port hub rejected; no child enumeration and slot released
+PASS 21B9 regression: shared Intel USB2 routed before enumeration even when EHCI exists; only documented mask bits changed
+PASS Intel Bay Trail: mask-limited USB3 then USB2 routing, preserves preexisting ports, bounded settling
+PASS six shared-mux controller families; already-routed no-op; inaccessible current registers cause zero writes; locked/failed readback never reports success
+PASS empty-HID fallback: only switchable masked USB2 bits, one retry; any live pointer or keyboard blocks remux; unknown/all-ones/zero mask/no companion rejected
+PASS routing guard: unknown/foreign/non-xHCI/all-ones registers and known non-switchable subsystem receive no writes
+PASS sole Italian physical map, Shift/AltGr/accent/euro/ISO102, independent shortcuts, UTF-8 insertion/delete/caret/field validation
+PASS Recovery verified Boot first, strict Report fallback, mode mismatch rejected
+PASS Recovery relative deltas coalesce without pinning cursor to a stale source position; release and idle filtering retained
+PASS Recovery actual async error path: twelve separate STALL/cancel/clear/rearm/success cycles; no lifetime failure limit
+PASS actual Recovery vertical-only reproduction: ID/16-bit report despite Boot indication, X=64/Y=0 then X=0/Y=64; foreign ID ignored
+PASS Recovery never disconnects a firmware-owned mouse or keyboard; existing firmware pointer remains available
+PASS optical firmware: deterministic derivation, 29 original FFS and 3 earlier executables byte-exact, only 3 pinned USB modules added
+PASS fail-closed on truncated bootstrap, invalid EFILDR signature and corrupted startup page tables
+PASS pinned FFS digest rejects modified vendor module; both original vendor images remain unchanged
+PASS actual Recovery consumer: firmware raw/USB, deduplication, Shift/AltGr, caps, repeat/release, overflow/error recovery
+PASS firmware raw ring 2550000 byte roundtrips, overflow/isolation, physical Shift/AltGr/ISO/keypad/prefix/caps
+PASS pinned Linux sources and complete function extractions (not a full HCD claim)
+PASS Linux EHCI qtd_fill: 147672 page/alignment/DMA64/maxpacket cases, zero/status, bounded writes and invalid-input rollback
+PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion
+PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown
+PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion
+PASS complete Linux v6.12 core/urb.c: allocation overflow/refcounts, endpoint/state/packet/SG/interval checks, short packets, requeue, kill/unlink/poison/block, all anchor operations, real timeout and concurrent wakeup, active-driver-put and callback-free lifetime; native HCD backend still bounded
+PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion
+PASS mouse lifecycle: 1024 paired five-button states, independent signed X/Y/wheel, idle/unplug button union, transient STALL/EIO release/requeue, fatal/unlink/cancel stop/reopen, invalid status rejection, no stale motion or leaks; actual Linux mouse IRQ/core
+PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion
+PASS complete original Linux libps2: keyboard+mouse ACK/NAK/retry, translated keyboard ID, non-ACK mouse ID, reset partial response, sliced commands, shared command mutex, independent RX locks, capacity/flags checks, parity/timeout abort, real timed wait, interleaved input and nested-command rejection; native byte decoders still separate
+PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion
+PASS original Linux psmouse packet/detect functions: real libps2 0/3/4 negotiation, 3072 sign/axis cases, full IMPS wheel, Explorer five buttons/vertical/horizontal wheel, sync/overflow/parity recovery, ACK-like packet data, 1024 PS2+USB button-union states, independent release/error/detach, failed-negotiation rollback; native i8042/framing, not full psmouse driver
+PASS complete original Linux USB core/config.c: actual descriptor transport, 8-config cap, alternate/interface/endpoint caches, duplicate endpoints, speed-aware repairs, SS+SSP companions, full BOS capabilities, all allocation/transport rollback, bounded malformed input and 1024 leak-free lifecycles; native HCD/enumeration/hubs/HID remain separate
+PASS Linux HID field model -> native relative/absolute XY, buttons, wheel, packet limits and strict report-ID framing
+PASS Linux generic descriptor model: keyboard modifier bitmap, key array, LED output usages (not hid-input keyboard event dispatch)
+PASS Linux per-ID offsets, global Push/Pop, dynamic collection/stack growth and close/reopen lifetime
+PASS malformed/truncated descriptors, every allocation-failure rollback, no partial-success field model, aggregate heap limit
+PASS real feature report parsing, checked multiplier arithmetic, nested-call rejection and 4-thread owned-object lifetimes
+PASS 4096 deterministic descriptor mutations, 1024 keyboard reopen cycles; peak heap 2097050 bytes; all allocations freed
+PASS whole Linux hid-generic probe/match + hid-input mapping/events: signed 16-bit XY, five buttons, high/low-res wheel, strict framing, nested rejection and disconnect releases
+PASS whole Linux hid-input keyboard arrays/modifiers, unchanged-report filtering, rollover preservation, 16-key report bitmap and original deferred LED worker/output/raw fallback/errors
+PASS original generic competing-driver preference and special-driver override, composite per-application registration and low-level open/close references
+PASS all generic/input allocation-failure rollbacks, real transport-start/open and input-registration failures; no successful placeholder lifecycle or leaked objects
+PASS 1024 complete upstream generic/input attach/report/disconnect lifecycles with release, work cancellation and zero outstanding allocations
+PASS 4096 deterministic whole generic/input descriptor mutations, real report dispatch when accepted, complete teardown and sanitizers
+PASS native generic Italian keyboard, AltGr/ISO, descriptor revalidation/short failure, allocation rollback and mixed Boot+generic keyboard ownership
+PASS native generic 16-bit relative/wheel and absolute scale; mixed Boot+generic button ownership across STALL, recovery, fatal retirement and detach
+PASS deferred real LED SET_REPORT, cross-device EP0 reentry, bounded queue overflow/quiesce/recovery, 128 leak-free native generic lifecycles
+PASS original Linux hub.c debounce/reset: 100ms stable window, connection bounce/2000ms timeout, strict actual status length, disconnected/overcurrent/error paths, 5 reset attempts, reconnect retry, recovery delay, real CONFIGFLAG reader/writer exclusion, 1024 port lifecycles; not whole hub class/hotplug

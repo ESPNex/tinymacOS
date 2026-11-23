@@ -62,6 +62,8 @@ typedef unsigned gfp_t;
 #define tmc_lx_usb_kbd_driver tmc_lx_usbkbd_driver
 #define module_usb_driver(driver) struct usb_driver *tmc_lx_##driver(void){return &(driver);}
 #define le16_to_cpu(x) (x) /* supported kernel target is little-endian x86-64 */
+/* Core endpoint queues/reference types precede USB device representations. */
+#include "tmc_urb_types.h"
 struct device {struct device *parent;};
 static inline int device_set_wakeup_enable(struct device *d,int on){(void)d;return on?-95:0;} /* no platform suspend/wake implementation */
 struct input_id {u16 bustype,vendor,product,version;};
@@ -72,24 +74,24 @@ struct input_dev {
  int registered,x,y,wheel,hwheel,buttons;void *owner;
  int (*event)(struct input_dev *,unsigned,unsigned,int);
 };
-struct usb_bus {const char *bus_name;int no_sg_constraint;};
+struct usb_bus {const char *bus_name;int no_sg_constraint,busnum;struct usb_device *root_hub;};
 struct usb_host_endpoint;
 struct usb_device {
  struct device dev;struct usb_bus *bus;const char *manufacturer,*product,*devpath;
  struct {u16 idVendor,idProduct;} descriptor;unsigned maxpacket;void *owner;
- int state,speed;struct usb_host_endpoint *ep_in[16],*ep_out[16];
+ int state,speed,can_submit;atomic_t urbnum,references;struct usb_host_endpoint *ep_in[16],*ep_out[16];
 };
 struct usb_endpoint_descriptor {u8 bLength,bDescriptorType,bEndpointAddress,bmAttributes;u16 wMaxPacketSize;u8 bInterval;} PACK;
 struct usb_ssp_isoc_ep_comp_descriptor {u32 dwBytesPerInterval;};
 struct usb_host_endpoint {struct usb_endpoint_descriptor desc;
  struct {u8 bMaxBurst,bmAttributes;} ss_ep_comp;
  struct usb_ssp_isoc_ep_comp_descriptor ssp_isoc_ep_comp;
+ struct list_head urb_list;int enabled;
 };
 struct usb_host_interface {struct {u8 bNumEndpoints,bInterfaceNumber;} desc;struct usb_host_endpoint *endpoint;};
 struct usb_interface {struct device dev;struct usb_device *usbdev;struct usb_host_interface *cur_altsetting;void *driver_data;};
 struct usb_device_id {u8 cls,sub,proto;};
 /* The core ABI and real atomic/list/wait services used by upstream urb.c. */
-#include "tmc_urb_types.h"
 struct usb_driver {const char *name;int (*probe)(struct usb_interface *,const struct usb_device_id *);void (*disconnect)(struct usb_interface *);const struct usb_device_id *id_table;};
 void *tmc_lx_zalloc(size_t,gfp_t);
 void tmc_lx_free(void *);
@@ -153,6 +155,7 @@ struct usb_driver *tmc_lx_usbkbd_driver(void);
 unsigned tmc_lx_usbkbd_usage(unsigned);
 
 #include "tmc_urb_core.h"
+#include "tmc_hcd_core.h"
 
 /* Real registered non-USB input devices share button state with USB mice.
  * No fabricated usb_interface or URB is created for a PS/2 pointer. */

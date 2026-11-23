@@ -4,11 +4,11 @@
   "requested_build": "30B8",
   "published": false,
   "stable_release_unchanged": "10.1.6",
-  "development_iso_sha256": "0e837b07a8bf3157cc483c9299a0d7c538eb6e47238c0376aef9b27aef01416f",
-  "development_iso_bytes": 225806336,
-  "development_build": "/var/tmp/tmc-10.1.7/linux-generic-native-v13/build",
-  "source_files": 715,
-  "source_manifest_sha256": "6fd3351f91b2b155231b5f11d8e0fd89d3fd96a47d95c359fdff8772fb3cc272",
+  "development_iso_sha256": "6f693038ff80c009b2b7f06bf9900c145512359aa32ca8c672845de0c14ca59a",
+  "development_iso_bytes": 225810432,
+  "development_build": "/var/tmp/tmc-10.1.7/linux-hcd-hub-v14/build",
+  "source_files": 725,
+  "source_manifest_sha256": "6862e75590e031b10539a86104499046036a31dbb65603b18f2dea4f9d62e03b",
   "about_version_updated_to_10_1_7": true,
   "about_layout_unchanged_except_version_build": true,
   "actual_upstream_linux_usbmouse_compiled_and_linked": true,
@@ -37,7 +37,7 @@
   "current_kernel_binary_identical_to_v2": false,
   "physical_hardware_tested": false,
   "blocking_work": [
-    "Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hub/IRQ/DMA lifecycle; core urb.c/config.c, Boot input drivers and EHCI qtd_fill are upstream so far",
+    "Complete physical Linux xHCI/EHCI/UHCI drivers and remaining USB core/hub/IRQ/DMA/device/root-hub lifecycle; core URB/config, HCD lifecycle functions and USB2 hub debounce/reset are upstream so far",
     "Complete remaining Linux HID core/bus/usbhid/lifecycle and general transport support; bounded generic endpoint/native event integration is now active",
     "Complete actual Linux i8042/serio/atkbd/psmouse driver port; current PS/2 increment is the complete original libps2 library, not the class drivers",
     "Rerun the entire install, native input and Recovery release matrix on the fully integrated result; audit source/license correspondence before binary publication"
@@ -138,7 +138,7 @@
   "requested_four_block_complete": false,
   "four_block_scope": {
     "linux_controllers": "not complete; native HCDs remain",
-    "usb_core_hub": "not complete; original URB/config only, native enumeration/hub remain",
+    "usb_core_hub": "not complete; original URB/config and HCD lifecycle/USB2 hub debounce-reset functions active; remaining core/hub/root-hub/device lifecycle missing",
     "hid_generic": "complete original driver active through bounded native HCD transport; not Linux usbhid/HCD or HID bus",
     "hid_input": "complete original input mapping/event unit active through shared native event consumers; supported applications only"
   },
@@ -146,5 +146,10 @@
   "linux_hid_generic_driver_ported": true,
   "linux_hid_input_event_dispatch_ported": true,
   "installed_and_optical_all_component_notices_byte_exact": true,
-  "actual_installed_component_notices_byte_exact": false
+  "actual_installed_component_notices_byte_exact": false,
+  "linux_hcd_hub_functions_host_contract_passed": true,
+  "original_linux_hcd_lifecycle_functions_active": true,
+  "original_linux_hub_debounce_reset_functions_active": true,
+  "linux_hcd_lifecycle_current_guest_profiles_passed": 12,
+  "linux_hub_reset_current_guest_profiles_passed": 4
 }

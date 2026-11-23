@@ -6,6 +6,7 @@ from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
 paths=['vendor/linux-v6.12/libps2.c','vendor/linux-v6.12/libps2.h','vendor/linux-v6.12/manifest.json','compat/linux/ps2_protocol.c','compat/linux/ps2_input.c','compat/linux/include/linux/libps2.h','compat/linux/include/linux/tmc_ps2_compat.h','compat/linux/include/linux/serio.h','include/linux_ps2.h','tests/linux_ps2.c','tests/linux_usbmouse.c','compat/linux/usb_input.c','drivers/ps2.c','drivers/linux_usb.c']
+paths+=['compat/linux/hcd_runtime.inc', 'compat/linux/include/linux/tmc_hcd_core.h', 'vendor/linux-v6.12/hcd.c', 'vendor/linux-v6.12/hcd-endpoint.inc', 'vendor/linux-v6.12/hcd-lifecycle.inc']
 r={'passed':False,'scope':'Complete original Linux libps2 command/ACK/RX unit on native i8042 transport','full_linux_i8042_driver_port':False,'linux_atkbd_driver_port':False,'linux_psmouse_driver_port':False,'physical_hardware_tested':False,'sources':{name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in paths}}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)

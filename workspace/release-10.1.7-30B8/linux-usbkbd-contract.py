@@ -4,6 +4,7 @@ from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS'
 paths=['tests/linux_usbkbd.c','drivers/input.c','tests/input_test_support.h','compat/linux/usb_input.c','compat/linux/usb_keyboard.c','compat/linux/include/linux/tmc_compat.h','include/linux_usb.h','vendor/linux-v6.12/usbkbd.c','vendor/linux-v6.12/usbmouse.c','vendor/linux-v6.12/urb.c','compat/linux/include/linux/tmc_urb_types.h','compat/linux/include/linux/tmc_urb_core.h','vendor/linux-v6.12/manifest.json']
+paths+=['compat/linux/hcd_runtime.inc', 'compat/linux/include/linux/tmc_hcd_core.h', 'vendor/linux-v6.12/hcd.c', 'vendor/linux-v6.12/hcd-endpoint.inc', 'vendor/linux-v6.12/hcd-lifecycle.inc']
 r={'passed':False,'scope':'Complete upstream Linux Boot keyboard + actual native Italian input + deferred native-HCD control adapter; not full HCD/core/generic HID','asan':True,'ubsan':True,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths}}
 try:
  subprocess.run(['python3',str(root/'tools/linux-source-contract.py')],check=True)

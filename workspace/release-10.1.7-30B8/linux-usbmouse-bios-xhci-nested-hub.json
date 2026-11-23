@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "xhci-nested-hub",
-  "iso_sha256": "0e837b07a8bf3157cc483c9299a0d7c538eb6e47238c0376aef9b27aef01416f",
-  "work": "/var/tmp/tmc-linux-usb-bios-xhci-nested-hub-2qcb5ejs",
+  "iso_sha256": "6f693038ff80c009b2b7f06bf9900c145512359aa32ca8c672845de0c14ca59a",
+  "work": "/var/tmp/tmc-linux-usb-bios-xhci-nested-hub-ac4r530h",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -50,6 +50,26 @@
     "active": 1,
     "highwater": 1
   },
+  "hcd_core_before": {
+    "links": 1,
+    "unlinks": 0,
+    "queued": 1,
+    "givebacks": 0,
+    "map_checks": 1,
+    "map_rejected": 0,
+    "root_rejected": 0
+  },
+  "hub_core": {
+    "opens": 16,
+    "debounced": 2,
+    "resets": 2,
+    "failures": 14,
+    "status_reads": 30,
+    "feature_writes": 6,
+    "delayed_ms": 320,
+    "rejected": 0
+  },
+  "actual_upstream_hub_debounce_reset_functions_executed": true,
   "before": {
     "probes": 1,
     "attached": 1,
@@ -86,5 +106,16 @@
     "highwater": 1
   },
   "actual_upstream_core_urb_file_executed": true,
+  "hcd_core_after": {
+    "links": 172,
+    "unlinks": 0,
+    "queued": 172,
+    "givebacks": 171,
+    "map_checks": 172,
+    "map_rejected": 0,
+    "root_rejected": 0
+  },
+  "actual_upstream_hcd_lifecycle_functions_executed": true,
+  "whole_linux_hcd_core_or_controller_port": false,
   "exact_rendered_xy_checks": 6
 }

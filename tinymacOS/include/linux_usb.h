@@ -55,3 +55,9 @@ void tmc_linux_generic_error(void *,int fatal);
 int tmc_linux_generic_detach(void *);
 void tmc_linux_generic_service(void);
 void tmc_linux_generic_leds(unsigned);
+
+/* Original Linux hub.c USB2 debounce/reset functions, real native EP0 status
+ * and shared EHCI CONFIGFLAG exclusion; not the entire hub class driver. */
+int tmc_linux_hub_port_init(TmcLinuxHidControl,void *,unsigned,unsigned,unsigned *);
+void tmc_linux_usb_cf_begin(void);
+void tmc_linux_usb_cf_end(void);

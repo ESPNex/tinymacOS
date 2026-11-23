@@ -28,7 +28,7 @@ static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsig
     int result=u->control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
     return result==-2?-32:result?-5:0;
 }
-static int linux_generic_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
+int usb_input_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
 {
  UsbInput *u=context;
  if(!u||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>255)return -22;
@@ -78,7 +78,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         if(p->proto==3){
             n=p->report_length;
             if((!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n))continue;
-            p->linux_generic=tmc_linux_generic_attach(p,u->desc,n,p->packet,p->iface,linux_generic_control,u,boot.w,boot.h,hid_absolute);
+            p->linux_generic=tmc_linux_generic_attach(p,u->desc,n,p->packet,p->iface,usb_input_control,u,boot.w,boot.h,hid_absolute);
             if(!p->linux_generic)continue;
         }
         /* SET_IDLE is optional; rejecting it must not disable a valid HID. */

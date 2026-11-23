@@ -134,21 +134,9 @@ static void hub_children(struct Ehci *h,struct Edev *hub,unsigned depth)
     for(unsigned p=1;p<=ports;p++)(void)econtrol(u,0x23,3,8,p,0);
     usb_delay_ms(delay);
     for(unsigned p=1;p<=ports&&h->used<EN;p++) {
-        if(econtrol(u,0xa3,0,0,p,4)||u->ctrl_bytes<4||!(u->desc[0]&1))continue;
-        usb_delay_ms(100);
-        if(econtrol(u,0x23,3,4,p,0))continue;
-        unsigned s=0;int ready=0;
-        for(unsigned ms=0;ms<500;ms+=10) {
-            usb_delay_ms(10);
-            if(econtrol(u,0xa3,0,0,p,4)||u->ctrl_bytes<4)break;
-            s=u->desc[0]|u->desc[1]<<8;
-            if(!(s&1)||(s&8))break;
-            if((s&2)&&!(s&16)){ready=1;break;}
-        }
-        if(!ready)continue;
-        usb_delay_ms(10);
+        unsigned s;
+        if(tmc_linux_hub_port_init(usb_input_control,u,p,u->speed==1?2:u->speed==2?1:3,&s))continue;
         unsigned speed=s&1024?3:s&512?2:1;
-        for(unsigned f=16;f<=20;f++)(void)econtrol(u,0x23,1,f,p,0);
         eattach(h,p,speed,u->speed==3?u->address:u->hub,u->speed==3?p:u->hub_port,depth+1);
     }
 }
@@ -186,7 +174,9 @@ static void econtroller(u32 pci)
     op[2]=0;op[4]=0;op[5]=(u32)(u64)h->frames;op[6]=(u32)(u64)&h->async;op[3]=0;op[1]=0x3f;
     asm volatile("mfence":::"memory");op[0]=1|1u<<4|1u<<5|8u<<16;
     if(!ewait(op+1,1u<<12,0,100))return;
-    op[16]=1;h->ports=c[1]&15;usb_delay_ms(30);
+    tmc_linux_usb_cf_begin();op[16]=1;
+    (void)op[0]; /* flush posted PCI MMIO before the ownership-settle delay */
+    usb_delay_ms(30);tmc_linux_usb_cf_end();h->ports=c[1]&15;
     for(unsigned p=0;p<h->ports && h->used<EN;p++) {
         volatile u32 *s=op+17+p;u32 v=*s;
         if(c[1]&16){*s=(v&~0x2au)|1u<<12;usb_delay_ms(20);v=*s;}

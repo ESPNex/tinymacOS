@@ -57,7 +57,7 @@ struct urb {
  struct usb_device *dev;void *context,*transfer_buffer;int status,actual_length,transfer_buffer_length;
  dma_addr_t transfer_dma;unsigned transfer_flags,pipe;int interval;void (*complete)(struct urb *);
  /* Native adapter state, distinct from upstream core state below. */
- int submitted,killed,type;u8 *setup_packet;u64 serial;
+ int submitted,killed,type,unlinked;u8 *setup_packet;u64 serial;
  struct kref kref;struct list_head urb_list,anchor_list;
  struct usb_anchor *anchor;struct usb_host_endpoint *ep;void *hcpriv;
  atomic_t reject,use_count;struct scatterlist *sg;int num_sgs,number_of_packets;

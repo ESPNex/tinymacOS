@@ -2,7 +2,7 @@
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
 import filecmp,hashlib,json,os,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-generic-native-v13'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hcd-hub-v14'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -11,7 +11,7 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-generic-native-v13-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+other=Path('/var/tmp/tmc-10.1.7/linux-hcd-hub-v14-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
 (q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/atkbd/psmouse/full-stack port; bounded original hid-generic/hid-input now active','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
@@ -93,4 +93,12 @@ status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/conf
 status['blocking_work'][1]='Complete remaining Linux HID core/bus/usbhid/lifecycle and general transport support; bounded generic endpoint/native event integration is now active'
 status['installed_and_optical_all_component_notices_byte_exact']=current('media-contract-result.json') and load('media-contract-result.json').get('all_component_notices_in_three_fat_media',False)
 status['actual_installed_component_notices_byte_exact']=current('install-current-result.json') and load('install-current-result.json').get('actual_installed_component_notices_byte_exact',False)
+hcd_hub=load('linux-hcd-hub-contract-result.json')
+status['linux_hcd_hub_functions_host_contract_passed']=bool(hcd_hub.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in hcd_hub.get('sources',{}).items())
+status['original_linux_hcd_lifecycle_functions_active']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_hcd_submit_urb','usb_hcd_link_urb_to_ep','usb_hcd_check_unlink_urb','usb_hcd_unlink_urb_from_ep','usb_hcd_unlink_urb'])
+status['original_linux_hub_debounce_reset_functions_active']=status['linux_hcd_hub_functions_host_contract_passed'] and all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_linux_hub_port_init','hub_port_debounce'])
+status['linux_hcd_lifecycle_current_guest_profiles_passed']=sum(current(n) and load(n).get('actual_upstream_hcd_lifecycle_functions_executed',False) for n in names)
+status['linux_hub_reset_current_guest_profiles_passed']=sum(current(f'linux-usbmouse-{fw}-{p}.json') and load(f'linux-usbmouse-{fw}-{p}.json').get('actual_upstream_hub_debounce_reset_functions_executed',False) for fw in ['uefi','bios'] for p in ['xhci-hub','xhci-nested-hub'])
+status['four_block_scope']['usb_core_hub']='not complete; original URB/config and HCD lifecycle/USB2 hub debounce-reset functions active; remaining core/hub/root-hub/device lifecycle missing'
+status['blocking_work'][0]='Complete physical Linux xHCI/EHCI/UHCI drivers and remaining USB core/hub/IRQ/DMA/device/root-hub lifecycle; core URB/config, HCD lifecycle functions and USB2 hub debounce/reset are upstream so far'
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

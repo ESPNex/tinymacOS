@@ -43,6 +43,18 @@ int main(void)
  usb_kill_urb(u);usb_kill_urb(v);
  struct callback_state a={0},d={0};prepare(u,&a);prepare(v,&d);
  assert(atomic_read(&u->kref.refcount)==1&&!atomic_read(&u->use_count));
+ /* Actual hcd.c queue/state gates, not a native submitted-flag approximation. */
+ assert(list_empty(&b->endpoint.urb_list)&&atomic_read(&b->usb.references)==1);
+ b->endpoint.enabled=0;assert(usb_submit_urb(u,GFP_ATOMIC)==-ENOENT);b->endpoint.enabled=1;
+ b->usb.can_submit=0;assert(usb_submit_urb(u,GFP_ATOMIC)==-EHOSTUNREACH);b->usb.can_submit=1;
+ b->hcd.running=0;assert(usb_submit_urb(u,GFP_ATOMIC)==-ESHUTDOWN);b->hcd.running=1;
+ b->hcd.self.root_hub=&b->usb;assert(usb_submit_urb(u,GFP_ATOMIC)==-EOPNOTSUPP);b->hcd.self.root_hub=0;
+ assert(list_empty(&b->endpoint.urb_list)&&!atomic_read(&u->use_count)&&atomic_read(&u->kref.refcount)==1);
+ assert(!usb_submit_urb(u,GFP_ATOMIC));assert(b->endpoint.urb_list.next==&u->urb_list&&u->urb_list.next==&b->endpoint.urb_list);
+ assert(!usb_hcd_check_unlink_urb(&b->hcd,u,-ECONNRESET));assert(usb_hcd_check_unlink_urb(&b->hcd,u,-ENOENT)==-EBUSY);
+ tmc_lx_native_giveback(u,-EIO,0);assert(a.status==-ECONNRESET&&list_empty(&b->endpoint.urb_list));
+ assert(usb_hcd_check_unlink_urb(&b->hcd,u,-ENOENT)==-EIDRM);a.calls=0;
+
  assert(usb_urb_ep_type_check(u)==0);assert(usb_pipe_type_check(&b->usb,u->pipe^(2u<<30))==-EINVAL);
  assert(usb_pipe_type_check(&b->usb,(1u<<30)|(15u<<15)|128)==-EINVAL);
  unsigned original_pipe=u->pipe;u->pipe=(1u<<30)|(15u<<15)|128;assert(usb_submit_urb(u,GFP_ATOMIC)==-ENOENT);u->pipe=original_pipe;

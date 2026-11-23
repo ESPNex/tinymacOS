@@ -98,6 +98,18 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/LICENSES/exceptions/Linux-syscall-note",
       "sha256": "8e378ab93586eb55135d3bc119cce787f7324f48394777d00c34fa3d0be3303f",
       "license": "Linux-syscall-note"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hcd.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/hcd.c",
+      "sha256": "deeb79afb85362dfeda477e240e70b1b44bd2995b75d06aa92cf3a49d711e495",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hub.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/hub.c",
+      "sha256": "fffdbb0984fdce15e1b82bf93072f59f37a40a89cbf7e201bd78e47997cf26dc",
+      "license": "GPL-2.0-or-later"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
@@ -201,6 +213,42 @@
       "end_marker": "\nstruct hid_field *hid_find_field(",
       "sha256": "82d015916b661a40b3804ce29efb55210413a2c9d12b7b572013e2803833eae2",
       "modifications": "none: byte-exact complete functions"
+    },
+    {
+      "source": "hcd.c",
+      "output": "hcd-endpoint.inc",
+      "function": "hcd-endpoint",
+      "start_marker": "int usb_hcd_link_urb_to_ep(",
+      "end_marker": "\n/*\n * Some usb host controllers",
+      "sha256": "0df675175c00483ffc201697186bb7164f90dce66091089ad725064b7e41664b",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hcd.c",
+      "output": "hcd-lifecycle.inc",
+      "function": "hcd-lifecycle",
+      "start_marker": "int usb_hcd_submit_urb (",
+      "end_marker": "\nstatic void usb_giveback_urb_bh(",
+      "sha256": "b4fc8f8977492de955853f5f267f7dc0efc2ead6d9b4f9ee7b53fc5fe6cb7f86",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hub.c",
+      "output": "hub-reset.inc",
+      "function": "hub-reset",
+      "start_marker": "static bool hub_port_warm_reset_required(struct usb_hub *hub, int port1,\n\t\tu16 portstatus)\n{",
+      "end_marker": "\n/*\n * hub_port_stop_enumerate",
+      "sha256": "c6bc73b71a4eb83ee9f2398b28d1675c61fdb8ddc35a497f81cbb3fb8144eac2",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hub.c",
+      "output": "hub-debounce.inc",
+      "function": "hub-debounce",
+      "start_marker": "int hub_port_debounce(",
+      "end_marker": "\nvoid usb_ep0_reinit(",
+      "sha256": "fe432b519e158dc51d751a5a7d76c6466739a0ae785e8cb5778266b2a5a8c2b6",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
     }
   ]
 }

@@ -4,6 +4,7 @@ from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
 paths=['vendor/linux-v6.12/psmouse-base.c','vendor/linux-v6.12/psmouse.h','vendor/linux-v6.12/psmouse-packets.inc','vendor/linux-v6.12/psmouse-detect.inc','vendor/linux-v6.12/manifest.json','compat/linux/psmouse_input.c','compat/linux/ps2_protocol.c','compat/linux/ps2_input.c','compat/linux/usb_input.c','compat/linux/include/linux/tmc_compat.h','include/linux_ps2.h','tests/linux_psmouse.c','tests/linux_usbmouse.c','drivers/ps2.c','drivers/input.c','drivers/linux_usb.c','kernel/k.h']
+paths+=['compat/linux/hcd_runtime.inc', 'compat/linux/include/linux/tmc_hcd_core.h', 'vendor/linux-v6.12/hcd.c', 'vendor/linux-v6.12/hcd-endpoint.inc', 'vendor/linux-v6.12/hcd-lifecycle.inc']
 r={'passed':False,'scope':'Complete unchanged Linux psmouse standard/extended packet functions and IntelliMouse/Explorer detect functions, executed with original libps2 and actual native adapter','complete_linux_psmouse_driver':False,'full_linux_i8042_driver':False,'linux_atkbd_driver':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)

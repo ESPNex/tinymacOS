@@ -8,16 +8,21 @@
     "tests/linux_usbkbd.c": "cb77a33dbf1e296b01bdf62fc79f16961e0d5411b787af5acb366a571dddfcc6",
     "drivers/input.c": "91bedafaaba7cb80d5fe672d000f5f84adb991ac830e290a9533db509d1e9abb",
     "tests/input_test_support.h": "debb48add05bb8f704850ce5aa572499188c158ea9de182f3bd01a43dde4f976",
-    "compat/linux/usb_input.c": "bfead8508f11641d585c6691b01dd7dad5675e1be83657489d85b1f34a3155c3",
+    "compat/linux/usb_input.c": "0f914067fbeafbb3c1a0f179f7d041407ec3b8c40d1089c6a93eeb54c9790026",
     "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
-    "compat/linux/include/linux/tmc_compat.h": "fb1371ed412a6f81bad6da79ab188e821404e7d0cfbb2b2e3de6b1957212d0b2",
-    "include/linux_usb.h": "18c61ed970383b3034aef878adbe3b855a0dc1d3b2b0ff6025f68daa2b8b1b66",
+    "compat/linux/include/linux/tmc_compat.h": "3af2e6e3e046e3c2c69fd6eb3c9a5d3d20398d13102f8f7b0ddc2e5129d30aa7",
+    "include/linux_usb.h": "fd7e4a2de83b41f06545e95da61573250f91bf1169e4033fd4bd51121e19f9ea",
     "vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
     "vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
-    "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
+    "compat/linux/include/linux/tmc_urb_types.h": "df8b72f7d0cd583cc0ec21ebfb0dc5499f3cc790910e49440cc1c4865df5b5a9",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
-    "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef"
+    "vendor/linux-v6.12/manifest.json": "1765de0d2d1c5c41d4187de4080233540b62c70a2b296d4dc69c01db6b959f61",
+    "compat/linux/hcd_runtime.inc": "9e245e4b310c0cbe7ec71f6632be5e3305585b75944c06b7993819cb7f1f557d",
+    "compat/linux/include/linux/tmc_hcd_core.h": "86896103e8235c3b8d6da265a6b0b774a59ef6075524821335d82c502a478a0b",
+    "vendor/linux-v6.12/hcd.c": "deeb79afb85362dfeda477e240e70b1b44bd2995b75d06aa92cf3a49d711e495",
+    "vendor/linux-v6.12/hcd-endpoint.inc": "0df675175c00483ffc201697186bb7164f90dce66091089ad725064b7e41664b",
+    "vendor/linux-v6.12/hcd-lifecycle.inc": "b4fc8f8977492de955853f5f267f7dc0efc2ead6d9b4f9ee7b53fc5fe6cb7f86"
   },
   "output": "PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown\n"
 }

@@ -4,6 +4,7 @@ from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
 paths=['tests/linux_mouse_lifecycle.c','tests/linux_usbmouse.c','compat/linux/usb_input.c','compat/linux/usb_keyboard.c','compat/linux/include/linux/tmc_compat.h','compat/linux/include/linux/tmc_urb_types.h','compat/linux/include/linux/tmc_urb_core.h','include/linux_usb.h','vendor/linux-v6.12/usbmouse.c','vendor/linux-v6.12/usbkbd.c','vendor/linux-v6.12/urb.c','drivers/xhci.c','drivers/ehci.c','drivers/uhci.c','tests/input_maintenance.c']
+paths+=['compat/linux/hcd_runtime.inc', 'compat/linux/include/linux/tmc_hcd_core.h', 'vendor/linux-v6.12/hcd.c', 'vendor/linux-v6.12/hcd-endpoint.inc', 'vendor/linux-v6.12/hcd-lifecycle.inc']
 r={'passed':False,'scope':'Linux-bound mouse button aggregation and transport error handoff to original upstream URB core/IRQ; not a complete HCD port','physical_hardware_tested':False,'sources':{name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in paths}}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)

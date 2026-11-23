@@ -8,7 +8,7 @@ C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -We
 LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
 C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -Wno-sign-compare"
 
-gcc $C tests/input_maintenance.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
+gcc $C tests/input_maintenance.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
 "$out/queue"
 # Substitute only the MMIO notification in the host transport. No OS source edit.
 python3 - "$out/xhci-test.c" <<'PY'
@@ -21,11 +21,11 @@ s=s.replace('"../tests/input_test_support.h"','"'+str(p.parents[1]/'tests/input_
 s=s.replace('"../kernel/k.h"','"'+str(p.parents[1]/'kernel/k.h')+'"')
 Path(sys.argv[1]).write_text(s)
 PY
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/enumeration"
+gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/enumeration"
 "$out/enumeration"
 for t in hidconfig relative_pointer; do gcc $C "tests/$t.c" drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/$t";"$out/$t";done
 
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/hubs"
+gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/hubs"
 "$out/hubs"
 gcc $C tests/usbroute.c -o "$out/route"
 "$out/route"
@@ -74,3 +74,6 @@ gcc $C -fno-builtin -fno-pie -no-pie tests/linux_hid_generic.c tests/linux_hid_r
 
 # Actual generic/native adapter and shared input ownership, with scripted EP0.
 gcc $C tests/linux_usb_generic.c $LX -o "$out/linux-usb-generic";"$out/linux-usb-generic"
+
+# Actual original USB2 hub debounce/reset and shared CF exclusion.
+gcc $C -no-pie -pthread tests/linux_hub.c -o "$out/linux-hub";"$out/linux-hub"

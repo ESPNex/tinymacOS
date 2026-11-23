@@ -394,30 +394,12 @@ static int waitbit(volatile u32*p, u32 m, int set)
     return !!(*p&m)==set;
 }
 static void attach(struct Usb *,unsigned,unsigned,unsigned);
-static int hub_status(struct Usb *u,unsigned p,unsigned *status)
-{
-    memset(u->desc,0,4);
-    if(control(u,0xa3,0,0,p,4))return 0;
-    *status=u->desc[0]|u->desc[1]<<8;return 1;
-}
 static void hub_children(struct Usb *u)
 {
     if(u->depth>=5)return;
     for(unsigned p=1;p<=u->hub_ports && connected<NS;p++) {
         unsigned st;
-        if(!hub_status(u,p,&st)||!(st&1))continue;
-        usb_delay_ms(100); /* connect debounce, independent of CPU speed */
-        if(!hub_status(u,p,&st)||!(st&1)||(st&8))continue;
-        if(control(u,0x23,3,4,p,0))continue;
-        int ready=0;
-        for(unsigned ms=0;ms<500;ms+=10) {
-            usb_delay_ms(10);
-            if(!hub_status(u,p,&st)||!(st&1))break;
-            if(!(st&16)&&(st&2)){ready=1;break;}
-        }
-        if(!ready)continue;
-        for(unsigned f=16;f<=20;f++)(void)control(u,0x23,1,f,p,0);
-        usb_delay_ms(10); /* reset recovery before Address Device */
+        if(tmc_linux_hub_port_init(linux_generic_control,u,p,u->speed==1?2:u->speed==2?1:3,&st))continue;
         attach(u,p,st&1024?3:st&512?2:1,u->depth+1);
     }
 }
