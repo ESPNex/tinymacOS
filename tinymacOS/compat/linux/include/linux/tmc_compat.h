@@ -71,21 +71,24 @@ struct input_dev {
  int registered,x,y,wheel,buttons;void *owner;
  int (*event)(struct input_dev *,unsigned,unsigned,int);
 };
-struct usb_bus {const char *bus_name;};
+struct usb_bus {const char *bus_name;int no_sg_constraint;};
+struct usb_host_endpoint;
 struct usb_device {
  struct device dev;struct usb_bus *bus;const char *manufacturer,*product,*devpath;
  struct {u16 idVendor,idProduct;} descriptor;unsigned maxpacket;void *owner;
+ int state,speed;struct usb_host_endpoint *ep_in[16],*ep_out[16];
 };
 struct usb_endpoint_descriptor {u8 bLength,bDescriptorType,bEndpointAddress,bmAttributes;u16 wMaxPacketSize;u8 bInterval;} PACK;
-struct usb_host_endpoint {struct usb_endpoint_descriptor desc;};
+struct usb_ssp_isoc_ep_comp_descriptor {u32 dwBytesPerInterval;};
+struct usb_host_endpoint {struct usb_endpoint_descriptor desc;
+ struct {u8 bMaxBurst,bmAttributes;} ss_ep_comp;
+ struct usb_ssp_isoc_ep_comp_descriptor ssp_isoc_ep_comp;
+};
 struct usb_host_interface {struct {u8 bNumEndpoints,bInterfaceNumber;} desc;struct usb_host_endpoint *endpoint;};
 struct usb_interface {struct device dev;struct usb_device *usbdev;struct usb_host_interface *cur_altsetting;void *driver_data;};
 struct usb_device_id {u8 cls,sub,proto;};
-struct urb {
- struct usb_device *dev;void *context,*transfer_buffer;int status,actual_length,transfer_buffer_length;
- dma_addr_t transfer_dma;unsigned transfer_flags,pipe,interval;void (*complete)(struct urb *);
- int submitted,killed,type;u8 *setup_packet;u64 serial;
-};
+/* The core ABI and real atomic/list/wait services used by upstream urb.c. */
+#include "tmc_urb_types.h"
 struct usb_driver {const char *name;int (*probe)(struct usb_interface *,const struct usb_device_id *);void (*disconnect)(struct usb_interface *);const struct usb_device_id *id_table;};
 void *tmc_lx_zalloc(size_t,gfp_t);
 void tmc_lx_free(void *);
@@ -113,7 +116,7 @@ static inline struct usb_device *interface_to_usbdev(struct usb_interface *i){re
 static inline void usb_set_intfdata(struct usb_interface *i,void *p){i->driver_data=p;}
 static inline void *usb_get_intfdata(struct usb_interface *i){return i->driver_data;}
 static inline int usb_endpoint_is_int_in(struct usb_endpoint_descriptor *e){return (e->bmAttributes&3)==3&&(e->bEndpointAddress&128);}
-static inline unsigned usb_rcvintpipe(struct usb_device *d,unsigned ep){(void)d;return ep;}
+static inline unsigned usb_rcvintpipe(struct usb_device *d,unsigned ep){(void)d;return (1u<<30)|(ep&15)<<15|128;}
 static inline unsigned usb_maxpacket(struct usb_device *d,unsigned pipe){(void)pipe;return d->maxpacket;}
 void usb_to_input_id(struct usb_device *,struct input_id *);
 int usb_make_path(struct usb_device *,char *,size_t);
@@ -128,7 +131,6 @@ struct usb_driver *tmc_lx_usbmouse_driver(void);
 
 struct usb_ctrlrequest {u8 bRequestType,bRequest;u16 wValue,wIndex,wLength;} PACK;
 #define cpu_to_le16(x) ((u16)(x))
-typedef struct {unsigned word;} spinlock_t;
 void tmc_lx_spin_init(spinlock_t *);
 unsigned long tmc_lx_spin_lock_irqsave(spinlock_t *);
 void tmc_lx_spin_unlock_irqrestore(spinlock_t *,unsigned long);
@@ -144,7 +146,9 @@ void tmc_lx_hid_log(void *,unsigned,const char *,...);
 #define hid_warn(d,fmt,...) tmc_lx_hid_log((d),1,(fmt),##__VA_ARGS__)
 #define hid_err(d,fmt,...) tmc_lx_hid_log((d),2,(fmt),##__VA_ARGS__)
 #define pr_err(fmt,...) tmc_lx_hid_log(0,2,pr_fmt(fmt),##__VA_ARGS__)
-static inline unsigned usb_sndctrlpipe(struct usb_device *d,unsigned ep){(void)d;return ep;}
+static inline unsigned usb_sndctrlpipe(struct usb_device *d,unsigned ep){(void)d;return (2u<<30)|(ep&15)<<15;}
 void usb_fill_control_urb(struct urb *,struct usb_device *,unsigned,u8 *,void *,int,void (*)(struct urb *),void *);
 struct usb_driver *tmc_lx_usbkbd_driver(void);
 unsigned tmc_lx_usbkbd_usage(unsigned);
+
+#include "tmc_urb_core.h"

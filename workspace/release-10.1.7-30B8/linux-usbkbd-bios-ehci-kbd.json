@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "ehci-kbd",
-  "iso_sha256": "e0c7a892539ffaa2d8c036b3404dfbd2b400eec601d2c902a02889fc6ae296a5",
-  "work": "/var/tmp/tmc-linux-kbd-bios-ehci-kbd-7yizcxod",
+  "iso_sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
+  "work": "/var/tmp/tmc-linux-kbd-bios-ehci-kbd-okzyfcdl",
   "actual_upstream_boot_keyboard_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -11,6 +11,14 @@
   "physical_hardware_tested": false,
   "actual_iso_kernel_equals_build": true,
   "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Keyboard\r\n",
+  "urb_core_before": {
+    "submits": 2,
+    "givebacks": 0,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 2,
+    "highwater": 2
+  },
   "before": {
     "probes": 1,
     "attached": 1,
@@ -33,6 +41,15 @@
     "control_errors": 0,
     "stale_controls": 0
   },
+  "urb_core_after": {
+    "submits": 184,
+    "givebacks": 182,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 2,
+    "highwater": 3
+  },
+  "actual_upstream_core_urb_file_executed": true,
   "checks": [
     "USB-only keyboard with virtual i8042 disabled",
     "actual ISO KernelCache equals linked build",

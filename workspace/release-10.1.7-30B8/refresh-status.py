@@ -2,7 +2,7 @@
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
 import filecmp,hashlib,json,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-usbkbd-v5');iso=base/'tinymacOS-10.1.7-x86_64.iso'
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-urb-v6');iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -11,8 +11,8 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-usbkbd-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
-(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/EHCI qTD function; not an HCD/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
+other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-urb-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/EHCI qTD function; not an HCD/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
 symbols=subprocess.check_output(['nm',str(base/'build/kernel.debug')],text=True)
@@ -27,4 +27,10 @@ kbd_contract=load('linux-usbkbd-contract-result.json')
 status['linux_usbkbd_host_contract_passed']=bool(kbd_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in kbd_contract.get('sources',{}).items())
 status['linux_usbkbd_current_guest_topologies_passed']=sum(current(f'linux-usbkbd-{fw}-{profile}.json') for fw in ['uefi','bios'] for profile in ['ehci-kbd','companion-kbd','xhci-hub-kbd'])
 status['linux_usbkbd_current_guest_topologies_expected']=6
+status['actual_upstream_linux_usb_core_urb_file_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_alloc_urb','usb_init_urb','usb_get_urb','usb_submit_urb','usb_kill_urb','usb_poison_anchored_urbs','usb_wait_anchor_empty_timeout'])
+urb_contract=load('linux-urb-contract-result.json')
+status['linux_urb_host_contract_passed']=bool(urb_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in urb_contract.get('sources',{}).items())
+status['linux_urb_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_core_urb_file_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
+status['linux_hcd_backend_scope']='Native, one logical interrupt-IN and EP0-OUT slot per binding, maximum 8 payload bytes; not Linux hcd.c'
+status['blocking_work'][0]='Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hubs/IRQ/DMA lifecycle; only core urb.c, Boot drivers and EHCI qtd_fill are upstream so far'
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "scope": "Complete byte-exact upstream core/urb.c replaces handwritten URB APIs; native HCD backend remains bounded interrupt-IN/EP0-OUT only",
+  "full_linux_usb_core_port": false,
+  "linux_hcd_port": false,
+  "physical_hardware_tested": false,
+  "sources": {
+    "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
+    "vendor/linux-v6.12/manifest.json": "3295d2cfbb4f11ab47035863c60fe23648eda8d5aa85d94dcaefae891a0ba28d",
+    "tests/linux_urb.c": "ba69eb0007510944b463401c212a4c81270004671685dc9cd9668f77882497e3",
+    "tests/linux_usbmouse.c": "870f4c85b8bfafe645b3643cc5a859d55347cccdf6dc74ce1421f078808001b9",
+    "compat/linux/usb_input.c": "55da98bcf5a35a43cebda552d2dc45ff0b917da0e6fffb84987d68806263bcd6",
+    "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
+    "compat/linux/include/linux/tmc_compat.h": "af0d6922865630a3d524506f5e0adccf41bbccd23edffe2e4083d80ddb30d52d",
+    "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
+    "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
+    "include/linux_usb.h": "b06edb85b5a1208f635a22b7d3c00e33ad814c7fddf19e44948741af6a9c5948"
+  },
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\nPASS complete Linux v6.12 core/urb.c: allocation overflow/refcounts, endpoint/state/packet/SG/interval checks, short packets, requeue, kill/unlink/poison/block, all anchor operations, real timeout and concurrent wakeup, active-driver-put and callback-free lifetime; native HCD backend still bounded\n"
+}

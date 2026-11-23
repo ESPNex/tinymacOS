@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 /* Actual unmodified upstream usbmouse.c is linked separately. Only OS memory,
  * lock and event imports are provided here; no replacement mouse decoder. */
+#include <time.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,7 +25,7 @@ void tmc_lx_os_pointer(int x,int y,int b,int w){events++;last_x=x;last_y=y;last_
 void tmc_lx_os_error(const char *s){assert(s&&*s);errors++;}
 void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods){(void)bitmap;(void)mods;assert(!"unexpected keyboard in mouse-only fixture");}
 u32 tmc_lx_os_irq_save(void){return 0;}
-void tmc_lx_os_irq_restore(u32 f){assert(!f);}
+void tmc_lx_os_irq_restore(u32 f){assert(f==0||f==0x200);}
 void tmc_lx_os_spin_wait(void){__asm__ volatile("pause");}
 static void check(void *key,const u8 *raw,unsigned n,int x,int y,int buttons,int wheel)
 {
@@ -55,11 +56,11 @@ int main(void)
  check(&key,(u8[]){1,0,0,127},4,0,0,1,127);
  int previous_events=events;assert(!tmc_linux_mouse_report(&key,(u8[]){0,1},2));assert(events==previous_events);
  assert(!tmc_linux_mouse_report(&key,0,3));assert(!tmc_linux_mouse_report(&key,(u8[9]){0},9));
- assert(usb_submit_urb(b->urb,GFP_ATOMIC)==-EBUSY);
- b->urb->submitted=0;b->urb->status=-EPIPE;b->urb->complete(b->urb);assert(b->urb->submitted&&events==previous_events);
+ int prior_errors=errors;assert(usb_submit_urb(b->urb,GFP_ATOMIC)==-EBUSY);assert(errors==prior_errors+1);errors=prior_errors;
+ tmc_lx_native_giveback(b->urb,-EPIPE,0);assert(b->urb->submitted&&events==previous_events);
  int statuses[]={-ENOENT,-ECONNRESET,-ESHUTDOWN};
  for(unsigned i=0;i<COUNT(statuses);i++){
-  b->urb->submitted=0;b->urb->status=statuses[i];b->urb->complete(b->urb);assert(!b->urb->submitted);
+  tmc_lx_native_giveback(b->urb,statuses[i],0);assert(!b->urb->submitted);
   assert(!b->input->open(b->input));assert(b->urb->submitted);
  }
  usb_kill_urb(b->urb);assert(!b->urb->submitted);assert(!b->input->open(b->input));
@@ -82,4 +83,7 @@ int main(void)
  assert(tmc_lx_strscpy(text,"abcdefghijklm",sizeof text)==-7&&text[11]==0);
  TmcLinuxUsbStats out;tmc_linux_mouse_stats(&out);assert(out.allocations==out.frees&&out.attached==out.disconnected&&!errors);
  puts("PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion");
+ return 0;
 }
+
+u64 tmc_lx_os_clock_ms(void){struct timespec t;assert(!clock_gettime(CLOCK_MONOTONIC,&t));return (u64)t.tv_sec*1000+t.tv_nsec/1000000;}

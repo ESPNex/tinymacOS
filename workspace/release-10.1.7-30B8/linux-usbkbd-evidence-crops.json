@@ -1,0 +1,80 @@
+[
+  {
+    "file": "linux-usbkbd-bios-companion-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-bios-companion-kbd-fv9ybzh8/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "1702ab89ddd2fff67a665ef9fb86d570923d2b7b28d6edd86c8deb6c3b175352",
+    "crop_sha256": "e253d20a4c709b124b43079869e2da6d7f03f00711f5954fcf0b7eb6c2174a29"
+  },
+  {
+    "file": "linux-usbkbd-bios-ehci-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-bios-ehci-kbd-okzyfcdl/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "1702ab89ddd2fff67a665ef9fb86d570923d2b7b28d6edd86c8deb6c3b175352",
+    "crop_sha256": "e253d20a4c709b124b43079869e2da6d7f03f00711f5954fcf0b7eb6c2174a29"
+  },
+  {
+    "file": "linux-usbkbd-bios-xhci-hub-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-bios-xhci-hub-kbd-obc3mj9s/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "72f7c479c19de675ed0f06aa83b6c09da1b27777d3154528df71594e33669f47",
+    "crop_sha256": "15255595990d4bc085d4680e9bcf0bd3547527c7d6f01a31c1247baa30e2e326"
+  },
+  {
+    "file": "linux-usbkbd-uefi-companion-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-uefi-companion-kbd-7l_0cdnc/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "72f7c479c19de675ed0f06aa83b6c09da1b27777d3154528df71594e33669f47",
+    "crop_sha256": "15255595990d4bc085d4680e9bcf0bd3547527c7d6f01a31c1247baa30e2e326"
+  },
+  {
+    "file": "linux-usbkbd-uefi-ehci-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-uefi-ehci-kbd-yweew5e9/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "72f7c479c19de675ed0f06aa83b6c09da1b27777d3154528df71594e33669f47",
+    "crop_sha256": "15255595990d4bc085d4680e9bcf0bd3547527c7d6f01a31c1247baa30e2e326"
+  },
+  {
+    "file": "linux-usbkbd-uefi-xhci-hub-kbd.png",
+    "crop_box": [
+      299,
+      162,
+      1027,
+      601
+    ],
+    "operation": "lossless crop only; no rescale or pixel alteration",
+    "original_external_path": "/var/tmp/tmc-linux-kbd-uefi-xhci-hub-kbd-_jmjhslx/evidence/linux-usbkbd-italian-leds.png",
+    "original_sha256": "1702ab89ddd2fff67a665ef9fb86d570923d2b7b28d6edd86c8deb6c3b175352",
+    "crop_sha256": "e253d20a4c709b124b43079869e2da6d7f03f00711f5954fcf0b7eb6c2174a29"
+  }
+]

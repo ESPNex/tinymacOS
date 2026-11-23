@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "companion",
-  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
-  "work": "/var/tmp/tmc-linux-usb-uefi-companion-rb7gwbav",
+  "iso_sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
+  "work": "/var/tmp/tmc-linux-usb-uefi-companion-m91lg9mu",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -11,6 +11,19 @@
   "physical_hardware_tested": false,
   "actual_iso_kernel_equals_build": true,
   "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n",
+  "ehci_qtd_before": {
+    "calls": 0,
+    "bytes": 0,
+    "rejected": 0
+  },
+  "urb_core_before": {
+    "submits": 1,
+    "givebacks": 0,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 1,
+    "highwater": 1
+  },
   "before": {
     "probes": 1,
     "attached": 1,
@@ -25,13 +38,27 @@
   "after": {
     "probes": 1,
     "attached": 1,
-    "completions": 170,
-    "frames": 170,
+    "completions": 171,
+    "frames": 171,
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
     "allocations": 4,
     "frees": 0
   },
+  "ehci_qtd_after": {
+    "calls": 0,
+    "bytes": 0,
+    "rejected": 0
+  },
+  "urb_core_after": {
+    "submits": 172,
+    "givebacks": 171,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 1,
+    "highwater": 1
+  },
+  "actual_upstream_core_urb_file_executed": true,
   "exact_rendered_xy_checks": 6
 }

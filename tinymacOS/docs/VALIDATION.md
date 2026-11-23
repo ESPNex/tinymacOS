@@ -45,3 +45,7 @@ La variante PS/2 è identificata separatamente da OpenCore ufficiale; sorgenti, 
 ### Ulteriore milestone 10.1.7: tastiera Boot Linux
 
 `linux-usbkbd-contract-result.json` esegue il driver originale completo e il vero consumer italiano con ASan/UBSan, inclusi LED differiti e annullamento/disconnessione durante EP0. Le sei ricevute `linux-usbkbd-{uefi,bios}-{ehci-kbd,companion-kbd,xhci-hub-kbd}.json` verificano il KernelCache della ISO, tastiera solo USB, testo italiano renderizzato e contatori IRQ/LED reali. Restano trasporti HCD nativi: non è il port completo Linux e non prova compatibilità fisica Bay Trail.
+
+### Core URB originale, confine del backend
+
+`linux-urb-contract-result.json` esegue tutto `usb/core/urb.c` di Linux 6.12 (GPL-2.0-only), senza sostituirne le funzioni: lifecycle, validazione, cancellazione, riferimenti, anchor, timeout e wakeup concorrenti. I 18 profili mouse/tastiera attuali verificano anche contatori submit/giveback reali. Il backend controller resta nativo e limitato: **non** certifica HCD Linux, core USB completo, generic HID o hardware fisico. La release resta bloccata.

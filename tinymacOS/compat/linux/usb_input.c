@@ -8,8 +8,8 @@
 #define LX_BINDINGS 128
 struct LxBinding {
  void *key;struct usb_bus bus;struct usb_device usb;struct usb_interface intf;
- struct usb_host_interface alt;struct usb_host_endpoint endpoint;
- struct input_dev *input;struct urb *urb,*control_urb;int opened,kind,servicing;
+ struct usb_host_interface alt;struct usb_host_endpoint endpoint,ep0;
+ struct input_dev *input;struct urb *urb,*control_urb,*active_input,*active_control;int opened,kind,servicing;
  TmcLinuxUsbControl control;void *control_context;u64 generation;
 };
 static struct LxBinding bindings[LX_BINDINGS];
@@ -17,6 +17,9 @@ static TmcLinuxUsbStats tmc_linux_usb_stats;
 static TmcLinuxKeyboardStats tmc_linux_kbd_stats;
 static u64 generation;
 static unsigned service_busy;
+wait_queue_head_t usb_kill_urb_queue;
+static TmcLinuxUrbStats tmc_linux_urb_counters;
+#define ustats tmc_linux_urb_counters
 #define kstats tmc_linux_kbd_stats
 #define stats tmc_linux_usb_stats
 void *tmc_lx_zalloc(size_t n,gfp_t flags)
@@ -133,32 +136,16 @@ void *usb_alloc_coherent(struct usb_device *d,size_t n,gfp_t flags,dma_addr_t *d
  void *p=tmc_lx_os_dma_alloc(n,dma);if(p){memset(p,0,n);stats.allocations++;}return p;
 }
 void usb_free_coherent(struct usb_device *d,size_t n,void *p,dma_addr_t dma){(void)d;(void)n;if(p){stats.frees++;tmc_lx_os_dma_free(p,dma);}}
-struct urb *usb_alloc_urb(int iso,gfp_t flags){return iso?0:tmc_lx_zalloc(sizeof(struct urb),flags);}
-void usb_free_urb(struct urb *u){if(u){usb_kill_urb(u);tmc_lx_free(u);}}
-int usb_submit_urb(struct urb *u,gfp_t flags)
-{
- if(!u||!u->dev||!u->complete||!u->transfer_buffer||u->transfer_buffer_length<1||u->transfer_buffer_length>8)return -EINVAL;
- if(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC)return -EINVAL;
- if(u->killed)return -ESHUTDOWN;if(u->submitted)return -EBUSY;
- if(u->type==1){if(!(u->pipe&128))return -EINVAL;}
- else if(u->type==2){
-  struct LxBinding *b=u->dev->owner;
-  if(!b||!b->control||!u->setup_packet)return -ENODEV;
-  unsigned n=u->setup_packet[6]|u->setup_packet[7]<<8;
-  if((u->setup_packet[0]&128)||n!=(unsigned)u->transfer_buffer_length)return -EINVAL;
- }else return -EINVAL;
- u->serial++;u->submitted=1;return 0;
-}
-void usb_kill_urb(struct urb *u)
-{
- if(!u)return;int pending=u->submitted;u->serial++;u->killed=1;u->submitted=0;
- if(pending&&u->complete){u->status=-ENOENT;u->actual_length=0;u->complete(u);}
- u->killed=0; /* synchronous cancellation is not permanent URB poisoning */
-}
 void usb_fill_int_urb(struct urb *u,struct usb_device *d,unsigned pipe,void *buf,int n,void (*complete)(struct urb *),void *ctx,unsigned interval)
 {
  u->type=1;u->dev=d;u->pipe=pipe;u->transfer_buffer=buf;u->transfer_buffer_length=n;u->complete=complete;u->context=ctx;u->interval=interval;
  ((struct LxBinding *)d->owner)->urb=u;
+}
+static void core_endpoints(struct LxBinding *b)
+{
+ b->usb.state=USB_STATE_CONFIGURED;b->usb.speed=USB_SPEED_FULL;
+ b->ep0.desc=(struct usb_endpoint_descriptor){7,5,0,0,64,0};
+ b->usb.ep_in[0]=b->usb.ep_out[0]=&b->ep0;b->usb.ep_in[1]=&b->endpoint;
 }
 static struct LxBinding *binding(void *key)
 {
@@ -179,6 +166,7 @@ int tmc_linux_mouse_attach(void *key,unsigned vid,unsigned pid,unsigned packet,u
  if(!b)goto done;memset(b,0,sizeof *b);b->key=key;b->kind=2;b->generation=++generation;
  b->bus.bus_name="native-hcd";b->usb=(struct usb_device){.bus=&b->bus,.manufacturer="tinymacOS",.product="Linux usbmouse",.devpath="interrupt-in",.descriptor={(u16)vid,(u16)pid},.maxpacket=packet,.owner=b};
  b->endpoint.desc=(struct usb_endpoint_descriptor){7,5,0x81,3,(u16)packet,interval?interval:10};
+ core_endpoints(b);
  b->alt.desc.bNumEndpoints=1;b->alt.endpoint=&b->endpoint;b->intf.usbdev=&b->usb;b->intf.cur_altsetting=&b->alt;
  struct usb_driver *driver=tmc_lx_usbmouse_driver();stats.probes++;
  if(driver->probe(&b->intf,driver->id_table)){memset(b,0,sizeof *b);goto done;}
@@ -192,8 +180,8 @@ int tmc_linux_mouse_report(void *key,const u8 *data,unsigned n)
 {
  u32 flags=tmc_lx_os_lock();int consumed=0;struct LxBinding *b=binding(key);
  if(!b||b->kind!=2||!b->opened||!b->urb||!b->urb->submitted||!data||n<3||n>(unsigned)b->urb->transfer_buffer_length){stats.rejected++;goto done;}
- struct urb *u=b->urb;u->submitted=0;u->status=0;u->actual_length=n;
- memset(u->transfer_buffer,0,8);memcpy(u->transfer_buffer,data,n);stats.completions++;u->complete(u);consumed=1;
+ struct urb *u=b->urb;
+ memset(u->transfer_buffer,0,8);memcpy(u->transfer_buffer,data,n);stats.completions++;tmc_lx_native_giveback(u,0,n);consumed=1;
  done:tmc_lx_os_unlock(flags);return consumed;
 }
 void tmc_linux_mouse_detach(void *key)
@@ -243,6 +231,7 @@ int tmc_linux_keyboard_attach(void *key,unsigned vid,unsigned pid,unsigned packe
  b->control=control;b->control_context=context;b->bus.bus_name="native-hcd";
  b->usb=(struct usb_device){.bus=&b->bus,.manufacturer="tinymacOS",.product="Linux usbkbd",.devpath="interrupt-in",.descriptor={(u16)vid,(u16)pid},.maxpacket=packet,.owner=b};
  b->endpoint.desc=(struct usb_endpoint_descriptor){7,5,0x81,3,(u16)packet,interval?interval:10};
+ core_endpoints(b);
  b->alt.desc.bNumEndpoints=1;b->alt.desc.bInterfaceNumber=iface;b->alt.endpoint=&b->endpoint;
  b->intf.usbdev=&b->usb;b->intf.cur_altsetting=&b->alt;
  struct usb_driver *driver=tmc_lx_usbkbd_driver();kstats.probes++;
@@ -257,8 +246,8 @@ int tmc_linux_keyboard_report(void *key,const u8 *data,unsigned n)
  if(!b||b->kind!=1||!b->opened||!b->urb||!b->urb->submitted||!data||n!=8){kstats.rejected++;goto done;}
  /* A Boot error-rollover report is not a trustworthy set of key releases. */
  for(unsigned i=2;i<8;i++)if(data[i]>=1&&data[i]<=3){kstats.rejected++;consumed=1;goto done;}
- struct urb *u=b->urb;u->submitted=0;u->status=0;u->actual_length=8;
- memcpy(u->transfer_buffer,data,8);kstats.completions++;u->complete(u);consumed=1;
+ struct urb *u=b->urb;
+ memcpy(u->transfer_buffer,data,8);kstats.completions++;tmc_lx_native_giveback(u,0,8);consumed=1;
  done:tmc_lx_os_unlock(flags);return consumed;
 }
 void tmc_linux_keyboard_detach(void *key)
@@ -301,9 +290,8 @@ void tmc_linux_usb_service(void)
   if(b->generation==gen&&b->control_urb==u){
    b->servicing=0;
    if(u->serial==serial&&u->submitted){
-    u->submitted=0;u->status=status;u->actual_length=status?0:(int)n;
     if(status)kstats.control_errors++;
-    u->complete(u);
+    tmc_lx_native_giveback(u,status,status?0:n);
    }else kstats.stale_controls++;
   }else kstats.stale_controls++;
   break;
@@ -313,4 +301,64 @@ void tmc_linux_usb_service(void)
 void tmc_linux_keyboard_stats(TmcLinuxKeyboardStats *out)
 {
  u32 flags=tmc_lx_os_lock();if(out)*out=kstats;tmc_lx_os_unlock(flags);
+}
+
+/* Bounded native-HCD backend for the upstream URB core. It is NOT Linux
+ * hcd.c: each binding exposes one polled interrupt IN and one EP0 OUT slot.
+ * Unsupported DMA/SG/bulk/isoc traffic fails explicitly before ownership is
+ * transferred. Logical URBs do not DMA: native HCDs own hardware buffers.
+ */
+int usb_hcd_submit_urb(struct urb *u,gfp_t flags)
+{
+ if(!u||!u->dev||!u->ep)return -EINVAL;
+ struct LxBinding *b=u->dev->owner;int result=0;
+ if(atomic_read(&u->reject))result=-EPERM;
+ else if(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC)result=-EINVAL;
+ else if(!b||b->key==0||&b->usb!=u->dev)result=-ENODEV;
+ else if(u->num_sgs||u->sg||u->number_of_packets)result=-EOPNOTSUPP;
+ else if(u->transfer_buffer_length<0||u->transfer_buffer_length>8||
+         (u->transfer_buffer_length&&!u->transfer_buffer))result=-EINVAL;
+ else if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT){
+  if(!u->transfer_buffer_length||!(u->pipe&USB_DIR_IN)||b->urb!=u)result=-EOPNOTSUPP;
+ }else if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_CONTROL){
+  if((u->setup_packet[0]&USB_DIR_IN)||b->control_urb!=u||!b->control)result=-EOPNOTSUPP;
+ }else result=-EOPNOTSUPP;
+ if(!result){
+  struct urb *active=usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT?b->active_input:b->active_control;
+  if(active)result=-EBUSY;
+ }
+ if(result){ustats.rejected++;return result;}
+ if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT)b->active_input=u;else b->active_control=u;
+ usb_get_urb(u);atomic_inc(&u->use_count);u->hcpriv=b;u->serial++;u->submitted=1;
+ ustats.submits++;ustats.active++;if(ustats.active>ustats.highwater)ustats.highwater=ustats.active;
+ return 0;
+}
+/* Transfer ownership before invoking the driver: callback may resubmit OR
+ * drop its driver reference. The outstanding core reference keeps the URB
+ * alive until callback and anchor wakeup ordering are complete.
+ */
+void tmc_lx_native_giveback(struct urb *u,int status,unsigned length)
+{
+ if(!u||!u->hcpriv||!u->submitted)return;
+ struct usb_anchor *anchor=u->anchor;struct LxBinding *b=u->hcpriv;
+ if(b->active_input==u)b->active_input=0;if(b->active_control==u)b->active_control=0;
+ u->hcpriv=0;u->submitted=0;u->serial++;u->actual_length=length;
+ if(!status&&(u->transfer_flags&URB_SHORT_NOT_OK)&&length<(unsigned)u->transfer_buffer_length)status=-EREMOTEIO;
+ usb_anchor_suspend_wakeups(anchor);usb_unanchor_urb(u);
+ u->status=status;ustats.givebacks++;ustats.active--;
+ u->complete(u);
+ usb_anchor_resume_wakeups(anchor);atomic_dec(&u->use_count);
+ smp_mb__after_atomic();if(atomic_read(&u->reject))wake_up(&usb_kill_urb_queue);
+ usb_put_urb(u);
+}
+int usb_hcd_unlink_urb(struct urb *u,int status)
+{
+ if(!u||!u->submitted||!u->hcpriv)return -EIDRM;
+ ustats.unlinks++;tmc_lx_native_giveback(u,status,0);return -EINPROGRESS;
+}
+void tmc_lx_spin_lock_irq(spinlock_t *s){(void)tmc_lx_spin_lock_irqsave(s);}
+void tmc_lx_spin_unlock_irq(spinlock_t *s){tmc_lx_spin_unlock_irqrestore(s,0x200);}
+void tmc_linux_urb_stats(TmcLinuxUrbStats *out)
+{
+ u32 flags=tmc_lx_os_lock();if(out)*out=ustats;tmc_lx_os_unlock(flags);
 }

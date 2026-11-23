@@ -1,5 +1,6 @@
 /* Actual upstream usbkbd + compatibility + actual native Italian input.
  * No replacement keyboard decoder and no privileged instructions here. */
+#include <time.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,7 +32,7 @@ void tmc_lx_os_pointer(int x,int y,int b,int w){hid_relative(x,y,b,w);}
 void tmc_lx_os_keyboard(const u8 bits[32],unsigned mods){hid_linux_keys(bits,mods);}
 void tmc_lx_os_error(const char *s){assert(s&&*s);}
 u32 tmc_lx_os_irq_save(void){return 0;}
-void tmc_lx_os_irq_restore(u32 f){assert(!f);}
+void tmc_lx_os_irq_restore(u32 f){assert(f==0||f==0x200);}
 void tmc_lx_os_spin_wait(void){__asm__ volatile("pause");}
 static int control(void *context,const u8 setup[8],u8 *data,unsigned n)
 {
@@ -122,3 +123,5 @@ int main(void)
  puts("PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown");
  return 0;
 }
+
+u64 tmc_lx_os_clock_ms(void){struct timespec t;assert(!clock_gettime(CLOCK_MONOTONIC,&t));return (u64)t.tv_sec*1000+t.tv_nsec/1000000;}

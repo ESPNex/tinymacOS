@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "ehci",
-  "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
-  "work": "/var/tmp/tmc-linux-usb-bios-ehci-781vhe1t",
+  "iso_sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
+  "work": "/var/tmp/tmc-linux-usb-bios-ehci-3uzcq09j",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -15,6 +15,14 @@
     "calls": 27,
     "bytes": 206,
     "rejected": 0
+  },
+  "urb_core_before": {
+    "submits": 1,
+    "givebacks": 0,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 1,
+    "highwater": 1
   },
   "before": {
     "probes": 1,
@@ -44,5 +52,14 @@
     "rejected": 0
   },
   "upstream_linux_ehci_qtd_fill_executed": true,
+  "urb_core_after": {
+    "submits": 172,
+    "givebacks": 171,
+    "unlinks": 0,
+    "rejected": 0,
+    "active": 1,
+    "highwater": 1
+  },
+  "actual_upstream_core_urb_file_executed": true,
   "exact_rendered_xy_checks": 6
 }

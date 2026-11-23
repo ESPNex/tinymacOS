@@ -35,3 +35,8 @@ u32 tmc_lx_os_irq_save(void);
 void tmc_lx_os_irq_restore(u32);
 
 void tmc_lx_os_spin_wait(void);
+
+/* Upstream core/urb.c is distinct from this limited native-HCD backend. */
+typedef struct {u64 submits,givebacks,unlinks,rejected,active,highwater;} TmcLinuxUrbStats;
+void tmc_linux_urb_stats(TmcLinuxUrbStats *);
+u64 tmc_lx_os_clock_ms(void);

@@ -1,0 +1,65 @@
+{
+  "passed": true,
+  "scope": "Complete upstream Linux core/urb.c integrated with Boot mouse/keyboard; bounded native backend only",
+  "iso_sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
+  "iso_bytes": 225730560,
+  "kernelcache_sha256": "cf1658362c11a6e357ad3476e37c91ce4af226bfce8e7220ab5ee72870fcfe6a",
+  "full_linux_hcd_port": false,
+  "full_linux_usb_core_port": false,
+  "generic_hid_port": false,
+  "full_release_gate_passed": false,
+  "published": false,
+  "physical_hardware_tested": false,
+  "current_guest_profiles_passed": 18,
+  "receipts": [
+    "linux-usbkbd-uefi-ehci-kbd.json",
+    "linux-usbkbd-uefi-companion-kbd.json",
+    "linux-usbkbd-uefi-xhci-hub-kbd.json",
+    "linux-usbkbd-bios-ehci-kbd.json",
+    "linux-usbkbd-bios-companion-kbd.json",
+    "linux-usbkbd-bios-xhci-hub-kbd.json",
+    "linux-usbmouse-uefi-xhci.json",
+    "linux-usbmouse-uefi-ehci.json",
+    "linux-usbmouse-uefi-uhci.json",
+    "linux-usbmouse-uefi-companion.json",
+    "linux-usbmouse-uefi-xhci-hub.json",
+    "linux-usbmouse-uefi-xhci-nested-hub.json",
+    "linux-usbmouse-bios-xhci.json",
+    "linux-usbmouse-bios-ehci.json",
+    "linux-usbmouse-bios-uhci.json",
+    "linux-usbmouse-bios-companion.json",
+    "linux-usbmouse-bios-xhci-hub.json",
+    "linux-usbmouse-bios-xhci-nested-hub.json"
+  ],
+  "upstream_core_object_sha256": "1d03e547bd93f697a74d0ecbef986926f35152c1247dd617e9fdad586e60bbd1",
+  "linked_symbols": [
+    "00000000040307f0 T usb_alloc_urb",
+    "00000000040308e0 T usb_get_urb",
+    "0000000004031050 T usb_kill_urb",
+    "0000000004031210 T usb_poison_anchored_urbs",
+    "0000000004030ad0 T usb_submit_urb",
+    "00000000040314e0 T usb_wait_anchor_empty_timeout"
+  ],
+  "logs": {
+    "/var/tmp/tmc-linux-urb-v6-build.log": {
+      "sha256": "f1380b228f8a62c01f84b51147cfc8139b6e90c636777876b37f797efb22f72e",
+      "exit_code": 0
+    },
+    "/var/tmp/tmc-linux-urb-v6-package.log": {
+      "sha256": "4aff9d05d289a8f35aeb9b91441891ff6f7ad6aa458b5d00994f148e417b7251",
+      "exit_code": 0
+    },
+    "/var/tmp/tmc-linux-urb-v6-independent.log": {
+      "sha256": "d6e7da7f8c789cfecc3e9cf599ca55af4338e1f2f877269e6fd1ce90b64496a9",
+      "exit_code": 0
+    },
+    "/var/tmp/tmc-urb-maintenance-final.log": {
+      "sha256": "817faf29285f8fce9a8085dd965a2bd0437bdcc6aa268fd8a7a9117618610839",
+      "exit_code": 0
+    },
+    "/var/tmp/tmc-urb-legacy-final.log": {
+      "sha256": "26c822b2b6d7f9bf30b98ceb463dd813694b8ea65e899d9b96820697f30e8226",
+      "exit_code": 0
+    }
+  }
+}

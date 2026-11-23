@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 /* Host-only OS import provider for existing real native HCD/input contracts.
  * Links the actual Linux driver and compatibility core, not a report mock. */
+#include <time.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "linux_usb.h"
@@ -27,5 +28,7 @@ void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods)
  hid_keys(report);
 }
 u32 tmc_lx_os_irq_save(void){return 0;}
-void tmc_lx_os_irq_restore(u32 flags){assert(!flags);}
+void tmc_lx_os_irq_restore(u32 flags){assert(flags==0||flags==0x200);}
 void tmc_lx_os_spin_wait(void){__asm__ volatile("pause");}
+
+u64 tmc_lx_os_clock_ms(void){struct timespec t;assert(!clock_gettime(CLOCK_MONOTONIC,&t));return (u64)t.tv_sec*1000+t.tv_nsec/1000000;}
