@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "profile": "ps2",
+  "firmware": "bios",
+  "iso_sha256": "fe1c49ab49999d4ca4c3fa89948c7707adb3ae86c844ca4507b61b5ba4012348",
+  "work": "/var/tmp/tmc10-rec-kbd-0bcc5kr_",
+  "local_installed_recovery": false,
+  "opencore_keymap_protocol": true,
+  "physical_hardware_tested": false,
+  "i8042_present": true
+}

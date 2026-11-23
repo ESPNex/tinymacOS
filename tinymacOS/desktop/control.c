@@ -96,7 +96,6 @@ static void slider(Rect p,int id,const char *label,const char *state){
 void control_draw(Rect p){
     /* Identical backdrop convolution/refraction and reduced-transparency fallback as Dock. */
     ink=lite&&!sys.dark?0x23324b:0xf9fcff;muted=lite&&!sys.dark?0x4b6074:0xd9edf5;
-    text(p.x+sz(p,7),p.y+sz(p,3),"Centro di Controllo",F_SMALL,ink);
     pill(p,CC_APPEAR,"Aspetto",sys.dark?"Scuro":"Chiaro",SYM_APPEAR,sys.dark);
     tile(p,CC_MATERIAL,!sys.opaque);glyph(p,control_rect(p,CC_MATERIAL),SYM_GLASS,!sys.opaque);
     tile(p,CC_MOTION,!sys.reduce_motion);glyph(p,control_rect(p,CC_MOTION),SYM_MOTION,!sys.reduce_motion);
@@ -113,11 +112,10 @@ void control_draw(Rect p){
     const int ids[]={CC_CALC,CC_CALENDAR,CC_TERMINAL},icons[]={SYM_CALC,SYM_CALENDAR,SYM_TERMINAL};
     for(int j=0;j<3;j++){tile(p,ids[j],0);glyph(p,control_rect(p,ids[j]),icons[j],0);}
     b=control_rect(p,CC_ALL_SETTINGS);tile(p,CC_ALL_SETTINGS,0);
-    center(b.x+b.w/2,b.y+(b.h-14)/2,"Tutte le impostazioni",F_SMALL,ink);
+    center(b.x+b.w/2,b.y+(b.h-14)/2,"Impostazioni",F_SMALL,ink);
     /* Space below circles is reserved for a real, live hover/focus description. */
     int hit=-1;for(int id=0;id<CC_COUNT;id++)if(control_hit(p,mx,my,id)){hit=id;break;}
     if(hit<0)hit=focus;
-    const char *tips[]={"Aspetto chiaro / scuro","Trasparenza del vetro","Riduci movimento","Posizione del Dock","Sfondo · clic o frecce","Mission Control","Blocca sessione","Tema · trascina o usa le frecce","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema"};
-    const char *s=hit>=0?tips[hit]:"Vetro · movimento · scrivania";
-    center(p.x+p.w/2,p.y+sz(p,490),s,F_MICRO,muted);
+    const char *tips[]={"Aspetto chiaro / scuro","Trasparenza del vetro","Riduci movimento","Posizione del Dock","Cambia sfondo","Mission Control","Blocca sessione","Cambia tema","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema"};
+    if(hit>=0)center(p.x+p.w/2,p.y+sz(p,490),tips[hit],F_MICRO,muted);
 }

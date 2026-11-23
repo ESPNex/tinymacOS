@@ -5,6 +5,7 @@
 #endif
 #include "hidtablet.h"
 #include "hidconfig.h"
+#include "linux_usb.h"
 #include "usbroute.h"
 #ifndef TMC_INPUT_TEST
 #include "usbhost.h"
@@ -31,7 +32,7 @@ struct Hid {
     Ring in;
     u8 report[1024] ALIGNED(1024); /* a Normal TRB must not cross a 64 KiB boundary */
     TabletLayout tablet;
-    int ep,proto,mps,armed,iface,report_len,failures,pending;
+    int ep,proto,mps,armed,iface,report_len,failures,pending,linux_mouse;
     u64 retry_at;
 };
 struct Usb {
@@ -302,6 +303,7 @@ static int configure(struct Usb*u, int port, int speed)
     unsigned highest=1;
     for(int k=0;k<count;k++) {
         HidInterface *f=&choices[k];struct Hid *h=&u->hid[k];
+        tmc_linux_mouse_detach(h);
         *h=(struct Hid){.ep=f->ep,.proto=f->proto,.mps=f->packet,.iface=f->iface,.report_len=f->report_length};
         ringinit(&h->in);
         ctx(u,0)[1]|=1u<<h->ep;
@@ -340,6 +342,11 @@ static int configure(struct Usb*u, int port, int speed)
             if(ok){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
+        if(h->proto==2&&tmc_linux_mouse_boot_layout(&h->tablet)){
+            unsigned vid=u->diag?input_diag.device[u->diag-1].vid:0;
+            unsigned pid=u->diag?input_diag.device[u->diag-1].pid:0;
+            h->linux_mouse=tmc_linux_mouse_attach(h,vid,pid,h->mps,10);
+        }
         const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":
             h->tablet.relative?"USB HID report mouse":"USB HID tablet";
         device_add(name,"input",0);usable++;
@@ -566,7 +573,8 @@ static void transferred(const TRB *e)
             if(n<0||n>h->mps){input_diag.bad_reports++;arm(u,h);return;}
             if(h->proto==1&&n>=8)hid_keys(h->report);
             if(h->proto==2&&n>=3){TabletState pt;
-                if(pointer_boot_read(&h->tablet,h->report,n,boot.w,boot.h,&pt))hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
+                if(!(h->linux_mouse&&tmc_linux_mouse_report(h,h->report,n))&&
+                   pointer_boot_read(&h->tablet,h->report,n,boot.w,boot.h,&pt))hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
             }
             if(h->proto==3&&n>0) {
                 TabletState pt;

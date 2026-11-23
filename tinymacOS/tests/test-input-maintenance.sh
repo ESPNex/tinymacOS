@@ -4,7 +4,11 @@ cd "$(dirname "$0")/.."
 out=$(mktemp -d /var/tmp/tmc-input-host.XXXXXXXX)
 trap 'rm -rf "$out"' EXIT
 C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Werror -Iinclude'
-gcc $C tests/input_maintenance.c drivers/hidconfig.c drivers/hidtablet.c -o "$out/queue"
+# Execute pinned Linux Boot mouse alongside native HCD tests, with host-only OS imports.
+LX='tests/linux_usb_host_runtime.c compat/linux/usb_input.c vendor/linux-v6.12/usbmouse.c'
+C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation"
+
+gcc $C tests/input_maintenance.c $LX drivers/hidconfig.c drivers/hidtablet.c -o "$out/queue"
 "$out/queue"
 # Substitute only the MMIO notification in the host transport. No OS source edit.
 python3 - "$out/xhci-test.c" <<'PY'
@@ -17,11 +21,11 @@ s=s.replace('"../tests/input_test_support.h"','"'+str(p.parents[1]/'tests/input_
 s=s.replace('"../kernel/k.h"','"'+str(p.parents[1]/'kernel/k.h')+'"')
 Path(sys.argv[1]).write_text(s)
 PY
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c drivers/hidconfig.c drivers/hidtablet.c -o "$out/enumeration"
+gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c $LX drivers/hidconfig.c drivers/hidtablet.c -o "$out/enumeration"
 "$out/enumeration"
 for t in hidconfig relative_pointer; do gcc $C "tests/$t.c" drivers/hidconfig.c drivers/hidtablet.c -o "$out/$t";"$out/$t";done
 
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c drivers/hidconfig.c drivers/hidtablet.c -o "$out/hubs"
+gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c $LX drivers/hidconfig.c drivers/hidtablet.c -o "$out/hubs"
 "$out/hubs"
 gcc $C tests/usbroute.c -o "$out/route"
 "$out/route"
@@ -33,14 +37,13 @@ gcc $C tests/recovery_usb.c drivers/hidtablet.c -o "$out/recovery-usb"
 
 python3 tests/openduet_input.py
 
-# Execute the real Recovery keyboard code with only firmware/PS2 imports stubbed.
-python3 - "$out/recovery-keyboard.c" <<'PY'
-from pathlib import Path
-import sys
-p=Path('recovery/keyboard.c').resolve();s=p.read_text()
-s=s.replace('#include "screen.h"','#include "'+str(p.parents[1]/'tests/recovery_keyboard_support.h')+'"')
-s=s.replace('#include "../drivers/ps2.c"','/* PS/2 port imports supplied by the fixture. */')
-Path(sys.argv[1]).write_text(s)
-PY
-gcc $C -Wno-misleading-indentation -DTMC_REC_KBD_TEST_SOURCE=\""$out/recovery-keyboard.c"\" tests/recovery_keyboard.c -o "$out/recovery-keyboard"
+# Actual firmware-only Recovery consumer; no obsolete native-PS/2 fixture.
+EFI_HEADERS=${EFIINC:-${TOOLROOT:-}/usr/include/efi}
+gcc $C -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/firmware_keyboard_transport.c -o "$out/recovery-keyboard"
 "$out/recovery-keyboard"
+gcc $C tests/firmware_keyboard.c -o "$out/firmware-keyboard";"$out/firmware-keyboard"
+python3 tools/linux-source-contract.py
+gcc $C tests/linux_ehci_qtd.c drivers/linux_ehci_qtd.c -o "$out/linux-ehci-qtd";"$out/linux-ehci-qtd"
+
+# Direct upstream probe/IRQ/URB/lifetime and POSIX formatting contracts.
+gcc $C -no-pie -pthread tests/linux_usbmouse.c vendor/linux-v6.12/usbmouse.c -o "$out/linux-usbmouse";"$out/linux-usbmouse"

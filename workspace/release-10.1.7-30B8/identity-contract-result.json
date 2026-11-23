@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
+  "checks": [
+    {
+      "medium": "optical",
+      "system_version": "10.1.7",
+      "build": "30B8",
+      "app_metadata_count": 14,
+      "about_version": "10.1.7",
+      "about_build": "30B8",
+      "old_current_version_absent_except_unchanged_icon_provenance": true
+    },
+    {
+      "medium": "installed",
+      "system_version": "10.1.7",
+      "build": "30B8",
+      "app_metadata_count": 13,
+      "about_version": "10.1.7",
+      "about_build": "30B8",
+      "old_current_version_absent_except_unchanged_icon_provenance": true
+    }
+  ],
+  "physical_hardware_tested": false,
+  "recovery_version": "10.1.7 / 30B8",
+  "normal_recovery_has_no_raw_pointer_trace": true,
+  "direct_mouse_usb_driver_not_linked_in_recovery": true,
+  "about_version_updated": true,
+  "about_layout_source_unchanged_except_version_and_build": true
+}

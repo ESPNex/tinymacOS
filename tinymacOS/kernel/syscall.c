@@ -739,7 +739,7 @@ static Frame *syscall_inner(Frame *f)
         break;
     case S_REMOVE:
         if (string(a, s, sizeof s))
-            r = sip_block(s) ? -1 : fs_remove(s);
+            r = sip_block(s) ? -REMOVE_READ_ONLY : fs_remove_flags(s,(unsigned)b);
         break;
     case S_MOVE:
         if (string(a, s, sizeof s) && string(b, t, sizeof t))

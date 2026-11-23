@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "firmware": "bios",
+  "iso_sha256": "eac219a71cc891381c0785126a68606f21f6649a8bcaef18ed981adc0d6cf925",
+  "work": "/var/tmp/tmc1017-stage-bios-w8nevaly",
+  "linux_hcd_port": false,
+  "physical_hardware_tested": false,
+  "checks": [
+    "Actual OpenCore-booted live desktop reports verbose OFF; no persistent setting is claimed for diskless live media",
+    "Terminal identity 10.1.7 / 30B8",
+    "mkdir Desktop/Vuota -> 0",
+    "rmdir Desktop/Vuota/ -> 0",
+    "ls Desktop/Vuota -> 1",
+    "mkdir Desktop/Albero Desktop/Albero/Interna -> 0",
+    "echo prova > Desktop/Albero/Interna/file.txt -> 0",
+    "rmdir Desktop/Albero -> 1",
+    "rm Desktop/Albero -> 1",
+    "rm -r Desktop/Albero -> 0",
+    "ls Desktop/Albero -> 1",
+    "rm -f Desktop/Assente -> 0",
+    "rm -rf / -> 1",
+    "rm -r /System -> 1",
+    "mkdir Desktop/DaFinder Desktop/DaFinder/Interna -> 0",
+    "touch Desktop/DaFinder/Interna/prova -> 0",
+    "ls Desktop/DaFinder -> 1",
+    "Finder confirmed deletion removes nested directories and files",
+    "About remains 10.1.6 / 30B7 by explicit user request",
+    "OpenCore Recovery boots, keyboard opens terminal and reports 10.1.7 / 30B8"
+  ]
+}

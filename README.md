@@ -2,7 +2,9 @@
 
 Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e ambiente di Recupero UEFI. Non è basato su Linux o XNU e non offre compatibilità generale con le applicazioni macOS.
 
-**Versione: 10.1.6 Tramontana · build 30B7.**
+**Versione pubblicata: 10.1.6 Tramontana · build 30B7.**
+
+La 10.1.7 / 30B8 è in sviluppo: OpenCore unificato, cancellazione delle cartelle e pulizia UI. Sono integrati il driver mouse Boot e la funzione DMA qTD EHCI di Linux; controller/scheduler e core USB restano nativi. La tastiera Recovery usa ora i driver firmware OpenCore, con mappatura fisica italiana verificata su UEFI e BIOS. Anche Info riporta ora 10.1.7 / 30B8. Il port Linux completo resta da terminare: nessuna nuova ISO è stata pubblicata.
 
 [Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 

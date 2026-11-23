@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
+  "checks": [
+    {
+      "medium": "UEFI optical",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true,
+      "declared_derived_ps2_driver": true,
+      "derived_license_and_notice_present": true
+    },
+    {
+      "medium": "installed system",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true,
+      "declared_derived_ps2_driver": true,
+      "derived_license_and_notice_present": true
+    },
+    {
+      "medium": "BIOS OpenDuet",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true,
+      "declared_derived_ps2_driver": true,
+      "derived_license_and_notice_present": true
+    }
+  ],
+  "linux_hcd_port": false,
+  "iso_root_enters_opencore": true
+}

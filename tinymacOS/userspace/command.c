@@ -82,6 +82,45 @@ static int diskid(const char *s)
     if (memcmp(s, "disk", 4) || s[4] < '0' || s[4] > '7' || s[5])return -1;
     return s[4] - '0';
 }
+static int remove_command(int directory)
+{
+    unsigned flags=directory?REMOVE_DIR_ONLY:REMOVE_FILE_ONLY;
+    int k=1,force=0,status=0;
+    if(!directory)for(;k<A.argc && V(k)[0]=='-';k++){
+        const char *arg=V(k);
+        if(eq(arg,"--")){k++;break;}
+        if(!arg[1])break;
+        for(int j=1;arg[j];j++){
+            if(arg[j]=='r'||arg[j]=='R')flags=REMOVE_RECURSIVE;
+            else if(arg[j]=='f')force=1;
+            else return fail("Uso: rm [-rR] [-f] [--] percorso…");
+        }
+    }
+    else if(k<A.argc && eq(V(k),"--"))k++;
+    if(k==A.argc)return force?0:fail(directory?"Uso: rmdir [--] cartella…":"Uso: rm [-rR] [-f] [--] percorso…");
+    for(;k<A.argc;k++){
+        const char *arg=V(k),*last=arg;unsigned len=strlen(arg);
+        while(len && arg[len-1]=='/')len--;
+        for(unsigned j=0;j<len;j++)if(arg[j]=='/')last=arg+j+1;
+        unsigned leaflen=arg+len-last;
+        int r=-REMOVE_BAD_PATH;
+        if(!len || (leaflen==1 && last[0]=='.') || (leaflen==2 && last[0]=='.' && last[1]=='.'))goto error;
+        if(path(pa,k))goto error;
+        Dirent st;
+        if(sc(S_STAT,pa,&st,0,0)){
+            if(force)continue;
+            goto error;
+        }
+        r=sc(S_REMOVE,pa,flags,0,0);
+        if(!r)continue;
+error:
+        say(directory?"rmdir: ":"rm: ");say(arg);say(": ");
+        ln(r==-REMOVE_NOT_EMPTY?"cartella non vuota (usa rm -r per eliminarne il contenuto)":
+           r==-REMOVE_READ_ONLY?"sola lettura":r==-REMOVE_WRONG_TYPE?(directory?"non è una cartella":"è una cartella: usa rm -r"):
+           r==-REMOVE_IO?"errore di scrittura":"percorso non valido, protetto o inesistente");status=1;
+    }
+    return status;
+}
 static int run(void)
 {
     int n = A.argc;
@@ -151,10 +190,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.1.6");
-            ln("BuildVersion:      30B7");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.1.6");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B7");
+            ln("ProductVersion:    10.1.7");
+            ln("BuildVersion:      30B8");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.1.7");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B8");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -162,8 +201,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.1.6");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.1.6 30B7 x86_64");
+        else if (eq(V(1), "-r"))ln("10.1.7");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.1.7 30B8 x86_64");
         else return 2;
         return 0;
     }
@@ -855,6 +894,7 @@ static int run(void)
         }
         return sc(S_SPAWN, d.dir ? FINDER : TEXTEDIT, pa, 0, 0) < 0;
     }
+    if (IS("rm") || IS("rmdir"))return remove_command(IS("rmdir"));
     if (n < 2 || path(pa, 1))return 2;
     if (IS("cp") || IS("mv")) {
         if (n != 3 || path(pb, 2) || sc(S_STAT, pa, &d, 0, 0))return 1;
@@ -875,8 +915,6 @@ static int run(void)
             if (sc(S_CREATE, pa, 1, 0, 0) < 0)return 1;
         } else if (IS("touch")) {
             if (sc(S_TOUCH, pa, 0, 0, 0) < 0)return 1;
-        } else if (IS("rm") || IS("rmdir")) {
-            if (sc(S_STAT, pa, &d, 0, 0) || !!d.dir != IS("rmdir") || sc(S_REMOVE, pa, 0, 0, 0))return 1;
         } else return 2;
     }
     return 0;

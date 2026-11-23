@@ -1,0 +1,25 @@
+{
+  "scope": "Declared tinymacOS derivative of the firmware Ps2KeyboardDxe shipped by OpenCore; not an official unmodified OpenCore release artifact",
+  "binary": "TmcPs2KeyboardDxe.efi",
+  "binary_sha256": "5a8e38aced91db95d01253c22dfffad1367e2fe5a0f0687c850b397d575fa2e3",
+  "build_platform": "OpenCorePkg/TmcPs2.dsc",
+  "build_command": "build -p OpenCorePkg/TmcPs2.dsc -a X64 -b RELEASE -t GCC -n 2",
+  "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+  "physical_hardware_tested": false,
+  "inputs": {
+    "TmcRawPs2.h": "81cc52d5f16f4034d450f595cc148b880d437ff40afb0726d9696e07ba70bb85",
+    "prepare.py": "94e1f203076182e1ebcc52ea59738d45657fa6b5df12f534bc6f4b663096d6d8",
+    "prepare_platform.py": "bb9991d887dd17869b39063d9959b7a0f374c492fd159d539665bb60b2331b86",
+    "raw-set1.patch": "5393dfe6294d30ca9944ad510f8c5e988ee2a901e389043e7699569f73e69ba3",
+    "raw_ps2_queue.h": "cda573c63029e73d5e2ddcf6034f4cebeedd08f5ee0bf3290e43c58908484b48",
+    "upstream-lock.json": "34c33247a6e8e4d9166e0f7e0c89b9d6bea839b2c76e14ebfa0fb0087e5abc2b",
+    "upstream/ComponentName.c": "b1bec43624cabc5a884a871ac2b9f343edd2aef141b94a79614946554f737cc5",
+    "upstream/Ps2KbdCtrller.c": "c6a049198e0a8592300baacd942daaf955cc09957723b5fcea5fbe9cbf4c33f0",
+    "upstream/Ps2KbdTextIn.c": "531548f360498de1c708f2a4f6005976332c6a77a65278dc43ab03b99071031c",
+    "upstream/Ps2Keyboard.c": "68a459131d24d493373ab5351a04c589b680f075414dd648f456a590ef2bbf39",
+    "upstream/Ps2Keyboard.h": "cff8107872fd96a29992ccd83aec56992753ccc63e3e0e6f83716a2cf986299d",
+    "upstream/Ps2KeyboardDxe.inf": "20f694c8f304e60b8690371a8ab0fa035367e2347b84dbbb0a3c566117362564",
+    "upstream/Ps2KeyboardDxe.uni": "35894c9abaefd859825e5400e8e62c7c0dd4d1a4aa917f7748be507b19e2f18f",
+    "upstream/Ps2KeyboardDxeExtra.uni": "0ba009d8592b87905ab839f8664c5908e8bc308b4975c57a2b779e79bb39e0fc"
+  }
+}

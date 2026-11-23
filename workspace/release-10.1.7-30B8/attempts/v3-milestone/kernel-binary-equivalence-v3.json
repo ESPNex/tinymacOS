@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "scope": "Exact binary equivalence carries the existing kernel regression evidence only; firmware/Recovery tests were rerun separately on the v3 ISO",
+  "kernelcache_sha256": "118eac53b3b85eaf3c0b4483428f77ad48396978c63c0ae56e1ca038bb5849e3",
+  "v2_kernelcache": "/var/tmp/tmc-10.1.7/linux-usb-v2/build/KernelCache",
+  "v3_kernelcache": "/var/tmp/tmc-10.1.7/firmware-v3/build/KernelCache",
+  "kernel_regression_cases": 29,
+  "smp_guest_profiles": 13,
+  "previous_regression_receipt": "kernel-current-source-result.json",
+  "previous_regression_receipt_sha256": "357966a47d6e43b9bbd38a43066d7e4c65ebacaf9efcdceb79c607fb20a89eff",
+  "v3_iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
+  "new_kernel_suite_claimed": false
+}

@@ -145,11 +145,8 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
         if(!EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&rfs))&&!EFI_ERROR(rfs->OpenVolume(rfs,&rr))){load_boot_config(rr);rr->Close(rr);}}
     UINT32 verbose=0;UINTN vsize=sizeof verbose;EFI_GUID vg=TMC_SIP_GUID;
     if(!EFI_ERROR(st->RuntimeServices->GetVariable(L"tinymacOS-verbose",&vg,0,&vsize,&verbose))&&verbose==1)bi.boot_flags|=TMC_BOOT_VERBOSE;
-    EFI_GUID apple={0x7c436110,0xab2a,0x4bbb,{0xa8,0x80,0xfe,0x41,0x99,0x5c,0x9f,0x82}};
-    char options[1024]={0};UINTN osize=sizeof options-1;
-    if(!EFI_ERROR(st->RuntimeServices->GetVariable(L"boot-args",&apple,0,&osize,options))){
-        for(UINTN j=0;j+1<osize;j++)if(options[j]=='-'&&options[j+1]=='v'&&(!j||options[j-1]==' ')&&(!options[j+2]||options[j+2]==' '))bi.boot_flags|=TMC_BOOT_VERBOSE;
-    }
+    /* Global Apple boot-args may be inherited from another OS/older OpenCore.
+     * Our persisted BootConfig, explicit load options and V key are authoritative. */
     if(li->LoadOptions&&li->LoadOptionsSize<=2048&&arg16(li->LoadOptions,li->LoadOptionsSize/2))bi.boot_flags|=TMC_BOOT_VERBOSE;
     if(bi.boot_flags&TMC_BOOT_VERBOSE){bootconsole_clear(&bi,&verbose_console);vmsg("[loader] tinymacOS verbose boot\n");}
     splash_logo(&bi);

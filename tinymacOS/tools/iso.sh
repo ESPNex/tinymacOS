@@ -3,7 +3,7 @@ set -eu
 cd "$(dirname "$0")/..";. tools/env.sh
 export SOURCE_DATE_EPOCH=1735689600 LC_ALL=C TZ=UTC MTOOLS_SKIP_CHECK=1 MTOOLS_DATE_STRING=2025-01-01T00:00:00
 D=$TMC_BUILD;python3 tools/media_path.py "$D" "$D/$TMC_ISO";R=$(mktemp -d "$D/disc.XXXXXXXX");trap 'rm -rf "$R"' EXIT
-mkdir -p "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/BOOT/";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
+mkdir -p "$R/EFI/TMC" "$R/EFI/OC/Drivers" "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/TMC/BOOTX64.EFI";cp vendor/opencore-1.0.8/BOOTx64.efi "$R/EFI/BOOT/BOOTX64.EFI";cp vendor/opencore-1.0.8/OpenCore.efi "$R/EFI/OC/";cp boot/opencore.plist "$R/EFI/OC/config.plist";python3 tools/firmware_drivers.py "$R/EFI/OC/Drivers";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
 # BaseSystem is created in external scratch. Only the finished ISO is distributed.
 P=${1:-};if [ -z "$P" ];then P="$R/work";mkdir "$P";python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI";fi
 python3 tools/media_path.py "$P" "$P/RecoveryHD.fat"
@@ -38,8 +38,8 @@ mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES ::/NV
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
-for driver in BiosVideo XhciDxe OpenUsbKbDxe Ps2KeyboardDxe UsbMouseDxe;do
- mcopy -i "$D/install.esp" "vendor/opencore-1.0.8/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
+for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe;do
+ mcopy -i "$D/install.esp" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
 done
 python3 - "$D/installed-opencore.plist" <<'PYOC'
 import plistlib,sys
@@ -49,7 +49,17 @@ Path(sys.argv[1]).write_bytes(plistlib.dumps(p,sort_keys=False))
 PYOC
 mcopy -i "$D/install.esp" "$D/installed-opencore.plist" ::/EFI/OC/config.plist
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
-mkesp "$R/EFI.IMG" 64M TRAMONTANA System-live.vol;mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
+for notice in licenses/TMC-Ps2Firmware-*;do mcopy -i "$D/install.esp" "$notice" "::/LICENSES/$(basename "$notice")";done
+mkesp "$R/EFI.IMG" 64M TRAMONTANA System-live.vol
+mmd -i "$R/EFI.IMG" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/NVRAM ::/LICENSES
+mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
+for notice in licenses/TMC-Ps2Firmware-*;do mcopy -i "$R/EFI.IMG" "$notice" "::/LICENSES/$(basename "$notice")";done
+mcopy -i "$R/EFI.IMG" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
+mcopy -o -i "$R/EFI.IMG" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
+mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
+mcopy -i "$R/EFI.IMG" boot/opencore.plist ::/EFI/OC/config.plist
+for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe;do mcopy -i "$R/EFI.IMG" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi";done
+mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,
 # not the FAT El Torito image: carry the same payload files there too, or the
 # loader finds no System.vol / Install.esp and can only fall back to Recupero.
@@ -61,4 +71,4 @@ cp "$P/Volume.hdr" "$R/Recovery/Volume.hdr"
 cp "$D/Payload.sha" "$R/Recovery/Payload.sha"
 if [ "$P" = "$R/work" ];then rm -rf "$P";fi
 find "$R" -exec touch -h -d @1735689600 {} +
-xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_1_6 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
+xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_1_7 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"

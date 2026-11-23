@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "linux_boot_mouse_port": true,
+  "linux_hcd_port": false,
+  "linux_full_usb_core_port": false,
+  "physical_hardware_tested": false,
+  "sources": {
+    "tinymacOS/vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
+    "tinymacOS/licenses/LINUX-GPL-2.0.txt": "f6b78c087c3ebdf0f3c13415070dd480a3f35d8fc76f3d02180a407c1c812f79",
+    "tinymacOS/vendor/linux-v6.12/ehci-q.c": "6b2a725c4efe5531b01ecd42c1da7fd0e604edb006c3627e3c605ceb70bd741d",
+    "compat/linux/usb_input.c": "281ceec4bb61a0e657dd5b33f5259d539427f219998b017a4c3577c5aa0e6e09",
+    "drivers/linux_usb.c": "e207a676c967f9d808f1ade9e73465b417e792dfdaf0dc4f077e980b0b1d5a92",
+    "drivers/usbinput.c": "292e44a12810c7e7b297487db15f10efec7e625f49ad729a64301a712cfe4497",
+    "drivers/xhci.c": "c96ac9a37e7ae492ff32911b34044b88cb0f5b029a0dd4142684f54a42779a57",
+    "include/linux_usb.h": "1a1f5a75dc739d35e09497d8fa237de95dbd9b328380ed88f7659ab843dc3a3d",
+    "tests/linux_usbmouse.c": "b6c1748c642988e2019b9d5e7eaba01098aba0a40d325f6e87c8eca5f09a3141"
+  },
+  "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\n",
+  "stderr": "",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "concurrent_probe_report_disconnect_cycles": 4000,
+  "original_upstream_source_byte_exact": true
+}

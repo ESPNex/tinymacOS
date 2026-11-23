@@ -1,0 +1,111 @@
+--- a/Ps2Keyboard.h
++++ b/Ps2Keyboard.h
+@@ -10,6 +10,8 @@
+ #define _PS2KEYBOARD_H_
+ 
+ #include <Uefi.h>
++#include "TmcRawPs2.h"
++#include "raw_ps2_queue.h"
+ 
+ #include <Protocol/SuperIo.h>
+ #include <Protocol/SimpleTextIn.h>
+@@ -67,6 +69,9 @@
+ 
+ typedef struct {
+   UINTN                                Signature;
++
++  TMC_RAW_PS2_PROTOCOL                 TmcRaw;
++  struct TmcRawPs2Queue                 TmcRawQueue;
+ 
+   EFI_HANDLE                           Handle;
+   EFI_SIMPLE_TEXT_INPUT_PROTOCOL       ConIn;
+--- a/Ps2KbdCtrller.c
++++ b/Ps2KbdCtrller.c
+@@ -812,6 +812,7 @@
+     // Read one byte of the scan code and store it into the memory buffer
+     //
+     Data = KeyReadDataRegister (ConsoleIn);
++    tmc_raw_ps2_push (&ConsoleIn->TmcRawQueue, Data);
+     PushScancodeBufTail (&ConsoleIn->ScancodeQueue, Data);
+   }
+ 
+--- a/Ps2Keyboard.c
++++ b/Ps2Keyboard.c
+@@ -9,6 +9,40 @@
+ **/
+ 
+ #include "Ps2Keyboard.h"
++
++// Optional raw stream, in parallel with the unchanged UEFI text protocols.
++STATIC EFI_GUID mTmcRawPs2Guid = TMC_RAW_PS2_PROTOCOL_GUID;
++
++STATIC
++EFI_STATUS
++EFIAPI
++TmcRawReset (TMC_RAW_PS2_PROTOCOL *This)
++{
++  KEYBOARD_CONSOLE_IN_DEV *ConsoleIn;
++  EFI_TPL OldTpl;
++  ConsoleIn = CR (This, KEYBOARD_CONSOLE_IN_DEV, TmcRaw, KEYBOARD_CONSOLE_IN_DEV_SIGNATURE);
++  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
++  tmc_raw_ps2_reset (&ConsoleIn->TmcRawQueue);
++  gBS->RestoreTPL (OldTpl);
++  return EFI_SUCCESS;
++}
++
++STATIC
++EFI_STATUS
++EFIAPI
++TmcRawRead (TMC_RAW_PS2_PROTOCOL *This, UINT8 *Byte)
++{
++  KEYBOARD_CONSOLE_IN_DEV *ConsoleIn;
++  EFI_TPL OldTpl;
++  INTN Result;
++  if (Byte == NULL) { return EFI_INVALID_PARAMETER; }
++  ConsoleIn = CR (This, KEYBOARD_CONSOLE_IN_DEV, TmcRaw, KEYBOARD_CONSOLE_IN_DEV_SIGNATURE);
++  OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
++  Result = tmc_raw_ps2_pop (&ConsoleIn->TmcRawQueue, Byte);
++  gBS->RestoreTPL (OldTpl);
++  return Result < 0 ? EFI_DEVICE_ERROR : (Result == 0 ? EFI_NOT_READY : EFI_SUCCESS);
++}
++
+ 
+ //
+ // Function prototypes
+@@ -92,7 +126,7 @@
+   KbdControllerDriverSupported,
+   KbdControllerDriverStart,
+   KbdControllerDriverStop,
+-  0xa,
++  TMC_RAW_PS2_DRIVER_VERSION,
+   NULL,
+   NULL
+ };
+@@ -255,6 +289,9 @@
+   // Setup the device instance
+   //
+   ConsoleIn->Signature              = KEYBOARD_CONSOLE_IN_DEV_SIGNATURE;
++  ConsoleIn->TmcRaw.Revision         = TMC_RAW_PS2_PROTOCOL_REVISION;
++  ConsoleIn->TmcRaw.Reset            = TmcRawReset;
++  ConsoleIn->TmcRaw.Read             = TmcRawRead;
+   ConsoleIn->Handle                 = Controller;
+   (ConsoleIn->ConIn).Reset          = KeyboardEfiReset;
+   (ConsoleIn->ConIn).ReadKeyStroke  = KeyboardReadKeyStroke;
+@@ -412,6 +449,8 @@
+                   &ConsoleIn->ConIn,
+                   &gEfiSimpleTextInputExProtocolGuid,
+                   &ConsoleIn->ConInEx,
++                  &mTmcRawPs2Guid,
++                  &ConsoleIn->TmcRaw,
+                   NULL
+                   );
+   if (EFI_ERROR (Status)) {
+@@ -568,6 +607,8 @@
+                   &ConsoleIn->ConIn,
+                   &gEfiSimpleTextInputExProtocolGuid,
+                   &ConsoleIn->ConInEx,
++                  &mTmcRawPs2Guid,
++                  &ConsoleIn->TmcRaw,
+                   NULL
+                   );
+   if (EFI_ERROR (Status)) {

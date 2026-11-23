@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "kernel-remove",
+      "exit_code": 0,
+      "stdout": "PASS actual removal: empty-only rmdir, typed unlink, recursive subtree, root/RO protection, preflight before mutation, sibling preservation, first/later write rollback and 383-level bounded traversal\n",
+      "stderr": ""
+    },
+    {
+      "name": "command-remove",
+      "exit_code": 0,
+      "stdout": "PASS actual command parser: rmdir empty-only, rm/rm-r/rm-rf/rm-f, --, missing operands, invalid flags, root/dot/dotdot rejection and explicit non-empty/type diagnostics\n",
+      "stderr": ""
+    }
+  ],
+  "source_sha256": {
+    "fs/btrfs.c": "2b96cf099a457b48932f32ecfaca79ea7c84f2ceb013ed5a53c5ca83af859fa4",
+    "userspace/command.c": "d5655a047ce3ba2872d23a9476f3588bf1b8d8ca0e2d7bc6268d4dd5091269f7",
+    "include/abi.h": "bfd358a40ddb6f00230141db3c96b8e447d6651f1659300397e8674e44e05a03"
+  },
+  "physical_hardware_tested": false
+}

@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "iso_sha256": "98f7edb9546a29ab5170df6f2ff609b347acbf8bb78f0be34a2d3610476727a3",
+  "checks": [
+    {
+      "medium": "UEFI optical",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true
+    },
+    {
+      "medium": "installed system",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true
+    },
+    {
+      "medium": "BIOS OpenDuet",
+      "official_opencore_fallback": true,
+      "official_opencore_binary": true,
+      "native_loader_second_stage": true,
+      "default_verbose": false,
+      "firmware_mouse_driver_enabled": true,
+      "enabled_drivers_byte_exact": true
+    }
+  ],
+  "linux_hcd_port": false,
+  "iso_root_enters_opencore": true
+}

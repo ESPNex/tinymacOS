@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "profile": "ps2",
+  "firmware": "bios",
+  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
+  "work": "/var/tmp/tmc10-rec-kbd-a4vbyrbb",
+  "local_installed_recovery": false,
+  "keyboard_still_native": false,
+  "keyboard_transport": "OpenUsbKbDxe Apple keymap / declared derived Ps2KeyboardDxe raw protocol",
+  "physical_hardware_tested": false,
+  "i8042_present": true,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

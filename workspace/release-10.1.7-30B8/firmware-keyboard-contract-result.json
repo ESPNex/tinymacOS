@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "physical_hardware_tested": false,
+  "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
+  "work": "/var/tmp/tmc-fw-kbd-host-ub930kx2",
+  "tests": [
+    {
+      "name": "firmware_keyboard",
+      "asan_ubsan": true,
+      "result": "PASS firmware raw ring 2550000 byte roundtrips, overflow/isolation, physical Shift/AltGr/ISO/keypad/prefix/caps"
+    },
+    {
+      "name": "firmware_keyboard_transport",
+      "asan_ubsan": true,
+      "result": "PASS actual Recovery consumer: firmware raw/USB, deduplication, Shift/AltGr, caps, repeat/release, overflow/error recovery"
+    }
+  ],
+  "production_object_sha256": "043d53a9724569d50db402a47c6fddeb668b1d317c397c39d7845ee4347444c9",
+  "recovery_efi_sha256": "7a37f40d17c85cab461a70f07671be1444e219cf7bba03bd375aa0cb608049b8",
+  "derived_driver_sha256": "5a8e38aced91db95d01253c22dfffad1367e2fe5a0f0687c850b397d575fa2e3",
+  "derived_source_binary_lock_verified": true,
+  "no_recovery_port_io_instructions": true,
+  "no_native_recovery_keyboard_driver_inclusion": true,
+  "key_support_disabled": true,
+  "raw_protocol_guid_in_compiled_firmware": true,
+  "sources": {
+    "recovery/keyboard.c": "5be2978b76d83a663b5113dddf2e7462285af145157931369e39cbc2a6f3795b",
+    "recovery/firmware_keyboard_decode.h": "8487112d2c32ffcfe5b370a48891ea052365d8af779bcbfbabf0b3f339e0f200",
+    "include/keyboard_it.h": "bbb2a545bece4893f5dd3f7a858f746a00cbc0c8e45bb0c5f14f128b916f6d55",
+    "include/base.h": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30",
+    "tests/firmware_keyboard.c": "ab95ddc807853455dbac8d165492d98bff3a76cf0636ac54d7a965b10a4ca027",
+    "tests/firmware_keyboard_transport.c": "215ca3bc8fbf43c44602a9c3b58d428846d10c99b9328e2e032dce49c9579e01",
+    "tools/firmware_drivers.py": "d41cdb82255156fff9cc4321fe9a455c829035ffba7975103b07491f76a030b7"
+  },
+  "kernelcache_sha256": "5f50d4b8779767d6e756074a93dcfea8a375bd2eb8c940d335d93f8f3ab32642"
+}

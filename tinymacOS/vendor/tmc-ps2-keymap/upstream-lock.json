@@ -1,0 +1,81 @@
+{
+  "repository": "https://github.com/acidanthera/audk",
+  "commit": "0672a009e9ca85753d240324d761341adf0291b3",
+  "scope": "Upstream source of the Ps2KeyboardDxe firmware driver shipped by OpenCore; derived build will be clearly identified, not an official unmodified binary",
+  "files": [
+    {
+      "path": "ComponentName.c",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/ComponentName.c",
+      "sha256": "b1bec43624cabc5a884a871ac2b9f343edd2aef141b94a79614946554f737cc5"
+    },
+    {
+      "path": "Ps2KbdCtrller.c",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KbdCtrller.c",
+      "sha256": "c6a049198e0a8592300baacd942daaf955cc09957723b5fcea5fbe9cbf4c33f0"
+    },
+    {
+      "path": "Ps2KbdTextIn.c",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KbdTextIn.c",
+      "sha256": "531548f360498de1c708f2a4f6005976332c6a77a65278dc43ab03b99071031c"
+    },
+    {
+      "path": "Ps2Keyboard.c",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2Keyboard.c",
+      "sha256": "68a459131d24d493373ab5351a04c589b680f075414dd648f456a590ef2bbf39"
+    },
+    {
+      "path": "Ps2Keyboard.h",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2Keyboard.h",
+      "sha256": "cff8107872fd96a29992ccd83aec56992753ccc63e3e0e6f83716a2cf986299d"
+    },
+    {
+      "path": "Ps2KeyboardDxe.inf",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxe.inf",
+      "sha256": "20f694c8f304e60b8690371a8ab0fa035367e2347b84dbbb0a3c566117362564"
+    },
+    {
+      "path": "Ps2KeyboardDxe.uni",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxe.uni",
+      "sha256": "35894c9abaefd859825e5400e8e62c7c0dd4d1a4aa917f7748be507b19e2f18f"
+    },
+    {
+      "path": "Ps2KeyboardDxeExtra.uni",
+      "url": "https://raw.githubusercontent.com/acidanthera/audk/0672a009e9ca85753d240324d761341adf0291b3/MdeModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2KeyboardDxeExtra.uni",
+      "sha256": "0ba009d8592b87905ab839f8664c5908e8bc308b4975c57a2b779e79bb39e0fc"
+    }
+  ],
+  "build": {
+    "audk_commit": "0672a009e9ca85753d240324d761341adf0291b3",
+    "audk_archive_sha256": "2c4f5754c0b49d86a387fb21d97ffd61a7b638ee386074a6ebbd37d2fd26561d",
+    "opencore_sources": "https://github.com/acidanthera/OpenCorePkg/tree/1.0.8",
+    "opencore_archive_sha256": "5f08f0a3af56666d52dba49411ee541f0121ccbe43ff83d477edab38d5073e86",
+    "toolchain": "GCC; nasm 2.16.03; X64 RELEASE",
+    "dependencies": [
+      {
+        "path": "BaseTools/Source/C/BrotliCompress/brotli",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "e230f474b87134e8c6c85b630084c612057f253e"
+      },
+      {
+        "path": "MdeModulePkg/Library/BrotliCustomDecompressLib/brotli",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "e230f474b87134e8c6c85b630084c612057f253e"
+      },
+      {
+        "path": "MdePkg/Library/BaseFdtLib/libfdt",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "cfff805481bdea27f900c32698171286542b8d3c"
+      },
+      {
+        "path": "MdePkg/Library/MipiSysTLib/mipisyst",
+        "mode": "160000",
+        "type": "commit",
+        "sha": "370b5944c046bab043dd8b133727b2135af7747a"
+      }
+    ],
+    "opencore_dsc_sha256": "97170a31b089d7808f1f58027de3d3fc8e43231498b87df901d3c48d7ccb2b5d"
+  }
+}

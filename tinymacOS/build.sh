@@ -5,6 +5,7 @@ case "$TMC_BUILD" in /*) ;; *) echo 'TMC_BUILD must be an absolute external dire
 D=$(realpath -m "$TMC_BUILD"); case "$D/" in "$ROOT/"*) echo 'Use a build directory outside the source tree.' >&2; exit 2;; esac
 python3 tools/media_path.py "$D" "$D/$TMC_ISO"
 mkdir -p "$D"; export TMC_BUILD="$D"; export LC_ALL=C
+python3 tools/linux-source-contract.py
 C=(-O2 ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
 U=("${C[@]}" -fpie -fno-plt -Iuserspace -Idesktop);L=(-nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000)
 E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFIINC" -I"$EFIINC/x86_64")
@@ -14,8 +15,8 @@ python3 tools/tramontana-assets.py "$D"
 python3 tools/control-svg.py "$D"
 U+=(-DTMC_ICON_ATLAS=\""$D/icons.atlas"\" -DTMC_CONTROL_SVG=\""$D/control-svg.alpha"\")
 python3 tools/recoveryart.py "$D"; (cd "$D" && gcc -c recovery-art.S -o recovery-art.o)
-for f in recovery/{main,screen,usbhid,keyboard}.c drivers/hidtablet.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
-efilink RECOVERY "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-usbhid.c.o" "$D/rec-keyboard.c.o" "$D/rec-hidtablet.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
+for f in recovery/{main,screen,keyboard}.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
+efilink RECOVERY "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-keyboard.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI"
 gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"
@@ -44,6 +45,10 @@ LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/l
       net/lwip/core/ipv4/ip4_addr.c net/lwip/core/ipv4/ip4_frag.c net/lwip/netif/ethernet.c
       net/lwip/core/tcp.c net/lwip/core/tcp_in.c net/lwip/core/tcp_out.c)
 for f in arch/*.S arch/*.c kernel/*.c drivers/*.c fs/*.c storage/*.c crypto/*.c "${LWIP[@]}";do o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Inet/include -Inet/lwip/include -c "$f" -o "$D/$o";KOBJ+=("$o");done
+# Real pinned upstream Linux Boot mouse + implemented USB/input compatibility.
+# Native HCDs still own controllers/DMA and feed the interrupt-URB adapter.
+for f in compat/linux/usb_input.c vendor/linux-v6.12/usbmouse.c;do
+ o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Icompat/linux/include -Wno-unused-parameter -c "$f" -o "$D/$o";KOBJ+=("$o");done
 # driver kernel extensions (ELF relocatables loaded from /System/Library/Extensions)
 for k in e1000 wifi;do gcc "${C[@]}" -fno-pie -Iinclude -c "net/kext/$k.c" -o "$D/kext-$k.o";done
 # Upstream CPU Jitter RNG must not be optimized: preserve timing work and enable all health tests.

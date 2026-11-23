@@ -1,0 +1,33 @@
+{
+  "baseline": "Linux v6.12",
+  "files": [
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbmouse.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/usbhid/usbmouse.c",
+      "sha256": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c"
+    },
+    {
+      "path": "tinymacOS/licenses/LINUX-GPL-2.0.txt",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/LICENSES/preferred/GPL-2.0",
+      "sha256": "f6b78c087c3ebdf0f3c13415070dd480a3f35d8fc76f3d02180a407c1c812f79"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-q.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-q.c",
+      "sha256": "6b2a725c4efe5531b01ecd42c1da7fd0e604edb006c3627e3c605ceb70bd741d"
+    }
+  ],
+  "modifications": "Upstream files byte-exact; EHCI function extraction exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
+  "scope": "Complete upstream Boot mouse driver, plus the complete EHCI qtd_fill DMA descriptor function. Not a complete Linux HCD/USB-core/generic-HID port.",
+  "extractions": [
+    {
+      "source": "ehci-q.c",
+      "output": "ehci-qtd-fill.inc",
+      "function": "qtd_fill",
+      "start_marker": "static unsigned int\nqtd_fill(",
+      "end_marker": "\n/*-------------------------------------------------------------------------*/",
+      "sha256": "9748a890df34b1a11e4434796b66cee1863853cf3ebe5a9fc012ddbfe3856faa",
+      "modifications": "none: complete function body, including signature, preserved byte-for-byte"
+    }
+  ]
+}

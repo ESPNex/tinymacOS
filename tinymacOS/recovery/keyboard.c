@@ -1,115 +1,125 @@
-/* Recovery owns physical keyboard decoding too: firmware UnicodeChar is not
- * a physical key and depends on an unknowable firmware layout. Detach only
- * keyboard child drivers, not the host controller, mouse or boot storage.
- * Boot HID and i8042 use the same Italian map/PS2 decoder as the native OS. */
+/* Firmware-only Recovery keyboard.
+ * USB uses OpenUsbKbDxe's Apple keymap, with OpenCore KeySupport OFF.
+ * PS/2 uses the explicitly identified derived Ps2KeyboardDxe raw protocol.
+ * No native driver, i8042 port access, UsbIo, or direct HID transaction here.
+ */
 #include "screen.h"
-#include "keyboard_it.h"
-#define TMC_PS2_RECOVERY 1
-#include "../drivers/ps2.c"
-typedef struct PACK {u8 rt,request;u16 value,index,length;} KRequest;
-typedef struct PACK {u8 len,type,number,alt,eps,cls,sub,proto,string;} KInterface;
-typedef struct PACK {u8 len,type,address,attr;u16 packet;u8 interval;} KEndpoint;
-typedef struct KUsb KUsb;
-typedef EFI_STATUS (EFIAPI *KNotify)(VOID *,UINTN,VOID *,UINT32);
-struct KUsb {
-    EFI_STATUS (EFIAPI *control)(KUsb *,KRequest *,int,UINT32,VOID *,UINTN,UINT32 *);
-    VOID *bulk;
-    EFI_STATUS (EFIAPI *async)(KUsb *,UINT8,BOOLEAN,UINTN,UINTN,KNotify,VOID *);
-    VOID *sync,*iso,*async_iso,*device_desc,*config_desc;
-    EFI_STATUS (EFIAPI *interface_desc)(KUsb *,KInterface *);
-    EFI_STATUS (EFIAPI *endpoint_desc)(KUsb *,UINT8,KEndpoint *);
+#include "firmware_keyboard_decode.h"
+#include "../vendor/tmc-ps2-keymap/TmcRawPs2.h"
+typedef struct RecKeymap RecKeymap;
+struct RecKeymap {
+    UINT64 revision;
+    EFI_STATUS (EFIAPI *get)(RecKeymap *,UINT16 *,UINTN *,UINT16 *);
+    VOID *contains;
 };
-static int codes[128],kh,kt,kcaps,ps2active;
-static u8 previous[4][8],led_state[4]={255,255,255,255};
-static KUsb *keyboards[4];static unsigned interfaces[4],nkeyboards;
-static int repeat_key,repeat_mods;static u64 repeat_at;
-static void input_key_usage(int usage,int modifiers)
+static RecKeymap *keymap;
+static TMC_RAW_PS2_PROTOCOL *raw[4];
+static RecFirmwareSet1 ps2[4];
+static unsigned nraw,caps,head,tail;
+static int pending[128];
+static u8 usbheld[256];
+static unsigned repeat_key,repeat_mods;
+static u64 ticks,repeat_at;
+static void emit(unsigned usage,unsigned mods)
 {
-    if(usage==57){kcaps=!kcaps;ps2_setleds(kcaps);return;}
-    int c=usage==82?0x101:usage==81?0x102:it_character(usage,modifiers,kcaps);
-    if(c){int next=(kh+1)%128;if(next!=kt){codes[kh]=c;kh=next;}}
+    if(usage==57){caps=!caps;return;}
+    int c=usage==82?0x101:usage==81?0x102:it_character(usage,mods,caps);
+    unsigned next=(head+1)%128;
+    if(c&&next!=tail){pending[head]=c;head=next;}
 }
-static EFI_STATUS EFIAPI keyboard_report(VOID *data,UINTN n,VOID *context,UINT32 error)
+static int ps2_path(EFI_BOOT_SERVICES *bs,EFI_HANDLE h)
 {
-    if(error||!data||n<8)return EFI_SUCCESS;
-    const u8 *r=data;u8 *old=context;
-    for(int i=2;i<8;i++)if(r[i]>=1&&r[i]<=3)return EFI_SUCCESS;
-    for(int i=2;i<8;i++)if(r[i]){int seen=0;for(int j=2;j<8;j++)if(old[j]==r[i])seen=1;
-        if(!seen)input_key_usage(r[i],r[0]);}
-    if(r[2]!=repeat_key){repeat_key=r[2]==57?0:r[2];repeat_at=ticks+50;}
-    repeat_mods=r[0];
-    memcpy(old,r,8);return EFI_SUCCESS;
+    EFI_GUID guid=DEVICE_PATH_PROTOCOL;u8 *p=0;
+    if(EFI_ERROR(bs->HandleProtocol(h,&guid,(void **)&p)))return 0;
+    for(unsigned at=0;at<2048;){
+        unsigned len=p[at+2]|p[at+3]<<8;
+        if(len<4||len>2048-at||p[at]==127)break;
+        if(p[at]==2&&p[at+1]==1&&len>=12){
+            u32 hid;memcpy(&hid,p+at+4,4);if(hid==0x030341d0)return 1;
+        }
+        at+=len;
+    }
+    return 0;
 }
-static int detach_keyboard(EFI_BOOT_SERVICES *bs,EFI_HANDLE h,EFI_GUID *protocol)
+static void rebind_ps2(EFI_BOOT_SERVICES *bs)
 {
-    EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *info=0;UINTN n=0;
-    if(EFI_ERROR(bs->OpenProtocolInformation(h,protocol,&info,&n)))return 0;
-    int ok=1;
-    for(UINTN i=0;i<n;i++)if(info[i].Attributes&EFI_OPEN_PROTOCOL_BY_DRIVER)
-        if(EFI_ERROR(bs->DisconnectController(h,info[i].AgentHandle,0)))ok=0;
-    if(info)bs->FreePool(info);return ok;
+    EFI_GUID guid=EFI_DRIVER_BINDING_PROTOCOL_GUID,dp=DEVICE_PATH_PROTOCOL;
+    EFI_GUID rawguid=TMC_RAW_PS2_PROTOCOL_GUID;
+    EFI_HANDLE *handles=0,*paths=0,drivers[2]={0,0};UINTN count=0,np=0;
+    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&guid,0,&count,&handles))){
+        for(UINTN i=0;i<count;i++){
+            EFI_DRIVER_BINDING_PROTOCOL *binding=0;
+            if(!EFI_ERROR(bs->HandleProtocol(handles[i],&guid,(void **)&binding))&&binding&&binding->Version==TMC_RAW_PS2_DRIVER_VERSION){drivers[0]=handles[i];break;}
+        }
+        bs->FreePool(handles);
+    }
+    if(!drivers[0])return;
+    if(EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&dp,0,&np,&paths)))return;
+    for(UINTN i=0;i<np;i++){
+        TMC_RAW_PS2_PROTOCOL *r=0;
+        if(!ps2_path(bs,paths[i])||!EFI_ERROR(bs->HandleProtocol(paths[i],&rawguid,(void **)&r)))continue;
+        /* This is a PNP0303 child only, never its host bus or mouse/storage.
+         * No direct hardware takeover: reconnect it to the firmware binding.
+         * On failure let firmware reconnect its previous driver normally.
+         */
+        if(EFI_ERROR(bs->DisconnectController(paths[i],0,0)))continue;
+        if(EFI_ERROR(bs->ConnectController(paths[i],drivers,0,FALSE)))
+            (void)bs->ConnectController(paths[i],0,0,FALSE);
+    }
+    bs->FreePool(paths);
 }
 int rec_keyboard_start(EFI_BOOT_SERVICES *bs)
 {
-    EFI_GUID usb={0x2b2f68d6,0x0cd2,0x44cf,{0x8e,0x8b,0xbb,0xa2,0x0b,0x1b,0x5b,0x75}};
-    EFI_GUID dp=DEVICE_PATH_PROTOCOL;EFI_HANDLE *handles=0;UINTN n=0;int count=0;
-    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&usb,0,&n,&handles))){
-        for(UINTN i=0;i<n&&count<4;i++){
-            KUsb *io=0;KInterface f;
-            if(EFI_ERROR(bs->HandleProtocol(handles[i],&usb,(void **)&io))||!io||
-               EFI_ERROR(io->interface_desc(io,&f))||f.cls!=3||f.sub!=1||f.proto!=1||f.alt||f.eps>16)continue;
-            if(!detach_keyboard(bs,handles[i],&usb))continue;
-            if(EFI_ERROR(bs->HandleProtocol(handles[i],&usb,(void **)&io)))continue;
-            KRequest req={0x21,11,0,f.number,0};UINT32 err=0;
-            if(EFI_ERROR(io->control(io,&req,2,250,0,0,&err))||err)continue;
-            /* HID SET_IDLE duration is in 4 ms units. Refresh the full Boot
-             * report every 32 ms, including key releases: change-only reports
-             * can otherwise leave a stale state after firmware handoff.
-             * Duplicate reports are filtered below; repeat remains local.
-             * Optional on devices that STALL SET_IDLE (keep change reports). */
-            req.request=10;req.value=8u<<8;
-            (void)io->control(io,&req,2,250,0,0,&err);
-            for(unsigned j=0;j<f.eps;j++){
-                KEndpoint e;if(EFI_ERROR(io->endpoint_desc(io,j,&e))||(e.attr&3)!=3||!(e.address&128)||e.packet<8||e.packet>64)continue;
-                if(!EFI_ERROR(io->async(io,e.address,TRUE,8,e.packet,keyboard_report,previous[count]))){keyboards[count]=io;interfaces[count]=f.number;count++;nkeyboards=count;break;}
-            }
+    EFI_GUID apple={0x5b213447,0x6e73,0x4901,{0xa4,0xf1,0xb8,0x64,0xf3,0xb7,0xa1,0x72}};
+    EFI_GUID rg=TMC_RAW_PS2_PROTOCOL_GUID;
+    EFI_HANDLE *handles=0;UINTN count=0;
+    (void)bs->LocateProtocol(&apple,0,(void **)&keymap);
+    rebind_ps2(bs);
+    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&rg,0,&count,&handles))){
+        for(UINTN i=0;i<count&&nraw<4;i++){
+            TMC_RAW_PS2_PROTOCOL *r=0;
+            if(EFI_ERROR(bs->HandleProtocol(handles[i],&rg,(void **)&r))||!r||r->Revision!=TMC_RAW_PS2_PROTOCOL_REVISION||!r->Read||!r->Reset)continue;
+            if(EFI_ERROR(r->Reset(r)))continue;
+            rec_fw_set1_reset(&ps2[nraw]);raw[nraw++]=r;
         }
         bs->FreePool(handles);
     }
-    /* ACPI PNP0303 is a keyboard child. Never detach PNP0F13 (PS/2 mouse),
-     * never reset i8042, and preserve the auxiliary clock/IRQ configuration. */
-    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&dp,0,&n,&handles))){
-        for(UINTN i=0;i<n&&!ps2active;i++){
-            u8 *p=0;if(EFI_ERROR(bs->HandleProtocol(handles[i],&dp,(void **)&p)))continue;
-            int keyboard=0;
-            for(unsigned at=0;at<2048;){unsigned z=p[at+2]|p[at+3]<<8;if(z<4||z>2048-at||p[at]==127)break;
-                if(p[at]==2&&p[at+1]==1&&z>=12){u32 hid;memcpy(&hid,p+at+4,4);if(hid==0x030341d0)keyboard=1;}at+=z;}
-            if(!keyboard)continue;
-            /* The ISA I/O driver owns this handle; disconnect only this child. */
-            if(EFI_ERROR(bs->DisconnectController(handles[i],0,0)))continue;
-            if(inb(0x64)==255||!cmd(0x20))continue;
-            int cfg=receive(0);if(cfg<0)continue;cfg=(cfg|64)&~17;
-            if(!cmd(0x60)||!data(cfg)||!cmd(0xae))continue;
-            if(device(0,0xf5)&&device(0,0xf0)&&device(0,2)&&device(0,0xf4))ps2active=keyboard_on=1;
-        }
-        bs->FreePool(handles);
-    }
-    return count+ps2active;
+    return nraw+(keymap!=0);
 }
 int rec_keyboard_next(EFI_BOOT_SERVICES *bs,int *code)
 {
-    ticks++;
-    if(ps2active)for(int i=0;i<64;i++){
-        u8 status=inb(0x64);if(status==255||!(status&1)||(status&32))break;
-        u8 b=inb(0x60);if(!(status&0xc0))keyboard_byte(b);
+    (void)bs;ticks++;
+    for(unsigned i=0;i<nraw;i++)for(unsigned j=0;j<256;j++){
+        UINT8 b;EFI_STATUS status=raw[i]->Read(raw[i],&b);
+        if(EFI_ERROR(status)){
+            if(status!=EFI_NOT_READY)rec_fw_set1_reset(&ps2[i]);
+            break;
+        }
+        unsigned usage=rec_fw_set1(&ps2[i],b);
+        if(usage)emit(usage,ps2[i].mods);
     }
-    if(ps2active)keyboard_led_poll();
-    if(repeat_key&&ticks>=repeat_at){input_key_usage(repeat_key,repeat_mods);repeat_at=ticks+5;}
-    for(unsigned i=0;i<nkeyboards;i++)if(led_state[i]!=kcaps){
-        u8 leds=kcaps?2:0;KRequest req={0x21,9,0x0200,interfaces[i],1};UINT32 err=0;
-        (void)keyboards[i]->control(keyboards[i],&req,1,50,&leds,1,&err);led_state[i]=kcaps;
+    if(keymap){
+        UINT16 keys[256],mods=0;UINTN n=256;u8 held[256]={0};
+        EFI_STATUS status=keymap->get(keymap,&mods,&n,keys);
+        if(!EFI_ERROR(status)&&n<=256){
+            for(UINTN i=0;i<n;i++)if((keys[i]>>12)==7&&(keys[i]&0xfff)<256){
+                unsigned k=keys[i]&0xfff;
+                if(k<=3||held[k])continue;
+                held[k]=1;
+                if(!usbheld[k]){
+                    emit(k,mods);
+                    if(k!=57){repeat_key=k;repeat_at=ticks+42;}
+                }
+            }
+            if(repeat_key&&!held[repeat_key])repeat_key=0;
+            repeat_mods=mods;
+            memcpy(usbheld,held,256);
+            if(repeat_key&&ticks>=repeat_at){emit(repeat_key,repeat_mods);repeat_at=ticks+4;}
+        }else{
+            /* Do not perpetuate a held key across a failed/disconnected map. */
+            repeat_key=0;memset(usbheld,0,sizeof(usbheld));
+        }
     }
-    EFI_TPL old=bs->RaiseTPL(TPL_NOTIFY);int ready=kh!=kt;
-    if(ready){*code=codes[kt];kt=(kt+1)%128;}
-    bs->RestoreTPL(old);return ready;
+    if(head==tail)return 0;
+    *code=pending[tail];tail=(tail+1)%128;return 1;
 }

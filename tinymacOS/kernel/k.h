@@ -123,6 +123,7 @@ int fs_stat(const char *, Dirent *);
 int fs_list(const char *, Dirent *, int, int);
 int fs_create(const char *, int);
 int fs_remove(const char *);
+int fs_remove_flags(const char *,unsigned);
 int fs_move(const char *, const char *);
 int fs_open(Process *, const char *, int);
 int fs_close(Process *, int);

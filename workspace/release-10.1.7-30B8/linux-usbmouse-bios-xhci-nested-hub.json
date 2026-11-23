@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "firmware": "bios",
+  "profile": "xhci-nested-hub",
+  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
+  "work": "/var/tmp/tmc-linux-usb-bios-xhci-nested-hub-uyj_pge5",
+  "actual_upstream_boot_mouse_driver": true,
+  "linux_hcd_port": false,
+  "linux_full_usb_core_port": false,
+  "native_hcd_transport_adapter": true,
+  "physical_hardware_tested": false,
+  "actual_iso_kernel_equals_build": true,
+  "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Hub, ID: hub\r\n  Device 0.2, Port 1.3, Speed 12 Mb/s, Product QEMU USB Hub, ID: hub2\r\n  Device 0.3, Port 1.3.2, Speed 12 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n",
+  "before": {
+    "probes": 1,
+    "attached": 1,
+    "completions": 0,
+    "frames": 0,
+    "errors": 0,
+    "rejected": 0,
+    "disconnected": 0,
+    "allocations": 4,
+    "frees": 0
+  },
+  "after": {
+    "probes": 1,
+    "attached": 1,
+    "completions": 171,
+    "frames": 171,
+    "errors": 0,
+    "rejected": 0,
+    "disconnected": 0,
+    "allocations": 4,
+    "frees": 0
+  },
+  "exact_rendered_xy_checks": 6
+}

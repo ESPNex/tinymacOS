@@ -1,0 +1,23 @@
+{
+  "passed": false,
+  "firmware": "bios",
+  "iso_sha256": "ce03eea66c8ee7c2d1ac03fc2c199138bb9e9614a1cf23c3e79c94832d853a4c",
+  "work": "/var/tmp/tmc1017-stage-bios-7qp5wwov",
+  "linux_hcd_port": false,
+  "physical_hardware_tested": false,
+  "checks": [
+    "Actual OpenCore-booted live desktop reports verbose OFF; no persistent setting is claimed for diskless live media",
+    "Terminal identity 10.1.7 / 30B8",
+    "mkdir Desktop/Vuota -> 0",
+    "rmdir Desktop/Vuota/ -> 0",
+    "ls Desktop/Vuota -> 1",
+    "mkdir Desktop/Albero Desktop/Albero/Interna -> 0",
+    "echo prova > Desktop/Albero/Interna/file.txt -> 0",
+    "rmdir Desktop/Albero -> 1",
+    "rm Desktop/Albero -> 1",
+    "rm -r Desktop/Albero -> 0",
+    "ls Desktop/Albero -> 1",
+    "rm -f Desktop/Assente -> 0",
+    "rm -rf / -> 1"
+  ]
+}

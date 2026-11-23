@@ -4,11 +4,9 @@
 #include "startup.h"
 #include "hidtablet.h"
 #include "text_input.h"
+#include "firmware_pointer_scale.h"
 int rec_keyboard_start(EFI_BOOT_SERVICES *);
 int rec_keyboard_next(EFI_BOOT_SERVICES *,int *);
-int rec_pointer_start(EFI_BOOT_SERVICES *,int,int);
-int rec_pointer_next(EFI_BOOT_SERVICES *, TabletState *);
-int rec_pointer_relative(void);
 // This EFI application is the entire recovery runtime: no user session, compositor, Dock or desktop app archive.
 static struct RecoveryOrigin origin;
 static EFI_SYSTEM_TABLE *st;
@@ -36,7 +34,7 @@ static Layout layout;
 enum {HOME_MENU, DEST, TOOLS, CONFIRM, RESULT, TERM, POWER};
 enum {BACKUP = 1, REINSTALL, AID, CONSOLE, START, ERASE, SNAPSHOT};
 static const char *items[] = {"Ripristina da una copia locale", "Reinstalla tinymacOS", "Utility Disco", "Terminale", "Disco di avvio"};
-static const char *desc[] = {"Recupera documenti, account e preferenze salvati.", "Ripristina il sistema senza modificare i tuoi documenti.", "Controlla e ripara i volumi di questo computer.", "Usa i comandi essenziali, senza connessione a Internet.", "Scegli il volume da cui avviare il computer."};
+static const char *desc[] = {"Recupera documenti, account e preferenze salvati.", "Ripristina il sistema senza modificare i tuoi documenti.", "Controlla e ripara i volumi di questo computer.", "Comandi di recupero.", "Seleziona il sistema da avviare."};
 static int ico[] = {1, 2, 3, 4, 5};
 static u8 alignedio[CHUNK * 512] ALIGNED(4096);
 static int bio(int d, u32 l, u32 n, void *p, int wr)
@@ -143,7 +141,6 @@ static void paint(void)
     const int BY = y0 + hh - 46;         /* bottom button row */
     fill(x0 + 1, BY - 8, ww - 2, 1, 0, 0xe3e3e8);
     if (page == HOME_MENU) {
-        label(x, y, 0, "Scegli come proseguire.", 0x696a73);
         for (int j = 0; j < 5; j++) {
             int yy = y + 36 + 62 * j;
             fill(x0 + 18, yy, ww - 36, 57, 10, j == menu ? 0xe4efff : 0xfdfdfe);
@@ -201,8 +198,7 @@ static void paint(void)
         // Dark shell body filling the whole window, like a normal application window.
         int by = y, bx = x0 + 18, bw = ww - 36, bh = BY - y - 14;
         fill(bx, by, bw, bh, 12, 0x1e1e24);
-        label(bx + 17, by + 12, 0, "Shell di recupero locale", 0x9a9aa3);
-        int yy = by + 38;
+        int yy = by + 12;
         for (int j = 0; j < nr; j++) {
             label(bx + 17, yy, 1, rows[j], 0xe8e8ec);
             yy += 23;
@@ -355,7 +351,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.6 (30B7)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.7 (30B8)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -415,24 +411,25 @@ static void pointer_button(int down)
     if(!down)dragging=0;
     held=down;dirty=1;
 }
-/* Firmware pointer objects are discovered only after keyboard child ownership
- * is settled. A registered but idle direct transport must never mask them. */
-static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
+/* Mouse transport and ownership remain exclusively with firmware/OpenCore. */
+#ifdef TMC_DEBUG
+static void pointer_trace(UINTN id,EFI_SIMPLE_POINTER_PROTOCOL *source,EFI_SIMPLE_POINTER_STATE *state)
+{
+    static unsigned count;if(count++>=24)return;
+    const char *prefix="[efi-pointer] ";
+    for(const char *p=prefix;*p;p++){unsigned char c=*p;asm volatile("outb %0,%1"::"a"(c),"Nd"((unsigned short)0x3f8));}
+    u64 values[]={id,(u32)state->RelativeMovementX,(u32)state->RelativeMovementY,source->Mode?source->Mode->ResolutionX:0,source->Mode?source->Mode->ResolutionY:0};
+    for(unsigned k=0;k<5;k++){for(int shift=60;shift>=0;shift-=4){unsigned char c="0123456789abcdef"[(values[k]>>shift)&15];asm volatile("outb %0,%1"::"a"(c),"Nd"((unsigned short)0x3f8));}unsigned char c=k==4?'\n':' ';asm volatile("outb %0,%1"::"a"(c),"Nd"((unsigned short)0x3f8));}
+}
+#endif
+static void poll_pointer_sources(EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
     EFI_SIMPLE_POINTER_PROTOCOL **pointers,int *pointer_down,UINTN npointers)
 {
         static EFI_ABSOLUTE_POINTER_PROTOCOL *last_absolute;
         static int abs_valid,abs_x,abs_y,abs_down;
+        static EFI_SIMPLE_POINTER_PROTOCOL *simple_source[16];
+        static RecPointerAxis simple_axes[16][2];
         int got_abs = 0;
-        if (direct) {
-            TabletState s;
-            while (rec_pointer_next(bs,&s)) {
-                if(rec_pointer_relative()){
-                    mx=MAX(0,MIN(rw-1,(i64)mx+s.x));
-                    my=MAX(0,MIN(rh-1,(i64)my+s.y));
-                }else {mx=s.x;my=s.y;}
-                pointer_button(s.buttons&1);got_abs=1;
-            }
-        }
         if (absolute && !got_abs) {
             EFI_ABSOLUTE_POINTER_STATE p;
             if (!EFI_ERROR(absolute->GetState(absolute,&p))) {
@@ -452,11 +449,20 @@ static void poll_pointer_sources(int direct,EFI_ABSOLUTE_POINTER_PROTOCOL *absol
         if (!got_abs) for(UINTN i=0;i<npointers;i++) {
             EFI_SIMPLE_POINTER_STATE p;EFI_SIMPLE_POINTER_PROTOCOL *pointer=pointers[i];
             if (!EFI_ERROR(pointer->GetState(pointer, &p))) {
+#ifdef TMC_DEBUG
+                pointer_trace(i,pointer,&p);
+#endif
                 int down=!!p.LeftButton;
                 if(!p.RelativeMovementX && !p.RelativeMovementY && down==pointer_down[i])continue;
                 pointer_down[i]=down;
-                mx = MAX(0, MIN(rw - 1, (i64)mx + p.RelativeMovementX));
-                my = MAX(0, MIN(rh - 1, (i64)my + p.RelativeMovementY));
+                if(i>=COUNT(simple_source))continue;
+                if(simple_source[i]!=pointer){
+                    simple_source[i]=pointer;memset(simple_axes[i],0,sizeof simple_axes[i]);
+                }
+                int dx=rec_pointer_pixels(&simple_axes[i][0],p.RelativeMovementX,pointer->Mode?pointer->Mode->ResolutionX:0);
+                int dy=rec_pointer_pixels(&simple_axes[i][1],p.RelativeMovementY,pointer->Mode?pointer->Mode->ResolutionY:0);
+                mx = MAX(0, MIN(rw - 1, (i64)mx + dx));
+                my = MAX(0, MIN(rh - 1, (i64)my + dy));
                 pointer_button(down);
             }
         }
@@ -478,9 +484,6 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     my = rh - 55;
     int keyboards=rec_keyboard_start(bs);
     if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
-    /* Direct input only for unclaimed USB interfaces. Never invalidate a
-     * firmware-owned mouse or its existing SimplePointer protocol. */
-    int direct = rec_pointer_start(bs,mx,my);
     /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
      * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
     EFI_SIMPLE_POINTER_PROTOCOL *pointers[16]={0};
@@ -528,7 +531,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
                 else if(page==DEST&&num)sel=(sel+num+d)%num;
             } else if(page==TERM||(page==CONFIRM&&op==ERASE))text_append_key(field,sizeof field,c);
         }
-        poll_pointer_sources(direct,absolute,pointers,pointer_down,npointers);
+        poll_pointer_sources(absolute,pointers,pointer_down,npointers);
         bs->Stall(12000);
     }
     return EFI_SUCCESS;

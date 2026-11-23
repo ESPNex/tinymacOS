@@ -57,11 +57,11 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "9a90378114d46d42afaf8a0bd8f3b6cae8180a39ab26a20c9e457a7617e55085"
+    "sha256": "9dbed9c132d104d7251abdc084501974a1246c3b787ed6fc0d1d67a5b519a49c"
   },
   {
     "path": "kernel/k.h",
-    "sha256": "1aa0f674f47c7a146391f5f7c07424533d26cf9495832615827095d86903ac6d"
+    "sha256": "a7ec497f75117416ff34c048012ec85606c66b8bfc28bcf9c6a1d4db718dedc1"
   },
   {
     "path": "desktop/gfx.c",
@@ -77,7 +77,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "da79b62148cf6fd7d40abd2154ae8c4960868501930fac96286d363dc0ce95c6"
+    "sha256": "bfd358a40ddb6f00230141db3c96b8e447d6651f1659300397e8674e44e05a03"
   },
   {
     "path": "include/vmabi.h",

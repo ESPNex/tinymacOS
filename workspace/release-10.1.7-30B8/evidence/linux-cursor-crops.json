@@ -1,0 +1,146 @@
+{
+  "linux-usbmouse-bios-companion-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-companion-ecss0dw4/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-bios-ehci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-ehci-mnqzjdkg/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-bios-uhci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-uhci-ac7o3hl7/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-bios-xhci-hub-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-xhci-hub-roa_ddna/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-bios-xhci-nested-hub-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-xhci-nested-hub-uyj_pge5/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-bios-xhci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-bios-xhci-vld6gb4_/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-companion-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-companion-rb7gwbav/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-ehci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-ehci-6wrmeqpw/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-uhci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-uhci-2za3oe_1/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-xhci-hub-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-xhci-hub-q7c3z1vs/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-xhci-nested-hub-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-xhci-nested-hub-ox1dm91z/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  },
+  "linux-usbmouse-uefi-xhci-cursor.png": {
+    "full_frame_sha256": "2addb6eac406455953f3933aec8c886813c4c55432ca05f72b22a40631924025",
+    "crop_sha256": "2b9565a5ac7a9c9acae3cffe3c3665aa2f924a7090500ccb1f5d1a77cca24630",
+    "crop_box": [
+      700,
+      425,
+      830,
+      540
+    ],
+    "full_frame_external": "/var/tmp/tmc-linux-usb-uefi-xhci-ji917g0k/evidence/actual-linux-boot-mouse.png",
+    "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03"
+  }
+}

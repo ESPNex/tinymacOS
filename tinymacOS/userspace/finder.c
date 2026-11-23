@@ -221,7 +221,7 @@ static void confirm(void)
     int r = -1;
     pathsel(a);
     if (dialog == 4)
-        r = sc(S_REMOVE, a, 0, 0, 0);
+        r = sc(S_REMOVE, a, files[sel].dir ? REMOVE_RECURSIVE : REMOVE_FILE_ONLY, 0, 0);
     else if (dialog == 5)
         r = 0;
     else if (field[0] && !eq(field, ".") && !eq(field, "..") && !hasslash(field)
@@ -231,7 +231,7 @@ static void confirm(void)
         else
             r = sc(S_CREATE, b, dialog == 1, 0, 0);
     }
-    strset(note, r < 0 ? "Verifica nome, permessi e contenuto della cartella" : "Fatto", 96);
+    strset(note, r == -REMOVE_READ_ONLY ? "Elemento o contenuto in sola lettura" : r == -REMOVE_IO ? "Errore di scrittura: eliminazione non completata" : r < 0 ? "Operazione non riuscita: verifica nome e permessi" : "", 96);
     dialog = 0;
     ui_motion(FX_DISSOLVE);
     reload();
@@ -326,7 +326,7 @@ static void paint(void)
     else if (dialog) {
         char details[90] = "Scegli un nome non ancora usato.";
         if (dialog == 4)
-            strset(details, "L’elemento selezionato verrà rimosso.", 90);
+            strset(details, sel>=0 && files[sel].dir ? "La cartella e tutto il suo contenuto verranno eliminati." : "Il file verrà eliminato.", 90);
         if (dialog == 5 && sel >= 0) {
             strset(details, files[sel].dir ? "Cartella  ·  " : "File  /  ", 90);
             addnum(details, files[sel].size, 90);

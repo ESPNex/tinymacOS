@@ -3,11 +3,11 @@
   "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
   "sha256": {
     "command.elf": "f27328ca1710af1e8412718ca8316d0dca682cca86d74dfbf099c1224b5f404b",
-    "kernel.elf": "1b52fd3878c4504cf14c8a139f193aa45723f5bb657a7467c034cdef9a63856b",
-    "KernelCache": "42a9a11cd86c669b655a00ae06839820bf2231da2703d9b1aa2cc38cee798180",
-    "tinymacOS-qa-probe-x86_64.iso": "f799031ced2dc66d0c69e1ad8627cfd6b7963a863ed6e6f9ff9ea5551397a0dc"
+    "kernel.elf": "f011d497a43dfaf84a011d8b583cd8ea349ad87e1562a6dbb166cda423c7ec3e",
+    "KernelCache": "118eac53b3b85eaf3c0b4483428f77ad48396978c63c0ae56e1ca038bb5849e3",
+    "tinymacOS-qa-probe-x86_64.iso": "b4f5203fca59347221dbcfddc8f8cf02ffa5c568de8b426a9fd18c8d39d0a87c"
   },
   "iso_filename": "tinymacOS-qa-probe-x86_64.iso",
-  "production_build": "/var/tmp/tmc-10.1.6/build",
+  "production_build": "/var/tmp/tmc-10.1.7/linux-usb-v2/build",
   "kernel_equals_current_production": true
 }

@@ -1,6 +1,9 @@
 #include "../kernel/k.h"
 #include "usbhost.h"
-/* Native EHCI USB 2.0: periodic HID, asynchronous control, ownership handoff,
+#include "linux_ehci.h"
+/* Native EHCI controller/scheduler with the upstream Linux qTD DMA primitive.
+ * This is not yet the complete Linux EHCI HCD or general USB core.
+ * Native EHCI USB 2.0: periodic HID, asynchronous control, ownership handoff,
  * and split transactions for HID behind USB2 hubs. Root low/full speed ports
  * are handed to companion controllers (UHCI is implemented separately).
  * DMA descriptors and buffers stay allocated for controller lifetime. */
@@ -50,20 +53,27 @@ static int async_stop(struct Ehci *h)
 static int periodic_stop(struct Ehci *h){h->op[0]&=~(1u<<4);return ewait(h->op+1,1u<<14,0,100);}
 static void periodic_start(struct Ehci *h){asm volatile("mfence":::"memory");h->op[0]|=1u<<4;}
 static void async_start(struct Ehci *h){asm volatile("mfence":::"memory");h->op[0]|=1u<<5;}
-static void etd(struct Etd *t,u64 buf,unsigned n,unsigned pid,unsigned toggle)
+static int etd(struct Etd *t,u64 buf,unsigned n,unsigned pid,unsigned toggle,unsigned maxpacket)
 {
-    memset(t,0,sizeof *t);t->next=t->alt=EEND;
-    t->token=(toggle<<31)|(n<<16)|(3u<<10)|(pid<<8)|EACTIVE;
-    t->buf[0]=(u32)buf;for(unsigned i=1;i<5;i++)t->buf[i]=(u32)((buf&~4095ull)+4096*i);
+    memset(t,0,sizeof *t);
+    int count=tmc_linux_ehci_qtd_build(t,sizeof *t,buf,n,
+        (toggle<<31)|(3u<<10)|(pid<<8)|EACTIVE,maxpacket);
+    t->next=t->alt=EEND;
+    if(count<0||(unsigned)count!=n){t->token=EHALT;return 0;}
+    return 1;
 }
 static int econtrol(UsbInput *u,int rt,int rq,int val,int ix,int n)
 {
     struct Ehci *h=u->host;if(!async_stop(h))return -1;
     u64 request=(u64)rt|((u64)rq<<8)|((u64)val<<16)|((u64)ix<<32)|((u64)n<<48);
     memcpy(h->setup,&request,8);int in=rt&128;
-    unsigned count=1,off=0,toggle=1;etd(h->td,(u64)h->setup,8,2,0);
-    while(off<(unsigned)n){unsigned z=MIN((unsigned)n-off,u->max_packet0);etd(h->td+count,(u64)u->desc+off,z,in?1:0,toggle);off+=z;count++;toggle^=1;}
-    unsigned status=count++;etd(h->td+status,0,0,in?0:1,1);
+    unsigned count=1,off=0,toggle=1;
+    if(!etd(h->td,(u64)h->setup,8,2,0,u->max_packet0))return -1;
+    while(off<(unsigned)n){unsigned z=MIN((unsigned)n-off,u->max_packet0);
+        if(count>=ET-1||!etd(h->td+count,(u64)u->desc+off,z,in?1:0,toggle,u->max_packet0))return -1;
+        off+=z;count++;toggle^=1;}
+    unsigned status=count++;
+    if(!etd(h->td+status,0,0,in?0:1,1,u->max_packet0))return -1;
     for(unsigned i=0;i+1<count;i++){h->td[i].next=(u32)(u64)(h->td+i+1);h->td[i].alt=(u32)(u64)(h->td+status);}
     memset(&h->control,0,sizeof h->control);h->control.link=(u32)(u64)&h->async|EQH;
     h->control.ep=epchar(u,0,u->max_packet0);h->control.cap=epcap(u,0);
@@ -96,7 +106,8 @@ static unsigned level_for(unsigned interval)
 static void epipe_arm(struct Edev *d,unsigned j)
 {
     UsbInputPipe *p=d->u.pipe+j;struct Eqh *q=d->qh+j;struct Etd *t=d->td+j;
-    memset(p->report,0,sizeof p->report);etd(t,(u64)p->report,p->packet,1,p->toggle);
+    memset(p->report,0,sizeof p->report);
+    if(!etd(t,(u64)p->report,p->packet,1,p->toggle,p->packet)){p->armed=0;return;}
     q->current=0;q->alt=EEND;q->token&=1u<<31;memset(q->buf,0,sizeof q->buf);memset(q->hi,0,sizeof q->hi);
     asm volatile("mfence":::"memory");q->next=(u32)(u64)t;p->armed=1;
 }

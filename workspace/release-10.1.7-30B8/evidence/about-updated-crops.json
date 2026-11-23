@@ -1,0 +1,32 @@
+{
+  "about-updated-current-uefi.png": {
+    "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
+    "full_frame_external": "/var/tmp/tmc1017-stage-uefi-3k23inel/evidence/about-updated-version.png",
+    "full_frame_sha256": "ff0977959d1425def396756f2ea22e3a78b323312d13307c8e29d5850d59675b",
+    "crop_box": [
+      350,
+      214,
+      937,
+      601
+    ],
+    "crop_sha256": "af5d007727520c81198dd581ce11945128a50e99817043ce8231f8b4941d185c",
+    "version": "10.1.7",
+    "build": "30B8",
+    "lossless_crop": true
+  },
+  "about-updated-current-bios.png": {
+    "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
+    "full_frame_external": "/var/tmp/tmc1017-stage-bios-uh4h129m/evidence/about-updated-version.png",
+    "full_frame_sha256": "f06ab04d06018e1fbbea20c84672eb8d5ae96cb1b6193ec38812cd214ba52c7d",
+    "crop_box": [
+      350,
+      214,
+      937,
+      601
+    ],
+    "crop_sha256": "436121ab4211e02d782fe48d007440dcc4ce139ff2d9a633bfbcbd2c55e78e39",
+    "version": "10.1.7",
+    "build": "30B8",
+    "lossless_crop": true
+  }
+}

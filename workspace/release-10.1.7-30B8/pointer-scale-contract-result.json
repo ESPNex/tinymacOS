@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "source_sha256": "88541fbf20f05797f132b1c3df3beb27725f243e8fd054e1e4245056eded4449",
+  "stdout": "PASS UEFI counts/mm: scaled 65536 and raw 8 resolutions, exact independent X/Y, signed fractional accumulation, reversal, mode changes, unsupported axes and overflow boundaries\n",
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "specification": "https://uefi.org/specs/UEFI/2.11/12_Protocols_Console_Support.html#simple-pointer-protocol",
+  "physical_hardware_tested": false
+}

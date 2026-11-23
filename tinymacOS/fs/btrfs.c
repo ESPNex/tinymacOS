@@ -282,26 +282,50 @@ int fs_create_i(const char *p, int dir)
         }
     return -1;
 }
-int fs_remove_i(const char *p)
+int fs_remove_flags_i(const char *p, unsigned flags)
 {
+    if (flags & ~(REMOVE_RECURSIVE|REMOVE_DIR_ONLY|REMOVE_FILE_ONLY))return -REMOVE_BAD_PATH;
+    if ((flags&REMOVE_DIR_ONLY) && (flags&(REMOVE_FILE_ONLY|REMOVE_RECURSIVE)))return -REMOVE_BAD_PATH;
+    if ((flags&REMOVE_FILE_ONLY) && (flags&REMOVE_RECURSIVE))return -REMOVE_BAD_PATH;
     p = mountedpath(p);
-    if (bootfs_lookup(p) != -2)return -1;
+    if (bootfs_lookup(p) != -2)return -REMOVE_READ_ONLY;
     int i = resolve(p);
-    if (i <= 0 || nodes[i].ro || nodes[nodes[i].parent].ro)
-        return -1;
-    for (int j = 1; j < NSLOTS; j++)
-        if (nodes[j].kind && nodes[j].parent == i)
-            return -1;
-    Node old = nodes[i];
-    nodes[i].kind = 0;
-    if (syncnode(i) < 0) {
-        nodes[i] = old;
-        return -1;
+    if (i <= 0)return -REMOVE_BAD_PATH; /* root and unresolved paths are never removable */
+    if (nodes[i].ro || nodes[nodes[i].parent].ro)return -REMOVE_READ_ONLY;
+    if (((flags&REMOVE_DIR_ONLY) && nodes[i].kind!=1) ||
+        ((flags&REMOVE_FILE_ONLY) && nodes[i].kind!=2))return -REMOVE_WRONG_TYPE;
+    u8 selected[NSLOTS]={0},sectors[NSLOTS/8]={0};
+    u16 pending[NSLOTS];unsigned count=1;
+    pending[0]=i;selected[i]=1;
+    /* Discover and validate the ENTIRE subtree before the first mutation.
+     * No recursion or unbounded user-controlled kernel stack consumption. */
+    for (unsigned at=0;at<count;at++) {
+        unsigned parent=pending[at];
+        if (nodes[parent].ro)return -REMOVE_READ_ONLY;
+        sectors[parent/8]=1;
+        for(unsigned j=1;j<NSLOTS;j++)if(nodes[j].kind && nodes[j].parent==parent){
+            if(!(flags&REMOVE_RECURSIVE))return -REMOVE_NOT_EMPTY;
+            if(selected[j] || count==NSLOTS)return -REMOVE_BAD_PATH;
+            selected[j]=1;pending[count++]=j;
+        }
     }
-    usednodes--;
-    fsrev++;
+    Node *saved=kmalloc(sizeof nodes);
+    if(!saved)return -REMOVE_IO;
+    memcpy(saved,nodes,sizeof nodes);
+    for(unsigned at=0;at<count;at++)nodes[pending[at]].kind=0;
+    for(unsigned sector=0;sector<NSLOTS/8;sector++)if(sectors[sector]){
+        if(block.write(NODE0+sector,&nodes[sector*8])<0){
+            memcpy(nodes,saved,sizeof nodes);
+            /* Best-effort on-disk rollback. Persistent device failure is still
+             * an I/O error, not a claimed atomic/journalled transaction. */
+            for(unsigned k=0;k<NSLOTS/8;k++)if(sectors[k])block.write(NODE0+k,&nodes[k*8]);
+            kfree(saved);return -REMOVE_IO;
+        }
+    }
+    kfree(saved);usednodes-=count;fsrev++;
     return 0;
 }
+int fs_remove_i(const char *p){return fs_remove_flags_i(p,0);}
 int fs_move_i(const char *p, const char *q)
 {
     p = mountedpath(p);
@@ -953,7 +977,7 @@ void fs_init(void)
     seed(HOME "/Downloads", 1, 0, 0);
     seed(HOME "/Pictures", 1, 0, 0);
     seed(HOME "/Welcome.txt", 0, 0,
-         "Benvenuti in tinymacOS 10.1.6 Tramontana.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
+         "Benvenuti in tinymacOS 10.1.7 Tramontana.\n\nQuesta cartella personale è condivisa dalle app. Conserva i file in Documents. Finder mostra il sistema realmente avviato in /System/Library/KernelCollections.\n\nCtrl+Spazio apre Cerca. Dal Centro di Controllo puoi regolare vetro e movimento.\n");
     seed("/Volumes", 1, 1, 0);
     libraries();
     seeding = 0;
@@ -1568,6 +1592,12 @@ int fs_remove(const char *p)
     int r = fs_remove_i(p);
     rec_unlock(&fs_gate, fl);
     return r;
+}
+int fs_remove_flags(const char *p,unsigned flags)
+{
+    u32 fl;rec_lock(&fs_gate,&fl);
+    int r=fs_remove_flags_i(p,flags);
+    rec_unlock(&fs_gate,fl);return r;
 }
 
 int fs_move(const char *p, const char *q)

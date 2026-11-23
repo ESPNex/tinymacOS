@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "profile": "xhci-hub-kbd",
+  "firmware": "bios",
+  "iso_sha256": "1d0868a17a5aaf54a37f343fce4afca47a7f93d775fd512a467c45033cf99c1f",
+  "work": "/var/tmp/tmc10-rec-kbd-h_xi8fkg",
+  "local_installed_recovery": false,
+  "expected_keyboard_transport": "OpenUsbKbDxe Apple keymap + derived Ps2KeyboardDxe raw protocol; no native transport",
+  "physical_hardware_tested": false,
+  "i8042_present": false,
+  "keyboard_only_menu": true,
+  "italian_punctuation": true,
+  "altgr": true,
+  "utf8_backspace": true
+}

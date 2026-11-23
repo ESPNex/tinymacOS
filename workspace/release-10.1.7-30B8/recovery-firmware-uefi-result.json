@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "firmware": "uefi",
+  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
+  "work": "/var/tmp/tmc1017-firmware-uefi-f1s_j04i",
+  "linux_hcd_port": false,
+  "keyboard_adapter_native": false,
+  "physical_hardware_tested": false,
+  "checks": [
+    "Rendered cursor exact independent horizontal and vertical motion through firmware pointer protocol",
+    "Two mouse clicks select Terminal and Continue in actual Recovery",
+    "Recovery version 10.1.7 / 30B8; BIOS uses pre-existing 300ms firmware-QA key pacing"
+  ]
+}

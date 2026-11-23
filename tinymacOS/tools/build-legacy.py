@@ -5,6 +5,7 @@ This is not a BIOS installation routine for existing disks.
 """
 import argparse,hashlib,json,os,shutil,struct,subprocess,tempfile
 from pathlib import Path
+from firmware_drivers import stage as stage_firmware_drivers
 r=Path(__file__).resolve().parents[1]
 ap=argparse.ArgumentParser();ap.add_argument('iso',type=Path);ap.add_argument('output',type=Path);ap.add_argument('--quiet',action='store_true');ap.add_argument('--verbose-config',action='store_true');a=ap.parse_args()
 iso=a.iso.resolve();output=a.output.resolve()
@@ -18,21 +19,21 @@ output.parent.mkdir(parents=True,exist_ok=True)
 with tempfile.TemporaryDirectory(prefix='tmc-legacy-',dir='/var/tmp') as scratch:
  w=Path(scratch);root=w/'root';run('xorriso','-osirrox','on','-indev',iso,'-extract','/',root)
  for directory in [root,*[p for p in root.rglob('*') if p.is_dir()]]:directory.chmod(directory.stat().st_mode|0o700)
+ for file in root.rglob('*'):
+  if file.is_file():file.chmod(file.stat().st_mode|0o600)
  # The El Torito EFI image is NOT recursively copied inside another FAT image.
  for name in ['EFI.IMG','LEGACY.IMG','boot.catalog']:
   p=root/name
   if p.exists():p.unlink()
  oc=root/'EFI/OC';(oc/'Drivers').mkdir(parents=True,exist_ok=True)
  for name in ['OpenCore.efi'] :shutil.copyfile(v/name,oc/name)
- [shutil.copyfile(v/n,oc/'Drivers'/n) for n in ['BiosVideo.efi','XhciDxe.efi','OpenUsbKbDxe.efi','Ps2KeyboardDxe.efi','UsbMouseDxe.efi']]
+ stage_firmware_drivers(oc/'Drivers')
  shutil.copyfile(r/'boot/opencore.plist',oc/'config.plist')
  # Both OpenDuet BDS and removable UEFI entry MUST enter OpenCore, never bypass
  # it through the native fallback. Native loader lives at a distinct path.
  native=root/'EFI/TMC';native.mkdir(exist_ok=True)
- shutil.copyfile(root/'EFI/BOOT/BOOTX64.EFI',native/'BOOTX64.EFI')
- (oc/'Tools').mkdir(exist_ok=True);shutil.copyfile(native/'BOOTX64.EFI',oc/'Tools/tinymacOS.efi')
- (root/'EFI/BOOT/BOOTX64.EFI').unlink()
- shutil.copyfile(v/'OpenCore.efi',root/'EFI/BOOT/BOOTX64.EFI')
+ assert (native/'BOOTX64.EFI').is_file(),'Input must already contain the native second stage under EFI/TMC'
+ assert (root/'EFI/BOOT/BOOTX64.EFI').read_bytes()==(v/'BOOTx64.efi').read_bytes(),'OpenCore fallback required'
  if a.quiet:
   import plistlib
   p=oc/'config.plist';d=plistlib.loads(p.read_bytes());d['NVRAM']['Add']={};p.write_bytes(plistlib.dumps(d,sort_keys=False))
