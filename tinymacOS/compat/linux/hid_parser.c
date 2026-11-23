@@ -176,3 +176,5 @@ void tmc_linux_hid_parser_stats(TmcHidParserStats *out)
  READ(opens);READ(failures);READ(closes);READ(allocations);READ(frees);READ(live_bytes);READ(peak_bytes);READ(notices);READ(busy);
  #undef READ
 }
+
+#include "hid_generic_runtime.inc"

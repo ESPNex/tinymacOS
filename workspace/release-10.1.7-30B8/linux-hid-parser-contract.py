@@ -5,6 +5,8 @@ import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
 paths=['vendor/linux-v6.12/hid-core.c','vendor/linux-v6.12/hid-upstream.h','vendor/linux-v6.12/manifest.json','compat/linux/hid_parser.c','compat/linux/include/linux/tmc_hid_parser.h','include/linux_hid_parser.h','include/linux_usb.h','drivers/xhci.c','drivers/usbinput.c','drivers/linux_usb.c','drivers/hidtablet.c','tests/linux_hid_parser.c','tests/linux_hid_runtime.c','build.sh']
 paths+=sorted(str(p.relative_to(root)) for p in (root/'vendor/linux-v6.12').glob('hid-parser-*.inc'))
+paths+=['compat/linux/hid_generic_runtime.inc','compat/linux/include/linux/tmc_hid_input.h','include/linux_hid_generic.h','vendor/linux-v6.12/hid-input.c','vendor/linux-v6.12/hid-generic.c','vendor/linux-v6.12/hid-ids.h','vendor/linux-v6.12/input-event-codes.h']
+paths+=sorted(str(p.relative_to(root)) for p in (root/'vendor/linux-v6.12').glob('hid-event-*.inc'))
 r={'passed':False,'scope':'Byte-exact Linux v6.12 hid-core descriptor parser/field/collection/open-close/signed/multiplier function extractions; real native HCD pointer-layout consumer; not whole hid-core/hid-input/hid-generic','whole_linux_hid_core':False,'linux_hid_generic_driver':False,'linux_hid_input_events':False,'linux_hcd_port':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)

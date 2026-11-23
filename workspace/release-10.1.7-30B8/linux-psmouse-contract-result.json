@@ -10,7 +10,7 @@
     "vendor/linux-v6.12/psmouse.h": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
     "vendor/linux-v6.12/psmouse-packets.inc": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
     "vendor/linux-v6.12/psmouse-detect.inc": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
-    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76",
+    "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef",
     "compat/linux/psmouse_input.c": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",

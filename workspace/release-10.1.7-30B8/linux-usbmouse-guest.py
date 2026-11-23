@@ -8,7 +8,7 @@ import hashlib,json,os,struct,subprocess,sys,tempfile,time
 q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';sys.path.insert(0,str(root/'tests'))
 from retail_guest import Retail
 from input_pixels import cursor
-fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v11'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
+fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v12'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
 r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_mouse_driver':True,'linux_hcd_port':False,'linux_full_usb_core_port':False,'native_hcd_transport_adapter':True,'physical_hardware_tested':False}
 fields=['probes','attached','completions','frames','errors','rejected','disconnected','allocations','frees']

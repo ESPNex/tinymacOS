@@ -68,10 +68,40 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/hid.h",
       "sha256": "69db832572997025df301fbcf243e0bd7eb00a5dca61edfac46635efe8efe93b",
       "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-input.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/hid-input.c",
+      "sha256": "31f38838949d853a932735f2c6d76b4344b445f5d8550fd067c3a3cf88291ef9",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-generic.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/hid-generic.c",
+      "sha256": "b71b4f8295857dd82253055068b792e01bf7f98f9d45dacd152a3e9a30cfea4e",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-ids.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/hid-ids.h",
+      "sha256": "bc5e4e08569ea5395f88cb6466337f533f803c6221e712fdf10b32a8f0d222a7",
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/input-event-codes.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/input-event-codes.h",
+      "sha256": "f9889a73d7d4f7e303d2d346a3622657169c5e8d7d354cb7a030ff47a7fdfdee",
+      "license": "GPL-2.0-only WITH Linux-syscall-note"
+    },
+    {
+      "path": "tinymacOS/licenses/LINUX-syscall-note.txt",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/LICENSES/exceptions/Linux-syscall-note",
+      "sha256": "8e378ab93586eb55135d3bc119cce787f7324f48394777d00c34fa3d0be3303f",
+      "license": "Linux-syscall-note"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
-  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers. Complete original core/config.c descriptor/configuration/BOS parser; native enumeration and HCD remain. Complete hid-core parser/field/collection, signed-value, resolution multiplier and open/close report function extractions; not full hid-core bus/input event dispatch or hid-generic driver.",
+  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers. Complete original core/config.c descriptor/configuration/BOS parser; native enumeration and HCD remain. Complete hid-core parser/field/collection, signed-value, resolution multiplier and open/close report function extractions; not full hid-core bus/input event dispatch or hid-generic driver. Complete unchanged hid-input.c and hid-generic.c with host-executed bounded native transport/input services; native USB endpoints do not call generic report/event dispatch yet. No Linux HCD or complete USB core/hub.",
   "extractions": [
     {
       "source": "ehci-q.c",
@@ -144,6 +174,33 @@
       "end_marker": "\n/*\n * Convert a signed 32-bit",
       "sha256": "5c12e62778f8afac3337e9618e11307851d2c40e4f1a2ded53472dfc56978543",
       "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-event-bits.inc",
+      "function": "hid-event-bits",
+      "start_marker": "static u32 s32ton(",
+      "end_marker": "\n/*\n * Search an array",
+      "sha256": "b0345eb8af1f3426ad0f2d9153049502e8bb803e5a9d86da2c7b776bb8913962",
+      "modifications": "none: byte-exact complete functions"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-event-process.inc",
+      "function": "hid-event-process",
+      "start_marker": "static int search(",
+      "end_marker": "\n/*\n * Output the field",
+      "sha256": "9137744ac4abcd9e676d498bf3cde86758665222ad870b90325fe4ddad10c8dc",
+      "modifications": "none: byte-exact complete functions"
+    },
+    {
+      "source": "hid-core.c",
+      "output": "hid-event-output.inc",
+      "function": "hid-event-output",
+      "start_marker": "static void hid_output_field(",
+      "end_marker": "\nstruct hid_field *hid_find_field(",
+      "sha256": "82d015916b661a40b3804ce29efb55210413a2c9d12b7b572013e2803833eae2",
+      "modifications": "none: byte-exact complete functions"
     }
   ]
 }

@@ -2,7 +2,7 @@
 """Inspect three actual OpenCore media paths. This does not certify runtime boot or Linux port."""
 import hashlib,json,os,plistlib,struct,subprocess,tempfile,shutil,sys
 from pathlib import Path
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/linux-hid-v11/tinymacOS-10.1.7-x86_64.iso'));build=Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'build')));v=root/'vendor/opencore-1.0.8';w=Path(tempfile.mkdtemp(prefix='tmc1017-media-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root')
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/linux-hid-v12/tinymacOS-10.1.7-x86_64.iso'));build=Path(os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'build')));v=root/'vendor/opencore-1.0.8';w=Path(tempfile.mkdtemp(prefix='tmc1017-media-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root')
 env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
 sys.path.insert(0,str(root/'tools'))
 from firmware_drivers import driver_sources

@@ -8,7 +8,7 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[2];sys.path.insert(0,str(root/'tinymacOS/tests'))
 from retail_guest import Retail
 from riviera_media import gpt
-iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.1.7/linux-hid-v11/tinymacOS-10.1.7-x86_64.iso'))
+iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.1.7/linux-hid-v12/tinymacOS-10.1.7-x86_64.iso'))
 w=Path(tempfile.mkdtemp(prefix='tmc-bios-install-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get("TMC_STAGE_BUILD",str(iso.parent/"build")),TMC_MEM="512",TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_SMP='2')
 launcher=root/'tinymacOS/tools/run-bios-installed.sh';report={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'external_work':str(w),'physical_hardware_tested':False,'full_linux_input_port':False,'scope':'actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU'}

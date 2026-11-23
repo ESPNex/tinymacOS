@@ -6,7 +6,7 @@
   "physical_hardware_tested": false,
   "sources": {
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
-    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76",
+    "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef",
     "tests/linux_urb.c": "ba69eb0007510944b463401c212a4c81270004671685dc9cd9668f77882497e3",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
     "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",

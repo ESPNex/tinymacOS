@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "scope": "Complete unchanged Linux v6.12 hid-generic.c and hid-input.c, exact core event/bit/output function ranges, real bounded transport and event sink services; host fault-injection proof only",
+  "original_generic_driver_whole_file": true,
+  "original_hid_input_whole_file": true,
+  "native_usb_endpoints_wired_to_generic": false,
+  "full_linux_hid_core_or_bus": false,
+  "full_linux_usb_core_hub": false,
+  "full_linux_hcd": false,
+  "ps2_class_driver_work_deferred": true,
+  "physical_hardware_tested": false,
+  "sources": {
+    "compat/linux/hid_parser.c": "2e0533cada3f48bdc3fd041c4a87200dcf62f88128fb91d0b3d635d5b36f31d1",
+    "compat/linux/hid_generic_runtime.inc": "9b559e7f25c300dc57031f0c2cb72732a0dfeacef4d0cd4746c60e70f2d2c8cc",
+    "compat/linux/include/linux/tmc_hid_parser.h": "3b91a7a97cb45248a246af740e712816e0867a45b56f1d557385a529befb647d",
+    "compat/linux/include/linux/tmc_hid_input.h": "b53245ec46acb8334732176a23fd574cd82155431c0c5af1b5e114afacbe9053",
+    "include/linux_hid_parser.h": "03a5549cd12b5964f20ba933796ae20eb65fc40d67504d138de8d4c01e7d88d3",
+    "include/linux_hid_generic.h": "c40599e36f1ac4e037d6b2ddf73a49e74ad37df3234ca6f3edeef351277a7e85",
+    "tests/linux_hid_generic.c": "88c3ff33639b9af239ff226963432ec9501d895c0ad8f364b6887fe4415801fe",
+    "tests/linux_hid_runtime.c": "746347b0d99b15cc19e63ef34b636fcb5a2d952c04b6e3baba39b8d021152d93",
+    "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef",
+    "vendor/linux-v6.12/hid-core.c": "c12c3f89a2e04d7ef68a80d48cfe3b30f153f6de5bc7bb095c810b2f214d603b",
+    "vendor/linux-v6.12/hid-event-bits.inc": "b0345eb8af1f3426ad0f2d9153049502e8bb803e5a9d86da2c7b776bb8913962",
+    "vendor/linux-v6.12/hid-event-output.inc": "82d015916b661a40b3804ce29efb55210413a2c9d12b7b572013e2803833eae2",
+    "vendor/linux-v6.12/hid-event-process.inc": "9137744ac4abcd9e676d498bf3cde86758665222ad870b90325fe4ddad10c8dc",
+    "vendor/linux-v6.12/hid-generic.c": "b71b4f8295857dd82253055068b792e01bf7f98f9d45dacd152a3e9a30cfea4e",
+    "vendor/linux-v6.12/hid-ids.h": "bc5e4e08569ea5395f88cb6466337f533f803c6221e712fdf10b32a8f0d222a7",
+    "vendor/linux-v6.12/hid-input.c": "31f38838949d853a932735f2c6d76b4344b445f5d8550fd067c3a3cf88291ef9",
+    "vendor/linux-v6.12/hid-parser-fields.inc": "db2060031624cd4f8a49c513f1a07af1cdd138f4abca34602793a499dd8c87ef",
+    "vendor/linux-v6.12/hid-parser-items.inc": "8ef11915b2cabe9d4c261d5e70a7974af2504587229af469f7587972ca1c04c0",
+    "vendor/linux-v6.12/hid-parser-multipliers.inc": "117bb63948b36bd03059cce91b474d1b73186742f37a6ff8eb93915f5e79be49",
+    "vendor/linux-v6.12/hid-parser-open.inc": "cd02868f8f914c54ccd0a5f7d645dcc3220c35512e3eafad8c26520ac49d2dfa",
+    "vendor/linux-v6.12/hid-parser-signed.inc": "5c12e62778f8afac3337e9618e11307851d2c40e4f1a2ded53472dfc56978543",
+    "vendor/linux-v6.12/hid-upstream.h": "69db832572997025df301fbcf243e0bd7eb00a5dca61edfac46635efe8efe93b",
+    "vendor/linux-v6.12/input-event-codes.h": "f9889a73d7d4f7e303d2d346a3622657169c5e8d7d354cb7a030ff47a7fdfdee",
+    "licenses/LINUX-syscall-note.txt": "8e378ab93586eb55135d3bc119cce787f7324f48394777d00c34fa3d0be3303f",
+    "compat/linux/include/linux/module.h": "46d8fb1c336d7c8f99264e51ffbce27e9f22b9842fe252230bda72bae72ceed5",
+    "compat/linux/include/linux/slab.h": "46d8fb1c336d7c8f99264e51ffbce27e9f22b9842fe252230bda72bae72ceed5",
+    "compat/linux/include/linux/kernel.h": "67826fb4f7d354442b8d2181e0eb7b79072d6cbdeea12b9888a2b912dfe84096",
+    "compat/linux/include/linux/hid.h": "67826fb4f7d354442b8d2181e0eb7b79072d6cbdeea12b9888a2b912dfe84096",
+    "compat/linux/include/linux/hid-debug.h": "a7d1f8b2dfc173301d678cd9a9b82beef563db65638deef8bf3cb1b01b224ae8",
+    "compat/linux/include/linux/unaligned.h": "a7d1f8b2dfc173301d678cd9a9b82beef563db65638deef8bf3cb1b01b224ae8",
+    "compat/linux/include/asm/byteorder.h": "75e1230dc7ac771f2253da9f84e612432a6f0a319bb3c23ef6daed14b87183c5"
+  },
+  "runs": [
+    {
+      "optimization": "-O1",
+      "whole_original_units_linked": true,
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "upstream_signed_overflow_compiler_semantics": "hid-input compiled with fwrapv, matching Linux no-strict-overflow semantics",
+      "passed": true,
+      "stdout": "PASS whole Linux hid-generic probe/match + hid-input mapping/events: signed 16-bit XY, five buttons, high/low-res wheel, strict framing, nested rejection and disconnect releases\nPASS whole Linux hid-input keyboard arrays/modifiers, unchanged-report filtering, rollover preservation, 16-key report bitmap and original deferred LED worker/output/raw fallback/errors\nPASS original generic competing-driver preference and special-driver override, composite per-application registration and low-level open/close references\nPASS all generic/input allocation-failure rollbacks, real transport-start/open and input-registration failures; no successful placeholder lifecycle or leaked objects\nPASS 1024 complete upstream generic/input attach/report/disconnect lifecycles with release, work cancellation and zero outstanding allocations\nPASS 4096 deterministic whole generic/input descriptor mutations, real report dispatch when accepted, complete teardown and sanitizers\n"
+    },
+    {
+      "optimization": "-O2",
+      "whole_original_units_linked": true,
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "upstream_signed_overflow_compiler_semantics": "hid-input compiled with fwrapv, matching Linux no-strict-overflow semantics",
+      "passed": true,
+      "stdout": "PASS whole Linux hid-generic probe/match + hid-input mapping/events: signed 16-bit XY, five buttons, high/low-res wheel, strict framing, nested rejection and disconnect releases\nPASS whole Linux hid-input keyboard arrays/modifiers, unchanged-report filtering, rollover preservation, 16-key report bitmap and original deferred LED worker/output/raw fallback/errors\nPASS original generic competing-driver preference and special-driver override, composite per-application registration and low-level open/close references\nPASS all generic/input allocation-failure rollbacks, real transport-start/open and input-registration failures; no successful placeholder lifecycle or leaked objects\nPASS 1024 complete upstream generic/input attach/report/disconnect lifecycles with release, work cancellation and zero outstanding allocations\nPASS 4096 deterministic whole generic/input descriptor mutations, real report dispatch when accepted, complete teardown and sanitizers\n"
+    }
+  ]
+}

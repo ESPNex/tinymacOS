@@ -68,3 +68,6 @@ gcc $C -fno-builtin -fno-pie -no-pie tests/linux_config.c tests/linux_config_run
 
 # Genuine Linux HID descriptor parser functions, isolated from Boot/HCD ABI.
 gcc $C -fno-builtin -fno-pie -no-pie -pthread tests/linux_hid_parser.c tests/linux_hid_runtime.c compat/linux/hid_parser.c drivers/hidtablet.c -o "$out/linux-hid-parser";"$out/linux-hid-parser"
+
+# Whole unchanged Linux hid-input + hid-generic units, host real I/O fault injection.
+gcc $C -fno-builtin -fno-pie -no-pie tests/linux_hid_generic.c tests/linux_hid_runtime.c -o "$out/linux-hid-generic";"$out/linux-hid-generic"

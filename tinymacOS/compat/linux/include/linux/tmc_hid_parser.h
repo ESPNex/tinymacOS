@@ -44,7 +44,7 @@ static inline void *kcalloc(size_t a,size_t b,unsigned flags){return tmc_hid_all
 static inline void *kmemdup(const void *p,size_t n,unsigned flags){void *d=tmc_hid_alloc(n,0);if(d)memcpy(d,p,n);return d;}
 static inline u16 get_unaligned_le16(const u8 *p){return p[0]|(u16)p[1]<<8;}
 static inline u32 get_unaligned_le32(const u8 *p){return get_unaligned_le16(p)|(u32)get_unaligned_le16(p+2)<<16;}
-struct device {unsigned named;};
+struct device {unsigned named;struct device *parent;};
 static inline const char *dev_name(struct device *d){return d->named?"tmc-hid-parser":(const char *)0;}
 struct hid_item {
 	unsigned  format;
@@ -497,17 +497,112 @@ struct hid_parser {
 };
 
 
-#define HID_STAT_PARSED BIT(1)
+#define HID_QUIRK_NOTOUCH			BIT(1)
+#define HID_QUIRK_IGNORE			BIT(2)
+#define HID_QUIRK_NOGET				BIT(3)
+#define HID_QUIRK_HIDDEV_FORCE			BIT(4)
+#define HID_QUIRK_BADPAD			BIT(5)
+#define HID_QUIRK_MULTI_INPUT			BIT(6)
+#define HID_QUIRK_HIDINPUT_FORCE		BIT(7)
+/* BIT(8) reserved for backward compatibility, was HID_QUIRK_NO_EMPTY_INPUT */
+/* BIT(9) reserved for backward compatibility, was NO_INIT_INPUT_REPORTS */
+#define HID_QUIRK_ALWAYS_POLL			BIT(10)
+#define HID_QUIRK_INPUT_PER_APP			BIT(11)
+#define HID_QUIRK_X_INVERT			BIT(12)
+#define HID_QUIRK_Y_INVERT			BIT(13)
+#define HID_QUIRK_SKIP_OUTPUT_REPORTS		BIT(16)
+#define HID_QUIRK_SKIP_OUTPUT_REPORT_ID		BIT(17)
+#define HID_QUIRK_NO_OUTPUT_REPORTS_ON_INTR_EP	BIT(18)
+#define HID_QUIRK_HAVE_SPECIAL_DRIVER		BIT(19)
+#define HID_QUIRK_INCREMENT_USAGE_ON_DUPLICATE	BIT(20)
+#define HID_QUIRK_NOINVERT			BIT(21)
+#define HID_QUIRK_FULLSPEED_INTERVAL		BIT(28)
+#define HID_QUIRK_NO_INIT_REPORTS		BIT(29)
+#define HID_QUIRK_NO_IGNORE			BIT(30)
+#define HID_QUIRK_NO_INPUT_SYNC			BIT(31)
+
+/*
+ * HID device groups
+ *
+ * Note: HID_GROUP_ANY is declared in linux/mod_devicetable.h
+ * and has a value of 0x0000
+ */
+#define HID_GROUP_GENERIC			0x0001
+#define HID_GROUP_MULTITOUCH			0x0002
+#define HID_GROUP_SENSOR_HUB			0x0003
+#define HID_GROUP_MULTITOUCH_WIN_8		0x0004
+
+/*
+ * Vendor specific HID device groups
+ */
+#define HID_GROUP_RMI				0x0100
+#define HID_GROUP_WACOM				0x0101
+#define HID_GROUP_LOGITECH_DJ_DEVICE		0x0102
+#define HID_GROUP_STEAM				0x0103
+#define HID_GROUP_LOGITECH_27MHZ_DEVICE		0x0104
+#define HID_GROUP_VIVALDI			0x0105
+
+/*
+ * HID protocol status
+ */
+#define HID_REPORT_PROTOCOL	1
+#define HID_BOOT_PROTOCOL	0
+
+#define HID_CLAIMED_INPUT	BIT(0)
+#define HID_CLAIMED_HIDDEV	BIT(1)
+#define HID_CLAIMED_HIDRAW	BIT(2)
+#define HID_CLAIMED_DRIVER	BIT(3)
+
+#define HID_STAT_ADDED		BIT(0)
+#define HID_STAT_PARSED		BIT(1)
+#define HID_STAT_DUP_DETECTED	BIT(2)
+#define HID_STAT_REPROBED	BIT(3)
+
+struct hid_input {
+	struct list_head list;
+	struct hid_report *report;
+	struct input_dev *input;
+	const char *name;
+	struct list_head reports;	/* the list of reports */
+	unsigned int application;	/* application usage for this input */
+	bool registered;
+};
+
+
 struct hid_device;
-struct hid_driver {u8 *(*report_fixup)(struct hid_device *,u8 *,unsigned *);};
-struct hid_ll_driver {unsigned max_buffer_size;};
+struct hid_device_id {unsigned short bus,group;unsigned vendor,product;unsigned long driver_data;};
+struct device_driver {const char *name;};
+struct hid_driver {
+ const char *name;const struct hid_device_id *id_table;
+ bool (*match)(struct hid_device *,bool);
+ int (*probe)(struct hid_device *,const struct hid_device_id *);
+ void (*remove)(struct hid_device *);
+ const void *report_table,*usage_table;
+ int (*event)(struct hid_device *,struct hid_field *,struct hid_usage *,s32);
+ void (*report)(struct hid_device *,struct hid_report *);
+ const u8 *(*report_fixup)(struct hid_device *,u8 *,unsigned *);
+ int (*input_mapping)(struct hid_device *,struct hid_input *,struct hid_field *,struct hid_usage *,unsigned long **,int *);
+ int (*input_mapped)(struct hid_device *,struct hid_input *,struct hid_field *,struct hid_usage *,unsigned long **,int *);
+ int (*input_configured)(struct hid_device *,struct hid_input *);
+ void (*feature_mapping)(struct hid_device *,struct hid_field *,struct hid_usage *);
+ struct device_driver driver;
+};
+struct work_struct {void (*function)(struct work_struct *);unsigned queued;};
+struct hid_ll_driver {unsigned max_buffer_size;void (*request)(struct hid_device *,struct hid_report *,int);};
 struct hid_device {
  const u8 *dev_rdesc,*rdesc;unsigned dev_rsize,rsize;
  struct hid_collection *collection;unsigned collection_size,maxcollection,maxapplication;
  struct hid_report_enum report_enum[HID_REPORT_TYPES];
  struct hid_ll_driver *ll_driver;struct hid_driver *driver;unsigned status;struct device dev;
+ unsigned quirks,bus,group,vendor,product,version,claimed;
+ char name[80],phys[80],uniq[80];
+ struct list_head inputs,debug_list;struct work_struct led_work;
+ void (*hiddev_hid_event)(struct hid_device *,struct hid_field *,struct hid_usage *,s32);
+ void *tmc_generic;
 };
 /* CONFIG_HID_BPF is not implemented/enabled: the upstream disabled path
  * is a real owned copy, not a pretend successful BPF invocation. */
 static inline u8 *call_hid_bpf_rdesc_fixup(struct hid_device *d,const u8 *p,unsigned *n){return kmemdup(p,*n,GFP_KERNEL);}
 s32 hid_snto32(__u32 value,unsigned n);
+
+int hid_open_report(struct hid_device *);

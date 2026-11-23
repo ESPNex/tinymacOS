@@ -6,7 +6,7 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';tools=home/'workspace/webkit-tmc/tools'
-base=Path('/var/tmp/tmc-10.1.7/linux-hid-v11/build');evidence=Path(tempfile.mkdtemp(prefix='tmc-config-v10-kernel-',dir='/var/tmp'))
+base=Path('/var/tmp/tmc-10.1.7/linux-hid-v12/build');evidence=Path(tempfile.mkdtemp(prefix='tmc-config-v10-kernel-',dir='/var/tmp'))
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def save(name,data):(q/name).write_text(json.dumps(data,indent=2)+'\n')
 source={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and p.suffix in ('.c','.h','.S','.sh','.py','.ld') and '__pycache__' not in p.parts}
