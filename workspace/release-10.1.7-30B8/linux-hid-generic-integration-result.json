@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "scope": "v12 source/link/host and existing input regressions only; requested four-block completion is FALSE",
+  "iso_sha256": "8266731b51d2e0b3afed0a069423525626b3f4c2fe04a0ad171833fa2e340509",
+  "upstream_whole_generic_input_host_contract": true,
+  "upstream_whole_generic_input_symbols_linked": true,
+  "existing_input_guest_profiles_passed": 24,
+  "live_parser_guest_profiles_passed": 18,
+  "native_generic_endpoint_event_dispatch_executed": false,
+  "linux_controllers_complete": false,
+  "linux_usb_core_hub_complete": false,
+  "complete_four_part_requested_block": false,
+  "ps2_class_drivers_deferred": true,
+  "new_kernel_install_recovery_full_regression_completed": false,
+  "physical_hardware_tested": false,
+  "published": false,
+  "sources": {
+    "compat/linux/hid_parser.c": "2e0533cada3f48bdc3fd041c4a87200dcf62f88128fb91d0b3d635d5b36f31d1",
+    "compat/linux/hid_generic_runtime.inc": "9b559e7f25c300dc57031f0c2cb72732a0dfeacef4d0cd4746c60e70f2d2c8cc",
+    "include/linux_hid_generic.h": "c40599e36f1ac4e037d6b2ddf73a49e74ad37df3234ca6f3edeef351277a7e85",
+    "drivers/xhci.c": "347d5b6c3688b9232a4c27de7fff9a048fb351492b27dbcecd402c5e2f118490",
+    "drivers/usbinput.c": "2202d96bc835282092211febafe9a5c3d9ea00e5a001f14e190f22614bb31f75",
+    "drivers/linux_usb.c": "95d1e6348abaf5383b77e25b8a7b7e05f43ec15b0ece44d597ee6153d1be2dae"
+  }
+}
