@@ -1,7 +1,7 @@
 {
   "passed": true,
-  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
-  "work": "/var/tmp/tmc101-control-k6s0te7d",
+  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
+  "work": "/var/tmp/tmc101-control-ilgh8tm1",
   "checks": [
     "Clean panel: functional labels and Settings visible, duplicate heading and idle tagline absent",
     "No enclosing slab: inter-module gap is byte-identical to underlying desktop",

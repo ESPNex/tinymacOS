@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "xhci-hub",
-  "iso_sha256": "dfd32b1ca026bf7d8cc8f2be6394c89e58be32d99c90a711c2233d2c9d163827",
-  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-hub-x7_azg3n",
+  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
+  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-hub-gar28fze",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -16,6 +16,19 @@
     "bytes": 0,
     "rejected": 0
   },
+  "config_core": {
+    "opens": 2,
+    "failures": 0,
+    "descriptor_reads": 4,
+    "configs": 2,
+    "interfaces": 2,
+    "endpoints": 2,
+    "bos": 0,
+    "notices": 0,
+    "allocations": 14,
+    "frees": 14
+  },
+  "actual_upstream_core_config_file_executed": true,
   "urb_core_before": {
     "submits": 1,
     "givebacks": 0,

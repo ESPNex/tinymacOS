@@ -1,19 +1,21 @@
 {
   "passed": true,
-  "scope": "backend/runtime contracts, target objects and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance",
-  "kernelcache_sha256": "118eac53b3b85eaf3c0b4483428f77ad48396978c63c0ae56e1ca038bb5849e3",
-  "kernel_sha256": "f011d497a43dfaf84a011d8b583cd8ea349ad87e1562a6dbb166cda423c7ec3e",
-  "production_build": "/var/tmp/tmc-10.1.7/linux-usb-v2/build",
+  "scope": "Current production kernel: host/runtime/target contracts and actual guest TCP, MMU faults, synchronization, TLS/errno and managed-thread/C++ probes; NOT browser or Linux driver-port completion",
+  "production_build": "/var/tmp/tmc-10.1.7/linux-config-v10/build",
+  "kernelcache_sha256": "295789b7181a3e571bdf347569fbd9a0a5d6a896f1cbc725c9d0652ce60338af",
+  "kernel_sha256": "c030f8d78271713883806216af1ec2fada9135ab8f5202680aed8810ba4291e7",
+  "external_evidence": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e",
+  "full_linux_input_port": false,
+  "physical_hardware_tested": false,
   "suite_case_count": 29,
-  "suite_sha256": "b26eaa881f4c5fb742f02233f15c6b7c288c1435ccc1c57fe74d8025447140e6",
+  "guest_profiles_passed": 13,
   "actual_iso_kernel_equals_current_production_all_5_probes": true,
   "source_manifest_sha256_by_probe": {
-    "vm": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1",
-    "network": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1",
-    "sync": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1",
-    "tls": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1",
-    "threads": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1"
+    "network": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
+    "vm": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
+    "sync": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
+    "tls": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
+    "threads": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48"
   },
-  "linux_hcd_port": false,
-  "physical_hardware_tested": false
+  "suite_sha256": "767021d301d025abed9fe8ddcdff9deb1e36cdd693871b2bdcb2ae67b12b3ad8"
 }

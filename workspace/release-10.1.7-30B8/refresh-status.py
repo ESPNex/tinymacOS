@@ -11,8 +11,8 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-psmouse-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
-(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
+other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-config-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
 symbols=subprocess.check_output(['nm',str(base/'build/kernel.debug')],text=True)
@@ -64,4 +64,9 @@ status['linux_config_current_guest_topologies_expected']=18
 status['native_configuration_policy']='First configuration, alternate-zero inputs, 1024 bytes; original config.c parses/selects both HID and hub classes'
 status['complete_linux_hub_driver_port']=False
 status['blocking_work'][0]='Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hub/IRQ/DMA lifecycle; core urb.c/config.c, Boot input drivers and EHCI qtd_fill are upstream so far'
+status['current_installer_bios_hdd_reboot_uefi_crossboot_passed']=current('install-current-result.json') and load('install-current-result.json').get('installed_esp_kernel_readback_equals_current_build',False) and load('install-current-result.json').get('installed_kernelcache_sha256')==sha(base/'build/KernelCache')
+status['current_runtime_kernel_guest_profiles_passed']=load('kernel-current-source-result.json').get('guest_profiles_passed',0) if status['current_kernel_runtime_regression_passed'] else 0
+status['current_runtime_kernel_guest_profiles_expected']=13
+status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/config; native HCD/hub/report HID'
+status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; native HCD/hub/report HID'
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

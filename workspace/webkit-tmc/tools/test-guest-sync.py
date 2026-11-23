@@ -23,5 +23,5 @@ try:
   else:raise AssertionError('Guest sync timeout/deadlock; not a pass')
   g.visible('updates=240 workers=4 cpus='+str(cpus));g.visible('compare-park=atomic timeout=relocked');g.visible('thread-errno=preserved');g.shot('sync-pass')
   record.update(passed=True,workers=4,serialized_updates_with_yield_inside_lock=240,condition_predicate_loop_and_broadcast=True,timeout_reacquires_mutex=True,mutex_timedlock=True,changed_word_returns_EAGAIN=True,invalid_address_and_operation_rejected=True,zero_and_all_wake_counts_checked=True,per_thread_errno_preserved=True,cross_cpu_execution_required=cpus>1)
-finally:(r/'test-results'/('guest-sync-smp'+str(cpus)+'.json')).write_text(json.dumps(record,indent=2)+'\n')
+finally:(Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-sync-smp'+str(cpus)+'.json')).write_text(json.dumps(record,indent=2)+'\n')
 print('PASS real native compare-and-park + mutex/condition on',cpus,'vCPUs; 240 yielded critical sections, broadcast, timed lock/condition and errno preserved')

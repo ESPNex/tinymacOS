@@ -1,11 +1,11 @@
 {
   "passed": true,
   "image": "/var/tmp/tmc-tls-guest/tinymacOS-qa-probe-x86_64.iso",
-  "iso_sha256": "b4f5203fca59347221dbcfddc8f8cf02ffa5c568de8b426a9fd18c8d39d0a87c",
-  "production_build": "/var/tmp/tmc-10.1.7/linux-usb-v2/build",
-  "kernel_sha256": "f011d497a43dfaf84a011d8b583cd8ea349ad87e1562a6dbb166cda423c7ec3e",
-  "kernelcache_sha256": "118eac53b3b85eaf3c0b4483428f77ad48396978c63c0ae56e1ca038bb5849e3",
+  "iso_sha256": "d48564bfccfdf88fc2ff1c910c296f30041be19907a29a8d3b58341578db3a75",
+  "production_build": "/var/tmp/tmc-10.1.7/linux-config-v10/build",
+  "kernel_sha256": "c030f8d78271713883806216af1ec2fada9135ab8f5202680aed8810ba4291e7",
+  "kernelcache_sha256": "295789b7181a3e571bdf347569fbd9a0a5d6a896f1cbc725c9d0652ce60338af",
   "actual_iso_kernel_equals_current_production": true,
-  "source_files_verified": 433,
-  "source_manifest_sha256": "545fe2639e2b1f42d192828845208b8f42a64ce55689bd447fcbe8587a5780e1"
+  "source_files_verified": 499,
+  "source_manifest_sha256": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48"
 }

@@ -14,7 +14,7 @@ image=Path(os.environ.get('TMC_VM_PROBE_BUILD','/var/tmp/tmc-webkit-vm-guest'))/
 from probe_media import verify_probe_media
 verify_probe_media(image,"vm")
 work=Path(tempfile.mkdtemp(prefix='tmc-vm-guest-',dir='/var/tmp'))
-evidence=r/f'test-results/guest-vm-smp{cpus}';evidence.mkdir(exist_ok=True)
+evidence=Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/f'guest-vm-smp{cpus}';evidence.mkdir(exist_ok=True)
 record={'scope':'real user-mode VM and MMU; NOT JSC/WebCore/browser acceptance','passed':False,'requested_vcpus':cpus,'iso_qa_only':True,'iso_sha256':hashlib.sha256(image.read_bytes()).hexdigest(),'faults':[]}
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=str(image.parent),TMC_SMP=str(cpus))
 def visible(g,word,timeout=15):

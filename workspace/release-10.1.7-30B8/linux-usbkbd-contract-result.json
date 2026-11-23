@@ -17,7 +17,7 @@
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
     "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
-    "vendor/linux-v6.12/manifest.json": "6fb90c5d50b06f58f95150b5fe9ccc5fcd000bb7ef6dd770bd001bafb0815a81"
+    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c"
   },
   "output": "PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown\n"
 }

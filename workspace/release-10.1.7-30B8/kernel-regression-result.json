@@ -1,181 +1,159 @@
 {
-  "scope": "backend/runtime contracts, target objects and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance",
-  "guest_requested": true,
   "passed": true,
+  "scope": "Current production kernel: host/runtime/target contracts and actual guest TCP, MMU faults, synchronization, TLS/errno and managed-thread/C++ probes; NOT browser or Linux driver-port completion",
+  "guest_requested": true,
   "cases": [
     {
       "name": "workspace-budget",
-      "exit_code": 0,
-      "stdout": "{\n  \"files\": 3272,\n  \"bytes\": 122180259,\n  \"MiB\": 116.52,\n  \"guard_files\": 9000,\n  \"guard_bytes\": 125829120,\n  \"ok\": true\n}\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "source-sync",
-      "exit_code": 0,
-      "stdout": "PASS: all 21 OS integration sources and 7 native ABI copies match the workspace overlay.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "backend-contract",
-      "exit_code": 0,
-      "stdout": "PASS: DNS/TCP contracts, RESET vs EOF, polling, deadlines, clock, entropy fail-closed.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "threads-contract",
-      "exit_code": 0,
-      "stdout": "PASS managed-thread contract: created=82 updates=320 first-failure-line=0; host transport only, not native FS/scheduler\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "sync-contract",
-      "exit_code": 0,
-      "stdout": "PASS real sync.c via host futex: 8000 serialized updates, broadcast, condition/mutex timeout and mutex reacquisition; parks=1259 wakes=1492\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "vm-contract",
-      "exit_code": 0,
-      "stdout": "PASS: kernel VM model, guards/ranges, permission prevalidation, OOM rollback, 50000 reservation operations, multi-CPU reservation path (host model, not MMU proof).\nPASS: VM native ABI forwarding, feature query, pointer sanity and errno mapping.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "descriptor-contract",
-      "exit_code": 0,
-      "stdout": "PASS: unified read-only-file/TCP descriptors, dup/shared offsets, last-close ownership, poll, caps, invalid/error paths and 100000 lifetime operations.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "kernel-stream",
-      "exit_code": 0,
-      "stdout": "PASS: stream stress 35539167 bytes; no loss/duplication across ring/counter wrap.\nPASS: kernel callback backpressure, pbuf ownership, receive-window credit, FIN/RESET/status and legacy op6 contracts.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "system-appearance",
-      "exit_code": 0,
-      "stdout": "PASS: 64 system appearance combinations, real S_INFO contract, shared compositor RGB palette, change detection and failure preservation.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "backend-target-compile",
-      "exit_code": 0,
-      "stdout": "Compile-only PASS. Target errno resolves to caller-attached TCB; no complete target libc has been linked.\n",
-      "stderr": ""
+      "exit_code": 0
     },
     {
       "name": "system-target-compile",
-      "exit_code": 0,
-      "stdout": "PASS: target object compilation: kernel network, syscall dispatch, compositor and appearance adapter. No executable linked, no ISO produced.\n",
-      "stderr": "kernel/net.c: In function \u2018lwip_tx\u2019:\nkernel/net.c:59:22: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n   59 |                 char b[110];\n      |                      ^\nkernel/net.c: In function \u2018net_ping\u2019:\nkernel/net.c:239:18: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  239 |             char b[28];\n      |                  ^\nkernel/net.c:255:25: warning: unused variable \u2018hx\u2019 [-Wunused-variable]\n  255 |             const char *hx = \"0123456789abcdef\";\n      |                         ^~\nkernel/net.c:254:18: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  254 |             char b[24];\n      |                  ^\nkernel/net.c: In function \u2018dns_recv\u2019:\nkernel/net.c:456:14: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  456 |         char b[72];\n      |              ^\n"
+      "exit_code": 0
     },
     {
-      "name": "guest-vm-probe-build",
+      "name": "network-probe-build",
       "exit_code": 0,
-      "stdout": "PASS: all 21 OS integration sources and 7 native ABI copies match the workspace overlay.\nImported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\nInstalled BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64\nISO (outside source): /var/tmp/tmc-webkit-vm-system/tinymacOS-10.1.7-x86_64.iso\nImported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\n\nQA ONLY - DO NOT DISTRIBUTE: /var/tmp/tmc-webkit-vm-guest/tinymacOS-qa-probe-x86_64.iso\n",
-      "stderr": "userspace/settings.c: In function 'row2':\nuserspace/settings.c:76:37: warning: unused parameter 'w' [-Wunused-parameter]\n   76 | static void row2(int x, int ry, int w, const char *l, const char *v)\n      |                                 ~~~~^\nkernel/kext.c: In function 'kext_log':\nkernel/kext.c:502:34: warning: unused parameter 't' [-Wunused-parameter]\n  502 | static void kext_log(const char *t)\n      |                      ~~~~~~~~~~~~^\nkernel/net.c: In function 'lwip_tx':\nkernel/net.c:59:22: warning: variable 'b' set but not used [-Wunused-but-set-variable]\n   59 |                 char b[110];\n      |                      ^\nkernel/net.c: In function 'net_ping':\nkernel/net.c:239:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]\n  239 |             char b[28];\n      |                  ^\nkernel/net.c:255:25: warning: unused variable 'hx' [-Wunused-variable]\n  255 |             const char *hx = \"0123456789abcdef\";\n      |                         ^~\nkernel/net.c:254:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]\n  254 |             char b[24];\n      |                  ^\nkernel/net.c: In function 'dns_recv':\nkernel/net.c:456:14: warning: variable 'b' set but not used [-Wunused-but-set-variable]\n  456 |         char b[72];\n      |              ^\ndrivers/linux_usb.c: In function 'tmc_lx_os_error':\ndrivers/linux_usb.c:20:34: warning: unused parameter 'message' [-Wunused-parameter]\n   20 | void tmc_lx_os_error(const char *message){logstr(message);logstr(\"\\n\");}\n      |                      ~~~~~~~~~~~~^~~~~~~\nxorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\nxorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\n"
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/network-build.log",
+      "log_sha256": "ade0f7c4fd29e72a7941ce49505fcacb428780b09343c93b119a5fdefbf08032"
     },
     {
-      "name": "guest-probe-build",
+      "name": "network-smp1",
       "exit_code": 0,
-      "stdout": "Imported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\n\nQA ONLY - DO NOT DISTRIBUTE: /var/tmp/tmc-webkit-network-guest/tinymacOS-qa-probe-x86_64.iso\n",
-      "stderr": "xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\n"
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/network-smp1.log",
+      "log_sha256": "dd7c146dad1f2a9b4e056e119fbee18c5bd765761ca9802c62ff6d531bb6cb00"
     },
     {
-      "name": "guest-runtime-smp1",
+      "name": "network-smp2",
       "exit_code": 0,
-      "stdout": "type 'W' dt=0.163\ntype 'e' dt=0.162\ntype 'b' dt=0.162\ntype 'k' dt=0.162\ntype 'i' dt=0.163\ntype 't' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.163\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.163\ntype 'l' dt=0.163\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype '/' dt=0.162\ntype 'u' dt=0.163\ntype 's' dt=0.162\ntype 'r' dt=0.162\ntype '/' dt=0.162\ntype 'b' dt=0.162\ntype 'i' dt=0.162\ntype 'n' dt=0.162\ntype '/' dt=0.163\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.163\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS: actual guest TCP and read-only file descriptors, SHA256, dup/shared seek, FIN/half-close, timeout/EAGAIN, invalid handles and ECONNRESET.\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/network-smp2.log",
+      "log_sha256": "4a4a2f2f32aff6935b737e5db64b50ebb5dd6f72860a18d2557ef4e4b27787f1"
     },
     {
-      "name": "guest-runtime-smp2",
+      "name": "vm-probe-build",
       "exit_code": 0,
-      "stdout": "type 'W' dt=0.163\ntype 'e' dt=0.162\ntype 'b' dt=0.162\ntype 'k' dt=0.163\ntype 'i' dt=0.162\ntype 't' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.163\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.163\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.163\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.163\ntype 'l' dt=0.162\ntype '-' dt=0.163\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.163\ntype '5' dt=0.165\ntype '/' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype 'r' dt=0.162\ntype '/' dt=0.164\ntype 'b' dt=0.163\ntype 'i' dt=0.162\ntype 'n' dt=0.162\ntype '/' dt=0.163\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.163\nPASS: actual guest TCP and read-only file descriptors, SHA256, dup/shared seek, FIN/half-close, timeout/EAGAIN, invalid handles and ECONNRESET.\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/vm-build.log",
+      "log_sha256": "eeac8c09478104e44a19c3c7c27cc34c81b5d622723c07cf9bbaccb721f43db8"
     },
     {
-      "name": "guest-vm-smp1",
+      "name": "vm-smp1",
       "exit_code": 0,
-      "stdout": "type 'W' dt=0.163\ntype 'e' dt=0.162\ntype 'b' dt=0.162\ntype 'k' dt=0.162\ntype 'i' dt=0.162\ntype 't' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.163\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.161\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.161\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'l' dt=0.162\ntype 'e' dt=0.162\ntype 'f' dt=0.162\ntype 't' dt=0.162\ntype 'f' dt=0.163\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.163\ntype ' ' dt=0.162\ntype 'l' dt=0.163\ntype 'e' dt=0.162\ntype 'f' dt=0.162\ntype 't' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'i' dt=0.162\ntype 'g' dt=0.162\ntype 'h' dt=0.162\ntype 't' dt=0.166\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.163\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'i' dt=0.163\ntype 'g' dt=0.162\ntype 'h' dt=0.162\ntype 't' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.167\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.164\ntype 'l' dt=0.170\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.166\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 'd' dt=0.162\ntype 'o' dt=0.168\ntype 'n' dt=0.162\ntype 'l' dt=0.162\ntype 'y' dt=0.161\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.164\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.162\ntype '?' dt=0.162\ntype ' ' dt=0.165\ntype 'r' dt=0.167\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 'd' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'l' dt=0.162\ntype 'y' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.163\ntype 'e' dt=0.178\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.163\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.162\ntype ' ' dt=0.167\ntype 'n' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'e' dt=0.170\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.163\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'd' dt=0.162\ntype 'e' dt=0.162\ntype 'c' dt=0.162\ntype 'o' dt=0.162\ntype 'm' dt=0.165\ntype 'm' dt=0.162\ntype 'i' dt=0.162\ntype 't' dt=0.161\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.169\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.163\ntype ' ' dt=0.164\ntype 'd' dt=0.170\ntype 'e' dt=0.167\ntype 'c' dt=0.162\ntype 'o' dt=0.162\ntype 'm' dt=0.163\ntype 'm' dt=0.162\ntype 'i' dt=0.162\ntype 't' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.164\ntype 'e' dt=0.162\ntype 't' dt=0.163\ntype 'c' dt=0.162\ntype 'h' dt=0.163\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.163\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.162\ntype 'l' dt=0.164\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 's' dt=0.162\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.163\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.163\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.163\ntype '$' dt=0.162\ntype '?' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.162\ntype 'l' dt=0.162\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 's' dt=0.162\ntype 'e' dt=0.162\ntype 'd' dt=0.166\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'x' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.163\ntype 's' dt=0.162\ntype 't' dt=0.163\ntype 'a' dt=0.163\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.164\ntype '$' dt=0.162\ntype '?' dt=0.164\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'x' dt=0.162\ntype 'f' dt=0.164\ntype 'e' dt=0.162\ntype 't' dt=0.163\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'p' dt=0.162\ntype 'o' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.163\nPASS: real VM/MMU profile 1 vCPU; 7 faulting children verified.\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/vm-smp1.log",
+      "log_sha256": "f3eb5d12c5de216c3eeefb6f289e692d0e4475f9fb369012a92df7092097a66b"
     },
     {
-      "name": "guest-vm-smp2",
+      "name": "vm-smp2",
       "exit_code": 0,
-      "stdout": "type 'W' dt=0.163\ntype 'e' dt=0.162\ntype 'b' dt=0.162\ntype 'k' dt=0.163\ntype 'i' dt=0.163\ntype 't' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.163\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.167\ntype 'e' dt=0.162\ntype 's' dt=0.165\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.164\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.164\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'l' dt=0.164\ntype 'e' dt=0.162\ntype 'f' dt=0.163\ntype 't' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.163\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.166\ntype ' ' dt=0.162\ntype 'l' dt=0.162\ntype 'e' dt=0.162\ntype 'f' dt=0.162\ntype 't' dt=0.163\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.163\ntype 'f' dt=0.162\ntype 'a' dt=0.165\ntype 'u' dt=0.165\ntype 'l' dt=0.162\ntype 't' dt=0.163\ntype ' ' dt=0.164\ntype 'r' dt=0.162\ntype 'i' dt=0.162\ntype 'g' dt=0.167\ntype 'h' dt=0.162\ntype 't' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.164\ntype 'c' dt=0.165\ntype 'h' dt=0.162\ntype ' ' dt=0.165\ntype 's' dt=0.164\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.164\ntype 'u' dt=0.162\ntype 's' dt=0.165\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'i' dt=0.162\ntype 'g' dt=0.170\ntype 'h' dt=0.162\ntype 't' dt=0.162\ntype 'f' dt=0.163\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.163\ntype ' ' dt=0.162\ntype 'f' dt=0.163\ntype 'a' dt=0.163\ntype 'u' dt=0.164\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.162\ntype 'a' dt=0.183\ntype 'd' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'l' dt=0.162\ntype 'y' dt=0.168\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.167\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.164\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.164\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.162\ntype '?' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.163\ntype 'a' dt=0.162\ntype 'd' dt=0.163\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'l' dt=0.162\ntype 'y' dt=0.162\ntype 'f' dt=0.164\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.166\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.163\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'e' dt=0.162\ntype 'f' dt=0.167\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.167\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.162\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'o' dt=0.162\ntype 'n' dt=0.162\ntype 'e' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.163\ntype 'c' dt=0.163\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'd' dt=0.162\ntype 'e' dt=0.162\ntype 'c' dt=0.162\ntype 'o' dt=0.168\ntype 'm' dt=0.162\ntype 'm' dt=0.162\ntype 'i' dt=0.162\ntype 't' dt=0.162\ntype 't' dt=0.168\ntype 'e' dt=0.166\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.166\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.165\ntype '$' dt=0.165\ntype '?' dt=0.163\ntype ' ' dt=0.162\ntype 'd' dt=0.162\ntype 'e' dt=0.162\ntype 'c' dt=0.162\ntype 'o' dt=0.166\ntype 'm' dt=0.162\ntype 'm' dt=0.162\ntype 'i' dt=0.162\ntype 't' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.162\ntype 'l' dt=0.163\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 's' dt=0.165\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.166\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.164\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.163\ntype '?' dt=0.163\ntype ' ' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.166\ntype 'l' dt=0.172\ntype 'e' dt=0.162\ntype 'a' dt=0.164\ntype 's' dt=0.163\ntype 'e' dt=0.162\ntype 'd' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.171\ntype 'c' dt=0.163\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'f' dt=0.162\ntype 'a' dt=0.162\ntype 'u' dt=0.162\ntype 'l' dt=0.162\ntype 't' dt=0.162\ntype ' ' dt=0.162\ntype 'n' dt=0.162\ntype 'x' dt=0.162\ntype 'f' dt=0.163\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.163\ntype ' ' dt=0.163\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype 'a' dt=0.162\ntype 't' dt=0.162\ntype 'u' dt=0.162\ntype 's' dt=0.162\ntype ' ' dt=0.162\ntype '$' dt=0.165\ntype '?' dt=0.163\ntype ' ' dt=0.162\ntype 'n' dt=0.164\ntype 'x' dt=0.162\ntype 'f' dt=0.163\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\ntype ' ' dt=0.162\ntype 'p' dt=0.162\ntype 'o' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\nPASS: real VM/MMU profile 2 vCPU; 7 faulting children verified.\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/vm-smp2.log",
+      "log_sha256": "61c1b3f67e7709f366dc17773b2fbef2d31749132fe311265262f1e111fc41ae"
     },
     {
-      "name": "guest-sync-probe-build",
+      "name": "sync-probe-build",
       "exit_code": 0,
-      "stdout": "Imported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\n\nQA ONLY - DO NOT DISTRIBUTE: /var/tmp/tmc-sync-guest/tinymacOS-qa-probe-x86_64.iso\n",
-      "stderr": "xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\n"
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/sync-build.log",
+      "log_sha256": "1b8fae1ab906dcdb7faebca55a74c361b05666ce4fa7be48da32412f43a1792b"
     },
     {
-      "name": "guest-sync-smp1",
+      "name": "sync-smp1",
       "exit_code": 0,
-      "stdout": "type 'S' dt=0.163\ntype 'y' dt=0.162\ntype 'n' dt=0.163\ntype 'c' dt=0.163\ntype 'l' dt=0.163\ntype 'o' dt=0.163\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.168\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.166\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.163\ntype 't' dt=0.163\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.163\nPASS real native compare-and-park + mutex/condition on 1 vCPUs; 240 yielded critical sections, broadcast, timed lock/condition and errno preserved\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/sync-smp1.log",
+      "log_sha256": "37e9a1fb49f7e5f2d300558b3b1c259eca5646463ab1521cac2062c8c84bc595"
     },
     {
-      "name": "guest-sync-smp4",
+      "name": "sync-smp4",
       "exit_code": 0,
-      "stdout": "type 'S' dt=0.162\ntype 'y' dt=0.162\ntype 'n' dt=0.162\ntype 'c' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.163\ntype '2' dt=0.162\ntype '8' dt=0.165\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.163\ntype 'l' dt=0.162\ntype '-' dt=0.163\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS real native compare-and-park + mutex/condition on 4 vCPUs; 240 yielded critical sections, broadcast, timed lock/condition and errno preserved\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/sync-smp4.log",
+      "log_sha256": "81572f39d71dd6ea0c001463b294aa17b925a5836f8d8b4d18076eb1b0ec01b9"
     },
     {
-      "name": "guest-sync-smp8",
+      "name": "sync-smp8",
       "exit_code": 0,
-      "stdout": "type 'S' dt=0.163\ntype 'y' dt=0.162\ntype 'n' dt=0.162\ntype 'c' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.163\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.164\ntype '5' dt=0.162\ntype 'l' dt=0.166\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.163\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.168\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.168\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.163\ntype 'h' dt=0.163\nPASS real native compare-and-park + mutex/condition on 8 vCPUs; 240 yielded critical sections, broadcast, timed lock/condition and errno preserved\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/sync-smp8.log",
+      "log_sha256": "8ff580c7f55ab902ed520fc3acd64b8f8ba4c6d526ad3e34ca9c5a8590274dad"
     },
     {
-      "name": "guest-tls-probe-build",
+      "name": "tls-probe-build",
       "exit_code": 0,
-      "stdout": "Imported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\n\nQA ONLY - DO NOT DISTRIBUTE: /var/tmp/tmc-tls-guest/tinymacOS-qa-probe-x86_64.iso\n",
-      "stderr": "xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\n"
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/tls-build.log",
+      "log_sha256": "48a3148a4c1c0f0556ed745bc31cbfb38cc2095817a3ea350f17cb05ab4c94b4"
     },
     {
-      "name": "guest-tls-smp1",
+      "name": "tls-smp1",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.163\ntype 'l' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.163\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.163\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.163\ntype 't' dt=0.163\ntype 'e' dt=0.163\ntype 's' dt=0.165\ntype 't' dt=0.162\ntype '-' dt=0.163\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS real guest native FS/TLS isolation on 1 vCPUs; 4 workers, 600 post-yield checks\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/tls-smp1.log",
+      "log_sha256": "deda7ff721008eeb6b842c73fcc6bb5ec8f5f6d9e0ca096faef1208822d8a948"
     },
     {
-      "name": "guest-tls-smp4",
+      "name": "tls-smp4",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.167\ntype 'l' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.163\ntype 'o' dt=0.163\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.163\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.163\ntype '5' dt=0.162\ntype 'l' dt=0.161\ntype 'o' dt=0.162\ntype 'c' dt=0.164\ntype 'a' dt=0.166\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.164\ntype 'e' dt=0.163\ntype 's' dt=0.163\ntype 't' dt=0.163\ntype '-' dt=0.163\ntype '2' dt=0.163\ntype '8' dt=0.166\ntype '5' dt=0.171\ntype 'f' dt=0.163\ntype 'e' dt=0.163\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS real guest native FS/TLS isolation on 4 vCPUs; 4 workers, 600 post-yield checks\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/tls-smp4.log",
+      "log_sha256": "7f0320bc4b3e7efc17cd671e3ab3ae1a57cf298601ad2f87821eec219baef54a"
     },
     {
-      "name": "guest-tls-smp8",
+      "name": "tls-smp8",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.163\ntype 'l' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.166\ntype 'c' dt=0.163\ntype 'a' dt=0.162\ntype 'l' dt=0.163\ntype '-' dt=0.163\ntype 't' dt=0.162\ntype 'e' dt=0.163\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.164\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.163\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.163\ntype 's' dt=0.162\ntype 't' dt=0.165\ntype '-' dt=0.162\ntype '2' dt=0.164\ntype '8' dt=0.164\ntype '5' dt=0.162\ntype 'f' dt=0.167\ntype 'e' dt=0.165\ntype 't' dt=0.163\ntype 'c' dt=0.164\ntype 'h' dt=0.163\nPASS real guest native FS/TLS isolation on 8 vCPUs; 4 workers, 600 post-yield checks\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/tls-smp8.log",
+      "log_sha256": "6db35489b35c9932605e1a11204f73c5cbefa5b31f7519504e26833195696325"
     },
     {
-      "name": "guest-threads-probe-build",
+      "name": "threads-probe-build",
       "exit_code": 0,
-      "stdout": "Imported icon atlas: 14 artworks, 15 slots, 6 sizes\nSVG Control Center: 13 original SVG sources; deterministic antialiased masks\nBaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 dd0e10dd566d5c6a42d9c513cc921c3682c07649504344b8d263b4ec744ba6e1\n\nQA ONLY - DO NOT DISTRIBUTE: /var/tmp/tmc-threads-guest/tinymacOS-qa-probe-x86_64.iso\n",
-      "stderr": "xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.\n\nxorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600\n"
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/threads-build.log",
+      "log_sha256": "08259e18d28c333e65c5d0de8c11c3e4aaa5edd635d142a08d72513e719cf5ee"
     },
     {
-      "name": "guest-threads-smp1",
+      "name": "threads-smp1",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.167\ntype 'h' dt=0.162\ntype 'r' dt=0.163\ntype 'e' dt=0.162\ntype 'a' dt=0.162\ntype 'd' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.164\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.163\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.163\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.163\ntype 't' dt=0.163\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.164\ntype 'e' dt=0.162\ntype 't' dt=0.162\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS native managed thread runtime on 1 CPUs: 90 base creations plus slot exhaustion, safe join/timeout, TSD destructors/generations, 16 TCB unmaps and freestanding C++ RAII\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/threads-smp1.log",
+      "log_sha256": "755e87e37c90cda6d7ffe3da77de3f7650877070ed0c64fedac84d2e63200c05"
     },
     {
-      "name": "guest-threads-smp4",
+      "name": "threads-smp4",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.163\ntype 'h' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.168\ntype 'a' dt=0.169\ntype 'd' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.162\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.162\ntype '5' dt=0.165\ntype 'f' dt=0.162\ntype 'e' dt=0.165\ntype 't' dt=0.163\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS native managed thread runtime on 4 CPUs: 90 base creations plus slot exhaustion, safe join/timeout, TSD destructors/generations, 16 TCB unmaps and freestanding C++ RAII\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/threads-smp4.log",
+      "log_sha256": "bd578df33f80c26b5848982067051917dba4d196a1ab28299a987850f2a1cdb6"
     },
     {
-      "name": "guest-threads-smp8",
+      "name": "threads-smp8",
       "exit_code": 0,
-      "stdout": "type 'T' dt=0.162\ntype 'h' dt=0.162\ntype 'r' dt=0.162\ntype 'e' dt=0.162\ntype 'a' dt=0.167\ntype 'd' dt=0.162\ntype 's' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.162\ntype 'c' dt=0.164\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.163\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.162\ntype '8' dt=0.163\ntype '5' dt=0.162\ntype 'l' dt=0.162\ntype 'o' dt=0.163\ntype 'c' dt=0.162\ntype 'a' dt=0.162\ntype 'l' dt=0.162\ntype '-' dt=0.162\ntype 't' dt=0.162\ntype 'e' dt=0.162\ntype 's' dt=0.163\ntype 't' dt=0.162\ntype '-' dt=0.162\ntype '2' dt=0.171\ntype '8' dt=0.162\ntype '5' dt=0.162\ntype 'f' dt=0.162\ntype 'e' dt=0.162\ntype 't' dt=0.165\ntype 'c' dt=0.162\ntype 'h' dt=0.162\nPASS native managed thread runtime on 8 CPUs: 90 base creations plus slot exhaustion, safe join/timeout, TSD destructors/generations, 16 TCB unmaps and freestanding C++ RAII\n",
-      "stderr": ""
+      "external_log": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e/threads-smp8.log",
+      "log_sha256": "5ce2bef40142db619e26bee6f4078469ef8c738d08d1eaabf38b3249b5b60ae9"
     }
   ]
 }

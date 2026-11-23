@@ -22,5 +22,5 @@ try:
    time.sleep(.2)
   else:raise AssertionError('Guest TLS marker timeout; not a pass')
   g.visible('checks=600 workers=4 cpus='+str(cpus));g.visible('errno-per-thread=isolated');g.visible('adapter-errno=thread-local');g.shot('tls-pass');record.update(passed=True,workers=4,post_yield_isolation_checks=600,invalid_base_rejected=True,unset_thread_starts_with_zero_fs=True,child_does_not_inherit_parent_tcb=True,main_errno_preserved=True,thread_cleanup_clears_fs=True,target_errno_macro_and_adapter_errors_isolated=True,global_errno_symbol_absent=True,cross_cpu_execution_required=cpus>1)
-finally:(r/'test-results'/('guest-tls-smp'+str(cpus)+'.json')).write_text(json.dumps(record,indent=2)+'\n')
+finally:(Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-tls-smp'+str(cpus)+'.json')).write_text(json.dumps(record,indent=2)+'\n')
 print('PASS real guest native FS/TLS isolation on',cpus,'vCPUs; 4 workers, 600 post-yield checks')

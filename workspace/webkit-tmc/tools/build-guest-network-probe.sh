@@ -13,11 +13,11 @@ mkdir -p "$OUT"
 # Preserve exactly the source hashes used BEFORE any target compilation.
 python3 - "$ROOT" "$OS" "$OUT" "$KIND" <<'PY'
 from pathlib import Path
-import sys,hashlib,json
+import sys,hashlib,json,os
 r,o,d=map(Path,sys.argv[1:4]);kind=sys.argv[4];files=[r/('tests/guest_'+kind+'_probe.c'),*sorted((r/'posix/src').glob('*.c')),*sorted((r/'posix/include').glob('*.h')),*sorted((r/'posix/libc-headers').rglob('*.h')),o/'userspace/lib.h',o/'userspace/start.S',o/'userspace/layout.ld',o/'kernel/string.c',o/'crypto/sha256.c',o/'kernel/net.c',o/'kernel/syscall.c',*sorted((o/'include').glob('*.h'))]
 if kind=='threads':files += [r/'tests/thread_cases.h',r/'tests/threads_cpp_smoke.cpp']
 manifest={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
-(r/('test-results/guest-'+kind+'-source-hashes.json')).write_text(json.dumps(manifest,indent=2))
+(Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-'+kind+'-source-hashes.json')).write_text(json.dumps(manifest,indent=2))
 PY
 cd "$OS"
 source tools/env.sh
@@ -58,6 +58,6 @@ production=Path(os.environ.get('TMC_PRODUCTION_BUILD','/var/tmp/tmc-webkit-vm-sy
 for name in ('kernel.elf','KernelCache'):assert (d/name).read_bytes()==(production/name).read_bytes(), 'QA kernel differs from current production build'
 manifest['iso_filename']='tinymacOS-qa-probe-x86_64.iso';manifest['production_build']=str(production);manifest['kernel_equals_current_production']=True
 if kind=='threads':manifest['g++']=subprocess.check_output(['g++','--version'],text=True).splitlines()[0]
-(r/('test-results/guest-'+kind+'-build.json')).write_text(json.dumps(manifest,indent=2))
+(Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-'+kind+'-build.json')).write_text(json.dumps(manifest,indent=2))
 PY
 printf '\nQA ONLY - DO NOT DISTRIBUTE: %s\n' "$OUT/tinymacOS-qa-probe-x86_64.iso"

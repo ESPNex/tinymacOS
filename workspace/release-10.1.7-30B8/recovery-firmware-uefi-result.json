@@ -1,8 +1,8 @@
 {
   "passed": true,
   "firmware": "uefi",
-  "iso_sha256": "cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03",
-  "work": "/var/tmp/tmc1017-firmware-uefi-f1s_j04i",
+  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
+  "work": "/var/tmp/tmc1017-firmware-uefi-_vyswvm6",
   "linux_hcd_port": false,
   "keyboard_adapter_native": false,
   "physical_hardware_tested": false,

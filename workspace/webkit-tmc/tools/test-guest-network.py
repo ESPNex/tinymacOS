@@ -13,7 +13,7 @@ if os.environ.get('TMC_PROBE_RUN'):
  WORK=Path(os.environ['TMC_PROBE_RUN']);WORK.mkdir(parents=True,exist_ok=False)
 else:WORK=Path(tempfile.mkdtemp(prefix='tmc-webkit-network-',dir='/var/tmp'))
 cpus=int(os.environ.get('TMC_SMP','2'));assert cpus in (1,2),'Test profiles are 1 or 2 vCPUs'
-EVIDENCE=ROOT/('test-results/guest-network-smp'+str(cpus));EVIDENCE.mkdir(exist_ok=True)
+EVIDENCE=Path(os.environ.get('TMC_QA_RESULTS',str(ROOT/'test-results')))/('guest-network-smp'+str(cpus));EVIDENCE.mkdir(exist_ok=True)
 IMAGE=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-webkit-network-guest'))/'tinymacOS-qa-probe-x86_64.iso'
 from probe_media import verify_probe_media
 verify_probe_media(IMAGE,"network")

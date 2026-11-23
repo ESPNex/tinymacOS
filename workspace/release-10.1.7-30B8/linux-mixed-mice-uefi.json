@@ -2,15 +2,15 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "xhci",
-  "iso_sha256": "dfd32b1ca026bf7d8cc8f2be6394c89e58be32d99c90a711c2233d2c9d163827",
-  "work": "/var/tmp/tmc-two-mice-uefi-bzzlljrp",
+  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
+  "work": "/var/tmp/tmc-two-mice-uefi-oeiaxan6",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [
     "First mouse holds drag; second mouse zero-button motion moves actual Terminal window by +20 X without releasing it",
     "Both mice press left; first releases; second-held drag survives and actual window moves -10 X/+15 Y",
     "Final mouse release ends drag: subsequent pointer motion leaves Terminal window stationary",
-    "Mixed input: enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX, while both mice use Linux USB Boot driver/core",
+    "Enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX; pointer paths are PS/2 psmouse functions + USB Boot",
     "Cross-transport drag holds in both directions: PS/2 original Linux psmouse packet engine and Linux USB mouse share real registered input button state"
   ],
   "actual_iso_kernel_equals_build": true,

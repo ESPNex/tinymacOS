@@ -1,8 +1,8 @@
 {
   "passed": true,
   "firmware": "uefi",
-  "iso_sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
-  "work": "/var/tmp/tmc1017-stage-uefi-3k23inel",
+  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
+  "work": "/var/tmp/tmc1017-stage-uefi-w39m39qs",
   "linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [

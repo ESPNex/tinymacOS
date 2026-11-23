@@ -4,7 +4,8 @@ import hashlib,json,os,subprocess,tempfile
 ROOT=Path(__file__).resolve().parents[1]
 def digest(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def verify_probe_media(image,kind):
- image=Path(image);manifest=json.loads((ROOT/'test-results'/('guest-'+kind+'-build.json')).read_text())
+ results=Path(os.environ.get('TMC_QA_RESULTS',str(ROOT/'test-results')))
+ image=Path(image);manifest=json.loads((results/('guest-'+kind+'-build.json')).read_text())
  assert image.name==manifest['iso_filename']=='tinymacOS-qa-probe-x86_64.iso'
  assert digest(image)==manifest['sha256'][image.name]
  production=Path(os.environ.get('TMC_PRODUCTION_BUILD','/var/tmp/tmc-webkit-vm-system'))
@@ -19,7 +20,7 @@ def verify_probe_media(image,kind):
   subprocess.run([str(toolroot/'usr/bin/xorriso'),'-osirrox','on','-indev',str(image),'-extract','/System/Library/KernelCollections/KernelCache',str(payload)],env=env,check=True,capture_output=True)
   assert digest(payload)==digest(production/'KernelCache'),'Actual QA ISO contains a stale kernel'
  # The fresh BASE build records these before compilation; verify all remain current.
- source=json.loads((ROOT/'test-results/vm-system-source-hashes.json').read_text())
+ source=json.loads((results/'vm-system-source-hashes.json').read_text())
  osroot=ROOT.parent.parent/'tinymacOS'
  for name,expected in source.items():assert digest(osroot/name)==expected,'Source changed after fresh QA kernel build: '+name
- (ROOT/'test-results'/('guest-'+kind+'-media.json')).write_text(json.dumps({'passed':True,'image':str(image),'iso_sha256':digest(image),'production_build':str(production),'kernel_sha256':digest(production/'kernel.elf'),'kernelcache_sha256':digest(production/'KernelCache'),'actual_iso_kernel_equals_current_production':True,'source_files_verified':len(source),'source_manifest_sha256':digest(ROOT/'test-results/vm-system-source-hashes.json')},indent=2)+'\n')
+ (results/('guest-'+kind+'-media.json')).write_text(json.dumps({'passed':True,'image':str(image),'iso_sha256':digest(image),'production_build':str(production),'kernel_sha256':digest(production/'kernel.elf'),'kernelcache_sha256':digest(production/'KernelCache'),'actual_iso_kernel_equals_current_production':True,'source_files_verified':len(source),'source_manifest_sha256':digest(results/'vm-system-source-hashes.json')},indent=2)+'\n')

@@ -14,7 +14,7 @@
     "vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
     "vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
-    "drivers/xhci.c": "3356f904d4650bd608b5863e3d635660eeea3d4d3d319eaebeab06e870186a9e",
+    "drivers/xhci.c": "b9a8acbe0f682f35f253f3cd84a6a4ee5a60268de7ef548ab512c5c647633628",
     "drivers/ehci.c": "b0b7b268538344682694f081d1b5951046b1ab88213d25f1bc305a53eaf92438",
     "drivers/uhci.c": "dec0dd981dbb0a3087295f13422ee11e90b7fcda2737ea6cd05983408a1bcd55",
     "tests/input_maintenance.c": "0e41a9aa804f9d00623c7f35182b5a7a5cec5fe512922cd52218c488c0fe8812"

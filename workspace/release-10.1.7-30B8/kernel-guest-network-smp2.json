@@ -1,7 +1,7 @@
 {
   "scope": "actual QEMU guest with target backend, lwIP/e1000/slirp and controlled loopback peer; NOT WebKit/HTTPS acceptance",
   "iso_qa_only": true,
-  "iso_sha256": "47692272d78a557fcf053319f7e7a7fe386e9fdee689b2b8c6a683a3149a2fc8",
+  "iso_sha256": "ff06b2db40ac0ef1a55806654d997cf9a17a7e1cf0a9d42b6d8642594a766b9d",
   "requested_vcpus": 2,
   "font_bytes": 2453335,
   "font_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
