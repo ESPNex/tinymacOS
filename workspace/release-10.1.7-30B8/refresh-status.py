@@ -2,7 +2,7 @@
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
 import filecmp,hashlib,json,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-ps2-v8');iso=base/'tinymacOS-10.1.7-x86_64.iso'
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-psmouse-v9');iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -11,8 +11,8 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-ps2-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
-(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/EHCI qTD function and complete libps2; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
+other=Path('/var/tmp/tmc-10.1.7/linux-ehci-independent/tinymacOS-10.1.7-psmouse-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
 symbols=subprocess.check_output(['nm',str(base/'build/kernel.debug')],text=True)
@@ -48,7 +48,12 @@ status['linux_psmouse_driver_port']=False
 status['input_port_scope']={
  'usb_mouse':'Upstream Boot usbmouse + URB core; native HCD; no general HID',
  'usb_keyboard':'Upstream Boot usbkbd + URB core; native HCD; no general HID',
- 'ps2_mouse':'Upstream complete libps2 command/RX; native i8042/stream decoder, not psmouse',
+ 'ps2_mouse':'Upstream complete libps2 + original psmouse packet and IMPS/Explorer detect functions; native i8042/framing, not complete psmouse',
  'ps2_keyboard':'Upstream complete libps2 command/RX; native i8042/stream decoder/LED, not atkbd'}
 status['blocking_work'].insert(2,'Complete actual Linux i8042/serio/atkbd/psmouse driver port; current PS/2 increment is the complete original libps2 library, not the class drivers')
+psmouse_contract=load('linux-psmouse-contract-result.json')
+status['actual_upstream_psmouse_packet_and_detect_functions_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['psmouse_process_byte','psmouse_report_standard_motion','psmouse_report_standard_buttons'])
+status['linux_psmouse_functions_host_contract_passed']=bool(psmouse_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in psmouse_contract.get('sources',{}).items())
+status['ps2_usb_shared_pointer_guest_profiles_passed']=sum(current(f'linux-mixed-mice-{fw}.json') for fw in ['uefi','bios'])
+status['ps2_usb_shared_pointer_guest_profiles_expected']=2
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

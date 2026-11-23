@@ -45,6 +45,7 @@ typedef unsigned gfp_t;
 #define REL_X 0
 #define REL_Y 1
 #define REL_WHEEL 8
+#define REL_HWHEEL 6
 #define BIT_WORD(x) ((unsigned)(x)/64)
 #define BIT_MASK(x) (1UL<<((unsigned)(x)%64))
 #define USB_INTERFACE_CLASS_HID 3
@@ -68,7 +69,7 @@ struct input_dev {
  const char *name,*phys;struct input_id id;struct device dev;
  unsigned long evbit[1],keybit[16],relbit[1],ledbit[1],led[1],key[4];
  void *driver_data;int (*open)(struct input_dev *);void (*close)(struct input_dev *);
- int registered,x,y,wheel,buttons;void *owner;
+ int registered,x,y,wheel,hwheel,buttons;void *owner;
  int (*event)(struct input_dev *,unsigned,unsigned,int);
 };
 struct usb_bus {const char *bus_name;int no_sg_constraint;};
@@ -152,3 +153,9 @@ struct usb_driver *tmc_lx_usbkbd_driver(void);
 unsigned tmc_lx_usbkbd_usage(unsigned);
 
 #include "tmc_urb_core.h"
+
+/* Real registered non-USB input devices share button state with USB mice.
+ * No fabricated usb_interface or URB is created for a PS/2 pointer. */
+int tmc_lx_input_register_pointer(struct input_dev *);
+void tmc_lx_input_unregister_pointer(struct input_dev *);
+void tmc_lx_os_hwheel(int);

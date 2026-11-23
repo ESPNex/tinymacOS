@@ -9,10 +9,13 @@ from retail_guest import Retail
 from input_pixels import cursor
 import numpy as np
 fw=sys.argv[1];assert fw in ['uefi','bios']
-base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-ps2-v8'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
+mixed=len(sys.argv)>2 and sys.argv[2]=='ps2-usb'
+profile='xhci' if mixed else 'xhci-two-mice'
+receipt='linux-mixed-mice' if mixed else 'linux-two-mice'
+base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-psmouse-v9'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix=f'tmc-two-mice-{fw}-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT='xhci-two-mice',TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
-r={'passed':False,'firmware':fw,'profile':'xhci-two-mice','iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'full_linux_hcd_port':False,'physical_hardware_tested':False,'checks':[]}
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
+r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'full_linux_hcd_port':False,'physical_hardware_tested':False,'checks':[]}
 try:
  symbols=subprocess.check_output(['nm',str(build/'kernel.debug')],text=True).splitlines()
  def address(name):return int(next(s.split()[0] for s in symbols if s.endswith(' '+name)),16)
@@ -28,13 +31,16 @@ try:
    p=w/'counters.bin';g.req('pmemsave',val=address(name)+offset,size=size,filename=str(p));return p.read_bytes()
   def buttons():return struct.unpack('<I',memory('input_diag',4,button_offset))[0]
   def counters():return dict(zip(['probes','attached','completions','frames','errors','rejected','disconnected','allocations','frees'],struct.unpack('<9Q',memory('tmc_linux_usb_stats',72))))
-  r['before']=before=counters();assert before['attached']==2,before
+  r['before']=before=counters();assert before['attached']==(1 if mixed else 2),before
   r['usb']=g.hmp('info usb');assert 'USB Keyboard' not in r['usb']
   assert struct.unpack('<i',memory('keyboard_on',4))[0]==1
   r['ps2_before']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
   assert r['ps2_before']['setups']==1 and r['ps2_before']['commands']>=9 and not r['ps2_before']['command_errors']
 
-  mice=[m for m in g.req('query-mice') if m['name']=='QEMU HID Mouse'];assert len(mice)==2,mice;r['mice']=mice
+  mice=[m for m in g.req('query-mice') if m['name']=='QEMU HID Mouse'];assert len(mice)==(1 if mixed else 2),mice
+  if mixed:mice.insert(0,next(m for m in g.req('query-mice') if m['name']=='QEMU PS/2 Mouse'))
+  r['mice']=mice
+
   def select(i):g.hmp('mouse_set '+str(mice[i]['index']));time.sleep(.1)
   select(0);g.enroll('MouseLinux');g.key('f2');g.visible('Sessione locale');cursor(g,650,182)
   # Titlebar is glass, not a flat-pixel font template. Track the exact
@@ -67,7 +73,8 @@ try:
   r['after']=after=counters();assert after['completions']>before['completions'] and after['completions']==after['frames'] and not after['errors'] and not after['rejected']
   r['ps2_after']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
   assert r['ps2_after']['data_bytes']>r['ps2_before']['data_bytes']+50 and not r['ps2_after']['rx_errors']
-  r['checks'].append('Mixed input: enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX, while both mice use Linux USB Boot driver/core')
+  r['checks'].append('Enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX; pointer paths are '+('PS/2 psmouse functions + USB Boot' if mixed else 'two USB Boot mice'))
+  if mixed:r['checks'].append('Cross-transport drag holds in both directions: PS/2 original Linux psmouse packet engine and Linux USB mouse share real registered input button state')
   r['passed']=True;g.shot('two-mice-drag')
- print('PASS two real USB mice + actual rendered drag/button union',fw,r['after'],flush=True)
-finally:(q/f'linux-two-mice-{fw}.json').write_text(json.dumps(r,indent=2,ensure_ascii=False)+'\n')
+ print('PASS actual rendered drag/button union',profile,fw,r['after'],flush=True)
+finally:(q/f'{receipt}-{fw}.json').write_text(json.dumps(r,indent=2,ensure_ascii=False)+'\n')

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Audit current versions in actual optical/installed media; include the updated About window."""
 from pathlib import Path
-import hashlib,json,os,plistlib,struct,subprocess,tempfile,zlib
-q=Path(__file__).resolve().parent;home=q.parents[1];osroot=home/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7');iso=Path(os.environ.get('TMC_STAGE_ISO',str(base/'tinymacOS-10.1.7-x86_64.iso')));build=Path(os.environ.get('TMC_STAGE_BUILD',str(base/'linux-ps2-v8/build')));w=Path(tempfile.mkdtemp(prefix='tmc1017-identity-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root');env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
+import hashlib,json,os,plistlib,struct,subprocess,tempfile,shutil,zlib
+q=Path(__file__).resolve().parent;home=q.parents[1];osroot=home/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-psmouse-v9');iso=Path(os.environ.get('TMC_STAGE_ISO',str(base/'tinymacOS-10.1.7-x86_64.iso')));build=Path(os.environ.get('TMC_STAGE_BUILD',str(base/'build')));w=Path(tempfile.mkdtemp(prefix='tmc1017-identity-',dir='/var/tmp'));tool=Path('/var/tmp/tmc/tools/root');env={**os.environ,'PATH':str(tool/'usr/bin')+':'+os.environ['PATH'],'LD_LIBRARY_PATH':str(tool/'usr/lib/x86_64-linux-gnu')}
 def run(*args):return subprocess.check_output(list(map(str,args)),env=env,stderr=subprocess.DEVNULL)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def extract(src,dest):run('xorriso','-osirrox','on','-indev',iso,'-extract',src,w/dest);return w/dest
@@ -33,4 +33,6 @@ try:
  about_src=run('git','--git-dir=/var/tmp/tmc-github-git/tinymacOS.git','show','678c7e4d1947dbd8feaa11042b13eb5bd550ba36:tinymacOS/userspace/about.c');assert about_src.replace(b'10.1.6',b'10.1.7').replace(b'30B7',b'30B8')==(osroot/'userspace/about.c').read_bytes()
  r.update(passed=True,recovery_version='10.1.7 / 30B8',normal_recovery_has_no_raw_pointer_trace=True,direct_mouse_usb_driver_not_linked_in_recovery=True,about_version_updated=True,about_layout_source_unchanged_except_version_and_build=True)
  print('PASS actual ISO: optical/installed metadata 10.1.7/30B8, About 10.1.7/30B8 with original layout preserved, Recovery version and firmware-only mouse linkage')
-finally:(q/'identity-contract-result.json').write_text(json.dumps(r,indent=2)+'\n')
+finally:
+ (q/'identity-contract-result.json').write_text(json.dumps(r,indent=2)+'\n')
+ shutil.rmtree(w)

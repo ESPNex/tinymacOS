@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "iso_sha256": "b8f0c7a043602f170a33b8114e1cecffe76cacb01416236bc0d6d3c9c55fe311",
+  "iso_sha256": "dfd32b1ca026bf7d8cc8f2be6394c89e58be32d99c90a711c2233d2c9d163827",
   "checks": [
     {
       "medium": "UEFI optical",

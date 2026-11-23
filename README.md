@@ -4,7 +4,7 @@ Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e am
 
 **Versione pubblicata: 10.1.6 Tramontana · build 30B7.**
 
-La 10.1.7 / 30B8 è in sviluppo: OpenCore unificato, cancellazione delle cartelle e pulizia UI. Sono integrati i driver Boot mouse/tastiera, il core URB, la funzione DMA qTD EHCI e la libreria di protocollo PS/2 originali di Linux 6.12. Controller USB/i8042, decoder PS/2 e restante core USB/HID non sono ancora interamente portati. La tastiera Recovery usa ora i driver firmware OpenCore, con mappatura fisica italiana verificata su UEFI e BIOS. Anche Info riporta ora 10.1.7 / 30B8. Il port Linux completo resta da terminare: nessuna nuova ISO è stata pubblicata.
+La 10.1.7 / 30B8 è in sviluppo: OpenCore unificato, cancellazione delle cartelle e pulizia UI. Sono integrati i driver Boot mouse/tastiera, il core URB, la funzione DMA qTD EHCI e la libreria di protocollo PS/2 originali di Linux 6.12, oltre alle funzioni originali `psmouse` per pacchetti e rilevamento IntelliMouse/Explorer. Controller USB/i8042, driver tastiera PS/2 e restante core USB/HID non sono ancora interamente portati. La tastiera Recovery usa ora i driver firmware OpenCore, con mappatura fisica italiana verificata su UEFI e BIOS. Anche Info riporta ora 10.1.7 / 30B8. Il port Linux completo resta da terminare: nessuna nuova ISO è stata pubblicata.
 
 [Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 

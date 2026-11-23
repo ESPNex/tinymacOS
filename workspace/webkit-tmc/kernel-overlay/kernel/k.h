@@ -209,6 +209,7 @@ int fs_snap_delete(const char *);
 int fs_snap_info(FsInfo *);
 int fs_enc(int, const char *, EncInfo *);
 void hid_absolute(int x, int y, int buttons, int wheel);
+void hid_horizontal(int);
 void hid_relative(int x, int y, int buttons, int wheel);
 void hid_mouse(const u8*);void hid_keys(const u8[8]);void hid_linux_keys(const u8[32],unsigned);void input_repeat(void);
 int input_led_take(void);void kbd_setleds(int);

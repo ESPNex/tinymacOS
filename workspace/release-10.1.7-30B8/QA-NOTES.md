@@ -55,7 +55,7 @@ All twelve mouse and six keyboard profiles were rerun on v7, plus two UEFI/BIOS 
 
 Full Linux controllers/core/generic-HID and the final install/kernel/Recovery release matrix remain outstanding. No deployment or ISO upload. The latest completed public release remains 10.1.6.
 
-## Current v8: genuine Linux PS/2 command/RX library; four-path scope explicit
+## Historical v8: genuine Linux PS/2 command/RX library; four-path scope explicit
 
 Complete original Linux v6.12 `libps2.c` and header (GPL-2.0-only, hash-pinned) are now compiled through a separate compatibility wrapper. Kernel PS/2 keyboard setup and mouse wheel negotiation call original `ps2_command`; data and command responses pass original `ps2_interrupt`. Native i8042 I/O, Set-1 keyboard/PS2 mouse byte decoders and timer-safe LED machine remain native. This is not a complete `i8042`/`atkbd`/`psmouse` port. Blocking Linux PS/2 commands run during boot, not from the PIT handler; runtime LED ACKs use native nonblocking handling through Linux RX.
 
@@ -64,3 +64,13 @@ Host sanitizers cover ACK/NAK/resend, write failure, no-ACK mouse ID, keyboard I
 All twelve USB mouse, six USB keyboard and two mixed PS/2-keyboard/two-USB-mouse profiles were rerun on v8. The mixed cases observe original Linux PS/2 RX counters during enrollment, plus actual USB window dragging. Full Linux controllers, remaining USB core/hubs/HID, PS/2 class drivers and final release validation still block deployment. No physical Bay Trail result is claimed.
 
 Workspace guard counts all files, reports both decimal MB and MiB, and enforces a conservative 120 MiB ceiling below the user's 128,000,000-byte limit. Private builds/ISOs and downloaded research remain under `/var/tmp`, not in snapshots; frozen 10.1.6 receipts remain untouched. Every verified source milestone is synchronized to GitHub before any future binary publication.
+
+## Current v9: original psmouse packet/detect functions, shared PS/2+USB pointer ownership
+
+Native PS/2 arithmetic/wheel decoder replaced with byte-exact complete original Linux packet/report functions. IntelliMouse/Explorer boot detection also executes original Linux functions using real libps2 AUX commands. Vendor source+header and both extraction ranges are hash-pinned; GPL-2.0-only provenance preserved. Native i8042 and stream framing, keyboard decoder/LEDs, remaining psmouse lifecycle/touchpad protocols and full Linux USB HCD/core/hub/generic HID remain incomplete.
+
+Two PS/2-only ISO profiles pass with sixteen Linux commands, twenty-six transmitted bytes, Explorer four-byte negotiation, zero command/RX errors, Italian keyboard/Caps/LED, six exact rendered XY positions and bidirectional wheel. The twenty USB/two-USB-mouse profiles were rerun on this ISO, plus two new real PS/2+USB pointer profiles: **24 current profiles pass** across UEFI+BIOS. The latter verify actual Terminal window drag and button ownership survive both cross-transport release orders, not merely counters. Host ASan+UBSan runs at O1 and freestanding O2 check 3072 sign/axis combinations, full signed IMPS wheel, Explorer five buttons and wheel formats, stream recovery, 1024 PS/2+USB button states and failed negotiation rollback. Desktop horizontal scrolling is not implemented; the input path now delivers its independent horizontal component in EV_SCROLL.b.
+
+The first v9 boot failed under optimized compilation. Its receipts are preserved under `attempts/psmouse-adapter-optimized-guard/`; the initial private adapter used a redundant embedded-device identity guard and its optimized probe fell through after the first command. The private adapter is now explicitly bound to the sole native AUX port instead of that identity assumption; both freestanding O1/O2 sanitizer runs and actual BIOS/UEFI boots pass. The first packaging attempt also ran out of external temporary disk space, without touching the workspace or published release; a byte-verified redundant private ISO was removed before retrying. Old source-synced v7/v8 private output directories were removed only after replacement guest checks passed. Source and evidence remain in Git history.
+
+Independent normal build and dualboot packaging match byte-for-byte. Current ISO optical/installed/About/Recovery identity and actual OpenCore quiet/firmware input-driver media contracts pass. Final full install/kernel/Recovery release gates are still false; no deployment or physical Bay Trail claim.

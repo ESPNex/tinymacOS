@@ -38,10 +38,22 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/libps2.h",
       "sha256": "b57cb6943ee148455f385f39e8c626d17f3ace2d91b358b117531b05c7b38783",
       "license": "GPL-2.0-only"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/psmouse-base.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/input/mouse/psmouse-base.c",
+      "sha256": "22b20190bc3469e1f35827e6f4652073731de908975419fbf8f57d33b26eec1b",
+      "license": "GPL-2.0-only"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/psmouse.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/input/mouse/psmouse.h",
+      "sha256": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
+      "license": "GPL-2.0-only"
     }
   ],
-  "modifications": "Upstream files byte-exact; EHCI function extraction exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
-  "scope": "Complete byte-exact USB Boot mouse/keyboard, USB core urb.c and PS/2 libps2.c+header; complete EHCI qtd_fill extraction. Native bounded HCD/i8042/PS2 decoders remain; not a complete Linux USB/core/hub/HID/atkbd/psmouse/i8042 port.",
+  "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
+  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers.",
   "extractions": [
     {
       "source": "ehci-q.c",
@@ -51,6 +63,24 @@
       "end_marker": "\n/*-------------------------------------------------------------------------*/",
       "sha256": "9748a890df34b1a11e4434796b66cee1863853cf3ebe5a9fc012ddbfe3856faa",
       "modifications": "none: complete function body, including signature, preserved byte-for-byte"
+    },
+    {
+      "source": "psmouse-base.c",
+      "output": "psmouse-packets.inc",
+      "function": "standard packet functions + psmouse_process_byte",
+      "start_marker": "void psmouse_report_standard_buttons(",
+      "end_marker": "\nvoid psmouse_queue_work(",
+      "sha256": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "psmouse-base.c",
+      "output": "psmouse-detect.inc",
+      "function": "intellimouse_detect + im_explorer_detect",
+      "start_marker": "static int intellimouse_detect(",
+      "end_marker": "\n/*\n * Kensington ThinkingMouse",
+      "sha256": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
+      "modifications": "none: complete functions and intervening comments, byte-exact"
     }
   ]
 }

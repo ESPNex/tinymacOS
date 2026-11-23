@@ -9,7 +9,7 @@
 #include <pthread.h>
 #include "../compat/linux/usb_input.c"
 static long alive,fail_after=-1;static unsigned lock_word;
-static int events,last_x,last_y,last_buttons,last_wheel,errors;
+static int events,last_x,last_y,last_buttons,last_wheel,last_hwheel,errors;
 static void *allocate(size_t n,int aligned)
 {
  if(fail_after==0)return 0;if(fail_after>0)fail_after--;
@@ -22,6 +22,7 @@ void tmc_lx_os_dma_free(void *p,u64 dma){assert((u64)p==dma);tmc_lx_os_free(p);}
 u32 tmc_lx_os_lock(void){while(__sync_lock_test_and_set(&lock_word,1)){}return 0;}
 void tmc_lx_os_unlock(u32 f){(void)f;__sync_lock_release(&lock_word);}
 void tmc_lx_os_pointer(int x,int y,int b,int w){events++;last_x=x;last_y=y;last_buttons=b;last_wheel=w;}
+void tmc_lx_os_hwheel(int delta){last_hwheel=delta;}
 void tmc_lx_os_error(const char *s){assert(s&&*s);errors++;}
 void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods){(void)bitmap;(void)mods;assert(!"unexpected keyboard in mouse-only fixture");}
 u32 tmc_lx_os_irq_save(void){return 0;}

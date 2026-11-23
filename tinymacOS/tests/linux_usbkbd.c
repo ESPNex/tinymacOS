@@ -28,6 +28,7 @@ void *tmc_lx_os_dma_alloc(size_t n,u64 *dma){assert(n<=4096);void *p=allocate(n,
 void tmc_lx_os_dma_free(void *p,u64 dma){assert((u64)p==dma);tmc_lx_os_free(p);}
 u32 tmc_lx_os_lock(void){while(__sync_lock_test_and_set(&lock_word,1)){}return 0;}
 void tmc_lx_os_unlock(u32 flags){(void)flags;__sync_lock_release(&lock_word);}
+void tmc_lx_os_hwheel(int delta){hid_horizontal(delta);}
 void tmc_lx_os_pointer(int x,int y,int b,int w){hid_relative(x,y,b,w);}
 void tmc_lx_os_keyboard(const u8 bits[32],unsigned mods){hid_linux_keys(bits,mods);}
 void tmc_lx_os_error(const char *s){assert(s&&*s);}

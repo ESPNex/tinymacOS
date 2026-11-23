@@ -11,10 +11,11 @@
  * Keyboard: device Set 2 with controller translation to Set 1.
  * Mouse: standard 3-byte plus negotiated IntelliMouse 3/4 wheel packets.
  * Linux v6.12 libps2 owns boot command/ACK/resend/response handling for both
- * ports. Controller, stream decoders and timer-safe LED machine remain native;
+ * ports. Linux psmouse handles relative packets and wheel/Explorer probing.
+ * Controller, keyboard decoder/framing and timer-safe LEDs remain native;
  * this is NOT the complete Linux i8042/atkbd/psmouse driver port. */
-static int keyboard_on,mouse_on,ext,pause_left,mouse_bytes=3,mouse_at;
-static u8 keys[256],mouse_packet[4];
+static int keyboard_on,mouse_on,ext,pause_left;
+static u8 keys[256];
 static int kmods,numlock=1,scrolllock;
 static int led_want=2,led_applied=-1,led_phase,led_sent,led_retries;
 static u64 led_deadline;
@@ -67,18 +68,6 @@ static void keyboard_byte(u8 b)
     }
     input_key_usage(usage,kmods);
 }
-static void mouse_byte(u8 b)
-{
-    if(!mouse_at && !(b&8))return; /* first-byte sync, not ACK filtering mid-packet */
-    mouse_packet[mouse_at++]=b;
-    if(mouse_at<mouse_bytes)return;
-    mouse_at=0;u8 s=mouse_packet[0];
-    if(s&0xc0)return; /* overflow: do not turn an overflow into cursor teleportation */
-    int x=(int)mouse_packet[1]-((s&16)?256:0);
-    int y=(int)mouse_packet[2]-((s&32)?256:0);
-    int wheel=0;if(mouse_bytes==4){wheel=mouse_packet[3]&15;if(wheel&8)wheel-=16;wheel=-wheel;}
-    hid_relative(x,-y,(s&1)|((s&2)?2:0)|((s&4)?4:0),wheel);
-}
 static int ready_write(void)
 {
     for(int i=0;i<60000;i++){if(!(inb(0x64)&2))return 1;waitio();}return 0;
@@ -102,16 +91,12 @@ static int ps2_write_byte(void *context,unsigned aux,u8 value)
 static void ps2_receive_byte(void *context,unsigned aux,u8 value,unsigned flags)
 {
     (void)context;
-    if(flags){mouse_at=0;ext=0;return;}
-    if(aux){if(mouse_on)mouse_byte(value);}else if(keyboard_on)keyboard_byte(value);
+    if(aux){if(mouse_on)tmc_linux_psmouse_byte(value,flags);}
+    else if(flags){ext=0;pause_left=0;}else if(keyboard_on)keyboard_byte(value);
 }
 static int device(int aux,u8 value)
 {
     return !tmc_linux_ps2_command((unsigned)aux,0,0,value);
-}
-static int rate(int value)
-{
-    u8 param=(u8)value;return !tmc_linux_ps2_command(1,&param,1,0x10f3);
 }
 void ps2_init(void)
 {
@@ -130,11 +115,10 @@ void ps2_init(void)
     }
     if(cmd(0xa9)&&receive(0)==0&&cmd(0xa8)&&device(1,0xf6)) {
         cfg&=~32;
-        u8 id[2]={0};
-        if(rate(200)&&rate(100)&&rate(80)&&!tmc_linux_ps2_command(1,id,sizeof id,0x02f2)) {
-            if(id[0]==3||id[0]==4)mouse_bytes=4;
+        if(tmc_linux_psmouse_probe()) {
+            if(device(1,0xf4)){mouse_on=1;device_add("PS/2 mouse (Linux packet engine)","input",0);}
+            else tmc_linux_psmouse_stop();
         }
-        if(device(1,0xf4)){mouse_on=1;device_add("PS/2 mouse (i8042)","input",0);}
     }
     /* Self/interface tests and enable commands may change the clock bits. */
     if(cmd(0x60))data((u8)cfg);

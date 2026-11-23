@@ -4,12 +4,12 @@
   "requested_build": "30B8",
   "published": false,
   "stable_release_unchanged": "10.1.6",
-  "development_iso_sha256": "59a0191947aa36accd9bcfd21667bff1e09e6b2ba93d926b145ce1f19bf38f61",
+  "development_iso_sha256": "dfd32b1ca026bf7d8cc8f2be6394c89e58be32d99c90a711c2233d2c9d163827",
   "development_iso_bytes": 225738752,
-  "development_build": "/var/tmp/tmc-10.1.7/linux-ps2-v8/build",
-  "source_files": 670,
-  "source_manifest_sha256": "7afb515ecd9b95521f21f3e8bade054ffa2c98a65caf6a257477485b1d868540",
-  "about_version_updated_to_10_1_7": false,
+  "development_build": "/var/tmp/tmc-10.1.7/linux-psmouse-v9/build",
+  "source_files": 676,
+  "source_manifest_sha256": "2233a01ae8bf66c1919d7af0b5a2ac5890aed64c4362c5536b446d5b07362600",
+  "about_version_updated_to_10_1_7": true,
   "about_layout_unchanged_except_version_build": true,
   "actual_upstream_linux_usbmouse_compiled_and_linked": true,
   "actual_linux_hcd_compiled_or_linked": false,
@@ -22,8 +22,8 @@
   "linux_usbmouse_current_guest_topologies_passed": 12,
   "linux_usbmouse_current_guest_topologies_expected": 12,
   "host_deletion_contracts_passed": true,
-  "actual_opencore_media_contract_passed": false,
-  "identity_media_contract_passed": false,
+  "actual_opencore_media_contract_passed": true,
+  "identity_media_contract_passed": true,
   "full_staging_uefi_passed": false,
   "full_staging_bios_passed": false,
   "recovery_firmware_mouse_xy_passed": false,
@@ -108,7 +108,11 @@
   "input_port_scope": {
     "usb_mouse": "Upstream Boot usbmouse + URB core; native HCD; no general HID",
     "usb_keyboard": "Upstream Boot usbkbd + URB core; native HCD; no general HID",
-    "ps2_mouse": "Upstream complete libps2 command/RX; native i8042/stream decoder, not psmouse",
+    "ps2_mouse": "Upstream complete libps2 + original psmouse packet and IMPS/Explorer detect functions; native i8042/framing, not complete psmouse",
     "ps2_keyboard": "Upstream complete libps2 command/RX; native i8042/stream decoder/LED, not atkbd"
-  }
+  },
+  "actual_upstream_psmouse_packet_and_detect_functions_linked": true,
+  "linux_psmouse_functions_host_contract_passed": true,
+  "ps2_usb_shared_pointer_guest_profiles_passed": 2,
+  "ps2_usb_shared_pointer_guest_profiles_expected": 2
 }

@@ -18,6 +18,7 @@ void tmc_lx_os_dma_free(void *p,u64 dma){if(p&&(u64)p==dma)page_put(dma);}
 u32 tmc_lx_os_lock(void){u32 flags;spin_lock(&linux_usb_lock,&flags);return flags;}
 void tmc_lx_os_unlock(u32 flags){spin_unlock(&linux_usb_lock,flags);}
 void tmc_lx_os_pointer(int x,int y,int buttons,int wheel){hid_relative(x,y,buttons,wheel);}
+void tmc_lx_os_hwheel(int delta){hid_horizontal(delta);}
 void tmc_lx_os_error(const char *message){logstr(message);logstr("\n");}
 
 void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods){hid_linux_keys(bitmap,mods);}

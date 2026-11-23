@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "scope": "Complete unchanged Linux psmouse standard/extended packet functions and IntelliMouse/Explorer detect functions, executed with original libps2 and actual native adapter",
+  "complete_linux_psmouse_driver": false,
+  "full_linux_i8042_driver": false,
+  "linux_atkbd_driver": false,
+  "physical_hardware_tested": false,
+  "sources": {
+    "vendor/linux-v6.12/psmouse-base.c": "22b20190bc3469e1f35827e6f4652073731de908975419fbf8f57d33b26eec1b",
+    "vendor/linux-v6.12/psmouse.h": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
+    "vendor/linux-v6.12/psmouse-packets.inc": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
+    "vendor/linux-v6.12/psmouse-detect.inc": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
+    "vendor/linux-v6.12/manifest.json": "6fb90c5d50b06f58f95150b5fe9ccc5fcd000bb7ef6dd770bd001bafb0815a81",
+    "compat/linux/psmouse_input.c": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
+    "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
+    "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
+    "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
+    "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
+    "include/linux_ps2.h": "0ce1ace1dc15ba119ab54cb82bdc7eb3ed2056739808b1cfa455298d5777077c",
+    "tests/linux_psmouse.c": "3e792c2f0cdd3f1319997ccdcf37fe92cea87458fa92e5764dabe0f309083578",
+    "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
+    "drivers/ps2.c": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
+    "drivers/input.c": "91bedafaaba7cb80d5fe672d000f5f84adb991ac830e290a9533db509d1e9abb",
+    "drivers/linux_usb.c": "cdaac4fee0d01997ca83fce517bb17d4bda6bfa1cbc1997b42c40d7293dfbbc6",
+    "kernel/k.h": "55c5d608647fddfb902fc981efc9a993e67bbf4adb7f38ba45bd5f843d096428"
+  },
+  "runs": [
+    {
+      "optimization": "-O1",
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\nPASS original Linux psmouse packet/detect functions: real libps2 0/3/4 negotiation, 3072 sign/axis cases, full IMPS wheel, Explorer five buttons/vertical/horizontal wheel, sync/overflow/parity recovery, ACK-like packet data, 1024 PS2+USB button-union states, independent release/error/detach, failed-negotiation rollback; native i8042/framing, not full psmouse driver\n"
+    },
+    {
+      "optimization": "-O2",
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\nPASS original Linux psmouse packet/detect functions: real libps2 0/3/4 negotiation, 3072 sign/axis cases, full IMPS wheel, Explorer five buttons/vertical/horizontal wheel, sync/overflow/parity recovery, ACK-like packet data, 1024 PS2+USB button-union states, independent release/error/detach, failed-negotiation rollback; native i8042/framing, not full psmouse driver\n"
+    }
+  ]
+}

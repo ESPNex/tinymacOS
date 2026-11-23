@@ -8,6 +8,7 @@
 #define ps2_setleds native_ps2_setleds
 #include "../drivers/ps2.c"
 u64 ticks;
+static void mouse_byte(u8 b){tmc_linux_psmouse_byte(b,0); }
 static Event key(int k,int ctrl,int shift)
 {
  Event e;assert(input_pop(&e)&&e.type==EV_KEY&&e.a==k&&e.b==ctrl&&e.c==shift);return e;
@@ -40,13 +41,14 @@ int main(void)
  keyboard_byte(0x2a);keyboard_byte(0x47);key('7',0,1);keyboard_byte(0xc7);keyboard_byte(0xaa);
  native_ps2_setleds(1);assert(led_want==4);
  puts("PASS PS/2 keyboard: make/break, both Ctrl, Shift release 0xAA, Caps XOR Shift, autorepeat-safe Caps, E0 arrows, F2, PrintScreen and Pause fragments");
- mouse_byte(0);assert(mouse_at==0);
+ assert(tmc_linux_psmouse_start(0));
+ mouse_byte(0);assert(!input_pop(&e));
  mouse_byte(0x18);mouse_byte(251);mouse_byte(0);event(EV_MOUSE,-5,0,0);
  mouse_byte(0x28);mouse_byte(0);mouse_byte(251);event(EV_MOUSE,0,5,0);
  mouse_byte(0x09);mouse_byte(0);mouse_byte(0);event(EV_MOUSE,0,0,1);
  mouse_byte(0x08);mouse_byte(0);mouse_byte(0);event(EV_MOUSE,0,0,0);
  mouse_byte(0xc8);mouse_byte(255);mouse_byte(255);assert(!input_pop(&e));
- mouse_bytes=4;mouse_byte(0x0e);mouse_byte(2);mouse_byte(3);mouse_byte(15);
+ tmc_linux_psmouse_stop();assert(tmc_linux_psmouse_start(4));mouse_byte(0x0e);mouse_byte(2);mouse_byte(3);mouse_byte(15);
  event(EV_MOUSE,2,-3,6);event(EV_SCROLL,1,0,0);assert(!input_pop(&e));
  native_ps2_init();assert(!ps2_io_writes);
  ps2_fake_status=0;keyboard_on=1;native_ps2_poll();assert(ps2_last_byte==0xed&&led_phase==1);

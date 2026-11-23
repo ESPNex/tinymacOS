@@ -151,6 +151,9 @@ int input_led_take(void)
     return v;
 }
 
+/* EV_SCROLL.b carries horizontal wheel, independent of vertical .a. */
+void hid_horizontal(int delta){if(delta)put((Event){.type=EV_SCROLL,.b=delta});}
+
 void hid_relative(int x, int y, int mask, int wheel)
 {
     put((Event){.type=EV_MOUSE, .a=x, .b=y, .c=mask});

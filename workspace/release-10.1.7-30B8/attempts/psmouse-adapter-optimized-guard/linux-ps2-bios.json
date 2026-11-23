@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "firmware": "bios",
+  "profile": "ps2-keyboard-and-mouse",
+  "iso_sha256": "da946f90945cacb48e6a87683def1bd402fbeeb475e098eb1f239cc1f0151359",
+  "work": "/var/tmp/tmc-linux-ps2-bios-68ofzbuy",
+  "actual_upstream_libps2": true,
+  "full_linux_i8042_driver_port": false,
+  "linux_atkbd_driver_port": false,
+  "linux_psmouse_driver_port": false,
+  "physical_hardware_tested": false,
+  "checks": [],
+  "actual_iso_kernel_equals_build": true
+}

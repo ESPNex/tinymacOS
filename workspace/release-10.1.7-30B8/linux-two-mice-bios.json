@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "xhci-two-mice",
-  "iso_sha256": "59a0191947aa36accd9bcfd21667bff1e09e6b2ba93d926b145ce1f19bf38f61",
-  "work": "/var/tmp/tmc-two-mice-bios-ca_cy36s",
+  "iso_sha256": "dfd32b1ca026bf7d8cc8f2be6394c89e58be32d99c90a711c2233d2c9d163827",
+  "work": "/var/tmp/tmc-two-mice-bios-gfacuhyj",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [
@@ -27,13 +27,13 @@
   "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer2\r\n",
   "ps2_before": {
     "setups": 1,
-    "commands": 9,
+    "commands": 16,
     "command_errors": 0,
-    "tx_bytes": 13,
-    "rx_bytes": 16,
+    "tx_bytes": 26,
+    "rx_bytes": 30,
     "data_bytes": 2,
     "rx_errors": 0,
-    "wait_polls": 13,
+    "wait_polls": 26,
     "rejected": 0
   },
   "mice": [
@@ -63,13 +63,13 @@
   },
   "ps2_after": {
     "setups": 1,
-    "commands": 9,
+    "commands": 16,
     "command_errors": 0,
-    "tx_bytes": 13,
-    "rx_bytes": 104,
+    "tx_bytes": 26,
+    "rx_bytes": 118,
     "data_bytes": 90,
     "rx_errors": 0,
-    "wait_polls": 13,
+    "wait_polls": 26,
     "rejected": 0
   }
 }

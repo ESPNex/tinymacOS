@@ -4,10 +4,10 @@
   "physical_hardware_tested": false,
   "sources": {
     "tests/linux_mouse_lifecycle.c": "51979d0930f8a75f852c3b4707b69811ff5d563e48e5a417c3deb7313e94e2a6",
-    "tests/linux_usbmouse.c": "870f4c85b8bfafe645b3643cc5a859d55347cccdf6dc74ce1421f078808001b9",
-    "compat/linux/usb_input.c": "28981bf63e3b9c846174df2e83b508570553efa50274db336be9bf0d60977ec3",
+    "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
+    "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
     "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
-    "compat/linux/include/linux/tmc_compat.h": "af0d6922865630a3d524506f5e0adccf41bbccd23edffe2e4083d80ddb30d52d",
+    "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
     "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
     "include/linux_usb.h": "dc8215c016d1353276f3ad5ffc24874ca2f7afe5350f79510109cc9ba1874c70",

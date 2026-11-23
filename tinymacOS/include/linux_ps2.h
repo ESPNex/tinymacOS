@@ -16,3 +16,12 @@ int tmc_linux_ps2_rx_ready(unsigned port);
 int tmc_linux_ps2_receive(unsigned port,u8 byte,unsigned flags);
 typedef struct {u64 setups,commands,command_errors,tx_bytes,rx_bytes,data_bytes,rx_errors,wait_polls,rejected;} TmcLinuxPs2Stats;
 void tmc_linux_ps2_stats(TmcLinuxPs2Stats *);
+
+/* Complete upstream psmouse packet and wheel/Explorer detect functions, not
+ * the complete psmouse driver. Caller owns native controller/framing/polling. */
+int tmc_linux_psmouse_probe(void);
+int tmc_linux_psmouse_start(unsigned device_id); /* fixed, already-known protocol */
+void tmc_linux_psmouse_stop(void);
+void tmc_linux_psmouse_byte(u8 byte,unsigned flags);
+typedef struct {u64 starts,stops,bytes,packets,sync_drops,overflow_drops,rx_errors,protocol,packet_bytes;} TmcLinuxPsMouseStats;
+void tmc_linux_psmouse_stats(TmcLinuxPsMouseStats *);
