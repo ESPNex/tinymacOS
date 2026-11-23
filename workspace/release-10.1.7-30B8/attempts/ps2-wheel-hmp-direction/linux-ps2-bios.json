@@ -1,0 +1,31 @@
+{
+  "passed": false,
+  "firmware": "bios",
+  "profile": "ps2-keyboard-and-mouse",
+  "iso_sha256": "59a0191947aa36accd9bcfd21667bff1e09e6b2ba93d926b145ce1f19bf38f61",
+  "work": "/var/tmp/tmc-linux-ps2-bios-0ky6ux65",
+  "actual_upstream_libps2": true,
+  "full_linux_i8042_driver_port": false,
+  "linux_atkbd_driver_port": false,
+  "linux_psmouse_driver_port": false,
+  "physical_hardware_tested": false,
+  "checks": [
+    "Original Linux libps2 executes real native keyboard setup and IntelliMouse wheel negotiation; both PS/2 ports enabled without USB HID",
+    "Actual PS/2 keyboard enrollment/F2/Italian Shift/AltGr/accent/euro/Caps, with nonblocking native LED ACK through Linux RX"
+  ],
+  "actual_iso_kernel_equals_build": true,
+  "usb": "Error: USB support not enabled\r\n",
+  "before": {
+    "setups": 1,
+    "commands": 9,
+    "command_errors": 0,
+    "tx_bytes": 13,
+    "rx_bytes": 16,
+    "data_bytes": 2,
+    "rx_errors": 0,
+    "wait_polls": 13,
+    "rejected": 0
+  },
+  "negotiated_mouse_packet_bytes": 4,
+  "exact_rendered_xy_checks": 6
+}

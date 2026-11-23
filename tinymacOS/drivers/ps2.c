@@ -5,10 +5,14 @@
 #else
 #include "../kernel/k.h"
 #endif
+#include "linux_ps2.h"
 /* Native i8042, polled on CPU0's PIT. No BIOS/UEFI runtime input calls.
  * IRQ1/12 stay disabled at the controller: one consumer owns the data port.
  * Keyboard: device Set 2 with controller translation to Set 1.
- * Mouse: standard 3-byte plus negotiated IntelliMouse 3/4 wheel packets. */
+ * Mouse: standard 3-byte plus negotiated IntelliMouse 3/4 wheel packets.
+ * Linux v6.12 libps2 owns boot command/ACK/resend/response handling for both
+ * ports. Controller, stream decoders and timer-safe LED machine remain native;
+ * this is NOT the complete Linux i8042/atkbd/psmouse driver port. */
 static int keyboard_on,mouse_on,ext,pause_left,mouse_bytes=3,mouse_at;
 static u8 keys[256],mouse_packet[4];
 static int kmods,numlock=1,scrolllock;
@@ -86,35 +90,49 @@ static int receive(int aux)
     for(int i=0;i<60000;i++) {
         u8 s=inb(0x64);if(s==255)return -1;
         if(s&1){u8 b=inb(0x60);if(s&0xc0)continue;if(!!(s&32)==aux)return b;
-            if((s&32)&&mouse_on)mouse_byte(b);else if(!(s&32)&&keyboard_on)keyboard_byte(b);
+            (void)tmc_linux_ps2_receive(!!(s&32),b,0);
         }else waitio();
     }return -1;
 }
-static int device(int aux,u8 v)
+static void ps2_progress(void *context);
+static int ps2_write_byte(void *context,unsigned aux,u8 value)
 {
-    for(int retry=0;retry<3;retry++) {
-        if((aux&&!cmd(0xd4))||!data(v))return 0;
-        int b=receive(aux);if(b==0xfa)return 1;if(b!=0xfe)return 0;
-    }return 0;
+    (void)context;return ((aux&&!cmd(0xd4))||!data(value))?-5:0;
 }
-static int rate(int v){return device(1,0xf3)&&device(1,(u8)v);}
+static void ps2_receive_byte(void *context,unsigned aux,u8 value,unsigned flags)
+{
+    (void)context;
+    if(flags){mouse_at=0;ext=0;return;}
+    if(aux){if(mouse_on)mouse_byte(value);}else if(keyboard_on)keyboard_byte(value);
+}
+static int device(int aux,u8 value)
+{
+    return !tmc_linux_ps2_command((unsigned)aux,0,0,value);
+}
+static int rate(int value)
+{
+    u8 param=(u8)value;return !tmc_linux_ps2_command(1,&param,1,0x10f3);
+}
 void ps2_init(void)
 {
     if(inb(0x64)==255)return;
+    if(!tmc_linux_ps2_setup(ps2_write_byte,ps2_progress,ps2_receive_byte,0))return;
     if(!cmd(0xad)||!cmd(0xa7))return;
     for(int i=0;i<64&&(inb(0x64)&1);i++)(void)inb(0x60);
     if(!cmd(0x20))return;int cfg=receive(0);if(cfg<0)return;
     cfg=(cfg&~3)|64; /* translation enabled, controller IRQs disabled */
     if(!cmd(0x60)||!data((u8)cfg))return;
     if(cmd(0xab)&&receive(0)==0&&cmd(0xae)) {
-        if(device(0,0xf5)&&device(0,0xf0)&&device(0,2)&&device(0,0xf4)) {
+        u8 set=2;
+        if(device(0,0xf5)&&!tmc_linux_ps2_command(0,&set,1,0x10f0)&&device(0,0xf4)) {
             keyboard_on=1;cfg&=~16;device_add("PS/2 keyboard (i8042)","input",0);
         }
     }
     if(cmd(0xa9)&&receive(0)==0&&cmd(0xa8)&&device(1,0xf6)) {
         cfg&=~32;
-        if(rate(200)&&rate(100)&&rate(80)&&device(1,0xf2)) {
-            int id=receive(1);if(id==3||id==4)mouse_bytes=4;
+        u8 id[2]={0};
+        if(rate(200)&&rate(100)&&rate(80)&&!tmc_linux_ps2_command(1,id,sizeof id,0x02f2)) {
+            if(id[0]==3||id[0]==4)mouse_bytes=4;
         }
         if(device(1,0xf4)){mouse_on=1;device_add("PS/2 mouse (i8042)","input",0);}
     }
@@ -133,12 +151,20 @@ static void keyboard_led_poll(void)
     else if(led_phase==2){led_phase=3;outb(0x60,(u8)led_sent);}
 }
 
+static void ps2_progress(void *context)
+{
+    (void)context;
+    for(int i=0;i<64;i++) {
+        u8 s=inb(0x64);if(s==255||!(s&1))break;
+        unsigned aux=!!(s&32);
+        if(!tmc_linux_ps2_rx_ready(aux))break;
+        u8 value=inb(0x60);
+        unsigned flags=((s&0x40)?TMC_PS2_TIMEOUT:0)|((s&0x80)?TMC_PS2_PARITY:0);
+        (void)tmc_linux_ps2_receive(aux,value,flags);
+    }
+}
 void ps2_poll(void)
 {
-    for(int i=0;i<64;i++) {
-        u8 s=inb(0x64);if(s==255||!(s&1))break;u8 b=inb(0x60);
-        if(s&0xc0){mouse_at=0;ext=0;continue;}
-        if(s&32){if(mouse_on)mouse_byte(b);}else if(keyboard_on)keyboard_byte(b);
-    }
-    keyboard_led_poll();
+    ps2_progress(0);
+    keyboard_led_poll(); /* remains nonblocking in timer context */
 }

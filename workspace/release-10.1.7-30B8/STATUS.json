@@ -1,15 +1,15 @@
 {
-  "state": "UNRELEASED / partial Linux USB port",
+  "state": "UNRELEASED / partial Linux USB and PS/2 port",
   "requested_version": "10.1.7",
   "requested_build": "30B8",
   "published": false,
   "stable_release_unchanged": "10.1.6",
-  "development_iso_sha256": "b8f0c7a043602f170a33b8114e1cecffe76cacb01416236bc0d6d3c9c55fe311",
-  "development_iso_bytes": 225734656,
-  "development_build": "/var/tmp/tmc-10.1.7/linux-mouse-v7/build",
-  "source_files": 653,
-  "source_manifest_sha256": "bf8ef6839582db137cc003f9f17c9c242cbd05a35a8ba7f34e082e87e6d96f52",
-  "about_version_updated_to_10_1_7": true,
+  "development_iso_sha256": "59a0191947aa36accd9bcfd21667bff1e09e6b2ba93d926b145ce1f19bf38f61",
+  "development_iso_bytes": 225738752,
+  "development_build": "/var/tmp/tmc-10.1.7/linux-ps2-v8/build",
+  "source_files": 670,
+  "source_manifest_sha256": "7afb515ecd9b95521f21f3e8bade054ffa2c98a65caf6a257477485b1d868540",
+  "about_version_updated_to_10_1_7": false,
   "about_layout_unchanged_except_version_build": true,
   "actual_upstream_linux_usbmouse_compiled_and_linked": true,
   "actual_linux_hcd_compiled_or_linked": false,
@@ -22,8 +22,8 @@
   "linux_usbmouse_current_guest_topologies_passed": 12,
   "linux_usbmouse_current_guest_topologies_expected": 12,
   "host_deletion_contracts_passed": true,
-  "actual_opencore_media_contract_passed": true,
-  "identity_media_contract_passed": true,
+  "actual_opencore_media_contract_passed": false,
+  "identity_media_contract_passed": false,
   "full_staging_uefi_passed": false,
   "full_staging_bios_passed": false,
   "recovery_firmware_mouse_xy_passed": false,
@@ -39,6 +39,7 @@
   "blocking_work": [
     "Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hubs/IRQ/DMA lifecycle; only core urb.c, Boot drivers and EHCI qtd_fill are upstream so far",
     "Port generic Linux HID; usbmouse/usbkbd are Boot drivers, not generic HID",
+    "Complete actual Linux i8042/serio/atkbd/psmouse driver port; current PS/2 increment is the complete original libps2 library, not the class drivers",
     "Rerun the entire install, native input and Recovery release matrix on the fully integrated result; audit source/license correspondence before binary publication"
   ],
   "evidence_sha256": {
@@ -96,5 +97,18 @@
   "linux_hcd_backend_scope": "Native, one logical interrupt-IN and EP0-OUT slot per binding, maximum 8 payload bytes; not Linux hcd.c",
   "linux_mouse_lifecycle_host_contract_passed": true,
   "linux_two_mice_current_guest_profiles_passed": 2,
-  "linux_two_mice_current_guest_profiles_expected": 2
+  "linux_two_mice_current_guest_profiles_expected": 2,
+  "actual_upstream_linux_libps2_compiled_and_linked": true,
+  "linux_libps2_host_contract_passed": true,
+  "ps2_keyboard_and_mouse_current_guest_profiles_passed": 2,
+  "ps2_keyboard_and_mouse_current_guest_profiles_expected": 2,
+  "full_linux_i8042_driver_port": false,
+  "linux_atkbd_driver_port": false,
+  "linux_psmouse_driver_port": false,
+  "input_port_scope": {
+    "usb_mouse": "Upstream Boot usbmouse + URB core; native HCD; no general HID",
+    "usb_keyboard": "Upstream Boot usbkbd + URB core; native HCD; no general HID",
+    "ps2_mouse": "Upstream complete libps2 command/RX; native i8042/stream decoder, not psmouse",
+    "ps2_keyboard": "Upstream complete libps2 command/RX; native i8042/stream decoder/LED, not atkbd"
+  }
 }

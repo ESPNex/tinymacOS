@@ -45,7 +45,7 @@ Host ASan/UBSan covers reference/size overflow, active-driver-put and callback-f
 
 The final v6 ISO is independently reproducible and remains private. All twelve mouse plus six USB-only keyboard QEMU profiles were rerun on its exact KernelCache. Besides rendered input, each observes live upstream URB submissions/givebacks and the invariant `submits = givebacks + active`, with zero backend rejects. This is 18 virtual configurations, not physical ASRock/Bay Trail evidence. Older staging/Recovery/kernel receipts do not certify this changed kernel. Complete Linux controllers, remaining USB core/hubs, generic HID and final release tests still block completion and deployment.
 
-## Current v7: mouse button aggregation and controller error handoff
+## Historical v7: mouse button aggregation and controller error handoff
 
 The Linux input adapter now merges held buttons across registered Linux-bound mice, while each report supplies only its own signed X/Y/wheel. Native xHCI/EHCI/UHCI error branches hand the failed logical interrupt URB back through real upstream core/usbmouse code; they no longer leave the affected mouse's held buttons stuck while native recovery is pending. Transient failures resubmit, terminal shutdown retires the URB. Native controller implementations are still not Linux HCDs; generic HID and the rest of USB core remain unported.
 
@@ -54,3 +54,13 @@ Host ASan/UBSan checks 1,024 paired five-button states, idle/release/unregister 
 All twelve mouse and six keyboard profiles were rerun on v7, plus two UEFI/BIOS two-mouse profiles that check actual rendered Terminal-window movement across cross-device drag/release transitions. The first two-mouse harness attempt incorrectly used a flat font template on the glass titlebar; the next did not account for HMP's global button mask when switching the target mouse. Both failed receipts remain in `attempts/`. The corrected harness checks the pixel-exact rendered content rectangle and deliberately generates each selected device's button edge; no OS code was changed to accommodate the tests.
 
 Full Linux controllers/core/generic-HID and the final install/kernel/Recovery release matrix remain outstanding. No deployment or ISO upload. The latest completed public release remains 10.1.6.
+
+## Current v8: genuine Linux PS/2 command/RX library; four-path scope explicit
+
+Complete original Linux v6.12 `libps2.c` and header (GPL-2.0-only, hash-pinned) are now compiled through a separate compatibility wrapper. Kernel PS/2 keyboard setup and mouse wheel negotiation call original `ps2_command`; data and command responses pass original `ps2_interrupt`. Native i8042 I/O, Set-1 keyboard/PS2 mouse byte decoders and timer-safe LED machine remain native. This is not a complete `i8042`/`atkbd`/`psmouse` port. Blocking Linux PS/2 commands run during boot, not from the PIT handler; runtime LED ACKs use native nonblocking handling through Linux RX.
+
+Host sanitizers cover ACK/NAK/resend, write failure, no-ACK mouse ID, keyboard ID, truncated response, partial reset, sliced command, bounded drain, real timeout, parity/timeout abort, independent RX locks/shared command mutex, interleaved input and callback-command rejection. UEFI+BIOS PS/2-only guests each execute nine real Linux setup commands, thirteen transmitted bytes, four-byte mouse wheel negotiation and zero command/RX errors. Actual Italian keyboard text/Caps/LEDs, six pixel-verified X/Y positions, and visible forward/back Terminal scrollback pass. The initial wheel harness used the opposite HMP direction; its failed receipts remain under `attempts/ps2-wheel-hmp-direction/`. Only the harness changed; OS code was unchanged for the passing rerun.
+
+All twelve USB mouse, six USB keyboard and two mixed PS/2-keyboard/two-USB-mouse profiles were rerun on v8. The mixed cases observe original Linux PS/2 RX counters during enrollment, plus actual USB window dragging. Full Linux controllers, remaining USB core/hubs/HID, PS/2 class drivers and final release validation still block deployment. No physical Bay Trail result is claimed.
+
+Workspace guard counts all files, reports both decimal MB and MiB, and enforces a conservative 120 MiB ceiling below the user's 128,000,000-byte limit. Private builds/ISOs and downloaded research remain under `/var/tmp`, not in snapshots; frozen 10.1.6 receipts remain untouched. Every verified source milestone is synchronized to GitHub before any future binary publication.

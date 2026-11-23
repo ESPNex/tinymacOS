@@ -1,4 +1,4 @@
-# Linux USB compatibility — implementation status
+# Linux input compatibility — implementation status
 
 The kernel compiles the complete, unmodified Linux v6.12 files **`usbmouse.c`, `usbkbd.c` and USB core `urb.c`**, plus the complete unchanged EHCI `qtd_fill` function. `vendor/linux-v6.12/manifest.json` pins source/license hashes; upstream notices remain intact. Boot drivers and the separate shim are GPL-2.0-or-later; `urb.c` is **GPL-2.0-only**. The keyboard translation unit includes the byte-exact driver and exposes its physical keycode table to the input adapter.
 
@@ -17,3 +17,18 @@ Tests: `tests/linux_usbmouse.c`, `tests/linux_usbkbd.c` and `tests/linux_urb.c` 
 Mouse lifecycle integration also merges the held buttons of registered Linux-bound mice without replaying another device's motion/wheel. A second mouse's idle/release/unregister cannot cancel a drag still held on the first. Native xHCI/EHCI/UHCI error completions now reach the original upstream mouse IRQ through URB giveback. The affected device's buttons are released without manufacturing a successful report; recoverable errors resubmit for native reset, while terminal cancellation/shutdown statuses retire the logical URB. This does not add general controller hotplug or merge PS/2/native-fallback devices into Linux input.
 
 `tests/linux_mouse_lifecycle.c` checks 1,024 paired five-button states, signed independent X/Y/wheel, transient/fatal errors, cancel/reopen, teardown and leaks. The xHCI maintenance contract executes an actual native STALL/reset/rearm/resumed-motion path with the real Linux mouse/core attached. Two additional UEFI/BIOS guest profiles each attach two virtual USB mice and verify actual rendered Terminal-window dragging across both devices' press/release transitions. These are virtual-device tests, not physical Bay Trail certification.
+
+## Four input paths: explicit completion boundaries
+
+| Path | Actual Linux code linked and executed | Still native / missing Linux port |
+| --- | --- | --- |
+| USB mouse | Complete Boot `usbmouse.c`, core `urb.c`, EHCI `qtd_fill` | HCDs, remaining core/hubs and generic HID |
+| USB keyboard | Complete Boot `usbkbd.c`, core `urb.c` | HCDs, remaining core/hubs and generic HID |
+| PS/2 mouse | Complete `libps2.c`: commands, ACK/NAK/resend, mouse ID and RX dispatch | `i8042`, serio bus and `psmouse` stream decoder |
+| PS/2 keyboard | Complete `libps2.c`: setup/ACK/resend and RX dispatch | `i8042`, serio bus, `atkbd` decoder and runtime LED work |
+
+The PS/2 library and its header are byte-exact upstream Linux v6.12, GPL-2.0-only. `compat/linux/ps2_protocol.c` includes the entire unit with a polled RX wait adaptation; only its initializer is namespaced to avoid the OS's existing `ps2_init(void)` symbol. The native i8042 byte writer and the new serio subset use real IRQ-preserving RX locks, a shared command mutex, monotonic timeout, and explicit native RX progress. There are no synthetic ACKs or successful placeholder writes. Commands validate parameter capacity and cannot reenter from receive callbacks. This is CPU0-polled command infrastructure, not a general Linux process scheduler/serio framework.
+
+Kernel boot setup for both PS/2 ports now calls original `ps2_command`; mouse wheel negotiation uses original Get-ID handling, including the upstream non-ACK mouse-ID workaround. Subsequent input bytes pass through original `ps2_interrupt` before the existing native byte decoders. The keyboard LED state machine remains nonblocking/native in timer context: Linux documents synchronous `ps2_command` as process-context-only, so it is deliberately not called from the PIT handler. Recovery is unchanged and firmware-only; these native PS/2 services are not linked there.
+
+`tests/linux_ps2.c` executes actual original libps2 and adapter under ASan/UBSan: ACK/NAK/retry, keyboard/mouse IDs, absent ACK, partial reset response, sliced commands, RX locks, shared serialization, bounds/flags checks, parity/timeout abort, real timed wait, interleaved bytes and nested-command rejection. Two actual ISO guest profiles with **only PS/2 keyboard+mouse** verify Italian Shift/AltGr/accent/euro/Caps, LED acknowledgements, six exact rendered X/Y checks and visible bidirectional wheel scrollback. Two mixed guest profiles use PS/2 keyboard plus two Linux-bound USB mice for enrollment and rendered dragging. These functional checks do not make the remaining `atkbd`/`psmouse`/i8042 code into Linux drivers.

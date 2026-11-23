@@ -10,6 +10,8 @@
     "tinymacOS/vendor/linux-v6.12/ehci-q.c": "6b2a725c4efe5531b01ecd42c1da7fd0e604edb006c3627e3c605ceb70bd741d",
     "tinymacOS/vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
     "tinymacOS/vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
+    "tinymacOS/vendor/linux-v6.12/libps2.c": "6fd7c42b939e2285a22bd55f804a60e0a7944c984baa7715c1c092a8ab3900fc",
+    "tinymacOS/vendor/linux-v6.12/libps2.h": "b57cb6943ee148455f385f39e8c626d17f3ace2d91b358b117531b05c7b38783",
     "compat/linux/usb_input.c": "28981bf63e3b9c846174df2e83b508570553efa50274db336be9bf0d60977ec3",
     "drivers/linux_usb.c": "c6573f78a828a69a289e6db460e57cac880ece46b04131fd337b7c6d49cb9958",
     "drivers/usbinput.c": "57fda12db5c3ce61ace4d49dcfc2f0d42e95b76d9f02f3276146983b077bddca",

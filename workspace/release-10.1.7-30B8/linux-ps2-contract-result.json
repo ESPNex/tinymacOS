@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "scope": "Complete original Linux libps2 command/ACK/RX unit on native i8042 transport",
+  "full_linux_i8042_driver_port": false,
+  "linux_atkbd_driver_port": false,
+  "linux_psmouse_driver_port": false,
+  "physical_hardware_tested": false,
+  "sources": {
+    "vendor/linux-v6.12/libps2.c": "6fd7c42b939e2285a22bd55f804a60e0a7944c984baa7715c1c092a8ab3900fc",
+    "vendor/linux-v6.12/libps2.h": "b57cb6943ee148455f385f39e8c626d17f3ace2d91b358b117531b05c7b38783",
+    "vendor/linux-v6.12/manifest.json": "1c182155f33250f42af3a1142066b0cf4e4365c674aaeb994e603d67ffb0e96d",
+    "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
+    "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
+    "compat/linux/include/linux/libps2.h": "d6e524edb6587f824a48a1670a982a98ae29b179bcfd58860cac508c13136d7f",
+    "compat/linux/include/linux/tmc_ps2_compat.h": "6941a688dd502ef1d7f9e0bd3216421b09380abda71c9e3d10be77b4a6aeed38",
+    "compat/linux/include/linux/serio.h": "c4fc1d55c972c4bfa939286b873f4af55165e377f76f7b4a6869c5d92642749c",
+    "include/linux_ps2.h": "4102ffd89a4f3fbedf09101641cd2c1a73b112380612823ebcda974972089719",
+    "tests/linux_ps2.c": "657b63d75dbc746e37a8c8dddb653801f4c81e14e8e818bba7bb278689cc570f",
+    "tests/linux_usbmouse.c": "870f4c85b8bfafe645b3643cc5a859d55347cccdf6dc74ce1421f078808001b9",
+    "compat/linux/usb_input.c": "28981bf63e3b9c846174df2e83b508570553efa50274db336be9bf0d60977ec3",
+    "drivers/ps2.c": "ab7da01ead887cabb981f8d22294f6cf8ba7ba4b4760b03657470dc40a0233af",
+    "drivers/linux_usb.c": "c6573f78a828a69a289e6db460e57cac880ece46b04131fd337b7c6d49cb9958"
+  },
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\nPASS complete original Linux libps2: keyboard+mouse ACK/NAK/retry, translated keyboard ID, non-ACK mouse ID, reset partial response, sliced commands, shared command mutex, independent RX locks, capacity/flags checks, parity/timeout abort, real timed wait, interleaved input and nested-command rejection; native byte decoders still separate\n"
+}

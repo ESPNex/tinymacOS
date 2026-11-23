@@ -56,3 +56,6 @@ gcc $C -fno-pie -no-pie -pthread tests/linux_urb.c compat/linux/usb_keyboard.c v
 
 # Two actual Linux mice: aggregate buttons and real error/cancel lifetimes.
 gcc $C -fno-pie -no-pie -pthread tests/linux_mouse_lifecycle.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c -o "$out/linux-mouse-lifecycle";"$out/linux-mouse-lifecycle"
+
+# Complete original Linux PS/2 command/ACK core, not native PS/2 decoders.
+gcc $C -fno-builtin -fno-pie -no-pie -pthread tests/linux_ps2.c compat/linux/ps2_protocol.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c -o "$out/linux-ps2";"$out/linux-ps2"
