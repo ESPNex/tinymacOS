@@ -13,7 +13,8 @@ struct LxBinding {
  TmcLinuxUsbControl control;void *control_context;u64 generation;
 };
 static struct LxBinding bindings[LX_BINDINGS];
-static struct input_dev *external_pointers[2];
+static struct input_dev *external_pointers[16],*external_keyboards[16];
+static int external_keyboard(struct input_dev *d){for(unsigned i=0;i<COUNT(external_keyboards);i++)if(external_keyboards[i]==d)return 1;return 0;}
 static TmcLinuxUsbStats tmc_linux_usb_stats;
 static TmcLinuxKeyboardStats tmc_linux_kbd_stats;
 static u64 generation;
@@ -97,7 +98,7 @@ void input_report_key(struct input_dev *d,unsigned code,int on)
 {
  if(!d||!d->registered)return;
  struct LxBinding *b=d->owner;
- if(b&&b->kind==1){
+ if((b&&b->kind==1)||external_keyboard(d)){
   if(code>=256||!test_bit(code,d->keybit))return;
   if(on)set_bit(code,d->key);else clear_bit(code,d->key);
   return;
@@ -110,11 +111,21 @@ void input_report_rel(struct input_dev *d,unsigned axis,int delta)
  if(!d||!d->registered)return;
  if(axis==REL_X)d->x=delta;else if(axis==REL_Y)d->y=delta;else if(axis==REL_WHEEL)d->wheel=delta;else if(axis==REL_HWHEEL)d->hwheel=delta;
 }
+static unsigned held_buttons(void)
+{
+ unsigned buttons=0;
+ for(unsigned i=0;i<LX_BINDINGS;i++){
+  struct input_dev *in=bindings[i].input;
+  if(bindings[i].kind==2&&in&&in->registered)buttons|=(unsigned)in->buttons;
+ }
+ for(unsigned i=0;i<COUNT(external_pointers);i++)if(external_pointers[i]&&external_pointers[i]->registered)buttons|=(unsigned)external_pointers[i]->buttons;
+ return buttons;
+}
 void input_sync(struct input_dev *d)
 {
  if(!d||!d->registered)return;
  struct LxBinding *owner=d->owner;
- if(owner&&owner->kind==1){
+ if((owner&&owner->kind==1)||external_keyboard(d)){
   u8 bitmap[32]={0};unsigned modifiers=0;
   for(unsigned i=0;i<LX_BINDINGS;i++){
    struct input_dev *in=bindings[i].input;
@@ -125,17 +136,20 @@ void input_sync(struct input_dev *d)
     else if(usage>=4&&usage<224)bitmap[usage/8]|=1u<<(usage%8);
    }
   }
-  tmc_lx_os_keyboard(bitmap,modifiers);kstats.frames++;return;
+  for(unsigned i=0;i<COUNT(external_keyboards);i++){
+   struct input_dev *in=external_keyboards[i];if(!in||!in->registered)continue;
+   for(unsigned code=1;code<256;code++)if(test_bit(code,in->key)){
+    unsigned usage=tmc_lx_usbkbd_usage(code);
+    if(usage>=224&&usage<232)modifiers|=1u<<(usage-224);
+    else if(usage>=4&&usage<224)bitmap[usage/8]|=1u<<(usage%8);
+   }
+  }
+  tmc_lx_os_keyboard(bitmap,modifiers);if(owner)kstats.frames++;return;
  }
  /* Linux input devices have independent button state. Merge only held
   * buttons, never another device's already-consumed relative motion/wheel.
   * Idle packets or unplugging one mouse must not release another's drag. */
- unsigned buttons=0;
- for(unsigned i=0;i<LX_BINDINGS;i++){
-  struct input_dev *in=bindings[i].input;
-  if(bindings[i].kind==2&&in&&in->registered)buttons|=(unsigned)in->buttons;
- }
- for(unsigned i=0;i<COUNT(external_pointers);i++)if(external_pointers[i]&&external_pointers[i]->registered)buttons|=(unsigned)external_pointers[i]->buttons;
+ unsigned buttons=held_buttons();
  tmc_lx_os_pointer(d->x,d->y,buttons,d->wheel);if(d->hwheel)tmc_lx_os_hwheel(d->hwheel);
  d->x=d->y=d->wheel=d->hwheel=0;if(owner)stats.frames++;
 }
@@ -154,6 +168,26 @@ void tmc_lx_input_unregister_pointer(struct input_dev *d)
   d->x=d->y=d->wheel=d->hwheel=0;if(d->buttons){d->buttons=0;input_sync(d);}
   external_pointers[i]=0;d->registered=0;return;
  }
+}
+int tmc_lx_input_register_keyboard(struct input_dev *d)
+{
+ if(!d||d->registered||d->owner)return -EINVAL;
+ for(unsigned i=0;i<COUNT(external_keyboards);i++)if(!external_keyboards[i]){
+  memset(d->key,0,sizeof d->key);memset(d->keybit,255,sizeof d->keybit);external_keyboards[i]=d;d->registered=1;return 0;
+ }
+ return -ENOSPC;
+}
+void tmc_lx_input_unregister_keyboard(struct input_dev *d)
+{
+ if(!d)return;
+ for(unsigned i=0;i<COUNT(external_keyboards);i++)if(external_keyboards[i]==d){
+  memset(d->key,0,sizeof d->key);input_sync(d);external_keyboards[i]=0;d->registered=0;return;
+ }
+}
+void tmc_lx_input_absolute(struct input_dev *d,int x,int y,int wheel,void (*sink)(int,int,int,int))
+{
+ if(!d||!d->registered||!sink)return;
+ sink(x,y,held_buttons(),wheel);if(d->hwheel)tmc_lx_os_hwheel(d->hwheel);d->x=d->y=d->wheel=d->hwheel=0;
 }
 void usb_to_input_id(struct usb_device *d,struct input_id *id){*id=(struct input_id){3,d->descriptor.idVendor,d->descriptor.idProduct,0};}
 int usb_make_path(struct usb_device *d,char *p,size_t n){return tmc_lx_snprintf(p,n,"%s/%s",d->bus->bus_name,d->devpath);}

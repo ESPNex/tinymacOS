@@ -17,6 +17,12 @@ case ${TMC_TEST_FIRMWARE:-uefi} in
 esac
 case ${TMC_TEST_INPUT:-ps2} in
  ps2) ;;
+ xhci-tablet) Q+=(-device qemu-xhci,id=xhci -device usb-tablet,bus=xhci.0,port=1,id=pointer);;
+ ehci-tablet) Q+=(-device ich9-usb-ehci1,id=ehci -device usb-tablet,bus=ehci.0,port=1,id=pointer,usb_version=2);;
+ uhci-tablet) Q+=(-device piix3-usb-uhci,id=uhci -device usb-tablet,bus=uhci.0,port=1,id=pointer,usb_version=1);;
+ companion-tablet) Q+=(-device ich9-usb-ehci1,id=ehci -device ich9-usb-uhci1,masterbus=ehci.0,firstport=0,id=uhci -device usb-tablet,bus=ehci.0,port=1,id=pointer,usb_version=1);;
+ xhci-tablet-hub) Q+=(-device qemu-xhci,id=xhci -device usb-hub,bus=xhci.0,port=1,id=hub -device usb-tablet,bus=xhci.0,port=1.3,id=pointer,usb_version=1);;
+
  ehci|ehci-kbd)
  Q+=(-device ich9-usb-ehci1,id=ehci -device usb-mouse,bus=ehci.0,port=1,id=pointer,usb_version=2)
  if [[ "$TMC_TEST_INPUT" == ehci-kbd ]];then Q+=(-device usb-kbd,bus=ehci.0,port=2,usb_version=2);fi;;

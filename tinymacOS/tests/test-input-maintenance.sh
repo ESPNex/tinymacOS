@@ -5,7 +5,7 @@ out=$(mktemp -d /var/tmp/tmc-input-host.XXXXXXXX)
 trap 'rm -rf "$out"' EXIT
 C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Werror -Iinclude'
 # Execute pinned Linux Boot mouse alongside native HCD tests, with host-only OS imports.
-LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
+LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
 C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -Wno-sign-compare"
 
 gcc $C tests/input_maintenance.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
@@ -71,3 +71,6 @@ gcc $C -fno-builtin -fno-pie -no-pie -pthread tests/linux_hid_parser.c tests/lin
 
 # Whole unchanged Linux hid-input + hid-generic units, host real I/O fault injection.
 gcc $C -fno-builtin -fno-pie -no-pie tests/linux_hid_generic.c tests/linux_hid_runtime.c -o "$out/linux-hid-generic";"$out/linux-hid-generic"
+
+# Actual generic/native adapter and shared input ownership, with scripted EP0.
+gcc $C tests/linux_usb_generic.c $LX -o "$out/linux-usb-generic";"$out/linux-usb-generic"

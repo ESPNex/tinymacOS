@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "xhci-two-mice",
-  "iso_sha256": "8266731b51d2e0b3afed0a069423525626b3f4c2fe04a0ad171833fa2e340509",
-  "work": "/var/tmp/tmc-two-mice-bios-bxsw4zi6",
+  "iso_sha256": "0e837b07a8bf3157cc483c9299a0d7c538eb6e47238c0376aef9b27aef01416f",
+  "work": "/var/tmp/tmc-two-mice-bios-4nijx2zx",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [

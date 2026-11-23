@@ -43,3 +43,15 @@ void tmc_lx_os_spin_wait(void);
 typedef struct {u64 submits,givebacks,unlinks,rejected,active,highwater;} TmcLinuxUrbStats;
 void tmc_linux_urb_stats(TmcLinuxUrbStats *);
 u64 tmc_lx_os_clock_ms(void);
+
+/* Actual descriptor/report HID path on native HCD endpoints. Return kind mask
+ * (1 keyboard,2 pointer), or 0 on unsupported descriptor/transport resources.
+ * Native controller/DMA lifetime remains with the caller, not Linux HCD code. */
+typedef int (*TmcLinuxHidControl)(void *,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *,unsigned);
+typedef void (*TmcLinuxAbsolute)(int,int,int,int);
+int tmc_linux_generic_attach(void *,const u8 *,unsigned,unsigned packet,unsigned iface,TmcLinuxHidControl,void *,unsigned width,unsigned height,TmcLinuxAbsolute);
+int tmc_linux_generic_report(void *,const u8 *,unsigned);
+void tmc_linux_generic_error(void *,int fatal);
+int tmc_linux_generic_detach(void *);
+void tmc_linux_generic_service(void);
+void tmc_linux_generic_leds(unsigned);

@@ -28,6 +28,16 @@ static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsig
     int result=u->control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
     return result==-2?-32:result?-5:0;
 }
+static int linux_generic_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
+{
+ UsbInput *u=context;
+ if(!u||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>255)return -22;
+ if(!(rt&128)&&n)memcpy(u->desc,data,n);
+ int result=u->control(u,rt,req,value,iface,n);
+ if(result)return result==-2?-32:-5;
+ if(rt&128){if(u->ctrl_bytes>n)return -5;memcpy(data,u->desc,u->ctrl_bytes);return u->ctrl_bytes;}
+ return n;
+}
 int usb_input_enumerate(UsbInput *u,unsigned address)
 {
     int (*c)(UsbInput *,int,int,int,int,int)=u->control;
@@ -49,10 +59,10 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
     unsigned usable=0;
     for(int i=0;i<found;i++) {
         HidInterface *f=choices+i;UsbInputPipe *p=u->pipe+u->npipe;
+        if(tmc_linux_generic_detach(p))continue;
         tmc_linux_mouse_detach(p);tmc_linux_keyboard_detach(p);
         *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length};
         if((u->speed==2&&p->packet>8)||(u->speed==1&&p->packet>64))continue;
-        int report_ready=0;
         /* Boot support is a compatibility promise, not an instruction to
          * switch a working mouse into descriptor Report mode. */
         if(p->proto==2){
@@ -61,14 +71,15 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
                 !c(u,0x81,6,0x2200,p->iface,p->report_length) && u->ctrl_bytes==p->report_length &&
                 tmc_linux_hid_pointer_layout(u->desc,p->report_length,MIN(p->packet,64),&p->layout);
             if(!boot_ok){
-                if(parsed && select_protocol(u,p->iface,1)){p->proto=3;report_ready=1;}
+                if(parsed && select_protocol(u,p->iface,1)){p->proto=3;}
                 else continue;
             }
         }else if(p->proto==1 && !select_protocol(u,p->iface,0))continue;
-        if(p->proto==3 && !report_ready){
+        if(p->proto==3){
             n=p->report_length;
-            if(!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n||
-               !tmc_linux_hid_pointer_layout(u->desc,n,MIN(p->packet,64),&p->layout))continue;
+            if((!n||n>sizeof u->desc||c(u,0x81,6,0x2200,p->iface,n)||u->ctrl_bytes<n))continue;
+            p->linux_generic=tmc_linux_generic_attach(p,u->desc,n,p->packet,p->iface,linux_generic_control,u,boot.w,boot.h,hid_absolute);
+            if(!p->linux_generic)continue;
         }
         /* SET_IDLE is optional; rejecting it must not disable a valid HID. */
         (void)c(u,0x21,10,0,p->iface,0);
@@ -76,7 +87,8 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
             p->linux_mouse=tmc_linux_mouse_attach(p,u->vid,u->pid,p->packet,p->interval);
         if(p->proto==1)p->linux_keyboard=tmc_linux_keyboard_attach(p,u->vid,u->pid,p->packet,p->interval,p->iface,linux_keyboard_control,u);
         if(p->proto==1){input_diag.keyboards++;device_add("USB HID keyboard (USB2)","input",0);}
-        else {input_diag.pointers++;device_add("USB HID pointer (USB2)","input",0);}
+        else if(p->proto==2){input_diag.pointers++;device_add("USB HID pointer (USB2)","input",0);}
+        else{if(p->linux_generic&1)input_diag.keyboards++;if(p->linux_generic&2)input_diag.pointers++;device_add("Linux generic HID input (USB2)","input",0);}
         u->npipe++;usable++;
     }
     return usable!=0;
@@ -94,11 +106,7 @@ void usb_input_report(UsbInput *u,unsigned pipe,unsigned bytes)
         if(p->linux_mouse&&tmc_linux_mouse_report(p,p->report,bytes))return;
         if(pointer_boot_read(&p->layout,p->report,bytes,boot.w,boot.h,&s))hid_relative(s.x,s.y,s.buttons,s.wheel);
     }
-    else if(p->proto==3) {
-        TabletState s;
-        if(pointer_read(&p->layout,p->report,bytes,boot.w,boot.h,&s)) {
-            if(p->layout.relative)hid_relative(s.x,s.y,s.buttons,s.wheel);
-            else hid_absolute(s.x,s.y,s.buttons,s.wheel);
-        }else input_diag.bad_reports++;
+    else if(p->proto==3&&p->linux_generic) {
+        if(tmc_linux_generic_report(p,p->report,bytes))input_diag.bad_reports++;
     }
 }

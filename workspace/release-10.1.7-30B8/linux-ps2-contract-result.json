@@ -17,7 +17,7 @@
     "include/linux_ps2.h": "0ce1ace1dc15ba119ab54cb82bdc7eb3ed2056739808b1cfa455298d5777077c",
     "tests/linux_ps2.c": "657b63d75dbc746e37a8c8dddb653801f4c81e14e8e818bba7bb278689cc570f",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
-    "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
+    "compat/linux/usb_input.c": "bfead8508f11641d585c6691b01dd7dad5675e1be83657489d85b1f34a3155c3",
     "drivers/ps2.c": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
     "drivers/linux_usb.c": "95d1e6348abaf5383b77e25b8a7b7e05f43ec15b0ece44d597ee6153d1be2dae"
   },

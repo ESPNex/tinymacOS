@@ -1,11 +1,11 @@
 {
   "passed": false,
-  "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/hid-generic/atkbd/psmouse/full-stack port",
-  "sha256": "8266731b51d2e0b3afed0a069423525626b3f4c2fe04a0ad171833fa2e340509",
-  "bytes": 225802240,
+  "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/atkbd/psmouse/full-stack port; bounded original hid-generic/hid-input now active",
+  "sha256": "0e837b07a8bf3157cc483c9299a0d7c538eb6e47238c0376aef9b27aef01416f",
+  "bytes": 225806336,
   "builds": [
-    "/var/tmp/tmc-10.1.7/linux-hid-v12/build",
-    "/var/tmp/tmc-10.1.7/linux-hid-v12-independent/build"
+    "/var/tmp/tmc-10.1.7/linux-generic-native-v13/build",
+    "/var/tmp/tmc-10.1.7/linux-generic-native-v13-independent/build"
   ],
   "byte_comparison_exit_code": 1,
   "published": false

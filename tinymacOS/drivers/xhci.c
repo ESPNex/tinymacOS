@@ -32,7 +32,7 @@ struct Hid {
     Ring in;
     u8 report[1024] ALIGNED(1024); /* a Normal TRB must not cross a 64 KiB boundary */
     TabletLayout tablet;
-    int ep,proto,mps,armed,iface,report_len,failures,pending,linux_mouse,linux_keyboard;
+    int ep,proto,mps,armed,iface,report_len,failures,pending,linux_mouse,linux_keyboard,linux_generic;
     u64 retry_at;
 };
 struct Usb {
@@ -207,6 +207,15 @@ static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsig
     int result=control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
     int status=result?(hc->lastcode==6?-32:-5):0;hc=saved;return status;
 }
+static int linux_generic_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
+{
+ struct Usb *u=context;struct Xhci *saved=hc;
+ if(!u||!u->controller||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>255)return -22;
+ hc=u->controller;if(!(rt&128)&&n)memcpy(u->desc,data,n);
+ int result=control(u,rt,req,value,iface,n),actual=n;
+ if(!result&&(rt&128)){if(u->ctrl_bytes>(int)n)result=-1;else{actual=u->ctrl_bytes;memcpy(data,u->desc,actual);}}
+ int status=result?(hc->lastcode==6?-32:-5):actual;hc=saved;return status;
+}
 /* A successful SET status must not override a contradictory GET_PROTOCOL.
  * Some boot mice acknowledge SET without changing their packet mode. Keep
  * descriptor offsets only when Report really is selected. Unsupported GET is
@@ -308,6 +317,7 @@ static int configure(struct Usb*u, int port, int speed)
     unsigned highest=1;
     for(int k=0;k<count;k++) {
         HidInterface *f=&choices[k];struct Hid *h=&u->hid[k];
+        if(tmc_linux_generic_detach(h))return 0;
         tmc_linux_mouse_detach(h);tmc_linux_keyboard_detach(h);
         *h=(struct Hid){.ep=f->ep,.proto=f->proto,.mps=f->packet,.iface=f->iface,.report_len=f->report_length};
         ringinit(&h->in);
@@ -323,7 +333,7 @@ static int configure(struct Usb*u, int port, int speed)
     u->nhid=count;
     int usable=0;
     for(int k=0;k<count;k++) {
-        struct Hid *h=&u->hid[k];int ok=1,report_ready=0;
+        struct Hid *h=&u->hid[k];int ok=1;
         /* Boot-capable mice start in the mandatory Boot format. A parsed
          * descriptor is retained but is not permission to force Report mode.
          * Report SET/GET success alone did not prove a usable IN stream. */
@@ -333,14 +343,17 @@ static int configure(struct Usb*u, int port, int speed)
                 !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
                 tmc_linux_hid_pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet);
             if(!boot_ok){
-                if(parsed && select_protocol(u,h->iface,1)){h->proto=3;report_ready=1;}
+                if(parsed && select_protocol(u,h->iface,1)){h->proto=3;}
                 else ok=0;
             }
         }
-        if(h->proto==3 && !report_ready){
-            if(!h->report_len||h->report_len>(int)sizeof u->desc)ok=0;
-            else if(control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len||
-                    !tmc_linux_hid_pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet))ok=0;
+        if(h->proto==3){
+            if((!h->report_len||h->report_len>(int)sizeof u->desc||
+               control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len))ok=0;
+            if(ok){
+                h->linux_generic=tmc_linux_generic_attach(h,u->desc,h->report_len,h->mps,h->iface,linux_generic_control,u,boot.w,boot.h,hid_absolute);
+                if(!h->linux_generic)ok=0;
+            }
         }
         if(h->proto==1){
             if(!select_protocol(u,h->iface,0))ok=0;
@@ -357,10 +370,10 @@ static int configure(struct Usb*u, int port, int speed)
             unsigned pid=u->diag?input_diag.device[u->diag-1].pid:0;
             h->linux_keyboard=tmc_linux_keyboard_attach(h,vid,pid,h->mps,10,h->iface,linux_keyboard_control,u);
         }
-        const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":
-            h->tablet.relative?"USB HID report mouse":"USB HID tablet";
+        const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":"Linux generic HID input";
         device_add(name,"input",0);usable++;
-        if(h->proto==1)input_diag.keyboards++;else input_diag.pointers++;
+        if(h->proto==1||(h->linux_generic&1))input_diag.keyboards++;
+        if(h->proto==2||(h->linux_generic&2))input_diag.pointers++;
         if(u->diag)input_diag.device[u->diag-1].protocols|=1u<<h->proto;
     }
     if(u->diag)input_diag.device[u->diag-1].status=usable?2:1;
@@ -549,7 +562,7 @@ void input_init(void)
 // Control waits also dispatch unrelated input completions instead of losing them.
 void kbd_setleds(int on)
 {
-    tmc_linux_keyboard_leds((unsigned)on);
+    tmc_linux_keyboard_leds((unsigned)on);tmc_linux_generic_leds((unsigned)on);
     struct Xhci *saved=hc;
     for(unsigned c=0;c<ncontrollers;c++) {
         hc=&controllers[c];if(!hc->active)continue;
@@ -574,6 +587,7 @@ static void transferred(const TRB *e)
                 if(h->proto==1){const u8 release[8]={0};
                     if(h->linux_keyboard)(void)tmc_linux_keyboard_report(h,release,8);else hid_keys(release);}
 
+                if(h->linux_generic)tmc_linux_generic_error(h,!((code==3||code==4||code==6)&&h->failures<3));
                 if(h->linux_mouse){
                     int recoverable=(code==3||code==4||code==6)&&h->failures<3;
                     (void)tmc_linux_mouse_error(h,recoverable?(code==6?-32:-5):-108);
@@ -597,12 +611,8 @@ static void transferred(const TRB *e)
                 if(!(h->linux_mouse&&tmc_linux_mouse_report(h,h->report,n))&&
                    pointer_boot_read(&h->tablet,h->report,n,boot.w,boot.h,&pt))hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
             }
-            if(h->proto==3&&n>0) {
-                TabletState pt;
-                if(pointer_read(&h->tablet,h->report,(unsigned)n,boot.w,boot.h,&pt)) {
-                    if(h->tablet.relative)hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
-                    else hid_absolute(pt.x,pt.y,pt.buttons,pt.wheel);
-                }
+            if(h->proto==3&&n>0&&h->linux_generic) {
+                if(tmc_linux_generic_report(h,h->report,n))input_diag.bad_reports++;
             }
             arm(u,h);return;
         }
@@ -634,5 +644,5 @@ void input_irq(void)
     }
     ehci_poll();uhci_poll();ps2_poll();
     input_repeat();int leds=input_led_take();if(leds>=0){kbd_setleds(leds);ps2_setleds(leds&2);}
-    tmc_linux_usb_service();
+    tmc_linux_usb_service();tmc_linux_generic_service();
 }

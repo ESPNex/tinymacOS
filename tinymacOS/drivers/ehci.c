@@ -232,6 +232,7 @@ void ehci_poll(void)
                 if(p->proto==1){const u8 released[8]={0};
                     if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,released,8);else hid_keys(released);}
                 if(p->linux_mouse)(void)tmc_linux_mouse_error(p,p->failures<3?-32:-108);
+                if(p->linux_generic)tmc_linux_generic_error(p,p->failures>=3);
                 if(p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
                 continue;
             }

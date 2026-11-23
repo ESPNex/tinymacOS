@@ -5,7 +5,7 @@ out=$(mktemp -d /var/tmp/tmc-legacy-input-host.XXXXXXXX)
 trap 'rm -rf "$out"' EXIT
 C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Werror -Wno-misleading-indentation -Wno-sign-compare -Iinclude'
 # Execute pinned Linux Boot mouse alongside native HCD tests, with host-only OS imports.
-LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/ps2_protocol.c compat/linux/ps2_input.c compat/linux/psmouse_input.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
+LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/ps2_protocol.c compat/linux/ps2_input.c compat/linux/psmouse_input.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
 C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -Wno-sign-compare"
 
 gcc $C tests/ps2.c $LX -o "$out/ps2";"$out/ps2"

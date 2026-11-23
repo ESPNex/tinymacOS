@@ -9,12 +9,12 @@
     "vendor/linux-v6.12/manifest.json": "dcc59330378d04dec2d8e4ca71e11c783853759b8e9f3bba24908f942b56f7ef",
     "tests/linux_urb.c": "ba69eb0007510944b463401c212a4c81270004671685dc9cd9668f77882497e3",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
-    "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
+    "compat/linux/usb_input.c": "bfead8508f11641d585c6691b01dd7dad5675e1be83657489d85b1f34a3155c3",
     "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
-    "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
+    "compat/linux/include/linux/tmc_compat.h": "fb1371ed412a6f81bad6da79ab188e821404e7d0cfbb2b2e3de6b1957212d0b2",
     "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
-    "include/linux_usb.h": "5f77930abde8fd34903801e1898da3b814bd8ca0c6f450c94153b1217d71df47"
+    "include/linux_usb.h": "18c61ed970383b3034aef878adbe3b855a0dc1d3b2b0ff6025f68daa2b8b1b66"
   },
   "sanitizers": [
     "address",

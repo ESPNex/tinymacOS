@@ -38,6 +38,7 @@ int input_register_device(struct input_dev *i)
  if(!g||i->registered||g->inputs>=16)return -EINVAL;
  struct hid_input *h;unsigned app=0;list_for_each_entry(h,&d->inputs,list)if(h->input==i){app=h->application;break;}
  i->token=++g->token;int result=g->ops.input(g->context,i->token,app,1);if(result)return result;
+ if(g->ops.axis)for(unsigned c=0;c<ABS_CNT;c++)if(test_bit(c,i->absbit))g->ops.axis(g->context,i->token,c,i->absinfo[c].minimum,i->absinfo[c].maximum,i->absinfo[c].resolution);
  result=i->open?i->open(i):0;
  if(result){g->ops.input(g->context,i->token,app,0);return result;}
  i->registered=1;g->inputs++;__atomic_add_fetch(&tmc_hid_generic_counters.inputs,1,__ATOMIC_RELAXED);return 0;
@@ -188,7 +189,7 @@ int tmc_hid_generic_report(TmcHidGeneric *g,const u8 *bytes,unsigned n)
 }
 int tmc_hid_generic_set_led(TmcHidGeneric *g,unsigned code,int on)
 {
- if(!g||code>=LED_CNT||!generic_lock())return -EINVAL;
+ if(!g||code>=LED_CNT)return -EINVAL;if(!generic_lock())return -EBUSY;
  struct hid_device *d=&g->parser->device;struct hid_input *h;int result=-EINVAL;
  list_for_each_entry(h,&d->inputs,list)if(test_bit(code,h->input->ledbit)){
   if(on)set_bit(code,h->input->led);else clear_bit(code,h->input->led);
@@ -214,4 +215,29 @@ void tmc_hid_generic_stats(TmcHidGenericStats *out)
  #define READ(f) out->f=__atomic_load_n(&tmc_hid_generic_counters.f,__ATOMIC_RELAXED)
  READ(probes);READ(attached);READ(detached);READ(failures);READ(reports);READ(rejected);READ(events);READ(inputs);READ(outputs);READ(output_errors);READ(busy);
  #undef READ
+}
+
+int tmc_hid_generic_quiesce(TmcHidGeneric *g)
+{
+ if(!g||!generic_lock())return -EBUSY;
+ struct hid_device *d=&g->parser->device;struct hid_input *h;
+ list_for_each_entry(h,&d->inputs,list){
+  for(unsigned k=0;k<KEY_CNT;k++)if(test_bit(k,h->input->key))input_event(h->input,EV_KEY,k,0);
+  input_sync(h->input);
+ }
+ for(unsigned id=0;id<HID_MAX_IDS;id++){
+  struct hid_report *r=d->report_enum[HID_INPUT_REPORT].report_id_hash[id];if(!r)continue;
+  for(unsigned i=0;i<r->maxfield;i++){struct hid_field *f=r->field[i];memset(f->value,0,f->report_count*sizeof(s32));memset(f->new_value,0,f->report_count*sizeof(s32));}
+ }
+ generic_unlock();return 0;
+}
+
+int tmc_hid_generic_input_bytes(TmcHidGeneric *g)
+{
+ if(!g||!generic_lock())return -EBUSY;
+ struct hid_report_enum *e=&g->parser->device.report_enum[HID_INPUT_REPORT];unsigned maximum=0;
+ for(unsigned id=0;id<HID_MAX_IDS;id++){
+  struct hid_report *r=e->report_id_hash[id];if(r)maximum=MAX(maximum,(r->size+7)/8+!!e->numbered);
+ }
+ generic_unlock();return maximum;
 }

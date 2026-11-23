@@ -159,3 +159,7 @@ unsigned tmc_lx_usbkbd_usage(unsigned);
 int tmc_lx_input_register_pointer(struct input_dev *);
 void tmc_lx_input_unregister_pointer(struct input_dev *);
 void tmc_lx_os_hwheel(int);
+
+int tmc_lx_input_register_keyboard(struct input_dev *);
+void tmc_lx_input_unregister_keyboard(struct input_dev *);
+void tmc_lx_input_absolute(struct input_dev *,int,int,int,void (*)(int,int,int,int));

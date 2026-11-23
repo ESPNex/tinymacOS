@@ -44,7 +44,7 @@ static int output(void *p,const u8 *bytes,unsigned n)
 {
  struct Sink *s=p;s->output++;(void)bytes;(void)n;return s->output_error?s->output_error:-ENOSYS;
 }
-static const TmcHidGenericOps ops={start,stop,open_input,close_input,register_input,event,raw,output};
+static const TmcHidGenericOps ops={start,stop,open_input,close_input,register_input,event,raw,output,NULL};
 static void clean(void)
 {
  TmcHidParserStats c;tmc_linux_hid_parser_stats(&c);assert(!c.live_bytes&&c.allocations==c.frees&&!tmc_hid_test_alive);

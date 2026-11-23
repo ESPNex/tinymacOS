@@ -56,6 +56,7 @@ static int run(int reject_boot,int reject_report,int current,int bad)
 }
 int main(void)
 {
+    boot.w=1280;boot.h=800;
     /* Negative control: a boot-labelled ID/16-bit report decoded as bytes 1/2
      * produces X=0, Y=64 from a horizontal-only motion. */
     u8 horizontal[]={4,0,64,0,0,0,0};
@@ -77,6 +78,13 @@ int main(void)
     assert(input_diag.pointers==1&&!input_diag.control_errors);
     assert(input_diag.device[0].vid==0x1234&&input_diag.device[0].pid==0x5678);
     assert(run(1,0,1,0));assert(usb[0].hid[0].proto==3&&boot_requests==1);
+    h=&usb[0].hid[0];assert(h->linux_generic==2&&!h->linux_mouse);
+    memcpy(h->report,(u8[]){4,1,64,0,0,0,0},7);h->armed=1;event.len=(13u<<24)|1;
+    transferred(&event);assert(input_pop(&e)&&e.type==EV_MOUSE&&e.a==64&&!e.b&&e.c==1&&h->armed);assert(!input_pop(&e));
+    memcpy(h->report,(u8[]){4,0,0,0,251,255,0},7);transferred(&event);
+    assert(input_pop(&e)&&e.type==EV_MOUSE&&!e.a&&e.b==-5&&!e.c);assert(!input_pop(&e));
+    puts("PASS actual xHCI Report-only completion -> whole Linux generic/input -> native queue: independent 16-bit XY, button press/release and rearm");
+
     assert(run(1,1,1,0));assert(usb[0].hid[0].proto==3&&report_requests==1&&input_diag.control_errors==2);
     puts("PASS Report SET_PROTOCOL rejected: current Report protocol verified with GET_PROTOCOL");
     assert(run(1,1,0,0));assert(usb[0].hid[0].proto==2&&input_diag.pointers==1);

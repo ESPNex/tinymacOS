@@ -4,11 +4,11 @@
   "requested_build": "30B8",
   "published": false,
   "stable_release_unchanged": "10.1.6",
-  "development_iso_sha256": "8266731b51d2e0b3afed0a069423525626b3f4c2fe04a0ad171833fa2e340509",
-  "development_iso_bytes": 225802240,
-  "development_build": "/var/tmp/tmc-10.1.7/linux-hid-v12/build",
-  "source_files": 713,
-  "source_manifest_sha256": "7a288f5700f67795193a41b722786b2e48cd53fa0eea838f405e8f212271e312",
+  "development_iso_sha256": "0e837b07a8bf3157cc483c9299a0d7c538eb6e47238c0376aef9b27aef01416f",
+  "development_iso_bytes": 225806336,
+  "development_build": "/var/tmp/tmc-10.1.7/linux-generic-native-v13/build",
+  "source_files": 715,
+  "source_manifest_sha256": "6fd3351f91b2b155231b5f11d8e0fd89d3fd96a47d95c359fdff8772fb3cc272",
   "about_version_updated_to_10_1_7": true,
   "about_layout_unchanged_except_version_build": true,
   "actual_upstream_linux_usbmouse_compiled_and_linked": true,
@@ -38,7 +38,7 @@
   "physical_hardware_tested": false,
   "blocking_work": [
     "Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hub/IRQ/DMA lifecycle; core urb.c/config.c, Boot input drivers and EHCI qtd_fill are upstream so far",
-    "Wire actual native USB endpoints and native consumers to the now whole-source host-tested hid-generic/hid-input path; finish HID bus/core/lifecycle; compilation/host dispatch is not active USB integration",
+    "Complete remaining Linux HID core/bus/usbhid/lifecycle and general transport support; bounded generic endpoint/native event integration is now active",
     "Complete actual Linux i8042/serio/atkbd/psmouse driver port; current PS/2 increment is the complete original libps2 library, not the class drivers",
     "Rerun the entire install, native input and Recovery release matrix on the fully integrated result; audit source/license correspondence before binary publication"
   ],
@@ -106,8 +106,8 @@
   "linux_atkbd_driver_port": false,
   "linux_psmouse_driver_port": false,
   "input_port_scope": {
-    "usb_mouse": "Upstream Boot usbmouse + core URB/config + hid-core descriptor parser functions; native HCD/hub/report packet decoder",
-    "usb_keyboard": "Upstream Boot usbkbd + core URB/config; generic descriptor parsing host-tested, not hid-input generic keyboard events",
+    "usb_mouse": "Upstream Boot usbmouse + core URB/config + whole generic/input for Report-only relative/absolute pointers; native HCD/hub",
+    "usb_keyboard": "Upstream Boot usbkbd + core URB/config; whole generic keyboard events through shared native sink host-tested; native HCD/hub",
     "ps2_mouse": "Upstream complete libps2 + original psmouse packet and IMPS/Explorer detect functions; native i8042/framing, not complete psmouse",
     "ps2_keyboard": "Upstream complete libps2 command/RX; native i8042/stream decoder/LED, not atkbd"
   },
@@ -130,18 +130,21 @@
   "linux_hid_parser_current_guest_topologies_expected": 18,
   "linux_hid_generic_and_input_whole_source_host_contract_passed": true,
   "upstream_hid_generic_and_hid_input_whole_files_compiled_and_linked": true,
-  "native_usb_endpoints_wired_to_generic_hid_input": false,
+  "native_generic_host_contract_passed": true,
+  "native_usb_endpoints_wired_to_generic_hid_input": true,
+  "native_generic_current_guest_profiles_passed": 10,
+  "native_generic_current_guest_profiles_expected": 10,
   "ps2_class_driver_work_deferred_by_user": true,
   "requested_four_block_complete": false,
   "four_block_scope": {
     "linux_controllers": "not complete; native HCDs remain",
     "usb_core_hub": "not complete; original URB/config only, native enumeration/hub remain",
-    "hid_generic": "complete original source compiled and host-executed through bounded native-services API; actual USB endpoint wiring still missing",
-    "hid_input": "complete original source compiled and host-executed; actual native event-consumer wiring still missing"
+    "hid_generic": "complete original driver active through bounded native HCD transport; not Linux usbhid/HCD or HID bus",
+    "hid_input": "complete original input mapping/event unit active through shared native event consumers; supported applications only"
   },
   "whole_linux_hid_core_ported": false,
-  "linux_hid_generic_driver_ported": false,
-  "linux_hid_input_event_dispatch_ported": false,
+  "linux_hid_generic_driver_ported": true,
+  "linux_hid_input_event_dispatch_ported": true,
   "installed_and_optical_all_component_notices_byte_exact": true,
   "actual_installed_component_notices_byte_exact": false
 }
