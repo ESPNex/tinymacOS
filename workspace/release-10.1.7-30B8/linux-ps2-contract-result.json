@@ -8,7 +8,7 @@
   "sources": {
     "vendor/linux-v6.12/libps2.c": "6fd7c42b939e2285a22bd55f804a60e0a7944c984baa7715c1c092a8ab3900fc",
     "vendor/linux-v6.12/libps2.h": "b57cb6943ee148455f385f39e8c626d17f3ace2d91b358b117531b05c7b38783",
-    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c",
+    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
     "compat/linux/include/linux/libps2.h": "d6e524edb6587f824a48a1670a982a98ae29b179bcfd58860cac508c13136d7f",
@@ -19,7 +19,7 @@
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
     "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
     "drivers/ps2.c": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
-    "drivers/linux_usb.c": "d43ecfe36302790854f4b4c02fb3ce0abe7e9054aed5b0b8131d53402edac195"
+    "drivers/linux_usb.c": "95d1e6348abaf5383b77e25b8a7b7e05f43ec15b0ece44d597ee6153d1be2dae"
   },
   "sanitizers": [
     "address",

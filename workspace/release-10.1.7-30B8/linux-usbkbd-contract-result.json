@@ -11,13 +11,13 @@
     "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
     "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
     "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
-    "include/linux_usb.h": "dc8215c016d1353276f3ad5ffc24874ca2f7afe5350f79510109cc9ba1874c70",
+    "include/linux_usb.h": "5f77930abde8fd34903801e1898da3b814bd8ca0c6f450c94153b1217d71df47",
     "vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
     "vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
     "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
-    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c"
+    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76"
   },
   "output": "PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown\n"
 }

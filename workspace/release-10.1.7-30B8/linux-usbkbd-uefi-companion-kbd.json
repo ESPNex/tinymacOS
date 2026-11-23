@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "companion-kbd",
-  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
-  "work": "/var/tmp/tmc-linux-kbd-uefi-companion-kbd-jx1bamhu",
+  "iso_sha256": "e570e952315f7ebe68d6042b5ef113bed93af4ed9609a186bfa2dacbaaf24de7",
+  "work": "/var/tmp/tmc-linux-kbd-uefi-companion-kbd-39nplkbi",
   "actual_upstream_boot_keyboard_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -24,6 +24,19 @@
     "frees": 14
   },
   "actual_upstream_core_config_file_executed": true,
+  "hid_parser": {
+    "opens": 1,
+    "failures": 0,
+    "closes": 1,
+    "allocations": 9,
+    "frees": 9,
+    "live_bytes": 0,
+    "peak_bytes": 120340,
+    "notices": 0,
+    "busy": 0
+  },
+  "actual_upstream_hid_parser_functions_executed": true,
+  "whole_linux_hid_core_or_hid_generic_driver": false,
   "urb_core_before": {
     "submits": 2,
     "givebacks": 0,

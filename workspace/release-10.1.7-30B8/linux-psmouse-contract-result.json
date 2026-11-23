@@ -10,7 +10,7 @@
     "vendor/linux-v6.12/psmouse.h": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
     "vendor/linux-v6.12/psmouse-packets.inc": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
     "vendor/linux-v6.12/psmouse-detect.inc": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
-    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c",
+    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76",
     "compat/linux/psmouse_input.c": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
@@ -21,7 +21,7 @@
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
     "drivers/ps2.c": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
     "drivers/input.c": "91bedafaaba7cb80d5fe672d000f5f84adb991ac830e290a9533db509d1e9abb",
-    "drivers/linux_usb.c": "d43ecfe36302790854f4b4c02fb3ce0abe7e9054aed5b0b8131d53402edac195",
+    "drivers/linux_usb.c": "95d1e6348abaf5383b77e25b8a7b7e05f43ec15b0ece44d597ee6153d1be2dae",
     "kernel/k.h": "55c5d608647fddfb902fc981efc9a993e67bbf4adb7f38ba45bd5f843d096428"
   },
   "runs": [

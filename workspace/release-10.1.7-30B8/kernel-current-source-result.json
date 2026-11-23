@@ -1,21 +1,21 @@
 {
   "passed": true,
   "scope": "Current production kernel: host/runtime/target contracts and actual guest TCP, MMU faults, synchronization, TLS/errno and managed-thread/C++ probes; NOT browser or Linux driver-port completion",
-  "production_build": "/var/tmp/tmc-10.1.7/linux-config-v10/build",
-  "kernelcache_sha256": "295789b7181a3e571bdf347569fbd9a0a5d6a896f1cbc725c9d0652ce60338af",
-  "kernel_sha256": "c030f8d78271713883806216af1ec2fada9135ab8f5202680aed8810ba4291e7",
-  "external_evidence": "/var/tmp/tmc-config-v10-kernel-gwgrzg1e",
+  "production_build": "/var/tmp/tmc-10.1.7/linux-hid-v11/build",
+  "kernelcache_sha256": "4304c611f28e5f911ea322b22df65220202ea45f33e6e1e34b6bae364f35e00f",
+  "kernel_sha256": "a14e468c26f04f26a1eaf7e6015ad4f6850154ab746e8709d9629e1ba29d127b",
+  "external_evidence": "/var/tmp/tmc-config-v10-kernel-eel_une9",
   "full_linux_input_port": false,
   "physical_hardware_tested": false,
   "suite_case_count": 29,
   "guest_profiles_passed": 13,
   "actual_iso_kernel_equals_current_production_all_5_probes": true,
   "source_manifest_sha256_by_probe": {
-    "network": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
-    "vm": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
-    "sync": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
-    "tls": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48",
-    "threads": "680128bd8e17fd303054a2b1f84a0470b28b76322cdc13ee74e8e23700249b48"
+    "network": "3bc371f351ba1c8dc52ca26b1209cd45fa5b077511ee20be9ed40e24c0a47845",
+    "vm": "3bc371f351ba1c8dc52ca26b1209cd45fa5b077511ee20be9ed40e24c0a47845",
+    "sync": "3bc371f351ba1c8dc52ca26b1209cd45fa5b077511ee20be9ed40e24c0a47845",
+    "tls": "3bc371f351ba1c8dc52ca26b1209cd45fa5b077511ee20be9ed40e24c0a47845",
+    "threads": "3bc371f351ba1c8dc52ca26b1209cd45fa5b077511ee20be9ed40e24c0a47845"
   },
-  "suite_sha256": "767021d301d025abed9fe8ddcdff9deb1e36cdd693871b2bdcb2ae67b12b3ad8"
+  "suite_sha256": "8475ffe2beba758cc7303b98da4d3ad7724f4ff80f2bbdb41af0378b01e70e78"
 }

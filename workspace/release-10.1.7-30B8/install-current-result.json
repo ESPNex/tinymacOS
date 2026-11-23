@@ -1,10 +1,12 @@
 {
   "passed": true,
-  "iso_sha256": "77c53474026c5f30b186ce5f90ed2508f61d3d400d2b7953228b992151d2f2a9",
-  "external_work": "/var/tmp/tmc-bios-install-qa-i1crbxmf",
+  "iso_sha256": "e570e952315f7ebe68d6042b5ef113bed93af4ed9609a186bfa2dacbaaf24de7",
+  "external_work": "/var/tmp/tmc-bios-install-qa-coshkvld",
   "physical_hardware_tested": false,
   "full_linux_input_port": false,
   "scope": "actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU",
+  "installed_esp_kernel_readback_equals_current_build": true,
+  "installed_kernelcache_sha256": "4304c611f28e5f911ea322b22df65220202ea45f33e6e1e34b6bae364f35e00f",
   "bios_live_installer": true,
   "bios_hdd_only_login": true,
   "bios_cold_reboot": true,
@@ -16,6 +18,14 @@
   "official_duet_reserved_gap_verified": true,
   "installed_cpus_online": 2,
   "cd_removed": true,
-  "installed_esp_kernel_readback_equals_current_build": true,
-  "installed_kernelcache_sha256": "295789b7181a3e571bdf347569fbd9a0a5d6a896f1cbc725c9d0652ce60338af"
+  "actual_installed_component_notices_byte_exact": true,
+  "installed_component_notice_sha256": {
+    "ARTWORK.txt": "8a3a80f2dfbf68510065895cc355534b121829e5bf1ad3b7fcb148366eaba39d",
+    "FONTS.txt": "63d3ba759d12804c5b31a9d5940d855c1820d1f5999e6b0872eb1c7ff045fbc9",
+    "GNU-EFI.txt": "4c53ad5fdf4a2822505a204c0c4cdf8b05dc3352d262908ef5e92dad02a2534e",
+    "JITTERENTROPY.txt": "254c28a30f9dfa404a7ac80d6181933997374a96e5162e30bd71557911f60821",
+    "LINUX-GPL-2.0.txt": "f6b78c087c3ebdf0f3c13415070dd480a3f35d8fc76f3d02180a407c1c812f79",
+    "TMC-Ps2Firmware-BSD-2-Clause-Patent.txt": "50ce20c9cfdb0e19ee34fe0a51fc0afe961f743697b068359ab2f862b494df80",
+    "TMC-Ps2Firmware-NOTICE.txt": "bf102f649c23daf6015f95eb791f890f251c9972d4d6d0549ca9ce80f0051a08"
+  }
 }

@@ -3,7 +3,7 @@
   "firmware": "uefi",
   "profile": "xhci",
   "iso_sha256": "e570e952315f7ebe68d6042b5ef113bed93af4ed9609a186bfa2dacbaaf24de7",
-  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-h_hexg6k",
+  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-yb3su7dv",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,

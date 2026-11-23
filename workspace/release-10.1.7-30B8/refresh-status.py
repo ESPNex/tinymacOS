@@ -12,7 +12,7 @@ def current(name):
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
 other=Path('/var/tmp/tmc-10.1.7/linux-hid-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
-(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect functions; not an HCD/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
+(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/hid-generic/atkbd/psmouse/full-stack port','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
 symbols=subprocess.check_output(['nm',str(base/'build/kernel.debug')],text=True)
@@ -81,4 +81,5 @@ status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/confi
 status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; generic descriptor parsing host-tested, not hid-input generic keyboard events'
 status['blocking_work'][1]='Complete Linux HID bus/lifecycle, hid-input event dispatch and hid-generic driver; current increment is original descriptor-parser functions and a native pointer-layout bridge'
 status['installed_and_optical_all_component_notices_byte_exact']=current('media-contract-result.json') and load('media-contract-result.json').get('all_component_notices_in_three_fat_media',False)
+status['actual_installed_component_notices_byte_exact']=current('install-current-result.json') and load('install-current-result.json').get('actual_installed_component_notices_byte_exact',False)
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

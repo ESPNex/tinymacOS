@@ -6,7 +6,7 @@
   "physical_hardware_tested": false,
   "sources": {
     "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
-    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c",
+    "vendor/linux-v6.12/manifest.json": "1733b0443996a345a5ae1998f617fad1c6c0e7f0ce988e88060065e9a3a1ad76",
     "tests/linux_urb.c": "ba69eb0007510944b463401c212a4c81270004671685dc9cd9668f77882497e3",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
     "compat/linux/usb_input.c": "1f8f59ee8fd79f39cfea9d4fa50da1f811f81fc8e1088d1d211c5e35a6bfde6a",
@@ -14,7 +14,7 @@
     "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
     "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
     "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
-    "include/linux_usb.h": "dc8215c016d1353276f3ad5ffc24874ca2f7afe5350f79510109cc9ba1874c70"
+    "include/linux_usb.h": "5f77930abde8fd34903801e1898da3b814bd8ca0c6f450c94153b1217d71df47"
   },
   "sanitizers": [
     "address",

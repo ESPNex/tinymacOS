@@ -25,6 +25,11 @@ try:
  tool='/var/tmp/tmc/tools/root';installed_kernel=subprocess.check_output([tool+'/usr/bin/mtype','-i',str(installed_esp),'::/System/Library/KernelCollections/KernelCache'],env={**os.environ,'LD_LIBRARY_PATH':tool+'/usr/lib/x86_64-linux-gnu'})
  assert installed_kernel==(Path(os.environ['TMC_BUILD'])/'KernelCache').read_bytes()
  report['installed_esp_kernel_readback_equals_current_build']=True;report['installed_kernelcache_sha256']=hashlib.sha256(installed_kernel).hexdigest()
+ notice_hashes={}
+ for notice in sorted((root/'tinymacOS/licenses').iterdir()):
+  actual=subprocess.check_output([tool+'/usr/bin/mtype','-i',str(installed_esp),'::/LICENSES/'+notice.name],env={**os.environ,'LD_LIBRARY_PATH':tool+'/usr/lib/x86_64-linux-gnu'})
+  assert actual==notice.read_bytes(),notice.name;notice_hashes[notice.name]=hashlib.sha256(actual).hexdigest()
+ report['actual_installed_component_notices_byte_exact']=True;report['installed_component_notice_sha256']=notice_hashes
  with disk.open('rb') as f:
   mbr=f.read(512);f.seek(64*512);duet=f.read((root/'tinymacOS/vendor/opencore-1.0.8/bootX64').stat().st_size)
  assert mbr[:440]==(Path(os.environ['TMC_BUILD'])/'bios-mbr.bin').read_bytes();assert mbr[450]==0xee and mbr[510:]==b'\x55\xaa'
