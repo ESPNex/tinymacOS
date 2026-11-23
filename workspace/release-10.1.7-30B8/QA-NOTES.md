@@ -65,7 +65,7 @@ All twelve USB mouse, six USB keyboard and two mixed PS/2-keyboard/two-USB-mouse
 
 Workspace guard counts all files, reports both decimal MB and MiB, and enforces a conservative 120 MiB ceiling below the user's 128,000,000-byte limit. Private builds/ISOs and downloaded research remain under `/var/tmp`, not in snapshots; frozen 10.1.6 receipts remain untouched. Every verified source milestone is synchronized to GitHub before any future binary publication.
 
-## Current v9: original psmouse packet/detect functions, shared PS/2+USB pointer ownership
+## Historical v9: original psmouse packet/detect functions, shared PS/2+USB pointer ownership
 
 Native PS/2 arithmetic/wheel decoder replaced with byte-exact complete original Linux packet/report functions. IntelliMouse/Explorer boot detection also executes original Linux functions using real libps2 AUX commands. Vendor source+header and both extraction ranges are hash-pinned; GPL-2.0-only provenance preserved. Native i8042 and stream framing, keyboard decoder/LEDs, remaining psmouse lifecycle/touchpad protocols and full Linux USB HCD/core/hub/generic HID remain incomplete.
 
@@ -74,3 +74,11 @@ Two PS/2-only ISO profiles pass with sixteen Linux commands, twenty-six transmit
 The first v9 boot failed under optimized compilation. Its receipts are preserved under `attempts/psmouse-adapter-optimized-guard/`; the initial private adapter used a redundant embedded-device identity guard and its optimized probe fell through after the first command. The private adapter is now explicitly bound to the sole native AUX port instead of that identity assumption; both freestanding O1/O2 sanitizer runs and actual BIOS/UEFI boots pass. The first packaging attempt also ran out of external temporary disk space, without touching the workspace or published release; a byte-verified redundant private ISO was removed before retrying. Old source-synced v7/v8 private output directories were removed only after replacement guest checks passed. Source and evidence remain in Git history.
 
 Independent normal build and dualboot packaging match byte-for-byte. Current ISO optical/installed/About/Recovery identity and actual OpenCore quiet/firmware input-driver media contracts pass. Final full install/kernel/Recovery release gates are still false; no deployment or physical Bay Trail claim.
+
+## Current v10: complete Linux USB configuration/BOS core
+
+Entire unchanged GPL-2.0-only core/config.c now compiles through an explicitly private descriptor ABI, separate from bounded URB objects. Native controllers now use original configuration/interface/endpoint caches for HID and hub-class selection at actual bus speed. Endpoint repairs, alternate settings, SS/SSP companions, original config/BOS reads and teardown execute real upstream code. The native transport gate rejects truncated/malformed class descriptor streams and duplicate selected HID endpoints. Native HCDs, hub power/reset/enumeration, 1024-byte/first-configuration/alternate-zero policy and non-Boot report decoder remain; this is not complete HCD/core/hub/generic HID porting.
+
+Host ASan+UBSan freestanding O1/O2 pass allocation and transport rollback, 8-config cap, interface/alternate/endpoint caches, duplicates, all speed repairs, SS/SSP descriptors, BOS EXT/SS/container/SSP/PTM, replacement/free, malformed inputs, 4096 deterministic mutations, every truncated composite prefix and 1024 leak-free lifecycles. The first BOS fixture used a 16-byte SSP capability, whereas upstream's minimum is 20; the fixture was corrected to include both declared speed entries. No upstream source was modified.
+
+Initial actual-ISO UEFI nested-hub profile passes rendered XY and original core-config symbols plus live parse/read counters for both hubs and the mouse, with every temporary configuration allocation freed. Full current guest/regression matrix is still being rerun; historical receipts are only current when their ISO SHA matches. Port-completion, physical-hardware and final release gates remain false; no deploy.

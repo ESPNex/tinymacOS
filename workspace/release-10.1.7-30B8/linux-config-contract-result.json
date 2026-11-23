@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "scope": "Complete original Linux v6.12 drivers/usb/core/config.c configuration/interface/endpoint/SS/SSP/BOS parser and cache lifetime, real native HID/hub-class selection",
+  "full_linux_hcd_port": false,
+  "full_linux_hub_driver": false,
+  "generic_linux_hid": false,
+  "native_configuration_limit_bytes": 1024,
+  "physical_hardware_tested": false,
+  "sources": {
+    "vendor/linux-v6.12/config.c": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
+    "vendor/linux-v6.12/manifest.json": "89aaa19715228c1910e33428171fcc1f9a64c3f1c71b55e374dccc5258088f6c",
+    "compat/linux/usb_config.c": "b163ff05e9772455e3a7f8317a4060058bbac507fd6b5f1bab91b236c429aafa",
+    "include/linux_usb_config.h": "a7eacc17217c5f2e2c290c242948d1a1aef92d822af3f193330779293737da2d",
+    "include/hidconfig.h": "f6d9a1c501ab3a59df16939a354a1656f726e67417663b8f97965aa3685900a0",
+    "drivers/hidconfig.c": "896f4928d736745f86c15d5f2469d2f9cdc9ce401af56407828abd0fb181c21b",
+    "drivers/xhci.c": "b9a8acbe0f682f35f253f3cd84a6a4ee5a60268de7ef548ab512c5c647633628",
+    "drivers/usbinput.c": "78862b9fd8bd65ad66b998ed28484228bde3b7dfbce6aff3f23d0d0a9ae157b8",
+    "drivers/linux_usb.c": "d43ecfe36302790854f4b4c02fb3ce0abe7e9054aed5b0b8131d53402edac195",
+    "tests/linux_config.c": "7dc88ef3b822f860f53984cb5ce1dea96be27f43feec988807e14e1db65e2107",
+    "tests/linux_config_runtime.c": "9cafe9442be5e6bf2c4be95c10b451e86d956bab9d9fbf9e0164f5298cc9e753",
+    "compat/linux/include/asm/byteorder.h": "c2117971441cfdfce9a3ca737c6b42c46195f69d65799b9d0d8dd6abf310fc18",
+    "compat/linux/include/linux/bitops.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/linux/delay.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/device.h": "c2117971441cfdfce9a3ca737c6b42c46195f69d65799b9d0d8dd6abf310fc18",
+    "compat/linux/include/linux/hid.h": "1f0a30c08063824cd067f8de54f35f6d1c5bd097bec1d922ede101e45a9d69e8",
+    "compat/linux/include/linux/i8042.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/init.h": "1f0a30c08063824cd067f8de54f35f6d1c5bd097bec1d922ede101e45a9d69e8",
+    "compat/linux/include/linux/input.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/interrupt.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/kernel.h": "1f0a30c08063824cd067f8de54f35f6d1c5bd097bec1d922ede101e45a9d69e8",
+    "compat/linux/include/linux/kmsan-checks.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/kmsan.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/linux/libps2.h": "d6e524edb6587f824a48a1670a982a98ae29b179bcfd58860cac508c13136d7f",
+    "compat/linux/include/linux/log2.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/linux/module.h": "9a6c4ef029466f6b3c8ca200a2ec4c5c1948dbcbdf3bf1f4d3c0a74c6637fa42",
+    "compat/linux/include/linux/mutex.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/scatterlist.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/linux/sched.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/serio.h": "c4fc1d55c972c4bfa939286b873f4af55165e377f76f7b4a6869c5d92642749c",
+    "compat/linux/include/linux/slab.h": "9a6c4ef029466f6b3c8ca200a2ec4c5c1948dbcbdf3bf1f4d3c0a74c6637fa42",
+    "compat/linux/include/linux/string.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/linux/tmc_compat.h": "33ca27e308696316054cc060cdac3168061751eb8fad53d4ebd736613f560aef",
+    "compat/linux/include/linux/tmc_ps2_compat.h": "6941a688dd502ef1d7f9e0bd3216421b09380abda71c9e3d10be77b4a6aeed38",
+    "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
+    "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
+    "compat/linux/include/linux/tmc_usb_config.h": "b70c5528a061e520c3cbdd24ffd1e823a10bd6c6294f2868edeca8f494e9a80a",
+    "compat/linux/include/linux/types.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
+    "compat/linux/include/linux/usb.h": "3796341f98dd0e9e530b46dd69eb89bdeff12ae666e8450e60ad4d0e9b83f2be",
+    "compat/linux/include/linux/usb/ch9.h": "c2117971441cfdfce9a3ca737c6b42c46195f69d65799b9d0d8dd6abf310fc18",
+    "compat/linux/include/linux/usb/hcd.h": "3796341f98dd0e9e530b46dd69eb89bdeff12ae666e8450e60ad4d0e9b83f2be",
+    "compat/linux/include/linux/usb/input.h": "702979e34080197149e12e4b99cfc09829342011088a2078946ecef7b335c2ec",
+    "compat/linux/include/linux/usb/quirks.h": "c2117971441cfdfce9a3ca737c6b42c46195f69d65799b9d0d8dd6abf310fc18",
+    "compat/linux/include/linux/wait.h": "9a6b6d4957ec2389f9710fba94d15e9abde60092e55ea70f23528d6589b3fedd",
+    "compat/linux/include/usb.h": "c2117971441cfdfce9a3ca737c6b42c46195f69d65799b9d0d8dd6abf310fc18"
+  },
+  "runs": [
+    {
+      "optimization": "-O1",
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS complete original Linux USB core/config.c: actual descriptor transport, 8-config cap, alternate/interface/endpoint caches, duplicate endpoints, speed-aware repairs, SS+SSP companions, full BOS capabilities, all allocation/transport rollback, bounded malformed input and 1024 leak-free lifecycles; native HCD/enumeration/hubs/HID remain separate\n"
+    },
+    {
+      "optimization": "-O2",
+      "freestanding": true,
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS complete original Linux USB core/config.c: actual descriptor transport, 8-config cap, alternate/interface/endpoint caches, duplicate endpoints, speed-aware repairs, SS+SSP companions, full BOS capabilities, all allocation/transport rollback, bounded malformed input and 1024 leak-free lifecycles; native HCD/enumeration/hubs/HID remain separate\n"
+    }
+  ]
+}

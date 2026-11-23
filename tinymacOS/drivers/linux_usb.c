@@ -48,3 +48,9 @@ u64 tmc_lx_os_clock_ms(void)
  }
  return linux_tsc()/linux_tsc_per_ms;
 }
+
+/* Complete Linux descriptor core uses private objects and real kernel memory
+ * and PIT-channel-2 delays; it shares neither fake URBs nor descriptor reads. */
+void *tmc_config_os_alloc(size_t n){return n&&n<=65536?kmalloc(n):0;}
+void tmc_config_os_free(void *p){kfree(p);}
+void tmc_config_os_delay(unsigned ms){usb_delay_ms(ms);}

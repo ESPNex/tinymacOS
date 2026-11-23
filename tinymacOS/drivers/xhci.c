@@ -298,14 +298,9 @@ static int configure(struct Usb*u, int port, int speed)
     int len = u->desc[2] | (u->desc[3] << 8);
     if (len < 9 || len > 1024 || control(u, 128, 6, 0x200, 0, len)||u->ctrl_bytes<len)
         return 0;
-    int cfg=u->desc[5];
-    for(unsigned at=0;at<(unsigned)len;) {
-        unsigned z=u->desc[at];if(z<2||z>(unsigned)len-at)return 0;
-        if(u->desc[at+1]==4 && z>=9 && !u->desc[at+3] && u->desc[at+5]==9)return hub_config(u,cfg);
-        at+=z;
-    }
-    HidInterface choices[NHID];
-    int count=hid_interfaces(u->desc,len,choices,NHID);
+    unsigned cfg=0;int hub=0;HidInterface choices[NHID];
+    int count=hid_configuration_at_speed(u->desc,len,speed==1?2:speed==2?1:speed==3?3:speed==4?5:6,choices,NHID,&cfg,&hub);
+    if(count<0)return 0;if(hub)return hub_config(u,cfg);
     if(count<=0)return 0;
     memset(u->ic,0,sizeof u->ic);
     ctx(u,0)[1]=1;

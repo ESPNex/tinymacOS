@@ -2,7 +2,7 @@
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
 import filecmp,hashlib,json,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-psmouse-v9');iso=base/'tinymacOS-10.1.7-x86_64.iso'
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path('/var/tmp/tmc-10.1.7/linux-config-v10');iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -56,4 +56,12 @@ status['actual_upstream_psmouse_packet_and_detect_functions_linked']=all(any(lin
 status['linux_psmouse_functions_host_contract_passed']=bool(psmouse_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in psmouse_contract.get('sources',{}).items())
 status['ps2_usb_shared_pointer_guest_profiles_passed']=sum(current(f'linux-mixed-mice-{fw}.json') for fw in ['uefi','bios'])
 status['ps2_usb_shared_pointer_guest_profiles_expected']=2
+config_contract=load('linux-config-contract-result.json')
+status['actual_upstream_linux_usb_core_config_file_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_config_get_configuration','tmc_config_destroy_configuration','tmc_config_get_bos_descriptor','tmc_config_release_bos_descriptor'])
+status['linux_config_host_contract_passed']=bool(config_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in config_contract.get('sources',{}).items())
+status['linux_config_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_core_config_file_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
+status['linux_config_current_guest_topologies_expected']=18
+status['native_configuration_policy']='First configuration, alternate-zero inputs, 1024 bytes; original config.c parses/selects both HID and hub classes'
+status['complete_linux_hub_driver_port']=False
+status['blocking_work'][0]='Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hub/IRQ/DMA lifecycle; core urb.c/config.c, Boot input drivers and EHCI qtd_fill are upstream so far'
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

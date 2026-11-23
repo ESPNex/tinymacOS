@@ -8,7 +8,7 @@ import hashlib,json,os,struct,subprocess,sys,tempfile,time
 q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';sys.path.insert(0,str(root/'tests'))
 from retail_guest import Retail
 fw,profile=sys.argv[1:];assert fw in ['uefi','bios'];assert profile in ['ehci-kbd','companion-kbd','xhci-hub-kbd']
-base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-psmouse-v9'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
+base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-config-v10'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix=f'tmc-linux-kbd-{fw}-{profile}-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
 r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_keyboard_driver':True,'linux_hcd_port':False,'linux_full_usb_core_port':False,'native_hcd_transport_adapter':True,'physical_hardware_tested':False}
@@ -31,6 +31,14 @@ try:
    return dict(zip(['submits','givebacks','unlinks','rejected','active','highwater'],struct.unpack('<6Q',p.read_bytes())))
   for name in ['usb_submit_urb','usb_init_urb','usb_get_urb','usb_kill_urb','usb_poison_anchored_urbs']:
    assert any(s.endswith(' '+name) for s in symbols),name
+  for name in ['tmc_config_get_configuration','tmc_config_get_bos_descriptor','tmc_config_destroy_configuration']:
+   assert any(s.endswith(' '+name) for s in symbols),name
+  config_address=int(next(s.split()[0] for s in symbols if s.endswith(' b tmc_linux_config_counters')),16)
+  p=w/'config-stats.bin';g.req('pmemsave',val=config_address,size=80,filename=str(p))
+  r['config_core']=cfg=dict(zip(['opens','failures','descriptor_reads','configs','interfaces','endpoints','bos','notices','allocations','frees'],struct.unpack('<10Q',p.read_bytes())))
+  assert cfg['opens']>=1 and cfg['descriptor_reads']>=2 and cfg['configs']>=1 and cfg['interfaces']>=1 and cfg['endpoints']>=1 and cfg['allocations']==cfg['frees'] and not cfg['failures'],cfg
+  r['actual_upstream_core_config_file_executed']=True
+  if 'hub' in profile:assert cfg['opens']>=3,cfg
   r['urb_core_before']=urb_counters()
   r['before']=before=counters();assert before['attached']==1,before
   g.enroll('PortLinux');g.key('f2');g.visible('Sessione locale')

@@ -42,15 +42,9 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
     if(c(u,128,6,0x200,0,9)||u->ctrl_bytes<9)return 0;
     unsigned n=u->desc[2]|u->desc[3]<<8;
     if(n<9||n>sizeof u->desc||c(u,128,6,0x200,0,n)||u->ctrl_bytes<n)return 0;
-    unsigned config=u->desc[5];int hub=0;
-    for(unsigned at=0;at+2<=n;) {
-        unsigned z=u->desc[at];if(z<2||z>n-at)return 0;
-        if(u->desc[at+1]==4&&z>=9&&u->desc[at+5]==9)hub=1;
-        at+=z;
-    }
-    if(hub)return c(u,0,9,config,0,0)?0:2;
-    HidInterface choices[USB_INPUT_INTERFACES];
-    int found=hid_interfaces(u->desc,n,choices,USB_INPUT_INTERFACES);
+    unsigned config=0;int hub=0;HidInterface choices[USB_INPUT_INTERFACES];
+    int found=hid_configuration_at_speed(u->desc,n,u->speed==1?2:u->speed==2?1:3,choices,USB_INPUT_INTERFACES,&config,&hub);
+    if(found<0)return 0;if(hub)return c(u,0,9,config,0,0)?0:2;
     if(found<=0||c(u,0,9,config,0,0))return 0;
     unsigned usable=0;
     for(int i=0;i<found;i++) {

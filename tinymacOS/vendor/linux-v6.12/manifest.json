@@ -50,10 +50,16 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/input/mouse/psmouse.h",
       "sha256": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
       "license": "GPL-2.0-only"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/config.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/config.c",
+      "sha256": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
+      "license": "GPL-2.0-only"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
-  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers.",
+  "scope": "Complete original Linux Boot mouse/keyboard, urb.c, libps2.c; complete EHCI qtd_fill and psmouse standard/extended packet and IntelliMouse/Explorer detection function extractions. Not full Linux HCD/core/hub/generic HID/i8042/atkbd/psmouse drivers. Complete original core/config.c descriptor/configuration/BOS parser; native enumeration and HCD remain.",
   "extractions": [
     {
       "source": "ehci-q.c",

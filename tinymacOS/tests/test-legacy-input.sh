@@ -20,4 +20,4 @@ a=s.index('void usb_delay_ms(');b=s.index('static int linux_keyboard_control(',a
 s=s[:a]+'void usb_delay_ms(unsigned ms){(void)ms;}\n'+s[b:]
 Path(sys.argv[1]).write_text(s)
 PY
-gcc $C -DTMC_USBINPUT_TEST_SOURCE=\""$out/usbinput-test.c"\" tests/usbinput_contract.c $LX drivers/hidconfig.c drivers/hidtablet.c -o "$out/usbinput";"$out/usbinput"
+gcc $C -DTMC_USBINPUT_TEST_SOURCE=\""$out/usbinput-test.c"\" tests/usbinput_contract.c $LX drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/usbinput";"$out/usbinput"
