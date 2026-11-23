@@ -4,7 +4,7 @@ Current status is machine-readable in `STATUS.json`. Every guest receipt identif
 
 ## Implemented port milestone
 
-Linux v6.12 `usbmouse.c` is preserved byte-for-byte upstream, compiled and linked into the native kernel. The implemented USB/input compatibility subset receives real interrupt packets from **native** xHCI/EHCI/UHCI transport. Twelve BIOS/UEFI topologies verify live driver completions plus 72 exact rendered cursor positions. Host sanitizers cover allocation failure, cancellation/reopen, held-button release on disconnect and 4,000 concurrent lifecycles. This is a Boot mouse HID port, not Linux HCD/general USB-core/generic-HID support.
+Linux v6.12 `usbmouse.c` is preserved byte-for-byte upstream, compiled and linked into the native kernel. The implemented USB/input compatibility subset receives real interrupt packets from **native** xHCI/EHCI/UHCI transport. The historical v3 twelve BIOS/UEFI topologies verified live driver completions plus 72 exact rendered cursor positions; their ISO hashes do not certify v5. Host sanitizers cover allocation failure, cancellation/reopen, held-button release on disconnect and 4,000 concurrent lifecycles. This is a Boot mouse HID port, not Linux HCD/general USB-core/generic-HID support.
 
 ## Recovery
 
@@ -19,12 +19,20 @@ The attempted Apple keymap/KeySupport combination duplicated USB input. A Simple
 
 Through v3, About source and executable were unchanged from 10.1.6 / 30B7 by the earlier request. The latest user instruction reverses that exception: v4 updates only the version/build strings to 10.1.7 / 30B8, retaining the layout. The icon manifest's historical 10.1.6 provenance note is likewise unchanged. No QEMU result is physical ASRock compatibility evidence. Final publication remains blocked on the remaining implementation and complete release gates.
 
-## Current v3 integration
+## Historical v3 integration
 
 ISO SHA-256 `cfed0081712277fd25b7020f56c15fe52e252316a42f5c1c64d116ca200fae03`, 225718272 bytes; two independent full builds are byte-identical. The linked KernelCache is byte-identical to v2 (the tested 29-case/13-profile kernel). Firmware/loader/Recovery changes still require their own current receipts; old v2 ISO-specific input receipts do not certify v3. Current v3 has four keyboard profiles, UEFI+BIOS staging/deletion/Recovery mouse and media/identity contracts. Linux HCD/core/generic HID and the complete final release gate remain unfinished; no deployment.
 
 The subsequent v3 retest also passed all twelve Linux Boot mouse topologies (72 exact rendered XY checks, live upstream completion counters) and the complete Control Center guest checks. These receipts identify the v3 ISO, not v2. Kernel evidence is carried only through the exact-byte comparison recorded in `kernel-binary-equivalence-v3.json`; it is not reported as a newly run kernel suite.
 
-## v4 work in progress
+## Historical v4 integration
 
 Current v4 adds the full unmodified Linux EHCI `qtd_fill` function to native EHCI descriptor construction, not the full HCD. Host sanitizers cover 147672 page/DMA64/packet combinations plus rollback. UEFI+BIOS EHCI guests independently verify live qTD-build counters, upstream Boot mouse completions and rendered XY. Shared Intel mux validation now checks current routing registers before either write and confirms readback; six controller-family fixtures include Bay Trail 8086:0f35. These fixtures do not emulate Bay Trail electrical behavior or certify ASRock hardware. About displays 10.1.7 / 30B8 by the latest instruction. Kernel bytes changed, so the old v2/v3 exact-kernel equivalence must NOT be carried to v4. Remaining controller/core/generic-HID work and final release gates still block deployment.
+
+## Current v5: complete upstream Boot keyboard, not complete USB stack
+
+The full byte-exact Linux v6.12 `usbkbd.c` is compiled through `compat/linux/usb_keyboard.c`. Native xHCI/EHCI/UHCI feed its interrupt URB. Its actual input events enter the sole Italian map; registered keyboards merge held-key bitmaps/modifiers without a six-key aggregate limit. The original upstream LED event/completion state machine now reaches native EP0 through a bounded deferred control adapter. Generation and submission-serial validation guard cancellation/disconnect/rebind while that native wait is outside the compatibility lock.
+
+ASan/UBSan executes seven allocation rollback points, Italian Shift/AltGr/accent/euro/ISO keys, Caps/repeat, two-keyboard shared keys/modifiers and twelve held keys, invalid/rollover packets, interrupt cancel/reopen, LED coalescing/reentry, same-URB resubmit ABA, concurrent disconnect/rebind ABA, STALL and leak-free teardown. Six actual ISO guests pass: UEFI+BIOS on EHCI, UHCI companion and xHCI hub, with i8042 disabled. Each records 180 upstream IRQ completions/frames, two native LED controls and zero rejected/control-error/stale completions. This verifies virtual devices, not ASRock/Bay Trail hardware.
+
+The v5 kernel differs from v4. Earlier full staging, recovery, media and runtime receipts must not be treated as current-binary certification. Linux HCDs, general USB core/hubs, generic HID and the complete final install/input/kernel/license gate still block deployment. Source synchronization only; no release or ISO upload.

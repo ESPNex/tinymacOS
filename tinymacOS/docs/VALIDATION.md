@@ -41,3 +41,7 @@ bash tests/test-legacy-input.sh
 Le prove guest richiedono toolchain, build esterna e dischi virtuali usa-e-getta. Leggere i parametri di ciascun harness. Il backend sperimentale ha test separati sotto `workspace/webkit-tmc/tools/`: non certificano Safari/WebKit.
 
 La variante PS/2 è identificata separatamente da OpenCore ufficiale; sorgenti, patch e lock sono in `vendor/tmc-ps2-keymap/`. `firmware-keyboard-contract-result.json` copre queue/overflow e il consumer reale con ASan/UBSan, deduplicazione, Shift/AltGr, Caps Lock, repeat/rilascio e assenza di istruzioni I/O nell’oggetto Recovery. I quattro `recovery-keyboard-*.json` restano la prova guest indipendente.
+
+### Ulteriore milestone 10.1.7: tastiera Boot Linux
+
+`linux-usbkbd-contract-result.json` esegue il driver originale completo e il vero consumer italiano con ASan/UBSan, inclusi LED differiti e annullamento/disconnessione durante EP0. Le sei ricevute `linux-usbkbd-{uefi,bios}-{ehci-kbd,companion-kbd,xhci-hub-kbd}.json` verificano il KernelCache della ISO, tastiera solo USB, testo italiano renderizzato e contatori IRQ/LED reali. Restano trasporti HCD nativi: non è il port completo Linux e non prova compatibilità fisica Bay Trail.

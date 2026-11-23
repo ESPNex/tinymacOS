@@ -20,6 +20,14 @@ void usb_delay_ms(unsigned ms)
         outb(0x61,old);
     }
 }
+static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsigned n)
+{
+    UsbInput *u=context;
+    if(!u||!data||n>sizeof u->desc||(setup[0]&128)||n!=(unsigned)(setup[6]|setup[7]<<8))return -22;
+    memcpy(u->desc,data,n);
+    int result=u->control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
+    return result==-2?-32:result?-5:0;
+}
 int usb_input_enumerate(UsbInput *u,unsigned address)
 {
     int (*c)(UsbInput *,int,int,int,int,int)=u->control;
@@ -47,7 +55,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
     unsigned usable=0;
     for(int i=0;i<found;i++) {
         HidInterface *f=choices+i;UsbInputPipe *p=u->pipe+u->npipe;
-        tmc_linux_mouse_detach(p);
+        tmc_linux_mouse_detach(p);tmc_linux_keyboard_detach(p);
         *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length};
         if((u->speed==2&&p->packet>8)||(u->speed==1&&p->packet>64))continue;
         int report_ready=0;
@@ -72,6 +80,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         (void)c(u,0x21,10,0,p->iface,0);
         if(p->proto==2&&tmc_linux_mouse_boot_layout(&p->layout))
             p->linux_mouse=tmc_linux_mouse_attach(p,u->vid,u->pid,p->packet,p->interval);
+        if(p->proto==1)p->linux_keyboard=tmc_linux_keyboard_attach(p,u->vid,u->pid,p->packet,p->interval,p->iface,linux_keyboard_control,u);
         if(p->proto==1){input_diag.keyboards++;device_add("USB HID keyboard (USB2)","input",0);}
         else {input_diag.pointers++;device_add("USB HID pointer (USB2)","input",0);}
         u->npipe++;usable++;
@@ -83,7 +92,10 @@ void usb_input_report(UsbInput *u,unsigned pipe,unsigned bytes)
     if(pipe>=u->npipe)return;UsbInputPipe *p=u->pipe+pipe;
     input_diag.reports++;
     if(bytes>p->packet){input_diag.bad_reports++;return;}
-    if(p->proto==1&&bytes>=8)hid_keys(p->report);
+    if(p->proto==1&&bytes>=8){
+        if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,p->report,bytes);
+        else hid_keys(p->report);
+    }
     else if(p->proto==2&&bytes>=3){TabletState s;
         if(p->linux_mouse&&tmc_linux_mouse_report(p,p->report,bytes))return;
         if(pointer_boot_read(&p->layout,p->report,bytes,boot.w,boot.h,&s))hid_relative(s.x,s.y,s.buttons,s.wheel);

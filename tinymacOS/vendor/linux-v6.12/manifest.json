@@ -15,10 +15,15 @@
       "path": "tinymacOS/vendor/linux-v6.12/ehci-q.c",
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-q.c",
       "sha256": "6b2a725c4efe5531b01ecd42c1da7fd0e604edb006c3627e3c605ceb70bd741d"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbkbd.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/hid/usbhid/usbkbd.c",
+      "sha256": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI function extraction exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
-  "scope": "Complete upstream Boot mouse driver, plus the complete EHCI qtd_fill DMA descriptor function. Not a complete Linux HCD/USB-core/generic-HID port.",
+  "scope": "Complete unmodified Linux Boot mouse and Boot keyboard drivers; complete EHCI qtd_fill function. Not the complete Linux HCD/USB core/generic HID stack.",
   "extractions": [
     {
       "source": "ehci-q.c",

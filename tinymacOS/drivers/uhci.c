@@ -1,5 +1,6 @@
 #include "../kernel/k.h"
 #include "usbhost.h"
+#include "linux_usb.h"
 /* Native UHCI companions: low/full-speed HID from EHCI-owned USB2 ports,
  * plus standalone UHCI root ports. Periodic frame tree and independent
  * control QH; no reliance on USB-legacy SMM emulation. */
@@ -123,7 +124,8 @@ void uhci_poll(void)
             u32 st=*(volatile u32 *)&d->td[j].status;if(st&UACTIVE)continue;p->armed=0;
             if(st&UERROR){
                 input_diag.transfer_errors++;
-                if(p->proto==1){const u8 released[8]={0};hid_keys(released);}
+                if(p->proto==1){const u8 released[8]={0};
+                    if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,released,8);else hid_keys(released);}
                 if(p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
                 continue;
             }

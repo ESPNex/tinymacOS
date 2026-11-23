@@ -32,7 +32,7 @@ struct Hid {
     Ring in;
     u8 report[1024] ALIGNED(1024); /* a Normal TRB must not cross a 64 KiB boundary */
     TabletLayout tablet;
-    int ep,proto,mps,armed,iface,report_len,failures,pending,linux_mouse;
+    int ep,proto,mps,armed,iface,report_len,failures,pending,linux_mouse,linux_keyboard;
     u64 retry_at;
 };
 struct Usb {
@@ -40,6 +40,7 @@ struct Usb {
     u8 outctx[32*64] ALIGNED(64),ic[33*64] ALIGNED(64);
     u8 desc[1024] ALIGNED(1024); /* Data Stage TRBs have the same 64 KiB boundary rule */
     struct Hid hid[NHID];
+    struct Xhci *controller;
     int id,port,speed,nhid,diag,ctrl_dead,ctrl_bytes;
     unsigned route,depth,tt_slot,tt_port,tt_think,hub_ports,hub_think;
 };
@@ -198,6 +199,14 @@ static int control(struct Usb*u, int rt, int rq, int val, int ix, int n)
     }
     return ret;
 }
+static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsigned n)
+{
+    struct Usb *u=context;struct Xhci *saved=hc;
+    if(!u||!u->controller||!data||n>sizeof u->desc||(setup[0]&128)||n!=(unsigned)(setup[6]|setup[7]<<8))return -22;
+    hc=u->controller;memcpy(u->desc,data,n);
+    int result=control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
+    int status=result?(hc->lastcode==6?-32:-5):0;hc=saved;return status;
+}
 /* A successful SET status must not override a contradictory GET_PROTOCOL.
  * Some boot mice acknowledge SET without changing their packet mode. Keep
  * descriptor offsets only when Report really is selected. Unsupported GET is
@@ -248,6 +257,7 @@ static int hub_config(struct Usb *u,int cfg)
 }
 static int configure(struct Usb*u, int port, int speed)
 {
+    u->controller=hc;
     int id = command(9, 0, 0);
     if (id <= 0 || id > NS)
         return 0;
@@ -303,7 +313,7 @@ static int configure(struct Usb*u, int port, int speed)
     unsigned highest=1;
     for(int k=0;k<count;k++) {
         HidInterface *f=&choices[k];struct Hid *h=&u->hid[k];
-        tmc_linux_mouse_detach(h);
+        tmc_linux_mouse_detach(h);tmc_linux_keyboard_detach(h);
         *h=(struct Hid){.ep=f->ep,.proto=f->proto,.mps=f->packet,.iface=f->iface,.report_len=f->report_length};
         ringinit(&h->in);
         ctx(u,0)[1]|=1u<<h->ep;
@@ -346,6 +356,11 @@ static int configure(struct Usb*u, int port, int speed)
             unsigned vid=u->diag?input_diag.device[u->diag-1].vid:0;
             unsigned pid=u->diag?input_diag.device[u->diag-1].pid:0;
             h->linux_mouse=tmc_linux_mouse_attach(h,vid,pid,h->mps,10);
+        }
+        if(h->proto==1){
+            unsigned vid=u->diag?input_diag.device[u->diag-1].vid:0;
+            unsigned pid=u->diag?input_diag.device[u->diag-1].pid:0;
+            h->linux_keyboard=tmc_linux_keyboard_attach(h,vid,pid,h->mps,10,h->iface,linux_keyboard_control,u);
         }
         const char *name=h->proto==1?"USB HID keyboard":h->proto==2?"USB HID mouse":
             h->tablet.relative?"USB HID report mouse":"USB HID tablet";
@@ -539,12 +554,13 @@ void input_init(void)
 // Control waits also dispatch unrelated input completions instead of losing them.
 void kbd_setleds(int on)
 {
+    tmc_linux_keyboard_leds((unsigned)on);
     struct Xhci *saved=hc;
     for(unsigned c=0;c<ncontrollers;c++) {
         hc=&controllers[c];if(!hc->active)continue;
         for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++) {
             struct Hid *h=&usb[i].hid[j];
-            if(h->proto==1){usb[i].desc[0]=on?2:0;control(usb+i,0x21,9,0x0200,h->iface,1);}
+            if(h->proto==1&&!h->linux_keyboard){usb[i].desc[0]=on&31;control(usb+i,0x21,9,0x0200,h->iface,1);}
         }
     }
     hc=saved;
@@ -560,6 +576,9 @@ static void transferred(const TRB *e)
             h->armed=0;
             if(code!=1&&code!=13) {
                 input_diag.transfer_errors++;
+                if(h->proto==1){const u8 release[8]={0};
+                    if(h->linux_keyboard)(void)tmc_linux_keyboard_report(h,release,8);else hid_keys(release);}
+
                 /* Only known halted states are recoverable here. Defer the
                  * bounded reset to the drain, never recurse inside result(). */
                 if((code==3||code==4||code==6) && h->failures<3) {
@@ -571,7 +590,10 @@ static void transferred(const TRB *e)
             input_diag.reports++;
             int n=h->mps-(int)(e->len&0xffffff);
             if(n<0||n>h->mps){input_diag.bad_reports++;arm(u,h);return;}
-            if(h->proto==1&&n>=8)hid_keys(h->report);
+            if(h->proto==1&&n>=8){
+                if(h->linux_keyboard)(void)tmc_linux_keyboard_report(h,h->report,n);
+                else hid_keys(h->report);
+            }
             if(h->proto==2&&n>=3){TabletState pt;
                 if(!(h->linux_mouse&&tmc_linux_mouse_report(h,h->report,n))&&
                    pointer_boot_read(&h->tablet,h->report,n,boot.w,boot.h,&pt))hid_relative(pt.x,pt.y,pt.buttons,pt.wheel);
@@ -613,4 +635,5 @@ void input_irq(void)
     }
     ehci_poll();uhci_poll();ps2_poll();
     input_repeat();int leds=input_led_take();if(leds>=0){kbd_setleds(leds);ps2_setleds(leds&2);}
+    tmc_linux_usb_service();
 }

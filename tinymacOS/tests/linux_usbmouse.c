@@ -22,6 +22,10 @@ u32 tmc_lx_os_lock(void){while(__sync_lock_test_and_set(&lock_word,1)){}return 0
 void tmc_lx_os_unlock(u32 f){(void)f;__sync_lock_release(&lock_word);}
 void tmc_lx_os_pointer(int x,int y,int b,int w){events++;last_x=x;last_y=y;last_buttons=b;last_wheel=w;}
 void tmc_lx_os_error(const char *s){assert(s&&*s);errors++;}
+void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods){(void)bitmap;(void)mods;assert(!"unexpected keyboard in mouse-only fixture");}
+u32 tmc_lx_os_irq_save(void){return 0;}
+void tmc_lx_os_irq_restore(u32 f){assert(!f);}
+void tmc_lx_os_spin_wait(void){__asm__ volatile("pause");}
 static void check(void *key,const u8 *raw,unsigned n,int x,int y,int buttons,int wheel)
 {
  int prior=events;assert(tmc_linux_mouse_report(key,raw,n));assert(events==prior+1);

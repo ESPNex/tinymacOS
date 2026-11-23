@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "firmware": "uefi",
+  "profile": "ehci-kbd",
+  "iso_sha256": "e0c7a892539ffaa2d8c036b3404dfbd2b400eec601d2c902a02889fc6ae296a5",
+  "work": "/var/tmp/tmc-linux-kbd-uefi-ehci-kbd-cvu1zx34",
+  "actual_upstream_boot_keyboard_driver": true,
+  "linux_hcd_port": false,
+  "linux_full_usb_core_port": false,
+  "native_hcd_transport_adapter": true,
+  "physical_hardware_tested": false,
+  "actual_iso_kernel_equals_build": true,
+  "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Keyboard\r\n",
+  "before": {
+    "probes": 1,
+    "attached": 1,
+    "completions": 0,
+    "frames": 0,
+    "rejected": 0,
+    "disconnected": 0,
+    "controls": 0,
+    "control_errors": 0,
+    "stale_controls": 0
+  },
+  "after": {
+    "probes": 1,
+    "attached": 1,
+    "completions": 180,
+    "frames": 180,
+    "rejected": 0,
+    "disconnected": 0,
+    "controls": 2,
+    "control_errors": 0,
+    "stale_controls": 0
+  },
+  "checks": [
+    "USB-only keyboard with virtual i8042 disabled",
+    "actual ISO KernelCache equals linked build",
+    "actual upstream probe/IRQ/event/LED/disconnect symbols",
+    "enrollment + F2 + rendered Italian Shift/AltGr/accent/euro command",
+    "Caps Lock on/off triggers two successful native EP0 LED controls"
+  ]
+}

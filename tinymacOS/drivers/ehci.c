@@ -1,5 +1,6 @@
 #include "../kernel/k.h"
 #include "usbhost.h"
+#include "linux_usb.h"
 #include "linux_ehci.h"
 /* Native EHCI controller/scheduler with the upstream Linux qTD DMA primitive.
  * This is not yet the complete Linux EHCI HCD or general USB core.
@@ -228,7 +229,8 @@ void ehci_poll(void)
             p->armed=0;
             if(st&0x7c){
                 input_diag.transfer_errors++;
-                if(p->proto==1){const u8 released[8]={0};hid_keys(released);}
+                if(p->proto==1){const u8 released[8]={0};
+                    if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,released,8);else hid_keys(released);}
                 if(p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
                 continue;
             }

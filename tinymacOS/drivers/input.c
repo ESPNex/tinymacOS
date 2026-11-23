@@ -8,7 +8,8 @@
 static Event q[128];
 static int head, tail, caps;
 static volatile int ledpend = -1;
-static u8 prior[8];
+static u8 prior_keys[32],legacy_keys[32],linux_keys[32];
+static unsigned legacy_mods,linux_mods;
 static int repeat, mods;
 static u64 due;
 static Spin input_lock;
@@ -95,36 +96,35 @@ void input_key_usage(int usage,int modifiers)
     if(usage==57){caps=!caps;ledpend=caps?2:0;}
     else emit(usage,modifiers);
 }
+/* Merge Linux input devices and any allocation-fallback Boot stream. Keep
+ * the whole physical bitmap: six-key USB reports from two keyboards must not
+ * truncate each other, lose modifiers, or release a key still held elsewhere.
+ */
+static void keyboard_sync(void)
+{
+    mods=legacy_mods|linux_mods;
+    for(unsigned k=4;k<224;k++){
+        unsigned bit=1u<<(k%8),at=k/8;
+        int held=!!((legacy_keys[at]|linux_keys[at])&bit);
+        if(held&&!(prior_keys[at]&bit)){
+            if(k==57)input_key_usage(57,mods);
+            else {emit(k,mods);repeat=k;due=ticks+48;}
+        }
+        if(held)prior_keys[at]|=bit;else prior_keys[at]&=~bit;
+    }
+    if(repeat&&!(prior_keys[repeat/8]&(1u<<(repeat%8))))repeat=0;
+}
+void hid_linux_keys(const u8 bitmap[32],unsigned modifiers)
+{
+    memcpy(linux_keys,bitmap,32);linux_mods=modifiers&255;keyboard_sync();
+}
 void hid_keys(const u8 r[8])
 {
-    int still = 0;
-    mods = r[0];
-    for (int i = 2; i < 8; i++)
-        if (r[i] == 1)
-            return;
-    for (int i = 2; i < 8; i++) {
-        int k = r[i];
-        if (k < 4)
-            continue;
-        int old = 0;
-        for (int j = 2; j < 8; j++)
-            old |= prior[j] == k;
-        if (!old) {
-            if (k == 57) {
-                caps = !caps;
-                ledpend = caps ? 2 : 0;   // queue HID LED report for xHCI
-            } else {
-                emit(k, mods);
-                repeat = k;
-                due = ticks + 48;
-            }
-        }
-        if (k == repeat)
-            still = 1;
-    }
-    if (!still)
-        repeat = 0;
-    memcpy(prior, r, 8);
+    for(unsigned i=2;i<8;i++)if(r[i]>=1&&r[i]<=3)return;
+    memset(legacy_keys,0,sizeof legacy_keys);legacy_mods=r[0];
+    for(unsigned i=2;i<8;i++)if(r[i]>=4&&r[i]<224)
+        legacy_keys[r[i]/8]|=1u<<(r[i]%8);
+    keyboard_sync();
 }
 void hid_mouse(const u8 *r)
 {

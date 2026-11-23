@@ -1,11 +1,12 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #pragma once
-/* The implemented Linux USB/input API subset for usbmouse.c, NOT a set of
+/* The implemented Linux USB/input API subset for usbmouse.c/usbkbd.c, NOT a set of
  * empty replacements for general Linux kernel services. Runtime definitions
  * are in usb_input.c; the native kernel supplies allocation, locking/events.
  */
 #include "base.h"
 #include <stdarg.h>
+#include <stdbool.h>
 typedef u64 dma_addr_t;
 typedef unsigned gfp_t;
 #define GFP_KERNEL 0
@@ -23,6 +24,18 @@ typedef unsigned gfp_t;
 #define URB_NO_TRANSFER_DMA_MAP 4
 #define EV_KEY 1
 #define EV_REL 2
+#define EV_LED 17
+#define EV_REP 20
+#define LED_NUML 0
+#define LED_CAPSL 1
+#define LED_SCROLLL 2
+#define LED_COMPOSE 3
+#define LED_KANA 4
+#define USB_TYPE_CLASS 0x20
+#define USB_RECIP_INTERFACE 1
+#ifndef KBUILD_MODNAME
+#define KBUILD_MODNAME "linux-usb"
+#endif
 #define BTN_MOUSE 0x110
 #define BTN_LEFT 0x110
 #define BTN_RIGHT 0x111
@@ -37,21 +50,26 @@ typedef unsigned gfp_t;
 #define USB_INTERFACE_CLASS_HID 3
 #define USB_INTERFACE_SUBCLASS_BOOT 1
 #define USB_INTERFACE_PROTOCOL_MOUSE 2
+#define USB_INTERFACE_PROTOCOL_KEYBOARD 1
 #define USB_INTERFACE_INFO(c,s,p) .cls=(c),.sub=(s),.proto=(p)
 /* These are static module metadata, not unimplemented runtime operations. */
 #define MODULE_AUTHOR(x) static const char tmc_lx_author[] __attribute__((used))=(x)
 #define MODULE_DESCRIPTION(x) static const char tmc_lx_description[] __attribute__((used))=(x)
 #define MODULE_LICENSE(x) static const char tmc_lx_license[] __attribute__((used))=(x)
 #define MODULE_DEVICE_TABLE(kind,table)
-#define module_usb_driver(driver) struct usb_driver *tmc_lx_usbmouse_driver(void){return &(driver);}
+#define tmc_lx_usb_mouse_driver tmc_lx_usbmouse_driver
+#define tmc_lx_usb_kbd_driver tmc_lx_usbkbd_driver
+#define module_usb_driver(driver) struct usb_driver *tmc_lx_##driver(void){return &(driver);}
 #define le16_to_cpu(x) (x) /* supported kernel target is little-endian x86-64 */
 struct device {struct device *parent;};
+static inline int device_set_wakeup_enable(struct device *d,int on){(void)d;return on?-95:0;} /* no platform suspend/wake implementation */
 struct input_id {u16 bustype,vendor,product,version;};
 struct input_dev {
  const char *name,*phys;struct input_id id;struct device dev;
- unsigned long evbit[1],keybit[16],relbit[1];
+ unsigned long evbit[1],keybit[16],relbit[1],ledbit[1],led[1],key[4];
  void *driver_data;int (*open)(struct input_dev *);void (*close)(struct input_dev *);
  int registered,x,y,wheel,buttons;void *owner;
+ int (*event)(struct input_dev *,unsigned,unsigned,int);
 };
 struct usb_bus {const char *bus_name;};
 struct usb_device {
@@ -60,18 +78,19 @@ struct usb_device {
 };
 struct usb_endpoint_descriptor {u8 bLength,bDescriptorType,bEndpointAddress,bmAttributes;u16 wMaxPacketSize;u8 bInterval;} PACK;
 struct usb_host_endpoint {struct usb_endpoint_descriptor desc;};
-struct usb_host_interface {struct {u8 bNumEndpoints;} desc;struct usb_host_endpoint *endpoint;};
+struct usb_host_interface {struct {u8 bNumEndpoints,bInterfaceNumber;} desc;struct usb_host_endpoint *endpoint;};
 struct usb_interface {struct device dev;struct usb_device *usbdev;struct usb_host_interface *cur_altsetting;void *driver_data;};
 struct usb_device_id {u8 cls,sub,proto;};
 struct urb {
  struct usb_device *dev;void *context,*transfer_buffer;int status,actual_length,transfer_buffer_length;
  dma_addr_t transfer_dma;unsigned transfer_flags,pipe,interval;void (*complete)(struct urb *);
- int submitted,killed;
+ int submitted,killed,type;u8 *setup_packet;u64 serial;
 };
 struct usb_driver {const char *name;int (*probe)(struct usb_interface *,const struct usb_device_id *);void (*disconnect)(struct usb_interface *);const struct usb_device_id *id_table;};
 void *tmc_lx_zalloc(size_t,gfp_t);
 void tmc_lx_free(void *);
 #define kzalloc tmc_lx_zalloc
+#define kmalloc tmc_lx_zalloc
 #define kfree tmc_lx_free
 long tmc_lx_strscpy(char *,const char *,size_t);
 size_t tmc_lx_strlcat(char *,const char *,size_t);
@@ -106,3 +125,26 @@ int usb_submit_urb(struct urb *,gfp_t);
 void usb_kill_urb(struct urb *);
 void usb_fill_int_urb(struct urb *,struct usb_device *,unsigned,void *,int,void (*)(struct urb *),void *,unsigned);
 struct usb_driver *tmc_lx_usbmouse_driver(void);
+
+struct usb_ctrlrequest {u8 bRequestType,bRequest;u16 wValue,wIndex,wLength;} PACK;
+#define cpu_to_le16(x) ((u16)(x))
+typedef struct {unsigned word;} spinlock_t;
+void tmc_lx_spin_init(spinlock_t *);
+unsigned long tmc_lx_spin_lock_irqsave(spinlock_t *);
+void tmc_lx_spin_unlock_irqrestore(spinlock_t *,unsigned long);
+#define spin_lock_init(l) tmc_lx_spin_init(l)
+#define spin_lock_irqsave(l,f) do {(f)=tmc_lx_spin_lock_irqsave(l);} while(0)
+#define spin_unlock_irqrestore(l,f) tmc_lx_spin_unlock_irqrestore((l),(f))
+static inline void set_bit(unsigned n,unsigned long *b){b[BIT_WORD(n)]|=BIT_MASK(n);}
+static inline void clear_bit(unsigned n,unsigned long *b){b[BIT_WORD(n)]&=~BIT_MASK(n);}
+static inline int test_bit(unsigned n,const unsigned long *b){return !!(b[BIT_WORD(n)]&BIT_MASK(n));}
+void *memscan(void *,int,size_t);
+void tmc_lx_hid_log(void *,unsigned,const char *,...);
+#define hid_info(d,fmt,...) tmc_lx_hid_log((d),0,(fmt),##__VA_ARGS__)
+#define hid_warn(d,fmt,...) tmc_lx_hid_log((d),1,(fmt),##__VA_ARGS__)
+#define hid_err(d,fmt,...) tmc_lx_hid_log((d),2,(fmt),##__VA_ARGS__)
+#define pr_err(fmt,...) tmc_lx_hid_log(0,2,pr_fmt(fmt),##__VA_ARGS__)
+static inline unsigned usb_sndctrlpipe(struct usb_device *d,unsigned ep){(void)d;return ep;}
+void usb_fill_control_urb(struct urb *,struct usb_device *,unsigned,u8 *,void *,int,void (*)(struct urb *),void *);
+struct usb_driver *tmc_lx_usbkbd_driver(void);
+unsigned tmc_lx_usbkbd_usage(unsigned);

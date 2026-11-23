@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "scope": "Complete upstream Linux Boot keyboard + actual native Italian input + deferred native-HCD control adapter; not full HCD/core/generic HID",
+  "asan": true,
+  "ubsan": true,
+  "physical_hardware_tested": false,
+  "sources": {
+    "tests/linux_usbkbd.c": "9a6561aaeb0c70c34842c0a2c02fc801fccb7a3a8ece4cd12cf0b9e8decddb1b",
+    "drivers/input.c": "5fbb9d887036134eec3674dd865bcf73a34f9d5301e698c5b33e533bdafb454b",
+    "tests/input_test_support.h": "debb48add05bb8f704850ce5aa572499188c158ea9de182f3bd01a43dde4f976",
+    "compat/linux/usb_input.c": "26c458232bb544672e465a9fb9da0f33b64ac659d7ec6f9c1b7ad3d5ffa3ae09",
+    "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
+    "compat/linux/include/linux/tmc_compat.h": "1d12d3a95734dbbee291c80dd56383ea54e1ebd15c26f28ab4cc6c98006e1c53",
+    "include/linux_usb.h": "b30f5094529f1c47b02ee80aee91a5cd039551bb7f848745b571df5a2d0c9d12",
+    "vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
+    "vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
+    "vendor/linux-v6.12/manifest.json": "711dd2e43e5b674bef0b77ac02a67ddfcf6955de0904032949852fb5822ce370"
+  },
+  "output": "PASS complete upstream Linux usbkbd: 7 allocation rollbacks, actual Italian events/AltGr/ISO/caps/repeat, multi-keyboard union >6 keys, rollover guards, IRQ cancel/reopen, deferred native LED control, reentry, submit-serial and disconnect/rebind ABA, STALL and leak-free teardown\n"
+}

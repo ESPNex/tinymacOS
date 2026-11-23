@@ -16,6 +16,7 @@ static inline u32 pci_find_after(u32 a,u32 b){(void)a;(void)b;return 0;}
 static inline void *pci_mmio(u32 a,int b){(void)a;(void)b;return 0;}
 static inline u64 page_get(void){return 0;}
 void hid_keys(const u8 [8]);
+void hid_linux_keys(const u8 [32],unsigned);
 void hid_relative(int,int,int,int);
 void hid_absolute(int,int,int,int);
 void input_repeat(void);

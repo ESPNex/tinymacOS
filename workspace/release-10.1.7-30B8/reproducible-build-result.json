@@ -1,10 +1,10 @@
 {
   "passed": true,
-  "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/EHCI qTD function; not an HCD/full-stack port",
-  "sha256": "178c8655e326754de2cea4377b918ba921a13adf7f1b89bc22e2a50881aff2d5",
-  "bytes": 225722368,
+  "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/EHCI qTD function; not an HCD/full-stack port",
+  "sha256": "e0c7a892539ffaa2d8c036b3404dfbd2b400eec601d2c902a02889fc6ae296a5",
+  "bytes": 225726464,
   "builds": [
-    "/var/tmp/tmc-10.1.7/linux-ehci-v4/build",
+    "/var/tmp/tmc-10.1.7/linux-usbkbd-v5/build",
     "/var/tmp/tmc-10.1.7/linux-ehci-independent/build"
   ],
   "byte_comparison_exit_code": 0,

@@ -9,10 +9,15 @@
 struct LxBinding {
  void *key;struct usb_bus bus;struct usb_device usb;struct usb_interface intf;
  struct usb_host_interface alt;struct usb_host_endpoint endpoint;
- struct input_dev *input;struct urb *urb;int opened;
+ struct input_dev *input;struct urb *urb,*control_urb;int opened,kind,servicing;
+ TmcLinuxUsbControl control;void *control_context;u64 generation;
 };
 static struct LxBinding bindings[LX_BINDINGS];
 static TmcLinuxUsbStats tmc_linux_usb_stats;
+static TmcLinuxKeyboardStats tmc_linux_kbd_stats;
+static u64 generation;
+static unsigned service_busy;
+#define kstats tmc_linux_kbd_stats
 #define stats tmc_linux_usb_stats
 void *tmc_lx_zalloc(size_t n,gfp_t flags)
 {
@@ -32,12 +37,12 @@ size_t tmc_lx_strlcat(char *d,const char *s,size_t n)
 static void charout(char *out,size_t n,size_t *at,char c){if(*at+1<n)out[*at]=c;(*at)++;}
 /* POSIX snprintf return/termination rules for the formats used by this driver.
  * Unsupported conversion is reported as an error, never silently succeeds. */
-int tmc_lx_snprintf(char *out,size_t n,const char *fmt,...)
+static int tmc_lx_vsnprintf(char *out,size_t n,const char *fmt,va_list ap)
 {
- va_list ap;va_start(ap,fmt);size_t at=0;int error=0;
+ size_t at=0;int error=0;
  for(;*fmt;fmt++){
   if(*fmt!='%'){charout(out,n,&at,*fmt);continue;}
-  fmt++;char pad=' ';unsigned width=0;if(*fmt=='0'){pad='0';fmt++;}
+  fmt++;int alternate=*fmt=='#';if(alternate)fmt++;char pad=' ';unsigned width=0;if(*fmt=='0'){pad='0';fmt++;}
   while(*fmt>='0'&&*fmt<='9'){width=width*10+*fmt-'0';fmt++;if(width>128){error=1;break;}}
   if(error)break;
   if(*fmt=='%'){charout(out,n,&at,'%');continue;}
@@ -46,12 +51,17 @@ int tmc_lx_snprintf(char *out,size_t n,const char *fmt,...)
    i64 v=*fmt=='d'?va_arg(ap,int):(i64)va_arg(ap,unsigned);u64 u=v<0?(u64)-v:(u64)v;char digits[32];unsigned len=0,base=*fmt=='x'?16:10;
    do{digits[len++]="0123456789abcdef"[u%base];u/=base;}while(u);
    if(v<0){charout(out,n,&at,'-');if(width)width--;}
+   if(alternate&&*fmt=='x'&&v){charout(out,n,&at,'0');charout(out,n,&at,'x');width=width>2?width-2:0;}
    while(width>len){charout(out,n,&at,pad);width--;}
    while(len)charout(out,n,&at,digits[--len]);continue;
   }
   error=1;break;
  }
- va_end(ap);if(n)out[at<n?at:n-1]=0;return error?-EINVAL:(int)at;
+ if(n)out[at<n?at:n-1]=0;return error?-EINVAL:(int)at;
+}
+int tmc_lx_snprintf(char *out,size_t n,const char *fmt,...)
+{
+ va_list ap;va_start(ap,fmt);int result=tmc_lx_vsnprintf(out,n,fmt,ap);va_end(ap);return result;
 }
 void tmc_lx_dev_err(struct device *d,const char *fmt,...)
 {
@@ -75,12 +85,20 @@ void input_unregister_device(struct input_dev *d)
  if(b&&b->opened){d->close(d);b->opened=0;}
  /* Linux input unregister releases held keys. Do not leave the compositor
   * dragging after a pipe is torn down; pending motion/wheel is not replayed. */
- if(d->registered&&d->buttons){d->buttons=d->x=d->y=d->wheel=0;input_sync(d);}
+ if(d->registered&&b&&b->kind==1){memset(d->key,0,sizeof d->key);input_sync(d);}
+ else if(d->registered&&d->buttons){d->buttons=d->x=d->y=d->wheel=0;input_sync(d);}
  if(b)b->input=0;d->registered=0;input_free_device(d);
 }
 void input_report_key(struct input_dev *d,unsigned code,int on)
 {
- if(!d||!d->registered||code<BTN_LEFT||code>BTN_EXTRA)return;
+ if(!d||!d->registered)return;
+ struct LxBinding *b=d->owner;
+ if(b&&b->kind==1){
+  if(code>=256||!test_bit(code,d->keybit))return;
+  if(on)set_bit(code,d->key);else clear_bit(code,d->key);
+  return;
+ }
+ if(code<BTN_LEFT||code>BTN_EXTRA)return;
  unsigned bit=1u<<(code-BTN_LEFT);if(on)d->buttons|=bit;else d->buttons&=~bit;
 }
 void input_report_rel(struct input_dev *d,unsigned axis,int delta)
@@ -91,6 +109,20 @@ void input_report_rel(struct input_dev *d,unsigned axis,int delta)
 void input_sync(struct input_dev *d)
 {
  if(!d||!d->registered)return;
+ struct LxBinding *owner=d->owner;
+ if(owner&&owner->kind==1){
+  u8 bitmap[32]={0};unsigned modifiers=0;
+  for(unsigned i=0;i<LX_BINDINGS;i++){
+   struct input_dev *in=bindings[i].input;
+   if(bindings[i].kind!=1||!in||!in->registered)continue;
+   for(unsigned code=1;code<256;code++)if(test_bit(code,in->key)){
+    unsigned usage=tmc_lx_usbkbd_usage(code);
+    if(usage>=224&&usage<232)modifiers|=1u<<(usage-224);
+    else if(usage>=4&&usage<224)bitmap[usage/8]|=1u<<(usage%8);
+   }
+  }
+  tmc_lx_os_keyboard(bitmap,modifiers);kstats.frames++;return;
+ }
  tmc_lx_os_pointer(d->x,d->y,d->buttons,d->wheel);d->x=d->y=d->wheel=0;stats.frames++;
 }
 void usb_to_input_id(struct usb_device *d,struct input_id *id){*id=(struct input_id){3,d->descriptor.idVendor,d->descriptor.idProduct,0};}
@@ -105,20 +137,27 @@ struct urb *usb_alloc_urb(int iso,gfp_t flags){return iso?0:tmc_lx_zalloc(sizeof
 void usb_free_urb(struct urb *u){if(u){usb_kill_urb(u);tmc_lx_free(u);}}
 int usb_submit_urb(struct urb *u,gfp_t flags)
 {
- if(!u||!u->dev||!u->complete||!u->transfer_buffer||u->transfer_buffer_length<1||u->transfer_buffer_length>8||!(u->pipe&128))return -EINVAL;
+ if(!u||!u->dev||!u->complete||!u->transfer_buffer||u->transfer_buffer_length<1||u->transfer_buffer_length>8)return -EINVAL;
  if(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC)return -EINVAL;
  if(u->killed)return -ESHUTDOWN;if(u->submitted)return -EBUSY;
- u->submitted=1;return 0;
+ if(u->type==1){if(!(u->pipe&128))return -EINVAL;}
+ else if(u->type==2){
+  struct LxBinding *b=u->dev->owner;
+  if(!b||!b->control||!u->setup_packet)return -ENODEV;
+  unsigned n=u->setup_packet[6]|u->setup_packet[7]<<8;
+  if((u->setup_packet[0]&128)||n!=(unsigned)u->transfer_buffer_length)return -EINVAL;
+ }else return -EINVAL;
+ u->serial++;u->submitted=1;return 0;
 }
 void usb_kill_urb(struct urb *u)
 {
- if(!u)return;int pending=u->submitted;u->killed=1;u->submitted=0;
+ if(!u)return;int pending=u->submitted;u->serial++;u->killed=1;u->submitted=0;
  if(pending&&u->complete){u->status=-ENOENT;u->actual_length=0;u->complete(u);}
  u->killed=0; /* synchronous cancellation is not permanent URB poisoning */
 }
 void usb_fill_int_urb(struct urb *u,struct usb_device *d,unsigned pipe,void *buf,int n,void (*complete)(struct urb *),void *ctx,unsigned interval)
 {
- u->dev=d;u->pipe=pipe;u->transfer_buffer=buf;u->transfer_buffer_length=n;u->complete=complete;u->context=ctx;u->interval=interval;
+ u->type=1;u->dev=d;u->pipe=pipe;u->transfer_buffer=buf;u->transfer_buffer_length=n;u->complete=complete;u->context=ctx;u->interval=interval;
  ((struct LxBinding *)d->owner)->urb=u;
 }
 static struct LxBinding *binding(void *key)
@@ -135,9 +174,9 @@ int tmc_linux_mouse_attach(void *key,unsigned vid,unsigned pid,unsigned packet,u
 {
  u32 flags=tmc_lx_os_lock();int success=0;
  if(!key||packet<3||packet>1024)goto done;
- if(binding(key)){success=1;goto done;}
+ if(binding(key)){success=binding(key)->kind==2;goto done;}
  struct LxBinding *b=0;for(unsigned i=0;i<LX_BINDINGS;i++)if(!bindings[i].key){b=&bindings[i];break;}
- if(!b)goto done;memset(b,0,sizeof *b);b->key=key;
+ if(!b)goto done;memset(b,0,sizeof *b);b->key=key;b->kind=2;b->generation=++generation;
  b->bus.bus_name="native-hcd";b->usb=(struct usb_device){.bus=&b->bus,.manufacturer="tinymacOS",.product="Linux usbmouse",.devpath="interrupt-in",.descriptor={(u16)vid,(u16)pid},.maxpacket=packet,.owner=b};
  b->endpoint.desc=(struct usb_endpoint_descriptor){7,5,0x81,3,(u16)packet,interval?interval:10};
  b->alt.desc.bNumEndpoints=1;b->alt.endpoint=&b->endpoint;b->intf.usbdev=&b->usb;b->intf.cur_altsetting=&b->alt;
@@ -152,7 +191,7 @@ int tmc_linux_mouse_attach(void *key,unsigned vid,unsigned pid,unsigned packet,u
 int tmc_linux_mouse_report(void *key,const u8 *data,unsigned n)
 {
  u32 flags=tmc_lx_os_lock();int consumed=0;struct LxBinding *b=binding(key);
- if(!b||!b->opened||!b->urb||!b->urb->submitted||!data||n<3||n>(unsigned)b->urb->transfer_buffer_length){stats.rejected++;goto done;}
+ if(!b||b->kind!=2||!b->opened||!b->urb||!b->urb->submitted||!data||n<3||n>(unsigned)b->urb->transfer_buffer_length){stats.rejected++;goto done;}
  struct urb *u=b->urb;u->submitted=0;u->status=0;u->actual_length=n;
  memset(u->transfer_buffer,0,8);memcpy(u->transfer_buffer,data,n);stats.completions++;u->complete(u);consumed=1;
  done:tmc_lx_os_unlock(flags);return consumed;
@@ -160,7 +199,118 @@ int tmc_linux_mouse_report(void *key,const u8 *data,unsigned n)
 void tmc_linux_mouse_detach(void *key)
 {
  u32 flags=tmc_lx_os_lock();struct LxBinding *b=binding(key);
- if(b){tmc_lx_usbmouse_driver()->disconnect(&b->intf);memset(b,0,sizeof *b);stats.disconnected++;}
+ if(b&&b->kind==2){tmc_lx_usbmouse_driver()->disconnect(&b->intf);memset(b,0,sizeof *b);stats.disconnected++;}
  tmc_lx_os_unlock(flags);
 }
 void tmc_linux_mouse_stats(TmcLinuxUsbStats *out){u32 flags=tmc_lx_os_lock();if(out)*out=stats;tmc_lx_os_unlock(flags);}
+
+void *memscan(void *data,int value,size_t n)
+{
+ u8 *p=data;while(n&&*p!=(u8)value){p++;n--;}return p;
+}
+void tmc_lx_spin_init(spinlock_t *s){__atomic_store_n(&s->word,0,__ATOMIC_RELAXED);}
+unsigned long tmc_lx_spin_lock_irqsave(spinlock_t *s)
+{
+ u32 flags=tmc_lx_os_irq_save();
+ while(__atomic_exchange_n(&s->word,1,__ATOMIC_ACQUIRE))tmc_lx_os_spin_wait();
+ return flags;
+}
+void tmc_lx_spin_unlock_irqrestore(spinlock_t *s,unsigned long flags)
+{
+ __atomic_store_n(&s->word,0,__ATOMIC_RELEASE);tmc_lx_os_irq_restore((u32)flags);
+}
+void tmc_lx_hid_log(void *device,unsigned level,const char *fmt,...)
+{
+ (void)device;char text[192];va_list ap;va_start(ap,fmt);
+ int n=tmc_lx_vsnprintf(text,sizeof text,fmt,ap);va_end(ap);
+ if(level>=2)stats.errors++;
+ tmc_lx_os_error(n<0?"Linux USB driver: unsupported diagnostic format":text);
+}
+void usb_fill_control_urb(struct urb *u,struct usb_device *d,unsigned pipe,u8 *setup,void *data,int n,void (*complete)(struct urb *),void *context)
+{
+ u->type=2;u->dev=d;u->pipe=pipe;u->setup_packet=setup;u->transfer_buffer=data;
+ u->transfer_buffer_length=n;u->complete=complete;u->context=context;
+ ((struct LxBinding *)d->owner)->control_urb=u;
+}
+int tmc_linux_keyboard_attach(void *key,unsigned vid,unsigned pid,unsigned packet,unsigned interval,unsigned iface,TmcLinuxUsbControl control,void *context)
+{
+ u32 flags=tmc_lx_os_lock();int success=0;
+ if(!key||packet<8||packet>1024||iface>255||!control)goto done;
+ struct LxBinding *b=binding(key);
+ if(b){success=b->kind==1;goto done;}
+ for(unsigned i=0;i<LX_BINDINGS;i++)if(!bindings[i].key){b=&bindings[i];break;}
+ if(!b)goto done;memset(b,0,sizeof *b);b->key=key;b->kind=1;b->generation=++generation;
+ b->control=control;b->control_context=context;b->bus.bus_name="native-hcd";
+ b->usb=(struct usb_device){.bus=&b->bus,.manufacturer="tinymacOS",.product="Linux usbkbd",.devpath="interrupt-in",.descriptor={(u16)vid,(u16)pid},.maxpacket=packet,.owner=b};
+ b->endpoint.desc=(struct usb_endpoint_descriptor){7,5,0x81,3,(u16)packet,interval?interval:10};
+ b->alt.desc.bNumEndpoints=1;b->alt.desc.bInterfaceNumber=iface;b->alt.endpoint=&b->endpoint;
+ b->intf.usbdev=&b->usb;b->intf.cur_altsetting=&b->alt;
+ struct usb_driver *driver=tmc_lx_usbkbd_driver();kstats.probes++;
+ if(driver->probe(&b->intf,driver->id_table)){memset(b,0,sizeof *b);goto done;}
+ if(!b->input||b->input->open(b->input)){driver->disconnect(&b->intf);memset(b,0,sizeof *b);goto done;}
+ b->opened=1;kstats.attached++;success=1;
+ done:tmc_lx_os_unlock(flags);return success;
+}
+int tmc_linux_keyboard_report(void *key,const u8 *data,unsigned n)
+{
+ u32 flags=tmc_lx_os_lock();int consumed=0;struct LxBinding *b=binding(key);
+ if(!b||b->kind!=1||!b->opened||!b->urb||!b->urb->submitted||!data||n!=8){kstats.rejected++;goto done;}
+ /* A Boot error-rollover report is not a trustworthy set of key releases. */
+ for(unsigned i=2;i<8;i++)if(data[i]>=1&&data[i]<=3){kstats.rejected++;consumed=1;goto done;}
+ struct urb *u=b->urb;u->submitted=0;u->status=0;u->actual_length=8;
+ memcpy(u->transfer_buffer,data,8);kstats.completions++;u->complete(u);consumed=1;
+ done:tmc_lx_os_unlock(flags);return consumed;
+}
+void tmc_linux_keyboard_detach(void *key)
+{
+ u32 flags=tmc_lx_os_lock();struct LxBinding *b=binding(key);
+ if(b&&b->kind==1){tmc_lx_usbkbd_driver()->disconnect(&b->intf);memset(b,0,sizeof *b);kstats.disconnected++;}
+ tmc_lx_os_unlock(flags);
+}
+void tmc_linux_keyboard_leds(unsigned value)
+{
+ u32 flags=tmc_lx_os_lock();
+ for(unsigned i=0;i<LX_BINDINGS;i++){
+  struct LxBinding *b=bindings+i;struct input_dev *d=b->input;
+  if(b->kind!=1||!b->opened||!d||!d->event)continue;
+  d->led[0]=value&31;d->event(d,EV_LED,LED_CAPSL,!!(value&2));
+ }
+ tmc_lx_os_unlock(flags);
+}
+/* One bounded native EP0 transaction per service call. Never hold the Linux
+ * compatibility lock across HCD waits: xHCI can dispatch unrelated interrupt
+ * completions from inside a control wait. Copy request/payload before unlock;
+ * after cancellation/disconnect, touch neither freed URB nor driver context.
+ * Generation AND submit serial checks prevent slot/URB-address ABA reuse.
+ */
+void tmc_linux_usb_service(void)
+{
+ static unsigned cursor;
+ u32 flags=tmc_lx_os_lock();
+ if(service_busy){tmc_lx_os_unlock(flags);return;}service_busy=1;
+ for(unsigned scan=0;scan<LX_BINDINGS;scan++){
+  unsigned index=(cursor+scan)%LX_BINDINGS;struct LxBinding *b=bindings+index;struct urb *u=b->control_urb;
+  if(!b->key||!b->opened||!u||!u->submitted||b->servicing)continue;
+  u8 setup[8],data[8];unsigned n=u->transfer_buffer_length;
+  memcpy(setup,u->setup_packet,8);memcpy(data,u->transfer_buffer,n);
+  u64 gen=b->generation,serial=u->serial;TmcLinuxUsbControl control=b->control;void *context=b->control_context;
+  b->servicing=1;kstats.controls++;cursor=(index+1)%LX_BINDINGS;
+  tmc_lx_os_unlock(flags);
+  int status=control(context,setup,data,n);
+  flags=tmc_lx_os_lock();b=bindings+index;
+  if(b->generation==gen&&b->control_urb==u){
+   b->servicing=0;
+   if(u->serial==serial&&u->submitted){
+    u->submitted=0;u->status=status;u->actual_length=status?0:(int)n;
+    if(status)kstats.control_errors++;
+    u->complete(u);
+   }else kstats.stale_controls++;
+  }else kstats.stale_controls++;
+  break;
+ }
+ service_busy=0;tmc_lx_os_unlock(flags);
+}
+void tmc_linux_keyboard_stats(TmcLinuxKeyboardStats *out)
+{
+ u32 flags=tmc_lx_os_lock();if(out)*out=kstats;tmc_lx_os_unlock(flags);
+}

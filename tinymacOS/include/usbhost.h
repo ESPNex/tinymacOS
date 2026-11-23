@@ -12,7 +12,7 @@ typedef struct {
     u8 report[1024] ALIGNED(4096);
     TabletLayout layout;
     unsigned proto,ep,packet,interval,iface,report_length,toggle,failures;
-    int armed,linux_mouse;
+    int armed,linux_mouse,linux_keyboard;
     u64 retry_at;
 } UsbInputPipe;
 struct UsbInput {
