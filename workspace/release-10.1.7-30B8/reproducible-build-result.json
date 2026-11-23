@@ -1,10 +1,10 @@
 {
   "passed": true,
   "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/EHCI qTD function; not an HCD/full-stack port",
-  "sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
-  "bytes": 225730560,
+  "sha256": "b8f0c7a043602f170a33b8114e1cecffe76cacb01416236bc0d6d3c9c55fe311",
+  "bytes": 225734656,
   "builds": [
-    "/var/tmp/tmc-10.1.7/linux-urb-v6/build",
+    "/var/tmp/tmc-10.1.7/linux-mouse-v7/build",
     "/var/tmp/tmc-10.1.7/linux-ehci-independent/build"
   ],
   "byte_comparison_exit_code": 0,

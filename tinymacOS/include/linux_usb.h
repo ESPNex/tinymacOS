@@ -6,6 +6,8 @@
 int tmc_linux_mouse_attach(void *key,unsigned vid,unsigned pid,unsigned packet,unsigned interval);
 int tmc_linux_mouse_report(void *key,const u8 *bytes,unsigned length);
 void tmc_linux_mouse_detach(void *key);
+/* Negative Linux errno: transient failures resubmit; cancellation/shutdown stop. */
+int tmc_linux_mouse_error(void *key,int status);
 int tmc_linux_mouse_boot_layout(const TabletLayout *layout);
 typedef struct {u64 probes,attached,completions,frames,errors,rejected,disconnected,allocations,frees;} TmcLinuxUsbStats;
 void tmc_linux_mouse_stats(TmcLinuxUsbStats *out);

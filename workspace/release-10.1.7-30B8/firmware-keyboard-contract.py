@@ -5,7 +5,7 @@ The four independent guest receipts remain the runtime integration evidence.
 import hashlib,json,os,plistlib,re,struct,subprocess,sys,tempfile
 from pathlib import Path
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
-base=Path(os.environ.get('TMC_FIRMWARE_STAGE','/var/tmp/tmc-10.1.7/linux-ehci-v4'))
+base=Path(os.environ.get('TMC_FIRMWARE_STAGE','/var/tmp/tmc-10.1.7/linux-mouse-v7'))
 build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 tool=Path('/var/tmp/tmc/tools/root');w=Path(tempfile.mkdtemp(prefix='tmc-fw-kbd-host-',dir='/var/tmp'))
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()

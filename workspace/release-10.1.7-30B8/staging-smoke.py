@@ -6,7 +6,7 @@ q=Path(__file__).resolve().parent;home=q.parents[1];sys.path.insert(0,str(home/'
 from retail_guest import Retail
 from boot_recovery import RecoveryKey
 fw=sys.argv[1];assert fw in ['uefi','bios'];iso=Path(os.environ.get('TMC_STAGE_ISO','/var/tmp/tmc-10.1.7/tinymacOS-10.1.7-x86_64.iso'));w=Path(tempfile.mkdtemp(prefix='tmc1017-stage-'+fw+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-ehci-v4/build')),TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_MEM='512')
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get('TMC_STAGE_BUILD',str(iso.parent/'linux-mouse-v7/build')),TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_MEM='512')
 launcher=home/'tinymacOS/tools/run-bios-iso.sh' if fw=='bios' else None
 r={'passed':False,'firmware':fw,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'linux_hcd_port':False,'physical_hardware_tested':False,'checks':[]}
 def ok(s):r['checks'].append(s);print('PASS',fw,s,flush=True)

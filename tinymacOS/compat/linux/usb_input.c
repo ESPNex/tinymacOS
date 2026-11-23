@@ -126,7 +126,15 @@ void input_sync(struct input_dev *d)
   }
   tmc_lx_os_keyboard(bitmap,modifiers);kstats.frames++;return;
  }
- tmc_lx_os_pointer(d->x,d->y,d->buttons,d->wheel);d->x=d->y=d->wheel=0;stats.frames++;
+ /* Linux input devices have independent button state. Merge only held
+  * buttons, never another device's already-consumed relative motion/wheel.
+  * Idle packets or unplugging one mouse must not release another's drag. */
+ unsigned buttons=0;
+ for(unsigned i=0;i<LX_BINDINGS;i++){
+  struct input_dev *in=bindings[i].input;
+  if(bindings[i].kind==2&&in&&in->registered)buttons|=(unsigned)in->buttons;
+ }
+ tmc_lx_os_pointer(d->x,d->y,buttons,d->wheel);d->x=d->y=d->wheel=0;stats.frames++;
 }
 void usb_to_input_id(struct usb_device *d,struct input_id *id){*id=(struct input_id){3,d->descriptor.idVendor,d->descriptor.idProduct,0};}
 int usb_make_path(struct usb_device *d,char *p,size_t n){return tmc_lx_snprintf(p,n,"%s/%s",d->bus->bus_name,d->devpath);}
@@ -182,6 +190,23 @@ int tmc_linux_mouse_report(void *key,const u8 *data,unsigned n)
  if(!b||b->kind!=2||!b->opened||!b->urb||!b->urb->submitted||!data||n<3||n>(unsigned)b->urb->transfer_buffer_length){stats.rejected++;goto done;}
  struct urb *u=b->urb;
  memset(u->transfer_buffer,0,8);memcpy(u->transfer_buffer,data,n);stats.completions++;tmc_lx_native_giveback(u,0,n);consumed=1;
+ done:tmc_lx_os_unlock(flags);return consumed;
+}
+/* A hardware error is not a successful zero-filled report. Retire through
+ * the actual upstream URB core and usbmouse IRQ; its cancellation statuses
+ * stop resubmission, while transient failures requeue for native recovery.
+ * Release only this device's held buttons, without replaying stale deltas.
+ */
+int tmc_linux_mouse_error(void *key,int status)
+{
+ u32 flags=tmc_lx_os_lock();int consumed=0;struct LxBinding *b=binding(key);
+ if(status>=0||status< -4095||!b||b->kind!=2||!b->opened||!b->urb||!b->urb->submitted){stats.rejected++;goto done;}
+ struct input_dev *d=b->input;
+ if(d&&d->buttons){
+  for(unsigned button=BTN_LEFT;button<=BTN_EXTRA;button++)input_report_key(d,button,0);
+  d->x=d->y=d->wheel=0;input_sync(d);
+ }
+ stats.errors++;tmc_lx_native_giveback(b->urb,status,0);consumed=1;
  done:tmc_lx_os_unlock(flags);return consumed;
 }
 void tmc_linux_mouse_detach(void *key)

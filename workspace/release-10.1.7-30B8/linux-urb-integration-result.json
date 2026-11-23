@@ -1,9 +1,9 @@
 {
   "passed": true,
   "scope": "Complete upstream Linux core/urb.c integrated with Boot mouse/keyboard; bounded native backend only",
-  "iso_sha256": "6838382da5c54d3ec71e709c5ffd97842e7c9c46991abe949c27024aa180d7f0",
-  "iso_bytes": 225730560,
-  "kernelcache_sha256": "cf1658362c11a6e357ad3476e37c91ce4af226bfce8e7220ab5ee72870fcfe6a",
+  "iso_sha256": "b8f0c7a043602f170a33b8114e1cecffe76cacb01416236bc0d6d3c9c55fe311",
+  "iso_bytes": 225734656,
+  "kernelcache_sha256": "eed7e222b7f858ee7ed45473256ad4fefc3498f56f6ce07e36662791403c97e5",
   "full_linux_hcd_port": false,
   "full_linux_usb_core_port": false,
   "generic_hid_port": false,
@@ -41,23 +41,23 @@
     "00000000040314e0 T usb_wait_anchor_empty_timeout"
   ],
   "logs": {
-    "/var/tmp/tmc-linux-urb-v6-build.log": {
-      "sha256": "f1380b228f8a62c01f84b51147cfc8139b6e90c636777876b37f797efb22f72e",
+    "/var/tmp/tmc-mouse-v7-build.log": {
+      "sha256": "7a6caab3d58945445d757ca02e9362ffe9e54e71d51e9cd3d138d17a677e0150",
       "exit_code": 0
     },
-    "/var/tmp/tmc-linux-urb-v6-package.log": {
-      "sha256": "4aff9d05d289a8f35aeb9b91441891ff6f7ad6aa458b5d00994f148e417b7251",
+    "/var/tmp/tmc-mouse-v7-package.log": {
+      "sha256": "f1e1c4af07728b2091a6d27149218b8d7d7d2bc0385b8b026f79dc1a7cfde554",
       "exit_code": 0
     },
-    "/var/tmp/tmc-linux-urb-v6-independent.log": {
-      "sha256": "d6e7da7f8c789cfecc3e9cf599ca55af4338e1f2f877269e6fd1ce90b64496a9",
+    "/var/tmp/tmc-mouse-v7-independent.log": {
+      "sha256": "45f442182225009d92f976dd59c24483d51fb77f68eac46c7a0e76ad1fcfcf96",
       "exit_code": 0
     },
-    "/var/tmp/tmc-urb-maintenance-final.log": {
-      "sha256": "817faf29285f8fce9a8085dd965a2bd0437bdcc6aa268fd8a7a9117618610839",
+    "/var/tmp/tmc-mouse-v7-maintenance.log": {
+      "sha256": "6097467d39d24c847c86efec3c93137e9616ba206a3ce51627945c127ea83d42",
       "exit_code": 0
     },
-    "/var/tmp/tmc-urb-legacy-final.log": {
+    "/var/tmp/tmc-mouse-v7-legacy.log": {
       "sha256": "26c822b2b6d7f9bf30b98ceb463dd813694b8ea65e899d9b96820697f30e8226",
       "exit_code": 0
     }

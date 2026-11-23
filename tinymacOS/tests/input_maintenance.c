@@ -61,6 +61,19 @@ int main(void)
     }
     h->failures=3;transferred(&stall);assert(!h->armed&&!h->pending);
     puts("PASS endpoint halt: deferred reset, clear-halt, new dequeue, rearm; bounded repeated-failure cap");
+    /* Same controller completion/reset path, now with the REAL upstream
+     * Linux mouse and URB core attached, not a mouse decoder substitute. */
+    fixture();u=usb;h=&u->hid[0];h->linux_mouse=tmc_linux_mouse_attach(h,1,2,8,10);assert(h->linux_mouse);
+    arm(u,h);h->report[0]=1;h->report[1]=12;h->report[2]=254;
+    ok.len=1u<<24|5;transferred(&ok);take(EV_MOUSE,12,-2,1);
+    transferred(&stall);take(EV_MOUSE,0,0,0);assert(h->pending&&!h->armed);
+    ticks=100;completion(0,&commands.tr[0],33,1,0);completion(1,&u->ctrl.tr[1],32,1,1);completion(2,&commands.tr[1],33,1,0);
+    recover_pending();assert(h->armed&&!h->pending);
+    h->report[0]=1;h->report[1]=253;h->report[2]=6;transferred(&ok);take(EV_MOUSE,-3,6,1);
+    h->failures=3;transferred(&stall);take(EV_MOUSE,0,0,0);assert(!h->pending&&!h->armed);
+    TmcLinuxUrbStats core;tmc_linux_urb_stats(&core);assert(!core.active&&core.submits==core.givebacks);
+    tmc_linux_mouse_detach(h);assert(!input_pop(&e));
+    puts("PASS actual xHCI+Linux mouse: held-button STALL release, upstream error/requeue, native reset/rearm, resumed XY, fatal retirement");
     for(int data=0;data<2;data++) {
         fixture();u=usb;
         completion(0,&u->ctrl.tr[data?1:0],32,6,1); /* error on Setup or Data, not Status */

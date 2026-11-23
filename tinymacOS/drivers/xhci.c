@@ -579,6 +579,10 @@ static void transferred(const TRB *e)
                 if(h->proto==1){const u8 release[8]={0};
                     if(h->linux_keyboard)(void)tmc_linux_keyboard_report(h,release,8);else hid_keys(release);}
 
+                if(h->linux_mouse){
+                    int recoverable=(code==3||code==4||code==6)&&h->failures<3;
+                    (void)tmc_linux_mouse_error(h,recoverable?(code==6?-32:-5):-108);
+                }
                 /* Only known halted states are recoverable here. Defer the
                  * bounded reset to the drain, never recurse inside result(). */
                 if((code==3||code==4||code==6) && h->failures<3) {

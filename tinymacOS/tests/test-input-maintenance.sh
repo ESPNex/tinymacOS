@@ -53,3 +53,6 @@ gcc $C -fno-pie -no-pie -pthread tests/linux_usbkbd.c compat/linux/usb_keyboard.
 
 # Entire original Linux URB core, all anchors/lifetime/cancel/timeout APIs.
 gcc $C -fno-pie -no-pie -pthread tests/linux_urb.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c -o "$out/linux-urb";"$out/linux-urb"
+
+# Two actual Linux mice: aggregate buttons and real error/cancel lifetimes.
+gcc $C -fno-pie -no-pie -pthread tests/linux_mouse_lifecycle.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c -o "$out/linux-mouse-lifecycle";"$out/linux-mouse-lifecycle"

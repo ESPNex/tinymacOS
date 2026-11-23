@@ -5,8 +5,8 @@ from pathlib import Path
 home=Path(__file__).resolve().parents[2];sys.path.insert(0,str(home/'tinymacOS/tests'))
 from retail_guest import Retail,fold
 from pixels import locate
-iso=Path('/var/tmp/tmc-10.1.7/linux-ehci-v4/tinymacOS-10.1.7-x86_64.iso');w=Path(tempfile.mkdtemp(prefix='tmc101-control-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD='/var/tmp/tmc-10.1.7/linux-ehci-v4/build',TMC_MEM='512',TMC_POINTER='tablet')
+iso=Path('/var/tmp/tmc-10.1.7/linux-mouse-v7/tinymacOS-10.1.7-x86_64.iso');w=Path(tempfile.mkdtemp(prefix='tmc101-control-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_BUILD='/var/tmp/tmc-10.1.7/linux-mouse-v7/build',TMC_MEM='512',TMC_POINTER='tablet')
 r={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'checks':[]}
 def ok(s):r['checks'].append(s);print('PASS',s,flush=True)
 def label(g,t,box=None):

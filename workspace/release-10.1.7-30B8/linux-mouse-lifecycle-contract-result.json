@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "scope": "Linux-bound mouse button aggregation and transport error handoff to original upstream URB core/IRQ; not a complete HCD port",
+  "physical_hardware_tested": false,
+  "sources": {
+    "tests/linux_mouse_lifecycle.c": "51979d0930f8a75f852c3b4707b69811ff5d563e48e5a417c3deb7313e94e2a6",
+    "tests/linux_usbmouse.c": "870f4c85b8bfafe645b3643cc5a859d55347cccdf6dc74ce1421f078808001b9",
+    "compat/linux/usb_input.c": "28981bf63e3b9c846174df2e83b508570553efa50274db336be9bf0d60977ec3",
+    "compat/linux/usb_keyboard.c": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
+    "compat/linux/include/linux/tmc_compat.h": "af0d6922865630a3d524506f5e0adccf41bbccd23edffe2e4083d80ddb30d52d",
+    "compat/linux/include/linux/tmc_urb_types.h": "caedb72ed709056affa10344b827cea5117bcb224b7749077437e16e33792359",
+    "compat/linux/include/linux/tmc_urb_core.h": "ae173cd822297ddfa33307c44d12655483040ea1bd463b6d5a311f44380f4633",
+    "include/linux_usb.h": "dc8215c016d1353276f3ad5ffc24874ca2f7afe5350f79510109cc9ba1874c70",
+    "vendor/linux-v6.12/usbmouse.c": "23c14adc856392edbcb091fb6f031fa2c69739651b4a04b1eedf569295ee454c",
+    "vendor/linux-v6.12/usbkbd.c": "26a4d8b5f715ec33bc33b4fa75e9697c17d435c1e7945eda272fe961b4ba4eae",
+    "vendor/linux-v6.12/urb.c": "b94172f9f6da9fe2ab7a618720d28611757c5c1514c8142a0ee02a3a8df79174",
+    "drivers/xhci.c": "3356f904d4650bd608b5863e3d635660eeea3d4d3d319eaebeab06e870186a9e",
+    "drivers/ehci.c": "b0b7b268538344682694f081d1b5951046b1ab88213d25f1bc305a53eaf92438",
+    "drivers/uhci.c": "dec0dd981dbb0a3087295f13422ee11e90b7fcda2737ea6cd05983408a1bcd55",
+    "tests/input_maintenance.c": "0e41a9aa804f9d00623c7f35182b5a7a5cec5fe512922cd52218c488c0fe8812"
+  },
+  "sanitizers": [
+    "address",
+    "undefined"
+  ],
+  "paired_five_button_states": 1024,
+  "stdout": "PASS actual Linux v6.12 usbmouse: probe/open/IRQ signed XY/buttons/wheel, three-byte zero padding, bad/truncated reports, URB resubmit/error/cancel/reopen, all allocation-failure rollbacks, bounded slots, disconnect, 4000 concurrent lifecycles, POSIX string/format bounds and non-Boot layout exclusion\nPASS mouse lifecycle: 1024 paired five-button states, independent signed X/Y/wheel, idle/unplug button union, transient STALL/EIO release/requeue, fatal/unlink/cancel stop/reopen, invalid status rejection, no stale motion or leaks; actual Linux mouse IRQ/core\n"
+}
