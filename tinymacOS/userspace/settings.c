@@ -4,6 +4,8 @@
 // è collegato a una API reale (S_PREF, S_SNAP, S_INFO, S_SESSION).
 
 static int pane, focus_search;
+static int res_open,res_pick,res_scroll;
+enum { RES_ROWS=8, RES_ROW=24, RES_PAD=6 };
 static char query[24];
 static int modal_mode, modal_op, modal_err; // 0 nessuno, 1 passphrase, 2 conferma
 static char modal_buf[65], msg[72];
@@ -18,6 +20,7 @@ static const int pglyph[] = {28, 9, 31, 33, 27, 29};
 #define NP 6
 
 typedef struct { int x, y, w, h; } R;
+static R hresmenu;
 static R hsearch, hpane[NP], hlight[2], hcol[NTHEME], hwall[NWALL], hsw[4], henc[4], hbk[4], hsnap[5], hres;
 static int nhpane, nenc, nbk, nsnapshow, hitpane[NP];
 static const char *enclab[4];
@@ -56,7 +59,7 @@ static void refresh(void)
 }
 static void setpane(int p)
 {
-    pane = p;
+    pane = p;res_open=0;
     focus_search = 0;
     if (p == 2 || p == 3)refresh();
     ui_motion(FX_SLIDE);
@@ -232,7 +235,11 @@ static void paint(void)
         row2(x, r1, w, "Posizione", si.dock ? "Sinistra" : "In basso");
         hsw[0] = (R) {x + w - 56, r1 + 7, 38, 22};
         sw(hsw[0], si.dock);
-        Text(x, 356, "Il dock si sposta tra la sinistra e il bordo inferiore.", F_SMALL, SUB);
+        Text(x, 365, "Il dock si sposta tra la sinistra e il bordo inferiore.", F_SMALL, SUB);
+        int caps=sc(S_RESMODE,0,1,0,0);
+        Text(x,390,(caps&1)?"Cambio risoluzione immediato disponibile.":"Su questa GPU il cambio richiede un riavvio (GOP UEFI).",F_MICRO,SUB);
+        if(!(caps&1)&&!(caps&2))Text(x,413,"Avvio live: per salvare la scelta serve un sistema installato.",F_MICRO,SUB);
+        if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
         Text(x, 78, "CRITTOGRAFIA DEI FILE", F_MICRO, SUB);
         int r0 = rowcard(x, 96, w, 2);
@@ -319,7 +326,7 @@ static void paint(void)
         row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.1.7 (30B8)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.1.8 (30B9)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
@@ -348,12 +355,39 @@ static void paint(void)
     } else if (modal_mode == 2)
         modal("Ripristinare lo snapshot?", sel_snap >= 0 ? snaps[sel_snap].name : "",
               "Invio per confermare · Esc per annullare");
+    if(res_open&&pane==1){
+        int visible=MIN((int)si.nmodes,RES_ROWS), widest=0;
+        for(u32 i=0;i<si.nmodes;i++){
+            char label[32]="";addnum(label,si.modes[i]>>16,32);append(label," × ",32);addnum(label,si.modes[i]&65535,32);
+            int measured=TextWidth(label,F_SMALL);widest=MAX(widest,measured);
+        }
+        int width=widest?MAX(132,widest+42):148;
+        if(!visible)width=MAX(width,TextWidth("Nessuna modalità GOP",F_SMALL)+20);
+        width=MIN(width,aw-16);
+        int anchor=MAX(8,MIN(hres.x+214-26,aw-width-8));
+        hresmenu=(R){anchor,hres.y+34,width,MAX(1,visible)*RES_ROW+2*RES_PAD};
+        Sheet(hresmenu.x,hresmenu.y,hresmenu.w,hresmenu.h,9);
+        if(!visible)Text(hresmenu.x+10,hresmenu.y+RES_PAD+2,"Nessuna modalità GOP",F_SMALL,SUB);
+        for(int j=0;j<visible;j++){int i=res_scroll+j;if(i>=(int)si.nmodes)break;int yy=hresmenu.y+RES_PAD+j*RES_ROW;
+            if(i==res_pick)Box(hresmenu.x+4,yy,hresmenu.w-8,RES_ROW-2,5,SEL);
+            if(si.modes[i]==(((u32)si.w<<16)|si.h))Text(hresmenu.x+8,yy+2,"✓",F_SMALL,TX);
+            char label[32]="";addnum(label,si.modes[i]>>16,32);append(label," × ",32);addnum(label,si.modes[i]&65535,32);
+            Text(hresmenu.x+26,yy+2,label,F_SMALL,TX);
+        }
+    }
     finish();
 }
 
+static void apply_resolution(int i){
+    res_open=0;if(i<0||i>=(int)si.nmodes)return;
+    long z=sc(S_RESMODE,i,0,0,0);
+    strset(msg,z==0?"Risoluzione applicata.":z==1?"Scelta salvata: sara applicata al prossimo riavvio.":z==-2?"Avvio live: risoluzione non salvabile su questo supporto.":"Cambio non riuscito: risoluzione precedente mantenuta.",sizeof msg);
+    sc(S_INFO,&si,0,0,0);ui_motion(FX_SELECT);
+}
 static void click(int ax, int ay)
 {
     if (modal_mode)return;
+    if(res_open){if(hit(hresmenu,ax,ay)){int j=(ay-hresmenu.y-RES_PAD)/RES_ROW;if(ay>=hresmenu.y+RES_PAD&&j<MIN((int)si.nmodes-res_scroll,RES_ROWS))apply_resolution(res_scroll+j);return;}res_open=0;if(!hit(hres,ax,ay))return;}
     if (hit(hsearch, ax, ay)) {
         focus_search = 1;
         return;
@@ -380,13 +414,9 @@ static void click(int ax, int ay)
         else if (hit(hsw[1], ax, ay))setpref(3, !si.reduce_motion);
     } else if (pane == 1) {
         if (hit(hres, ax, ay)) {
-            // Cycle to the next GOP mode; fonts/DPI stay fixed and readable.
-            if (si.nmodes) {
-                u32 cur = ((u32)si.w << 16) | si.h, idx = 0;
-                for (u32 i = 0; i < si.nmodes; i++)
-                    if (si.modes[i] == cur)idx = i;
-                sc(S_RESMODE, (idx + 1) % si.nmodes, 0, 0, 0);
-            }
+            res_open=!res_open;res_pick=0;res_scroll=0;
+            for(u32 i=0;i<si.nmodes;i++)if(si.modes[i]==(((u32)si.w<<16)|si.h))res_pick=i;
+            if(res_pick>=RES_ROWS)res_scroll=res_pick-RES_ROWS+1;
             return;
         }
         if (hit(hsw[0], ax, ay))setpref(2, !si.dock);
@@ -437,6 +467,7 @@ static void click(int ax, int ay)
 static void key(Event *e)
 {
     int k = e->a;
+    if(res_open){if(k==27)res_open=0;else if(k=='\n'||k=='\r')apply_resolution(res_pick);else if(k==K_UP||k==K_DOWN){res_pick=MAX(0,MIN((int)si.nmodes-1,res_pick+(k==K_UP?-1:1)));if(res_pick<res_scroll)res_scroll=res_pick;if(res_pick>=res_scroll+RES_ROWS)res_scroll=res_pick-RES_ROWS+1;}return;}
     if (modal_mode == 1) {
         if (k == 27)modal_mode = 0;
         else if (k == '\n') {
@@ -498,6 +529,7 @@ void app_main(void)
             if (e.type == EV_CLOSE)quit();
             if (e.type == EV_CLICK)click(e.a, e.b);
             if (e.type == EV_KEY)key(&e);
+            if(e.type==EV_SCROLL&&res_open){res_scroll=MAX(0,MIN(MAX(0,(int)si.nmodes-RES_ROWS),res_scroll-(e.a>0?1:-1)));res_pick=res_scroll;}
         }
         if (pane == 4 && (int)si.second != oldsec)d = 1;
         if (d)paint();

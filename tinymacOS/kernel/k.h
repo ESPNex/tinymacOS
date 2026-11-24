@@ -140,6 +140,7 @@ int install_writing(void);
 
 void video_present(const u32 *, int, int, int, int, int, int);
 int video_setmode(int, int);
+int video_runtime_available(void);
 void fx_setup(void);
 void fx_new(void *);
 

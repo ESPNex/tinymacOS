@@ -73,6 +73,13 @@ void video_present(const u32 *src, int x0, int y0, int width, int height, int sw
 // on-screen UI size (readable DPI) stays identical in every mode.
 #define DISPI_IDX 0x01CE
 #define DISPI_DAT 0x01CF
+int video_runtime_available(void)
+{
+    /* Never probe emulator-specific I/O ports on arbitrary physical GPUs. */
+    static int cached=-1;if(cached>=0)return cached;
+    u32 d=pci_find(0x030000);u32 id=d?pci_reg(d,0):0;
+    cached=id==0x11111234u||id==0xbeef80eeu;return cached;
+}
 int video_setmode(int w, int h)
 {
 #ifdef TMC_DEBUG
@@ -89,7 +96,7 @@ int video_setmode(int w, int h)
         logstr("\n");
     }
 #endif
-    if (w < 800 || h < 600 || w > 1920 || h > 1080)
+    if (!video_runtime_available() || w < 800 || h < 600 || w > 1920 || h > 1080)
         return -1;
     outw(DISPI_IDX, 0);
     if ((inw(DISPI_DAT) >> 8) != 0xB0) { /* VBE_DISPI_IDn present */

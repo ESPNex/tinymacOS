@@ -18,6 +18,7 @@ void begin(void);
 void finish(void);
 void Box(int, int, int, int, int, u32);
 void Text(int, int, const char *, int, u32);
+int TextWidth(const char *, int);
 void Center(int, int, const char *, int, u32);
 void Icon(int, int, int, int);
 void Line(int, int, int, int, u32);

@@ -92,7 +92,7 @@ void glass(Rect q, int r, int kind)
     u32 tint = dark ? (kind == MAT_WIDGET ? 0x34363d : 0x28282c) : (kind == MAT_DOCK ? 0xe1e1e8 : 0xf5f5f7);
     if(kind!=MAT_BAR&&kind!=MAT_WIDGET)tint=color(INK(kind==MAT_DOCK?I_PANEL:I_BG));
     int strength = kind == MAT_WINDOW ? (dark ? 204 : 211) : kind == MAT_MENU ||
-                   kind == MAT_SHEET ? (dark ? 203 : 213) : kind == MAT_WIDGET ? 143 : kind == MAT_BAR ? 97 : 63;
+                   kind == MAT_SHEET ? (dark ? 203 : 213) : kind == MAT_WIDGET ? 143 : kind == MAT_BAR ? 97 : kind==MAT_DOCK ? (dark?152:145) : 63;
     if (lite) {
         roundr(q.x, q.y, q.w, q.h, r, kind==MAT_BAR||kind==MAT_WIDGET?0x303035:color(INK(kind==MAT_DOCK?I_PANEL:I_BG)), 255);
         if (kind != MAT_BAR)stroke(q, r, dark ? 0xa5a5aa : 0xffffff, 112);
@@ -125,7 +125,7 @@ void glass(Rect q, int r, int kind)
         int rowShade = clampi(strength + (q.h / 2 - j) * 16 / MAX(1, q.h), 0, 246);
         for (int X = L; X < R; X++, p++) {
             int i = X - q.x, sx = X - left, ex = MIN(i, q.w - 1 - i), ey = MIN(j, q.h - 1 - j);
-            if (kind == MAT_BAR || (ex >= r + 7 && ey >= 7)) {
+            if (kind == MAT_BAR || (kind!=MAT_DOCK && ex >= r + 7 && ey >= 7)) {
                 *p = blend(sample(blur, sx, sy), tint, rowShade);
                 continue;
             }
@@ -133,6 +133,7 @@ void glass(Rect q, int r, int kind)
             int mask = coverage(i, j, q.w, q.h, r);
             if (!mask)continue;
             int rim = clampi(11 - d, 0, 11), off = (rim * (15 - rim)) >> 2;
+            if(kind==MAT_DOCK){int depth=MIN(MAX(0,d),18);off+=((18-depth)*3)/8;}
             int rx = sx + (dx * off >> 4), ry = sy + (dy * off >> 4);
             rx = clampi(rx, 8, (nx - 4) * 4);
             ry = clampi(ry, 8, (ny - 4) * 4);

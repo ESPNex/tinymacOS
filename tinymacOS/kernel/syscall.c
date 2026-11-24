@@ -1,4 +1,5 @@
 #include "k.h"
+#include "bootconfig.h"
 #include "tlsabi.h"
 #include "wordwaitabi.h"
 #include "threadfinishabi.h"
@@ -223,9 +224,14 @@ static Frame *syscall_inner(Frame *f)
         }
         break;
     case S_RESMODE:
-        // Cycle the GOP at runtime (Settings → Schermo). Fonts stay fixed.
-        r = a < boot.nmodes ? video_setmode((int)(boot.modes[a] >> 16),
-                                            (int)(boot.modes[a] & 0xffff)) : -1;
+        /* b=1: capabilities, bit0 runtime, bit1 persistent GOP-at-next-boot.
+         * Runtime GOP calls after ExitBootServices are never attempted. */
+        if(b==1){r=(video_runtime_available()?1:0)|(!boot.install_len?2:0);break;}
+        if(!session_open()||a>=boot.nmodes)break;
+        {int w=boot.modes[a]>>16,h=boot.modes[a]&65535;
+         if(video_runtime_available())r=video_setmode(w,h);
+         else {int z=bootconfig_disk(2,bootconfig_display(w,h));r=z>=0?1:z;}}
+
         break;
     case S_KEXT: {
         /* a=op: 0 stat (b=KextInfo[], c=cap) 1 load (b=path, c=err buf128)

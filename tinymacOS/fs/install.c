@@ -378,7 +378,7 @@ static unsigned cfg16(const u8 *p){return p[0]|(unsigned)p[1]<<8;}
 static u32 cfg32(const u8 *p){return cfg16(p)|(u32)cfg16(p+2)<<16;}
 int bootconfig_disk(int write,u32 flags)
 {
-    if(boot.install_len || flags>1)return -2;
+    if(boot.install_len || (write==1?flags>1:!bootconfig_flags_valid(flags)))return -2;
     u32 irq;spin_lock(&cfg_lock,&irq);int result=-1;
     for(int d=0;d<sata_count();d++) {
         Medium medium={sata_io,sata_flush,d,sata_size(d)};
@@ -405,9 +405,11 @@ int bootconfig_disk(int write,u32 flags)
         if(!at||sata_io(d,at,1,cfg_sector,0)||!bootconfig_valid((BootConfig *)cfg_sector))break;
         result=((BootConfig *)cfg_sector)->flags;
         if(write) {
-            BootConfig want;bootconfig_make(&want,flags);
+            u32 old=((BootConfig *)cfg_sector)->flags;
+            u32 next=write==2?((old&TMC_BOOT_VERBOSE)|(flags&TMC_BOOT_DISPLAY_MASK)):((old&TMC_BOOT_DISPLAY_MASK)|flags);
+            BootConfig want;bootconfig_make(&want,next);
             if(sata_io(d,at,1,&want,1)||sata_flush(d)||sata_io(d,at,1,cfg_sector,0)||memcmp(&want,cfg_sector,512))result=-1;
-            else result=flags;
+            else result=next;
         }
         break;
     }

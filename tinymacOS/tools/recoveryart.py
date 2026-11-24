@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
+import os
 """Derive a small static recovery font+icon subset. No desktop graphics linked into Recovery."""
 from pathlib import Path
 import struct,sys
-D=Path(sys.argv[1]);a=Path('assets');raw=(a/'type.tfn').read_bytes();nf,ng=struct.unpack_from('<II',raw,4);end=12+4*ng;bits=end+nf*(4+ng*8);hdr=bytearray(raw[:end]);struct.pack_into('<I',hdr,4,4);px=bytearray()
+D=Path(sys.argv[1]);a=Path('assets');raw=Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes();nf,ng=struct.unpack_from('<II',raw,4);end=12+4*ng;bits=end+nf*(4+ng*8);hdr=bytearray(raw[:end]);struct.pack_into('<I',hdr,4,4);px=bytearray()
 for i in (0,1,2,3):
  pos=end+i*(4+8*ng);h=struct.unpack_from('<I',raw,pos)[0];hdr+=struct.pack('<I',h)
  for j in range(ng):

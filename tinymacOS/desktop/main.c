@@ -717,6 +717,12 @@ void app_main(void)
             for (int i = 0; i < nz; i++) {
                 View *v = &views[order[i]];
                 Rect *b = &v->box;
+                /* A lower scanout must shrink oversized clients, not merely
+                 * move their still-too-large rectangles to (0,36). */
+                int resized=0;
+                if(b->w>W-28){b->w=W-28;resized=1;}
+                if(b->h>H-BAR-100){b->h=H-BAR-100;resized=1;}
+                if(resized)resize(order[i]);
                 if (b->x + b->w > W)b->x = W - b->w;
                 if (b->y + b->h > H)b->y = H - b->h;
                 if (b->x < 0)b->x = 0;

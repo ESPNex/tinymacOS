@@ -5,6 +5,9 @@
 #include "hidtablet.h"
 #include "text_input.h"
 #include "firmware_pointer_scale.h"
+int rec_pointer_start(EFI_BOOT_SERVICES *,int,int);
+int rec_pointer_relative(void);
+int rec_pointer_next(EFI_BOOT_SERVICES *,TabletState *);
 int rec_keyboard_start(EFI_BOOT_SERVICES *);
 int rec_keyboard_next(EFI_BOOT_SERVICES *,int *);
 // This EFI application is the entire recovery runtime: no user session, compositor, Dock or desktop app archive.
@@ -351,7 +354,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.7 (30B8)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.8 (30B9)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {
@@ -411,7 +414,7 @@ static void pointer_button(int down)
     if(!down)dragging=0;
     held=down;dirty=1;
 }
-/* Mouse transport and ownership remain exclusively with firmware/OpenCore. */
+/* Prefer firmware pointer protocols. Direct UsbIo is only for unclaimed HID. */
 #ifdef TMC_DEBUG
 static void pointer_trace(UINTN id,EFI_SIMPLE_POINTER_PROTOCOL *source,EFI_SIMPLE_POINTER_STATE *state)
 {
@@ -434,6 +437,7 @@ static void poll_pointer_sources(EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
             EFI_ABSOLUTE_POINTER_STATE p;
             if (!EFI_ERROR(absolute->GetState(absolute,&p))) {
                 EFI_ABSOLUTE_POINTER_MODE *m=absolute->Mode;
+                if(!m)return;
                 int x=pointer_pixel(p.CurrentX,m->AbsoluteMinX,m->AbsoluteMaxX,rw);
                 int y=pointer_pixel(p.CurrentY,m->AbsoluteMinY,m->AbsoluteMaxY,rh);
                 int down=!!(p.ActiveButtons & EFI_ABSP_TouchActive);
@@ -441,7 +445,7 @@ static void poll_pointer_sources(EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
                  * without fresh activity. It must not hide SimplePointer USB.
                  * Compare against that source, not the shared on-screen cursor. */
                 if(last_absolute!=absolute || !abs_valid || x!=abs_x || y!=abs_y || down!=abs_down) {
-                    mx=x;my=y;pointer_button(down);got_abs=1;
+                    mx=x;my=y;pointer_button(down);got_abs=1;dirty=1;
                 }
                 last_absolute=absolute;abs_valid=1;abs_x=x;abs_y=y;abs_down=down;
             }
@@ -459,13 +463,47 @@ static void poll_pointer_sources(EFI_ABSOLUTE_POINTER_PROTOCOL *absolute,
                 if(simple_source[i]!=pointer){
                     simple_source[i]=pointer;memset(simple_axes[i],0,sizeof simple_axes[i]);
                 }
-                int dx=rec_pointer_pixels(&simple_axes[i][0],p.RelativeMovementX,pointer->Mode?pointer->Mode->ResolutionX:0);
-                int dy=rec_pointer_pixels(&simple_axes[i][1],p.RelativeMovementY,pointer->Mode?pointer->Mode->ResolutionY:0);
+                int dx=rec_pointer_pixels(&simple_axes[i][0],p.RelativeMovementX,pointer->Mode&&pointer->Mode->ResolutionX?pointer->Mode->ResolutionX:8);
+                int dy=rec_pointer_pixels(&simple_axes[i][1],p.RelativeMovementY,pointer->Mode&&pointer->Mode->ResolutionY?pointer->Mode->ResolutionY:8);
                 mx = MAX(0, MIN(rw - 1, (i64)mx + dx));
                 my = MAX(0, MIN(rh - 1, (i64)my + dy));
-                pointer_button(down);
+                pointer_button(down);dirty=1;
             }
         }
+}
+/* Firmware may install mouse children late, or after hotplug. Snapshot the
+ * protocols periodically, without resetting devices or stealing ownership. */
+static void pointer_sources(EFI_SIMPLE_POINTER_PROTOCOL **pointers,UINTN *npointers,
+                            EFI_ABSOLUTE_POINTER_PROTOCOL **absolute)
+{
+    /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
+     * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
+    *npointers=0;*absolute=0;
+    EFI_GUID pg = EFI_SIMPLE_POINTER_PROTOCOL_GUID;
+    EFI_HANDLE *ph=0;UINTN pn=0;
+    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&pg,0,&pn,&ph))){
+        for(UINTN i=0;i<pn && *npointers<16;i++){
+            EFI_SIMPLE_POINTER_PROTOCOL *p=0;
+            if(!EFI_ERROR(bs->HandleProtocol(ph[i],&pg,(void **)&p)) && p){
+                pointers[(*npointers)++]=p;
+            }
+        }
+        bs->FreePool(ph);
+    }
+    EFI_GUID ag = EFI_ABSOLUTE_POINTER_PROTOCOL_GUID;
+    EFI_HANDLE *handles; UINTN count;
+    if (!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&ag,0,&count,&handles))) {
+        for (UINTN i=0;i<count;i++) {
+            EFI_ABSOLUTE_POINTER_PROTOCOL *a=0;
+            if (EFI_ERROR(bs->HandleProtocol(handles[i],&ag,(void **)&a)) || !a || !a->Mode) continue;
+            if (a->Mode->AbsoluteMaxX <= a->Mode->AbsoluteMinX || a->Mode->AbsoluteMaxY <= a->Mode->AbsoluteMinY) continue;
+            *absolute=a;
+            if (handles[i]!=st->ConsoleInHandle) break;
+        }
+        bs->FreePool(handles);
+    }
+
+
 }
 EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
 {
@@ -484,35 +522,11 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
     my = rh - 55;
     int keyboards=rec_keyboard_start(bs);
     if(!keyboards)strset(info,"Tastiera: nessun dispositivo HID boot o PS/2 disponibile",sizeof info);
-    /* OpenDuet can publish an idle PS/2 pointer before the USB mouse.
-     * Poll every SimplePointer instead of trusting LocateProtocol's first hit. */
     EFI_SIMPLE_POINTER_PROTOCOL *pointers[16]={0};
     int pointer_down[16]={0};UINTN npointers=0;
-    EFI_GUID pg = EFI_SIMPLE_POINTER_PROTOCOL_GUID;
-    EFI_HANDLE *ph=0;UINTN pn=0;
-    if(!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&pg,0,&pn,&ph))){
-        for(UINTN i=0;i<pn && npointers<16;i++){
-            EFI_SIMPLE_POINTER_PROTOCOL *p=0;
-            if(!EFI_ERROR(bs->HandleProtocol(ph[i],&pg,(void **)&p)) && p){
-                p->Reset(p,FALSE);pointers[npointers++]=p;
-            }
-        }
-        bs->FreePool(ph);
-    }
-    EFI_ABSOLUTE_POINTER_PROTOCOL *absolute = 0;
-    EFI_GUID ag = EFI_ABSOLUTE_POINTER_PROTOCOL_GUID;
-    EFI_HANDLE *handles; UINTN count;
-    if (!EFI_ERROR(bs->LocateHandleBuffer(ByProtocol,&ag,0,&count,&handles))) {
-        for (UINTN i=0;i<count;i++) {
-            EFI_ABSOLUTE_POINTER_PROTOCOL *a=0;
-            if (EFI_ERROR(bs->HandleProtocol(handles[i],&ag,(void **)&a)) || !a || !a->Mode) continue;
-            if (a->Mode->AbsoluteMaxX <= a->Mode->AbsoluteMinX || a->Mode->AbsoluteMaxY <= a->Mode->AbsoluteMinY) continue;
-            absolute=a;
-            if (handles[i]!=st->ConsoleInHandle) break;
-        }
-        bs->FreePool(handles);
-    }
-    if (absolute) absolute->Reset(absolute,FALSE);
+    EFI_ABSOLUTE_POINTER_PROTOCOL *absolute=0;
+    pointer_sources(pointers,&npointers,&absolute);
+    int direct=rec_pointer_start(bs,mx,my);unsigned pointer_ticks=0;
 
     for (;;) {
         if (dirty) {
@@ -530,6 +544,18 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *sys)
                 else if(page==TOOLS)row=(row+3+d)%3;
                 else if(page==DEST&&num)sel=(sel+num+d)%num;
             } else if(page==TERM||(page==CONFIRM&&op==ERASE))text_append_key(field,sizeof field,c);
+        }
+        if(++pointer_ticks%170==0){
+            pointer_sources(pointers,&npointers,&absolute);
+            if(!direct)direct=rec_pointer_start(bs,mx,my);
+        }
+        TabletState pointer_state;
+        for(int n=0;direct&&n<32&&rec_pointer_next(bs,&pointer_state);n++){
+            if(rec_pointer_relative()){
+                mx=MAX(0,MIN(rw-1,(i64)mx+pointer_state.x));
+                my=MAX(0,MIN(rh-1,(i64)my+pointer_state.y));
+            }else{mx=pointer_state.x;my=pointer_state.y;}
+            pointer_button(!!(pointer_state.buttons&1));dirty=1;
         }
         poll_pointer_sources(absolute,pointers,pointer_down,npointers);
         bs->Stall(12000);

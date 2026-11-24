@@ -73,4 +73,4 @@ cp "$P/Volume.hdr" "$R/Recovery/Volume.hdr"
 cp "$D/Payload.sha" "$R/Recovery/Payload.sha"
 if [ "$P" = "$R/work" ];then rm -rf "$P";fi
 find "$R" -exec touch -h -d @1735689600 {} +
-xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_1_7 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
+xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_1_8 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"

@@ -80,7 +80,14 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     if (EFI_ERROR(bs->LocateProtocol(&gg, 0, (void **)&go)))
         FAIL("GOP unavailable");
     ginst = st;
-    int best = -1, score = -1, nm = 0;
+    if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))
+        || EFI_ERROR(bs->HandleProtocol(li->DeviceHandle, &sg, (void **)&fs)) || EFI_ERROR(fs->OpenVolume(fs, &root))
+       )FAIL("volume");
+    EFI_HANDLE rd = sibling(bs, li->DeviceHandle, 3);
+    load_boot_config(root);
+    if(rd){EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *rfs=0;EFI_FILE_PROTOCOL *rr=0;
+        if(!EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&rfs))&&!EFI_ERROR(rfs->OpenVolume(rfs,&rr))){load_boot_config(rr);rr->Close(rr);}}
+    int best = -1, preferred=-1, score = -1, nm = 0;
     for (UINT32 i = 0; i < go->Mode->MaxMode; i++) {
         EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *m;
         UINTN n;
@@ -95,6 +102,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
            duplicates would pin the Settings mode cycler on one entry. */
         if (w >= 800 && h >= 600 && w <= 1920 && h <= 1080 && !(w & 7) &&
             (UINT64)w * h <= 1920ULL * 1080 && m->PixelFormat <= 1) {
+            if((bi.boot_flags&TMC_BOOT_DISPLAY)&&w==(int)(((bi.boot_flags>>8)&255)*8)&&h==(int)((bi.boot_flags>>16)&2047))preferred=i;
             if (s > score) {
                 score = s;
                 best = i;
@@ -126,7 +134,8 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
         }
         bi.csr = csr & 1u;
     }
-    if (best < 0 || EFI_ERROR(go->SetMode(go, best)))
+    if(preferred>=0 && !EFI_ERROR(go->SetMode(go,preferred)))best=preferred;
+    else if (best < 0 || EFI_ERROR(go->SetMode(go, best)))
         FAIL("No compatible 32-bit GOP mode");
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *m = go->Mode->Info;
     bi.fb = go->Mode->FrameBufferBase;
@@ -136,13 +145,6 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     bi.rgb = m->PixelFormat == 0;
     if (bi.fb + (UINT64)bi.stride * bi.h * 4 > 0x100000000ULL)
         FAIL("GOP outside 32-bit physical map");
-    if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))
-        || EFI_ERROR(bs->HandleProtocol(li->DeviceHandle, &sg, (void **)&fs)) || EFI_ERROR(fs->OpenVolume(fs, &root))
-       )FAIL("volume");
-    EFI_HANDLE rd = sibling(bs, li->DeviceHandle, 3);
-    load_boot_config(root);
-    if(rd){EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *rfs=0;EFI_FILE_PROTOCOL *rr=0;
-        if(!EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&rfs))&&!EFI_ERROR(rfs->OpenVolume(rfs,&rr))){load_boot_config(rr);rr->Close(rr);}}
     UINT32 verbose=0;UINTN vsize=sizeof verbose;EFI_GUID vg=TMC_SIP_GUID;
     if(!EFI_ERROR(st->RuntimeServices->GetVariable(L"tinymacOS-verbose",&vg,0,&vsize,&verbose))&&verbose==1)bi.boot_flags|=TMC_BOOT_VERBOSE;
     /* Global Apple boot-args may be inherited from another OS/older OpenCore.

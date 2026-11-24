@@ -16,8 +16,9 @@ python3 tools/tramontana-assets.py "$D"
 python3 tools/control-svg.py "$D"
 U+=(-DTMC_ICON_ATLAS=\""$D/icons.atlas"\" -DTMC_CONTROL_SVG=\""$D/control-svg.alpha"\")
 python3 tools/recoveryart.py "$D"; (cd "$D" && gcc -c recovery-art.S -o recovery-art.o)
-for f in recovery/{main,screen,keyboard}.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
-efilink RECOVERY "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-keyboard.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
+for f in recovery/{main,screen,keyboard,usbhid}.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
+gcc "${E[@]}" -c drivers/hidtablet.c -o "$D/rec-hidtablet.o"
+efilink RECOVERY "$D/rec-usbhid.c.o" "$D/rec-hidtablet.o" "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-keyboard.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI"
 gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"
@@ -29,6 +30,7 @@ for a in "${APPS[@]}"; do
  desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/assets.S);;
  finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c);;
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
+ settings|about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"
