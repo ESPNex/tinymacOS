@@ -79,7 +79,7 @@ struct usb_host_endpoint;
 struct usb_device {
  struct device dev;struct usb_bus *bus;const char *manufacturer,*product,*devpath;
  struct {u16 idVendor,idProduct;} descriptor;unsigned maxpacket;void *owner;
- int state,speed,can_submit;atomic_t urbnum,references;struct usb_host_endpoint *ep_in[16],*ep_out[16];
+ unsigned long quirks;int state,speed,can_submit;atomic_t urbnum,references;struct usb_host_endpoint *ep_in[16],*ep_out[16];
 };
 struct usb_endpoint_descriptor {u8 bLength,bDescriptorType,bEndpointAddress,bmAttributes;u16 wMaxPacketSize;u8 bInterval;} PACK;
 struct usb_ssp_isoc_ep_comp_descriptor {u32 dwBytesPerInterval;};

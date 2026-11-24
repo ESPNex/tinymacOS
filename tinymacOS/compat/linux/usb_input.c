@@ -10,7 +10,7 @@ struct LxBinding {
  void *key;struct usb_hcd hcd;struct usb_device usb;struct usb_interface intf;
  struct usb_host_interface alt;struct usb_host_endpoint endpoint,ep0;
  struct input_dev *input;struct urb *urb,*control_urb,*active_input,*active_control;int opened,kind,servicing;
- TmcLinuxUsbControl control;void *control_context;u64 generation;
+ TmcLinuxUsbControl control;TmcLinuxHidControl message_control;void *control_context;u64 generation,deadline;int message_busy;
 };
 static struct LxBinding bindings[LX_BINDINGS];
 static struct input_dev *external_pointers[16],*external_keyboards[16];
@@ -29,9 +29,9 @@ static struct {u64 links,unlinks,queued,givebacks,map_checks,map_rejected,root_r
 void *tmc_lx_zalloc(size_t n,gfp_t flags)
 {
  if(!n||n>65536||(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC))return 0;
- void *p=tmc_lx_os_alloc(n);if(p){memset(p,0,n);stats.allocations++;}return p;
+ void *p=tmc_lx_os_alloc(n);if(p){memset(p,0,n);__atomic_add_fetch(&stats.allocations,1,__ATOMIC_RELAXED);}return p;
 }
-void tmc_lx_free(void *p){if(p){stats.frees++;tmc_lx_os_free(p);}}
+void tmc_lx_free(void *p){if(p){__atomic_add_fetch(&stats.frees,1,__ATOMIC_RELAXED);tmc_lx_os_free(p);}}
 long tmc_lx_strscpy(char *d,const char *s,size_t n)
 {
  if(!n)return -7;size_t i=0;while(i+1<n&&s[i]){d[i]=s[i];i++;}d[i]=0;return s[i]?-7:(long)i;
@@ -196,9 +196,9 @@ int usb_make_path(struct usb_device *d,char *p,size_t n){return tmc_lx_snprintf(
 void *usb_alloc_coherent(struct usb_device *d,size_t n,gfp_t flags,dma_addr_t *dma)
 {
  (void)d;if(!dma||!n||n>4096||(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC))return 0;
- void *p=tmc_lx_os_dma_alloc(n,dma);if(p){memset(p,0,n);stats.allocations++;}return p;
+ void *p=tmc_lx_os_dma_alloc(n,dma);if(p){memset(p,0,n);__atomic_add_fetch(&stats.allocations,1,__ATOMIC_RELAXED);}return p;
 }
-void usb_free_coherent(struct usb_device *d,size_t n,void *p,dma_addr_t dma){(void)d;(void)n;if(p){stats.frees++;tmc_lx_os_dma_free(p,dma);}}
+void usb_free_coherent(struct usb_device *d,size_t n,void *p,dma_addr_t dma){(void)d;(void)n;if(p){__atomic_add_fetch(&stats.frees,1,__ATOMIC_RELAXED);tmc_lx_os_dma_free(p,dma);}}
 void usb_fill_int_urb(struct urb *u,struct usb_device *d,unsigned pipe,void *buf,int n,void (*complete)(struct urb *),void *ctx,unsigned interval)
 {
  u->type=1;u->dev=d;u->pipe=pipe;u->transfer_buffer=buf;u->transfer_buffer_length=n;u->complete=complete;u->context=ctx;u->interval=interval;
@@ -276,7 +276,14 @@ void tmc_linux_mouse_detach(void *key)
  if(b&&b->kind==2){tmc_lx_usbmouse_driver()->disconnect(&b->intf);memset(b,0,sizeof *b);stats.disconnected++;}
  tmc_lx_os_unlock(flags);
 }
-void tmc_linux_mouse_stats(TmcLinuxUsbStats *out){u32 flags=tmc_lx_os_lock();if(out)*out=stats;tmc_lx_os_unlock(flags);}
+void tmc_linux_mouse_stats(TmcLinuxUsbStats *out)
+{
+ u32 flags=tmc_lx_os_lock();if(out){
+ #define COPY_STAT(f) out->f=__atomic_load_n(&stats.f,__ATOMIC_RELAXED)
+ COPY_STAT(probes);COPY_STAT(attached);COPY_STAT(completions);COPY_STAT(frames);COPY_STAT(errors);COPY_STAT(rejected);COPY_STAT(disconnected);COPY_STAT(allocations);COPY_STAT(frees);
+ #undef COPY_STAT
+ }tmc_lx_os_unlock(flags);
+}
 
 void *memscan(void *data,int value,size_t n)
 {
@@ -304,7 +311,7 @@ void usb_fill_control_urb(struct urb *u,struct usb_device *d,unsigned pipe,u8 *s
 {
  u->type=2;u->dev=d;u->pipe=pipe;u->setup_packet=setup;u->transfer_buffer=data;
  u->transfer_buffer_length=n;u->complete=complete;u->context=context;
- ((struct LxBinding *)d->owner)->control_urb=u;
+ if(((struct LxBinding *)d->owner)->kind!=3)((struct LxBinding *)d->owner)->control_urb=u;
 }
 int tmc_linux_keyboard_attach(void *key,unsigned vid,unsigned pid,unsigned packet,unsigned interval,unsigned iface,TmcLinuxUsbControl control,void *context)
 {
@@ -366,20 +373,27 @@ void tmc_linux_usb_service(void)
  for(unsigned scan=0;scan<LX_BINDINGS;scan++){
   unsigned index=(cursor+scan)%LX_BINDINGS;struct LxBinding *b=bindings+index;struct urb *u=b->control_urb;
   if(!b->key||!b->opened||!u||!u->submitted||b->servicing)continue;
-  u8 setup[8],data[8];unsigned n=u->transfer_buffer_length;
-  memcpy(setup,u->setup_packet,8);memcpy(data,u->transfer_buffer,n);
-  u64 gen=b->generation,serial=u->serial;TmcLinuxUsbControl control=b->control;void *context=b->control_context;
-  b->servicing=1;kstats.controls++;cursor=(index+1)%LX_BINDINGS;
+  u8 setup[8],data[1024];unsigned n=u->transfer_buffer_length;int message=b->kind==3;
+  memcpy(setup,u->setup_packet,8);if(n)memcpy(data,u->transfer_buffer,n);
+  u64 gen=b->generation,serial=u->serial,deadline=b->deadline;
+  TmcLinuxUsbControl control=b->control;TmcLinuxHidControl message_control=b->message_control;void *context=b->control_context;
+  b->servicing=1;if(!message)kstats.controls++;cursor=(index+1)%LX_BINDINGS;
   tmc_lx_os_unlock(flags);
-  int status=control(context,setup,data,n);
+  int status=0,actual=n;
+  if(message){
+   int result=tmc_lx_os_clock_ms()>=deadline?-110:message_control(context,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,data,n);
+   if(result<0)status=result;else if((unsigned)result>n)status=-75;else actual=result;
+   if(tmc_lx_os_clock_ms()>=deadline){status=-110;actual=0;}
+  }else status=control(context,setup,data,n);
   flags=tmc_lx_os_lock();b=bindings+index;
   if(b->generation==gen&&b->control_urb==u){
    b->servicing=0;
    if(u->serial==serial&&u->submitted){
-    if(status)kstats.control_errors++;
-    tmc_lx_native_giveback(u,status,status?0:n);
-   }else kstats.stale_controls++;
-  }else kstats.stale_controls++;
+    if(status&&!message)kstats.control_errors++;
+    if(!status&&message&&(setup[0]&128)&&actual)memcpy(u->transfer_buffer,data,actual);
+    tmc_lx_native_giveback(u,status,status?0:actual);
+   }else if(!message)kstats.stale_controls++;
+  }else if(!message)kstats.stale_controls++;
   break;
  }
  service_busy=0;tmc_lx_os_unlock(flags);
@@ -400,12 +414,13 @@ static int tmc_native_hcd_validate(struct usb_hcd *h,struct urb *u,gfp_t flags)
  else if(flags!=GFP_KERNEL&&flags!=GFP_ATOMIC)result=-EINVAL;
  else if(!b||!b->key||&b->usb!=u->dev||&b->hcd!=h||h->driver!=&native_input_hc_driver)result=-ENODEV;
  else if(u->num_sgs||u->sg||u->number_of_packets)result=-EOPNOTSUPP;
- else if(u->transfer_buffer_length<0||u->transfer_buffer_length>8||
+ else if(u->transfer_buffer_length<0||u->transfer_buffer_length>(b->kind==3?1024:8)||
          (u->transfer_buffer_length&&!u->transfer_buffer))result=-EINVAL;
  else if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT){
   if(!u->transfer_buffer_length||!(u->pipe&USB_DIR_IN)||b->urb!=u)result=-EOPNOTSUPP;
  }else if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_CONTROL){
-  if(!u->setup_packet||(u->setup_packet[0]&USB_DIR_IN)||b->control_urb!=u||!b->control)result=-EOPNOTSUPP;
+  if(b->kind==3){if(!u->setup_packet||!b->message_control)result=-EOPNOTSUPP;else if(service_busy)result=-EBUSY;}
+  else if(!u->setup_packet||(u->setup_packet[0]&USB_DIR_IN)||b->control_urb!=u||!b->control)result=-EOPNOTSUPP;
  }else result=-EOPNOTSUPP;
  if(!result){
   struct urb *active=usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT?b->active_input:b->active_control;
@@ -417,7 +432,7 @@ static int native_hcd_enqueue(struct usb_hcd *h,struct urb *u,gfp_t flags)
 {
  (void)flags;int result=usb_hcd_link_urb_to_ep(h,u);if(result){ustats.rejected++;return result;}
  struct LxBinding *b=u->dev->owner;
- if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT)b->active_input=u;else b->active_control=u;
+ if(usb_endpoint_type(&u->ep->desc)==USB_ENDPOINT_XFER_INT)b->active_input=u;else{b->active_control=u;if(b->kind==3)b->control_urb=u;}
  u->hcpriv=b;u->serial++;u->submitted=1;HCOUNT(links);HCOUNT(queued);
  ustats.submits++;ustats.active++;if(ustats.active>ustats.highwater)ustats.highwater=ustats.active;
  return 0;
@@ -428,6 +443,7 @@ void tmc_lx_native_giveback(struct urb *u,int status,unsigned length)
 {
  if(!u||!u->hcpriv||!u->submitted)return;struct LxBinding *b=u->hcpriv;
  if(b->active_input==u)b->active_input=0;if(b->active_control==u)b->active_control=0;
+ if(b->kind==3&&b->control_urb==u)b->control_urb=0;
  u->submitted=0;u->serial++;u->actual_length=length;
  usb_hcd_unlink_urb_from_ep(&b->hcd,u);
  if(!u->unlinked)u->unlinked=status;
@@ -446,3 +462,5 @@ void tmc_linux_urb_stats(TmcLinuxUrbStats *out)
 {
  u32 flags=tmc_lx_os_lock();if(out)*out=ustats;tmc_lx_os_unlock(flags);
 }
+
+#include "message_runtime.inc"

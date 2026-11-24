@@ -11,7 +11,7 @@ static const u8 report[]={
 static int transport(UsbInput *u,int rt,int rq,int val,int ix,int n)
 {
  (void)rt;(void)ix;u->ctrl_bytes=n;
- if(rq==6&&val==0x100){memset(u->desc,0,18);u->desc[7]=8;u->desc[8]=0x34;u->desc[9]=0x12;}
+ if(rq==6&&val==0x100){memset(u->desc,0,18);u->desc[0]=18;u->desc[1]=1;u->desc[7]=8;u->desc[8]=0x34;u->desc[9]=0x12;}
  else if(rq==6&&val==0x200){
   const u8 cfg[]={9,2,34,0,1,1,0,0x80,50,9,4,0,0,1,3,1,2,0,9,0x21,0x11,1,0,1,0x22,sizeof report,0,7,5,0x81,3,8,0,10};
   memcpy(u->desc,cfg,n);if(is_hub)u->desc[14]=9;if(short_config&&n>9)u->ctrl_bytes=n-1;

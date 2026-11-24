@@ -61,3 +61,11 @@ void tmc_linux_generic_leds(unsigned);
 int tmc_linux_hub_port_init(TmcLinuxHidControl,void *,unsigned,unsigned,unsigned *);
 void tmc_linux_usb_cf_begin(void);
 void tmc_linux_usb_cf_end(void);
+
+/* Real original message.c control pipeline -> urb.c -> hcd.c -> native EP0.
+ * Public calls are serialized polled operations, <=1024 bytes, bounded native
+ * callback required. Timeout rejects late data; it does not preempt a callback.
+ * A concurrent/reentrant request returns -EBUSY rather than deadlocking. */
+int tmc_linux_core_control(void *key,unsigned speed,unsigned ep0,TmcLinuxHidControl,void *,unsigned rt,unsigned request,unsigned value,unsigned index,u8 *,unsigned n,unsigned timeout_ms);
+int tmc_linux_core_control_detach(void *key);
+int tmc_linux_core_control_busy(void);

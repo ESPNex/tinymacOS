@@ -38,7 +38,7 @@ static void test_doorbell(int slot,int ep)
  u64 v=setup->ptr;int rt=v&255,rq=v>>8&255,val=v>>16&65535,ix=v>>32&65535,n=v>>48;
  int ishub=slot==1||(mode==1&&slot==2);
  if(rq==6){
-  if(val==0x100){memset(u->desc,0,18);u->desc[7]=ishub?64:8;}
+  if(val==0x100){memset(u->desc,0,18);u->desc[0]=18;u->desc[1]=1;u->desc[7]=ishub?64:8;}
   else if(val==0x200)memcpy(u->desc,ishub?hubcfg:mousecfg,n);
   else if(val==0x2900){const u8 d[]={9,0x29,4,0x69,0,50,0,0,255};memcpy(u->desc,d,n);if(mode==2)u->desc[2]=0;}
   else assert(0);

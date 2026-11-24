@@ -41,7 +41,7 @@ struct Usb {
     u8 desc[1024] ALIGNED(1024); /* Data Stage TRBs have the same 64 KiB boundary rule */
     struct Hid hid[NHID];
     struct Xhci *controller;
-    int id,port,speed,nhid,diag,ctrl_dead,ctrl_bytes;
+    int id,port,speed,nhid,diag,ctrl_dead,ctrl_bytes,packet0;
     unsigned route,depth,tt_slot,tt_port,tt_think,hub_ports,hub_think;
 };
 static struct Xhci {
@@ -207,14 +207,24 @@ static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsig
     int result=control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
     int status=result?(hc->lastcode==6?-32:-5):0;hc=saved;return status;
 }
-static int linux_generic_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
+static int native_generic_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
 {
  struct Usb *u=context;struct Xhci *saved=hc;
- if(!u||!u->controller||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>255)return -22;
+ if(!u||!u->controller||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>65535)return -22;
  hc=u->controller;if(!(rt&128)&&n)memcpy(u->desc,data,n);
  int result=control(u,rt,req,value,iface,n),actual=n;
  if(!result&&(rt&128)){if(u->ctrl_bytes>(int)n)result=-1;else{actual=u->ctrl_bytes;memcpy(data,u->desc,actual);}}
  int status=result?(hc->lastcode==6?-32:-5):actual;hc=saved;return status;
+}
+static int linux_generic_control(void *context,unsigned rt,unsigned request,unsigned value,unsigned index,u8 *data,unsigned n)
+{
+ struct Usb *u=context;if(!u)return -22;
+ return tmc_linux_core_control(u,u->speed==1?2:u->speed==2?1:u->speed==3?3:u->speed==4?5:6,u->packet0,native_generic_control,u,rt,request,value,index,data,n,1000);
+}
+static int core_request(struct Usb *u,int rt,int request,int value,int index,int n)
+{
+ int result=linux_generic_control(u,rt,request,value,index,u->desc,n);
+ if(result<0){u->ctrl_bytes=0;return -1;}u->ctrl_bytes=result;return 0;
 }
 /* A successful SET status must not override a contradictory GET_PROTOCOL.
  * Some boot mice acknowledge SET without changing their packet mode. Keep
@@ -222,10 +232,10 @@ static int linux_generic_control(void *context,unsigned rt,unsigned req,unsigned
  * optional after a successful SET; STALL/short replies never confirm stale data. */
 static int select_protocol(struct Usb *u,int iface,unsigned expected)
 {
-    int set=!control(u,0x21,11,expected,iface,0);
+    int set=!core_request(u,0x21,11,expected,iface,0);
     if(u->ctrl_dead)return 0;
     u->desc[0]=255;
-    int get=!control(u,0xa1,3,0,iface,1);
+    int get=!core_request(u,0xa1,3,0,iface,1);
     if(u->ctrl_dead)return 0;
     return get ? u->ctrl_bytes==1 && u->desc[0]==expected : set;
 }
@@ -245,9 +255,9 @@ static void endpoint(u32 *p, Ring*r, int type, int pkt, int interval)
  * may be downstream of such a hub: "directly connected" is not root-port-only. */
 static int hub_config(struct Usb *u,int cfg)
 {
-    if(u->speed>3 || control(u,0,9,cfg,0,0))return 0;
+    if(u->speed>3 || core_request(u,0,9,cfg,0,0))return 0;
     memset(u->desc,0,sizeof u->desc);
-    if(control(u,0xa0,6,0x2900,0,9))return 0;
+    if(core_request(u,0xa0,6,0x2900,0,9))return 0;
     if(u->desc[0]<7 || u->desc[1]!=0x29 || !u->desc[2] || u->desc[2]>15)return 0;
     u->hub_ports=u->desc[2];u->hub_think=(u->desc[3]>>5)&3;
     unsigned delay=MAX(20u,(unsigned)u->desc[5]*2);
@@ -259,14 +269,14 @@ static int hub_config(struct Usb *u,int cfg)
     if(u->speed==3)s[2]=(s[2]&~(3u<<16))|(u->hub_think<<16);
     s[3]=0;
     if(command(hc->version>0x95?12:13,(u64)u->ic,u->id)<0)return 0;
-    for(unsigned p=1;p<=u->hub_ports;p++)if(control(u,0x23,3,8,p,0))return 0;
+    for(unsigned p=1;p<=u->hub_ports;p++)if(core_request(u,0x23,3,8,p,0))return 0;
     usb_delay_ms(delay);
     device_add("USB2 hub (xHCI)","usb",0);
     return 2;
 }
 static int configure(struct Usb*u, int port, int speed)
 {
-    u->controller=hc;
+    u->controller=hc;if(tmc_linux_core_control_detach(u))return 0;
     int id = command(9, 0, 0);
     if (id <= 0 || id > NS)
         return 0;
@@ -281,8 +291,8 @@ static int configure(struct Usb*u, int port, int speed)
     s[1] = (u32)port << 16;
     s[2] = u->tt_slot | (u->tt_port<<8); /* TTT is reserved except in HS hub contexts */
     int pkt = speed >= 4 ? 512 : speed == 3 ? 64 : 8;
-    endpoint(ctx(u, 2), &u->ctrl, 4, pkt, 0);
-    if (command(11, (u64)u->ic, id) < 0 || control(u, 128, 6, 0x100, 0, 8) || u->ctrl_bytes<8)
+    u->packet0=pkt;endpoint(ctx(u, 2), &u->ctrl, 4, pkt, 0);
+    if (command(11, (u64)u->ic, id) < 0 || core_request(u, 128, 6, 0x100, 0, 8) || u->ctrl_bytes<8)
         return 0;
     if (speed <= 2 && u->desc[7] != pkt) {
         pkt = u->desc[7];
@@ -295,17 +305,18 @@ static int configure(struct Usb*u, int port, int speed)
         if (command(13, (u64)u->ic, id) < 0)
             return 0;
     }
-    if(control(u,128,6,0x100,0,18)||u->ctrl_bytes<18)return 0;
+    u->packet0=pkt;
+    if(core_request(u,128,6,0x100,0,18)||u->ctrl_bytes<18)return 0;
     if(input_diag.device_count<TMC_INPUTDIAG_DEVICES) {
         u->diag=++input_diag.device_count;
         InputDeviceDiag *d=&input_diag.device[u->diag-1];
         *d=(InputDeviceDiag){.pci=hc->pci,.port=(u32)port,
             .vid=u->desc[8]|u->desc[9]<<8,.pid=u->desc[10]|u->desc[11]<<8,.status=1};
     }
-    if (control(u, 128, 6, 0x200, 0, 9)||u->ctrl_bytes<9)
+    if (core_request(u, 128, 6, 0x200, 0, 9)||u->ctrl_bytes<9)
         return 0;
     int len = u->desc[2] | (u->desc[3] << 8);
-    if (len < 9 || len > 1024 || control(u, 128, 6, 0x200, 0, len)||u->ctrl_bytes<len)
+    if (len < 9 || len > 1024 || core_request(u, 128, 6, 0x200, 0, len)||u->ctrl_bytes<len)
         return 0;
     unsigned cfg=0;int hub=0;HidInterface choices[NHID];
     int count=hid_configuration_at_speed(u->desc,len,speed==1?2:speed==2?1:speed==3?3:speed==4?5:6,choices,NHID,&cfg,&hub);
@@ -329,7 +340,7 @@ static int configure(struct Usb*u, int port, int speed)
         endpoint(ctx(u,h->ep+1),&h->in,7,h->mps,interval);
     }
     s[0]=(s[0]&0x07ffffffu)|(highest<<27);s[3]=0;
-    if(command(12,(u64)u->ic,id)<0||control(u,0,9,cfg,0,0))return 0;
+    if(command(12,(u64)u->ic,id)<0||core_request(u,0,9,cfg,0,0))return 0;
     u->nhid=count;
     int usable=0;
     for(int k=0;k<count;k++) {
@@ -340,7 +351,7 @@ static int configure(struct Usb*u, int port, int speed)
         if(h->proto==2){
             int boot_ok=select_protocol(u,h->iface,0);
             int parsed=h->report_len>0 && h->report_len<=(int)sizeof u->desc &&
-                !control(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
+                !core_request(u,0x81,6,0x2200,h->iface,h->report_len) && u->ctrl_bytes==h->report_len &&
                 tmc_linux_hid_pointer_layout(u->desc,h->report_len,MIN(h->mps,64),&h->tablet);
             if(!boot_ok){
                 if(parsed && select_protocol(u,h->iface,1)){h->proto=3;}
@@ -349,7 +360,7 @@ static int configure(struct Usb*u, int port, int speed)
         }
         if(h->proto==3){
             if((!h->report_len||h->report_len>(int)sizeof u->desc||
-               control(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len))ok=0;
+               core_request(u,0x81,6,0x2200,h->iface,h->report_len)||u->ctrl_bytes<h->report_len))ok=0;
             if(ok){
                 h->linux_generic=tmc_linux_generic_attach(h,u->desc,h->report_len,h->mps,h->iface,linux_generic_control,u,boot.w,boot.h,hid_absolute);
                 if(!h->linux_generic)ok=0;
@@ -357,7 +368,7 @@ static int configure(struct Usb*u, int port, int speed)
         }
         if(h->proto==1){
             if(!select_protocol(u,h->iface,0))ok=0;
-            if(ok){u->desc[0]=0;control(u,0x21,9,0x0200,h->iface,1);}
+            if(ok){u->desc[0]=0;core_request(u,0x21,9,0x0200,h->iface,1);}
         }
         if(!ok){h->proto=0;continue;}
         if(h->proto==2&&tmc_linux_mouse_boot_layout(&h->tablet)){
@@ -550,7 +561,7 @@ void kbd_setleds(int on)
         hc=&controllers[c];if(!hc->active)continue;
         for(int i=0;i<connected;i++)for(int j=0;j<usb[i].nhid;j++) {
             struct Hid *h=&usb[i].hid[j];
-            if(h->proto==1&&!h->linux_keyboard){usb[i].desc[0]=on&31;control(usb+i,0x21,9,0x0200,h->iface,1);}
+            if(h->proto==1&&!h->linux_keyboard){usb[i].desc[0]=on&31;core_request(usb+i,0x21,9,0x0200,h->iface,1);}
         }
     }
     hc=saved;
@@ -610,7 +621,7 @@ static void recover_pending(void)
         /* CLEAR_FEATURE(ENDPOINT_HALT), then discard the failed ring and
          * program its new dequeue/cycle before accepting further reports. */
         int addr=0x80|((unsigned)h->ep>>1);
-        if(control(u,2,1,0,addr,0))continue;
+        if(core_request(u,2,1,0,addr,0))continue;
         ringinit(&h->in);
         if(epcommand(16,u,h->ep,(u64)h->in.tr|1)<0)continue;
         arm(u,h);

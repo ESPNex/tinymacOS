@@ -1,11 +1,12 @@
 #include "../kernel/k.h"
 #include "usbhost.h"
 #include "linux_usb.h"
+static int core_request(UsbInput *,int,int,int,int,int);
 static int select_protocol(UsbInput *u,unsigned iface,unsigned expected)
 {
-    int set=!u->control(u,0x21,11,expected,iface,0);
+    int set=!core_request(u,0x21,11,expected,iface,0);
     u->desc[0]=255;
-    int get=!u->control(u,0xa1,3,0,iface,1);
+    int get=!core_request(u,0xa1,3,0,iface,1);
     return get ? u->ctrl_bytes==1 && u->desc[0]==expected : set;
 }
 /* PIT channel 2, independent of channel-0 scheduler tick and pre-IRQ startup.
@@ -28,19 +29,30 @@ static int linux_keyboard_control(void *context,const u8 setup[8],u8 *data,unsig
     int result=u->control(u,setup[0],setup[1],setup[2]|setup[3]<<8,setup[4]|setup[5]<<8,n);
     return result==-2?-32:result?-5:0;
 }
-int usb_input_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
+static int usb_native_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned iface,u8 *data,unsigned n)
 {
  UsbInput *u=context;
- if(!u||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>255)return -22;
+ if(!u||n>sizeof u->desc||(n&&!data)||rt>255||req>255||value>65535||iface>65535)return -22;
  if(!(rt&128)&&n)memcpy(u->desc,data,n);
  int result=u->control(u,rt,req,value,iface,n);
  if(result)return result==-2?-32:-5;
  if(rt&128){if(u->ctrl_bytes>n)return -5;memcpy(data,u->desc,u->ctrl_bytes);return u->ctrl_bytes;}
  return n;
 }
+int usb_input_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned index,u8 *data,unsigned n)
+{
+ UsbInput *u=context;if(!u)return -22;
+ return tmc_linux_core_control(u,u->speed==1?2:u->speed==2?1:3,u->max_packet0,usb_native_control,u,rt,req,value,index,data,n,1000);
+}
+static int core_request(UsbInput *u,int rt,int req,int value,int index,int n)
+{
+ int result=usb_input_control(u,rt,req,value,index,u->desc,n);
+ if(result<0){u->ctrl_bytes=0;return result==-32?-2:-1;}u->ctrl_bytes=result;return 0;
+}
 int usb_input_enumerate(UsbInput *u,unsigned address)
 {
-    int (*c)(UsbInput *,int,int,int,int,int)=u->control;
+    if(tmc_linux_core_control_detach(u))return 0;
+    int (*c)(UsbInput *,int,int,int,int,int)=core_request;
     u->max_packet0=u->speed==3?64:8;
     if(c(u,128,6,0x100,0,8)||u->ctrl_bytes<8)return 0;
     unsigned m=u->desc[7];if(m!=8&&m!=16&&m!=32&&m!=64)return 0;

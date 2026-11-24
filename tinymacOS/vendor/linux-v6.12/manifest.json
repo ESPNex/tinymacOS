@@ -110,6 +110,12 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/hub.c",
       "sha256": "fffdbb0984fdce15e1b82bf93072f59f37a40a89cbf7e201bd78e47997cf26dc",
       "license": "GPL-2.0-or-later"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/message.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/message.c",
+      "sha256": "6ba31eeacd7d3cff93bff40f0f8b83d94ee381b3a18244b0e93edf808a91d831",
+      "license": "GPL-2.0-only"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
@@ -248,6 +254,24 @@
       "start_marker": "int hub_port_debounce(",
       "end_marker": "\nvoid usb_ep0_reinit(",
       "sha256": "fe432b519e158dc51d751a5a7d76c6466739a0ae785e8cb5778266b2a5a8c2b6",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "message.c",
+      "output": "message-control.inc",
+      "function": "message-control",
+      "start_marker": "struct api_context {",
+      "end_marker": "\n/**\n * usb_interrupt_msg",
+      "sha256": "b6fc6936753d7e4687c4d7c03e04f867fba826a67dac960f93fbafdea3717c91",
+      "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "source": "message.c",
+      "output": "message-descriptor.inc",
+      "function": "message-descriptor",
+      "start_marker": "int usb_get_descriptor(",
+      "end_marker": "\n/**\n * usb_get_string",
+      "sha256": "81cba013497239ff0152d2c01c15faa88103e62a05aa25f495ddea1f9fe7abca",
       "modifications": "none: complete upstream functions and intervening comments, byte-exact"
     }
   ]

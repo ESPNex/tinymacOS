@@ -35,7 +35,7 @@ static void test_doorbell(int slot,int ep)
     u64 v=setup->ptr;int rq=v>>8&255,val=v>>16&65535,n=v>>48;
     int code=1;
     if(rq==6) {
-        if(val==0x100){memset(u->desc,0,18);u->desc[7]=64;u->desc[8]=0x34;u->desc[9]=0x12;u->desc[10]=0x78;u->desc[11]=0x56;}
+        if(val==0x100){memset(u->desc,0,18);u->desc[0]=18;u->desc[1]=1;u->desc[7]=64;u->desc[8]=0x34;u->desc[9]=0x12;u->desc[10]=0x78;u->desc[11]=0x56;}
         else if(val==0x200)memcpy(u->desc,cfg,n);
         else if(val==0x2200){memcpy(u->desc,report_desc,n);if(malformed)memset(u->desc,0,n);}
         else assert(0);

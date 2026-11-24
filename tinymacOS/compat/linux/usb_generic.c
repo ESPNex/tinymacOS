@@ -134,7 +134,8 @@ int tmc_linux_generic_detach(void *key)
 }
 void tmc_linux_generic_service(void)
 {
- for(unsigned i=0;i<NG;i++)if(generic_bindings[i])drain_generic(generic_bindings[i],1);
+ int output=!tmc_linux_core_control_busy();
+ for(unsigned i=0;i<NG;i++)if(generic_bindings[i])drain_generic(generic_bindings[i],output);
 }
 void tmc_linux_generic_leds(unsigned on)
 {

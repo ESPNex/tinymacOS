@@ -8,9 +8,10 @@ void usb_delay_ms(unsigned ms){(void)ms;}
 static u32 fakeir[16],fakedb[256];
 static void fixture(void)
 {
+    if(hc)assert(!tmc_linux_core_control_detach(usb));
     memset(controllers,0,sizeof controllers);hc=controllers;
     ir=fakeir;db=fakedb;evcycle=1;connected=1;
-    usb[0].id=1;ringinit(&commands);ringinit(&usb[0].ctrl);
+    usb[0].id=1;usb[0].controller=hc;usb[0].packet0=8;usb[0].speed=1;ringinit(&commands);ringinit(&usb[0].ctrl);
     usb[0].nhid=1;usb[0].hid[0]=(struct Hid){.proto=2,.ep=3,.mps=8};
     ringinit(&usb[0].hid[0].in);ticks=0;
 }
