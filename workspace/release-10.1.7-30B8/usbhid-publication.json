@@ -1,0 +1,47 @@
+{
+  "published": true,
+  "prerelease": true,
+  "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.7-usbhid-candidate",
+  "tag": "v10.1.7-usbhid-candidate",
+  "release_commit": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+  "runtime_source_commit": "28e9f95359707e84644b704ca919a05b571f82f6",
+  "published_at_github": "2026-11-24T19:39:56Z",
+  "remote_download_readback_verified": true,
+  "assets": [
+    {
+      "name": "SHA256SUMS.txt",
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.7-usbhid-candidate/SHA256SUMS.txt",
+      "bytes": 375,
+      "downloaded_sha256": "038259c8236fad745a565131d37bc6f46ab13f142c2567e0e7577d585280e775"
+    },
+    {
+      "name": "tinymacOS-10.1.7-usbhid-sources.zip",
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.7-usbhid-candidate/tinymacOS-10.1.7-usbhid-sources.zip",
+      "bytes": 17160782,
+      "downloaded_sha256": "47ed35004cd05f366bc00478f71674292427255f280337e1e4dad8e64f3d3848"
+    },
+    {
+      "name": "tinymacOS-10.1.7-usbhid.iso",
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.7-usbhid-candidate/tinymacOS-10.1.7-usbhid.iso",
+      "bytes": 226215936,
+      "downloaded_sha256": "427463c2e0a9ab923aa5fce82799d53edaaa8795420cd007d0c34a1a16b24584"
+    },
+    {
+      "name": "usbhid-evidence.json.gz",
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.7-usbhid-candidate/usbhid-evidence.json.gz",
+      "bytes": 9130,
+      "downloaded_sha256": "bbffeadd82a3f2fe8b22ed14da29487fda7bdfd68cd5350d17c12c9df2115ba7"
+    },
+    {
+      "name": "usbhid-validation.json",
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.1.7-usbhid-candidate/usbhid-validation.json",
+      "bytes": 2479,
+      "downloaded_sha256": "418978ed083fc714af89feeb3a5da97c0fba6a8e4e1a8bb4d778c91414513647"
+    }
+  ],
+  "stable_latest_tag": "v10.1.6",
+  "stable_latest_release_id": 454670448,
+  "stable_release_unchanged": true,
+  "production_port_complete": false,
+  "physical_hardware_tested": false
+}

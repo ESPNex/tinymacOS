@@ -1,10 +1,10 @@
 {
-  "state": "USB/HID CANDIDATE / software gates passed; publication pending",
+  "state": "PUBLISHED PRE-RELEASE / canonical USB-HID candidate; stable 10.1.6 unchanged",
   "requested_version": "10.1.7",
   "requested_build": "30B8",
   "current_validation": "usbhid-validation.json",
   "source_commit": "28e9f95359707e84644b704ca919a05b571f82f6",
-  "published": false,
+  "published": true,
   "stable_release_unchanged": "10.1.6 / 30B7",
   "canonical_hid_connection_complete": true,
   "full_original_hid_core_usbhid_input_generic_active": true,
@@ -26,5 +26,10 @@
     "Broader init/endpoint rollback and integrated reset failure injection remains; entropy hook credits none.",
     "No physical IRQ/IOMMU/noncoherent-DMA/system-PM or physical hardware certification.",
     "Optical BIOS/UEFI ISO only, not USB-DD hybrid."
-  ]
+  ],
+  "prerelease": true,
+  "publication_record": "usbhid-publication.json",
+  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.7-usbhid-candidate",
+  "release_commit": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+  "remote_download_readback_verified": true
 }
