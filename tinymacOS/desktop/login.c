@@ -8,7 +8,8 @@ static SessionInfo account;
 static AuthRequest form;
 static char confirm[65], notice[112], setup_code[33];
 static int field, confirmPower, blink = -1, minute = -1, lastPhase = -1, shake, reset_arm;
-static u64 spinStart;
+static u64 spinStart, caretTick;
+static int carets[3];
 static u32 glow[1920 * 1080];
 int gate;
 static void wipe(void *p, int n)
@@ -25,6 +26,7 @@ void login_enter(void)
 {
     gate = 1;
     field = 0;
+    memset(carets,0,sizeof carets);caretTick=sys.ticks;
     confirmPower = 0;
     shake = 0;
     reset_arm = 0;
@@ -157,21 +159,28 @@ static void field_draw(int i)
 {
     Rect r = inputbox(i);
     const char *s = setup() && i == 0 ? form.name : setup() && i == 2 ? confirm : form.password;
-    int secret = !setup() || i != 0;
-    /* Solid tinted fill, no white outline/highlight or secure-field caret. */
+    int secret = !setup() || i != 0, len=strlen(s);
+    carets[i]=MAX(0,MIN(carets[i],len));
+    int col=text_columns(s,carets[i]),startcol=MAX(0,col-(secret?18:21));
     roundr(r.x,r.y,r.w,r.h,17,i==field?0x284969:0x172c45,238);
     const char *hint = !setup() ? "Inserisci la password" : i == 0 ? "Nome utente" : i == 1 ?
                        "Password · almeno 8 caratteri" : "Conferma password";
-    if (!s[0])text(r.x + 17, r.y + 8, hint, F_SMALL, 0xf3f5fc);
+    int cx=r.x+16;
+    if (!s[0])text(r.x+(i==field?24:17),r.y+8,hint,F_SMALL,0xf3f5fc);
     else if (secret) {
-        int n = MIN(19, text_columns(s,strlen(s)));
+        int n = MIN(19, text_columns(s,len)-startcol);
         for (int j = 0; j < n; j++)roundr(r.x + 16 + j * 9, r.y + 14, 5, 5, 2, 0xc4d8ec, 245);
-        /* Secure fields intentionally show dots only, with no white caret bar. */
+        cx=r.x+16+(col-startcol)*9;
     } else {
-        const char *t = s + text_offset(s,0,strlen(s),MAX(0,text_columns(s,strlen(s))-22));
-        text(r.x + 16, r.y + 7, t, F_BODY, 0xffffff);
-        if (i == field && blink)rect(r.x + 18 + textw(t, F_BODY), r.y + 8, 1, 17, 0xffffff);
+        int start=text_offset(s,0,len,startcol),end=len;
+        char visible[128],prefix[128];
+        for(;;){memcpy(prefix,s+start,carets[i]-start);prefix[carets[i]-start]=0;
+            if(textw(prefix,F_BODY)<=r.w-38||start>=carets[i])break;start=text_next(s,start);}
+        for(;;){memcpy(visible,s+start,end-start);visible[end-start]=0;
+            if(textw(visible,F_BODY)<=r.w-32||end<=carets[i])break;end=text_prev(s,end);}
+        text(r.x+16,r.y+7,visible,F_BODY,0xffffff);cx=r.x+16+textw(prefix,F_BODY);
     }
+    if(i==field&&blink&&!account.working)rect(MIN(r.x+r.w-12,cx),r.y+8,1,17,0xffffff);
 }
 void login_draw(void)
 {
@@ -337,7 +346,10 @@ void login_input(Event *e)
             submit();
             return;
         }
-        for (int i = 0; i < (setup() ? 3 : 1); i++)if (inside(mx, my, inputbox(i)))field = i;
+        for (int i = 0; i < (setup() ? 3 : 1); i++)if (inside(mx, my, inputbox(i))){
+            field=i;char *value=setup()&&i==0?form.name:setup()&&i==2?confirm:form.password;
+            carets[i]=strlen(value);caretTick=sys.ticks;blink=1;
+        }
         return;
     }
     if (e->type != EV_KEY)return;
@@ -354,6 +366,7 @@ void login_input(Event *e)
 #endif
     if (account.working)return;
     int k = e->a;
+    caretTick=sys.ticks;blink=1;
     dirty = 1;
     if (confirmPower) {
         int v = confirmPower;
@@ -396,12 +409,19 @@ void login_input(Event *e)
         return;
     }
     char *p = setup() && field == 0 ? form.name : setup() && field == 2 ? confirm : form.password;
-    int len = strlen(p), max = p == form.name ? 31 : 64;
+    int max = p == form.name ? 31 : 64;
+    int *at=&carets[field];*at=MAX(0,MIN(*at,strlen(p)));
     if (e->b) {
-        if (k == 'u' || k == 'a')wipe(p, max + 1);
+        if (k == 'u' || k == 'a'){wipe(p, max + 1);*at=0;}
         return;
     }
-    (void)len;text_append_key(p,max+1,k);
+    if(k==K_LEFT)*at=text_prev(p,*at);
+    else if(k==K_RIGHT)*at=text_next(p,*at);
+    else if(k==K_HOME)*at=0;
+    else if(k==K_END)*at=strlen(p);
+    else if(k==8)text_backspace(p,at);
+    else if(k==K_DEL)text_delete(p,*at);
+    else if(text_printable(k))text_insert(p,max+1,at,k);
     notice[0] = 0;
 }
 int login_step(void)
@@ -432,9 +452,9 @@ int login_step(void)
         shake--;
         dirty = 1;
     }
-    if (minute != (int)sys.minute || blink != (int)(sys.ticks / 64 % 2)) {
+    if (minute != (int)sys.minute || blink != (int)(((sys.ticks-caretTick)/64%2)==0)) {
         minute = sys.minute;
-        blink = sys.ticks / 64 % 2;
+        blink = ((sys.ticks-caretTick)/64%2)==0;
         dirty = 1;
     }
     return 0;

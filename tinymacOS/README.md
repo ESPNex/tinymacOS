@@ -14,16 +14,17 @@ Dalla directory `tinymacOS/`:
 python3 tools/local-tools.py /var/tmp/tmc/tools/root
 export TOOLROOT=/var/tmp/tmc/tools/root
 export TMC_BUILD=/var/tmp/tmc-current
+export TMC_USB_CANONICAL=1
 bash build.sh
 ```
 
-La build produce `tinymacOS-10.1.7-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
+La build produce `tinymacOS-10.1.9-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
 
 ```sh
 mkdir -p /var/tmp/tmc-optical
 python3 tools/dualboot-iso.py \
-  "$TMC_BUILD/tinymacOS-10.1.7-x86_64.iso" \
-  /var/tmp/tmc-optical/tinymacOS-10.1.7-x86_64.iso
+  "$TMC_BUILD/tinymacOS-10.1.9-x86_64.iso" \
+  /var/tmp/tmc-optical/tinymacOS-10.1.9-x86_64.iso
 ```
 
 Toolchain, immagini disco e output non devono finire nel checkout. Il font e gli asset richiesti sono inclusi; `tools/control-svg.py` compila gli SVG in maschere alpha deterministiche, senza un interprete SVG a runtime.
@@ -38,7 +39,7 @@ STATE=/var/tmp/tmc-vm LIVE=1 bash run.sh
 
 Il launcher usa Q35/AHCI, 2 vCPU, 1 GiB RAM, OVMF, tastiera USB e tablet xHCI. `TMC_POINTER=mouse` seleziona invece il mouse relativo. Il prefisso degli strumenti supporta l'avvio headless; per un display interattivo occorre un frontend QEMU disponibile sull'host, oppure aggiungere `-display vnc=127.0.0.1:0` e usare un client VNC locale.
 
-Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.1.7-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
+Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.1.9-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
 
 ## Organizzazione tecnica
 
@@ -86,4 +87,4 @@ La nuova matrice copre 8 casi sullo stesso ISO dualboot: BIOS/UEFI × xHCI con d
 
 Limiti: CPU0 serializzata a polling su worker kernel dedicato (non IRQ); trasporto control/interrupt-IN/interrupt-OUT, senza bulk/SG/iso; i lock canonici rilevano e arrestano contesa/ricorsione non supportata, non offrono semantica Linux arbitraria; rollback/reset integrati hanno copertura limitata; nessun collaudo fisico, IOMMU, IRQ hardware o PM di sistema certificato. L'hook d'ingestione entropia non dispone ancora di un pool kernel collegato e non accredita entropia.
 
-[Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.6 / 30B7 resta l'ultima release pubblicata; la candidata USB/HID è una pre-release distinta, non un aggiornamento della stabile.
+[Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.9 / 30B10 è la candidata corrente; note e ISO sono nella release corrispondente.

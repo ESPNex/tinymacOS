@@ -1,4 +1,7 @@
 #include "ui.h"
+#include "filepanel.h"
+static FilePanel picker;
+static int hasfile;
 static char doc[MAXFILE + 1], board[MAXFILE + 1], path[PATHLEN], field[PATHLEN], status[96];
 static int length, cursor, dirty, dialog, replace, firstline;
 static int starts[MAXFILE + 2], nlines;
@@ -35,15 +38,16 @@ static int endline(int j)
         e--;
     return e;
 }
-static void saved(void)
+static int saved(void)
 {
     int r = writefile(path, doc, length);
-    if (r >= 0) {
-        dirty = 0;
+    if (r == length) {
+        dirty = 0;hasfile=1;
         strset(status, si.persistent ? "Salvato su disco" : "Salvato nella sessione live", 96);
-        trace(status);
+        trace(status);return 1;
     } else
         strset(status, "Salvataggio non riuscito. Controlla cartella e permessi.", 96);
+    return 0;
 }
 static int load(const char *p)
 {
@@ -53,6 +57,7 @@ static int load(const char *p)
     int r = readfile(p, doc, MAXFILE);
     if (r < 0)
         return -1;
+    hasfile=1;
     length = r;
     doc[r] = 0;
     cursor = 0;
@@ -65,6 +70,7 @@ static int load(const char *p)
 }
 static void blank(void)
 {
+    hasfile=0;
     length = cursor = dirty = firstline = 0;
     doc[0] = 0;
     strset(path, DOCS "/Untitled.txt", PATHLEN);
@@ -78,6 +84,7 @@ static void blank(void)
 }
 static void prompt(int m)
 {
+    if(m==1||m==2){dialog=0;filepanel_open(&picker,m==1,path);return;}
     dialog = m;
     ui_motion(FX_SHEET);
     replace = 1;
@@ -98,8 +105,7 @@ static void paste(const char *s, int n)
 }
 static void act(int a)
 {
-    if (a == ACT_SAVE)
-        saved();
+    if (a == ACT_SAVE){if(hasfile)saved();else prompt(1);}
     else if (a == ACT_OPEN)
         prompt(dirty ? 6 : 2);
     else if (a == ACT_NEW) {
@@ -172,7 +178,7 @@ static void key(Event *e)
         if ((k == 's' || k == 'S') && e->c)
             prompt(1);
         else if (k == 's')
-            saved();
+            act(ACT_SAVE);
         else if (k == 'o')
             act(ACT_OPEN);
         else if (k == 'n')
@@ -210,7 +216,8 @@ static void paint(void)
     layout();
     begin();
     title(dirty ? "* " : "", leaf(path));
-    int nrows = MAX(2, (ah - 115) / 20), j = cursorline();
+    /* Keep the parent backdrop bounded while the modal sheet owns the draw budget. */
+    int nrows = picker.active ? 8 : MAX(2, (ah - 115) / 20), j = cursorline();
     if (j < firstline)
         firstline = j;
     if (j >= firstline + nrows)
@@ -245,11 +252,22 @@ static void paint(void)
         modal(t, dialog <= 2 ? field : leaf(path),
               dialog <= 2 ? "Nome in Documenti, oppure un percorso assoluto." : "Le modifiche non salvate andranno perse.");
     }
+    if(picker.active)filepanel_draw(&picker);
     finish();
+}
+static void picker_event(const Event *e)
+{
+    int result=filepanel_event(&picker,e);
+    if(result!=1)return;
+    if(picker.save){
+        char old[PATHLEN];strset(old,path,PATHLEN);strset(path,picker.result,PATHLEN);
+        int before=hasfile;
+        if(!saved()){strset(path,old,PATHLEN);hasfile=before;picker.active=1;strset(picker.message,status,sizeof picker.message);}
+    }else if(load(picker.result)<0){picker.active=1;strset(picker.message,"Impossibile aprire il documento.",sizeof picker.message);}
 }
 void app_main(void)
 {
-    win(618, 352, "TextEdit");
+    win(760, 480, "TextEdit");
     blank();
     char s[PATHLEN];
     sc(S_STARTARG, s, 0, 0, 0);
@@ -269,6 +287,7 @@ void app_main(void)
             redraw = 1;
             if (baseevent(&e))
                 continue;
+            if(picker.active){picker_event(&e);continue;}
             if (e.type == EV_CLOSE) {
                 if (dirty) {
                     dialog = 3;
@@ -298,6 +317,9 @@ void app_main(void)
                 }
             }
         }
+        SysInfo next;sc(S_INFO,&next,0,0,0);
+        if(picker.active&&(si.fsrev!=next.fsrev||si.ticks/64!=next.ticks/64))redraw=1;
+        si=next;
         if (redraw)
             paint();
         slp(2);

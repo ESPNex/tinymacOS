@@ -22,10 +22,10 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.1.8','CFBundleVersion':'30B9','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.1.9','CFBundleVersion':'30B10','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
 for svg in sorted(Path('assets/control-center').glob('*.svg')):add('/System/Library/CoreServices/ControlCenter/Symbols/'+svg.name,svg.read_bytes())
 add('/System/Library/CoreServices/ControlCenter/Symbols/manifest.json',(D/'control-svg.json').read_bytes())
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.1.8','ProductBuildVersion':'30B9'}));add('/System/Library/KernelCollections',None)
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.1.9','ProductBuildVersion':'30B10'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes())
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json

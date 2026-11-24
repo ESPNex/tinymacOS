@@ -1,5 +1,6 @@
 #include "preview.h"
 #include "volume.h"
+#include "filebrowser.h"
 static char cwd[PATHLEN] = HOME, clipfile[PATHLEN], field[PATHLEN], note[96], cwdarg[PATHLEN];
 static Dirent files[NSLOTS];
 static int n, sel = -1, listview, offset, dialog;
@@ -24,9 +25,9 @@ static int visible(void)
 {
     return listview ? rows() : rows() * cols();
 }
-static const char *const navs[] = {"Inizio", "Scrivania", "Documenti", "Download", "Immagini", "Applicazioni", "Disco di avvio", "KernelCollections", "Libreria"};
-static const char *const paths[] = {HOME, HOME "/Desktop", DOCS, HOME "/Downloads", HOME "/Pictures", "/Applications", "/", KERNELDIR, "/Library"};
-static int navicon[] = {8, 9, 6, 10, 11, 13, 33, 32, 37};
+#define navs browser_labels
+#define paths browser_paths
+#define navicon browser_icons
 static int ny(int i)
 {
     return i < 5 ? 39 + i * 30 : 222 + (i - 5) * 30;
@@ -66,10 +67,10 @@ static const char *pretty(const char *s)
 }
 static void reload(void)
 {
-    n = sc(S_LIST, cwd, files, NSLOTS, 0);
+    n = browser_list(cwd, files, NSLOTS);
     if (n < 0) {
         strset(cwd, HOME, PATHLEN);
-        n = sc(S_LIST, cwd, files, NSLOTS, 0);
+        n = browser_list(cwd, files, NSLOTS);
     }
     if (n < 0)
         n = 0;

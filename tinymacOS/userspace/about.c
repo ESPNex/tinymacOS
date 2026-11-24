@@ -18,7 +18,7 @@ static void paint(void)
         Text(x - 2, 32, "tiny", F_DISPLAY, TX);
         Text(x - 2 + tiny, 32, "macOS", F_DISPLAY_SEMIBOLD, TX);
     }
-    Text(x, 91, "Versione 10.1.8", F_CAPTION, SUB);
+    Text(x, 91, "Versione 10.1.9", F_CAPTION, SUB);
     Box(x, 130, aw - x - 17, 1, 0, EDGE);
     pair(x, 145, "Processore", si.cpu);
     char s[90] = "";
@@ -30,7 +30,7 @@ static void paint(void)
     pair(x, 243, "Volume dati", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
     s[0] = 0;
     addnum(s, si.procs, 90);
-    append(s, " processi attivi  ·  Build 30B9", 90);
+    append(s, " processi attivi  ·  Build 30B10", 90);
     Text(x, ah - 30, s, F_SMALL, EMP);
     finish();
 }

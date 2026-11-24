@@ -355,7 +355,7 @@ static void term(void)
         }
     } else if (eq(field, "diskutil verifyVolume"))lineout(num &&
                 !firstaid(media + sel, 0) ? "Volume valido." : "Verifica non riuscita.");
-    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.8 (30B9)");
+    else if (eq(field, "sw_vers"))lineout("tinymacOS Recovery 10.1.9 (30B10)");
     else if (eq(field, "date")) {
         EFI_TIME t;
         if (!EFI_ERROR(st->RuntimeServices->GetTime(&t, 0))) {

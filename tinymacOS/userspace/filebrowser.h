@@ -1,0 +1,8 @@
+#pragma once
+#include "ui.h"
+#define BROWSER_PLACES 9
+extern const char *const browser_labels[BROWSER_PLACES];
+extern const char *const browser_paths[BROWSER_PLACES];
+extern const int browser_icons[BROWSER_PLACES];
+int browser_list(const char *, Dirent *, int);
+int browser_finder(const char *);

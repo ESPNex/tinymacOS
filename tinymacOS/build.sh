@@ -30,8 +30,9 @@ APPS=(desktop finder terminal textedit settings about calculator calendar monito
 for a in "${APPS[@]}"; do
  src=userspace/$a.c; units=(); objects=(); case "$a" in
  desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/assets.S);;
- finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c);;
+ finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c userspace/filebrowser.c);;
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
+ textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
  settings|about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done

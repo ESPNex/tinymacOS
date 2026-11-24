@@ -2,9 +2,9 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery UEFI. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.1.8 Tramontana · build 30B9 · pre-release.**
+**Versione attuale: 10.1.9 Tramontana · build 30B10 · pre-release.**
 
-[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.8)
+[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.9)
 
 ## Funzioni principali
 
