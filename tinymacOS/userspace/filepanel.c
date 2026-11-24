@@ -70,7 +70,7 @@ void filepanel_draw(FilePanel *p)
 {
     geometry(p);if(si.fsrev!=p->revision)filepanel_refresh(p);
     int x=p->x,y=p->y,w=p->w,h=p->h,l=x+p->side+12,cw=w-p->side-24;
-    Sheet(x,y,w,h,14);Text(x+18,y+13,p->save?"Salva documento":"Apri documento",F_BOLD,TX);
+    DialogSheet(x,y,w,h,14);Text(x+18,y+13,p->save?"Salva documento":"Apri documento",F_BOLD,TX);
     button(x+12,y+48,39,"Su",0);
     field_draw(p,x+61,y+48,w-73,p->location,2);
     Box(x+8,y+87,p->side-8,h-195,8,PANEL);
@@ -100,7 +100,7 @@ void filepanel_draw(FilePanel *p)
     button(x+w-201,y+h-37,85,"Annulla",0);button(x+w-106,y+h-37,94,p->save?"Salva":"Apri",1);
     if(p->overwrite||p->newfolder){
         int mw=MIN(410,w-28),mx=x+(w-mw)/2,my=y+(h-150)/2;
-        Sheet(mx,my,mw,150,12);Text(mx+16,my+13,p->overwrite?"Sostituire il documento?":"Nuova cartella",F_BOLD,TX);
+        DialogSheet(mx,my,mw,150,12);Text(mx+16,my+13,p->overwrite?"Sostituire il documento?":"Nuova cartella",F_BOLD,TX);
         if(p->overwrite){Text(mx+16,my+47,leaf(p->result),F_SMALL,TX);Text(mx+16,my+75,"Il file esistente verra sostituito.",F_SMALL,SUB);}
         else field_draw(p,mx+16,my+47,mw-32,p->folder,3);
         button(mx+mw-200,my+109,87,"Annulla",0);button(mx+mw-103,my+109,87,p->overwrite?"Sostituisci":"Crea",1);

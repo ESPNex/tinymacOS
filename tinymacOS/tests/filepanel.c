@@ -42,6 +42,6 @@ int main(void)
     filepanel_open(&p,1,DOCS "/new.txt");p.replace=1;key(&p,0xe8);key(&p,'.');key(&p,'t');key(&p,'x');key(&p,'t');assert(eq(p.name,"è.txt"));key(&p,K_HOME);key(&p,K_DEL);assert(eq(p.name,".txt"));assert(key(&p,27)==-1&&!p.active&&!writes);
     filepanel_open(&p,1,DOCS "/new.txt");p.newfolder=1;p.focus=3;strset(p.folder,"../bad",48);assert(key(&p,'\n')==0&&creates==0);strset(p.folder,"Nuova",48);key(&p,'\n');assert(creates==1&&eq(created,DOCS "/Nuova"));
     assert(browser_finder(DOCS)>=0&&spawned==1);assert(browser_finder(DOCS "/existing.txt")<0);
-    filepanel_open(&p,1,DOCS "/new.txt");begin();filepanel_draw(&p);assert(count<NCMDS);
+    filepanel_open(&p,1,DOCS "/new.txt");begin();filepanel_draw(&p);assert(count<NCMDS);assert(list[0].type==C_GLASS&&list[0].style==GLASS_DIALOG);
     puts("PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, no document writes before acceptance");
 }

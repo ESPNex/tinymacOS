@@ -27,10 +27,17 @@ try:
   gaps=[hits[i+1][0]-sum(hits[i]) for i in range(2)];assert min(gaps)>=6,gaps
   r['login_date_visible_gaps_px']=gaps;ok('Login date has two visible word gaps of at least six pixels on actual framebuffer')
   g.enroll('Vetro');g.key('f1');g.visible('Preferiti');g.key('ctrl-w');time.sleep(.4)
-  imgs=[]
+  imgs=[];origins=[];parent_errors=[]
   for j,wall in enumerate([0,7]):
-   g.app('f4','Impostazioni di Sistema');X,Y=sorigin(g);g.click(X+80,Y+60);g.visible('SFONDO');g.click(X+270+(wall%7)*83,Y+320+(wall//7)*50);time.sleep(.5);g.key('ctrl-w');time.sleep(.3)
-   g.app('f3','Testo semplice');TX,TY=torigin(g);g.key('ctrl-s');g.visible('Salva documento');g.move(1180,690);time.sleep(.6);img=np.asarray(g.snap(),dtype=np.int16);imgs.append(img);g.snap().save(ev/f'07-vetro-superficie-sfondo-{j}.png');g.key('esc')
+   g.app('f4','Impostazioni di Sistema');X,Y=sorigin(g);g.click(X+80,Y+60);g.visible('SFONDO');g.click(X+270+(wall%7)*83,Y+320+(wall//7)*50);time.sleep(.7);g.key('ctrl-w');time.sleep(.7);backdrop=np.asarray(g.snap(),dtype=np.int16)
+   g.app('f3','Testo semplice');TX,TY=torigin(g);g.key('ctrl-s');g.visible('Salva documento');g.move(1180,690);time.sleep(.6);img=np.asarray(g.snap(),dtype=np.int16);imgs.append(img);origins.append((TX,TY))
+   # Compare the former parent title bar directly to the unobstructed desktop.
+   a=img[TY-38:TY-5,TX+90:TX+620];c=backdrop[TY-38:TY-5,TX+90:TX+620]
+   parent_errors.append(float(np.abs(a-c).mean()));assert parent_errors[-1]<.1,parent_errors
+   assert pixels.locate(g.snap(),'Testo semplice',faces=(0,),threshold=.98) is None
+   g.snap().save(ev/f'07-vetro-superficie-sfondo-{j}.png');g.key('esc');g.visible('Testo semplice');g.key('ctrl-w');time.sleep(.4)
+  r['former_parent_title_rgb_error']=parent_errors;assert origins[0]==origins[1],origins
+  ok('Standalone dialog replaces parent chrome exactly with the desktop; cancel restores TextEdit without quitting it')
   # Interior patches deliberately avoid text, fields, sidebar and button chrome.
   patches=[(280,32,80,8),(350,220,90,45),(400,410,80,12)]
   errors=[]
@@ -38,5 +45,10 @@ try:
    a=imgs[0][TY+y:TY+y+h,TX+x:TX+x+w];c=imgs[1][TY+y:TY+y+h,TX+x:TX+x+w];errors.append(float(np.abs(a-c).mean()))
   r['sheet_wallpaper_response_rgb_mean']=errors;assert min(errors)>2,errors
   ok('Identical sheet changes with the actual wallpaper across header, center and footer, not only its rim')
+  # Readability and lack of parent chrome in dark appearance too.
+  g.app('f4','Impostazioni di Sistema');X,Y=sorigin(g);g.click(X+80,Y+60);g.visible('COLORE');g.click(X+655,Y+147);time.sleep(.5);g.key('ctrl-w')
+  g.app('f3','Testo semplice');g.key('ctrl-o');g.visible('Apri documento');g.visible('Nome');g.visible('Tipo');g.move(1180,690);time.sleep(.5);g.snap().save(ev/'08-dialogo-scuro.png')
+  assert pixels.locate(g.snap(),'Testo semplice',faces=(0,),threshold=.98) is None
+  g.key('esc');g.visible('Testo semplice');ok('Dark standalone Open dialog remains readable and cancel restores the editor')
   r['passed']=True
 finally:(b/'material-result.json').write_text(json.dumps(r,indent=2)+'\n')

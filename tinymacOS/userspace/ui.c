@@ -208,6 +208,10 @@ void Sheet(int x, int y, int w, int h, int r)
 {
     op(C_GLASS, x, y, w, h, 0, 0, r);
 }
+void DialogSheet(int x, int y, int w, int h, int r)
+{
+    op(C_GLASS, x, y, w, h, GLASS_DIALOG, 0, r);
+}
 void Keyface(int x, int y, int w, int h, int on)
 {
     op(C_BUTTON, x, y, w, h, on != 0, 0, 0);

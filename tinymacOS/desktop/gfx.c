@@ -332,7 +332,7 @@ void client(int x, int y, int w, int h, Draw *d, int n)
         }, q->style);
         else if (q->type == C_GLASS) glass((Rect) {
             X, Y, q->w, q->h
-        }, q->radius, MAT_SHEET);
+        }, q->radius, q->style==GLASS_DIALOG?MAT_DIALOG:MAT_SHEET);
         else if (q->type == C_TEXT) {
             if (q->style & 128)
                 center(X, Y, q->text, q->style & 127, q->ink);

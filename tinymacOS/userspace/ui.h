@@ -37,4 +37,5 @@ void title(const char *, const char *);
 void ui_motion(int);
 void Photo(int, int, int, int, int, int);
 void Sheet(int, int, int, int, int);
+void DialogSheet(int, int, int, int, int);
 void Keyface(int, int, int, int, int);

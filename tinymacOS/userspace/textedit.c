@@ -216,8 +216,9 @@ static void paint(void)
     layout();
     begin();
     title(dirty ? "* " : "", leaf(path));
-    /* Keep the parent backdrop bounded while the modal sheet owns the draw budget. */
-    int nrows = picker.active ? 8 : MAX(2, (ah - 115) / 20), j = cursorline();
+    /* The chooser is the only surface while modal; keep the document in memory. */
+    if(picker.active){filepanel_draw(&picker);finish();return;}
+    int nrows = MAX(2, (ah - 115) / 20), j = cursorline();
     if (j < firstline)
         firstline = j;
     if (j >= firstline + nrows)
@@ -252,7 +253,6 @@ static void paint(void)
         modal(t, dialog <= 2 ? field : leaf(path),
               dialog <= 2 ? "Nome in Documenti, oppure un percorso assoluto." : "Le modifiche non salvate andranno perse.");
     }
-    if(picker.active)filepanel_draw(&picker);
     finish();
 }
 static void picker_event(const Event *e)

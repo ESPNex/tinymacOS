@@ -14,7 +14,7 @@ static inline u32 blend(u32 a, u32 b, int t) {
     return (((((a & 0xff00ff) * z + (b & 0xff00ff) * t) >> 8) & 0xff00ff) | ((((a & 0xff00) * z +
             (b & 0xff00) * t) >> 8) & 0xff00));
 }
-enum {MAT_WINDOW, MAT_BAR, MAT_DOCK, MAT_MENU, MAT_WIDGET, MAT_SHEET};
+enum {MAT_WINDOW, MAT_BAR, MAT_DOCK, MAT_MENU, MAT_WIDGET, MAT_SHEET, MAT_DIALOG = MAT_DOCK};
 extern int W, H, PW, PH, night, lite, lightx, lighty;
 extern u32 canvas[], back[];
 extern int x1, y1, x2, y2;

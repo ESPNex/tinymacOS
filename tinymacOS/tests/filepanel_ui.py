@@ -32,10 +32,16 @@ def accept(g,X,Y):g.click(X+690,Y+452-6)
 try:
  with Retail(iso,b,ev,'filepanel',live=True) as g:
   g.type('Elena');g.key('tab');r['password_caret_samples']=caret(g,513,473);g.type('local-test-28');g.key('left');g.type('X');g.key('delete');g.key('backspace');g.key('end');g.type('85');g.key('tab');g.type('local-test-285');g.key('ret');g.visible('Preferiti',35);ok('Setup password field blinks without plaintext; UTF8-safe caret editing authenticates the resulting password')
-  g.app('f3','Testo semplice');X,Y=origin(g);g.type('HELLO19');g.key('ctrl-s');g.visible('Salva documento');g.snap().save(ev/'02-salva-documento.png')
+  g.app('f3','Testo semplice');X,Y=origin(g);g.type('HELLO19');g.key('ctrl-s');g.visible('Salva documento');time.sleep(.5)
+  assert pixels.locate(g.snap().crop((X,Y-42,X+750,Y)),'Untitled.txt',faces=(2,),threshold=.94) is None
+  assert pixels.locate(g.snap(),'Testo semplice',faces=(0,),threshold=.98) is None
+  assert pixels.locate(g.snap().crop((0,34,X+10,700)),'KernelCollections',faces=(0,),threshold=.94) is not None
+  ok('Only the file panel has no extra window frame; background Finder remains visible and open')
+  g.snap().save(ev/'02-salva-documento.png')
+  g.app('f2','Terminale');g.cmd('echo APP-ATTIVA','APP-ATTIVA');g.key('f3');g.visible('Salva documento');ok('Other apps remain usable while the file panel is open; switching back preserves the pending dialog and document')
   # Create a real folder in the sheet; no shell fixture is used.
   g.click(X+80,Y+447);g.visible('Nuova cartella');g.type('Prova19');g.key('ret');g.visible('Cartella vuota');ok('Save panel creates and enters a real user folder')
-  g.click(X+300,Y+383);g.type('UI19.txt');g.click(X+690,Y+446);g.visible('Salvato nella sessione live');ok('First Save opens native chooser and writes the selected path')
+  g.click(X+300,Y+383);g.type('UI19.txt');g.click(X+690,Y+446);g.visible('Salvato nella sessione live');g.visible('KernelCollections');ok('First Save opens native chooser and writes the selected path')
   g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');g.cmd('sw_vers -productVersion','10.2');ok('Saved file content and version verified through real Terminal/filesystem')
   g.app('f3','Testo semplice');X,Y=origin(g);g.key('ctrl-n');g.key('ctrl-o');g.visible('Apri documento');g.key('ctrl-l');g.type('/Users/User/Documents/Prova19');g.key('ret');g.visible('UI19.txt');g.snap().save(ev/'03-apri-documento.png')
   # Removed action stays inert, while shared filesystem navigation still works.

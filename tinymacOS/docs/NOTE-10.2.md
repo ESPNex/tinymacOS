@@ -1,11 +1,19 @@
 # tinymacOS 10.2 Tramontana · build 30B11
 
+## Rimpiazzo della stessa 10.2 / 30B11
+
+Questa revisione sostituisce gli allegati della 10.2, senza creare una nuova versione. Il nuovo commit e i nuovi SHA-256 identificano la ISO corretta.
+
+- Apri/Salva mostra il solo pannello, senza la cornice aggiuntiva, la barra del titolo, i semafori o il contenuto della finestra TextEdit che lo contiene. Le altre applicazioni restano visibili, aperte e utilizzabili: nessun occultamento globale, chiusura o minimizzazione. Chiudendo il pannello ritorna il documento senza perderne il contenuto.
+- Trasparenza identica al Centro di Controllo: il pannello usa lo stesso materiale `MAT_DOCK`, lo stesso shader, tinta, opacità, blur e rifrazione. Nessun valore alpha separato da tarare; anche il fallback opaco è condiviso.
+- Nessuna modifica a Dock, menu risoluzione, Recovery, font o kernel. Le altre applicazioni conservano la propria cornice.
+
 ## Interfaccia
 
 - Rimossa l'azione «Mostra nel Finder» dai dialoghi Apri/Salva. Restano navigazione reale delle cartelle, nuova cartella, apertura e salvataggio.
 - Data di login con spaziatura esplicita tra giorno della settimana, numero e mese, indipendente dalla metrica dello spazio del font. Font accettato invariato.
 - Backup in Impostazioni: nuovo tracciato SVG continuo con freccia e orologio leggibili.
-- Liquid Glass dei dialoghi esteso anche all'interno: campionamento della scena sotto la finestra anziché del foglio opaco già disegnato, tinta più traslucida e rifrazione su tutta la superficie. La modalità grafica ridotta resta opaca intenzionalmente.
+- Liquid Glass dei dialoghi esteso anche all'interno: campionamento della scena sotto la finestra anziché del foglio opaco già disegnato, tinta traslucida controllata e rifrazione leggera su tutta la superficie. La modalità grafica ridotta resta opaca intenzionalmente.
 - Data e ora in Impostazioni mostrate una sola volta; conservata la riga della sorgente.
 
 ## Recovery: ricerca storica e correzioni

@@ -232,11 +232,26 @@ static void wins(void)
         }
     }
 }
+/* Only explicitly marked file dialogs suppress their owning window. Ordinary
+ * Sheet users (calculator, inspectors, Settings popups) retain their chrome. */
+static int standalone_dialog(const View *v)
+{
+    return v->n>0 && v->cmd[0].type==C_GLASS && v->cmd[0].style==GLASS_DIALOG;
+}
+static Rect dialog_bounds(const View *v)
+{
+    const Draw *d=v->cmd;
+    return (Rect){v->box.x+1+d->x,v->box.y+TITLE+d->y,d->w,d->h};
+}
 static void wincontent(View *v, int focus)
 {
     Rect q = v->box;
     int sheet=0;for(int i=0;i<v->n;i++)if(v->cmd[i].type==C_GLASS){sheet=1;break;}
-    glass_sheet_backdrop(q,sheet);
+    glass_sheet_backdrop(q,sheet&&!standalone_dialog(v));
+    if(standalone_dialog(v)){
+        client(q.x+1,q.y+TITLE,q.w-2,q.h-TITLE-FOOT,v->cmd,v->n);
+        return;
+    }
     glass(q, TMC_CHROME_RADIUS, MAT_WINDOW);
     int x = q.x, y = q.y, w = q.w;
     u32 lights[] = {tmc_chrome_light(0), tmc_chrome_light(1), tmc_chrome_light(2)};
@@ -371,8 +386,8 @@ static void render(int dt)
         if (mk)dirty = 1;
         if (cache(v, key, focus == i)) {
             int radius = MAX(2, MIN(18, q.w * 18 / MAX(1, v->box.w)));
-            shadow(q, radius, focus == i ? 52 : 29);
-            if (v->previous && !mk && !sys.reduce_motion) {
+            if(!standalone_dialog(v))shadow(q, radius, focus == i ? 52 : 29);
+            if (v->previous && !mk && !sys.reduce_motion && !standalone_dialog(v)) {
                 v->contentAge += MIN(7ull, sys.ticks - v->contentTick);
                 v->contentTick = sys.ticks;
                 int t = ease(clampi(v->contentAge * 256 / 21, 0, 256));
@@ -402,7 +417,7 @@ static void render(int dt)
                 dirty = 1;
             }
         } else wincontent(v, focus == i); // Hover marks are composited over the cached, untransformed traffic lights.
-        if (!mk && lights == i + 1 && focus == i) {
+        if (!mk && lights == i + 1 && focus == i && !standalone_dialog(v)) {
             int x = q.x + 20, y = q.y + 20;
             line(x, y, x + 5, y + 5, 0x803235);
             line(x + 5, y, x, y + 5, 0x803235);
@@ -565,6 +580,7 @@ static void down(void)
         int i = order[j];
         View *v = views + i;
         if (v->mini || v->dead || !inside(mx, my, v->box))continue;
+        if(standalone_dialog(v)&&!inside(mx,my,dialog_bounds(v)))continue;
         focuswin(i);
         Rect q = v->box;
         int x = mx - q.x, y = my - q.y;
@@ -648,7 +664,7 @@ static void input(Event *e)
         lighty = my;
         cursorDirty = 1;
         int i = topwin(), hl = 0;
-        if (i >= 0 && !mc) {
+        if (i >= 0 && !mc && !standalone_dialog(views+i)) {
             Rect b = views[i].box;
             if (mx >= b.x + 11 && mx < b.x + 76 && my >= b.y + 8 && my < b.y + 36)hl = i + 1;
         }
