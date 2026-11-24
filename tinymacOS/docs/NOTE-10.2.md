@@ -1,12 +1,20 @@
 # tinymacOS 10.2 Tramontana · build 30B11
 
-## Rimpiazzo della stessa 10.2 / 30B11
+## Nuovo rimpiazzo: sfondo Recovery nero con luce soffusa
+
+- Sostituito soltanto lo sfondo piatto di Recovery con un gradiente radiale neutro: bordi quasi neri e alone bianco/grigio soffuso, leggermente sopra il centro.
+- Riferimenti cercati sul web: [discussione sullo sfondo Recovery jet black/grey](https://discussions.apple.com/thread/250065614), [richiesta del classico gradiente con vignettatura](https://www.reddit.com/r/MacOS/comments/pi6spn/hey_i_am_looking_for_the_wallpaper_that_is_in_the/), [guida Apple per il contesto dell'ambiente Recovery](https://support.apple.com/en-us/102518). Le immagini Apple non sono copiate o distribuite: il gradiente è un'implementazione originale procedurale.
+- Immagine calcolata una sola volta all'avvio e conservata in memoria; nei ridisegni viene copiata, senza ricalcolare il gradiente a ogni evento del mouse. Matematica intera e dithering inferiore a un livello di grigio per evitare bande marcate.
+- Finestre, card Regular, comandi, font e percorsi di input Recovery invariati. Le prove guest BIOS/UEFI controllano anche i pixel esposti del nuovo alone e dei bordi neri. Preservati i pannelli senza cornice aggiuntiva e il glass identico al Centro di Controllo nel desktop; le altre app restano visibili e utilizzabili.
+- Stessa versione 10.2 / 30B11 e stessa pagina di release; nuovo commit, nuova ISO e nuovi checksum.
+
+## Rimpiazzo precedente della stessa 10.2 / 30B11
 
 Questa revisione sostituisce gli allegati della 10.2, senza creare una nuova versione. Il nuovo commit e i nuovi SHA-256 identificano la ISO corretta.
 
 - Apri/Salva mostra il solo pannello, senza la cornice aggiuntiva, la barra del titolo, i semafori o il contenuto della finestra TextEdit che lo contiene. Le altre applicazioni restano visibili, aperte e utilizzabili: nessun occultamento globale, chiusura o minimizzazione. Chiudendo il pannello ritorna il documento senza perderne il contenuto.
 - Trasparenza identica al Centro di Controllo: il pannello usa lo stesso materiale `MAT_DOCK`, lo stesso shader, tinta, opacità, blur e rifrazione. Nessun valore alpha separato da tarare; anche il fallback opaco è condiviso.
-- Nessuna modifica a Dock, menu risoluzione, Recovery, font o kernel. Le altre applicazioni conservano la propria cornice.
+- Nel rimpiazzo dei pannelli non erano stati modificati Dock, menu risoluzione, Recovery, font o kernel. Le altre applicazioni conservano la propria cornice.
 
 ## Interfaccia
 

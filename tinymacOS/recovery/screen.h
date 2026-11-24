@@ -4,6 +4,7 @@
 #include "disklayout.h"
 extern int rw, rh;
 int screen_init(EFI_SYSTEM_TABLE *);
+void screen_background(void);
 void fill(int, int, int, int, int, u32);
 void label(int, int, int, const char *, u32);
 void glyph(int, int, int, int);

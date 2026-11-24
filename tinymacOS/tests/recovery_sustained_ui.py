@@ -47,6 +47,12 @@ try:
  assert (root/'recovery/usbhid.c').is_file()
  with Rec(iso,w,ev,'firmware',live=True,launcher=root/'tools/run-bios-iso.sh' if fw=='bios' else None) as g:
   g.shot('recovery-regular-home')
+  background=np.asarray(g.snap());height,width=background.shape[:2]
+  edge=background[80,16];glow=background[80,width//2];bottom=background[height-20,16]
+  assert int(edge.max())<=8 and int(bottom.max())<=8,(edge,bottom)
+  assert int(glow[0])>=int(edge[0])+15 and int(glow.max())-int(glow.min())<=1,glow
+  r['background_samples_rgb']={'edge':edge.tolist(),'soft_glow':glow.tolist(),'bottom':bottom.tolist()}
+  ok('Recovery uses a neutral soft-light background with near-black edges, not the former flat gray fill')
   import pixels
   title='Ripristina da una copia locale'
   image=g.snap();regular=pixels.locate(image,title,faces=(1,),threshold=.97);bold=pixels.locate(image,title,faces=(2,),threshold=.97)

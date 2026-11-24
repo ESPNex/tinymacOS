@@ -129,7 +129,7 @@ static void paint(void)
     hh = MIN(560, rh - 96);
     if(!positioned){x0=(rw-ww)/2;y0=(rh-hh)/2;positioned=1;}
     x0=MAX(8,MIN(rw-ww-8,x0));y0=MAX(42,MIN(rh-hh-8,y0));
-    fill(0, 0, rw, rh, 0, 0xe9eaf0);
+    screen_background();
     fill(0, 0, rw, 34, 0, 0x34353a);
     menu_apple(12,3);
     label(50, 6, 1, "tinymacOS Recovery", 0xffffff);

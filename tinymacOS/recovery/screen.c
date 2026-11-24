@@ -1,5 +1,6 @@
 #include "screen.h"
 #include "window_chrome.h"
+#include "background.h"
 extern const u8 recfont[], recicons[];
 typedef struct PACK {
     u16 adv, w;
@@ -11,7 +12,7 @@ static const u8 *bits;
 static const u32 *chars;
 static int ng;
 static EFI_GRAPHICS_OUTPUT_PROTOCOL *go;
-static u32 *pix;
+static u32 *pix,*backdrop;
 int rw, rh;
 static u32 blend(u32 a, u32 b, int k)
 {
@@ -39,6 +40,10 @@ int screen_init(EFI_SYSTEM_TABLE *st)
     rw = go->Mode->Info->HorizontalResolution;
     rh = go->Mode->Info->VerticalResolution;
     if (EFI_ERROR(st->BootServices->AllocatePool(EfiLoaderData, rw * rh * 4, (void **)&pix)))return 0;
+    if(EFI_ERROR(st->BootServices->AllocatePool(EfiLoaderData,rw*rh*4,(void **)&backdrop))){
+        st->BootServices->FreePool(pix);pix=0;return 0;
+    }
+    for(int y=0;y<rh;y++)for(int x=0;x<rw;x++)backdrop[y*rw+x]=rec_background_pixel(x,y,rw,rh);
     ng = *(u32 *)(recfont + 8);
     chars = (void *)(recfont + 12);
     const u8 *p = (void *)(chars + ng);
@@ -50,6 +55,10 @@ int screen_init(EFI_SYSTEM_TABLE *st)
     }
     bits = p;
     return 1;
+}
+void screen_background(void)
+{
+    memcpy(pix,backdrop,(u64)rw*rh*sizeof(u32));
 }
 void fill(int x, int y, int w, int h, int r, u32 c)
 {
