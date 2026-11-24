@@ -71,6 +71,7 @@ static void command_doorbell(void)
   event(trb,result<<24,(TRB_COMPLETION<<10)|(slot<<24));
  }
 }
+static unsigned output_bytes;
 static void transfer(unsigned slot,unsigned ep)
 {
  if(hw_never)return;u32 *e=context(slot)+8*ep;if((e[0]&7)!=EP_STATE_RUNNING)return;
@@ -85,7 +86,7 @@ static void transfer(unsigned slot,unsigned ep)
   if(type==TRB_SETUP){memcpy(setup_bytes,t,8);control_requests++;}
   else if(type==TRB_DATA||type==TRB_NORMAL){
    if(ep>1&&hw_stall){code=COMP_STALL_ERROR;e[0]=(e[0]&~7u)|EP_STATE_HALTED;hw_stall=0;}
-   else {unsigned got=ep>1&&hw_short?min_t(unsigned,len,3):len;if(got){u8 *data=cpu(ptr,len);for(unsigned i=0;i<got;i++)data[i]=ep>1?0x40+i:0x5a;}
+   else {unsigned got=ep>1&&hw_short?min_t(unsigned,len,3):len;if(got){u8 *data=(flags&TRB_IDT)?(u8 *)t:cpu(ptr,len);if(ep>1&&!(ep&1)){assert(got==1&&data[0]==0x5a);output_bytes+=got;}else for(unsigned i=0;i<got;i++)data[i]=ep>1?0x40+i:0x5a;}
     actual+=got;remaining=len-got;if(remaining)code=COMP_SHORT_PACKET;if(ep>1){hw_interrupt_ready--;hw_packets++;}}
   }else assert(type==TRB_STATUS||type==TRB_TR_NOOP);
   deq+=16;e[2]=(u32)deq|cycle;e[3]=deq>>32;
@@ -168,6 +169,9 @@ int main(void)
  hw_never=1;assert(tmc_linux_xhci_control(d,128,6,0x100,0,payload,18,10)==-ETIMEDOUT);hw_never=0;
  rearm_device=d;rearm_remaining=600;unsigned before=int_callbacks;assert(!tmc_linux_xhci_interrupt(d,1,8,8,rearm_payload,done,(void *)0x1234));
  for(unsigned i=0;i<2048&&rearm_remaining;i++){hw_interrupt_ready=1;tmc_linux_xhci_poll();}assert(!rearm_remaining&&int_callbacks==before+600);
+ /* Exact interrupt-OUT payload/length and distinct endpoint direction. */
+ payload[0]=0x5a;before=int_callbacks;assert(!tmc_linux_xhci_interrupt_report(d,0x101,8,8,1,payload,done,(void *)0x1234));hw_interrupt_ready=1;
+ for(unsigned i=0;i<40&&int_callbacks==before;i++)tmc_linux_xhci_poll();assert(int_callbacks==before+1&&!int_status&&int_bytes==1&&output_bytes==1&&payload[0]==0x5a);
  assert(!tmc_linux_xhci_device_destroy(d));
  /* Hardware slot contexts are checked, not private facade counters. */
  TmcXhciDevice *hub=tmc_linux_xhci_device(0,USB_SPEED_HIGH);assert(hub);assert(!tmc_linux_xhci_device_port(hub,NULL,1));

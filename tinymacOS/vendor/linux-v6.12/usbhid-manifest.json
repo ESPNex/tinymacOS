@@ -1,0 +1,65 @@
+{
+  "tag": "v6.12",
+  "files": [
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/hid-quirks.c",
+      "upstream": "drivers/hid/hid-quirks.c",
+      "sha256": "67615baaee9e6d1770c7af98e136158de7bf690955db4293a67250b3980afab7"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbhid/hid-core.c",
+      "upstream": "drivers/hid/usbhid/hid-core.c",
+      "sha256": "c7643c5ffd9f8792aa110b55fffd433d96d35cdf07fa68f5d6295a5a3e87ae97"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbhid/usbhid.h",
+      "upstream": "drivers/hid/usbhid/usbhid.h",
+      "sha256": "2b2368a604e7d276a614cadc981a71eff5fc8d4daa37ef57e9ab54d830cddef4"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/hid.h",
+      "upstream": "include/linux/hid.h",
+      "sha256": "69db832572997025df301fbcf243e0bd7eb00a5dca61edfac46635efe8efe93b"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/hid_bpf.h",
+      "upstream": "include/linux/hid_bpf.h",
+      "sha256": "ecae83affa62050afed8337ad8d4cdf02fad3dd3752af23d6687f969845deb16"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/hiddev.h",
+      "upstream": "include/linux/hiddev.h",
+      "sha256": "34cdb0c2f559f005dcc717bd52103fd2914397eaf648cedb9f22f47034ea07c9"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/hidraw.h",
+      "upstream": "include/linux/hidraw.h",
+      "sha256": "b5162e1ac6d055de0e9150abb0c549266aad7fc519cf1d8b52abf81385af039f"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/hid-debug.h",
+      "upstream": "include/linux/hid-debug.h",
+      "sha256": "b2b971feeaca313688c104ae22bdbb2dc74e2240d0587247f72eddeaaee09485"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/input/elan-i2c-ids.h",
+      "upstream": "include/linux/input/elan-i2c-ids.h",
+      "sha256": "3eccb6209da8ba5741b6d616f565f944594c82c40d7322acf81e60abb4252611"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/hid.h",
+      "upstream": "include/uapi/linux/hid.h",
+      "sha256": "bcdae993778fd1edec2cd4490bc92dd0cdb16151de84e1cb56958191938ca601"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/hiddev.h",
+      "upstream": "include/uapi/linux/hiddev.h",
+      "sha256": "476cabaaada97acd03444b9d0ae28f975c9d0312f884529020c7cc1acdb56e4d"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/hidraw.h",
+      "upstream": "include/uapi/linux/hidraw.h",
+      "sha256": "d78d3cffa74a1593b32d2e3e39260179d0e12b27a919fe2d599fb46f25c5249e"
+    }
+  ]
+}

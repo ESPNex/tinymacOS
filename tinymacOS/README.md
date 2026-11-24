@@ -59,7 +59,7 @@ Le licenze sono specifiche dei componenti: vedere `licenses/` e i file vendor. I
 
 I controller UHCI/EHCI/xHCI utilizzano ora sorgenti originali Linux v6.12, con runtime privati e DMA/polling implementati. La build predefinita mantiene il confine di enumerazione/classe `UsbInput`; non equivale al port completo di USB core/hub/usbhid.
 
-Per compilare il percorso canonico **xHCI/EHCI + core/HCD/hub Linux + Boot mouse/tastiera**, dalla directory `tinymacOS/` e con i prerequisiti già predisposti:
+Per compilare il percorso canonico **xHCI/EHCI + core/HCD/hub Linux + HID-core/usbhid/hid-input/generic**, dalla directory `tinymacOS/` e con i prerequisiti già predisposti:
 
 ```sh
 export TMC_BUILD=/var/tmp/tmc-usbcore-test/build
@@ -68,20 +68,22 @@ TMC_USB_CANONICAL=1 bash build.sh
 
 La selezione avviene in compilazione: non basta cambiare una preferenza su una ISO precedente. I simboli dei servizi canonici sono isolati e un'allowlist impedisce collegamenti involontari agli ABI privati. Il vecchio percorso di classe non viene avviato in questa modalità; PS/2 non è attivato dal percorso canonico.
 
-Questo esperimento **non collega ancora il completo HID-core/usbhid**. Sono attivi i driver Boot originali `usbkbd`/`usbmouse`, non tablet/generic HID universale. Usare `tools/run-input-qa.sh` con `TMC_TEST_INPUT=xhci-two-mice-kbd`, `ehci-kbd` o `xhci-hub-kbd`, non il tablet del launcher predefinito.
+Il percorso canonico collega ora i file originali interi HID-core/usbhid/hid-input/hid-generic/hid-quirks. Non registra usbkbd/usbmouse. Sono disponibili anche tablet assoluti; aggiungere `xhci-tablet-kbd` ai profili QA. Non significa supporto universale di ogni dispositivo HID.
 
 Verifiche ripetibili:
 
 ```sh
 bash tests/test-linux-usbcore.sh
 bash tests/test-linux-usbcore-enumeration.sh
+bash tests/test-linux-usbhid.sh
+TMC_HID_OPT=-O2 bash tests/test-linux-usbhid.sh
 # Richiede una build/media esterni; non usa dischi fisici:
 TMC_CANONICAL_STAGE=/var/tmp/tmc-usbcore-test \
   python3 tests/linux_usbcore_guest.py uefi xhci-two-mice-kbd
 ```
 
-La matrice salvata copre 6 casi sullo stesso ISO dualboot: BIOS/UEFI × xHCI con due mouse e tastiera, EHCI con mouse/tastiera, xHCI con hub esterno e mouse/tastiera. Ogni caso verifica input renderizzato, KernelCache del supporto, contatori dei controller e hot unplug/replug. I test host O1/O2 ASan/UBSan restano distinti dalla prova guest.
+La nuova matrice copre 8 casi sullo stesso ISO dualboot: BIOS/UEFI × xHCI con due mouse e tastiera, EHCI con mouse/tastiera, xHCI con hub esterno e mouse/tastiera, xHCI con tablet/tastiera. Ogni caso verifica input renderizzato, KernelCache del supporto, contatori dei controller e hot unplug/replug. I test host O1/O2 ASan/UBSan restano distinti dalla prova guest.
 
-Limiti: CPU0 serializzata a polling; lavoro USB che può attendere ancora drenato nel contesto input/IRQ; trasporto control/interrupt-IN, senza bulk/SG/iso/interrupt-OUT; rollback/reset e contesto scheduler da completare; nessun collaudo fisico, IOMMU, IRQ hardware o PM di sistema certificato. L'hook d'ingestione entropia non dispone ancora di un pool kernel collegato e non accredita entropia.
+Limiti: CPU0 serializzata a polling su worker kernel dedicato (non IRQ); trasporto control/interrupt-IN/interrupt-OUT, senza bulk/SG/iso; i lock canonici rilevano e arrestano contesa/ricorsione non supportata, non offrono semantica Linux arbitraria; rollback/reset integrati hanno copertura limitata; nessun collaudo fisico, IOMMU, IRQ hardware o PM di sistema certificato. L'hook d'ingestione entropia non dispone ancora di un pool kernel collegato e non accredita entropia.
 
 [Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.6 / 30B7 resta l'ultima release pubblicata; questo è un commit di sviluppo, non una release.

@@ -5,7 +5,7 @@
 #include "linux_xhci_hcd.h"
 #include "linux_ehci_hcd.h"
 #include "usbroute.h"
-struct CanonicalCounters {u64 started,keys,pointers,errors,bound_keys,bound_pointers;};
+struct CanonicalCounters {u64 started,keys,pointers,errors,bound_keys,bound_pointers,worker_polls;};
 volatile struct CanonicalCounters tmc_usb_canonical_counters;
 char tmc_usb_canonical_log[16384];static unsigned canonical_logused;
 extern int tmc_usb_stack_init(void);
@@ -25,7 +25,26 @@ void tmc_usbcore_os_fatal(void){logstr("canonical USB fatal invariant\n");for(;;
 void tmc_usbcore_os_entropy(const void *p,unsigned n){(void)p;(void)n;/* no kernel entropy ingestion API: never a USB I/O operation */}
 void tmc_usbcore_os_input_registered(unsigned kind,int add){volatile u64 *n=kind==1?&tmc_usb_canonical_counters.bound_keys:&tmc_usb_canonical_counters.bound_pointers;if(add)(*n)++;else if(*n)(*n)--;}
 void tmc_usbcore_os_keys(const u8 bitmap[32],unsigned mods){tmc_usb_canonical_counters.keys++;hid_linux_keys(bitmap,mods);}
+void tmc_usbcore_os_absolute(int x,int y,unsigned buttons,int wheel,int hwheel){tmc_usb_canonical_counters.pointers++;hid_absolute(((u64)x*(boot.w-1)+16383)/32767,((u64)y*(boot.h-1)+16383)/32767,buttons,wheel);if(hwheel)hid_horizontal(hwheel);}
 void tmc_usbcore_os_pointer(int x,int y,unsigned buttons,int wheel,int hwheel){tmc_usb_canonical_counters.pointers++;hid_relative(x,y,buttons,wheel);if(hwheel)hid_horizontal(hwheel);}
-int tmc_usb_canonical_start(void){int r=tmc_linux_xhci_module_init();if(r){boot_logstr("[canonical] XHCI error\n");return r;}for(unsigned c=0;c<tmc_linux_xhci_controllers();c+=2)usb_route_intel_xhci(tmc_linux_xhci_pci_address(c));r=tmc_linux_ehci_module_init();if(r){boot_logstr("[canonical] EHCI error\n");return r;}boot_logstr("[canonical] controller transports ready\n");r=tmc_usb_stack_init();boot_logstr("[canonical] stack result=");boot_lognum((u64)(i64)r);boot_logstr("\n");if(!r)tmc_usb_canonical_counters.started=1;return r;}
+int tmc_usb_canonical_start(void){int r=tmc_linux_xhci_module_init();if(r){boot_logstr("[canonical] XHCI error\n");return r;}for(unsigned c=0;c<tmc_linux_xhci_controllers();c+=2)usb_route_intel_xhci(tmc_linux_xhci_pci_address(c));r=tmc_linux_ehci_module_init();if(r){boot_logstr("[canonical] EHCI error\n");return r;}boot_logstr("[canonical] controller transports ready\n");r=tmc_usb_stack_init();boot_logstr("[canonical] stack result=");boot_lognum((u64)(i64)r);boot_logstr("\n");if(!r){tmc_usb_canonical_counters.started=1;
+ /* Finish initial asynchronous discovery before presenting an interactive
+  * login. Otherwise a visible form can silently lose its first keystrokes.
+  * Headless/disconnected devices must not stall boot indefinitely. */
+ u64 deadline=tmc_usbcore_os_clock_ms()+1500;
+ do{tmc_usb_stack_poll();usb_delay_ms(1);}while(tmc_usbcore_os_clock_ms()<deadline&&(!tmc_usb_canonical_counters.bound_keys||!tmc_usb_canonical_counters.bound_pointers));
+ }return r;}
 
+#endif
+
+#ifdef TMC_USB_CANONICAL
+void tmc_usb_kernel_worker(void)
+{
+ for(;;){
+  tmc_usb_canonical_counters.worker_polls++;
+  tmc_usb_stack_poll();
+  int leds=input_led_take();if(leds>=0)tmc_usb_stack_leds((unsigned)leds);
+  asm volatile("sti; int $129"::"D"(1ul):"memory");
+ }
+}
 #endif

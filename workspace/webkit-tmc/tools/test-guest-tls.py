@@ -6,7 +6,7 @@ r=Path(__file__).resolve().parents[1];sys.path.insert(0,str(r.parent.parent/'tin
 from retail_guest import Retail
 from pixels import locate
 cpus=int(os.environ.get('TMC_SMP','2'));assert cpus in (1,2,4,8)
-iso=Path('/var/tmp/tmc-tls-guest/tinymacOS-qa-probe-x86_64.iso')
+iso=Path(os.environ.get('TMC_PROBE_BUILD','/var/tmp/tmc-tls-guest'))/'tinymacOS-qa-probe-x86_64.iso'
 from probe_media import verify_probe_media
 verify_probe_media(iso,"tls")
 w=Path(tempfile.mkdtemp(prefix='tmc-tls-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()

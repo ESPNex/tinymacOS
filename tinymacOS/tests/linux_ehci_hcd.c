@@ -37,6 +37,7 @@ void tmc_dma_os_coherent_free(size_t n,void *p,u64 bus)
 static void *cpu(u64 bus,size_t n)
 {for(unsigned i=0;i<256;i++){struct HostDma *d=&host_dma[i];if(d->cpu&&bus>=d->bus&&bus-d->bus<=d->n&&n<=d->n-(bus-d->bus))return (u8 *)d->cpu+bus-d->bus;}fprintf(stderr,"unmapped DMA %llx len %zu\n",(unsigned long long)bus,n);abort();}
 static u32 *op(void){return registers+8;}
+static unsigned output_bytes;
 static void execute_qh(u32 address)
 {
  struct ehci_qh_hw *qh=cpu(address&~31u,sizeof(*qh));
@@ -49,6 +50,7 @@ static void execute_qh(u32 address)
   unsigned remaining=0;
   if(ep&&hw_stall){td->hw_token=(token&~0x80)|0x40;qh->hw_token=td->hw_token;op()[1]|=2;hw_stall=0;break;}
   if(pid==2){assert(n==8);memcpy(setup_bytes,cpu(td->hw_buf[0],8),8);control_requests++;}
+  else if(pid==0&&ep&&n){assert(n==1&&*(u8 *)cpu(td->hw_buf[0],n)==0x5a);output_bytes+=n;hw_interrupt_ready--;hw_packets++;}
   else if(pid==1&&n){u8 *data=cpu(td->hw_buf[0],n);unsigned actual=n;if(ep){actual=hw_short?min_t(unsigned,3,n):n;hw_interrupt_ready--;hw_packets++;}for(unsigned i=0;i<actual;i++)data[i]=ep?0x40+i:0x5a;remaining=n-actual;}
   td->hw_token=(token&~(0x80u|0x7fff0000u))|(remaining<<16);
   qh->hw_current=link;qh->hw_token=td->hw_token^(1u<<31); /* one packet toggle */
@@ -134,6 +136,9 @@ int main(void)
  assert(!tmc_linux_ehci_interrupt(d,1,8,8,rearm_payload,done,(void *)0x1234));
  for(unsigned i=0;i<64&&rearm_remaining;i++){hw_interrupt_ready=1;tmc_linux_ehci_poll();}
  assert(!rearm_remaining&&int_callbacks==callbacks_before+16);
+ /* Exact interrupt-OUT payload/length and distinct endpoint direction. */
+ payload[0]=0x5a;unsigned before_output=int_callbacks;assert(!tmc_linux_ehci_interrupt_report(d,0x101,8,8,1,payload,done,(void *)0x1234));hw_interrupt_ready=1;
+ for(unsigned i=0;i<40&&int_callbacks==before_output;i++)tmc_linux_ehci_poll();assert(int_callbacks==before_output+1&&!int_status&&int_bytes==1&&output_bytes==1&&payload[0]==0x5a);
  assert(!tmc_linux_ehci_device_destroy(d));
  TmcEhciDevice *hub=tmc_linux_ehci_device(0,USB_SPEED_HIGH);d=tmc_linux_ehci_device(0,USB_SPEED_FULL);assert(hub&&d);
  tmc_linux_ehci_device_state(hub,1,64,1);tmc_linux_ehci_device_state(d,2,64,1);

@@ -1,16 +1,16 @@
 # Prova live su hardware reale — USB canonico sperimentale
 
-**Si può tentare, ma non è ancora hardware validato.** La 10.1.7 / 30B8 con `TMC_USB_CANONICAL=1` è una build di sviluppo, non la release stabile né una build qualificata per l'installazione. Il port completo HID-core/usbhid non è ancora attivo. Il successo in QEMU non prova compatibilità ASRock Q1900M/J1900 o con altre schede reali.
+**Si può tentare, ma non è ancora hardware validato.** La 10.1.7 / 30B8 con `TMC_USB_CANONICAL=1` è una build di sviluppo, non la release stabile né una build qualificata per l'installazione. Il collegamento HID-core/usbhid/hid-input/generic è attivo; non significa supporto HID universale. Il successo in QEMU non prova compatibilità ASRock Q1900M/J1900 o con altre schede reali.
 
 ## Quale immagine
 
 L'esperimento verificato usa il supporto **ottico BIOS/UEFI**:
 
-- nome: `tinymacOS-10.1.7-x86_64.iso`;
-- dimensione: **226142208 byte**;
-- SHA-256: `101efdd502151905b7976655c341532c805626dd47c49bec0ec8d5ba90a6cff0`;
-- staging locale: `/var/tmp/tmc-10.1.7/linux-usbcore-live/tinymacOS-10.1.7-x86_64.iso`;
-- provenienza: `workspace/release-10.1.7-30B8/usbcore-kernel-integration-result.json`.
+- nome: `tinymacOS-10.1.7-usbhid.iso`;
+- dimensione: **226215936 byte**;
+- SHA-256: `427463c2e0a9ab923aa5fce82799d53edaaa8795420cd007d0c34a1a16b24584`;
+- staging locale: `/var/tmp/tmc-10.1.7/linux-usbhid-live/tinymacOS-10.1.7-usbhid.iso`;
+- provenienza: `workspace/release-10.1.7-30B8/usbhid-validation.json`.
 
 Questo percorso locale non è un link pubblico né un asset pubblicato. Il download «latest» continua a indicare 10.1.6 / 30B7. Una build ricompilata dopo modifiche può avere hash diverso e richiede proprie verifiche; non eredita i PASS dell'immagine sopra.
 
@@ -22,7 +22,7 @@ Questo percorso locale non è un link pubblico né un asset pubblicato. Il downl
 2. Fare un backup indipendente e **scollegare fisicamente i dischi interni/esterni con dati da conservare**. Una sessione live non è una garanzia di sola lettura: il kernel dispone di codice storage e utility distruttive. Non collegare un disco di destinazione per questa prova.
 3. Annotare le impostazioni firmware prima di cambiarle. Secure Boot deve essere disattivato; il percorso storage implementato è SATA/AHCI. Non modificare la modalità SATA di un sistema di lavoro per provare questa build.
 4. I runtime controller attuali non sono un port IOMMU/DMA-remapping generale. Non assumere compatibilità con un IOMMU attivo e non disabilitare protezioni su un computer critico solo per questo test.
-5. Collegare una tastiera USB Boot italiana e un mouse USB Boot semplici, preferibilmente cablati e direttamente alle porte della scheda madre. Iniziare senza hub, dock, ricevitore wireless, KVM o dispositivi compositi. Evitare tablet e dispositivi che richiedono il completo usbhid. PS/2 non è il percorso da verificare.
+5. Collegare una tastiera USB Boot italiana e un mouse USB Boot semplici, preferibilmente cablati e direttamente alle porte della scheda madre. Iniziare senza hub, dock, ricevitore wireless, KVM o dispositivi compositi. Il tablet QEMU è verificato, ma tablet fisici/compositi arbitrari non lo sono. PS/2 non è il percorso da verificare.
 
 ## Sequenza breve e non distruttiva
 

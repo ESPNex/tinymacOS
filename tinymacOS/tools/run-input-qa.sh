@@ -17,6 +17,7 @@ case ${TMC_TEST_FIRMWARE:-uefi} in
 esac
 case ${TMC_TEST_INPUT:-ps2} in
  ps2) ;;
+ xhci-tablet-kbd) Q+=(-device qemu-xhci,id=xhci -device usb-tablet,bus=xhci.0,port=1,id=pointer -device usb-kbd,bus=xhci.0,port=2);;
  xhci-tablet) Q+=(-device qemu-xhci,id=xhci -device usb-tablet,bus=xhci.0,port=1,id=pointer);;
  ehci-tablet) Q+=(-device ich9-usb-ehci1,id=ehci -device usb-tablet,bus=ehci.0,port=1,id=pointer,usb_version=2);;
  uhci-tablet) Q+=(-device piix3-usb-uhci,id=uhci -device usb-tablet,bus=uhci.0,port=1,id=pointer,usb_version=1);;

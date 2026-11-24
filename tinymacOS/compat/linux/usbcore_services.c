@@ -106,7 +106,7 @@ static void remove_attr(void *,const void *);
 static int add_groups(struct device *,const struct attribute_group **);
 static void remove_groups(struct device *,const struct attribute_group **);
 struct managed {struct list_head entry;void (*release)(void *);void *data;};
-static void release_managed(struct device *d){while(!list_empty(&d->managed)){struct managed *m=list_first_entry(&d->managed,struct managed,entry);list_del(&m->entry);void (*f)(void *)=m->release;void *p=m->data;kfree(m);f(p);}}
+static void release_managed(struct device *d){while(!list_empty(&d->managed)){struct managed *m=list_first_entry(&d->managed,struct managed,entry);list_del(&m->entry);void (*f)(void *)=m->release;void *p=m->data;kfree(m);if(f)f(p);}}
 int devm_add_action_or_reset(struct device *d,void (*f)(void *),void *p){if(!d||!f)return -EINVAL;struct managed *m=kmalloc(sizeof(*m),GFP_KERNEL);if(!m){f(p);return -ENOMEM;}m->release=f;m->data=p;list_add(&m->entry,&d->managed);return 0;}
 void *devm_kzalloc(struct device *d,size_t n,gfp_t f){void *p=kzalloc(n,f);if(p&&devm_add_action_or_reset(d,(void (*)(void *))kfree,p))return NULL;return p;}
 void device_initialize(struct device *d){kref_init(&d->refs);mutex_init(&d->mutex);INIT_LIST_HEAD(&d->children);INIT_LIST_HEAD(&d->sibling);INIT_LIST_HEAD(&d->bus_entry);INIT_LIST_HEAD(&d->managed);d->registered=0;d->kobj.directory=(struct kernfs_node){.owner=&d->kobj};d->kobj.sd=&d->kobj.directory;}
@@ -142,7 +142,7 @@ int bus_for_each_dev(const struct bus_type *b,struct device *start,void *data,in
 struct attach_arg {struct device_driver *driver;};
 static int attach_device(struct device *d,void *p){struct attach_arg *a=p;if(!d->driver){int r=probe_driver(d,a->driver);if(r==-EPROBE_DEFER)return 0;}return 0;}
 int driver_attach(struct device_driver *d){struct attach_arg a={d};return bus_for_each_dev(d->bus,NULL,&a,attach_device);}
-int driver_register(struct device_driver *d){if(!d||!d->name||!d->bus)return -EINVAL;struct bus_state *s=find_bus(d->bus);if(!s)return -ENODEV;struct device_driver *p;list_for_each_entry(p,&s->drivers,registry)if(p==d||!strcmp(p->name,d->name))return -EEXIST;list_add_tail(&d->registry,&s->drivers);int r=driver_attach(d);if(r)list_del_init(&d->registry);return r;}
+int driver_register(struct device_driver *d){if(!d||!d->name||!d->bus)return -EINVAL;struct bus_state *s=find_bus(d->bus);if(!s)return -ENODEV;struct device_driver *p;list_for_each_entry(p,&s->drivers,registry)if(p==d||!strcmp(p->name,d->name))return -EEXIST;list_add_tail(&d->registry,&s->drivers);int r=0;const struct attribute_group **g=d->bus->drv_groups;if(g)for(unsigned i=0;g[i];i++){if(g[i]->name||g[i]->is_visible||g[i]->bin_attrs){r=-EOPNOTSUPP;break;}if(g[i]->attrs)for(unsigned j=0;g[i]->attrs[j];j++){r=driver_create_file(d,container_of(g[i]->attrs[j],struct driver_attribute,attr));if(r)break;}if(r)break;}if(!r)r=driver_attach(d);if(r){remove_attr(d,NULL);list_del_init(&d->registry);}return r;}
 static int detach_device(struct device *d,void *p){if(d->driver==p)device_release_driver(d);return 0;}
 void driver_unregister(struct device_driver *d){struct bus_state *s=find_bus(d->bus);if(!s)return;struct device_driver *p;int found=0;list_for_each_entry(p,&s->drivers,registry)if(p==d){found=1;break;}if(!found)return;remove_attr(d,NULL);list_del_init(&d->registry);/* detach cannot fail because OOM would leave callbacks into removed code */for(;;){struct device *v=NULL;list_for_each_entry(v,&s->devices,bus_entry)if(v->driver==d)break;if(&v->bus_entry==&s->devices)break;get_device(v);detach_device(v,d);put_device(v);}}
 int bus_for_each_drv(const struct bus_type *b,struct device_driver *start,void *data,int (*fn)(struct device_driver *,void *)){struct bus_state *s=find_bus(b);if(!s)return -ENODEV;struct device_driver **v;size_t n;int r=snapshot_drivers(s,&v,&n);if(r)return r;int go=!start;for(size_t i=0;i<n;i++){if(!go){if(v[i]==start)go=1;continue;}if(driver_registered(s,v[i])){r=fn(v[i],data);if(r)break;}}kfree(v);return r;}
@@ -159,8 +159,8 @@ int device_create_file(struct device *d,const struct device_attribute *a){if(!d|
 void device_remove_file(struct device *d,const struct device_attribute *a){remove_attr(d,a);}
 int driver_create_file(struct device_driver *d,const struct driver_attribute *a){return add_attr(d,a,1);}
 void driver_remove_file(struct device_driver *d,const struct driver_attribute *a){remove_attr(d,a);}
-ssize_t tmc_usbcore_attribute_read(void *owner,const char *name,char *page){struct attr_file *p;list_for_each_entry(p,&attributes,entry)if(p->owner==owner&&!strcmp(((const struct attribute *)p->attr)->name,name)){if(p->is_driver){const struct driver_attribute *a=p->attr;return a->show?a->show(owner,page):-EACCES;}const struct device_attribute *a=p->attr;return a->show?a->show(owner,(void *)a,page):-EACCES;}return -ENOENT;}
-ssize_t tmc_usbcore_attribute_write(void *owner,const char *name,const char *buf,size_t n){struct attr_file *p;list_for_each_entry(p,&attributes,entry)if(p->owner==owner&&!strcmp(((const struct attribute *)p->attr)->name,name)){if(p->is_driver){const struct driver_attribute *a=p->attr;return a->store?a->store(owner,buf,n):-EACCES;}const struct device_attribute *a=p->attr;return a->store?a->store(owner,(void *)a,buf,n):-EACCES;}return -ENOENT;}
+ssize_t tmc_usbcore_attribute_read(void *owner,const char *name,char *page){struct attr_file *p;list_for_each_entry(p,&attributes,entry)if(p->owner==owner&&!strcmp(((const struct attribute *)p->attr)->name,name)){if(p->is_driver==2){const struct bin_attribute *a=p->attr;return a->read?a->read(NULL,&((struct device *)owner)->kobj,(void *)a,page,0,a->size):-EACCES;}if(p->is_driver){const struct driver_attribute *a=p->attr;return a->show?a->show(owner,page):-EACCES;}const struct device_attribute *a=p->attr;return a->show?a->show(owner,(void *)a,page):-EACCES;}return -ENOENT;}
+ssize_t tmc_usbcore_attribute_write(void *owner,const char *name,const char *buf,size_t n){struct attr_file *p;list_for_each_entry(p,&attributes,entry)if(p->owner==owner&&!strcmp(((const struct attribute *)p->attr)->name,name)){if(p->is_driver==2)return -EACCES;if(p->is_driver){const struct driver_attribute *a=p->attr;return a->store?a->store(owner,buf,n):-EACCES;}const struct device_attribute *a=p->attr;return a->store?a->store(owner,(void *)a,buf,n):-EACCES;}return -ENOENT;}
 /* Explicit unsupported debug filesystem; never returns a made-up node. */
 struct dentry *debugfs_create_file(const char *n,umode_t m,struct dentry *p,void *d,const struct file_operations *f){(void)n;(void)m;(void)p;(void)d;(void)f;return ERR_PTR(-ENODEV);}
 void debugfs_lookup_and_remove(const char *n,struct dentry *p){(void)n;(void)p;}
@@ -169,21 +169,12 @@ int atomic_notifier_chain_unregister(struct atomic_notifier_head *h,struct notif
 int add_uevent_var(struct kobj_uevent_env *e,const char *fmt,...){if(e->count>=ARRAY_SIZE(e->envp)||e->used>=sizeof(e->buf))return -ENOMEM;va_list a;va_start(a,fmt);int n=vsnprintf(e->buf+e->used,sizeof(e->buf)-e->used,fmt,a);va_end(a);if(n<0||(size_t)n>=sizeof(e->buf)-e->used)return -ENOMEM;e->envp[e->count++]=e->buf+e->used;e->used+=n+1;return 0;}
 int utf16s_to_utf8s(const void *input,int units,int endian,u8 *out,int capacity){if(!input||!out||units<0||capacity<0||endian!=UTF16_LITTLE_ENDIAN)return -EINVAL;const u8 *s=input;int n=0;for(int i=0;i<units;i++){u32 c=s[i*2]|(u32)s[i*2+1]<<8;if(c>=0xd800&&c<=0xdbff){if(i+1>=units)return -EINVAL;u32 low=s[(i+1)*2]|(u32)s[(i+1)*2+1]<<8;if(low<0xdc00||low>0xdfff)return -EINVAL;c=0x10000+((c-0xd800)<<10)+(low-0xdc00);i++;}else if(c>=0xdc00&&c<=0xdfff)return -EINVAL;int bytes=c<0x80?1:c<0x800?2:c<0x10000?3:4;if(n+bytes>capacity)break;if(bytes==1)out[n++]=c;else{out[n++]=(bytes==2?0xc0:bytes==3?0xe0:0xf0)|(c>>(6*(bytes-1)));for(int j=bytes-2;j>=0;j--)out[n++]=0x80|((c>>(6*j))&0x3f);}}return n;}
 
-static int add_groups(struct device *d,const struct attribute_group **groups){
- if(!groups)return 0;
- unsigned i=0,j=0;int r=0;
- for(;groups[i];i++){
-  j=0;
-  /* Unsupported metadata paths are explicit errors, not fake registration. */
-  if(groups[i]->name||groups[i]->is_visible){r=-EOPNOTSUPP;goto rollback;}
-  struct attribute **attrs=groups[i]->attrs;if(!attrs)continue;
-  for(;attrs[j];j++){r=device_create_file(d,container_of(attrs[j],struct device_attribute,attr));if(r)goto rollback;}
- }
- return 0;
-rollback:
- for(unsigned k=0;k<=i;k++){struct attribute **attrs=groups[k]->attrs;if(!attrs)continue;for(unsigned m=0;attrs[m]&&(k<i||m<j);m++)device_remove_file(d,container_of(attrs[m],struct device_attribute,attr));}
- return r;
-}
-static void remove_groups(struct device *d,const struct attribute_group **groups){if(!groups)return;for(unsigned i=0;groups[i];i++){struct attribute **attrs=groups[i]->attrs;if(attrs)for(unsigned j=0;attrs[j];j++)device_remove_file(d,container_of(attrs[j],struct device_attribute,attr));}}
+static void remove_groups(struct device *d,const struct attribute_group **groups){if(!groups)return;for(unsigned i=0;groups[i];i++){struct attribute **a=groups[i]->attrs;if(a)for(unsigned j=0;a[j];j++)remove_attr(d,a[j]);struct bin_attribute **b=groups[i]->bin_attrs;if(b)for(unsigned j=0;b[j];j++)remove_attr(d,b[j]);}}
+static int add_groups(struct device *d,const struct attribute_group **groups){if(!groups)return 0;int r=0;for(unsigned i=0;groups[i];i++){if(groups[i]->name||groups[i]->is_visible){r=-EOPNOTSUPP;break;}struct attribute **a=groups[i]->attrs;if(a)for(unsigned j=0;a[j];j++){r=add_attr(d,a[j],0);if(r)goto fail;}struct bin_attribute **b=groups[i]->bin_attrs;if(b)for(unsigned j=0;b[j];j++){r=add_attr(d,b[j],2);if(r)goto fail;}}if(!r)return 0;fail:remove_groups(d,groups);return r;}
 
 int tmc_usbcore_attribute_exists(void *owner,const char *name){struct attr_file *p;list_for_each_entry(p,&attributes,entry)if(p->owner==owner&&!strcmp(((const struct attribute *)p->attr)->name,name))return 1;return 0;}
+
+void *devres_open_group(struct device *d,void *id,gfp_t f){struct managed *m=kzalloc(sizeof(*m),f);if(!m)return NULL;m->data=id?id:m;list_add(&m->entry,&d->managed);return m->data;}
+int devres_release_group(struct device *d,void *id){struct managed *m;int found=0;list_for_each_entry(m,&d->managed,entry)if(!m->release&&m->data==id){found=1;break;}if(!found)return -ENOENT;for(;;){m=list_first_entry(&d->managed,struct managed,entry);int end=!m->release&&m->data==id;list_del(&m->entry);void (*fn)(void *)=m->release;void *data=m->data;kfree(m);if(fn)fn(data);if(end)break;}return 0;}
+static int rescan_one(struct device *d,void *p){(void)p;int r=device_attach(d);return r<0?r:0;}
+int bus_rescan_devices(const struct bus_type *b){return bus_for_each_dev(b,NULL,NULL,rescan_one);}

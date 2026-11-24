@@ -225,7 +225,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *h,struct urb *u,int status){(void)
 wait_queue_head_t usb_kill_urb_queue;
 
 struct XhciInterrupt {struct urb *urb;TmcXhciComplete complete;void *context;unsigned callback_depth;};
-struct TmcXhciDevice {struct usb_device core;struct usb_hub hub;struct usb_host_endpoint eps[15];struct XhciInterrupt interrupt[15];struct usb_device *parent_ref,*tt_ref;};
+struct TmcXhciDevice {struct usb_device core;struct usb_hub hub;struct usb_host_endpoint eps[30];struct XhciInterrupt interrupt[30];struct usb_device *parent_ref,*tt_ref;};
 TmcXhciDevice *tmc_linux_xhci_device(unsigned controller,unsigned speed)
 {
  if(!bus_hcd(controller)||(speed!=USB_SPEED_LOW&&speed!=USB_SPEED_FULL&&speed!=USB_SPEED_HIGH&&speed!=USB_SPEED_SUPER&&speed!=USB_SPEED_SUPER_PLUS))return NULL;
@@ -258,37 +258,39 @@ static void interrupt_complete(struct urb *u)
 {struct XhciInterrupt *p=u->context;p->callback_depth++;p->complete(p->context,u->status,u->actual_length);p->callback_depth--;}
 int tmc_linux_xhci_interrupt_companion(TmcXhciDevice *d,unsigned ep,unsigned burst,unsigned attributes,unsigned bytes)
 {
- if(!d||!ep||ep>15||d->core.speed<USB_SPEED_SUPER||burst>15||attributes||!bytes||bytes>16384)return -EINVAL;
- struct usb_host_endpoint *e=&d->eps[ep-1];
+ if(!d||!(ep&15)||(ep&~0x10f)||d->core.speed<USB_SPEED_SUPER||burst>15||attributes||!bytes||bytes>16384)return -EINVAL;
+ struct usb_host_endpoint *e=&d->eps[(ep&15)-1+((ep&0x100)?15:0)];
  if(e->hcpriv)return e->ss_ep_comp.bMaxBurst==burst&&e->ss_ep_comp.bmAttributes==attributes&&e->ss_ep_comp.wBytesPerInterval==bytes?0:-EBUSY;
  e->ss_ep_comp=(struct usb_ss_ep_comp_descriptor){.bLength=6,.bDescriptorType=USB_DT_SS_ENDPOINT_COMP,.bMaxBurst=burst,.bmAttributes=attributes,.wBytesPerInterval=bytes};return 0;
 }
-int tmc_linux_xhci_interrupt(TmcXhciDevice *d,unsigned ep,unsigned packet,unsigned interval,void *data,TmcXhciComplete complete,void *context)
+int tmc_linux_xhci_interrupt_report(TmcXhciDevice *d,unsigned ep,unsigned packet,unsigned interval,unsigned length,void *data,TmcXhciComplete complete,void *context)
 {
- if(!d||!ep||ep>15||!packet||packet>(d->core.speed==USB_SPEED_LOW?8:d->core.speed>=USB_SPEED_HIGH?1024:64)||!interval||interval>32768||!data||!complete)return -EINVAL;
- struct XhciInterrupt *p=&d->interrupt[ep-1];struct usb_host_endpoint *e=&d->eps[ep-1];
+ if(!d||!(ep&15)||(ep&~0x10f)||length>packet||!packet||packet>(d->core.speed==USB_SPEED_LOW?8:d->core.speed>=USB_SPEED_HIGH?1024:64)||!interval||interval>32768||!data||!complete)return -EINVAL;
+ struct XhciInterrupt *p=&d->interrupt[(ep&15)-1+((ep&0x100)?15:0)];struct usb_host_endpoint *e=&d->eps[(ep&15)-1+((ep&0x100)?15:0)];
  if(d->core.speed>=USB_SPEED_SUPER&&(!e->ss_ep_comp.wBytesPerInterval||e->ss_ep_comp.wBytesPerInterval>packet*(e->ss_ep_comp.bMaxBurst+1)))return -EINVAL;
  if(e->hcpriv&&(e->desc.wMaxPacketSize!=packet||e->desc.bInterval!=(d->core.speed>=USB_SPEED_HIGH?ilog2(interval)+1:interval)))return -EINVAL;
- if(!p->urb){p->urb=usb_alloc_urb(0,GFP_KERNEL);if(!p->urb)return -ENOMEM;if(!e->hcpriv){e->enabled=1;e->desc=(struct usb_endpoint_descriptor){.bLength=7,.bDescriptorType=5,.bEndpointAddress=0x80|ep,.bmAttributes=3,.wMaxPacketSize=packet,.bInterval=d->core.speed>=USB_SPEED_HIGH?ilog2(interval)+1:interval};INIT_LIST_HEAD(&e->urb_list);d->core.ep_in[ep]=e;
- struct usb_hcd *h=bus_to_hcd(d->core.bus);int rc=h->driver->add_endpoint(h,&d->core,e);if(!rc)rc=h->driver->check_bandwidth(h,&d->core);if(rc){h->driver->reset_bandwidth(h,&d->core);usb_free_urb(p->urb);p->urb=NULL;d->core.ep_in[ep]=NULL;e->hcpriv=NULL;e->enabled=0;return rc;}}}
+ if(!p->urb){p->urb=usb_alloc_urb(0,GFP_KERNEL);if(!p->urb)return -ENOMEM;if(!e->hcpriv){e->enabled=1;e->desc=(struct usb_endpoint_descriptor){.bLength=7,.bDescriptorType=5,.bEndpointAddress=((ep&0x100)?0:0x80)|(ep&15),.bmAttributes=3,.wMaxPacketSize=packet,.bInterval=d->core.speed>=USB_SPEED_HIGH?ilog2(interval)+1:interval};INIT_LIST_HEAD(&e->urb_list);(ep&0x100?d->core.ep_out:d->core.ep_in)[ep&15]=e;
+ struct usb_hcd *h=bus_to_hcd(d->core.bus);int rc=h->driver->add_endpoint(h,&d->core,e);if(!rc)rc=h->driver->check_bandwidth(h,&d->core);if(rc){h->driver->reset_bandwidth(h,&d->core);usb_free_urb(p->urb);p->urb=NULL;(ep&0x100?d->core.ep_out:d->core.ep_in)[ep&15]=NULL;e->hcpriv=NULL;e->enabled=0;return rc;}}}
  else if(!list_empty(&e->urb_list))return -EBUSY;
- p->complete=complete;p->context=context;struct urb *u=p->urb;u->dev=&d->core;u->pipe=(PIPE_INTERRUPT<<30)|(d->core.devnum<<8)|(ep<<15)|128;u->interval=interval;u->transfer_buffer=data;u->transfer_buffer_length=packet;u->context=p;u->complete=interrupt_complete;int rc=usb_submit_urb(u,GFP_ATOMIC);return rc;
+ p->complete=complete;p->context=context;struct urb *u=p->urb;u->dev=&d->core;u->pipe=(PIPE_INTERRUPT<<30)|(d->core.devnum<<8)|((ep&15)<<15)|((ep&0x100)?0:128);u->interval=interval;u->transfer_buffer=data;u->transfer_buffer_length=length;u->context=p;u->complete=interrupt_complete;int rc=usb_submit_urb(u,GFP_ATOMIC);return rc;
 }
 int tmc_linux_xhci_interrupt_stop(TmcXhciDevice *d,unsigned ep)
 {
- if(!d||!ep||ep>15)return -EINVAL;struct XhciInterrupt *p=&d->interrupt[ep-1];if(p->callback_depth)return -EBUSY;
+ if(!d||!(ep&15)||(ep&~0x10f))return -EINVAL;struct XhciInterrupt *p=&d->interrupt[(ep&15)-1+((ep&0x100)?15:0)];if(p->callback_depth)return -EBUSY;
  if(p->urb){if(atomic_read(&p->urb->use_count))UCOUNT(unlinks);usb_kill_urb(p->urb);usb_free_urb(p->urb);p->urb=NULL;}return 0;
 }
+int tmc_linux_xhci_interrupt(TmcXhciDevice *d,unsigned ep,unsigned packet,unsigned interval,void *data,TmcXhciComplete complete,void *context)
+{return tmc_linux_xhci_interrupt_report(d,ep,packet,interval,packet,data,complete,context);}
 int tmc_linux_xhci_device_destroy(TmcXhciDevice *d)
 {
- if(!d)return -EINVAL;if(atomic_read(&d->core.references)!=1)return -EBUSY;for(unsigned i=0;i<15;i++)if(d->interrupt[i].callback_depth)return -EBUSY;
+ if(!d)return -EINVAL;if(atomic_read(&d->core.references)!=1)return -EBUSY;for(unsigned i=0;i<30;i++)if(d->interrupt[i].callback_depth)return -EBUSY;
  if(!list_empty(&d->core.ep0.urb_list))return -EBUSY;struct usb_hcd *h=bus_to_hcd(d->core.bus);d->core.can_submit=0;
- for(unsigned i=0;i<15;i++){tmc_linux_xhci_interrupt_stop(d,i+1);if(d->eps[i].hcpriv)h->driver->endpoint_disable(h,&d->eps[i]);}
+ for(unsigned i=0;i<30;i++){tmc_linux_xhci_interrupt_stop(d,(i%15+1)|(i>=15?0x100:0));if(d->eps[i].hcpriv)h->driver->endpoint_disable(h,&d->eps[i]);}
  h->driver->endpoint_disable(h,&d->core.ep0);if(h->driver->free_dev)h->driver->free_dev(h,&d->core);if(atomic_read(&d->core.references)!=1)return -EBUSY;if(d->tt_ref)usb_put_dev(d->tt_ref);if(d->parent_ref)usb_put_dev(d->parent_ref);kfree(d);return 0;
 }
 
 void tmc_linux_xhci_reset_toggle(TmcXhciDevice *d,unsigned ep)
-{if(d&&ep>0&&ep<=15&&list_empty(&d->eps[ep-1].urb_list))bus_to_hcd(d->core.bus)->driver->endpoint_reset(bus_to_hcd(d->core.bus),&d->eps[ep-1]);}
+{if(d&&(ep&15)&&!(ep&~0x10f)&&list_empty(&d->eps[(ep&15)-1+((ep&0x100)?15:0)].urb_list))bus_to_hcd(d->core.bus)->driver->endpoint_reset(bus_to_hcd(d->core.bus),&d->eps[(ep&15)-1+((ep&0x100)?15:0)]);}
 
 #include "xhci_services.inc"
 

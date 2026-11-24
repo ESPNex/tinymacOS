@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Original canonical USB core/HCD/hub + opaque original xHCI/EHCI + Boot.
-Read-only guest observation; actual rendered login and cursor. NOT usbhid,
+Read-only guest observation; actual rendered login and cursor. Detects original usbhid,
 not physical hardware, not release/install acceptance. No PS/2 input.
 """
 from pathlib import Path
@@ -11,16 +11,19 @@ from retail_guest import Retail
 from input_pixels import cursor
 fw=sys.argv[1];profile=sys.argv[2]
 assert fw in ('uefi','bios')
-assert profile in ('xhci-two-mice-kbd','ehci-kbd','xhci-hub-kbd')
+assert profile in ('xhci-two-mice-kbd','ehci-kbd','xhci-hub-kbd','xhci-tablet-kbd')
 stage=Path(os.environ.get('TMC_CANONICAL_STAGE','/var/tmp/tmc-10.1.7/linux-usbcore-live'))
 build=stage/'build'
 iso=Path(os.environ.get('TMC_CANONICAL_ISO',str(build/'tinymacOS-10.1.7-x86_64.iso')))
 work=Path(tempfile.mkdtemp(prefix='tmc-canonical-'+fw+'-',dir='/var/tmp'));ev=work/'evidence';ev.mkdir()
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
+os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='tablet' if profile=='xhci-tablet-kbd' else 'mouse')
 symbols=subprocess.check_output(['nm',str(build/'kernel.debug')],text=True).splitlines()
 def address(name):return int(next(s.split()[0] for s in symbols if s.endswith(' '+name)),16)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
-r={'passed':False,'work':str(work),'firmware':fw,'profile':profile,'physical_hardware_tested':False,'usbhid_tested':False,'release_gate':False,'iso_sha256':sha(iso),'kernelcache_sha256':sha(build/'KernelCache'),'checks':[]}
+full_hid=any(s.endswith(' tmc_usbcore_usbhid_probe') for s in symbols)
+# usbhid probe is local; use exported parser and input registration symbols too.
+full_hid=all(any(s.endswith(' '+n) for s in symbols) for n in ('tmc_usbcore_hid_parse_report','tmc_usbcore_hidinput_connect','tmc_usbcore_hid_add_device'))
+r={'passed':False,'work':str(work),'firmware':fw,'profile':profile,'physical_hardware_tested':False,'usbhid_tested':full_hid,'release_gate':False,'iso_sha256':sha(iso),'kernelcache_sha256':sha(build/'KernelCache'),'checks':[]}
 try:
  for name in ('tmc_usbcore_usb_hcd_submit_urb','tmc_usbcore_usb_new_device','tmc_usbcore_usb_alloc_dev','tmc_usbcore_usb_register_driver','tmc_usb_stack_init'):address(name)
  # Extract the actual boot media's cache, not an unrelated kernel image.
@@ -49,7 +52,13 @@ try:
   assert before[0]==1 and before[3]==0,before
   # The historical native class facade must NOT own any devices in this mode.
   assert native()==[0]*9
-  r['checks'].append('Genuine canonical core/HCD/hub enumeration and original Boot driver binding; legacy native class facade inactive')
+  r['checks'].append('Canonical core/HCD/hub and original '+('HID-core/usbhid/hid-input/generic' if full_hid else 'Boot')+' binding; native facade inactive')
+  if full_hid:
+   log=memory('tmc_usb_canonical_log',16384)
+   assert b'registered new interface driver usbhid' in log
+   assert b'registered new interface driver usbkbd' not in log and b'registered new interface driver usbmouse' not in log
+   r['worker_polls_before']=struct.unpack('<Q',memory('tmc_usb_canonical_counters',56)[48:])[0]
+   assert r['worker_polls_before']>0
   g.enroll('Canonico');g.key('f2');g.visible('Sessione locale')
   cursor(g,650,182)
   r['checks'].append('USB-only Italian keyboard completes rendered enrollment and opens Terminal; actual cursor sprite verified at pixel coordinates')
@@ -61,7 +70,7 @@ try:
   bus='ehci.0' if profile=='ehci-kbd' else 'xhci.0'
   g.req('device_del',id=victim);wait_bound(1,pointers-1)
   r['after_unplug']=counts()
-  g.req('device_add',driver='usb-mouse',id=victim,bus=bus,port=port,usb_version=1 if profile=='xhci-hub-kbd' else 2)
+  g.req('device_add',driver='usb-tablet' if profile=='xhci-tablet-kbd' else 'usb-mouse',id=victim,bus=bus,port=port,usb_version=1 if profile=='xhci-hub-kbd' else 2)
   wait_bound(1,pointers)
   g.key('f2');g.visible('Sessione locale')
   cursor(g,700,190)
@@ -73,6 +82,9 @@ try:
   assert native()==[0]*9
   r['usb']=g.hmp('info usb');g.shot('canonical-live-input')
   (work/'canonical-log.txt').write_bytes(memory('tmc_usb_canonical_log',16384).rstrip(b'\0'))
+  if full_hid:
+   r['worker_polls_after']=struct.unpack('<Q',memory('tmc_usb_canonical_counters',56)[48:])[0]
+   assert r['worker_polls_after']>r['worker_polls_before']
   r['passed']=True
  print('PASS canonical USB guest',fw,profile,r['after'],flush=True)
 finally:

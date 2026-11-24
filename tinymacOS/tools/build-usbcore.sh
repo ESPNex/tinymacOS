@@ -1,6 +1,5 @@
 #!/bin/bash
-# Experimental canonical USB core/HCD/hub -> original controller transport.
-# Kept separate from the proven v19 private-ABI build; no USBFS or usbhid claim.
+# Canonical USB core/hub/HID-core/usbhid/input/generic with original HCDs.
 set -euo pipefail
 D=$1;shift
 mkdir -p "$D/usbcore"
@@ -10,8 +9,10 @@ C=("$@" -std=gnu11 -fno-strict-aliasing -fwrapv -fno-pie -ffunction-sections -fd
  -Wno-unused-but-set-variable -Wno-pointer-sign -Wno-maybe-uninitialized
  -Wno-int-in-bool-context -I"$A" -include "$A/tmc_kernel.h")
 units=(vendor/linux-v6.12/usbcore-{usb,driver,generic,quirks,endpoint,buffer,port}.c
- vendor/linux-v6.12/{config,urb,hub,message,hcd}.c
- compat/linux/usbcore_{services,platform,bridge,input,bootkbd,bootmouse,format,common,stack}.c)
+ vendor/linux-v6.12/{config,urb,hub,message,hcd,hid-input,hid-generic,hid-quirks}.c
+ compat/linux/usbcore_{services,platform,bridge,input,keymap,format,common,stack,hidcore,usbhid,hidservices}.c)
+C+=(-Ivendor/linux-v6.12)
+
 objects=()
 for unit in "${units[@]}";do
  name=$(basename "$unit" .c)

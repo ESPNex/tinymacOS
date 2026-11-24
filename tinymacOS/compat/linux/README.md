@@ -1,20 +1,18 @@
 # Linux USB/input compatibility — implemented boundaries
 
-The requested complete Linux controller/core/hub port is **not finished**. PS/2 is excluded from the remaining scope by the latest user instruction. Recovery remains a separate OpenCore firmware input path. QEMU and host tests do not certify physical Bay Trail hardware.
+The canonical opt-in path now links the complete original Linux v6.12 xHCI/EHCI controller units, USB core/HCD/hub, HID-core/usbhid/hid-input/hid-generic and HID quirks. PS/2 is excluded. Recovery remains a separate firmware path. See [current scope and tests](../../docs/USBHID-PORT.md).
 
-## Current canonical kernel experiment (opt-in)
+## Canonical integration (`TMC_USB_CANONICAL=1`)
 
-`TMC_USB_CANONICAL=1 bash build.sh` links complete original USB core/HCD/hub/common/buffer/port translation units against a single canonical USB/device ABI. `usbcore_bridge.c` reaches the original xHCI/EHCI runtimes through opaque handles and byte buffers, never struct aliases. The original Boot keyboard/mouse drivers bind through the original USB bus. The previous native class/enumeration path is not started in this mode; PS/2 is excluded. The default build retains the earlier separate private-ABI class facade described below.
+The controller bridge crosses opaque handles/bytes, not struct aliases. Original usbhid owns report descriptors, parsing, input/output URBs, LED requests and disconnect. Original input/generic bind on the canonical HID bus. Original Boot class drivers are not compiled into this canonical object. `usbcore_keymap.c` contains only the upstream inverse keymap, not a Boot driver.
 
-The same dualboot experimental ISO passed **6/6 QEMU BIOS/UEFI cases**, including rendered USB keyboard login/Terminal, pixel-checked cursor, external hub, armed-URB hot unplug and same-port reattach. The original controller counters advance without errors and the old native class counters remain zero. Full original core/HCD/hub MODEL enumeration/teardown also passes O1/O2 ASan/leaks/UBSan; MODEL and guest evidence are separate.
+A 64 KiB CPU0-pinned kernel worker owns polling/workqueue dispatch, outside hardware IRQ. Control and both interrupt directions use real original HCD DMA/completion/unlink. Direction-specific endpoint storage prevents IN/OUT aliasing. Absolute HID values are clamped/normalized, then rounded to framebuffer coordinates at the OS boundary. Managed-resource groups, driver groups and binary sysfs attributes are implemented in the internal registry.
 
-This path uses whole original `usbkbd`/`usbmouse`, **not the complete canonical HID-core/usbhid stack**. It is serialized CPU0 polling, with sleeping USB work still draining in input/IRQ context. Only control and interrupt-IN transport is accepted. Further scheduler, initialization/endpoint rollback and reset coverage is required. The entropy ingestion hook has no connected kernel pool and credits no entropy. No physical IRQ, IOMMU, noncoherent DMA, system PM, physical-board or final release guarantee is made.
-
-Receipts: `workspace/release-10.1.7-30B8/usbcore-kernel-integration-result.json` and its six `usbcore-dualboot-*` records. [Hardware live-test precautions](../../docs/HARDWARE-TEST.md). Source snapshots remain immutable when documentation later changes.
+Limits: serialized polling, not general Linux scheduling. Contended locks/semaphores fail closed; bulk/SG/iso, hidraw/HIDDEV/BPF, general multitouch/gamepad user APIs, IOMMU/noncoherent DMA, physical IRQ routing and system PM are not provided. The entropy hook deliberately credits nothing. Init rollback and integrated reset/clear-halt need broader failure coverage. QEMU/model success is not physical certification or universal HID support. Frozen Boot-only receipts are retained, not rebranded as usbhid evidence.
 
 ## Earlier/default private-ABI implementation
 
-The remainder describes the default/private-ABI path and its earlier host contracts; it must not be read as denying the opt-in kernel integration above, or as claiming that opt-in usbhid is complete.
+The remainder describes the default/private-ABI path and its earlier host contracts; it must not be read as denying the opt-in kernel integration above, or as evidence for the new canonical build.
 
 ## Original Linux v6.12 code actually active
 

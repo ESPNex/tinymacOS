@@ -5,9 +5,10 @@ spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara
 questi dispositivi; per build e variabili consultare il README di sistema.
 
 MODALITÀ USB CANONICA SPERIMENTALE
-La variante TMC_USB_CANONICAL=1 usa xHCI/EHCI + core/HCD/hub Linux e driver
-Boot mouse/tastiera; non il completo usbhid né il tablet del launcher
-predefinito. La 10.1.7 / 30B8 non è una nuova release pubblicata.
+La variante TMC_USB_CANONICAL=1 usa xHCI/EHCI + core/HCD/hub Linux e i file
+originali HID-core/usbhid/hid-input/generic; supporta mouse, tastiera e
+tablet nei profili verificati. Non significa HID universale o hardware
+fisico certificato. È una candidata sperimentale, non la stabile 10.1.6.
 Per tentare una prova live fisica leggere docs/HARDWARE-TEST.md: PC non
 critico, dischi con dati scollegati, nessuna installazione. La compatibilità
 ASRock fisica non è ancora dimostrata. Recovery usa un percorso firmware

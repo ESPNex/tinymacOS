@@ -318,7 +318,7 @@ Frame *schedule(Frame *f)
     int next = 0;
     for (int run = 1; run <= NTASK; run++) {
         int j = (cur + run) % NTASK;
-        if (!j || task[j].pin >= 0)
+        if (!j || (task[j].pin >= 0 && (task[j].pin != me || j == idle_slots[me])))
             continue;
         if (task[j].at >= 0 && task[j].at != me && j != cur)
             continue;
@@ -366,14 +366,14 @@ Frame *schedule(Frame *f)
     return task[cur].f;
 }
 // Kernel-only tasks use their own running stacks and a DPL-0 software wait gate.
-static u8 kernel_worker_stacks[2][8192] ALIGNED(16);
+static u8 kernel_worker_stacks[2][65536] ALIGNED(16);
 static int workers;
 static int kernel_thread(void(*entry)(void))
 {
     int ti = tid();
     if (ti < 0 || workers >= 2)
         return -1;
-    u8 *sp = kernel_worker_stacks[workers++] + 8192;
+    u8 *sp = kernel_worker_stacks[workers++] + sizeof kernel_worker_stacks[0];
     mkframe(ti, 0, (u64)entry, (u64)sp - 8, 0);
     return ti;
 }
@@ -438,6 +438,12 @@ void scheduler_init(void)
         panic("cannot start session", 0, 0);
     if (kernel_thread(clock_worker) < 0)
         panic("cannot start clock worker", 0, 0);
+#ifdef TMC_USB_CANONICAL
+    extern void tmc_usb_kernel_worker(void);
+    int usb_thread=kernel_thread(tmc_usb_kernel_worker);
+    if(usb_thread<0)panic("cannot start USB worker",0,0);
+    task[usb_thread].pin=0;
+#endif
     logstr("[sched] desktop up\n");
     smp_start();
     logstr("[sched] smp done\n");

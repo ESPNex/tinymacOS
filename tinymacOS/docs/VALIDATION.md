@@ -6,7 +6,11 @@ I contratti host verificano parser e invarianti; le prove guest esercitano codic
 
 Ogni esito deve indicare sorgenti e media effettivi. Una compilazione riuscita, un controllo statico o il PASS di una vecchia ISO non certificano una nuova release.
 
-## Milestone più recente: core USB/HCD/hub canonici nel kernel
+## Milestone corrente: HID-core/usbhid canonici
+
+Il collegamento completo dei file HID originali è attivo. Vedere [USBHID-PORT.md](USBHID-PORT.md) e `usbhid-validation.json` per i nuovi hash e risultati. Control/interrupt-IN/interrupt-OUT, tablet assoluto e worker kernel sono successivi alle prove Boot qui sotto. Le vecchie ricevute restano immutate e non certificano la nuova ISO.
+
+## Milestone storica: core USB/HCD/hub con classi Boot
 
 La modalità opt-in `TMC_USB_CANONICAL=1` esegue xHCI/EHCI originali attraverso un confine opaco, core USB/HCD/hub originali e driver Boot originali. **Non** esegue ancora tutto HID-core/usbhid. PS/2 è escluso. L'ultima release pubblicata resta 10.1.6 / 30B7.
 

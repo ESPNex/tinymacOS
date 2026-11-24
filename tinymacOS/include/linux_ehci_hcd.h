@@ -24,3 +24,6 @@ int tmc_linux_ehci_translator(TmcEhciDevice *,TmcEhciDevice *hub,unsigned port,u
 int tmc_linux_ehci_device_destroy(TmcEhciDevice *);
 typedef struct {u64 controllers,submissions,givebacks,unlinks,map_failures,irq_polls,schedule_polls,timer_fires,root_polls,errors;} TmcEhciStats;
 void tmc_linux_ehci_stats(TmcEhciStats *);
+
+/* Endpoint token: 1..15 IN (legacy ABI), 0x100|1..15 OUT. Exact report length. */
+int tmc_linux_ehci_interrupt_report(TmcEhciDevice *,unsigned,unsigned,unsigned,unsigned,void *,TmcEhciComplete,void *);

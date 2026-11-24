@@ -332,7 +332,7 @@ void k_log(unsigned,const char *,...);
 #define dev_WARN_ONCE(d,c,...) WARN_ON(c)
 #define dev_WARN(d,...) k_log(1,__VA_ARGS__)
 void k_fatal(void) __attribute__((noreturn));
-#define BUG() k_fatal()
+#define BUG() do{k_log(1,"BUG %s:%u",__FILE__,__LINE__);k_fatal();}while(0)
 #define BUG_ON(c) do{if(c)BUG();}while(0)
 struct bus_type;struct device_driver;struct attribute_group;struct device_type;struct dev_pm_ops;struct fwnode_handle;struct device_node;struct kobj_uevent_env;typedef unsigned kuid_t;typedef unsigned kgid_t;
 struct attribute {const char *name;umode_t mode;};
@@ -349,10 +349,10 @@ struct device {
 };
 struct device_type {const char *name;const struct attribute_group **groups;void (*release)(struct device *);int (*uevent)(const struct device *,struct kobj_uevent_env *);const struct dev_pm_ops *pm;char *(*devnode)(const struct device *,umode_t *,kuid_t *,kgid_t *);};
 struct device_driver {const char *name;const struct bus_type *bus;struct module *owner;const char *mod_name;bool suppress_bind_attrs;int (*probe)(struct device *);int (*remove)(struct device *);void (*shutdown)(struct device *);const struct attribute_group **groups;const struct attribute_group **dev_groups;struct list_head registry;};
-struct bus_type {const char *name;int (*match)(struct device *,const struct device_driver *);int (*uevent)(const struct device *,struct kobj_uevent_env *);int (*probe)(struct device *);void (*remove)(struct device *);void (*shutdown)(struct device *);const struct attribute_group **dev_groups;const struct dev_pm_ops *pm;bool need_parent_lock;};
+struct bus_type {const char *name;int (*match)(struct device *,const struct device_driver *);int (*uevent)(const struct device *,struct kobj_uevent_env *);int (*probe)(struct device *);void (*remove)(struct device *);void (*shutdown)(struct device *);const struct attribute_group **dev_groups;const struct attribute_group **drv_groups;const struct dev_pm_ops *pm;bool need_parent_lock;};
 struct device_attribute {struct attribute attr;ssize_t (*show)(struct device *,struct device_attribute *,char *);ssize_t (*store)(struct device *,struct device_attribute *,const char *,size_t);};
 struct driver_attribute {struct attribute attr;ssize_t (*show)(struct device_driver *,char *);ssize_t (*store)(struct device_driver *,const char *,size_t);};
-struct attribute_group {const char *name;struct attribute **attrs;umode_t (*is_visible)(struct kobject *,struct attribute *,int);};
+struct attribute_group {const char *name;struct attribute **attrs;struct bin_attribute **bin_attrs;umode_t (*is_visible)(struct kobject *,struct attribute *,int);};
 #define __ATTR(n,m,s,t) {.attr={#n,m},.show=s,.store=t}
 #define DEVICE_ATTR_RO(n) struct device_attribute dev_attr_##n=__ATTR(n,0444,n##_show,NULL)
 #define DEVICE_ATTR_RW(n) struct device_attribute dev_attr_##n=__ATTR(n,0644,n##_show,n##_store)
@@ -602,3 +602,30 @@ int device_property_match_property_string(struct device *,const char *,const cha
 int device_property_read_string(struct device *,const char *,const char **);
 int match_string(const char * const *,size_t,const char *);
 struct dentry *debugfs_create_dir(const char *,struct dentry *);void debugfs_remove_recursive(struct dentry *);
+#define module_param_array_named(n,v,t,c,p)
+#define module_init(fn) int tmc_hid_module_init(void){return fn();}
+#undef module_exit
+#define module_exit(fn) void tmc_hid_module_exit(void){fn();}
+#define pr_warn_ratelimited(...) k_log(1,__VA_ARGS__)
+#define PMSG_IS_AUTO(m) ((m).event&0x400)
+static inline struct fwnode_handle *dev_fwnode(struct device *d){return d->fwnode;}
+static inline void device_set_node(struct device *d,struct fwnode_handle *f){d->fwnode=f;}
+
+#define module_driver(d,reg,unreg) int tmc_generic_init(void){return reg(&(d));} void tmc_generic_exit(void){unreg(&(d));}
+#define DRIVER_ATTR_WO(n) struct driver_attribute driver_attr_##n=__ATTR(n,0200,NULL,n##_store)
+#define __ATTRIBUTE_GROUPS(n) static const struct attribute_group *n##_groups[]={&n##_group,NULL}
+#define dev_warn_once(d,...) dev_warn(d,__VA_ARGS__)
+static inline int mutex_lock_killable(struct mutex *m){return mutex_lock_interruptible(m);}
+static inline void *kvzalloc(size_t n,gfp_t f){return kzalloc(n,f);}
+static inline void kvfree(const void *p){kfree(p);}
+static inline void *vzalloc(size_t n){return kzalloc(n,GFP_KERNEL);}
+static inline void vfree(const void *p){kfree(p);}
+static inline size_t array3_size(size_t a,size_t b,size_t c){size_t x,y;if(__builtin_mul_overflow(a,b,&x)||__builtin_mul_overflow(x,c,&y))return SIZE_MAX;return y;}
+static inline u16 get_unaligned_le16(const void *p){u16 v;memcpy(&v,p,2);return le16_to_cpu(v);}
+static inline u32 get_unaligned_le32(const void *p){u32 v;memcpy(&v,p,4);return le32_to_cpu(v);}
+typedef i64 loff_t;
+struct bin_attribute {struct attribute attr;size_t size;ssize_t (*read)(struct file *,struct kobject *,struct bin_attribute *,char *,loff_t,size_t);};
+char *strrchr(const char *,int);
+void *devres_open_group(struct device *,void *,gfp_t);int devres_release_group(struct device *,void *);
+int bus_rescan_devices(const struct bus_type *);
+static inline void list_replace(struct list_head *o,struct list_head *n){n->next=o->next;n->prev=o->prev;n->next->prev=n;n->prev->next=n;}

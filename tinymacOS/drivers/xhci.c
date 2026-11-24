@@ -137,8 +137,8 @@ void kbd_setleds(int on){
 void input_irq(void)
 {
 #ifdef TMC_USB_CANONICAL
- extern void tmc_usb_stack_poll(void);tmc_usb_stack_poll();input_repeat();
- int current_leds=input_led_take();if(current_leds>=0)kbd_setleds(current_leds);return;
+ /* Canonical USB is owned by the pinned kernel worker, never this ISR. */
+ input_repeat();return;
 #endif
  xhci_controller_poll();ehci_poll();uhci_poll();ps2_poll();input_repeat();
  int leds=input_led_take();if(leds>=0){kbd_setleds(leds);ps2_setleds(leds&2);}

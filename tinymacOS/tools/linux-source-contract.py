@@ -18,3 +18,11 @@ for row in lock.get('extractions',[]):
     if expected!=(vendor/row['output']).read_bytes() or hashlib.sha256(expected).hexdigest()!=row['sha256']:
         raise SystemExit('Upstream function extraction mismatch: '+row['function'])
 print('PASS pinned Linux sources and complete function extractions (not a full HCD claim)')
+
+for manifest in ('usbcore-manifest.json','usbhid-manifest.json'):
+    rows=json.loads((vendor/manifest).read_text())['files']
+    for row in rows:
+        p=root.parent/row['path']
+        if hashlib.sha256(p.read_bytes()).hexdigest()!=row['sha256']:
+            raise SystemExit('Canonical upstream mismatch: '+str(p))
+    print('PASS canonical upstream pins:',manifest,len(rows))
