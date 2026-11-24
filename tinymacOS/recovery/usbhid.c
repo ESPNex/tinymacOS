@@ -37,14 +37,21 @@ static volatile unsigned head, tail;
 static int relative, rx, ry, last_buttons;
 static EfiUsb *active_io;
 static int submitted;
-static unsigned active_ep,active_packet,active_interval,cooldown,consecutive_errors;
+static unsigned active_ep,active_packet,active_interval,consecutive_errors;
+static volatile unsigned cooldown;
 static volatile UINT32 pending_error;
 int rec_pointer_relative(void){return relative || layout.relative;}
 static EFI_STATUS EFIAPI received(VOID *data, UINTN n, VOID *unused, UINT32 error)
 {
     (void)unused;
     TabletState s;int oldx=rx,oldy=ry;
-    if(error){pending_error=error;cooldown=8;return EFI_SUCCESS;}
+    if(error){
+        /* A burst of callbacks must not restart the backoff forever: that
+         * reproduced "moves briefly, then stops" without a single rearm. */
+        if(!pending_error){cooldown=8;pending_error=error;}
+        else pending_error|=error;
+        return EFI_SUCCESS;
+    }
     if (!data || n > 64) return EFI_SUCCESS;
     consecutive_errors=0;
     if (relative) {
@@ -164,6 +171,7 @@ int rec_pointer_next(EFI_BOOT_SERVICES *bs, TabletState *s)
      * Limit work per poll; repeated failures back off instead of an IRQ loop. */
     if(active_io && pending_error && (!cooldown || !--cooldown)){
         UINT32 error=pending_error;EFI_STATUS status=submitted?active_io->async(active_io,active_ep,FALSE,0,0,0,0):EFI_SUCCESS;
+        if(status==EFI_NOT_FOUND||status==EFI_NOT_STARTED)status=EFI_SUCCESS;
         if(!EFI_ERROR(status)){
             submitted=0;
             if(error&2){UsbRequest req={2,1,0,active_ep,0};UINT32 err=0;

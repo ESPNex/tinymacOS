@@ -36,6 +36,8 @@ python3 tests/openduet_input.py
 
 # Actual firmware-only Recovery consumer; no obsolete native-PS/2 fixture.
 EFI_HEADERS=${EFIINC:-${TOOLROOT:-}/usr/include/efi}
+gcc $C -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/recovery_firmware_pointer.c -o "$out/recovery-firmware-pointer"
+"$out/recovery-firmware-pointer"
 gcc $C -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/firmware_keyboard_transport.c -o "$out/recovery-keyboard"
 "$out/recovery-keyboard"
 gcc $C tests/firmware_keyboard.c -o "$out/firmware-keyboard";"$out/firmware-keyboard"

@@ -2,7 +2,7 @@
 #include "../recovery/usbhid.c"
 int rw=1280,rh=800;
 static int state=1,deny_boot,deny_report,short_reply,bad_report,armed,cancelled,cleared,connected_back;
-static int wide;
+static int wide,cancel_gone;
 static const u8 wide_descriptor[]={
  5,1,9,2,0xa1,1,0x85,4,9,1,0xa1,0,
  5,9,0x19,1,0x29,5,0x15,0,0x25,1,0x75,1,0x95,5,0x81,2,
@@ -25,7 +25,7 @@ static EFI_STATUS ctl(EfiUsb *io,UsbRequest *q,int dir,UINT32 timeout,VOID *dst,
 static EFI_STATUS iface(EfiUsb *io,UsbInterface *f){(void)io;*f=(UsbInterface){9,4,0,0,1,3,1,device_proto,0};return 0;}
 static EFI_STATUS endpoint(EfiUsb *io,UINT8 n,UsbEndpoint *e){(void)io;assert(!n);*e=(UsbEndpoint){7,5,0x81,3,8,10};return 0;}
 static EFI_STATUS start(EfiUsb *io,UINT8 ep,BOOLEAN add,UINTN interval,UINTN len,Notify cb,VOID *arg){
- (void)io;(void)arg;assert(ep==0x81);if(!add){assert(!interval&&!len&&!cb);cancelled++;return 0;}
+ (void)io;(void)arg;assert(ep==0x81);if(!add){assert(!interval&&!len&&!cb);cancelled++;return cancel_gone?EFI_NOT_FOUND:0;}
  assert(interval==10&&len==8&&cb==received);armed++;return 0;
 }
 static EfiUsb io={.control=ctl,.async=start,.interface_desc=iface,.endpoint_desc=endpoint};
@@ -61,6 +61,16 @@ int main(void){
   r[1]=1;received(r,3,0,0);assert(rec_pointer_next(&bs,&s)&&s.x==1);
  }
  puts("PASS Recovery actual async error path: twelve separate STALL/cancel/clear/rearm/success cycles; no lifetime failure limit");
+ int before_storm=armed;
+ for(int j=0;j<64;j++){received(0,0,0,2);rec_pointer_next(&bs,&s);}
+ assert(armed>=before_storm+8); /* Old code never reaches the first rearm. */
+ for(int j=0;j<8;j++)rec_pointer_next(&bs,&s);
+ r[1]=7;received(r,3,0,0);assert(rec_pointer_next(&bs,&s)&&s.x==7);
+ cancel_gone=1;int before_gone=armed;received(0,0,0,2);
+ for(int j=0;j<8;j++)rec_pointer_next(&bs,&s);
+ assert(armed==before_gone+1&&!pending_error);cancel_gone=0;
+ puts("PASS sustained error-callback storm cannot postpone recovery indefinitely; already-retired transfer still rearms");
+
  wide=1;deny_report=1;state=0;assert(rec_pointer_start(&bs,100,100)&&relative);
  u8 id_report[]={4,0,64,0,0,0,0};received(id_report,7,0,0);
  assert(rec_pointer_next(&bs,&s)&&s.x==64&&!s.y);

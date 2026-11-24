@@ -13,7 +13,7 @@ pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',raw,1
 pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 b=Path(os.environ.get('TMC_QA_DIR','/var/tmp/tmc-filepanel-qa'));b.mkdir(parents=True,exist_ok=True);ev=b/'screenshots';ev.mkdir(exist_ok=True)
 os.environ.update(TOOLROOT=os.environ.get('TOOLROOT','/var/tmp/tmc/tools/root'),OCR_ROOT=os.environ.get('OCR_ROOT','/var/tmp/tmc/tools/root'),TMC_BUILD=os.environ.get('TMC_BUILD','/var/tmp/tmc-current'),TMC_MEM='512',TMC_POINTER='tablet',PYTHONDONTWRITEBYTECODE='1')
-iso=Path(os.environ.get('TMC_STAGE_ISO',str(b/'tinymacOS-10.1.9-x86_64.iso')));r={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'checks':[]}
+iso=Path(os.environ.get('TMC_STAGE_ISO',str(b/'tinymacOS-10.2-x86_64.iso')));r={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'checks':[]}
 def ok(t):r['checks'].append(t);print('PASS',t,flush=True)
 def caret(g,x,y):
  states=[]
@@ -36,11 +36,12 @@ try:
   # Create a real folder in the sheet; no shell fixture is used.
   g.click(X+80,Y+447);g.visible('Nuova cartella');g.type('Prova19');g.key('ret');g.visible('Cartella vuota');ok('Save panel creates and enters a real user folder')
   g.click(X+300,Y+383);g.type('UI19.txt');g.click(X+690,Y+446);g.visible('Salvato nella sessione live');ok('First Save opens native chooser and writes the selected path')
-  g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');g.cmd('sw_vers -productVersion','10.1.9');ok('Saved file content and version verified through real Terminal/filesystem')
+  g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');g.cmd('sw_vers -productVersion','10.2');ok('Saved file content and version verified through real Terminal/filesystem')
   g.app('f3','Testo semplice');X,Y=origin(g);g.key('ctrl-n');g.key('ctrl-o');g.visible('Apri documento');g.key('ctrl-l');g.type('/Users/User/Documents/Prova19');g.key('ret');g.visible('UI19.txt');g.snap().save(ev/'03-apri-documento.png')
-  # The explicit Finder action opens the same filesystem location.
-  g.click(X+680,Y+32);g.visible('/Users/User/Documents/Prova19');g.snap().save(ev/'04-collegamento-finder.png');ok('Show in Finder opens the same real folder')
-  g.key('f3');g.visible('Apri documento');g.key('down');g.key('ret');g.visible('HELLO19');ok('Open chooser browses folders and loads the selected file into TextEdit')
+  # Removed action stays inert, while shared filesystem navigation still works.
+  assert pixels.locate(g.snap(),'Mostra nel Finder',faces=(0,1,2,3)) is None
+  g.click(X+680,Y+32);g.visible('Apri documento');g.snap().save(ev/'04-dialogo-senza-finder.png');ok('Finder button removed; former target cannot launch another window')
+  g.key('down');g.key('ret');g.visible('HELLO19');ok('Open chooser browses folders and loads the selected file into TextEdit')
   g.key('ctrl-shift-s');g.visible('Salva documento');g.click(X+690,Y+446);g.visible('Sostituire il documento?');g.snap().save(ev/'05-conferma-sovrascrittura.png');g.key('esc');g.key('esc');g.visible('HELLO19');ok('Overwrite confirmation can be canceled without losing the document')
   g.key('ctrl-shift-s');g.visible('Salva documento');g.click(X+300,Y+383);g.type('/System/Nope19.txt');g.click(X+690,Y+446);g.visible('La destinazione non e scrivibile.');g.key('esc');ok('Readonly destinations rejected in the actual save sheet')
   g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');ok('Canceled and rejected saves leave existing file bytes unchanged')

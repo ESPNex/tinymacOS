@@ -321,13 +321,12 @@ static void paint(void)
         datestr(d, 32);
         Center(x + w / 2, 72, t, F_CLOCK, TX);   // F_CLOCK is 94px tall: ends at 166
         Center(x + w / 2, 176, d, F_BODY, SUB);  // date now clears the clock
-        int r0 = rowcard(x, 216, w, 3);
-        row2(x, r0, w, "DATA", d);
-        row2(x, r0 + 40, w, "ORA", t);
-        row2(x, r0 + 80, w, "SORGENTE", "Orologio del computer");
+        int r0 = rowcard(x, 216, w, 1);
+        row2(x, r0, w, "SORGENTE", "Orologio del computer");
+        Text(x, 278, "Data e ora lette dall'orologio del computer.", F_SMALL, SUB);
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.1.9 (30B10)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.2 (30B11)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");

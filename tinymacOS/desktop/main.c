@@ -235,6 +235,8 @@ static void wins(void)
 static void wincontent(View *v, int focus)
 {
     Rect q = v->box;
+    int sheet=0;for(int i=0;i<v->n;i++)if(v->cmd[i].type==C_GLASS){sheet=1;break;}
+    glass_sheet_backdrop(q,sheet);
     glass(q, TMC_CHROME_RADIUS, MAT_WINDOW);
     int x = q.x, y = q.y, w = q.w;
     u32 lights[] = {tmc_chrome_light(0), tmc_chrome_light(1), tmc_chrome_light(2)};

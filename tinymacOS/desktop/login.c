@@ -68,6 +68,18 @@ static void clocktext(char t[24], char day[88])
     mo[0] += 'a' - 'A';
     append(day, mo, 88);
 }
+/* Explicit word spacing is independent of unusually narrow spaces in a supplied font. */
+static void login_date(int cx,int y)
+{
+    char day[16],month[24];int m=clampi(sys.month,1,12);
+    const char *week=dayname(weekday(sys.year,m,MAX(1u,sys.day)));
+    number(day,sys.day);strset(month,monthname(m),sizeof month);month[0]+='a'-'A';
+    int a=textw(week,F_CAPTION),b=textw(day,F_CAPTION),c=textw(month,F_CAPTION),gap=8;
+    int x=cx-(a+b+c+2*gap)/2;
+    text(x,y,week,F_CAPTION,0xfbf6f0);x+=a+gap;
+    text(x,y,day,F_CAPTION,0xfbf6f0);x+=b+gap;
+    text(x,y,month,F_CAPTION,0xfbf6f0);
+}
 static int setup(void)
 {
     return account.state == SESSION_SETUP;
@@ -188,7 +200,7 @@ void login_draw(void)
     int cx = W / 2;
     char t[24], day[88];
     clocktext(t, day);
-    center(cx, H / 11, day, F_CAPTION, 0xfbf6f0);
+    login_date(cx,H/11);
     center(cx, H / 11 + 18, t, F_CLOCK, 0xfffaf4);
     int y = avatar_y(), sz = setup() ? 68 : 88;
     avatar(cx - sz / 2, y, sz);

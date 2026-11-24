@@ -6,7 +6,11 @@ I contratti host verificano parser e invarianti; le prove guest esercitano codic
 
 Ogni esito deve indicare sorgenti e media effettivi. Una compilazione riuscita, un controllo statico o il PASS di una vecchia ISO non certificano una nuova release.
 
-## Milestone corrente: HID-core/usbhid canonici
+## Candidata corrente: 10.2 / 30B11
+
+Vedere [NOTE-10.2.md](NOTE-10.2.md) per correzioni UI e ricerca sul mouse Recovery. I contratti host `tests/recovery_usb.c` e `tests/recovery_firmware_pointer.c` esercitano il trasporto e il polling reali, non una riscrittura del comportamento. Prove guest e stato hardware sono distinti: nessuna certificazione della Q1900M/J1900 senza nuovo riscontro fisico. Le sezioni successive restano evidenze storiche.
+
+## Milestone: HID-core/usbhid canonici
 
 Il collegamento completo dei file HID originali è attivo. Vedere [USBHID-PORT.md](USBHID-PORT.md) e `usbhid-validation.json` per i nuovi hash e risultati. Control/interrupt-IN/interrupt-OUT, tablet assoluto e worker kernel sono successivi alle prove Boot qui sotto. Le vecchie ricevute restano immutate e non certificano la nuova ISO.
 
@@ -33,7 +37,7 @@ Le nuove prove sono in `workspace/release-10.1.7-30B8/`, dalla radice del reposi
 - `media-contract-result.json`: file OpenCore effettivamente estratti dai media e configurazioni verbose.
 - `staging-uefi-result.json`, `staging-bios-result.json`: avvio quiet, identità, cancellazione CLI/Finder e Recovery; leggere sempre `passed` e i singoli controlli.
 - `pointer-scale-contract-result.json`: conversione reale counts/mm del firmware con residui firmati e 100.000 confronti al modello indipendente, ASan/UBSan.
-- `recovery-firmware-*-result.json`: movimento XY e clic osservati sul framebuffer tramite i protocolli firmware. Il vecchio trasporto mouse USB diretto non è più collegato a Recovery.
+- `recovery-firmware-*-result.json`: movimento XY e clic osservati sul framebuffer tramite i protocolli firmware. In quella milestone il trasporto USB diretto non era collegato; nelle release successive è tornato sulle sole interfacce libere.
 - `identity-contract-result.json`: metadati ottici/installati 10.1.7 / 30B8, anche nella finestra Info; layout About e provenienza storica delle icone invariati.
 - `reproducible-build-result.json`: due build indipendenti della ISO di sviluppo, identiche byte per byte.
 - `linux-usbmouse-contract-result.json`: driver Boot mouse upstream Linux v6.12 byte-esatto, shim implementato, ASan/UBSan, guasti di allocazione e 4.000 cicli concorrenti probe/report/disconnect.

@@ -37,6 +37,7 @@ void photo(Rect, int, int);
 int coverage(int, int, int, int, int);
 void shadow(Rect, int, int);
 void glass(Rect, int, int);
+void glass_sheet_backdrop(Rect, int);
 void stroke(Rect, int, u32, int);
 void copyout(Rect, u32 *);
 void copyin(Rect, const u32 *);

@@ -71,7 +71,6 @@ void filepanel_draw(FilePanel *p)
     geometry(p);if(si.fsrev!=p->revision)filepanel_refresh(p);
     int x=p->x,y=p->y,w=p->w,h=p->h,l=x+p->side+12,cw=w-p->side-24;
     Sheet(x,y,w,h,14);Text(x+18,y+13,p->save?"Salva documento":"Apri documento",F_BOLD,TX);
-    button(x+w-141,y+10,123,"Mostra nel Finder",0);
     button(x+12,y+48,39,"Su",0);
     field_draw(p,x+61,y+48,w-73,p->location,2);
     Box(x+8,y+87,p->side-8,h-195,8,PANEL);
@@ -129,7 +128,6 @@ int filepanel_event(FilePanel *p,const Event *e)
         if(p->overwrite)return 0;
     }else if(e->type==EV_CLICK){
         int a=e->a,b=e->b;
-        if(in(a,b,x+w-141,y+10,123,26)){if(browser_finder(p->cwd)<0)message(p,"Impossibile aprire Finder.");return 0;}
         if(in(a,b,x+12,y+48,39,26)){navigate(p,"..");return 0;}
         if(in(a,b,x+61,y+48,w-73,25)){p->focus=2;p->cursor=strlen(p->location);p->replace=1;return 0;}
         if(in(a,b,x+133,y+h-97,w-149,25)){p->focus=1;p->cursor=strlen(p->name);p->replace=1;return 0;}

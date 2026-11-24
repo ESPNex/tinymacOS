@@ -5,6 +5,18 @@
 #define SW 512   /* quarter-scale capture of up to 1920px + 20px halo */
 #define SH 288   /* up to 1080px + halo */
 static u32 raw[SW * SH], pass[SW * SH], blur[SW * SH];
+/* Modal sheets sample the actual scene beneath their parent window, not the
+ * opaque document/sidebar that the client has just painted over that scene. */
+static u32 sheet_underlay[1920*1080];
+static int sheet_valid;
+void glass_sheet_backdrop(Rect q,int enabled)
+{
+    sheet_valid=enabled;
+    if(!enabled)return;
+    int l=MAX(0,q.x-24),t=MAX(0,q.y-24),rr=MIN(W,q.x+q.w+24),bb=MIN(H,q.y+q.h+24);
+    if(l>=rr||t>=bb){sheet_valid=0;return;}
+    for(int y=t;y<bb;y++)memcpy(sheet_underlay+y*W+l,canvas+y*W+l,(rr-l)*sizeof(u32));
+}
 static u8 roots[8400];
 static int ready;
 static void initroot(void)
@@ -91,8 +103,8 @@ void glass(Rect q, int r, int kind)
     int dark = night || kind == MAT_WIDGET || kind == MAT_BAR;
     u32 tint = dark ? (kind == MAT_WIDGET ? 0x34363d : 0x28282c) : (kind == MAT_DOCK ? 0xe1e1e8 : 0xf5f5f7);
     if(kind!=MAT_BAR&&kind!=MAT_WIDGET)tint=color(INK(kind==MAT_DOCK?I_PANEL:I_BG));
-    int strength = kind == MAT_WINDOW ? (dark ? 204 : 211) : kind == MAT_MENU ||
-                   kind == MAT_SHEET ? (dark ? 203 : 213) : kind == MAT_WIDGET ? 143 : kind == MAT_BAR ? 97 : kind==MAT_DOCK ? (dark?152:145) : 63;
+    int strength = kind == MAT_WINDOW ? (dark ? 204 : 211) : kind == MAT_MENU ? (dark ? 203 : 213) :
+                   kind == MAT_SHEET ? (dark ? 154 : 148) : kind == MAT_WIDGET ? 143 : kind == MAT_BAR ? 97 : kind==MAT_DOCK ? (dark?152:145) : 63;
     if (lite) {
         roundr(q.x, q.y, q.w, q.h, r, kind==MAT_BAR||kind==MAT_WIDGET?0x303035:color(INK(kind==MAT_DOCK?I_PANEL:I_BG)), 255);
         if (kind != MAT_BAR)stroke(q, r, dark ? 0xa5a5aa : 0xffffff, 112);
@@ -103,12 +115,13 @@ void glass(Rect q, int r, int kind)
     if (L >= R || T >= B)return;
     int left = L - 20, top = T - 20, nx = (R - L + 40 + 3) / 4 + 2, ny = (B - T + 40 + 3) / 4 + 2;
     if (nx > SW || ny > SH)return;
+    const u32 *source=kind==MAT_SHEET&&sheet_valid?sheet_underlay:canvas;
     for (int y = 0; y < ny; y++) {
         int sy = clampi(top + y * 4, 0, H - 1), sy2 = MIN(H - 1, sy + 2);
         for (int x = 0; x < nx; x++) {
             int sx = clampi(left + x * 4, 0, W - 1), sx2 = MIN(W - 1, sx + 2);
-            raw[y * SW + x] = blend(blend(canvas[sy * W + sx], canvas[sy * W + sx2], 128), blend(canvas[sy2 * W + sx],
-                                    canvas[sy2 * W + sx2], 128), 128);
+            raw[y * SW + x] = blend(blend(source[sy * W + sx], source[sy * W + sx2], 128), blend(source[sy2 * W + sx],
+                                    source[sy2 * W + sx2], 128), 128);
         }
     }
     for (int y = 0; y < ny; y++)for (int x = 2; x < nx - 2; x++) {
@@ -125,7 +138,7 @@ void glass(Rect q, int r, int kind)
         int rowShade = clampi(strength + (q.h / 2 - j) * 16 / MAX(1, q.h), 0, 246);
         for (int X = L; X < R; X++, p++) {
             int i = X - q.x, sx = X - left, ex = MIN(i, q.w - 1 - i), ey = MIN(j, q.h - 1 - j);
-            if (kind == MAT_BAR || (kind!=MAT_DOCK && ex >= r + 7 && ey >= 7)) {
+            if (kind == MAT_BAR || (kind!=MAT_DOCK && kind!=MAT_SHEET && ex >= r + 7 && ey >= 7)) {
                 *p = blend(sample(blur, sx, sy), tint, rowShade);
                 continue;
             }
@@ -133,7 +146,7 @@ void glass(Rect q, int r, int kind)
             int mask = coverage(i, j, q.w, q.h, r);
             if (!mask)continue;
             int rim = clampi(11 - d, 0, 11), off = (rim * (15 - rim)) >> 2;
-            if(kind==MAT_DOCK){int depth=MIN(MAX(0,d),18);off+=((18-depth)*3)/8;}
+            if(kind==MAT_DOCK||kind==MAT_SHEET){int depth=MIN(MAX(0,d),18);off+=((18-depth)*3)/8;}
             int rx = sx + (dx * off >> 4), ry = sy + (dy * off >> 4);
             rx = clampi(rx, 8, (nx - 4) * 4);
             ry = clampi(ry, 8, (ny - 4) * 4);

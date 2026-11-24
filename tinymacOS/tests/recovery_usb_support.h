@@ -4,6 +4,8 @@
 #include <stdio.h>
 #define EFIAPI
 #define EFI_SUCCESS 0
+#define EFI_NOT_FOUND 14
+#define EFI_NOT_STARTED 19
 #define EFI_ERROR(x) ((x)!=0)
 #define TRUE 1
 #define FALSE 0
