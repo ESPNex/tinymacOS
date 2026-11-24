@@ -228,6 +228,13 @@ void line(int x, int y, int X, int Y, u32 col)
 }
 void icon(int x, int y, int size, int id)
 {
+    if (id <= ICON_SETTINGS_APPEARANCE && id >= ICON_SETTINGS_GENERAL) {
+        extern const u8 settings_svg_masks[];
+        if (size >= 1 && size <= 128)
+            alpha_symbol(settings_svg_masks + (ICON_SETTINGS_APPEARANCE-id)*4096,
+                         64, (Rect){x,y,size,size}, 0xffffff);
+        return;
+    }
     int procedural=id<0;if(procedural)id=-id;
     if (size < 1 || size > 128 || id < 1 || id > 42)
         return;

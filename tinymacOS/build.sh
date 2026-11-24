@@ -14,7 +14,9 @@ for f in crypto/sha256.c kernel/string.c storage/maintenance.c;do gcc "${E[@]}" 
 efilink(){ local name=$1;shift;ld -nostdlib --build-id=none -znocombreloc -T "$EFILIB/elf_x86_64_efi.lds" -shared -Bsymbolic "$EFILIB/crt0-efi-x86_64.o" "$@" "$D/efi-sha256.c.o" "$D/efi-string.c.o" -L"$EFILIB" -lgnuefi -o "$D/$name.so";objcopy --strip-all -j .text -j .rodata -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64 "$D/$name.so" "$D/$name.EFI";}
 python3 tools/tramontana-assets.py "$D"
 python3 tools/control-svg.py "$D"
+python3 tools/settings-svg.py "$D"
 U+=(-DTMC_ICON_ATLAS=\""$D/icons.atlas"\" -DTMC_CONTROL_SVG=\""$D/control-svg.alpha"\")
+U+=(-DTMC_SETTINGS_SVG=\""$D/settings-svg.alpha"\")
 python3 tools/recoveryart.py "$D"; (cd "$D" && gcc -c recovery-art.S -o recovery-art.o)
 for f in recovery/{main,screen,keyboard,usbhid}.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
 gcc "${E[@]}" -c drivers/hidtablet.c -o "$D/rec-hidtablet.o"

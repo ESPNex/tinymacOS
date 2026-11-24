@@ -3,6 +3,10 @@
 Questa revisione non e una pubblicazione automatica su GitHub.
 
 ## Interfaccia
+- Impostazioni: sei icone laterali con sorgenti SVG originali in
+  `assets/settings/`, compilate in maschere alpha antialias e renderizzate
+  nativamente. Nessun ricorso ai vecchi sprite per queste icone; mappatura
+  preservata anche filtrando la ricerca. Simboli bianchi su riquadri colorati.
 - Risoluzione: menu contestuale compatto, larghezza calcolata sulle voci reali
   (132 px con il profilo corrente, invece di 246), righe di 24 px, colonna
   separata per il segno di spunta e ancoraggio al valore selezionato.

@@ -16,7 +16,8 @@ static EncInfo ei;
 static SessionInfo acct;
 
 static const char *const pname[] = {"Aspetto", "Schermo", "Sicurezza e privacy", "Backup", "Data e ora", "Generali"};
-static const int pglyph[] = {28, 9, 31, 33, 27, 29};
+static const int pglyph[] = {ICON_SETTINGS_APPEARANCE, ICON_SETTINGS_DISPLAY,
+    ICON_SETTINGS_PRIVACY, ICON_SETTINGS_BACKUP, ICON_SETTINGS_CLOCK, ICON_SETTINGS_GENERAL};
 #define NP 6
 
 typedef struct { int x, y, w, h; } R;
@@ -166,9 +167,9 @@ static void paint(void)
         hitpane[nhpane] = i;
         nhpane++;
         if (i == pane)Box(7, y - 3, S - 14, 30, 8, SEL);
-        static const u32 chip[6] = {0xd9e6fb, 0xcfe3fb, 0x5b6472, 0x6ea8e8, 0xfae8cf, 0xe4e5ec};
+        static const u32 chip[6] = {0x5865d8, 0x2385e8, 0x687384, 0x2caa76, 0xef922c, 0x788394};
         Box(13, y + 1, 20, 20, 6, chip[i]);
-        Icon(14, y + 2, 18, -pglyph[i]);
+        Icon(14, y + 2, 18, pglyph[i]);
         Text(40, y + 4, pname[i], F_SMALL, i == pane ? EMP : TX);
         y += 34;
     }
