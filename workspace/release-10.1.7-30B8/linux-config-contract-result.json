@@ -8,7 +8,7 @@
   "physical_hardware_tested": false,
   "sources": {
     "vendor/linux-v6.12/config.c": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
-    "vendor/linux-v6.12/manifest.json": "cc1a14a135704ea9ea98c8f35e9a6551c3f6f5142ce9b1cfd564811f30d87c6f",
+    "vendor/linux-v6.12/manifest.json": "abd7eacbde936267b84de55c1f5fd35db4815c5bfa110da147e2ff02f6b5e4e8",
     "compat/linux/usb_config.c": "8b59b2da743974c04e67e7500847532815fdde30bb73cea672d5a6bdb1cef81e",
     "include/linux_usb_config.h": "a7eacc17217c5f2e2c290c242948d1a1aef92d822af3f193330779293737da2d",
     "include/hidconfig.h": "f6d9a1c501ab3a59df16939a354a1656f726e67417663b8f97965aa3685900a0",

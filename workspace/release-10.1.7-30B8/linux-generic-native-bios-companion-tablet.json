@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "companion-tablet",
-  "iso_sha256": "c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3",
-  "work": "/var/tmp/tmc-generic-bios-companion-tablet-05whfag4",
+  "iso_sha256": "5d4b5084b43095a7519c5cd93e97213c4d56cf224c3b6258e34f7b9af990bd39",
+  "work": "/var/tmp/tmc-generic-bios-companion-tablet-rb4fviq8",
   "linux_hcd_port": false,
   "full_linux_usb_core_hub": false,
   "physical_hardware_tested": false,
@@ -18,6 +18,21 @@
     "timeouts": 0
   },
   "actual_upstream_message_control_functions_executed": true,
+  "dma_pool": {
+    "devices": 2,
+    "pools": 4,
+    "allocations": 3,
+    "frees": 0,
+    "coherent_allocations": 3,
+    "coherent_frees": 0,
+    "live_bytes": 16640,
+    "highwater": 16640,
+    "rejected": 0,
+    "failures": 0,
+    "attributes": 2,
+    "devres": 0
+  },
+  "original_dma_pool_in_native_controller_executed": true,
   "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Tablet, ID: pointer\r\n",
   "before": {
     "attached": 1,

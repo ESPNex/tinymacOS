@@ -3,7 +3,7 @@
   "firmware": "bios",
   "profile": "uhci-tablet",
   "iso_sha256": "5d4b5084b43095a7519c5cd93e97213c4d56cf224c3b6258e34f7b9af990bd39",
-  "work": "/var/tmp/tmc-generic-bios-uhci-tablet-a2s_8eaw",
+  "work": "/var/tmp/tmc-generic-bios-uhci-tablet-f5qcv0xi",
   "linux_hcd_port": false,
   "full_linux_usb_core_hub": false,
   "physical_hardware_tested": false,
@@ -18,6 +18,21 @@
     "timeouts": 0
   },
   "actual_upstream_message_control_functions_executed": true,
+  "dma_pool": {
+    "devices": 1,
+    "pools": 2,
+    "allocations": 2,
+    "frees": 0,
+    "coherent_allocations": 2,
+    "coherent_frees": 0,
+    "live_bytes": 8192,
+    "highwater": 8192,
+    "rejected": 0,
+    "failures": 0,
+    "attributes": 1,
+    "devres": 0
+  },
+  "original_dma_pool_in_native_controller_executed": true,
   "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Tablet, ID: pointer\r\n",
   "before": {
     "attached": 1,

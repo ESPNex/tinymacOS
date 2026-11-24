@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "xhci-two-mice",
-  "iso_sha256": "c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3",
-  "work": "/var/tmp/tmc-two-mice-uefi-slhkm9gf",
+  "iso_sha256": "5d4b5084b43095a7519c5cd93e97213c4d56cf224c3b6258e34f7b9af990bd39",
+  "work": "/var/tmp/tmc-two-mice-uefi-49u6e4oi",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [
