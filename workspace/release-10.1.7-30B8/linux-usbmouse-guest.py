@@ -89,6 +89,10 @@ try:
   r['actual_upstream_hcd_lifecycle_functions_executed']=True
   r['whole_linux_hcd_core_or_controller_port']=False
 
+  if profile.startswith(('uhci','companion')):
+   r['whole_original_uhci_runtime_after']=observe_uhci(g,symbols,w)
+   assert r['whole_original_uhci_runtime_after']['givebacks']>r['whole_original_uhci_runtime']['givebacks'],r['whole_original_uhci_runtime_after']
+   r['linux_uhci_controller_executed']=True
   r['exact_rendered_xy_checks']=6;r['passed']=True
  print('PASS actual Linux usbmouse IRQ + rendered XY',fw,profile,r['after'],flush=True)
 finally:(q/f'linux-usbmouse-{fw}-{profile}.json').write_text(json.dumps(r,indent=2)+'\n')

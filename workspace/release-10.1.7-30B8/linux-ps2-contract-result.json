@@ -8,7 +8,7 @@
   "sources": {
     "vendor/linux-v6.12/libps2.c": "6fd7c42b939e2285a22bd55f804a60e0a7944c984baa7715c1c092a8ab3900fc",
     "vendor/linux-v6.12/libps2.h": "b57cb6943ee148455f385f39e8c626d17f3ace2d91b358b117531b05c7b38783",
-    "vendor/linux-v6.12/manifest.json": "abd7eacbde936267b84de55c1f5fd35db4815c5bfa110da147e2ff02f6b5e4e8",
+    "vendor/linux-v6.12/manifest.json": "9712fbc259aa350f04b3061c1532fc79a831f0e14b7ae0895e8df79eb36ad9fc",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
     "compat/linux/include/linux/libps2.h": "d6e524edb6587f824a48a1670a982a98ae29b179bcfd58860cac508c13136d7f",

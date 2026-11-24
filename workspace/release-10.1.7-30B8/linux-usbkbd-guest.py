@@ -65,6 +65,10 @@ try:
   assert core['submits']>previous['submits'] and core['givebacks']>previous['givebacks'],(previous,core)
   assert core['submits']==core['givebacks']+core['active'] and core['active']>=1 and not core['rejected'],core
   r['actual_upstream_core_urb_file_executed']=True
+  if profile.startswith(('uhci','companion')):
+   r['whole_original_uhci_runtime_after']=observe_uhci(g,symbols,w)
+   assert r['whole_original_uhci_runtime_after']['givebacks']>r['whole_original_uhci_runtime']['givebacks'],r['whole_original_uhci_runtime_after']
+   r['linux_uhci_controller_executed']=True
   g.shot('linux-usbkbd-italian-leds');r['passed']=True
   r['checks']=['USB-only keyboard with virtual i8042 disabled','actual ISO KernelCache equals linked build','actual upstream probe/IRQ/event/LED/disconnect symbols','enrollment + F2 + rendered Italian Shift/AltGr/accent/euro command','Caps Lock on/off triggers two successful native EP0 LED controls']
  print('PASS actual Linux usbkbd IRQ + Italian input + LED controls',fw,profile,r['after'],flush=True)

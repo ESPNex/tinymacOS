@@ -37,6 +37,10 @@ try:
   assert not any(after[k] for k in ['failed','rejected','overflows','errors','control_errors']),after
   record['whole_source_generic_input']=generic=counters('tmc_hid_generic_counters',['probes','attached','detached','failures','reports','rejected','events','inputs','outputs','output_errors','busy'])
   assert generic['attached']>=1 and generic['events']>0 and generic['reports']>=after['dispatched'] and not generic['failures'] and not generic['rejected'],generic
+  if profile.startswith(('uhci','companion')):
+   record['whole_original_uhci_runtime_after']=observe_uhci(g,symbols,w)
+   assert record['whole_original_uhci_runtime_after']['givebacks']>record['whole_original_uhci_runtime']['givebacks'],record['whole_original_uhci_runtime_after']
+   record['linux_uhci_controller_executed']=True
   record['exact_rendered_xy_checks']=6;record['native_generic_endpoint_event_dispatch_executed']=True;g.shot('whole-source-generic-input');record['passed']=True
  print('PASS actual whole-source Linux generic/input endpoint + exact rendered absolute XY',fw,profile,after,flush=True)
 finally:(q/f'linux-generic-native-{fw}-{profile}.json').write_text(json.dumps(record,indent=2)+'\n')

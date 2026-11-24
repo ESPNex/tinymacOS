@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "bios",
   "profile": "xhci",
-  "iso_sha256": "5d4b5084b43095a7519c5cd93e97213c4d56cf224c3b6258e34f7b9af990bd39",
-  "work": "/var/tmp/tmc-two-mice-bios-fi63perr",
+  "iso_sha256": "dfe113a908b61dd6d5a8c353a8b927df957566881f6cb40f5fae11282766767b",
+  "work": "/var/tmp/tmc-two-mice-bios-v_jenpg3",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [

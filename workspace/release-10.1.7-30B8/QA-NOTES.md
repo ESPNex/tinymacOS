@@ -1,8 +1,10 @@
-## UHCI v17 — integrazione in corso, nessun deploy
+## Current v17 — whole original Linux UHCI, no deployment
 
 Sostituito lo scheduler UHCI nativo con i file originali completi Linux v6.12 HCD/queue/hub/PCI, byte-exact e verificati nel manifest. Runtime reale per coherent DMA/pool, timer cancellabili, lock IF-preserving, PCI e dispatch polling; originali anche URB e funzioni HCD lifecycle. Contratto host O1/O2 ASan/UBSan passato: esecuzione DMA non-identity di controllo/interrupt, full/short/STALL/cancel/timeout, toggle, reset/status root hub, rollback e 128 cicli senza leak. UBSan alignment escluso per i pseudo-oggetti sentinella list_entry upstream, non ASan né gli altri controlli UBSan.
 
-Primo smoke UEFI UHCI passato con 171 rapporti mouse e coordinate renderizzate. La matrice finale v17 e la riproducibilità sono ancora da eseguire; le vecchie ricevute v16 non certificano la nuova ISO. Classe/enumerazione UsbInput ancora separate, SG/mapping esterni, IRQ hardware, PM, hotplug generale e core/usbhid non completi. xHCI/EHCI restano nativi. PS/2 per ultimo. Nessuna prova ASRock fisica o nuova release pubblicata.
+Validazione finale: **34/34 guest BIOS/UEFI**, **14 contratti principali legati agli SHA dei sorgenti**, suite manutenzione/legacy, contratti ausiliari EHCI qTD/Intel e identità/OpenCore/licenze nei tre media passati. Sono osservati prima/dopo l'input **10 profili con UHCI originale**, oltre a 16 DMA e 28 message. Il banco DMA misto inizialmente pretendeva due allocazioni nel vecchio facade anche quando il periodico era ormai originale UHCI; corretto distinguendo i controller attivi, mantenendo i controlli su memorie vive/errori/attributi. Tutti i 16 profili DMA sono stati rieseguiti e superati col controllo definitivo. Due build/packaging indipendenti identici: **225851392 byte**, SHA-256 `dfe113a908b61dd6d5a8c353a8b927df957566881f6cb40f5fae11282766767b`. Sorgenti sincronizzati prima dei test finali: `1a7e04e40efcb64d7edf7f002c9ad2cc6d75c05d`.
+
+Classe/enumerazione UsbInput ancora separate; SG/mapping esterni, IRQ hardware, PM, hotplug generale e core/usbhid non completi. xHCI/EHCI restano nativi. PS/2 per ultimo. Macroblocco richiesto ancora FALSE, gate finali kernel/installazione/Recovery non dedotti da questi test; nessuna prova ASRock fisica o nuova release. Per il limite snapshot è stata compattata soltanto la formattazione di un vecchio audit JSON, mantenendone invariato il contenuto.
 
 # 10.1.7 / 30B8 — development, not published
 
@@ -131,7 +133,7 @@ The message facade serializes up to 1024 bytes, copies only actual valid IN byte
 
 V15 final input validation: **34/34 BIOS+UEFI profiles**, **12 source-bound host contracts**, maintenance/legacy suites and identity/three-path OpenCore/license media checks pass. **28** USB mouse/keyboard/generic guest receipts observe the original message-control pipeline. Two independent normal builds and dualboot packaging are byte-identical: 225814528 bytes, SHA-256 `c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3`. This is an input increment, not complete physical Linux controllers/core/hub/usbhid, full kernel/install/Recovery final gate or deployment. Source-first commit: `53a81e344374f18e80b81d5b97460a13570993de`.
 
-## Current v16: whole original Linux DMA pool and native TD consumers
+## Historical v16: whole original Linux DMA pool and native TD consumers
 
 The requested complete macroblock is **still incomplete**. Entire original Linux v6.12 `mm/dmapool.c` is now compiled, not a function-shaped substitute. Real implemented services provide coherent contiguous memory, IRQ-safe locks, native registration/readout of the original pools attribute, and allocated managed resources with LIFO release. There is no claim of Linux sysfs/VFS, a sleepable scheduler, IOMMU or noncoherent DMA. EHCI/UHCI control and interrupt transfer descriptors now use these pools and use DMA bus handles in hardware links rather than assuming CPU pointers equal DMA addresses. The physical schedulers, QHs/frame lists and the xHCI DMA model still remain native.
 

@@ -8,7 +8,7 @@
   "physical_hardware_tested": false,
   "sources": {
     "vendor/linux-v6.12/config.c": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
-    "vendor/linux-v6.12/manifest.json": "abd7eacbde936267b84de55c1f5fd35db4815c5bfa110da147e2ff02f6b5e4e8",
+    "vendor/linux-v6.12/manifest.json": "9712fbc259aa350f04b3061c1532fc79a831f0e14b7ae0895e8df79eb36ad9fc",
     "compat/linux/usb_config.c": "8b59b2da743974c04e67e7500847532815fdde30bb73cea672d5a6bdb1cef81e",
     "include/linux_usb_config.h": "a7eacc17217c5f2e2c290c242948d1a1aef92d822af3f193330779293737da2d",
     "include/hidconfig.h": "f6d9a1c501ab3a59df16939a354a1656f726e67417663b8f97965aa3685900a0",
@@ -46,7 +46,7 @@
     "compat/linux/include/linux/tmc_hid_parser.h": "3b91a7a97cb45248a246af740e712816e0867a45b56f1d557385a529befb647d",
     "compat/linux/include/linux/tmc_ps2_compat.h": "6941a688dd502ef1d7f9e0bd3216421b09380abda71c9e3d10be77b4a6aeed38",
     "compat/linux/include/linux/tmc_urb_core.h": "93149a9287cff6c338097083380c1d71ebbc3de9be592d1fe6987f7ecb125696",
-    "compat/linux/include/linux/tmc_urb_types.h": "df8b72f7d0cd583cc0ec21ebfb0dc5499f3cc790910e49440cc1c4865df5b5a9",
+    "compat/linux/include/linux/tmc_urb_types.h": "b0e756e8d28f461ff064c0be2fe594ea5f70b33e3cdad5cbc7123c095dc4c803",
     "compat/linux/include/linux/tmc_usb_config.h": "b70c5528a061e520c3cbdd24ffd1e823a10bd6c6294f2868edeca8f494e9a80a",
     "compat/linux/include/linux/types.h": "afa7f41551d797183c2ba9b3b8ea0dd07937c7852c46108e795c4ca52ad3f33e",
     "compat/linux/include/linux/unaligned.h": "a7d1f8b2dfc173301d678cd9a9b82beef563db65638deef8bf3cb1b01b224ae8",

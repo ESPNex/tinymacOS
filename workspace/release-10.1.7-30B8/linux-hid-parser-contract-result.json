@@ -9,7 +9,7 @@
   "sources": {
     "vendor/linux-v6.12/hid-core.c": "c12c3f89a2e04d7ef68a80d48cfe3b30f153f6de5bc7bb095c810b2f214d603b",
     "vendor/linux-v6.12/hid-upstream.h": "69db832572997025df301fbcf243e0bd7eb00a5dca61edfac46635efe8efe93b",
-    "vendor/linux-v6.12/manifest.json": "abd7eacbde936267b84de55c1f5fd35db4815c5bfa110da147e2ff02f6b5e4e8",
+    "vendor/linux-v6.12/manifest.json": "9712fbc259aa350f04b3061c1532fc79a831f0e14b7ae0895e8df79eb36ad9fc",
     "compat/linux/hid_parser.c": "2e0533cada3f48bdc3fd041c4a87200dcf62f88128fb91d0b3d635d5b36f31d1",
     "compat/linux/include/linux/tmc_hid_parser.h": "3b91a7a97cb45248a246af740e712816e0867a45b56f1d557385a529befb647d",
     "include/linux_hid_parser.h": "03a5549cd12b5964f20ba933796ae20eb65fc40d67504d138de8d4c01e7d88d3",
@@ -20,7 +20,7 @@
     "drivers/hidtablet.c": "1db15b1cbdf45b45dab00adeed1501db1185f8e197412737be1214fb613feaf1",
     "tests/linux_hid_parser.c": "4c17c1330510db15cdeee9a364769434736c60141afb9ed82733da2188316d0c",
     "tests/linux_hid_runtime.c": "746347b0d99b15cc19e63ef34b636fcb5a2d952c04b6e3baba39b8d021152d93",
-    "build.sh": "41201063a097a831c9a31490167299e9e295e0ba30cd1d71cac4a17ae3f82901",
+    "build.sh": "9a565b02354c101435795296b736c7611cad3a8a2a575efe0cabe2e3de49e091",
     "vendor/linux-v6.12/hid-parser-fields.inc": "db2060031624cd4f8a49c513f1a07af1cdd138f4abca34602793a499dd8c87ef",
     "vendor/linux-v6.12/hid-parser-items.inc": "8ef11915b2cabe9d4c261d5e70a7974af2504587229af469f7587972ca1c04c0",
     "vendor/linux-v6.12/hid-parser-multipliers.inc": "117bb63948b36bd03059cce91b474d1b73186742f37a6ff8eb93915f5e79be49",

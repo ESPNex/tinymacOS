@@ -2,8 +2,8 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "uhci",
-  "iso_sha256": "b7f4c456ed7effc89eb2ff5b31daaefb93600913d5cae4038829efb844960b5f",
-  "work": "/var/tmp/tmc-linux-usb-uefi-uhci-hbc_dx93",
+  "iso_sha256": "dfe113a908b61dd6d5a8c353a8b927df957566881f6cb40f5fae11282766767b",
+  "work": "/var/tmp/tmc-linux-usb-uefi-uhci-72or5hqf",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
@@ -41,8 +41,8 @@
     "givebacks": 10,
     "unlinks": 0,
     "map_failures": 0,
-    "irq_polls": 12022,
-    "schedule_polls": 12022,
+    "irq_polls": 9775,
+    "schedule_polls": 9775,
     "timer_fires": 22,
     "root_polls": 21,
     "errors": 0
@@ -153,5 +153,18 @@
   },
   "actual_upstream_hcd_lifecycle_functions_executed": true,
   "whole_linux_hcd_core_or_controller_port": false,
+  "whole_original_uhci_runtime_after": {
+    "controllers": 1,
+    "submissions": 182,
+    "givebacks": 181,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 11028,
+    "schedule_polls": 11028,
+    "timer_fires": 206,
+    "root_polls": 205,
+    "errors": 0
+  },
+  "linux_uhci_controller_executed": true,
   "exact_rendered_xy_checks": 6
 }
