@@ -5,9 +5,9 @@ This is a DMA prerequisite, not a claim of complete Linux physical HCDs.
 from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
-paths=['compat/linux/dma_pool.c','include/linux_dma_pool.h','drivers/linux_dma.c','drivers/ehci.c','drivers/uhci.c','drivers/linux_ehci_qtd.c','include/linux_ehci.h','include/usbhost.h','tests/linux_dma_pool.c','tests/linux_controller_dma.c','tests/linux_dma_native.c','tests/controller_dma_support.h','vendor/linux-v6.12/dmapool.c','vendor/linux-v6.12/manifest.json','build.sh','tools/linux-source-contract.py']
+paths=['compat/linux/dma_pool.c','include/linux_dma_pool.h','drivers/linux_dma.c','drivers/ehci.c','drivers/uhci.c','drivers/linux_ehci_qtd.c','include/linux_ehci.h','include/usbhost.h','tests/linux_dma_pool.c','tests/linux_controller_dma.c','tests/linux_dma_native.c','tests/controller_dma_support.h','include/linux_uhci.h','compat/linux/uhci_runtime.c','vendor/linux-v6.12/dmapool.c','vendor/linux-v6.12/manifest.json','build.sh','tools/linux-source-contract.py']
 paths+=sorted(str(p.relative_to(root)) for p in (root/'compat/linux/dma-include').rglob('*') if p.is_file())
-r={'passed':False,'scope':'Whole byte-exact original Linux v6.12 mm/dmapool.c with real coherent allocation, locks, registered original read attribute and managed resources; actual EHCI/UHCI TD consumers preserve CPU/bus distinction. Physical schedulers remain native','whole_original_dma_pool_file':True,'full_linux_hcd':False,'iommu_supported':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
+r={'passed':False,'scope':'Whole byte-exact original Linux v6.12 mm/dmapool.c with real coherent allocation, locks, registered original read attribute and managed resources; actual native EHCI TD consumers preserve CPU/bus distinction. Whole original UHCI has a separate hardware-model/runtime contract','whole_original_dma_pool_file':True,'full_linux_hcd':False,'iommu_supported':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)
  with tempfile.TemporaryDirectory(prefix='tmc-dma-contract-',dir='/var/tmp') as tmp:

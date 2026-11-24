@@ -33,7 +33,7 @@ static inline void list_del(struct list_head *n){n->prev->next=n->next;n->next->
 #define list_entry(p,t,m) container_of(p,t,m)
 #define list_for_each_entry(p,h,m) for(p=list_entry((h)->next,__typeof__(*p),m);&(p)->m!=(h);p=list_entry((p)->m.next,__typeof__(*p),m))
 #define list_for_each_entry_safe(p,n,h,m) for(p=list_entry((h)->next,__typeof__(*p),m),n=list_entry((p)->m.next,__typeof__(*p),m);&(p)->m!=(h);p=n,n=list_entry((n)->m.next,__typeof__(*n),m))
-typedef struct {unsigned word;} spinlock_t;
+typedef struct {unsigned word;u32 irq_flags;} spinlock_t;
 struct mutex {spinlock_t lock;u32 flags;};
 #define DEFINE_MUTEX(name) struct mutex name={0}
 static inline u32 dma_lock(spinlock_t *s){u32 f=tmc_lx_os_irq_save();while(__atomic_exchange_n(&s->word,1,__ATOMIC_ACQUIRE))tmc_lx_os_spin_wait();return f;}
@@ -44,7 +44,7 @@ static inline void dma_unlock(spinlock_t *s,u32 f){__atomic_store_n(&s->word,0,_
 static inline void mutex_lock(struct mutex *m){u32 f=dma_lock(&m->lock);m->flags=f;}
 static inline void mutex_unlock(struct mutex *m){u32 f=m->flags;dma_unlock(&m->lock,f);}
 struct device_attribute;
-struct device {struct list_head dma_pools;struct device_attribute *attribute;struct DmaResource *resources;spinlock_t resource_lock;const char *name;u64 mask;};
+struct device {struct list_head dma_pools;struct device_attribute *attribute;struct DmaResource *resources;spinlock_t resource_lock;const char *name;u64 mask;unsigned wakeup_capable,wakeup_enabled;};
 struct device_attribute {const char *name;ssize_t (*show)(struct device *,struct device_attribute *,char *);};
 #define DEVICE_ATTR_RO(n) struct device_attribute dev_attr_##n={#n,n##_show}
 int device_create_file(struct device *,struct device_attribute *);

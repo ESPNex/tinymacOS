@@ -68,7 +68,7 @@ int main(void)
  b->usb.speed=USB_SPEED_SUPER;u->interval=32769;assert(usb_submit_urb(u,GFP_ATOMIC)==-EINVAL);
  u->interval=1000;assert(!usb_submit_urb(u,GFP_ATOMIC)&&u->interval==512);tmc_lx_native_giveback(u,0,8);
  b->usb.speed=speed;u->interval=8;
- struct scatterlist sg={7,0};u->num_sgs=2;u->sg=&sg;assert(usb_submit_urb(u,GFP_ATOMIC)==-EINVAL);
+ struct scatterlist sg={.length=7};u->num_sgs=2;u->sg=&sg;assert(usb_submit_urb(u,GFP_ATOMIC)==-EINVAL);
  sg.length=8;u->num_sgs=1;assert(usb_submit_urb(u,GFP_ATOMIC)==-EOPNOTSUPP);u->num_sgs=0;u->sg=0;
  u->transfer_buffer_length=-1;assert(usb_submit_urb(u,GFP_ATOMIC)==-EINVAL);u->transfer_buffer_length=8;
  assert(usb_submit_urb(u,73)==-EINVAL);

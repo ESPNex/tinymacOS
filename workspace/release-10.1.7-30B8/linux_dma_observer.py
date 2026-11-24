@@ -8,8 +8,12 @@ def observe_dma(guest,symbols,work):
     path=work/'dma-pool-counters.bin'
     guest.req('pmemsave',val=address,size=96,filename=str(path))
     counts=dict(zip(['devices','pools','allocations','frees','coherent_allocations','coherent_frees','live_bytes','highwater','rejected','failures','attributes','devres'],struct.unpack('<12Q',path.read_bytes())))
-    assert counts['devices']>=1 and counts['pools']>=2*counts['devices'],counts
-    assert counts['allocations']>=2 and counts['allocations']>counts['frees'],counts
+    whole_uhci=any(line.endswith(' b uhci_stats') for line in symbols) and counts['devices']==0
+    if whole_uhci:
+        assert counts['attributes']>=1 and counts['coherent_allocations']>counts['coherent_frees'],counts
+    else:
+        assert counts['devices']>=1 and counts['pools']>=2*counts['devices'],counts
+    if not whole_uhci:assert counts['allocations']>=2 and counts['allocations']>counts['frees'],counts
     assert counts['coherent_allocations']>counts['coherent_frees'] and counts['live_bytes']>0,counts
     assert counts['highwater']>=counts['live_bytes'] and not counts['failures'] and not counts['rejected'],counts
     return counts

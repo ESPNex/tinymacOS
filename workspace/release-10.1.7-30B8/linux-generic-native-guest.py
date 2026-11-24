@@ -8,6 +8,7 @@ q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';sys.path.insert(
 from retail_guest import Retail
 from linux_message_observer import observe_message
 from linux_dma_observer import observe_dma
+from linux_uhci_observer import observe_uhci
 from input_pixels import cursor
 fw,profile=sys.argv[1:];assert fw in ['uefi','bios'];assert profile in ['xhci-tablet','ehci-tablet','uhci-tablet','companion-tablet','xhci-tablet-hub']
 base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-generic-native-v13'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
@@ -24,6 +25,7 @@ try:
  with Retail(iso,w,ev,'generic',live=True,launcher=root/'tools/run-input-qa.sh') as g:
   record['message_core']=observe_message(g,symbols,w);record['actual_upstream_message_control_functions_executed']=True
   if profile.startswith(('ehci','uhci','companion')):record['dma_pool']=observe_dma(g,symbols,w);record['original_dma_pool_in_native_controller_executed']=True
+  if profile.startswith(('uhci','companion')):record['whole_original_uhci_runtime']=observe_uhci(g,symbols,w)
   mice=g.req('query-mice');target=next(m for m in mice if m['name']=='QEMU HID Tablet');g.hmp('mouse_set '+str(target['index']))
   assert [m['name'] for m in g.req('query-mice') if m['current']]==['QEMU HID Tablet'];record['usb']=g.hmp('info usb')
   def counters(name,fields):

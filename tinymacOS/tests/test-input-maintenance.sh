@@ -81,7 +81,12 @@ gcc $C tests/linux_usb_generic.c $LX -o "$out/linux-usb-generic";"$out/linux-usb
 # Actual original USB2 hub debounce/reset and shared CF exclusion.
 gcc $C -no-pie -pthread tests/linux_hub.c -o "$out/linux-hub";"$out/linux-hub"
 
-# Whole original Linux DMA pool and actual EHCI/UHCI descriptor consumers.
+# Whole original Linux DMA pool and actual native EHCI descriptor consumers.
 # Its private ABI include path must precede the older USB/HID compatibility ABI.
 gcc -Icompat/linux/dma-include $C -Wno-unused-function -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-pie -no-pie -pthread tests/linux_controller_dma.c drivers/linux_ehci_qtd.c -o "$out/linux-controller-dma";"$out/linux-controller-dma"
 gcc -Icompat/linux/dma-include $C -fno-pie -no-pie tests/linux_dma_native.c -o "$out/linux-native-dma";"$out/linux-native-dma"
+
+# Byte-exact whole UHCI on a nonidentity DMA hardware model. Alignment UBSan
+# is disabled only for upstream list_entry sentinel pseudo-objects; actual
+# DMA object alignment is checked separately, ASan/other UBSan stay enabled.
+gcc -Icompat/linux/uhci-include -Icompat/linux/dma-include $C -fwrapv -fno-sanitize=alignment -Wno-unused-function -Wno-unused-but-set-variable -fno-pie -no-pie tests/linux_uhci.c -o "$out/linux-uhci";"$out/linux-uhci"

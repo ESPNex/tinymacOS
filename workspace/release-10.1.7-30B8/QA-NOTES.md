@@ -1,3 +1,9 @@
+## UHCI v17 — integrazione in corso, nessun deploy
+
+Sostituito lo scheduler UHCI nativo con i file originali completi Linux v6.12 HCD/queue/hub/PCI, byte-exact e verificati nel manifest. Runtime reale per coherent DMA/pool, timer cancellabili, lock IF-preserving, PCI e dispatch polling; originali anche URB e funzioni HCD lifecycle. Contratto host O1/O2 ASan/UBSan passato: esecuzione DMA non-identity di controllo/interrupt, full/short/STALL/cancel/timeout, toggle, reset/status root hub, rollback e 128 cicli senza leak. UBSan alignment escluso per i pseudo-oggetti sentinella list_entry upstream, non ASan né gli altri controlli UBSan.
+
+Primo smoke UEFI UHCI passato con 171 rapporti mouse e coordinate renderizzate. La matrice finale v17 e la riproducibilità sono ancora da eseguire; le vecchie ricevute v16 non certificano la nuova ISO. Classe/enumerazione UsbInput ancora separate, SG/mapping esterni, IRQ hardware, PM, hotplug generale e core/usbhid non completi. xHCI/EHCI restano nativi. PS/2 per ultimo. Nessuna prova ASRock fisica o nuova release pubblicata.
+
 # 10.1.7 / 30B8 — development, not published
 
 Current status is machine-readable in `STATUS.json`. Every guest receipt identifies its actual ISO; older successful tests do not certify a later binary.

@@ -9,6 +9,7 @@ q=Path(__file__).resolve().parent;home=q.parents[1];root=home/'tinymacOS';sys.pa
 from retail_guest import Retail
 from linux_message_observer import observe_message
 from linux_dma_observer import observe_dma
+from linux_uhci_observer import observe_uhci
 from input_pixels import cursor
 fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v12'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
@@ -23,6 +24,7 @@ try:
  with Retail(iso,w,ev,'linux-usbmouse',live=True,launcher=root/'tools/run-input-qa.sh') as g:
   r['message_core']=observe_message(g,symbols,w);r['actual_upstream_message_control_functions_executed']=True
   if profile.startswith(('ehci','uhci','companion')):r['dma_pool']=observe_dma(g,symbols,w);r['original_dma_pool_in_native_controller_executed']=True
+  if profile.startswith(('uhci','companion')):r['whole_original_uhci_runtime']=observe_uhci(g,symbols,w)
   mice=g.req('query-mice');target=next(m for m in mice if m['name']=='QEMU HID Mouse');g.hmp('mouse_set '+str(target['index']));assert [m['name'] for m in g.req('query-mice') if m['current']]==['QEMU HID Mouse'];r['usb']=g.hmp('info usb');assert 'USB Keyboard' not in r['usb']
   def counters():
    p=w/'counters.bin';g.req('pmemsave',val=addr,size=8*len(fields),filename=str(p));return dict(zip(fields,struct.unpack('<9Q',p.read_bytes())))

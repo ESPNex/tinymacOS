@@ -2,7 +2,7 @@
 """Refresh truthful development status; this NEVER commits, uploads or publishes."""
 from pathlib import Path
 import filecmp,hashlib,json,os,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-dma-v16'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
+q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-uhci-v17'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(name):
  p=q/name;return json.loads(p.read_text()) if p.exists() else {}
@@ -11,7 +11,7 @@ def current(name):
  r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
 manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
 (q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-dma-v16-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
+other=Path('/var/tmp/tmc-10.1.7/linux-uhci-v17-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
 (q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/atkbd/psmouse/full-stack port; bounded original hid-generic/hid-input now active','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
 names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
 ports=sum(current(n) for n in names)
@@ -116,4 +116,14 @@ status['whole_original_linux_dma_pool_functions_linked']=all(any(line.endswith('
 status['linux_dma_pool_native_controller_guest_profiles_passed']=sum(current(n) and load(n).get('original_dma_pool_in_native_controller_executed',False) for n in message_guests)
 status['linux_dma_pool_iommu_supported']=False
 status['linux_dma_pool_scope']='Whole original mm/dmapool.c with real coherent/lock/attribute/devres services; EHCI/UHCI control and interrupt TDs use it, physical HCD schedulers still native; <=64 KiB coherent identity-DMA x86, no IOMMU/noncoherent port'
+uhci=load('linux-uhci-contract-result.json')
+status['whole_original_linux_uhci_host_contract_passed']=bool(uhci.get('passed')) and bool(uhci.get('sources')) and all((root/name).exists() and sha(root/name)==digest for name,digest in uhci.get('sources',{}).items())
+status['whole_original_linux_uhci_controller_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_linux_uhci_module_init','tmc_uhci_usb_hcd_submit_urb','uhci_urb_enqueue','uhci_hub_control','uhci_irq'])
+status['actual_linux_hcd_compiled_or_linked']=status['whole_original_linux_uhci_controller_linked']
+status['whole_original_linux_uhci_current_guest_profiles_passed']=sum(current(n) and bool(load(n).get('whole_original_uhci_runtime')) for n in message_guests)
+status['linux_uhci_runtime_scope']='Whole original UHCI HCD/queue/root-hub/PCI + URB/HCD lifecycle; real coherent bounce DMA, locks, timers, PCI, polling; native UsbInput class boundary remains. No hardware IRQ routing, system PM, SG/external streaming mappings, full core/usbhid or physical-board claim'
+status['linux_dma_pool_scope']='Whole original mm/dmapool.c with real coherent/lock/attribute/devres services, used by native EHCI and whole original Linux UHCI; <=64 KiB coherent identity-DMA x86, no IOMMU/noncoherent port'
+status['four_block_scope']['linux_controllers']='UHCI original whole HCD/queue/root-hub/PCI active on real polled runtime; xHCI/EHCI still native, IRQ/PM and general USB lifecycle incomplete'
+status['blocking_work'][0]='Complete original xHCI/EHCI and remaining USB core/hub/IRQ/DMA/device lifecycle; whole original UHCI is now active on polled runtime, not a complete Linux USB stack'
+status['linux_hcd_backend_scope']='Whole original Linux UHCI on polled DMA runtime feeding separate UsbInput class boundary; native xHCI/EHCI and copying Boot/generic class transport remain'
 (q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))

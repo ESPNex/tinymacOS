@@ -54,3 +54,9 @@ Gli overlay e gli header ABI sotto `workspace/webkit-tmc/` sono copie d'integraz
 [Architettura](docs/ARCHITECTURE.md) · [Dischi e TinyFS](docs/TINYFS.md) · [Validazione](docs/VALIDATION.md)
 
 Le licenze sono specifiche dei componenti: vedere `licenses/` e i file vendor. I sorgenti corrispondenti Syslinux, con patch Debian, sono nel branch `vendor/syslinux-6.04` della stessa repository.
+
+### UHCI Linux in sviluppo (10.1.7, non pubblicata)
+
+`compat/linux/uhci_runtime.c` compila senza modifiche i file Linux v6.12 `uhci-hcd.c`, `uhci-q.c`, `uhci-hub.c`, `uhci-pci.c`, header e supporto debug disabilitato secondo configurazione upstream. Gli SHA e le estrazioni complete di reset PCI/calcolo banda sono nel manifest vendor. Frame, QH/TD, banda, toggle, unlink e completamenti non sono più lo scheduler UHCI nativo. DMA coerente e pool originali conservano indirizzi CPU/bus distinti. Timer cancellabili, PCI e polling eseguono realmente le operazioni; IRQ hardware e PM di sistema non sono dichiarati implementati.
+
+Il confine di enumerazione/classe `UsbInput` resta separato: non è il port completo di USB core/hub/usbhid. SG streaming, mapping DMA esterni, hotplug generale e IOMMU non sono supportati. xHCI/EHCI rimangono nativi; class driver PS/2 per ultimi. Contratto ripetibile: `python3 ../workspace/release-10.1.7-30B8/linux-uhci-contract.py`. Il modello host percorre gli effettivi frame/QH/TD DMA; le prove QEMU osservano contatori vivi e input a schermo. Non sostituiscono una prova ASRock fisica.
