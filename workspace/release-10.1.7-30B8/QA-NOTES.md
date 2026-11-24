@@ -296,3 +296,12 @@ rewritten to describe documentation added later. The progress verifier reports
 lists the documentation delta, while still checking media and receipt hashes.
 No runtime source changed during this documentation update. Development commit
 only: no push, tag, release, installer approval or hardware PASS follows.
+
+
+## Canonical HID candidate — final optical media
+
+Source commit `28e9f95359707e84644b704ca919a05b571f82f6` connects whole original HID-core/usbhid/input/generic/quirks to the canonical USB core/hub and original xHCI/EHCI. Boot class drivers no longer bind in this mode. A CPU0-pinned kernel worker replaces IRQ dispatch; bounded initial discovery fixes loss of initial login keystrokes. Exact interrupt-OUT reports and distinct IN/OUT endpoints are implemented; tablets reach actual absolute OS events.
+
+Final ISO: 226215936 bytes, SHA-256 `427463c2e0a9ab923aa5fce82799d53edaaa8795420cd007d0c34a1a16b24584`. Final-media USB matrix 8/8 BIOS/UEFI; actual GUI install -> BIOS HDD/reboot -> same disk UEFI; installed Italian accents/euro/AltGr byte-exact hash; Control Center/UI; identity/media/notices and separate firmware Recovery BIOS/UEFI PASS. Thirteen guest network/MMU/sync/TLS/managed-thread probes use the exact final KernelCache; QA probe images are NOT release assets. Host core/HID/controller sanitizer models remain explicitly distinct from QEMU.
+
+`usbhid-validation.json`, compressed raw receipts/logs `usbhid-evidence.json.gz` and read-only `verify-usbhid.py` supersede status, not the frozen older Boot evidence. Failed scratch builds, stale-path/source test rejections and the initial login race are recorded in the new evidence. Final gates were rerun after fixes; no failed attempt was relabeled PASS. Physical hardware and general Linux runtime/device-class support remain unproven; see USBHID-PORT.md. Publish as a candidate, not as the stable 10.1.6 replacement.

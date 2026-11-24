@@ -6,7 +6,7 @@ Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e am
 
 La **10.1.7 / 30B8** ha ora una variante canonica con il collegamento **xHCI/EHCI → USB core/HCD → hub → HID-core/usbhid → hid-input/hid-generic originali Linux v6.12**. Non usa più le classi Boot nel percorso canonico. Tastiera, mouse relativo e tablet assoluto passano attraverso il medesimo modello USB, con handle opachi verso i controller e worker kernel dedicato, pinning CPU0, fuori dall’IRQ. Sono implementati control, interrupt-IN e interrupt-OUT. Il percorso precedente resta disponibile per confronto; selezionare `TMC_USB_CANONICAL=1` in compilazione.
 
-Le prove e i limiti correnti sono in [USBHID-PORT.md](tinymacOS/docs/USBHID-PORT.md). La release stabile 10.1.6 non viene sostituita dalla candidata USB. **QEMU non certifica hardware fisico**, IRQ/IOMMU/PM o compatibilità HID universale; PS/2 è escluso dal nuovo percorso. Recovery usa separatamente i driver firmware OpenCore.
+[ISO candidata USB/HID e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.7-usbhid-candidate). Le prove e i limiti correnti sono in [USBHID-PORT.md](tinymacOS/docs/USBHID-PORT.md). La release stabile 10.1.6 non viene sostituita dalla candidata USB. **QEMU non certifica hardware fisico**, IRQ/IOMMU/PM o compatibilità HID universale; PS/2 è escluso dal nuovo percorso. Recovery usa separatamente i driver firmware OpenCore.
 
 [Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 

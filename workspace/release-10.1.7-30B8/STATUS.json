@@ -1,113 +1,30 @@
 {
-  "state": "UNRELEASED / canonical USB core + controller + hub kernel integration experiment",
+  "state": "USB/HID CANDIDATE / software gates passed; publication pending",
   "requested_version": "10.1.7",
   "requested_build": "30B8",
-  "current_increment": "v19",
-  "current_validation": "v19-validation.json",
+  "current_validation": "usbhid-validation.json",
+  "source_commit": "28e9f95359707e84644b704ca919a05b571f82f6",
   "published": false,
-  "stable_release_unchanged": "10.1.6",
-  "public_main": "edbfecf54074428f02b3e76e698d8ad5c67782ba",
-  "development_iso_sha256": "9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601",
-  "development_iso_bytes": 226019328,
-  "development_build": "/var/tmp/tmc-10.1.7/linux-xhci-v19/build",
-  "source_files": 965,
-  "source_manifest_sha256": "15e2df7888e482f9b89605655b8ceb7ca8eedc1b6964062f7fea61fb7910d1dd",
-  "controller_input_increment_validated": true,
-  "source_manifest_scope": "Frozen v19 stage; not the newer canonical-ABI working tree",
-  "working_tree_delta_from_v19": {
-    "changed_existing": [
-      "compat/linux/README.md"
-    ],
-    "deleted": [],
-    "added_count": 110,
-    "working_file_count": 1075
-  },
-  "canonical_usb_abi_development": {
-    "source_bound_host_contracts_passed": true,
-    "receipt": "usbcore-canonical-host-result.json",
-    "optimizations": [
-      "O1",
-      "O2"
-    ],
-    "original_bus_binding_authorization_dynamic_ids_tested": true,
-    "kernel_linked": true,
-    "full_core_runtime_tested": true,
-    "hub_enumeration_tested": true,
-    "hub_hotplug_tested": true,
-    "usbhid_tested": false,
-    "release_gate": false,
-    "kernel_receipt": "usbcore-kernel-integration-result.json",
-    "explicit_controller_model_receipt": "usbcore-enumeration-model-result.json",
-    "explicit_controller_model_sanitized_passed": true,
-    "same_dualboot_artifact_guests_passed": 6,
-    "boot_class_drivers_only": true,
-    "old_native_class_path_inactive_in_experiment": true,
-    "kernel_build_is_opt_in": "TMC_USB_CANONICAL=1",
-    "source_snapshot_current": false,
-    "runtime_sources_match_frozen_snapshot": true,
-    "documentation_delta_from_tested_snapshot": [
-      "README.md",
-      "compat/linux/README.md",
-      "docs/ARCHITECTURE.md",
-      "docs/QUICKSTART.txt",
-      "docs/VALIDATION.md",
-      "docs/HARDWARE-TEST.md"
-    ],
-    "artifacts_match_receipt": true,
-    "limitations": [
-      "Only serialized CPU0 polled controller transport; sleeping USB work still drains from kernel input/IRQ polling context, not a complete scheduler/workqueue port",
-      "Transport accepts control and interrupt-IN only; SG/bulk/iso/interrupt-OUT rejected",
-      "Canonical input adapter exposes Boot key/mouse class paths, not the complete Linux input subsystem",
-      "Full canonical HID-core/usbhid pending; no generic tablet support in this build",
-      "Entropy ingestion hook has no kernel pool API and remains explicitly inactive; no entropy is credited",
-      "Init failure rollback, reset/clear-halt and endpoint reservation rollback need further integrated coverage",
-      "No physical IRQ/IOMMU/noncoherent/system-PM or physical ASRock proof",
-      "Final installation, Recovery firmware input, UI/layout/deletion and license/source gates remain separate"
-    ]
-  },
-  "whole_original_controllers_linked": {
-    "uhci": true,
-    "ehci": true,
-    "xhci": true
-  },
-  "current_usb_guest_profiles_passed": 30,
-  "current_usb_guest_profiles_expected": 30,
-  "current_usb_host_suites_passed": 15,
-  "current_usb_host_receipts_passed": 16,
-  "independent_reproducible_build_run": true,
-  "ps2_required": false,
-  "ps2_completion_excluded_by_user": true,
-  "requested_usb_macroblock_complete": false,
-  "native_class_enumeration_facade_remains": true,
-  "complete_linux_hcd_core_file_ported": false,
-  "complete_linux_usb_core_bus_model_ported": false,
-  "complete_linux_hub_driver_ported": false,
-  "complete_linux_hid_core_usbhid_ported": false,
-  "linux_hid_generic_and_hid_input_whole_files_active": true,
-  "identity_media_contract_passed": true,
-  "actual_opencore_media_contract_passed": true,
-  "current_installer_gate_passed": false,
-  "current_kernel_runtime_gate_passed": false,
-  "full_kernel_input_install_final_gate_passed": false,
+  "stable_release_unchanged": "10.1.6 / 30B7",
+  "canonical_hid_connection_complete": true,
+  "full_original_hid_core_usbhid_input_generic_active": true,
+  "usb_guest_matrix_passed": 8,
+  "kernel_guest_profiles_passed": 13,
+  "candidate_software_gates_passed": true,
+  "current_installer_gate_passed": true,
+  "current_kernel_runtime_gate_passed": true,
+  "current_input_italian_ui_identity_license_gates_passed": true,
+  "recovery_firmware_bios_uefi_passed": true,
+  "production_port_complete": false,
   "physical_hardware_tested": false,
-  "blocking_work": [
-    "Finish whole canonical HID core/usbhid/hid-input path; current experimental kernel uses original Boot mouse/keyboard drivers.",
-    "Complete scheduler/workqueue context, controller-init and endpoint rollback, integrated reset/clear-halt and genuine entropy-ingestion boundary before enabling this path by default.",
-    "Run final installation, separate Recovery firmware input, kernel, UI/layout/deletion and license/matching-source gates on the fully integrated artifact before release."
-  ],
-  "current_controller_runtime_scope": "Whole original UHCI/EHCI/xHCI on serialized CPU0 polling and original URB/HCD functions. Actual coherent DMA, PCI, commands, rings, event completion, bandwidth, cancellation and workers. No claim of physical IRQ routing, IOMMU, system PM or physical ASRock proof.",
-  "superspeed_validation_scope": "Original xHCI SuperSpeed EP0 and companion/ESIT contexts exercised by host hardware model; no SuperSpeed HID physical or QEMU-device proof.",
-  "history_note": "v17/v18 and older non-USB receipts are historical. Current source/ISO-bound controller/input evidence is enumerated in v19-validation.json. No release or final-stack gate follows from this milestone.",
-  "experimental_canonical_increment": {
-    "receipt": "usbcore-kernel-integration-result.json",
-    "verified": true,
-    "iso_sha256": "101efdd502151905b7976655c341532c805626dd47c49bec0ec8d5ba90a6cff0",
-    "build": "/var/tmp/tmc-10.1.7/linux-usbcore-live/build",
-    "guest_matrix": [
-      "BIOS/UEFI xHCI two mice + keyboard",
-      "BIOS/UEFI EHCI mouse + keyboard",
-      "BIOS/UEFI xHCI external hub + mouse + keyboard"
-    ],
-    "scope": "Original USB core/HCD/hub + original xHCI/EHCI + original Boot classes; NOT full usbhid"
-  }
+  "ps2_required": false,
+  "legacy_boot_receipts_preserved": true,
+  "iso_sha256": "427463c2e0a9ab923aa5fce82799d53edaaa8795420cd007d0c34a1a16b24584",
+  "limitations": [
+    "Serialized CPU0 polling, fail-closed contended Linux compatibility locks; not a general Linux scheduler/locking port.",
+    "No bulk/SG/iso bridge, HIDRAW/HIDDEV/BPF or universal multitouch/gamepad APIs.",
+    "Broader init/endpoint rollback and integrated reset failure injection remains; entropy hook credits none.",
+    "No physical IRQ/IOMMU/noncoherent-DMA/system-PM or physical hardware certification.",
+    "Optical BIOS/UEFI ISO only, not USB-DD hybrid."
+  ]
 }

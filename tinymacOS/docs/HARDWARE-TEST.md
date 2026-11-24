@@ -12,7 +12,7 @@ L'esperimento verificato usa il supporto **ottico BIOS/UEFI**:
 - staging locale: `/var/tmp/tmc-10.1.7/linux-usbhid-live/tinymacOS-10.1.7-usbhid.iso`;
 - provenienza: `workspace/release-10.1.7-30B8/usbhid-validation.json`.
 
-Questo percorso locale non è un link pubblico né un asset pubblicato. Il download «latest» continua a indicare 10.1.6 / 30B7. Una build ricompilata dopo modifiche può avere hash diverso e richiede proprie verifiche; non eredita i PASS dell'immagine sopra.
+La [candidata USB/HID](https://github.com/ESPNex/tinymacOS/releases/tag/v10.1.7-usbhid-candidate) è separata dalla stabile. Il download «latest» continua a indicare 10.1.6 / 30B7. Una build ricompilata dopo modifiche può avere hash diverso e richiede proprie verifiche; non eredita i PASS dell'immagine sopra.
 
 **Non è una ISO USB-DD ibrida.** Non scriverla con `dd` su una chiavetta aspettandoti un avvio supportato. Rufus, Ventoy, copia dei file su FAT e catene di boot alternative non sono stati qualificati. Per il primo tentativo usare un DVD masterizzato come **immagine**, non come semplice file, e un lettore ottico avviabile riconosciuto dal firmware. Anche un lettore ottico USB introduce una combinazione firmware/controller non ancora verificata.
 

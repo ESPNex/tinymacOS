@@ -86,4 +86,4 @@ La nuova matrice copre 8 casi sullo stesso ISO dualboot: BIOS/UEFI × xHCI con d
 
 Limiti: CPU0 serializzata a polling su worker kernel dedicato (non IRQ); trasporto control/interrupt-IN/interrupt-OUT, senza bulk/SG/iso; i lock canonici rilevano e arrestano contesa/ricorsione non supportata, non offrono semantica Linux arbitraria; rollback/reset integrati hanno copertura limitata; nessun collaudo fisico, IOMMU, IRQ hardware o PM di sistema certificato. L'hook d'ingestione entropia non dispone ancora di un pool kernel collegato e non accredita entropia.
 
-[Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.6 / 30B7 resta l'ultima release pubblicata; questo è un commit di sviluppo, non una release.
+[Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.6 / 30B7 resta l'ultima release pubblicata; la candidata USB/HID è una pre-release distinta, non un aggiornamento della stabile.

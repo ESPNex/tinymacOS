@@ -6,6 +6,12 @@ from pathlib import Path
 import hashlib,json
 q=Path(__file__).resolve().parent
 root=q.parents[1]/'tinymacOS'
+# A frozen Boot milestone must never overwrite the later HID candidate status.
+if (q/'usbhid-validation.json').exists():
+ import subprocess,sys
+ subprocess.run([sys.executable,str(q/'verify-usbhid.py')],check=True)
+ print('Historical Boot receipts retained; current HID status left unchanged.')
+ raise SystemExit(0)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
 def load(n):return json.loads((q/n).read_text())
 r=load('usbcore-kernel-integration-result.json')

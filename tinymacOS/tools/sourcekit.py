@@ -3,7 +3,7 @@
 import sys,zipfile
 from media_path import external
 from pathlib import Path
-root=Path(__file__).resolve().parents[1];out=external(sys.argv[1]);out.parent.mkdir(parents=True,exist_ok=True);dirs='arch assets boot compat crypto desktop docs drivers fs include kernel licenses recovery storage tests tools userspace vendor'.split();files=[root/n for n in ('README.md','build.sh','run.sh')]
+root=Path(__file__).resolve().parents[1];out=external(sys.argv[1]);out.parent.mkdir(parents=True,exist_ok=True);dirs='arch assets boot compat crypto desktop docs drivers fs include kernel licenses net recovery storage tests tools userspace vendor'.split();files=[root/n for n in ('README.md','build.sh','run.sh')]
 for n in dirs:
  for p in sorted((root/n).rglob('*')):
     if p.is_file() and not set(p.parts)&{'__pycache__','storico','evidence'} and p.suffix not in ('.pyc','.orig'):
