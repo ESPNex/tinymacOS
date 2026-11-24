@@ -1,6 +1,11 @@
+#ifdef TMC_CONTROLLER_DMA_TEST
+#include "../tests/controller_dma_support.h"
+#else
 #include "../kernel/k.h"
+#endif
 #include "usbhost.h"
 #include "linux_usb.h"
+#include "linux_dma_pool.h"
 #include "linux_ehci.h"
 /* Native EHCI controller/scheduler with the upstream Linux qTD DMA primitive.
  * This is not yet the complete Linux EHCI HCD or general USB core.
@@ -20,19 +25,46 @@ struct ALIGNED(128) Eqh {u32 link,ep,cap,current,next,alt,token,buf[5],hi[5];};
 struct Edev {
     UsbInput u;
     struct Eqh qh[USB_INPUT_INTERFACES];
-    struct Etd td[USB_INPUT_INTERFACES];
+    struct Etd *td;u64 td_dma;
     unsigned port;
 };
 static struct Ehci {
     u32 frames[1024] ALIGNED(4096);
     struct Eqh anchors[10],async,control;
-    struct Etd td[ET];
+    struct Etd *td;u64 td_dma;
+    TmcLinuxDmaDevice *dma_device;
+    TmcLinuxDmaPool *control_pool,*pipe_pool;
     u8 setup[8] ALIGNED(4096);
     struct Edev dev[EN];
     volatile u32 *op;
     unsigned active,used,ports;
 } ehcis[EC];
 static unsigned nehci;
+/* Whole original Linux dmapool.c supplies real DMA descriptors. The physical
+ * controller/scheduler is still native. CPU pointers and bus handles are kept
+ * separate even on the present identity-DMA target. Only release while halted. */
+static void ehci_dma_release(struct Ehci *h)
+{
+ for(unsigned i=0;i<EN;i++)if(h->dev[i].td){(void)tmc_linux_dma_pool_free(h->pipe_pool,h->dev[i].td,h->dev[i].td_dma);h->dev[i].td=0;}
+ if(h->td){(void)tmc_linux_dma_pool_free(h->control_pool,h->td,h->td_dma);h->td=0;}
+ if(h->pipe_pool){(void)tmc_linux_dma_pool_destroy(h->pipe_pool);h->pipe_pool=0;}
+ if(h->control_pool){(void)tmc_linux_dma_pool_destroy(h->control_pool);h->control_pool=0;}
+ if(h->dma_device){(void)tmc_linux_dma_device_destroy(h->dma_device);h->dma_device=0;}
+}
+static int ehci_dma_init(struct Ehci *h)
+{
+ h->dma_device=tmc_linux_dma_device_create("ehci-native",0xffffffffull);if(!h->dma_device)return 0;
+ h->control_pool=tmc_linux_dma_pool_create(h->dma_device,"ehci-control-td",sizeof(struct Etd)*ET,sizeof(struct Etd),0);
+ h->pipe_pool=tmc_linux_dma_pool_create(h->dma_device,"ehci-interrupt-td",sizeof(struct Etd)*USB_INPUT_INTERFACES,sizeof(struct Etd),4096);
+ if(!h->control_pool||!h->pipe_pool)goto fail;
+ h->td=tmc_linux_dma_pool_alloc(h->control_pool,&h->td_dma);if(!h->td)goto fail;return 1;
+fail:ehci_dma_release(h);return 0;
+}
+static int ehci_pipe_dma(struct Ehci *h,struct Edev *d)
+{
+ if(d->td)return 1;d->td=tmc_linux_dma_pool_alloc(h->pipe_pool,&d->td_dma);return d->td!=0;
+}
+
 static u32 epchar(UsbInput *u,unsigned ep,unsigned packet)
 {
     unsigned speed=u->speed==3?2:u->speed==2?1:0;
@@ -75,10 +107,10 @@ static int econtrol(UsbInput *u,int rt,int rq,int val,int ix,int n)
         off+=z;count++;toggle^=1;}
     unsigned status=count++;
     if(!etd(h->td+status,0,0,in?0:1,1,u->max_packet0))return -1;
-    for(unsigned i=0;i+1<count;i++){h->td[i].next=(u32)(u64)(h->td+i+1);h->td[i].alt=(u32)(u64)(h->td+status);}
+    for(unsigned i=0;i+1<count;i++){h->td[i].next=(u32)(h->td_dma+(i+1)*sizeof *h->td);h->td[i].alt=(u32)(h->td_dma+status*sizeof *h->td);}
     memset(&h->control,0,sizeof h->control);h->control.link=(u32)(u64)&h->async|EQH;
     h->control.ep=epchar(u,0,u->max_packet0);h->control.cap=epcap(u,0);
-    h->control.next=(u32)(u64)h->td;h->control.alt=EEND;
+    h->control.next=(u32)h->td_dma;h->control.alt=EEND;
     h->async.link=(u32)(u64)&h->control|EQH;async_start(h);
     int result=-1;
     for(unsigned wait=0;wait<300;wait++) {
@@ -110,11 +142,11 @@ static void epipe_arm(struct Edev *d,unsigned j)
     memset(p->report,0,sizeof p->report);
     if(!etd(t,(u64)p->report,p->packet,1,p->toggle,p->packet)){p->armed=0;return;}
     q->current=0;q->alt=EEND;q->token&=1u<<31;memset(q->buf,0,sizeof q->buf);memset(q->hi,0,sizeof q->hi);
-    asm volatile("mfence":::"memory");q->next=(u32)(u64)t;p->armed=1;
+    asm volatile("mfence":::"memory");q->next=(u32)(d->td_dma+j*sizeof *d->td);p->armed=1;
 }
 static void install_pipes(struct Ehci *h,struct Edev *d)
 {
-    if(!periodic_stop(h))return; /* no active QH overlay writes */
+    if(!ehci_pipe_dma(h,d)){d->u.npipe=0;return;}if(!periodic_stop(h))return; /* no active QH overlay writes */
     for(unsigned j=0;j<d->u.npipe;j++) {
         UsbInputPipe *p=d->u.pipe+j;struct Eqh *q=d->qh+j;
         unsigned interval=d->u.speed==3?(p->interval>4?1u<<MIN(p->interval-4,9u):1):p->interval;
@@ -128,10 +160,10 @@ static void install_pipes(struct Ehci *h,struct Edev *d)
 static void eattach(struct Ehci *,unsigned,unsigned,unsigned,unsigned,unsigned);
 static void hub_children(struct Ehci *h,struct Edev *hub,unsigned depth)
 {
-    UsbInput *u=&hub->u;if(depth>=3||econtrol(u,0xa0,6,0x2900,0,9)||u->ctrl_bytes<7)return;
+    UsbInput *u=&hub->u;if(depth>=3||usb_input_control(u,0xa0,6,0x2900,0,u->desc,9)<7)return;
     if(u->desc[0]<7||u->desc[1]!=0x29)return;
     unsigned ports=MIN(u->desc[2],15u),delay=MAX(20u,(unsigned)u->desc[5]*2);
-    for(unsigned p=1;p<=ports;p++)(void)econtrol(u,0x23,3,8,p,0);
+    for(unsigned p=1;p<=ports;p++)(void)usb_input_control(u,0x23,3,8,p,0,0);
     usb_delay_ms(delay);
     for(unsigned p=1;p<=ports&&h->used<EN;p++) {
         unsigned s;
@@ -143,6 +175,7 @@ static void hub_children(struct Ehci *h,struct Edev *hub,unsigned depth)
 static void eattach(struct Ehci *h,unsigned port,unsigned speed,unsigned hub,unsigned hub_port,unsigned depth)
 {
     if(h->used>=EN)return;struct Edev *d=h->dev+h->used++;d->port=port;
+    if(!ehci_pipe_dma(h,d))return; /* allocate before class attachment */
     d->u.host=h;d->u.control=econtrol;d->u.speed=speed;d->u.hub=hub;d->u.hub_port=hub_port;
     int kind=usb_input_enumerate(&d->u,h->used);
     if(kind==1)install_pipes(h,d);else if(kind==2)hub_children(h,d,depth);
@@ -150,6 +183,7 @@ static void eattach(struct Ehci *h,unsigned port,unsigned speed,unsigned hub,uns
 static void econtroller(u32 pci)
 {
     struct Ehci *h=ehcis+nehci;volatile u32 *c=pci_mmio(pci,0);if(!c)return;
+    nehci++; /* reserve attempted slot: never reuse uncertain live DMA */
     unsigned eecp=(c[2]>>8)&255;
     for(unsigned n=0;eecp>=0x40&&n<32;n++) {
         u32 leg=pci_reg(pci,eecp);
@@ -164,6 +198,7 @@ static void econtroller(u32 pci)
     h->op=(void *)((u8 *)c+(c[0]&255));volatile u32 *op=h->op;
     op[0]&=~1u;if(!ewait(op+1,1u<<12,1,100))return;
     op[0]=2;if(!ewait(op,2,0,100))return;
+    if(!ehci_dma_init(h))return; /* reset completed: no descriptor is live yet */
     for(unsigned l=0;l<10;l++) {
         struct Eqh *q=h->anchors+l;q->link=l?(u32)(u64)(h->anchors+l-1)|EQH:EEND;
         q->ep=2u<<12|64u<<16;q->next=q->alt=EEND;q->token=EHALT;
@@ -187,7 +222,7 @@ static void econtroller(u32 pci)
         if(v&4)eattach(h,p+1,3,0,0,0);
         else *s=(v&~0x2au)|1u<<13;
     }
-    h->active=1;nehci++;device_add("USB EHCI 2.0 controller","usb",0);
+    h->active=1;device_add("USB EHCI 2.0 controller","usb",0);
 }
 void ehci_init(void)
 {
@@ -212,7 +247,7 @@ void ehci_poll(void)
             struct Edev *d=h->dev+i;UsbInputPipe *p=d->u.pipe+j;if(!p->armed)continue;
             if(p->armed<0) {
                 if(ticks<p->retry_at)continue;p->armed=0;
-                if(!econtrol(&d->u,2,1,0,0x80|p->ep,0)){p->toggle=0;d->qh[j].token=0;epipe_arm(d,j);}
+                if(usb_input_control(&d->u,2,1,0,0x80|p->ep,0,0)>=0){p->toggle=0;d->qh[j].token=0;epipe_arm(d,j);}
                 continue;
             }
             u32 st=*(volatile u32 *)&d->td[j].token;if(st&EACTIVE)continue;

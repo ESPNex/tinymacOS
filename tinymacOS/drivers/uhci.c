@@ -1,6 +1,11 @@
+#ifdef TMC_CONTROLLER_DMA_TEST
+#include "../tests/controller_dma_support.h"
+#else
 #include "../kernel/k.h"
+#endif
 #include "usbhost.h"
 #include "linux_usb.h"
+#include "linux_dma_pool.h"
 /* Native UHCI companions: low/full-speed HID from EHCI-owned USB2 ports,
  * plus standalone UHCI root ports. Periodic frame tree and independent
  * control QH; no reliance on USB-legacy SMM emulation. */
@@ -12,16 +17,43 @@
 #define UERROR ((1u<<22)|(1u<<21)|(1u<<20)|(1u<<18)|(1u<<17))
 struct ALIGNED(16) Utd {u32 link,status,token,buffer;};
 struct ALIGNED(16) Uqh {u32 link,element,pad[2];};
-struct Udev {UsbInput u;struct Uqh qh[USB_INPUT_INTERFACES];struct Utd td[USB_INPUT_INTERFACES];};
+struct Udev {UsbInput u;struct Uqh qh[USB_INPUT_INTERFACES];struct Utd *td;u64 td_dma;};
 static struct Uhci {
     u32 frames[1024] ALIGNED(4096);
     struct Uqh anchors[10],ctrl;
-    struct Utd td[UT];
+    struct Utd *td;u64 td_dma;
+    TmcLinuxDmaDevice *dma_device;
+    TmcLinuxDmaPool *control_pool,*pipe_pool;
     u8 setup[8] ALIGNED(4096);
     struct Udev dev[USB_INPUT_DEVICES];
     unsigned used,active;u16 io;
 } uhcis[UC];
 static unsigned nuhci;
+/* Whole original Linux dmapool.c supplies real DMA descriptors. The physical
+ * controller/scheduler is still native. CPU pointers and bus handles are kept
+ * separate even on the present identity-DMA target. Only release while halted. */
+static void uhci_dma_release(struct Uhci *h)
+{
+ for(unsigned i=0;i<USB_INPUT_DEVICES;i++)if(h->dev[i].td){(void)tmc_linux_dma_pool_free(h->pipe_pool,h->dev[i].td,h->dev[i].td_dma);h->dev[i].td=0;}
+ if(h->td){(void)tmc_linux_dma_pool_free(h->control_pool,h->td,h->td_dma);h->td=0;}
+ if(h->pipe_pool){(void)tmc_linux_dma_pool_destroy(h->pipe_pool);h->pipe_pool=0;}
+ if(h->control_pool){(void)tmc_linux_dma_pool_destroy(h->control_pool);h->control_pool=0;}
+ if(h->dma_device){(void)tmc_linux_dma_device_destroy(h->dma_device);h->dma_device=0;}
+}
+static int uhci_dma_init(struct Uhci *h)
+{
+ h->dma_device=tmc_linux_dma_device_create("uhci-native",0xffffffffull);if(!h->dma_device)return 0;
+ h->control_pool=tmc_linux_dma_pool_create(h->dma_device,"uhci-control-td",sizeof(struct Utd)*UT,sizeof(struct Utd),0);
+ h->pipe_pool=tmc_linux_dma_pool_create(h->dma_device,"uhci-interrupt-td",sizeof(struct Utd)*USB_INPUT_INTERFACES,sizeof(struct Utd),4096);
+ if(!h->control_pool||!h->pipe_pool)goto fail;
+ h->td=tmc_linux_dma_pool_alloc(h->control_pool,&h->td_dma);if(!h->td)goto fail;return 1;
+fail:uhci_dma_release(h);return 0;
+}
+static int uhci_pipe_dma(struct Uhci *h,struct Udev *d)
+{
+ if(d->td)return 1;d->td=tmc_linux_dma_pool_alloc(h->pipe_pool,&d->td_dma);return d->td!=0;
+}
+
 static int ustop(struct Uhci *h)
 {
     outw(h->io,inw(h->io)&~1u);
@@ -42,8 +74,8 @@ static int ucontrol(UsbInput *u,int rt,int rq,int val,int ix,int n)
     utd(h->td,(u64)h->setup,8,0x2d,u,0,0);
     while(off<(unsigned)n){unsigned z=MIN((unsigned)n-off,u->max_packet0);utd(h->td+count,(u64)u->desc+off,z,in?0x69:0xe1,u,0,toggle);off+=z;toggle^=1;count++;}
     unsigned status=count++;utd(h->td+status,0,0,in?0xe1:0x69,u,0,1);
-    for(unsigned i=0;i+1<count;i++)h->td[i].link=(u32)(u64)(h->td+i+1)|4;
-    h->ctrl.element=(u32)(u64)h->td;ustart(h);int result=-1,short_done=0;
+    for(unsigned i=0;i+1<count;i++)h->td[i].link=(u32)(h->td_dma+(i+1)*sizeof *h->td)|4;
+    h->ctrl.element=(u32)h->td_dma;ustart(h);int result=-1,short_done=0;
     for(unsigned wait=0;wait<300;wait++) {
         asm volatile("lfence":::"memory");u32 st=*(volatile u32 *)&h->td[status].status;
         if(!(st&UACTIVE)){result=st&UERROR?(st&1u<<22?-2:-1):0;break;}
@@ -56,7 +88,7 @@ static int ucontrol(UsbInput *u,int rt,int rq,int val,int ix,int n)
         }
         if(failed)break;
         if(short_packet&&!short_done) {
-            if(!ustop(h))return -1;h->ctrl.element=(u32)(u64)(h->td+status);short_done=1;ustart(h);
+            if(!ustop(h))return -1;h->ctrl.element=(u32)(h->td_dma+status*sizeof *h->td);short_done=1;ustart(h);
         }
         usb_delay_ms(1);
     }
@@ -71,10 +103,11 @@ static void upipe_arm(struct Udev *d,unsigned j)
 {
     UsbInputPipe *p=d->u.pipe+j;memset(p->report,0,sizeof p->report);
     utd(d->td+j,(u64)p->report,p->packet,0x69,&d->u,p->ep,p->toggle);
-    asm volatile("mfence":::"memory");d->qh[j].element=(u32)(u64)(d->td+j);p->armed=1;
+    asm volatile("mfence":::"memory");d->qh[j].element=(u32)(d->td_dma+j*sizeof *d->td);p->armed=1;
 }
 static void upipes(struct Uhci *h,struct Udev *d)
 {
+    if(!uhci_pipe_dma(h,d)){d->u.npipe=0;return;}
     for(unsigned j=0;j<d->u.npipe;j++) {
         UsbInputPipe *p=d->u.pipe+j;unsigned l=0;
         while(l<9&&(2u<<l)<=p->interval)l++;
@@ -85,13 +118,14 @@ static void upipes(struct Uhci *h,struct Udev *d)
 static void ucontroller(u32 pci)
 {
     u32 bar=pci_reg(pci,0x20);if(!(bar&1)||!(bar&0xffe0))return;
-    struct Uhci *h=uhcis+nuhci;h->io=bar&0xffe0;
+    struct Uhci *h=uhcis+nuhci++;h->io=bar&0xffe0; /* attempted slots never reused while DMA state is uncertain */
     outl(0xcf8,pci|4);outw(0xcfc,pci_reg(pci,4)|5|0x400);
     /* Disable chipset USB legacy/SMM traps before claiming the controller. */
     outl(0xcf8,pci|0xc0);outw(0xcfc,0x8f00);
     outw(h->io,0);usb_delay_ms(2);outw(h->io,2);usb_delay_ms(10);
     if(inw(h->io)&2)return;
     outw(h->io+4,0);outw(h->io+6,0);outb(h->io+12,64);
+    if(!uhci_dma_init(h))return; /* controller reset and halted */
     h->ctrl.link=h->ctrl.element=UTERM;
     for(unsigned l=0;l<10;l++){h->anchors[l].link=l?(u32)(u64)(h->anchors+l-1)|UQH:(u32)(u64)&h->ctrl|UQH;h->anchors[l].element=UTERM;}
     for(unsigned f=0;f<1024;f++){unsigned l=0;if(!f)l=9;else while(l<9&&!(f&(1u<<l)))l++;h->frames[f]=(u32)(u64)(h->anchors+l)|UQH;}
@@ -101,10 +135,11 @@ static void ucontroller(u32 pci)
         outw(reg,(v&~0xau)|0x200);usb_delay_ms(55);outw(reg,inw(reg)&~0x20au);usb_delay_ms(12);
         v=inw(reg);outw(reg,(v&~0xau)|4);usb_delay_ms(10);v=inw(reg);
         if(!(v&1)||!(v&4))continue;
-        struct Udev *d=h->dev+h->used++;d->u.host=h;d->u.control=ucontrol;d->u.speed=v&0x100?2:1;
+        struct Udev *d=h->dev+h->used++;if(!uhci_pipe_dma(h,d))continue; /* no class attach on DMA failure */
+        d->u.host=h;d->u.control=ucontrol;d->u.speed=v&0x100?2:1;
         if(usb_input_enumerate(&d->u,h->used)==1)upipes(h,d);
     }
-    h->active=1;nuhci++;device_add("USB UHCI companion controller","usb",0);
+    h->active=1;device_add("USB UHCI companion controller","usb",0);
 }
 void uhci_init(void)
 {
@@ -118,7 +153,7 @@ void uhci_poll(void)
             struct Udev *d=h->dev+i;UsbInputPipe *p=d->u.pipe+j;if(!p->armed)continue;
             if(p->armed<0) {
                 if(ticks<p->retry_at)continue;p->armed=0;
-                if(!ucontrol(&d->u,2,1,0,0x80|p->ep,0)){p->toggle=0;upipe_arm(d,j);}
+                if(usb_input_control(&d->u,2,1,0,0x80|p->ep,0,0)>=0){p->toggle=0;upipe_arm(d,j);}
                 continue;
             }
             u32 st=*(volatile u32 *)&d->td[j].status;if(st&UACTIVE)continue;p->armed=0;

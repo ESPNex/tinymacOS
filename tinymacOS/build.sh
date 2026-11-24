@@ -47,6 +47,9 @@ LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/l
 for f in arch/*.S arch/*.c kernel/*.c drivers/*.c fs/*.c storage/*.c crypto/*.c "${LWIP[@]}";do o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Inet/include -Inet/lwip/include -c "$f" -o "$D/$o";KOBJ+=("$o");done
 # Real pinned upstream Linux Boot mouse/keyboard + implemented USB/input compatibility.
 # Native HCDs still own controllers/DMA and feed the interrupt-URB adapter.
+# Whole original Linux DMA pool allocator uses its own private kernel ABI.
+gcc "${C[@]}" -fno-pie -Icompat/linux/dma-include -Wno-unused-parameter -c compat/linux/dma_pool.c -o "$D/k-linux-dma-pool.o"
+KOBJ+=(k-linux-dma-pool.o)
 for f in compat/linux/ps2_protocol.c compat/linux/ps2_input.c compat/linux/psmouse_input.c compat/linux/usb_config.c compat/linux/usb_hub.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c;do
  o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Icompat/linux/include -Wno-unused-parameter -c "$f" -o "$D/$o";KOBJ+=("$o");done
 # driver kernel extensions (ELF relocatables loaded from /System/Library/Extensions)

@@ -116,6 +116,11 @@
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/message.c",
       "sha256": "6ba31eeacd7d3cff93bff40f0f8b83d94ee381b3a18244b0e93edf808a91d831",
       "license": "GPL-2.0-only"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/dmapool.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/mm/dmapool.c",
+      "sha256": "be3b955c81490569dc088c23ddf8c55b80380f094d80352c9e5d11fa98c182d2"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",

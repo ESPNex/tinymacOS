@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "scope": "Whole byte-exact original Linux v6.12 mm/dmapool.c with real coherent allocation, locks, registered original read attribute and managed resources; actual EHCI/UHCI TD consumers preserve CPU/bus distinction. Physical schedulers remain native",
+  "whole_original_dma_pool_file": true,
+  "full_linux_hcd": false,
+  "iommu_supported": false,
+  "physical_hardware_tested": false,
+  "sources": {
+    "compat/linux/dma_pool.c": "75643a19855ea9731d5b3787ff5e669b605af0f9a4bde9f905b99e167a3a4d4d",
+    "include/linux_dma_pool.h": "133040df485ef7ceb423954597537fa43a7d5ff2d70559bc8ef17e899cb2d136",
+    "drivers/linux_dma.c": "f34ab95f1b1f57396dad9974d1fbbea02f19045625e27750cb2b281477208fe2",
+    "drivers/ehci.c": "7693bf75845bbde1dc401915476dbe099a482a92b9b2439ce06ae01e65c33c93",
+    "drivers/uhci.c": "0bd17e574620f3f7fb1b73dffee1a3bab40da0a95ad498abfc23506cc32d4c28",
+    "drivers/linux_ehci_qtd.c": "ffbd09ed7ae5b9da0c6ea479319764777b7c2c75d4d1f5f320908561af2f3831",
+    "include/linux_ehci.h": "29485303f18050f79d64863044b3dd3c95284ba634fd34dfaa215fe6ef60a1ee",
+    "include/usbhost.h": "a8223db8bd5bdd21eb3801f23d32864dc61a4c026c93e85fa3a69e04d82d7e2b",
+    "tests/linux_dma_pool.c": "cbd8ca82d9711bd3230e3d6c504cadd2146024f6290c9916dfecc893c904a0d3",
+    "tests/linux_controller_dma.c": "fb1acca60878b0960bddbaa9f416fe411dbd41e19948d6881dbd234f8dc3d1b0",
+    "tests/linux_dma_native.c": "04d74095a1f187628d2e684d8e349025674c17f956e4b9aef26b24b8d6675d66",
+    "tests/controller_dma_support.h": "4e93d342d474db6f667950ac81fe7b6fd3509210b327488601eb6c9656f6ab2a",
+    "vendor/linux-v6.12/dmapool.c": "be3b955c81490569dc088c23ddf8c55b80380f094d80352c9e5d11fa98c182d2",
+    "vendor/linux-v6.12/manifest.json": "abd7eacbde936267b84de55c1f5fd35db4815c5bfa110da147e2ff02f6b5e4e8",
+    "build.sh": "41201063a097a831c9a31490167299e9e295e0ba30cd1d71cac4a17ae3f82901",
+    "tools/linux-source-contract.py": "cbc7597e4f2889e37c11fa16e0b58b8710245e0f1b7d416f642897e5dc90f178",
+    "compat/linux/dma-include/linux/device.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/dma-mapping.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/dmapool.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/export.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/kernel.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/list.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/mutex.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/poison.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/sched.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/sched/mm.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/slab.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/spinlock.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/stat.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/string.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/types.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/linux/wait.h": "75272bccd38af44d2a576c7c720f75d72e16d54a2f4648286b573a1213bb2ab5",
+    "compat/linux/dma-include/tmc_dma_compat.h": "3a0a7ef42ebac5aabcc2f2caa99c1e1de8ec2fbc1390ffb2dd92a4a77175bd35"
+  },
+  "runs": [
+    {
+      "component": "pool",
+      "optimization": "-O1",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS whole original Linux v6.12 mm/dmapool.c: real independent CPU/bus mappings, 260-block multi-page alignment/boundaries, zeroing, boundary holes, >page control chains, busy teardown/invalid-free protection, registered original attribute, full managed devres cleanup, every allocation-failure rollback, DMA-mask rejection, original poison checks, four-thread 8000 allocations and 1024 leak-free lifecycles; NOT a complete Linux HCD\n"
+    },
+    {
+      "component": "controller",
+      "optimization": "-O1",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS whole original Linux v6.12 mm/dmapool.c: real independent CPU/bus mappings, 260-block multi-page alignment/boundaries, zeroing, boundary holes, >page control chains, busy teardown/invalid-free protection, registered original attribute, full managed devres cleanup, every allocation-failure rollback, DMA-mask rejection, original poison checks, four-thread 8000 allocations and 1024 leak-free lifecycles; NOT a complete Linux HCD\nPASS actual native EHCI/UHCI descriptor allocation/rearm/rollback uses whole original Linux dmapool.c: all 8 devices x 4 endpoints, independent non-identity bus handles in hardware links, 128 complete lifetimes and all DMA setup/expansion failures; physical schedulers still native, no full Linux HCD claim\n"
+    },
+    {
+      "component": "native",
+      "optimization": "-O1",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS actual native coherent-DMA backend: 1024 aligned/page-order/zeroed low-32-bit allocations, 1..65536 bytes, exact heap-base release, heap failure and high-address rejection without leak; identity-DMA x86 only, not IOMMU/noncoherent mapping\n"
+    },
+    {
+      "component": "pool",
+      "optimization": "-O2",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS whole original Linux v6.12 mm/dmapool.c: real independent CPU/bus mappings, 260-block multi-page alignment/boundaries, zeroing, boundary holes, >page control chains, busy teardown/invalid-free protection, registered original attribute, full managed devres cleanup, every allocation-failure rollback, DMA-mask rejection, original poison checks, four-thread 8000 allocations and 1024 leak-free lifecycles; NOT a complete Linux HCD\n"
+    },
+    {
+      "component": "controller",
+      "optimization": "-O2",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS whole original Linux v6.12 mm/dmapool.c: real independent CPU/bus mappings, 260-block multi-page alignment/boundaries, zeroing, boundary holes, >page control chains, busy teardown/invalid-free protection, registered original attribute, full managed devres cleanup, every allocation-failure rollback, DMA-mask rejection, original poison checks, four-thread 8000 allocations and 1024 leak-free lifecycles; NOT a complete Linux HCD\nPASS actual native EHCI/UHCI descriptor allocation/rearm/rollback uses whole original Linux dmapool.c: all 8 devices x 4 endpoints, independent non-identity bus handles in hardware links, 128 complete lifetimes and all DMA setup/expansion failures; physical schedulers still native, no full Linux HCD claim\n"
+    },
+    {
+      "component": "native",
+      "optimization": "-O2",
+      "sanitizers": [
+        "address",
+        "undefined"
+      ],
+      "passed": true,
+      "stdout": "PASS actual native coherent-DMA backend: 1024 aligned/page-order/zeroed low-32-bit allocations, 1..65536 bytes, exact heap-base release, heap failure and high-address rejection without leak; identity-DMA x86 only, not IOMMU/noncoherent mapping\n"
+    }
+  ]
+}
