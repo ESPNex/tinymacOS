@@ -3,6 +3,7 @@
 #include "base.h"
 typedef struct {
     unsigned iface,proto,ep,packet,interval,report_length;
+    unsigned burst,mult,bytes_per_interval;
 } HidInterface;
 /* Supported alternate-zero HID interfaces, one interrupt-IN endpoint each.
  * Protocol 1=boot keyboard, 2=boot mouse, 3=validated report pointer candidate.

@@ -55,8 +55,33 @@ Gli overlay e gli header ABI sotto `workspace/webkit-tmc/` sono copie d'integraz
 
 Le licenze sono specifiche dei componenti: vedere `licenses/` e i file vendor. I sorgenti corrispondenti Syslinux, con patch Debian, sono nel branch `vendor/syslinux-6.04` della stessa repository.
 
-### UHCI Linux in sviluppo (10.1.7, non pubblicata)
+## USB Linux: percorso predefinito e percorso canonico sperimentale
 
-`compat/linux/uhci_runtime.c` compila senza modifiche i file Linux v6.12 `uhci-hcd.c`, `uhci-q.c`, `uhci-hub.c`, `uhci-pci.c`, header e supporto debug disabilitato secondo configurazione upstream. Gli SHA e le estrazioni complete di reset PCI/calcolo banda sono nel manifest vendor. Frame, QH/TD, banda, toggle, unlink e completamenti non sono più lo scheduler UHCI nativo. DMA coerente e pool originali conservano indirizzi CPU/bus distinti. Timer cancellabili, PCI e polling eseguono realmente le operazioni; IRQ hardware e PM di sistema non sono dichiarati implementati.
+I controller UHCI/EHCI/xHCI utilizzano ora sorgenti originali Linux v6.12, con runtime privati e DMA/polling implementati. La build predefinita mantiene il confine di enumerazione/classe `UsbInput`; non equivale al port completo di USB core/hub/usbhid.
 
-Il confine di enumerazione/classe `UsbInput` resta separato: non è il port completo di USB core/hub/usbhid. SG streaming, mapping DMA esterni, hotplug generale e IOMMU non sono supportati. xHCI/EHCI rimangono nativi; class driver PS/2 per ultimi. Contratto ripetibile: `python3 ../workspace/release-10.1.7-30B8/linux-uhci-contract.py`. Il modello host percorre gli effettivi frame/QH/TD DMA; le prove QEMU osservano contatori vivi e input a schermo. Non sostituiscono una prova ASRock fisica.
+Per compilare il percorso canonico **xHCI/EHCI + core/HCD/hub Linux + Boot mouse/tastiera**, dalla directory `tinymacOS/` e con i prerequisiti già predisposti:
+
+```sh
+export TMC_BUILD=/var/tmp/tmc-usbcore-test/build
+TMC_USB_CANONICAL=1 bash build.sh
+```
+
+La selezione avviene in compilazione: non basta cambiare una preferenza su una ISO precedente. I simboli dei servizi canonici sono isolati e un'allowlist impedisce collegamenti involontari agli ABI privati. Il vecchio percorso di classe non viene avviato in questa modalità; PS/2 non è attivato dal percorso canonico.
+
+Questo esperimento **non collega ancora il completo HID-core/usbhid**. Sono attivi i driver Boot originali `usbkbd`/`usbmouse`, non tablet/generic HID universale. Usare `tools/run-input-qa.sh` con `TMC_TEST_INPUT=xhci-two-mice-kbd`, `ehci-kbd` o `xhci-hub-kbd`, non il tablet del launcher predefinito.
+
+Verifiche ripetibili:
+
+```sh
+bash tests/test-linux-usbcore.sh
+bash tests/test-linux-usbcore-enumeration.sh
+# Richiede una build/media esterni; non usa dischi fisici:
+TMC_CANONICAL_STAGE=/var/tmp/tmc-usbcore-test \
+  python3 tests/linux_usbcore_guest.py uefi xhci-two-mice-kbd
+```
+
+La matrice salvata copre 6 casi sullo stesso ISO dualboot: BIOS/UEFI × xHCI con due mouse e tastiera, EHCI con mouse/tastiera, xHCI con hub esterno e mouse/tastiera. Ogni caso verifica input renderizzato, KernelCache del supporto, contatori dei controller e hot unplug/replug. I test host O1/O2 ASan/UBSan restano distinti dalla prova guest.
+
+Limiti: CPU0 serializzata a polling; lavoro USB che può attendere ancora drenato nel contesto input/IRQ; trasporto control/interrupt-IN, senza bulk/SG/iso/interrupt-OUT; rollback/reset e contesto scheduler da completare; nessun collaudo fisico, IOMMU, IRQ hardware o PM di sistema certificato. L'hook d'ingestione entropia non dispone ancora di un pool kernel collegato e non accredita entropia.
+
+[Prova live su hardware reale](docs/HARDWARE-TEST.md) · [Evidenze e limiti](docs/VALIDATION.md). La 10.1.6 / 30B7 resta l'ultima release pubblicata; questo è un commit di sviluppo, non una release.

@@ -1,0 +1,74 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-canonical-bios-lepb0d_w",
+  "firmware": "bios",
+  "profile": "xhci-two-mice-kbd",
+  "physical_hardware_tested": false,
+  "usbhid_tested": false,
+  "release_gate": false,
+  "iso_sha256": "101efdd502151905b7976655c341532c805626dd47c49bec0ec8d5ba90a6cff0",
+  "kernelcache_sha256": "180b498a69bfa2f8e753ed7a177e229cfa5aa7eb3119286ef2465fe417c9f6e0",
+  "checks": [
+    "Genuine canonical core/HCD/hub enumeration and original Boot driver binding; legacy native class facade inactive",
+    "USB-only Italian keyboard completes rendered enrollment and opens Terminal; actual cursor sprite verified at pixel coordinates",
+    "Armed interrupt URB hot unplug drains original class/HCD teardown; same-port reattach re-enumerates and rendered input remains functional"
+  ],
+  "actual_iso_kernel_equals_build": true,
+  "before": [
+    1,
+    0,
+    0,
+    0,
+    1,
+    2
+  ],
+  "controller_before": {
+    "controllers": 1,
+    "submissions": 33,
+    "givebacks": 30,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 12547,
+    "schedule_polls": 12547,
+    "timer_fires": 53,
+    "root_polls": 59,
+    "errors": 0
+  },
+  "before_unplug": [
+    1,
+    120,
+    38,
+    0,
+    1,
+    2
+  ],
+  "after_unplug": [
+    1,
+    121,
+    39,
+    0,
+    1,
+    1
+  ],
+  "after": [
+    1,
+    150,
+    66,
+    0,
+    1,
+    2
+  ],
+  "controller_after": {
+    "controllers": 1,
+    "submissions": 193,
+    "givebacks": 190,
+    "unlinks": 1,
+    "map_failures": 0,
+    "irq_polls": 21790,
+    "schedule_polls": 21790,
+    "timer_fires": 718,
+    "root_polls": 728,
+    "errors": 0
+  },
+  "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.3, Port 3, Speed 480 Mb/s, Product QEMU USB Keyboard\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer2\r\n"
+}

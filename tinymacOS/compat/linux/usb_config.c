@@ -108,7 +108,7 @@ int tmc_linux_usb_config_select(const u8 *bytes,unsigned length,unsigned speed,H
   for(unsigned e=0;e<f.endpoints;e++){
    TmcLinuxConfigEndpoint ep;if(!tmc_linux_config_endpoint(config,0,i,a,e,&ep))continue;
    if(!(ep.address&128)||(ep.attributes&3)!=3||!ep.interval||ep.packet<(proto==1?8u:proto==2?3u:1u)||ep.packet>1024)continue;
-   if(found<capacity)out[found++]=(HidInterface){.iface=f.number,.proto=proto,.ep=2*(ep.address&15)+1,.packet=ep.packet,.interval=ep.interval,.report_length=report};
+   if(found<capacity)out[found++]=(HidInterface){.iface=f.number,.proto=proto,.ep=2*(ep.address&15)+1,.packet=ep.packet,.interval=ep.interval,.report_length=report,.burst=ep.burst,.mult=ep.mult,.bytes_per_interval=ep.bytes_per_interval};
    break;
   }
  }

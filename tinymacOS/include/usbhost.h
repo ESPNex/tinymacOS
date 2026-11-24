@@ -4,14 +4,15 @@
 #include "hidconfig.h"
 #define USB_INPUT_INTERFACES 4
 #define USB_INPUT_DEVICES 8
-/* Native USB 1.x/2.0 HID transport shared by UHCI and EHCI; xHCI remains independent.
- * Speed codes match xHCI: 1 full, 2 low, 3 high. DMA is below 4 GiB.
+/* Shared HID enumeration/class boundary for original UHCI/EHCI/xHCI HCDs.
+ * Speed codes: 1 full, 2 low, 3 high, 4 SuperSpeed. DMA is below 4 GiB.
  * ctrl returns 0, -2 STALL, or -1 timeout/transport; ctrl_bytes is actual IN length. */
 typedef struct UsbInput UsbInput;
 typedef struct {
     u8 report[1024] ALIGNED(4096);
     TabletLayout layout;
     unsigned proto,ep,packet,interval,iface,report_length,toggle,failures;
+    unsigned burst,mult,bytes_per_interval;
     int armed,linux_mouse,linux_keyboard,linux_generic;
     u64 retry_at;
 } UsbInputPipe;

@@ -93,7 +93,7 @@ static int feature(struct usb_device *d,int port,int f,unsigned request)
 static int usb_clear_port_feature(struct usb_device *d,int port,int f){return feature(d,port,f,1);}
 static int set_port_feature(struct usb_device *d,int port,int f){return feature(d,port,f,3);}
 /* These SuperSpeed services explicitly reject: the public adapter accepts
- * USB2 hubs only, so no fabricated SS status/speed reaches these originals. */
+ * USB2 and USB 3.0 hubs only; SSP lane/rate decoding is not exposed. */
 static int hub_ext_port_status(struct usb_hub *h,int port,int type,u16 *st,u16 *ch,u32 *ext)
 {(void)h;(void)port;(void)type;(void)st;(void)ch;(void)ext;return -EOPNOTSUPP;}
 static int get_port_ssp_rate(struct usb_device *d,u32 ext){(void)d;(void)ext;return USB_SSP_GEN_UNKNOWN;}
@@ -101,7 +101,7 @@ static int get_port_ssp_rate(struct usb_device *d,u32 ext){(void)d;(void)ext;ret
 #include "../../vendor/linux-v6.12/hub-reset.inc"
 int tmc_linux_hub_port_init(TmcLinuxHidControl control,void *context,unsigned port,unsigned speed,unsigned *status)
 {
- if(!control||!status||port<1||port>15||(speed!=USB_SPEED_LOW&&speed!=USB_SPEED_FULL&&speed!=USB_SPEED_HIGH)){HSTAT(rejected);return -EINVAL;}
+ if(!control||!status||port<1||port>15||(speed!=USB_SPEED_LOW&&speed!=USB_SPEED_FULL&&speed!=USB_SPEED_HIGH&&speed!=USB_SPEED_SUPER)){HSTAT(rejected);return -EINVAL;}
  struct usb_device d={.control=control,.context=context,.speed=speed};struct usb_port p={.dev={1}};
  struct usb_hub h={.hdev=&d,.intfdev=&p.dev};h.ports[port-1]=&p;HSTAT(opens);
  u16 initial,change;int result=usb_hub_port_status(&h,port,&initial,&change);

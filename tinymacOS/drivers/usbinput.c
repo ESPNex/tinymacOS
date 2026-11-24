@@ -42,7 +42,7 @@ static int usb_native_control(void *context,unsigned rt,unsigned req,unsigned va
 int usb_input_control(void *context,unsigned rt,unsigned req,unsigned value,unsigned index,u8 *data,unsigned n)
 {
  UsbInput *u=context;if(!u)return -22;
- return tmc_linux_core_control(u,u->speed==1?2:u->speed==2?1:3,u->max_packet0,usb_native_control,u,rt,req,value,index,data,n,1000);
+ return tmc_linux_core_control(u,u->speed==1?2:u->speed==2?1:u->speed==3?3:5,u->max_packet0,usb_native_control,u,rt,req,value,index,data,n,1000);
 }
 static int core_request(UsbInput *u,int rt,int req,int value,int index,int n)
 {
@@ -53,9 +53,9 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
 {
     if(tmc_linux_core_control_detach(u))return 0;
     int (*c)(UsbInput *,int,int,int,int,int)=core_request;
-    u->max_packet0=u->speed==3?64:8;
+    u->max_packet0=u->speed>=4?512:u->speed==3?64:8;
     if(c(u,128,6,0x100,0,8)||u->ctrl_bytes<8)return 0;
-    unsigned m=u->desc[7];if(m!=8&&m!=16&&m!=32&&m!=64)return 0;
+    unsigned m=u->desc[7];if(u->speed>=4){if(m!=9)return 0;m=512;}else if(m!=8&&m!=16&&m!=32&&m!=64)return 0;
     if(u->speed==2&&m!=8)return 0;u->max_packet0=m;
     if(!address||address>127||c(u,0,5,address,0,0))return 0;
     usb_delay_ms(3);u->address=address;
@@ -65,7 +65,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
     unsigned n=u->desc[2]|u->desc[3]<<8;
     if(n<9||n>sizeof u->desc||c(u,128,6,0x200,0,n)||u->ctrl_bytes<n)return 0;
     unsigned config=0;int hub=0;HidInterface choices[USB_INPUT_INTERFACES];
-    int found=hid_configuration_at_speed(u->desc,n,u->speed==1?2:u->speed==2?1:3,choices,USB_INPUT_INTERFACES,&config,&hub);
+    int found=hid_configuration_at_speed(u->desc,n,u->speed==1?2:u->speed==2?1:u->speed==3?3:5,choices,USB_INPUT_INTERFACES,&config,&hub);
     if(found<0)return 0;if(hub)return c(u,0,9,config,0,0)?0:2;
     if(found<=0||c(u,0,9,config,0,0))return 0;
     unsigned usable=0;
@@ -73,7 +73,7 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         HidInterface *f=choices+i;UsbInputPipe *p=u->pipe+u->npipe;
         if(tmc_linux_generic_detach(p))continue;
         tmc_linux_mouse_detach(p);tmc_linux_keyboard_detach(p);
-        *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length};
+        *p=(UsbInputPipe){.proto=f->proto,.ep=f->ep>>1,.packet=f->packet,.interval=f->interval,.iface=f->iface,.report_length=f->report_length,.burst=f->burst,.mult=f->mult,.bytes_per_interval=f->bytes_per_interval};
         if((u->speed==2&&p->packet>8)||(u->speed==1&&p->packet>64))continue;
         /* Boot support is a compatibility promise, not an instruction to
          * switch a working mouse into descriptor Report mode. */
@@ -98,9 +98,9 @@ int usb_input_enumerate(UsbInput *u,unsigned address)
         if(p->proto==2&&tmc_linux_mouse_boot_layout(&p->layout))
             p->linux_mouse=tmc_linux_mouse_attach(p,u->vid,u->pid,p->packet,p->interval);
         if(p->proto==1)p->linux_keyboard=tmc_linux_keyboard_attach(p,u->vid,u->pid,p->packet,p->interval,p->iface,linux_keyboard_control,u);
-        if(p->proto==1){input_diag.keyboards++;device_add("USB HID keyboard (USB2)","input",0);}
-        else if(p->proto==2){input_diag.pointers++;device_add("USB HID pointer (USB2)","input",0);}
-        else{if(p->linux_generic&1)input_diag.keyboards++;if(p->linux_generic&2)input_diag.pointers++;device_add("Linux generic HID input (USB2)","input",0);}
+        if(p->proto==1){input_diag.keyboards++;device_add("USB HID keyboard (USB)","input",0);}
+        else if(p->proto==2){input_diag.pointers++;device_add("USB HID pointer (USB)","input",0);}
+        else{if(p->linux_generic&1)input_diag.keyboards++;if(p->linux_generic&2)input_diag.pointers++;device_add("Linux generic HID input (USB)","input",0);}
         u->npipe++;usable++;
     }
     return usable!=0;

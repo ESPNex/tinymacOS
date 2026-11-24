@@ -4,7 +4,16 @@ Configurazione consigliata: VM x86-64 Q35/AHCI, 1 GiB RAM, Secure Boot
 spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara
 questi dispositivi; per build e variabili consultare il README di sistema.
 
-INSTALLAZIONE
+MODALITÀ USB CANONICA SPERIMENTALE
+La variante TMC_USB_CANONICAL=1 usa xHCI/EHCI + core/HCD/hub Linux e driver
+Boot mouse/tastiera; non il completo usbhid né il tablet del launcher
+predefinito. La 10.1.7 / 30B8 non è una nuova release pubblicata.
+Per tentare una prova live fisica leggere docs/HARDWARE-TEST.md: PC non
+critico, dischi con dati scollegati, nessuna installazione. La compatibilità
+ASRock fisica non è ancora dimostrata. Recovery usa un percorso firmware
+separato: il funzionamento nel desktop non garantisce quello in Recupero.
+
+INSTALLAZIONE (PROVE SU DISCHI VIRTUALI)
 1. Collegare la ISO al lettore virtuale e un nuovo disco virtuale SATA
    vuoto dedicato, almeno 96 MiB consigliati. Non usare dischi fisici o dati
    da conservare. La nuova ISO non aggiorna una precedente installazione.

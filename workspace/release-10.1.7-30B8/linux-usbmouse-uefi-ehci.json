@@ -2,12 +2,13 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "ehci",
-  "iso_sha256": "dfe113a908b61dd6d5a8c353a8b927df957566881f6cb40f5fae11282766767b",
-  "work": "/var/tmp/tmc-linux-usb-uefi-ehci-s_mtk_uv",
+  "iso_sha256": "9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601",
+  "work": "/var/tmp/tmc-linux-usb-uefi-ehci-272_4c1e",
   "actual_upstream_boot_mouse_driver": true,
-  "linux_hcd_port": false,
+  "linux_hcd_port": true,
   "linux_full_usb_core_port": false,
-  "native_hcd_transport_adapter": true,
+  "native_hcd_transport_adapter": false,
+  "native_class_enumeration_facade": true,
   "physical_hardware_tested": false,
   "actual_iso_kernel_equals_build": true,
   "message_core": {
@@ -21,24 +22,37 @@
   },
   "actual_upstream_message_control_functions_executed": true,
   "dma_pool": {
-    "devices": 1,
-    "pools": 2,
-    "allocations": 2,
+    "devices": 0,
+    "pools": 0,
+    "allocations": 0,
     "frees": 0,
-    "coherent_allocations": 2,
-    "coherent_frees": 0,
-    "live_bytes": 12544,
-    "highwater": 12544,
+    "coherent_allocations": 20,
+    "coherent_frees": 16,
+    "live_bytes": 12292,
+    "highwater": 12348,
     "rejected": 0,
     "failures": 0,
     "attributes": 1,
     "devres": 0
   },
   "original_dma_pool_in_native_controller_executed": true,
+  "whole_original_ehci_runtime": {
+    "controllers": 1,
+    "submissions": 11,
+    "givebacks": 10,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 4459,
+    "schedule_polls": 4459,
+    "timer_fires": 21,
+    "root_polls": 16,
+    "errors": 0
+  },
+  "linux_controller_hcd_port": true,
   "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n",
   "ehci_qtd_before": {
-    "calls": 27,
-    "bytes": 206,
+    "calls": 0,
+    "bytes": 0,
     "rejected": 0
   },
   "config_core": {
@@ -85,13 +99,13 @@
     "root_rejected": 0
   },
   "hub_core": {
-    "opens": 0,
-    "debounced": 0,
-    "resets": 0,
-    "failures": 0,
-    "status_reads": 0,
-    "feature_writes": 0,
-    "delayed_ms": 0,
+    "opens": 6,
+    "debounced": 1,
+    "resets": 1,
+    "failures": 5,
+    "status_reads": 16,
+    "feature_writes": 3,
+    "delayed_ms": 380,
     "rejected": 0
   },
   "before": {
@@ -117,11 +131,10 @@
     "frees": 20
   },
   "ehci_qtd_after": {
-    "calls": 198,
-    "bytes": 890,
+    "calls": 0,
+    "bytes": 0,
     "rejected": 0
   },
-  "upstream_linux_ehci_qtd_fill_executed": true,
   "urb_core_after": {
     "submits": 182,
     "givebacks": 181,
@@ -141,6 +154,20 @@
     "root_rejected": 0
   },
   "actual_upstream_hcd_lifecycle_functions_executed": true,
-  "whole_linux_hcd_core_or_controller_port": false,
+  "whole_linux_hcd_core_port": false,
+  "whole_linux_controller_port": true,
+  "whole_original_ehci_runtime_after": {
+    "controllers": 1,
+    "submissions": 182,
+    "givebacks": 181,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 5678,
+    "schedule_polls": 5678,
+    "timer_fires": 371,
+    "root_polls": 195,
+    "errors": 0
+  },
+  "linux_ehci_controller_executed": true,
   "exact_rendered_xy_checks": 6
 }

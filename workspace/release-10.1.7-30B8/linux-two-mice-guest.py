@@ -7,10 +7,11 @@ import hashlib,json,os,struct,subprocess,sys,tempfile,time
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';sys.path.insert(0,str(root/'tests'))
 from retail_guest import Retail
 from input_pixels import cursor
+from linux_xhci_observer import observe_xhci
 import numpy as np
 fw=sys.argv[1];assert fw in ['uefi','bios']
 mixed=len(sys.argv)>2 and sys.argv[2]=='ps2-usb'
-profile='xhci' if mixed else 'xhci-two-mice'
+profile='xhci' if mixed else 'xhci-two-mice-kbd'
 receipt='linux-mixed-mice' if mixed else 'linux-two-mice'
 base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v12'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix=f'tmc-two-mice-{fw}-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
@@ -32,10 +33,15 @@ try:
   def buttons():return struct.unpack('<I',memory('input_diag',4,button_offset))[0]
   def counters():return dict(zip(['probes','attached','completions','frames','errors','rejected','disconnected','allocations','frees'],struct.unpack('<9Q',memory('tmc_linux_usb_stats',72))))
   r['before']=before=counters();assert before['attached']==(1 if mixed else 2),before
-  r['usb']=g.hmp('info usb');assert 'USB Keyboard' not in r['usb']
-  assert struct.unpack('<i',memory('keyboard_on',4))[0]==1
-  r['ps2_before']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
-  assert r['ps2_before']['setups']==1 and r['ps2_before']['commands']>=9 and not r['ps2_before']['command_errors']
+  r['whole_original_xhci_runtime']=observe_xhci(g,symbols,w)
+  r['usb']=g.hmp('info usb');assert ('USB Keyboard' in r['usb'])!=mixed
+  if mixed:
+   assert struct.unpack('<i',memory('keyboard_on',4))[0]==1
+   r['ps2_before']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
+   assert r['ps2_before']['setups']==1 and r['ps2_before']['commands']>=9 and not r['ps2_before']['command_errors']
+  else:
+   assert struct.unpack('<i',memory('keyboard_on',4))[0]==0
+   r['usb_keyboard_before']=struct.unpack('<9Q',memory('tmc_linux_kbd_stats',72))
 
   mice=[m for m in g.req('query-mice') if m['name']=='QEMU HID Mouse'];assert len(mice)==(1 if mixed else 2),mice
   if mixed:mice.insert(0,next(m for m in g.req('query-mice') if m['name']=='QEMU PS/2 Mouse'))
@@ -71,9 +77,16 @@ try:
   assert buttons()==0 and rectangle()==shifted2
   r['checks'].append('Final mouse release ends drag: subsequent pointer motion leaves Terminal window stationary')
   r['after']=after=counters();assert after['completions']>before['completions'] and after['completions']==after['frames'] and not after['errors'] and not after['rejected']
-  r['ps2_after']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
-  assert r['ps2_after']['data_bytes']>r['ps2_before']['data_bytes']+50 and not r['ps2_after']['rx_errors']
-  r['checks'].append('Enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX; pointer paths are '+('PS/2 psmouse functions + USB Boot' if mixed else 'two USB Boot mice'))
+  r['whole_original_xhci_runtime_after']=observe_xhci(g,symbols,w)
+  assert r['whole_original_xhci_runtime_after']['givebacks']>r['whole_original_xhci_runtime']['givebacks']
+  r['linux_xhci_controller_executed']=True
+  if mixed:
+   r['ps2_after']=dict(zip(['setups','commands','command_errors','tx_bytes','rx_bytes','data_bytes','rx_errors','wait_polls','rejected'],struct.unpack('<9Q',memory('tmc_linux_ps2_counters',72))))
+   assert r['ps2_after']['data_bytes']>r['ps2_before']['data_bytes']+50 and not r['ps2_after']['rx_errors']
+  else:
+   r['usb_keyboard_after']=struct.unpack('<9Q',memory('tmc_linux_kbd_stats',72))
+   assert r['usb_keyboard_after'][2]>r['usb_keyboard_before'][2]+50
+  r['checks'].append('Enrollment/F2 uses '+('historical PS/2 keyboard' if mixed else 'USB-only keyboard with i8042 disabled')+'; two USB mice exercise original xHCI controller and Linux Boot mouse button ownership')
   if mixed:r['checks'].append('Cross-transport drag holds in both directions: PS/2 original Linux psmouse packet engine and Linux USB mouse share real registered input button state')
   r['passed']=True;g.shot('two-mice-drag')
  print('PASS actual rendered drag/button union',profile,fw,r['after'],flush=True)

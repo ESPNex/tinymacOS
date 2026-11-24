@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "scope": "Two full normal builds and dualboot packaging, not release approval",
+  "artifacts": [
+    {
+      "path": "build/kernel.elf",
+      "sha256": "8ac46005f5afd676d8192af9b994e0632eea98f6c9fdad21aebbc3a75a4dd91b",
+      "bytes": 808456,
+      "byte_identical": true
+    },
+    {
+      "path": "build/KernelCache",
+      "sha256": "522016880ffd1bc5676a7f8e9fce3c16cd0259321ce6ca88b5aaf9f9cfe4b0f6",
+      "bytes": 808520,
+      "byte_identical": true
+    },
+    {
+      "path": "build/tinymacOS-10.1.7-x86_64.iso",
+      "sha256": "9cf5190a435311a2af6883086e18f1e58e7c8332ef0fae0d47f05f3ca2201e2a",
+      "bytes": 124024832,
+      "byte_identical": true
+    },
+    {
+      "path": "tinymacOS-10.1.7-x86_64.iso",
+      "sha256": "9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601",
+      "bytes": 226019328,
+      "byte_identical": true
+    }
+  ]
+}

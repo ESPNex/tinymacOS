@@ -37,7 +37,9 @@ case ${TMC_TEST_INPUT:-ps2} in
  Q+=(-device usb-mouse,bus=xhci.0,port=$hubport,id=pointer,usb_version=1)
  if [[ "$TMC_TEST_INPUT" == xhci-hub-kbd ]];then Q+=(-device usb-kbd,bus=xhci.0,port=1.4,usb_version=1);fi;;
  xhci) Q+=(-device qemu-xhci,id=xhci -device usb-mouse,bus=xhci.0,port=1,id=pointer);;
- xhci-two-mice) Q+=(-device qemu-xhci,id=xhci -device usb-mouse,bus=xhci.0,port=1,id=pointer -device usb-mouse,bus=xhci.0,port=2,id=pointer2);;
+ xhci-two-mice|xhci-two-mice-kbd)
+ Q+=(-device qemu-xhci,id=xhci -device usb-mouse,bus=xhci.0,port=1,id=pointer -device usb-mouse,bus=xhci.0,port=2,id=pointer2)
+ if [[ "$TMC_TEST_INPUT" == xhci-two-mice-kbd ]];then Q+=(-device usb-kbd,bus=xhci.0,port=3,usb_version=2);fi;;
  *) exit 2;;
 esac
 if [[ ${BOOT_DISK:-0} != 1 ]];then

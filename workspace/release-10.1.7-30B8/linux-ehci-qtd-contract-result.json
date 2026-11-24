@@ -3,15 +3,15 @@
   "scope": "Host contract, not full HCD/general compatibility/hardware acceptance",
   "asan_ubsan": true,
   "physical_hardware_tested": false,
-  "work": "/var/tmp/tmc-linux-ehci-host-oyieuf9a",
+  "work": "/var/tmp/tmc-linux-ehci-host-jcl7c3oc",
   "sources": {
     "tests/linux_ehci_qtd.c": "8bb4fad65e2203a94c57c5f90981dc1fecee0b114f38a2b7c91c1fb33686306a",
     "drivers/linux_ehci_qtd.c": "ffbd09ed7ae5b9da0c6ea479319764777b7c2c75d4d1f5f320908561af2f3831",
     "include/linux_ehci.h": "29485303f18050f79d64863044b3dd3c95284ba634fd34dfaa215fe6ef60a1ee",
-    "drivers/ehci.c": "7693bf75845bbde1dc401915476dbe099a482a92b9b2439ce06ae01e65c33c93",
+    "drivers/ehci.c": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5",
     "vendor/linux-v6.12/ehci-q.c": "6b2a725c4efe5531b01ecd42c1da7fd0e604edb006c3627e3c605ceb70bd741d",
     "vendor/linux-v6.12/ehci-qtd-fill.inc": "9748a890df34b1a11e4434796b66cee1863853cf3ebe5a9fc012ddbfe3856faa",
-    "vendor/linux-v6.12/manifest.json": "9712fbc259aa350f04b3061c1532fc79a831f0e14b7ae0895e8df79eb36ad9fc",
+    "vendor/linux-v6.12/manifest.json": "d499f53247e447bcc98badcd9d87a0e00bbc184b9e35ff4ec9f3b00b84689dd4",
     "tools/linux-source-contract.py": "cbc7597e4f2889e37c11fa16e0b58b8710245e0f1b7d416f642897e5dc90f178"
   },
   "stdout": "PASS Linux EHCI qtd_fill: 147672 page/alignment/DMA64/maxpacket cases, zero/status, bounded writes and invalid-input rollback\n",

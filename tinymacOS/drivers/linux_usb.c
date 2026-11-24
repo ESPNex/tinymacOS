@@ -59,3 +59,11 @@ void tmc_config_os_delay(unsigned ms){usb_delay_ms(ms);}
  * Its own checked allocation budget bounds all allocations to 2 MiB total. */
 void *tmc_hid_os_alloc(size_t n){return n&&n<=512*1024+16?kmalloc(n):0;}
 void tmc_hid_os_free(void *p){kfree(p);}
+
+/* Private physical-HCD hrtimers need sub-millisecond elapsed time even with
+ * IF clear. Same CPU0 calibrated TSC and limits as the millisecond service. */
+u64 tmc_lx_os_clock_ns(void)
+{
+ if(!linux_tsc_per_ms)(void)tmc_lx_os_clock_ms();u64 now=linux_tsc(),rate=linux_tsc_per_ms;
+ return now/rate*1000000ull+(now%rate)*1000000ull/rate;
+}

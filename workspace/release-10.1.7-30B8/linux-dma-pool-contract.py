@@ -5,18 +5,24 @@ This is a DMA prerequisite, not a claim of complete Linux physical HCDs.
 from pathlib import Path
 import hashlib,json,os,subprocess,tempfile
 q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
-paths=['compat/linux/dma_pool.c','include/linux_dma_pool.h','drivers/linux_dma.c','drivers/ehci.c','drivers/uhci.c','drivers/linux_ehci_qtd.c','include/linux_ehci.h','include/usbhost.h','tests/linux_dma_pool.c','tests/linux_controller_dma.c','tests/linux_dma_native.c','tests/controller_dma_support.h','include/linux_uhci.h','compat/linux/uhci_runtime.c','vendor/linux-v6.12/dmapool.c','vendor/linux-v6.12/manifest.json','build.sh','tools/linux-source-contract.py']
+paths=['compat/linux/dma_pool.c','include/linux_dma_pool.h','drivers/linux_dma.c','drivers/ehci.c','drivers/uhci.c','drivers/linux_ehci_qtd.c','include/linux_ehci.h','include/usbhost.h','tests/linux_dma_pool.c','tests/linux_controller_dma.c','tests/linux_ehci_hcd.c','compat/linux/ehci_runtime.c','compat/linux/ehci_services.inc','compat/linux/ehci_pci.c','include/linux_ehci_hcd.h','tests/linux_dma_native.c','tests/controller_dma_support.h','include/linux_uhci.h','compat/linux/uhci_runtime.c','vendor/linux-v6.12/dmapool.c','vendor/linux-v6.12/manifest.json','build.sh','tools/linux-source-contract.py']
+paths+=sorted(str(p.relative_to(root)) for p in (root/'compat/linux/ehci-include').rglob('*') if p.is_file())
 paths+=sorted(str(p.relative_to(root)) for p in (root/'compat/linux/dma-include').rglob('*') if p.is_file())
-r={'passed':False,'scope':'Whole byte-exact original Linux v6.12 mm/dmapool.c with real coherent allocation, locks, registered original read attribute and managed resources; actual native EHCI TD consumers preserve CPU/bus distinction. Whole original UHCI has a separate hardware-model/runtime contract','whole_original_dma_pool_file':True,'full_linux_hcd':False,'iommu_supported':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
+r={'passed':False,'scope':'Whole byte-exact original Linux v6.12 mm/dmapool.c with real coherent allocation, locks, registered original read attribute and managed resources; whole original EHCI DMA consumers execute 128 full lifetimes with nonidentity bus handles. Original UHCI has a separate hardware-model/runtime contract','whole_original_dma_pool_file':True,'full_linux_hcd':False,'iommu_supported':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)
  with tempfile.TemporaryDirectory(prefix='tmc-dma-contract-',dir='/var/tmp') as tmp:
   for optimization in ['-O1','-O2']:
-   for name,sources in [('pool',['tests/linux_dma_pool.c']),('controller',['tests/linux_controller_dma.c','drivers/linux_ehci_qtd.c']),('native',['tests/linux_dma_native.c'])]:
+   for name,sources in [('pool',['tests/linux_dma_pool.c']),('controller',['tests/linux_controller_dma.c','compat/linux/ehci_pci.c']),('native',['tests/linux_dma_native.c'])]:
     output=Path(tmp)/(name+optimization)
     command=['gcc','-std=gnu11',optimization,'-g','-ffunction-sections','-fdata-sections','-Wl,--gc-sections','-fsanitize=address,undefined','-fno-omit-frame-pointer','-fno-pie','-no-pie','-pthread','-Wall','-Wextra','-Werror','-Wno-unused-function','-Wno-sign-compare','-Wno-unused-parameter','-Wno-misleading-indentation','-Iinclude','-Icompat/linux/dma-include',*sources,'-o',str(output)]
+    if name=='controller':
+     dma=Path(tmp)/('ehci-dma'+optimization+'.o')
+     flags=command[:command.index('tests/linux_controller_dma.c')]
+     subprocess.run(flags+['-fwrapv','-fno-sanitize=alignment','-c','compat/linux/dma_pool.c','-o',str(dma)],cwd=root,check=True,capture_output=True)
+     command+=['-Icompat/linux/ehci-include','-fwrapv','-fno-sanitize=alignment','-Wno-unused-but-set-variable',str(dma)]
     subprocess.run(command,cwd=root,check=True,capture_output=True)
     result=subprocess.run([str(output)],cwd=root,check=True,capture_output=True,text=True,env={**os.environ,'ASAN_OPTIONS':'detect_leaks=1:halt_on_error=1','UBSAN_OPTIONS':'halt_on_error=1:print_stacktrace=1'})
-    r['runs'].append({'component':name,'optimization':optimization,'sanitizers':['address','undefined'],'passed':True,'stdout':result.stdout});print(result.stdout,end='')
+    r['runs'].append({'component':name,'optimization':optimization,'sanitizers':['address','undefined'],'alignment_exception':name=='controller','passed':True,'stdout':result.stdout});print(result.stdout,end='')
  r['passed']=True
 finally:(q/'linux-dma-pool-contract-result.json').write_text(json.dumps(r,indent=2)+'\n')

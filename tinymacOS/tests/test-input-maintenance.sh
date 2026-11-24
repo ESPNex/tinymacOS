@@ -10,23 +10,20 @@ C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -
 
 gcc $C tests/input_maintenance.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
 "$out/queue"
-# Substitute only the MMIO notification in the host transport. No OS source edit.
-python3 - "$out/xhci-test.c" <<'PY'
+# Actual shared enumeration/class adapter; scripted EP0, not HCD proof.
+python3 - "$out/usbinput-test.c" <<'PYCODE'
 from pathlib import Path
 import sys
-p=Path('drivers/xhci.c').resolve();s=p.read_text()
-assert s.count('db[s]=ep;')==1
-s=s.replace('db[s]=ep;','db[s]=ep;test_doorbell(s,ep);')
-s=s.replace('"../tests/input_test_support.h"','"'+str(p.parents[1]/'tests/input_test_support.h')+'"')
-s=s.replace('"../kernel/k.h"','"'+str(p.parents[1]/'kernel/k.h')+'"')
+p=Path('drivers/usbinput.c').resolve();s=p.read_text().replace('#include "../kernel/k.h"','#include "'+str(p.parents[1]/'tests/input_test_support.h')+'"')
+a=s.index('void usb_delay_ms(');b=s.index('static int linux_keyboard_control(',a)
+s=s[:a]+'void usb_delay_ms(unsigned ms){(void)ms;}\n'+s[b:]
 Path(sys.argv[1]).write_text(s)
-PY
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/input_enumeration.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/enumeration"
+PYCODE
+gcc $C -DTMC_USBINPUT_TEST_SOURCE=\""$out/usbinput-test.c"\" tests/usbinput_contract.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/enumeration"
 "$out/enumeration"
 for t in hidconfig relative_pointer; do gcc $C "tests/$t.c" drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/$t";"$out/$t";done
-
-gcc $C -DTMC_XHCI_TEST_SOURCE=\""$out/xhci-test.c"\" tests/xhci_hubs.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/hubs"
-"$out/hubs"
+# Both optimizations execute original rings, commands, hub contexts and DMA.
+sh tests/test-linux-xhci.sh
 gcc $C tests/usbroute.c -o "$out/route"
 "$out/route"
 
@@ -83,7 +80,9 @@ gcc $C -no-pie -pthread tests/linux_hub.c -o "$out/linux-hub";"$out/linux-hub"
 
 # Whole original Linux DMA pool and actual native EHCI descriptor consumers.
 # Its private ABI include path must precede the older USB/HID compatibility ABI.
-gcc -Icompat/linux/dma-include $C -Wno-unused-function -ffunction-sections -fdata-sections -Wl,--gc-sections -fno-pie -no-pie -pthread tests/linux_controller_dma.c drivers/linux_ehci_qtd.c -o "$out/linux-controller-dma";"$out/linux-controller-dma"
+gcc -Icompat/linux/dma-include $C -Wno-unused-function -fno-pie -no-pie -pthread tests/linux_dma_pool.c -o "$out/linux-dma-pool";"$out/linux-dma-pool"
+gcc -Icompat/linux/dma-include $C -Wno-unused-function -fwrapv -fno-sanitize=alignment -fno-pie -no-pie -c compat/linux/dma_pool.c -o "$out/dma-pool.o"
+gcc -Icompat/linux/ehci-include -Icompat/linux/dma-include $C -fwrapv -fno-sanitize=alignment -Wno-unused-function -Wno-unused-but-set-variable -fno-pie -no-pie tests/linux_controller_dma.c compat/linux/ehci_pci.c "$out/dma-pool.o" -o "$out/linux-controller-dma";"$out/linux-controller-dma"
 gcc -Icompat/linux/dma-include $C -fno-pie -no-pie tests/linux_dma_native.c -o "$out/linux-native-dma";"$out/linux-native-dma"
 
 # Byte-exact whole UHCI on a nonidentity DMA hardware model. Alignment UBSan

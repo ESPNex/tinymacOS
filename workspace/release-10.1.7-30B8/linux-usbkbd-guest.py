@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Execute the real upstream usbkbd IRQ and LED control in the actual ISO.
 USB-only virtual keyboard (i8042 off); no diagnostic guest UI or test decoder.
-Native controller transport is explicitly NOT a Linux HCD/core port.
+Whole original UHCI/EHCI/xHCI, selected per profile; not a full USB core port.
 """
 from pathlib import Path
 import hashlib,json,os,struct,subprocess,sys,tempfile,time
@@ -10,11 +10,13 @@ from retail_guest import Retail
 from linux_message_observer import observe_message
 from linux_dma_observer import observe_dma
 from linux_uhci_observer import observe_uhci
+from linux_ehci_observer import observe_ehci
+from linux_xhci_observer import observe_xhci
 fw,profile=sys.argv[1:];assert fw in ['uefi','bios'];assert profile in ['ehci-kbd','companion-kbd','xhci-hub-kbd']
 base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v12'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix=f'tmc-linux-kbd-{fw}-{profile}-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
-r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_keyboard_driver':True,'linux_hcd_port':False,'linux_full_usb_core_port':False,'native_hcd_transport_adapter':True,'physical_hardware_tested':False}
+r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_keyboard_driver':True,'linux_hcd_port':profile.startswith(('ehci','uhci','companion','xhci')),'linux_full_usb_core_port':False,'native_hcd_transport_adapter':not profile.startswith(('ehci','uhci','companion','xhci')),'native_class_enumeration_facade':True,'physical_hardware_tested':False}
 fields=['probes','attached','completions','frames','rejected','disconnected','controls','control_errors','stale_controls']
 try:
  symbols=subprocess.check_output(['nm',str(build/'kernel.debug')],text=True).splitlines()
@@ -26,8 +28,14 @@ try:
  assert (w/'actual.cache').read_bytes()==(build/'KernelCache').read_bytes();r['actual_iso_kernel_equals_build']=True
  with Retail(iso,w,ev,'linux-usbkbd',live=True,launcher=root/'tools/run-input-qa.sh') as g:
   r['message_core']=observe_message(g,symbols,w);r['actual_upstream_message_control_functions_executed']=True
-  if profile.startswith(('ehci','uhci','companion')):r['dma_pool']=observe_dma(g,symbols,w);r['original_dma_pool_in_native_controller_executed']=True
+  if profile.startswith(('ehci','uhci','companion','xhci')):r['dma_pool']=observe_dma(g,symbols,w);r['original_dma_pool_in_native_controller_executed']=True
   if profile.startswith(('uhci','companion')):r['whole_original_uhci_runtime']=observe_uhci(g,symbols,w)
+  if profile.startswith('xhci'):
+   r['whole_original_xhci_runtime']=observe_xhci(g,symbols,w)
+   r['linux_controller_hcd_port']=True;r['native_hcd_transport_adapter']=False;r['native_class_enumeration_facade']=True
+  if profile.startswith('ehci'):
+   r['whole_original_ehci_runtime']=observe_ehci(g,symbols,w)
+   r['linux_controller_hcd_port']=True;r['native_hcd_transport_adapter']=False;r['native_class_enumeration_facade']=True
   r['usb']=g.hmp('info usb');assert 'USB Keyboard' in r['usb']
   def counters():
    p=w/'kbd-stats.bin';g.req('pmemsave',val=addr,size=8*len(fields),filename=str(p));return dict(zip(fields,struct.unpack('<9Q',p.read_bytes())))
@@ -65,6 +73,14 @@ try:
   assert core['submits']>previous['submits'] and core['givebacks']>previous['givebacks'],(previous,core)
   assert core['submits']==core['givebacks']+core['active'] and core['active']>=1 and not core['rejected'],core
   r['actual_upstream_core_urb_file_executed']=True
+  if profile.startswith('xhci'):
+   r['whole_original_xhci_runtime_after']=observe_xhci(g,symbols,w)
+   assert r['whole_original_xhci_runtime_after']['givebacks']>r['whole_original_xhci_runtime']['givebacks'],r['whole_original_xhci_runtime_after']
+   r['linux_xhci_controller_executed']=True
+  if profile.startswith('ehci'):
+   r['whole_original_ehci_runtime_after']=observe_ehci(g,symbols,w)
+   assert r['whole_original_ehci_runtime_after']['givebacks']>r['whole_original_ehci_runtime']['givebacks'],r['whole_original_ehci_runtime_after']
+   r['linux_ehci_controller_executed']=True
   if profile.startswith(('uhci','companion')):
    r['whole_original_uhci_runtime_after']=observe_uhci(g,symbols,w)
    assert r['whole_original_uhci_runtime_after']['givebacks']>r['whole_original_uhci_runtime']['givebacks'],r['whole_original_uhci_runtime_after']

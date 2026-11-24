@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real post-EBS Linux usbmouse IRQ execution + rendered XY, native HCD transport.
+"""Real post-EBS Linux usbmouse IRQ execution + rendered XY, controller-specific HCD transport.
 Read only the driver's non-secret counters via QEMU physical-memory observation;
 no diagnostic UI, application or replacement decoder in the guest.
 """
@@ -10,10 +10,12 @@ from retail_guest import Retail
 from linux_message_observer import observe_message
 from linux_dma_observer import observe_dma
 from linux_uhci_observer import observe_uhci
+from linux_ehci_observer import observe_ehci
+from linux_xhci_observer import observe_xhci
 from input_pixels import cursor
 fw=sys.argv[1];profile=sys.argv[2];base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-hid-v12'));build=base/'build';iso=base/'tinymacOS-10.1.7-x86_64.iso';w=Path(tempfile.mkdtemp(prefix='tmc-linux-usb-'+fw+'-'+profile+'-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='mouse')
-r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_mouse_driver':True,'linux_hcd_port':False,'linux_full_usb_core_port':False,'native_hcd_transport_adapter':True,'physical_hardware_tested':False}
+r={'passed':False,'firmware':fw,'profile':profile,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'actual_upstream_boot_mouse_driver':True,'linux_hcd_port':profile.startswith(('ehci','uhci','companion','xhci')),'linux_full_usb_core_port':False,'native_hcd_transport_adapter':not profile.startswith(('ehci','uhci','companion','xhci')),'native_class_enumeration_facade':True,'physical_hardware_tested':False}
 fields=['probes','attached','completions','frames','errors','rejected','disconnected','allocations','frees']
 try:
  symbols=subprocess.check_output(['nm',str(build/'kernel.debug')],text=True).splitlines();addr=int(next(s.split()[0] for s in symbols if s.endswith(' b tmc_linux_usb_stats')),16)
@@ -23,8 +25,14 @@ try:
  assert (w/'actual.cache').read_bytes()==(build/'KernelCache').read_bytes();r['actual_iso_kernel_equals_build']=True
  with Retail(iso,w,ev,'linux-usbmouse',live=True,launcher=root/'tools/run-input-qa.sh') as g:
   r['message_core']=observe_message(g,symbols,w);r['actual_upstream_message_control_functions_executed']=True
-  if profile.startswith(('ehci','uhci','companion')):r['dma_pool']=observe_dma(g,symbols,w);r['original_dma_pool_in_native_controller_executed']=True
+  if profile.startswith(('ehci','uhci','companion','xhci')):r['dma_pool']=observe_dma(g,symbols,w);r['original_dma_pool_in_native_controller_executed']=True
   if profile.startswith(('uhci','companion')):r['whole_original_uhci_runtime']=observe_uhci(g,symbols,w)
+  if profile.startswith('xhci'):
+   r['whole_original_xhci_runtime']=observe_xhci(g,symbols,w)
+   r['linux_controller_hcd_port']=True;r['native_hcd_transport_adapter']=False;r['native_class_enumeration_facade']=True
+  if profile.startswith('ehci'):
+   r['whole_original_ehci_runtime']=observe_ehci(g,symbols,w)
+   r['linux_controller_hcd_port']=True;r['native_hcd_transport_adapter']=False;r['native_class_enumeration_facade']=True
   mice=g.req('query-mice');target=next(m for m in mice if m['name']=='QEMU HID Mouse');g.hmp('mouse_set '+str(target['index']));assert [m['name'] for m in g.req('query-mice') if m['current']]==['QEMU HID Mouse'];r['usb']=g.hmp('info usb');assert 'USB Keyboard' not in r['usb']
   def counters():
    p=w/'counters.bin';g.req('pmemsave',val=addr,size=8*len(fields),filename=str(p));return dict(zip(fields,struct.unpack('<9Q',p.read_bytes())))
@@ -76,7 +84,7 @@ try:
   assert after['completions']>before['completions'] and after['frames']>before['frames'],(before,after)
   assert after['completions']==after['frames'] and not after['errors'] and not after['rejected'],after
   r['ehci_qtd_after']=ehci_counters()
-  if profile=='ehci':
+  if profile=='ehci' and not r.get('whole_original_ehci_runtime'):
    assert r['ehci_qtd_after']['calls']>r['ehci_qtd_before']['calls'] and not r['ehci_qtd_after']['rejected']
    r['upstream_linux_ehci_qtd_fill_executed']=True
   r['urb_core_after']=core=urb_counters();previous=r['urb_core_before']
@@ -87,8 +95,16 @@ try:
   assert hcd['queued']>previous_hcd['queued'] and hcd['givebacks']>previous_hcd['givebacks'],(previous_hcd,hcd)
   assert hcd['links']==hcd['queued']==core['submits'] and hcd['givebacks']==core['givebacks'] and not hcd['map_rejected'] and not hcd['root_rejected'],hcd
   r['actual_upstream_hcd_lifecycle_functions_executed']=True
-  r['whole_linux_hcd_core_or_controller_port']=False
+  r['whole_linux_hcd_core_port']=False;r['whole_linux_controller_port']=profile.startswith(('ehci','uhci','companion','xhci'))
 
+  if profile.startswith('xhci'):
+   r['whole_original_xhci_runtime_after']=observe_xhci(g,symbols,w)
+   assert r['whole_original_xhci_runtime_after']['givebacks']>r['whole_original_xhci_runtime']['givebacks'],r['whole_original_xhci_runtime_after']
+   r['linux_xhci_controller_executed']=True
+  if profile.startswith('ehci'):
+   r['whole_original_ehci_runtime_after']=observe_ehci(g,symbols,w)
+   assert r['whole_original_ehci_runtime_after']['givebacks']>r['whole_original_ehci_runtime']['givebacks'],r['whole_original_ehci_runtime_after']
+   r['linux_ehci_controller_executed']=True
   if profile.startswith(('uhci','companion')):
    r['whole_original_uhci_runtime_after']=observe_uhci(g,symbols,w)
    assert r['whole_original_uhci_runtime_after']['givebacks']>r['whole_original_uhci_runtime']['givebacks'],r['whole_original_uhci_runtime_after']

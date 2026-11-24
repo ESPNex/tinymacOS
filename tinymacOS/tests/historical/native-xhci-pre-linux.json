@@ -1,0 +1,10 @@
+{
+  "scope": "Historical native xHCI and its matching host fixtures. Not executed as current-original-HCD coverage.",
+  "archive_sha256": "2b6331e328aed978bc9d58a145fb3a88f3580f36e92417823c885410b4e2a55b",
+  "files": {
+    "tests/input_maintenance.c": "2f4647c16abae84c5d5826042ca71eebc8bdfe4ba0ad586b88cc1a5c4b1be523",
+    "tests/input_enumeration.c": "229b07eac1f934dd777116aa438bfb9c46c4e18298bc308f0bbe60684206e161",
+    "tests/xhci_hubs.c": "068df99f80444baa4636acc35d80d9eb33ece5b84c2d7a4787af6b4764409194",
+    "drivers/xhci.c": "a433933653875a04a29f84a030034d97e05fb01567901e3ee42531cd04d634c5"
+  }
+}

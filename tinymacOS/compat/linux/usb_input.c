@@ -403,9 +403,10 @@ void tmc_linux_keyboard_stats(TmcLinuxKeyboardStats *out)
  u32 flags=tmc_lx_os_lock();if(out)*out=kstats;tmc_lx_os_unlock(flags);
 }
 
-/* Copying native HCD backend. Actual upstream hcd.c owns endpoint queues,
- * submission/unlink references and direct giveback below. Hardware rings/DMA
- * and the physical xHCI/EHCI/UHCI implementations remain native. */
+/* Copying class HCD boundary. Actual upstream hcd.c owns endpoint queues,
+ * submission/unlink references and direct giveback below. The physical bridge
+ * reaches native xHCI or separate whole-original UHCI/EHCI runtime objects;
+ * these class objects are not aliases of their physical HCD/device ABI. */
 static int tmc_native_hcd_validate(struct usb_hcd *h,struct urb *u,gfp_t flags)
 {
  if(!u||!u->dev||!u->ep||!h)return -EINVAL;

@@ -1,0 +1,14 @@
+{
+  "passed": false,
+  "firmware": "uefi",
+  "profile": "ehci-hub",
+  "iso_sha256": "9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601",
+  "work": "/var/tmp/tmc-linux-usb-uefi-ehci-hub-ovq82vn3",
+  "actual_upstream_boot_mouse_driver": true,
+  "linux_hcd_port": true,
+  "linux_full_usb_core_port": false,
+  "native_hcd_transport_adapter": false,
+  "native_class_enumeration_facade": true,
+  "physical_hardware_tested": false,
+  "actual_iso_kernel_equals_build": true
+}

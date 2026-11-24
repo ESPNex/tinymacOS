@@ -1,16 +1,16 @@
 {
   "passed": true,
   "firmware": "uefi",
-  "profile": "xhci-two-mice",
-  "iso_sha256": "dfe113a908b61dd6d5a8c353a8b927df957566881f6cb40f5fae11282766767b",
-  "work": "/var/tmp/tmc-two-mice-uefi-wsgnrd1q",
+  "profile": "xhci-two-mice-kbd",
+  "iso_sha256": "9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601",
+  "work": "/var/tmp/tmc-two-mice-uefi-kyveree3",
   "full_linux_hcd_port": false,
   "physical_hardware_tested": false,
   "checks": [
     "First mouse holds drag; second mouse zero-button motion moves actual Terminal window by +20 X without releasing it",
     "Both mice press left; first releases; second-held drag survives and actual window moves -10 X/+15 Y",
     "Final mouse release ends drag: subsequent pointer motion leaves Terminal window stationary",
-    "Enrollment/F2 uses actual PS/2 keyboard through Linux libps2 RX; pointer paths are two USB Boot mice"
+    "Enrollment/F2 uses USB-only keyboard with i8042 disabled; two USB mice exercise original xHCI controller and Linux Boot mouse button ownership"
   ],
   "actual_iso_kernel_equals_build": true,
   "before": {
@@ -21,30 +21,42 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 40,
-    "frees": 32
+    "allocations": 73,
+    "frees": 58
   },
-  "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer2\r\n",
-  "ps2_before": {
-    "setups": 1,
-    "commands": 16,
-    "command_errors": 0,
-    "tx_bytes": 26,
-    "rx_bytes": 30,
-    "data_bytes": 2,
-    "rx_errors": 0,
-    "wait_polls": 26,
-    "rejected": 0
+  "whole_original_xhci_runtime": {
+    "controllers": 1,
+    "submissions": 29,
+    "givebacks": 26,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 110,
+    "schedule_polls": 110,
+    "timer_fires": 25,
+    "root_polls": 28,
+    "errors": 0
   },
+  "usb": "  Device 0.1, Port 1, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n  Device 0.2, Port 2, Speed 480 Mb/s, Product QEMU USB Mouse, ID: pointer2\r\n  Device 0.3, Port 3, Speed 480 Mb/s, Product QEMU USB Keyboard\r\n",
+  "usb_keyboard_before": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
   "mice": [
     {
-      "index": 3,
+      "index": 1,
       "name": "QEMU HID Mouse",
       "current": false,
       "absolute": false
     },
     {
-      "index": 4,
+      "index": 2,
       "name": "QEMU HID Mouse",
       "current": true,
       "absolute": false
@@ -58,18 +70,31 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 40,
-    "frees": 32
+    "allocations": 73,
+    "frees": 58
   },
-  "ps2_after": {
-    "setups": 1,
-    "commands": 16,
-    "command_errors": 0,
-    "tx_bytes": 26,
-    "rx_bytes": 118,
-    "data_bytes": 90,
-    "rx_errors": 0,
-    "wait_polls": 26,
-    "rejected": 0
-  }
+  "whole_original_xhci_runtime_after": {
+    "controllers": 1,
+    "submissions": 164,
+    "givebacks": 161,
+    "unlinks": 0,
+    "map_failures": 0,
+    "irq_polls": 2562,
+    "schedule_polls": 2562,
+    "timer_fires": 748,
+    "root_polls": 751,
+    "errors": 0
+  },
+  "linux_xhci_controller_executed": true,
+  "usb_keyboard_after": [
+    1,
+    1,
+    88,
+    88,
+    0,
+    0,
+    0,
+    0,
+    0
+  ]
 }

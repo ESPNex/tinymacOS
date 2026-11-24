@@ -6,6 +6,21 @@ I contratti host verificano parser e invarianti; le prove guest esercitano codic
 
 Ogni esito deve indicare sorgenti e media effettivi. Una compilazione riuscita, un controllo statico o il PASS di una vecchia ISO non certificano una nuova release.
 
+## Milestone più recente: core USB/HCD/hub canonici nel kernel
+
+La modalità opt-in `TMC_USB_CANONICAL=1` esegue xHCI/EHCI originali attraverso un confine opaco, core USB/HCD/hub originali e driver Boot originali. **Non** esegue ancora tutto HID-core/usbhid. PS/2 è escluso. L'ultima release pubblicata resta 10.1.6 / 30B7.
+
+Evidenze in `workspace/release-10.1.7-30B8/`:
+
+- `usbcore-kernel-integration-result.json`: artefatti, hash della fotografia sorgente, confine dei simboli, limiti e sei ricevute dello stesso ISO dualboot.
+- `usbcore-dualboot-{bios,uefi}-{xhci-two-mice-kbd,ehci-kbd,xhci-hub-kbd}.json`: **6/6 PASS**. Tastiera solo USB con i8042 disabilitato, login/Terminale, cursore a pixel, URB attive allo scollegamento, ricollegamento sulla stessa porta e contatori originali; vecchio adattatore di classe inattivo.
+- `usbcore-enumeration-model-result.json`: intero core/HCD/hub sul modello esplicitamente dichiarato, O1/O2 ASan/leak/UBSan, enumerazione/binding/completamenti/scollegamento/teardown. **Non** è prova hardware.
+- `usbcore-canonical-host-result.json`: contratti ABI e binding/NO-I/O, distinti dall'enumerazione reale.
+
+I test non certificano hardware fisico, installazione, Recupero firmware sul nuovo artefatto o una release. I sorgenti eseguibili e i media devono corrispondere alle ricevute. Le modifiche solo documentali successive vengono riportate separatamente senza riscrivere la fotografia sorgente storica.
+
+[Guida alla prova live su hardware](HARDWARE-TEST.md). Le sezioni successive descrivono milestone storiche: affermazioni come «HCD nativo» si riferiscono alle rispettive ricevute, non al percorso canonico appena descritto.
+
 ## 10.1.7 / 30B8 in sviluppo
 
 Le nuove prove sono in `workspace/release-10.1.7-30B8/`, dalla radice del repository:
@@ -21,7 +36,7 @@ Le nuove prove sono in `workspace/release-10.1.7-30B8/`, dalla radice del reposi
 - `linux-usbmouse-{uefi,bios}-*.json`: dodici topologie guest su xHCI, EHCI, UHCI, companion, hub e hub annidato. Il kernel reale della ISO deve coincidere con quello compilato; contatori vivi del driver e cursore a schermo sono verificati indipendentemente. Il trasporto HCD rimane nativo.
 - `linux-posix-feasibility.json`: misura iniziale dei sette sorgenti Linux core/HCD contro il solo shim POSIX preesistente, **non** un port HCD riuscito. Non include il successivo port `usbmouse`.
 
-Queste prove non costituiscono il gate finale della 10.1.7. Mancano i controller/core USB e HID generico Linux. La tastiera Recovery usa ora OpenUsbKbDxe e una variante dichiarata di Ps2KeyboardDxe, senza trasporto nativo: quattro profili firmware/tastiera verificano la mappatura italiana. I precedenti tentativi con regressioni restano archiviati, non promossi a PASS. La matrice completa di installazione/input va rieseguita sul risultato definitivo. Non creare ricevute di pubblicazione prima della pubblicazione effettiva.
+Queste prove storiche non costituiscono il gate finale della 10.1.7; per il successivo collegamento controller/core/hub vedere la milestone canonica sopra. Il completo HID-core/usbhid e i gate finali restano da completare. La tastiera Recovery usa ora OpenUsbKbDxe e una variante dichiarata di Ps2KeyboardDxe, senza trasporto nativo: quattro profili firmware/tastiera verificano la mappatura italiana. I precedenti tentativi con regressioni restano archiviati, non promossi a PASS. La matrice completa di installazione/input va rieseguita sul risultato definitivo. Non creare ricevute di pubblicazione prima della pubblicazione effettiva.
 
 ## Ultima release pubblicata
 

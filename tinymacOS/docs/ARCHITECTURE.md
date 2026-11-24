@@ -14,9 +14,9 @@ Le applicazioni sono eseguibili statici nel catalogo di sistema, organizzati in 
 
 ## Dispositivi e input
 
-AHCI serve lo storage SATA. I driver nativi comprendono PS/2, xHCI, EHCI e UHCI; routing Intel e topologie USB hanno limiti espliciti. La decodifica distingue delta relativi e coordinate assolute, verifica i report HID supportati e usa una mappa italiana ISO condivisa per tastiere USB e PS/2.
+AHCI serve lo storage SATA. UHCI, EHCI e xHCI eseguono driver originali Linux v6.12 su runtime privati a polling; il percorso predefinito conserva un adattatore nativo di enumerazione/classe. La modalità opt-in `TMC_USB_CANONICAL=1` collega xHCI/EHCI al core USB/HCD e al ciclo completo degli hub originali Linux, con driver Boot mouse/tastiera. HID-core/usbhid completo e un generale scheduler Linux non sono ancora collegati; PS/2 è escluso da questo percorso. Routing Intel e topologie USB hanno limiti espliciti. La decodifica distingue delta relativi e coordinate assolute, verifica i report HID supportati e usa una mappa italiana ISO condivisa per tastiere USB e PS/2.
 
-Nel desktop l'input passa dai driver kernel. In Recovery, che è un runtime UEFI separato, il puntatore usa i protocolli firmware disponibili o USB I/O sulle interfacce non reclamate. Questi percorsi non sono intercambiabili: un test del decoder o del controller nativo non certifica il firmware Recovery.
+Nel desktop l'input passa dai driver kernel. In Recovery, che è un runtime UEFI separato, il puntatore usa i protocolli firmware disponibili; il precedente trasporto mouse USB diretto non è collegato. Questi percorsi non sono intercambiabili: un test del decoder o del controller nativo non certifica il firmware Recovery.
 
 ## Recupero e integrità
 

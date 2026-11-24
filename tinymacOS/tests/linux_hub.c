@@ -45,7 +45,7 @@ static int control(void *arg,unsigned rt,unsigned request,unsigned value,unsigne
  }
  assert(rt==0x23&&!n&&!data);f->writes++;
  if(request==3){assert(value==4);f->resets++;f->polls=0;if(f->mode==9)return -19;}
- else {assert(request==1&&(value==16||value==20));f->clears++;}
+ else {assert(request==1&&(value==16||value==20||value==25||value==29));f->clears++;}
  return 0;
 }
 static int run(struct Fixture *f,unsigned *status)
@@ -65,7 +65,8 @@ int main(void)
  f=(struct Fixture){.mode=9};assert(run(&f,&status)==-ENODEV&&f.resets==1);
  assert(tmc_linux_hub_port_init(control,&f,0,3,&status)==-EINVAL);
  assert(tmc_linux_hub_port_init(control,&f,16,3,&status)==-EINVAL);
- assert(tmc_linux_hub_port_init(control,&f,3,5,&status)==-EINVAL);
+ f=(struct Fixture){0};active=&f;assert(!tmc_linux_hub_port_init(control,&f,3,5,&status)&&f.resets==1&&f.clears>=3);
+ assert(tmc_linux_hub_port_init(control,&f,3,6,&status)==-EINVAL);
  f=(struct Fixture){.start_writer=1};assert(!run(&f,&status));assert(!pthread_join(writer,0)&&writer_done);
  assert(!__atomic_load_n(&ehci_cf_port_reset_rwsem,__ATOMIC_ACQUIRE));
  for(unsigned i=0;i<1024;i++){f=(struct Fixture){0};assert(!run(&f,&status));}

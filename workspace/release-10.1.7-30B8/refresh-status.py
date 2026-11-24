@@ -1,129 +1,109 @@
 #!/usr/bin/env python3
-"""Refresh truthful development status; this NEVER commits, uploads or publishes."""
+"""Current, source/ISO-bound development status. Never uploads or publishes.
+Historical v17/v18 receipts are not accepted as current-kernel evidence.
+"""
 from pathlib import Path
-import filecmp,hashlib,json,os,subprocess
-q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS';base=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-uhci-v17'));iso=base/'tinymacOS-10.1.7-x86_64.iso'
-def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()
+import hashlib,json,os,subprocess
+q=Path(__file__).resolve().parent
+root=q.parents[1]/'tinymacOS'
+stage=Path(os.environ.get('TMC_LINUX_STAGE','/var/tmp/tmc-10.1.7/linux-xhci-v19'))
+iso=stage/'tinymacOS-10.1.7-x86_64.iso'
+def sha(p):
+ with Path(p).open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()
 def load(name):
- p=q/name;return json.loads(p.read_text()) if p.exists() else {}
+ p=q/name
+ return json.loads(p.read_text()) if p.exists() else {}
 identity=sha(iso)
+# The v19 staging manifest is a FROZEN source receipt, not a writable view of
+# an unrelated newer working tree. Never rebind an old ISO to new source files.
+manifest=load('staging-source-hashes.json')
+if not manifest:raise RuntimeError('Missing frozen stage source manifest')
+working={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
+working_delta={'changed_existing':[n for n,h in manifest.items() if n in working and working[n]!=h],
+               'deleted':[n for n in manifest if n not in working],
+               'added_count':sum(n not in manifest for n in working),'working_file_count':len(working)}
+canonical=load('usbcore-canonical-host-result.json')
+canonical_current=bool(canonical.get('passed') and canonical.get('source_files') and
+ all((root/n).is_file() and sha(root/n)==h for n,h in canonical['source_files'].items()))
+
+def source_current(record):
+ if not record.get('passed') or not record.get('sources'):return False
+ for name,digest in record['sources'].items():
+  p=root.parent/name if name.startswith('tinymacOS/') else root/name
+  if not p.is_file() or sha(p)!=digest:return False
+ return True
 def current(name):
- r=load(name);return bool(r.get('passed') and r.get('iso_sha256')==identity)
-manifest={str(p.relative_to(root)):sha(p) for p in sorted(root.rglob('*')) if p.is_file() and '__pycache__' not in p.parts}
-(q/'staging-source-hashes.json').write_text(json.dumps(manifest,indent=2)+'\n')
-other=Path('/var/tmp/tmc-10.1.7/linux-uhci-v17-independent/tinymacOS-10.1.7-x86_64.iso');repro=other.exists() and filecmp.cmp(iso,other,shallow=False)
-(q/'reproducible-build-result.json').write_text(json.dumps({'passed':repro,'scope':'Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/atkbd/psmouse/full-stack port; bounded original hid-generic/hid-input now active','sha256':identity,'bytes':iso.stat().st_size,'builds':[str(base/'build'),str(other.parent/'build')],'byte_comparison_exit_code':0 if repro else 1,'published':False},indent=2)+'\n')
-names=[f'linux-usbmouse-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci','ehci','uhci','companion','xhci-hub','xhci-nested-hub']]
-ports=sum(current(n) for n in names)
-symbols=subprocess.check_output(['nm',str(base/'build/kernel.debug')],text=True)
-linked=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_mouse_irq','usb_mouse_probe','tmc_lx_usbmouse_driver'])
-contract=load('linux-usbmouse-contract-result.json');host_current=bool(contract.get('passed'))
-for name,digest in contract.get('sources',{}).items():
- path=root.parent/name if name.startswith('tinymacOS/') else root/name
- if not path.exists() or sha(path)!=digest:host_current=False
-status={'state':'UNRELEASED / partial Linux USB and PS/2 port','requested_version':'10.1.7','requested_build':'30B8','published':False,'stable_release_unchanged':'10.1.6','development_iso_sha256':identity,'development_iso_bytes':iso.stat().st_size,'development_build':str(base/'build'),'source_files':len(manifest),'source_manifest_sha256':sha(q/'staging-source-hashes.json'),'about_version_updated_to_10_1_7':current('identity-contract-result.json') and load('identity-contract-result.json').get('about_version_updated',False),'about_layout_unchanged_except_version_build':load('identity-contract-result.json').get('about_layout_source_unchanged_except_version_and_build',False),'actual_upstream_linux_usbmouse_compiled_and_linked':bool(linked),'actual_linux_hcd_compiled_or_linked':False,'upstream_linux_ehci_qtd_fill_compiled_and_linked':all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['qtd_fill','tmc_linux_ehci_qtd_build']),'linux_ehci_qtd_host_contract_passed':load('linux-ehci-qtd-contract-result.json').get('passed',False),'intel_shared_port_routing_host_contract_passed':load('intel-usb-routing-contract-result.json').get('passed',False),'general_linux_usb_core_or_generic_hid_ported':False,'posix_compatibility_alone_sufficient':False,'linux_usbmouse_host_contract_passed':host_current,'linux_usbmouse_current_guest_topologies_passed':ports,'linux_usbmouse_current_guest_topologies_expected':12,'host_deletion_contracts_passed':load('deletion-contract-result.json').get('passed',False),'actual_opencore_media_contract_passed':current('media-contract-result.json'),'identity_media_contract_passed':current('identity-contract-result.json'),'full_staging_uefi_passed':current('staging-uefi-result.json'),'full_staging_bios_passed':current('staging-bios-result.json'),'recovery_firmware_mouse_xy_passed':all(current(f'recovery-firmware-{fw}-result.json') for fw in ['uefi','bios']),'recovery_keyboard_uses_native_decoder':False,'recovery_keyboard_firmware_contract_passed':current('firmware-keyboard-contract-result.json'),'recovery_keyboard_current_firmware_guest_profiles_passed':sum(current(f'recovery-keyboard-{fw}-{profile}.json') for fw in ['uefi','bios'] for profile in ['ps2','xhci-hub-kbd']),'control_center_guest_passed':current('control-result.json'),'independent_reproducible_build_run':repro,'current_kernel_runtime_regression_passed':load('kernel-current-source-result.json').get('passed',False) and load('kernel-current-source-result.json').get('kernelcache_sha256')==sha(base/'build/KernelCache'),'full_kernel_input_install_final_gate_passed':False,'current_kernel_binary_identical_to_v2':Path('/var/tmp/tmc-10.1.7/linux-usb-v2/build/KernelCache').exists() and filecmp.cmp(base/'build/KernelCache',Path('/var/tmp/tmc-10.1.7/linux-usb-v2/build/KernelCache'),shallow=False),'physical_hardware_tested':False,'blocking_work':['Complete actual Linux xHCI/EHCI HCDs and USB core/hub/IRQ/DMA lifecycle; only EHCI qtd_fill is now upstream, controller/scheduler remain native','Port generic Linux HID; usbmouse/usbkbd are Boot drivers, not generic HID','Rerun the entire install, native input and Recovery release matrix on the fully integrated result; audit source/license correspondence before binary publication'],'evidence_sha256':{p.name:sha(p) for p in sorted((q/'evidence').glob('*.png'))}}
-status['actual_upstream_linux_usbkbd_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_kbd_irq','usb_kbd_probe','usb_kbd_event','usb_kbd_led','usb_kbd_disconnect','tmc_lx_usbkbd_driver'])
-kbd_contract=load('linux-usbkbd-contract-result.json')
-status['linux_usbkbd_host_contract_passed']=bool(kbd_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in kbd_contract.get('sources',{}).items())
-status['linux_usbkbd_current_guest_topologies_passed']=sum(current(f'linux-usbkbd-{fw}-{profile}.json') for fw in ['uefi','bios'] for profile in ['ehci-kbd','companion-kbd','xhci-hub-kbd'])
-status['linux_usbkbd_current_guest_topologies_expected']=6
-status['actual_upstream_linux_usb_core_urb_file_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_alloc_urb','usb_init_urb','usb_get_urb','usb_submit_urb','usb_kill_urb','usb_poison_anchored_urbs','usb_wait_anchor_empty_timeout'])
-urb_contract=load('linux-urb-contract-result.json')
-status['linux_urb_host_contract_passed']=bool(urb_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in urb_contract.get('sources',{}).items())
-status['linux_urb_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_core_urb_file_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
-status['linux_hcd_backend_scope']='Native, one logical interrupt-IN and EP0-OUT slot per binding, maximum 8 payload bytes; not Linux hcd.c'
-status['blocking_work'][0]='Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hubs/IRQ/DMA lifecycle; only core urb.c, Boot drivers and EHCI qtd_fill are upstream so far'
-mouse_lifecycle=load('linux-mouse-lifecycle-contract-result.json')
-status['linux_mouse_lifecycle_host_contract_passed']=bool(mouse_lifecycle.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in mouse_lifecycle.get('sources',{}).items())
-status['linux_two_mice_current_guest_profiles_passed']=sum(current(f'linux-two-mice-{fw}.json') for fw in ['uefi','bios'])
-status['linux_two_mice_current_guest_profiles_expected']=2
-status['actual_upstream_linux_libps2_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['ps2_command','__ps2_command','ps2_interrupt','ps2_sendbyte','ps2_sliced_command','tmc_linux_ps2_init'])
-ps2_contract=load('linux-ps2-contract-result.json')
-status['linux_libps2_host_contract_passed']=bool(ps2_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in ps2_contract.get('sources',{}).items())
-status['ps2_keyboard_and_mouse_current_guest_profiles_passed']=sum(current(f'linux-ps2-{fw}.json') for fw in ['uefi','bios'])
-status['ps2_keyboard_and_mouse_current_guest_profiles_expected']=2
-status['full_linux_i8042_driver_port']=False
-status['linux_atkbd_driver_port']=False
-status['linux_psmouse_driver_port']=False
-status['input_port_scope']={
- 'usb_mouse':'Upstream Boot usbmouse + URB core; native HCD; no general HID',
- 'usb_keyboard':'Upstream Boot usbkbd + URB core; native HCD; no general HID',
- 'ps2_mouse':'Upstream complete libps2 + original psmouse packet and IMPS/Explorer detect functions; native i8042/framing, not complete psmouse',
- 'ps2_keyboard':'Upstream complete libps2 command/RX; native i8042/stream decoder/LED, not atkbd'}
-status['blocking_work'].insert(2,'Complete actual Linux i8042/serio/atkbd/psmouse driver port; current PS/2 increment is the complete original libps2 library, not the class drivers')
-psmouse_contract=load('linux-psmouse-contract-result.json')
-status['actual_upstream_psmouse_packet_and_detect_functions_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['psmouse_process_byte','psmouse_report_standard_motion','psmouse_report_standard_buttons'])
-status['linux_psmouse_functions_host_contract_passed']=bool(psmouse_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in psmouse_contract.get('sources',{}).items())
-status['ps2_usb_shared_pointer_guest_profiles_passed']=sum(current(f'linux-mixed-mice-{fw}.json') for fw in ['uefi','bios'])
-status['ps2_usb_shared_pointer_guest_profiles_expected']=2
-config_contract=load('linux-config-contract-result.json')
-status['actual_upstream_linux_usb_core_config_file_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_config_get_configuration','tmc_config_destroy_configuration','tmc_config_get_bos_descriptor','tmc_config_release_bos_descriptor'])
-status['linux_config_host_contract_passed']=bool(config_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in config_contract.get('sources',{}).items())
-status['linux_config_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_core_config_file_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
-status['linux_config_current_guest_topologies_expected']=18
-status['native_configuration_policy']='First configuration, alternate-zero inputs, 1024 bytes; original config.c parses/selects both HID and hub classes'
-status['complete_linux_hub_driver_port']=False
-status['blocking_work'][0]='Complete actual Linux xHCI/EHCI HCDs and remaining USB core/hub/IRQ/DMA lifecycle; core urb.c/config.c, Boot input drivers and EHCI qtd_fill are upstream so far'
-status['current_installer_bios_hdd_reboot_uefi_crossboot_passed']=current('install-current-result.json') and load('install-current-result.json').get('installed_esp_kernel_readback_equals_current_build',False) and load('install-current-result.json').get('installed_kernelcache_sha256')==sha(base/'build/KernelCache')
-status['current_runtime_kernel_guest_profiles_passed']=load('kernel-current-source-result.json').get('guest_profiles_passed',0) if status['current_kernel_runtime_regression_passed'] else 0
-status['current_runtime_kernel_guest_profiles_expected']=13
-status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/config; native HCD/hub/report HID'
-status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; native HCD/hub/report HID'
-hid_contract=load('linux-hid-parser-contract-result.json')
-status['upstream_linux_hid_parser_functions_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['hid_open_report','hid_register_report','hid_setup_resolution_multiplier','tmc_linux_hid_pointer_layout'])
-status['linux_hid_parser_host_contract_passed']=bool(hid_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in hid_contract.get('sources',{}).items())
-status['linux_hid_parser_current_guest_topologies_passed']=sum(current(n) and load(n).get('actual_upstream_hid_parser_functions_executed',False) for n in names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']])
-status['linux_hid_parser_current_guest_topologies_expected']=18
-generic_contract=load('linux-hid-generic-contract-result.json')
-status['linux_hid_generic_and_input_whole_source_host_contract_passed']=bool(generic_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in generic_contract.get('sources',{}).items())
-status['upstream_hid_generic_and_hid_input_whole_files_compiled_and_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['hid_generic_probe','hid_generic_match','hidinput_connect','hidinput_disconnect','hidinput_hid_event','hidinput_report_event'])
-native_contract=load('linux-generic-native-contract-result.json')
-status['native_generic_host_contract_passed']=bool(native_contract.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in native_contract.get('sources',{}).items())
-status['native_usb_endpoints_wired_to_generic_hid_input']=status['native_generic_host_contract_passed'] and all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_linux_generic_attach','tmc_linux_generic_report','tmc_linux_generic_service'])
-status['native_generic_current_guest_profiles_passed']=sum(current(f'linux-generic-native-{fw}-{p}.json') for fw in ['uefi','bios'] for p in ['xhci-tablet','ehci-tablet','uhci-tablet','companion-tablet','xhci-tablet-hub'])
-status['native_generic_current_guest_profiles_expected']=10
-status['ps2_class_driver_work_deferred_by_user']=True
-status['requested_four_block_complete']=False
-status['four_block_scope']={'linux_controllers':'not complete; native HCDs remain','usb_core_hub':'not complete; original URB/config only, native enumeration/hub remain','hid_generic':'complete original driver active through bounded native HCD transport; not Linux usbhid/HCD or HID bus','hid_input':'complete original input mapping/event unit active through shared native event consumers; supported applications only'}
-status['whole_linux_hid_core_ported']=False
-status['linux_hid_generic_driver_ported']=status['native_usb_endpoints_wired_to_generic_hid_input']
-status['linux_hid_input_event_dispatch_ported']=status['native_usb_endpoints_wired_to_generic_hid_input']
-status['input_port_scope']['usb_mouse']='Upstream Boot usbmouse + core URB/config + whole generic/input for Report-only relative/absolute pointers; native HCD/hub'
-status['input_port_scope']['usb_keyboard']='Upstream Boot usbkbd + core URB/config; whole generic keyboard events through shared native sink host-tested; native HCD/hub'
-status['blocking_work'][1]='Complete remaining Linux HID core/bus/usbhid/lifecycle and general transport support; bounded generic endpoint/native event integration is now active'
-status['installed_and_optical_all_component_notices_byte_exact']=current('media-contract-result.json') and load('media-contract-result.json').get('all_component_notices_in_three_fat_media',False)
-status['actual_installed_component_notices_byte_exact']=current('install-current-result.json') and load('install-current-result.json').get('actual_installed_component_notices_byte_exact',False)
-hcd_hub=load('linux-hcd-hub-contract-result.json')
-status['linux_hcd_hub_functions_host_contract_passed']=bool(hcd_hub.get('passed')) and all((root/name).exists() and sha(root/name)==digest for name,digest in hcd_hub.get('sources',{}).items())
-status['original_linux_hcd_lifecycle_functions_active']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_hcd_submit_urb','usb_hcd_link_urb_to_ep','usb_hcd_check_unlink_urb','usb_hcd_unlink_urb_from_ep','usb_hcd_unlink_urb'])
-status['original_linux_hub_debounce_reset_functions_active']=status['linux_hcd_hub_functions_host_contract_passed'] and all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_linux_hub_port_init','hub_port_debounce'])
-status['linux_hcd_lifecycle_current_guest_profiles_passed']=sum(current(n) and load(n).get('actual_upstream_hcd_lifecycle_functions_executed',False) for n in names)
-status['linux_hub_reset_current_guest_profiles_passed']=sum(current(f'linux-usbmouse-{fw}-{p}.json') and load(f'linux-usbmouse-{fw}-{p}.json').get('actual_upstream_hub_debounce_reset_functions_executed',False) for fw in ['uefi','bios'] for p in ['xhci-hub','xhci-nested-hub'])
-status['four_block_scope']['usb_core_hub']='not complete; original URB/config and HCD lifecycle/USB2 hub debounce-reset functions active; remaining core/hub/root-hub/device lifecycle missing'
-status['blocking_work'][0]='Complete physical Linux xHCI/EHCI/UHCI drivers and remaining USB core/hub/IRQ/DMA/device/root-hub lifecycle; core URB/config, HCD lifecycle functions and USB2 hub debounce/reset are upstream so far'
-message=load('linux-message-contract-result.json')
-status['linux_message_control_host_contract_passed']=bool(message.get('passed')) and bool(message.get('sources')) and all((root/name).exists() and sha(root/name)==digest for name,digest in message.get('sources',{}).items())
-status['original_linux_message_control_functions_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['usb_control_msg','usb_control_msg_send','usb_control_msg_recv','usb_get_descriptor','tmc_linux_core_control'])
-message_guests=names+[f'linux-usbkbd-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['ehci-kbd','companion-kbd','xhci-hub-kbd']]+[f'linux-generic-native-{fw}-{p}.json' for fw in ['uefi','bios'] for p in ['xhci-tablet','ehci-tablet','uhci-tablet','companion-tablet','xhci-tablet-hub']]
-status['linux_message_control_current_guest_profiles_passed']=sum(current(n) and load(n).get('actual_upstream_message_control_functions_executed',False) for n in message_guests)
-status['complete_linux_message_file_ported']=False
-status['linux_hcd_backend_scope']='Native copying physical controllers; original URB/HCD lifecycle, eight-byte Boot interrupt/LED slots and serialized message-only EP0 IN/OUT <=1024 bytes; not physical Linux HCDs'
-status['four_block_scope']['usb_core_hub']='not complete; original URB/config, synchronous message/descriptor functions, HCD lifecycle and USB2 debounce/reset active; remaining core/hub/root-hub/device lifecycle missing'
-status['blocking_work'][0]='Complete physical Linux xHCI/EHCI/UHCI and remaining USB core/hub/IRQ/DMA/device/root-hub lifecycle; original URB/config, sync message/descriptor, HCD lifecycle and USB2 hub debounce/reset are integrated'
-dma=load('linux-dma-pool-contract-result.json')
-status['whole_original_linux_dma_pool_host_contract_passed']=bool(dma.get('passed')) and bool(dma.get('sources')) and all((root/name).exists() and sha(root/name)==digest for name,digest in dma.get('sources',{}).items())
-status['whole_original_linux_dma_pool_functions_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['dma_pool_create','dma_pool_alloc','dma_pool_free','dma_pool_destroy','dmam_pool_create','dmam_pool_destroy','tmc_dma_os_coherent'])
-status['linux_dma_pool_native_controller_guest_profiles_passed']=sum(current(n) and load(n).get('original_dma_pool_in_native_controller_executed',False) for n in message_guests)
-status['linux_dma_pool_iommu_supported']=False
-status['linux_dma_pool_scope']='Whole original mm/dmapool.c with real coherent/lock/attribute/devres services; EHCI/UHCI control and interrupt TDs use it, physical HCD schedulers still native; <=64 KiB coherent identity-DMA x86, no IOMMU/noncoherent port'
-uhci=load('linux-uhci-contract-result.json')
-status['whole_original_linux_uhci_host_contract_passed']=bool(uhci.get('passed')) and bool(uhci.get('sources')) and all((root/name).exists() and sha(root/name)==digest for name,digest in uhci.get('sources',{}).items())
-status['whole_original_linux_uhci_controller_linked']=all(any(line.endswith(' '+name) for line in symbols.splitlines()) for name in ['tmc_linux_uhci_module_init','tmc_uhci_usb_hcd_submit_urb','uhci_urb_enqueue','uhci_hub_control','uhci_irq'])
-status['actual_linux_hcd_compiled_or_linked']=status['whole_original_linux_uhci_controller_linked']
-status['whole_original_linux_uhci_current_guest_profiles_passed']=sum(current(n) and bool(load(n).get('whole_original_uhci_runtime')) for n in message_guests)
-status['linux_uhci_runtime_scope']='Whole original UHCI HCD/queue/root-hub/PCI + URB/HCD lifecycle; real coherent bounce DMA, locks, timers, PCI, polling; native UsbInput class boundary remains. No hardware IRQ routing, system PM, SG/external streaming mappings, full core/usbhid or physical-board claim'
-status['linux_dma_pool_scope']='Whole original mm/dmapool.c with real coherent/lock/attribute/devres services, used by native EHCI and whole original Linux UHCI; <=64 KiB coherent identity-DMA x86, no IOMMU/noncoherent port'
-status['four_block_scope']['linux_controllers']='UHCI original whole HCD/queue/root-hub/PCI active on real polled runtime; xHCI/EHCI still native, IRQ/PM and general USB lifecycle incomplete'
-status['blocking_work'][0]='Complete original xHCI/EHCI and remaining USB core/hub/IRQ/DMA/device lifecycle; whole original UHCI is now active on polled runtime, not a complete Linux USB stack'
-status['linux_hcd_backend_scope']='Whole original Linux UHCI on polled DMA runtime feeding separate UsbInput class boundary; native xHCI/EHCI and copying Boot/generic class transport remain'
-(q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n');print(json.dumps({k:v for k,v in status.items() if k not in ['evidence_sha256','blocking_work']},indent=2))
+ r=load(name)
+ return bool(r.get('passed') and r.get('iso_sha256')==identity)
+names=['config','dma-pool','ehci','xhci','generic-native','hcd-hub','hid-generic','hid-parser','message','mouse-lifecycle','uhci','urb','usbkbd','usbmouse','ehci-qtd']
+host=[]
+for name in ['linux-'+n+'-contract-result.json' for n in names]+['intel-usb-routing-contract-result.json']:
+ record=load(name)
+ host.append({'receipt':name,'passed':source_current(record),'sha256':sha(q/name) if (q/name).exists() else None,'source_hashes_match_current':source_current(record)})
+guests=[]
+profiles={'linux-usbmouse':['xhci','xhci-hub','xhci-nested-hub','ehci','uhci','companion'],
+          'linux-usbkbd':['ehci-kbd','companion-kbd','xhci-hub-kbd'],
+          'linux-generic-native':['xhci-tablet','ehci-tablet','uhci-tablet','companion-tablet','xhci-tablet-hub'],
+          'linux-two-mice':['']}
+for firmware in ['uefi','bios']:
+ for script,options in profiles.items():
+  for profile in options:
+   name=script+'-'+firmware+('-'+profile if profile else '')+'.json'
+   r=load(name)
+   row={'receipt':name,'firmware':firmware,'profile':r.get('profile',profile),'passed':current(name) and bool(r.get('actual_iso_kernel_equals_build'))}
+   if (q/name).exists():row['sha256']=sha(q/name)
+   if profile.startswith('xhci') or script=='linux-two-mice':
+    before=r.get('whole_original_xhci_runtime',{});after=r.get('whole_original_xhci_runtime_after',{})
+    row['original_xhci_execution_observed']=bool(before.get('givebacks',0)>0 and after.get('givebacks',0)>before.get('givebacks',0) and not after.get('errors',1))
+    row['passed']=row['passed'] and row['original_xhci_execution_observed']
+   guests.append(row)
+repro=load('v19-reproducible-build.json')
+repro_current=bool(repro.get('passed') and any(a.get('path')==iso.name and a.get('sha256')==identity and a.get('byte_identical') for a in repro.get('artifacts',[])))
+symbols=subprocess.check_output(['nm',str(stage/'build/kernel.debug')],text=True).splitlines()
+def linked(*names):return all(any(line.split()[-1].split('.')[0]==n for line in symbols) for n in names)
+controllers={'uhci':linked('uhci_irq','tmc_uhci_usb_hcd_submit_urb'),
+             'ehci':linked('ehci_irq','tmc_ehci_usb_hcd_submit_urb'),
+             'xhci':linked('tmc_xhci_xhci_irq','tmc_xhci_usb_hcd_submit_urb','tmc_xhci_xhci_queue_intr_tx')}
+validation={'passed':all(r['passed'] for r in host+guests) and repro_current and all(controllers.values()),
+ 'scope':'Controller/input development increment, not USB core/hub/usbhid completion or release approval',
+ 'iso_sha256':identity,'iso_bytes':iso.stat().st_size,'source_manifest_sha256':sha(q/'staging-source-hashes.json'),
+ 'source_files':len(manifest),'source_manifest_scope':'Frozen v19 stage; not the newer canonical-ABI working tree','host_suites_expected':15,'host_receipts_expected':16,'host_receipts_passed':sum(r['passed'] for r in host),
+ 'host_receipts':host,'usb_guest_profiles_expected':30,'usb_guest_profiles_passed':sum(r['passed'] for r in guests),
+ 'usb_guest_receipts':guests,'whole_original_controllers_linked':controllers,'independent_build_byte_identical':repro_current,
+ 'ps2_in_acceptance_scope':False,'physical_hardware_tested':False,'full_linux_usb_core_hub_usbhid':False,'published':False}
+(q/'v19-validation.json').write_text(json.dumps(validation,indent=2)+'\n')
+status={'state':'UNRELEASED / USB integration development','requested_version':'10.1.7','requested_build':'30B8',
+ 'current_increment':'v19','current_validation':'v19-validation.json','published':False,'stable_release_unchanged':'10.1.6',
+ 'public_main':'edbfecf54074428f02b3e76e698d8ad5c67782ba','development_iso_sha256':identity,
+ 'development_iso_bytes':iso.stat().st_size,'development_build':str(stage/'build'),'source_files':len(manifest),
+ 'source_manifest_sha256':sha(q/'staging-source-hashes.json'),'controller_input_increment_validated':validation['passed'],
+ 'source_manifest_scope':'Frozen v19 stage; not the newer canonical-ABI working tree',
+ 'working_tree_delta_from_v19':working_delta,
+ 'canonical_usb_abi_development':{'source_bound_host_contracts_passed':canonical_current,
+    'receipt':'usbcore-canonical-host-result.json','optimizations':canonical.get('optimizations',[]),
+    'original_bus_binding_authorization_dynamic_ids_tested':bool(canonical_current and canonical.get('original_binding_host_O1_O2')),
+    'kernel_linked':False,'full_core_runtime_tested':False,'hub_enumeration_tested':False,'usbhid_tested':False,'release_gate':False},
+ 'whole_original_controllers_linked':controllers,'current_usb_guest_profiles_passed':validation['usb_guest_profiles_passed'],
+ 'current_usb_guest_profiles_expected':30,'current_usb_host_suites_passed':15 if all(r['passed'] for r in host) else None,
+ 'current_usb_host_receipts_passed':validation['host_receipts_passed'],'independent_reproducible_build_run':repro_current,
+ 'ps2_required':False,'ps2_completion_excluded_by_user':True,'requested_usb_macroblock_complete':False,
+ 'native_class_enumeration_facade_remains':True,'complete_linux_hcd_core_file_ported':False,
+ 'complete_linux_usb_core_bus_model_ported':False,'complete_linux_hub_driver_ported':False,
+ 'complete_linux_hid_core_usbhid_ported':False,'linux_hid_generic_and_hid_input_whole_files_active':True,
+ 'identity_media_contract_passed':current('identity-contract-result.json'),'actual_opencore_media_contract_passed':current('media-contract-result.json'),
+ 'current_installer_gate_passed':current('install-current-result.json'),
+ 'current_kernel_runtime_gate_passed':bool(load('kernel-current-source-result.json').get('passed') and load('kernel-current-source-result.json').get('kernelcache_sha256')==sha(stage/'build/KernelCache')),
+ 'full_kernel_input_install_final_gate_passed':False,'physical_hardware_tested':False,
+ 'blocking_work':['Integrate remaining genuine Linux USB core/bus, complete hub enumeration/disconnect/hotplug and full HID-core/usbhid in one working stack; existing UsbInput/class and private ABI boundaries are not that stack.',
+                  'Run final installation, separate Recovery firmware input, kernel, interface/layout/deletion and license/source gates on the fully integrated artifact before release.'],
+ 'current_controller_runtime_scope':'Whole original UHCI/EHCI/xHCI on serialized CPU0 polling and original URB/HCD functions. Actual coherent DMA, PCI, commands, rings, event completion, bandwidth, cancellation and workers. No claim of physical IRQ routing, IOMMU, system PM or physical ASRock proof.',
+ 'superspeed_validation_scope':'Original xHCI SuperSpeed EP0 and companion/ESIT contexts exercised by host hardware model; no SuperSpeed HID physical or QEMU-device proof.',
+ 'history_note':'v17/v18 and older non-USB receipts are historical. Current source/ISO-bound controller/input evidence is enumerated in v19-validation.json. No release or final-stack gate follows from this milestone.'}
+(q/'STATUS.json').write_text(json.dumps(status,indent=2)+'\n')
+print(json.dumps({k:v for k,v in validation.items() if k not in ['host_receipts','usb_guest_receipts']},indent=2))
+
+# Preserve the independently verified newer canonical kernel experiment when
+# refreshing the historical v19/controller report. Never infer usbhid/release.
+if (q/'usbcore-kernel-integration-result.json').exists():
+ import runpy
+ runpy.run_path(str(q/'refresh-usbcore-progress.py'),run_name='__main__')

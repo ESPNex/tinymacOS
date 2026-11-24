@@ -1,3 +1,5 @@
+/* HISTORICAL NATIVE FIXTURE: matched source and hashes in historical/native-xhci-pre-linux.tar.xz.
+ * Not a current xHCI test; replaced by linux_xhci_hcd.c plus usbinput_contract.c. */
 /* Actual configure()/control() path, with emulated MMIO doorbells/descriptors.
  * This is a fault-injection contract, not evidence about a physical mouse. */
 #define TMC_INPUT_TEST 1

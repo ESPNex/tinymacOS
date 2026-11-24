@@ -1,0 +1,414 @@
+{
+  "state": "UNRELEASED / USB macroblock incomplete",
+  "increment": "v18 whole original EHCI, private polled runtime",
+  "published": false,
+  "ps2_required": false,
+  "macroblock_complete": false,
+  "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+  "iso_bytes": 225908736,
+  "external_artifact": "/var/tmp/tmc-10.1.7/linux-ehci-v18/tinymacOS-10.1.7-x86_64.iso",
+  "source_manifest": "staging-source-hashes.json",
+  "source_manifest_sha256": "164ff0f11adfa25250e0012f544237c28be911c9c5c54d68b5e399aee307abf0",
+  "source_files": 864,
+  "host_suites_passed": 14,
+  "host_receipts": [
+    {
+      "receipt": "linux-config-contract-result.json",
+      "sha256": "f232173853a40f21c6939cfeda06c38c2f2f0a93ff11705bd62aa7e0f70d8359",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-dma-pool-contract-result.json",
+      "sha256": "f246ff66528f709f4f4961c97e6fcf6b250ddbb85a14a596e31a0a21e3be09e8",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-ehci-contract-result.json",
+      "sha256": "4b3ab6c697ce5c58d124f00f136678092fa584b6c83c0f737cc60ae07c703412",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-generic-native-contract-result.json",
+      "sha256": "fc1aaf612d96e798dead237ea10353e374c39ce1ceb0664db7e522a6448e8237",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-hcd-hub-contract-result.json",
+      "sha256": "824582d713922be0e0cd586d939356e63c2eded4af6fe7f0edda28ae502b569b",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-hid-generic-contract-result.json",
+      "sha256": "4c6d7bd230e45715f04141008bae0c34b0be84f008351df4051a70f0c032fe7f",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-hid-parser-contract-result.json",
+      "sha256": "9424fd5b913d66d6c83830e4678be06e923aa541b3841d72b27c8dbab1975fa1",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-message-contract-result.json",
+      "sha256": "e065c31bb18ca7b59da374c5fa850c3ad9248aabf93fd0506a66c22d3dd2af23",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-mouse-lifecycle-contract-result.json",
+      "sha256": "877c55649270a7ae3107e935b14d208853527ccb82f6910135e7e7e143c6d26e",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-uhci-contract-result.json",
+      "sha256": "b36d71da9fe92e72bf83852e0ecc706e02d24a722e450dca007549ed0e8fad54",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-urb-contract-result.json",
+      "sha256": "f993353537e6952b82dc1e4fbf7179d5dfa3039fee75e1a6dbb94d030ee70f1d",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-usbkbd-contract-result.json",
+      "sha256": "400ab6ef16dbdcc6ac0278987da454e938821505ff3698df253028300c8da222",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-usbmouse-contract-result.json",
+      "sha256": "58fe6f7076c6de5109be35cfc9b87e34c122e77af415cd2b9fa02b512c94b9b7",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "linux-ehci-qtd-contract-result.json",
+      "sha256": "973084af04b7eac36c38a910773b5390cb2cb54e2c80f08ff6b164bbe93ef1d7",
+      "passed": true,
+      "source_hashes_match_current": true
+    },
+    {
+      "receipt": "intel-usb-routing-contract-result.json",
+      "sha256": "6b089edd160fcd96fbb46a4cee352c82299f26b0e47adabed3e9d2e3e024d8fb",
+      "passed": true,
+      "source_hashes_match_current": true
+    }
+  ],
+  "guest_profiles_passed": 30,
+  "guests": [
+    {
+      "receipt": "linux-usbmouse-uefi-xhci.json",
+      "sha256": "8de6e038864d2313047a48f153fddae465f7445e05192e2b75223fc84e53b732",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-uefi-xhci-hub.json",
+      "sha256": "2882be115e5c9a8c65fd489877c60c13f877f22dc0ebbf284598e82d37fe8c8e",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-uefi-xhci-nested-hub.json",
+      "sha256": "c14778d9af4eb4a2d140e97d6ac46299d84b4793732e70ca9b4783e9678aaddf",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-nested-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-uefi-ehci.json",
+      "sha256": "e32d061e877a78ba4b2b2566f06c0cb4d7ffbdba81a49392f484579475b7fa78",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "ehci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        10,
+        181
+      ]
+    },
+    {
+      "receipt": "linux-usbmouse-uefi-uhci.json",
+      "sha256": "0ed470adb34323143b0a6c968458bbf172958d7ac432242e658945c1c75cbd6a",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "uhci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-uefi-companion.json",
+      "sha256": "258063a214ef83b490ae69baebc372d8264a47df9cbeb6451ea364887e2d50ba",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "companion",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbkbd-uefi-ehci-kbd.json",
+      "sha256": "e36897c4703b70f1a38e0c5938f04758c85508355a12714c560ec5befba5a300",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "ehci-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        19,
+        201
+      ]
+    },
+    {
+      "receipt": "linux-usbkbd-uefi-companion-kbd.json",
+      "sha256": "7b90f50bcf6d708cebe9cd04e83ca9d1a8aa0ba99d021bfa56758465ecb16230",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "companion-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbkbd-uefi-xhci-hub-kbd.json",
+      "sha256": "7658d745a6234f2d8a71ee880c3ad9834de5bfbb47c527f7b2d75c15048ffcf2",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-hub-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-uefi-xhci-tablet.json",
+      "sha256": "6aafd5edc7c43a913761d51612725a090d41fce8315ac2f08242c4aa34e0c898",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-uefi-ehci-tablet.json",
+      "sha256": "c3e6325157ccda97689f90fff8dd0eb3f167b9ebca44ec3f1da9bd05b26ca235",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "ehci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        9,
+        21
+      ]
+    },
+    {
+      "receipt": "linux-generic-native-uefi-uhci-tablet.json",
+      "sha256": "948feaf9bd607ef98edde201f7e146f0a1dea1ac182ad174ae8db04030afd593",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "uhci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-uefi-companion-tablet.json",
+      "sha256": "529d40f1afb8b4a9c540b5d9e64c6e7a31535232688576dded3605fdb5147e83",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "companion-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-uefi-xhci-tablet-hub.json",
+      "sha256": "aac356dede37dc52c51b0c0e0978e6d951a5f28a35651584fb43f3f8b7194b6b",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-tablet-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-two-mice-uefi.json",
+      "sha256": "16c7ba4b253414cd8435f0553870926509b00f627699ac5bbf8e3413ad5432bd",
+      "passed": true,
+      "firmware": "uefi",
+      "profile": "xhci-two-mice",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-bios-xhci.json",
+      "sha256": "514147163ccf0ba27260d1d6b516c54909868dee5410faf05f526ddcc318278f",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-bios-xhci-hub.json",
+      "sha256": "b2f5ed975f27afb001364309a1771ff92c74a5dd3664aa8983b99529f1df3464",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-bios-xhci-nested-hub.json",
+      "sha256": "721445e76fbc3e2f982af9179870d3439015389b79bb8689bc5457f4201c8d1d",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-nested-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-bios-ehci.json",
+      "sha256": "5818ad5599c426295caf93576aea91cd29f5e72124e8d38b1ac1be8c0cdbc752",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "ehci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        10,
+        181
+      ]
+    },
+    {
+      "receipt": "linux-usbmouse-bios-uhci.json",
+      "sha256": "01ac9edccee5422612c5488e9c69d13a75045f6a1bfc432d9bdcfbbae6b3a590",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "uhci",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbmouse-bios-companion.json",
+      "sha256": "04637b4cd26121218c7ba95d36ff8b9e1a4994c288a17012a212df70d11a3678",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "companion",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbkbd-bios-ehci-kbd.json",
+      "sha256": "52124eff1b44e3f8a630743082511c0c2dbf61dbce50cd96f104275b7c724638",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "ehci-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        19,
+        201
+      ]
+    },
+    {
+      "receipt": "linux-usbkbd-bios-companion-kbd.json",
+      "sha256": "79772737d71ae6a5cce617a23b4eb7c1f2ee464253b150d7a900e57940cd3639",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "companion-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-usbkbd-bios-xhci-hub-kbd.json",
+      "sha256": "0b4fb133f44437309a9e2e34a3cfd8155e1219a56a8791aaa9555afa8c44396c",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-hub-kbd",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-bios-xhci-tablet.json",
+      "sha256": "539189b52239a31f83c4c301b01b7a465462b894edcb42c5e366405f0c5b4885",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-bios-ehci-tablet.json",
+      "sha256": "7c795ef271dc7954e04718a0f4f1303b40ba0a25517f23f74183829b84fd957d",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "ehci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "original_ehci_givebacks_before_after": [
+        9,
+        21
+      ]
+    },
+    {
+      "receipt": "linux-generic-native-bios-uhci-tablet.json",
+      "sha256": "de887de539c8edbf06451c25a4cbac59505a4080d9d14ee52817d12081a5fd06",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "uhci-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-bios-companion-tablet.json",
+      "sha256": "32e3b251200276cda648fc67bbc8df3f225a4e843a9552a2458cf91972e56498",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "companion-tablet",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-generic-native-bios-xhci-tablet-hub.json",
+      "sha256": "224816aeca774971079f58c929a09fb3be27298db00652984ccb399572c3b59e",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-tablet-hub",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    },
+    {
+      "receipt": "linux-two-mice-bios.json",
+      "sha256": "4cf0293ec3afe2e2f2e1966ba03587827039d236ee5e025ed169658f49a0c45a",
+      "passed": true,
+      "firmware": "bios",
+      "profile": "xhci-two-mice",
+      "iso_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9"
+    }
+  ],
+  "ehci_live_before_after_profiles": 6,
+  "independent_reproducibility": {
+    "build/kernel.elf": {
+      "sha256": "03f0b1e5a91f39fb2972d0cbec1285c51dc4a2c57224be2fd6f100969c582611",
+      "independent_sha256": "03f0b1e5a91f39fb2972d0cbec1285c51dc4a2c57224be2fd6f100969c582611",
+      "identical": true
+    },
+    "build/KernelCache": {
+      "sha256": "bbb53e2f82d15a3d2dc605d9d730c7e42f572afe6d7cba39a1e979d1c4954601",
+      "independent_sha256": "bbb53e2f82d15a3d2dc605d9d730c7e42f572afe6d7cba39a1e979d1c4954601",
+      "identical": true
+    },
+    "build/tinymacOS-10.1.7-x86_64.iso": {
+      "sha256": "fe18df7987b1ced00bedb41eef6d82200c3d9fba26de3b75c489cb0257e7463b",
+      "independent_sha256": "fe18df7987b1ced00bedb41eef6d82200c3d9fba26de3b75c489cb0257e7463b",
+      "identical": true
+    },
+    "tinymacOS-10.1.7-x86_64.iso": {
+      "sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "independent_sha256": "17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9",
+      "identical": true
+    }
+  },
+  "final_source_rebuild_same_kernel_cache_native_iso": true,
+  "physical_hardware_tested": false,
+  "hardware_irq_routing": false,
+  "full_linux_usb_core_hub_usbhid": false,
+  "whole_original_xhci": false,
+  "full_install_recovery_kernel_release_gate": false,
+  "resolved_failures": [
+    "EP0 cached QH retained address zero after SET_ADDRESS; retire using original endpoint_disable before device address/maxpacket changes",
+    "Inline EHCI giveback deadlocked on immediate interrupt requeue under schedule lock; execute original HCD_BH functions with separate serialized BH executor",
+    "Sleeping TT worker and BH giveback must not share a recursion guard; real synchronous TT control waits require independent BH progress",
+    "First independent dualboot packaging exhausted sandbox disk; removed only two failed-smoke derived ISOs and repackaged successfully"
+  ],
+  "remaining": [
+    "Whole original xHCI integration (current xHCI still native)",
+    "Complete shared original USB core/root-hub/device lifecycle and full hub driver",
+    "Complete original usbhid/HID-bus lifecycle integration; UsbInput enumeration/class facade remains",
+    "Final integrated install/input/Recovery/kernel/license regression before release"
+  ]
+}

@@ -1,3 +1,5 @@
+/* HISTORICAL NATIVE FIXTURE: matched source and hashes in historical/native-xhci-pre-linux.tar.xz.
+ * Not a current xHCI test; replaced by linux_xhci_hcd.c plus usbinput_contract.c. */
 /* Real attach/configure/hub_children path, mocked command MMIO completions.
  * Tests slot/route/TT invariants; not evidence about a physical controller. */
 #define TMC_INPUT_TEST 1

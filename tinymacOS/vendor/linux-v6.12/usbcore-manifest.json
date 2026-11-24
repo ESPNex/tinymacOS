@@ -1,0 +1,224 @@
+{
+  "baseline": "Linux v6.12",
+  "scope": "Canonical USB ABI host development only; not in v19 kernel",
+  "base_manifest": "manifest.json",
+  "files": [
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb.h",
+      "sha256": "fe966738a6ceee364787c48db817cb5ec198e27d3e52b59bc714894f8882ddcd",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/mod_devicetable.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/mod_devicetable.h",
+      "sha256": "68eb777e6bfef9ae65def4a4ad15164febf60dcf4f874ab028472e0b00aad04c",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usbdevice_fs.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usbdevice_fs.h",
+      "sha256": "d822c4c7ac5dd7fa54cf0d1a440fe3413edfee443a611a6d8d4ce69856393d25",
+      "license": "GPL-2.0+ WITH Linux-syscall-note",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usb/cdc.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/cdc.h",
+      "sha256": "922bd199d3d8163be1027d3b7a8ab679fd8a7fba98f1f67f4f597d5e36adce81",
+      "license": "GPL-2.0 WITH Linux-syscall-note",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usb/charger.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/charger.h",
+      "sha256": "4ff5f8b3483a91483683bae8adb06cdb55323e3d952eb5eec0ea9a06ce75fd3b",
+      "license": "GPL-2.0-only",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usb/audio.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/audio.h",
+      "sha256": "d00a53ba5f0e75e485d7642bfc9a6a3d355429878804d6818aff217fe9508a2e",
+      "license": "GPL-2.0 WITH Linux-syscall-note",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usb/ch11.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/ch11.h",
+      "sha256": "df7cbd5071e44fd2c9140541e99c00ac471d2f158ecd822273bff300c3c23256",
+      "license": "GPL-2.0 WITH Linux-syscall-note",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/uapi/linux/usb/ch9.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/ch9.h",
+      "sha256": "9c20d00059603795bfad32b18331c54d2c1bfc3413d2c888f03201ac50180f7a",
+      "license": "GPL-2.0 WITH Linux-syscall-note",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/hcd.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/hcd.h",
+      "sha256": "9a749a7c74b59e29fbd639576c85c267ab4a5c7440c41717ae25e672855b3f41",
+      "license": "GPL-2.0+",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/phy.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/phy.h",
+      "sha256": "3c6a1531f44953384043c4d2feee8496a63c40f45b6e8f8d812d171d7d5fcfa5",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/cdc.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/cdc.h",
+      "sha256": "ed460371a8de23384bfed4ef862229aca3cd26de5a31ba7ac96137a22eb893d4",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/quirks.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/quirks.h",
+      "sha256": "cf63c55b16310f009b0977d0dbd1c1de0654b5569b366efabe671f963dbcef21",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/onboard_dev.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/onboard_dev.h",
+      "sha256": "5776e99fd12c57fc125327dc717cd0f2c325d1d9bb11b3ddc7a2ec655b777234",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/typec.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/typec.h",
+      "sha256": "076953a30dd98e39959966b180f3194b0fe6c1b77ba2b1a3a6ccd64afcb95013",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/ch9.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/ch9.h",
+      "sha256": "7df5caf8a59029c9f5df6ad66ef520adb56f6afaa285971dd988783467d7299e",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/of.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/of.h",
+      "sha256": "24a42f1b59c41304af8a15b4e5d45e54e69078e8782ae70c3b95cc553c785063",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/otg.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/otg.h",
+      "sha256": "124c93f66ca5984cc5e0989839144aab4e7545141f577a84fd1889917f95e694",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/usb.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/usb.h",
+      "sha256": "c67b4a827da5bf1fb1bc9316813d590e94665e5c844f091a6f247467b85438af",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/hub.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/hub.h",
+      "sha256": "6f41b58b61f32637b344ea6c4517c32e8e525a79960b58360bbe895068fc708d",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/phy.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/phy.h",
+      "sha256": "8e70e5905aa2cd07c48be10059ae1ed8ccc450f5abe01a25f5b901b4b3c776be",
+      "license": "GPL-2.0+",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/otg_productlist.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/otg_productlist.h",
+      "sha256": "24c81370fae925ce17ec4ef6ff4fbb08e23b8a8d9ed9843a0dd4d093bbaf57b8",
+      "license": "GPL-2.0+",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-usb.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/usb.c",
+      "sha256": "3d730c541b767f09cfd751a249848dd0b2f3fff232a2132ce33d40f77dbb453e",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-driver.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/driver.c",
+      "sha256": "cdcf494c67e19fefdddf444bba54fd3fe7feca95a372879f24c3abf725d9b347",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-generic.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/generic.c",
+      "sha256": "339d41f71cdef535dce4b541dcdd9f7e45966183bc1d9d627f6b13e7e4710ab9",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-quirks.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/quirks.c",
+      "sha256": "c787ecbb64ff135042ee14a27f6281283f6df87b057dcfcdb089bd3dd24614c9",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI development; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-endpoint.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/endpoint.c",
+      "sha256": "6a7ddac16295e3e46e664011ca0288da33c66bda0e76dc7eb5e6c763ae528ca3",
+      "license": "GPL-2.0",
+      "scope": "canonical USB ABI host binding test; not linked in v19 kernel"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-buffer.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/buffer.c",
+      "sha256": "1c73089558a9fec43ffca9d55ecf391ee516a1cfe8c044204a84726ca3319d22",
+      "license": "GPL-2.0",
+      "scope": "canonical USB integration development"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-port.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/core/port.c",
+      "sha256": "f8bfb55c40b294e8ac1e9667f4c34ecfe4817bcd1a7adb69b995129ed183c419",
+      "license": "GPL-2.0",
+      "scope": "canonical USB integration development"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/usbcore-common.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/common/common.c",
+      "sha256": "3b7bb4b07cf93f1f7f00a604279363f2da5515fc390a6c5c90f98687fa59275f",
+      "license": "GPL-2.0",
+      "scope": "canonical USB integration development"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/common.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/common/common.h",
+      "sha256": "6784158958c333ff3af2f8f93fb465049cd42fdb76ba8afe9c9d0ac059c5a17a",
+      "license": "GPL-2.0",
+      "scope": "canonical USB integration development"
+    },
+    {
+      "path": "tinymacOS/compat/linux/usbcore-include/linux/usb/input.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/input.h",
+      "sha256": "1619f7936d3e5f1a01ad220bbc1f73d1290452a25c09172759ed7a653ad773d3",
+      "license": "GPL-2.0",
+      "scope": "canonical USB integration development"
+    }
+  ]
+}

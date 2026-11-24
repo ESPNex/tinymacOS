@@ -1,4 +1,18 @@
-## Current v17 — whole original Linux UHCI, no deployment
+## Current v18 — whole original Linux EHCI, USB macroblock still incomplete
+
+**Non pubblicata. PS/2 escluso dal lavoro residuo su richiesta dell’utente.** Il riferimento corrente è `v18-validation.json`; i risultati storici sotto non certificano il nuovo kernel.
+
+EHCI usa ora i file completi originali Linux v6.12 HCD/queue/memory/schedule/root-hub/timer/PCI/sysfs, con funzioni originali HCD_BH e worker TT-clear estratte byte-exact. Runtime reale per PCI, coherent DMA/pool, lock IF-preserving, timer/htimer, polling e lavoro differito. L’enumerazione e il confine di classe UsbInput rimangono separati; non è un port completo USB core/hub/usbhid.
+
+Corrette due regressioni native: QH EP0 con indirizzo zero memorizzato dopo SET_ADDRESS (ora ritirato con endpoint_disable originale), e deadlock del reinvio dalla callback interrupt sotto il lock EHCI (ora giveback HCD_BH originale). Le completion BH hanno un esecutore indipendente dal worker TT, perché quest’ultimo attende veri controlli USB sincroni. Il modello host controlla lock e completing_ep, 16 reinvii immediati, full/short/STALL/cancel/timeout, topologia HS hub/FS child e CLEAR_TT_BUFFER reale, 38 rollback di inizializzazione. Il contratto DMA non usa più il vecchio EHCI nativo come fixture: esegue il nuovo controller originale per 128 cicli completi con bus non-identity.
+
+Validazione: **30/30 profili USB BIOS/UEFI** (12 mouse, 6 tastiera italiana/LED, 10 tablet/generic, 2 doppio mouse), sei osservatori EHCI prima/dopo input con contatori originali in crescita, **14 suite host / 15 ricevute sorgente-verificate**, ASan/UBSan O1/O2. Alignment UBSan escluso soltanto per le sentinelle list_entry upstream; l’allineamento DMA è verificato. Nessun test PS/2 richiesto o conteggiato. Le build indipendenti hanno kernel/cache/ISO nativa/ISO dualboot identici; anche l’ultimo rebuild dopo gli aggiornamenti dei commenti conserva gli stessi byte.
+
+ISO privata v18: **225908736 byte**, SHA-256 `17ba26a8750cf8fd7d07a46c04999d21a144e4c45a3045a6211d383617b95bd9`. Primo packaging indipendente fallito per spazio disco sandbox: cancellate soltanto due ISO derivate dei precedenti smoke falliti, poi packaging ripetuto con successo. Per il budget snapshot, il vecchio rapporto visivo 2.4.1 è conservato integralmente e senza perdita nell’archivio XZ adiacente; nessun sorgente corrente rimosso.
+
+**Restano incompleti:** xHCI originale (ancora nativo), USB core/root-hub/device lifecycle condiviso, hub completo e usbhid/HID bus completi. Polling non equivale a IRQ hardware o PM di sistema. I test QEMU non sono una prova fisica ASRock. Installazione/Recovery/kernel/licenze devono superare il gate finale dopo il completamento del macroblocco: non è dedotto da queste regressioni USB. Nessuna release, upload o push di questo incremento; release stabile 10.1.6 e main pubblico v17 invariati.
+
+## Historical v17 — whole original Linux UHCI, no deployment
 
 Sostituito lo scheduler UHCI nativo con i file originali completi Linux v6.12 HCD/queue/hub/PCI, byte-exact e verificati nel manifest. Runtime reale per coherent DMA/pool, timer cancellabili, lock IF-preserving, PCI e dispatch polling; originali anche URB e funzioni HCD lifecycle. Contratto host O1/O2 ASan/UBSan passato: esecuzione DMA non-identity di controllo/interrupt, full/short/STALL/cancel/timeout, toggle, reset/status root hub, rollback e 128 cicli senza leak. UBSan alignment escluso per i pseudo-oggetti sentinella list_entry upstream, non ASan né gli altri controlli UBSan.
 
@@ -142,3 +156,143 @@ Host O1/O2 ASan/UBSan contracts exercise the whole allocator, allocation failure
 Final guest counts are valid only for the recorded v16 ISO hash. No complete physical Linux HCD/root-hub/core/hub/usbhid claim or deployment; PS/2 class drivers stay last.
 
 V16 final input validation: **34/34 BIOS+UEFI guests**, **13 primary source-bound host contracts**, additional current EHCI qTD/Intel routing contracts, maintenance/legacy suites and identity/three-path OpenCore/license checks pass. **16** EHCI/UHCI/companion mouse, keyboard and tablet profiles observe actual original DMA pool allocation with live coherent TD memory and no allocator failures/rejections. The original message path is observed in **28** USB profiles. Two independent complete builds and dualboot packaging are byte-identical: 225822720 bytes, SHA-256 `5d4b5084b43095a7519c5cd93e97213c4d56cf224c3b6258e34f7b9af990bd39`. The source-first commit is `5fec8e546b63ffeb204780393f5669ac589d7292`. Requested full block remains FALSE, final kernel/install/Recovery release gate not inferred, no deploy, stable 10.1.6 unchanged.
+
+
+## v19 — original xHCI controller/input validation (unpublished)
+
+The original Linux v6.12 xHCI core, memory, ring, root-hub, PCI, extended-capability and debug translation units now replace the former native controller. The separate native UsbInput enumeration/class boundary remains: this milestone is not the complete Linux USB core/bus/hub/usbhid stack and is not release approval. PS/2 is excluded from the requested remaining acceptance scope.
+
+The initial mouse regression was traced with actual QEMU hardware TRBs. The shared USB 3.0 HCD was missing the initial `hc_driver.flags & HCD_MASK` protocol assignment; its root-hub scan incorrectly reset already-enumerated USB 2.0 devices. Endpoint submission had actually succeeded; the early hypothesis of a pre-submit endpoint failure was disproved by checked return diagnostics and hardware traces. The protocol initialization is fixed. Host tests additionally caught and fixed interrupt endpoint re-add after stop, stale IRQ registration on controller removal, endpoint configuration rollback, and parent/TT reference ownership. Intel shared-port routing now precedes enumeration.
+
+**30/30 current UEFI+BIOS USB guests** pass, including direct/hub/nested mouse, original EHCI/UHCI/companion regressions, generic relative/absolute input, Italian keyboard and two successful LED controls. The two-mouse drag tests now use a USB-only keyboard with i8042 disabled; no PS/2 acceptance dependency. **14 actual ISO profiles observe original xHCI submission/giveback counters increasing with rendered input**, without controller errors. Original xHCI host tests run at O1/O2 with ASan/UBSan (only original list-sentinel alignment instrumentation excluded), nonidentity DMA, real command/transfer/event-ring consumption, full/short/STALL/clear-halt, cancellation, timeout, 600 callback requeues with ring rollover, nested route/TT contexts, parent lifetime, 96 controller allocation budgets and 32 endpoint/configure/DMA failure budgets with successful retry and no leaks. The host model also verifies SuperSpeed EP0=512 and companion burst/ESIT contexts; that is not a physical or QEMU SuperSpeed HID test.
+
+15 source-bound host suites / 16 receipts pass. The complete maintenance suite also passes after replacing obsolete native-xHCI fixture invocations with the original-controller model and actual shared enumeration tests. The matched old native driver/fixtures are losslessly retained with hashes under `tinymacOS/tests/historical/native-xhci-pre-linux.tar.xz`; they are not counted as current transport coverage.
+
+Two full independent normal builds and dualboot packaging are byte-identical. Current ISO: **226019328 bytes**, SHA-256 **9a9bb1611116787246ba9cae1f1545dafe5110d283fe4d8693199f4c7a6d1601**. KernelCache: **522016880ffd1bc5676a7f8e9fce3c16cd0259321ce6ca88b5aaf9f9cfe4b0f6**. Exact records: `v19-validation.json`, `v19-reproducible-build.json`, `STATUS.json`, `staging-source-hashes.json`. Actual ISO identity/About 10.1.7/30B8 and all three OpenCore media/license paths pass. The source ZIP tool now includes `compat/`, complete pinned Linux vendor sources, notices and the pinned firmware build dependencies; all archive entries were byte-compared to working source.
+
+No full USB-core/hub/usbhid, installation, final kernel, separate Recovery runtime or physical ASRock acceptance is inferred. No upload, push or release was performed; public main stays v17 and stable 10.1.6 is unchanged. The original USB core/driver/generic/port/endpoint and usbhid source/header inputs for the next integration were downloaded to `/var/tmp/tmc-usbcore-port/`; they are not compiled or claimed active. The accidental unsupported `ehci-hub` launcher invocation is a harness-profile error, excluded from the supported 30-profile matrix, not an EHCI product test.
+
+## Canonical USB ABI implementation and original bus binding (development)
+
+After the v19 controller matrix, implemented `compat/linux/usbcore_services.c`
+and `usbcore-include/` instead of aliasing the incompatible older USB/config/HID
+structures. Exact upstream `linux/usb.h` and `linux/usb/hcd.h` now share one
+implemented platform device model. Added original core usb/driver/generic/
+quirks/endpoint source units and local core headers. Twenty-six additional
+upstream inputs are pinned in the separate `usbcore-manifest.json`; the
+production provenance manifest is byte-identical to the frozen v19 copy.
+
+`TMC_USBCORE_RECEIPT=... bash tinymacOS/tests/test-linux-usbcore.sh` PASS at O1
+and O2 with heap/stack/leak ASan plus UBSan including alignment. The receipt
+`usbcore-canonical-host-result.json` binds 49 actual dependency/source files.
+Nine entire original units compile on the same canonical ABI. Two focused
+executables link/call the relevant functions; this is NOT all-file execution.
+
+Implemented/tested: bus/device/driver registration; parent and release refs;
+device iteration safe against child deletion; original matching, configuration
+parser and allocation-failure unwind, alternate/interface lookup, hub ownership
+and URB references; managed resource rollback and unbind release; internal
+attribute/unnamed metadata groups; bounded aligned allocation/reallocation;
+work/timer cancel/rearm, callback-owned frees, completion deadlines and UTF-16.
+BH givebacks have independent queues and can progress while a sleeping worker
+waits; sleeping workers do not recursively dispatch one another, and workers
+are not entered while a caller holds a mutex. Freestanding -m64/-mno-red-zone
+service compile with -Wall/-Wextra/-Werror PASS.
+
+The second executable actually calls original USB bus registration/probe/
+unbind and dynamic-ID add/show/remove code. Per optimization: 16 probes,
+13 disconnects, 30 release callbacks, 15 managed releases; authorization and
+failed-probe rollback plus fourteen registration allocation-failure positions
+PASS. It has NO USB endpoints or I/O: test-only HCD/notification dependencies
+abort on every call, rather than return a fake success. The first executable
+uses an explicit descriptor transport fixture, not a guest/hardware device.
+ASan global registration alone is disabled to allow dead-section elimination
+of unused upstream tables. Named/dynamic-visibility metadata groups fail
+explicitly; this registry is not a sysfs filesystem. The service layer is
+serialized CPU0, not an SMP/preemptive Linux scheduler.
+
+No kernel build/link change: `build.sh` does not contain the canonical units,
+and they cannot be linked beside the old conflicting private ABIs. Original
+HCD/root-hub transport plus the full hub lifecycle and HID/usbhid ABI still need
+to be wired to this model before actual USB enumeration/runtime can be gated.
+Do not count the NO-I/O binding test as USB input, hub enumeration, usbhid,
+installation, Recovery, physical-ASRock or release evidence. No push/release.
+
+Fixed `refresh-status.py` so it no longer rewrites the frozen v19 source
+manifest with a later working tree. v19 remains source-manifest SHA
+15e2df7888e482f9b89605655b8ceb7ca8eedc1b6964062f7fea61fb7910d1dd,
+30/30 guest profiles and 16/16 source-bound controller receipts PASS. The
+separate canonical-development evidence is explicitly kernel_linked=false.
+Only existing source-tree documentation changed; all added canonical code is
+unlinked. Matching-source ZIP for v19 remains a frozen v19 archive, not an
+archive of this newer working tree. Final full-stack gates are not implied.
+
+## Newer milestone: canonical USB core/HCD/hub actually linked and running
+
+This section supersedes the preceding **unlinked-only** development status.
+It does NOT supersede the frozen v19 release/source receipts or approve a release.
+
+`TMC_USB_CANONICAL=1` now selects an experimental kernel path:
+- complete original canonical USB core/HCD/hub/common/buffer/port translation
+  units, genuinely used for root registration, child enumeration/configuration,
+  bus/class binding, URB submission/giveback, and hot unplug;
+- original xHCI/EHCI runtimes reached only via typed opaque handles/byte buffers,
+  never aliased canonical/private structs; original native class facade inactive;
+- complete original usbkbd/usbmouse and a canonical-model OS input adapter,
+  **not** the complete HID-core/usbhid transport. No generic/tablet claim.
+
+The same new dualboot ISO passed **6/6** development guest cases: BIOS and UEFI,
+xHCI two mice+keyboard, EHCI mouse+keyboard, xHCI external hub+mouse+keyboard.
+Each case: actual media kernel matches build, USB-only rendered enrollment and
+Terminal, pixel-level cursor assertion, armed-URB unplug, same-port reattach,
+new actual mouse input, original controller counters advancing without errors,
+canonical error counter zero, historical native class allocation/probe counters
+remain zero. All use i8042=off. This is QEMU evidence, not physical ASRock proof.
+
+Artifacts under `/var/tmp/tmc-10.1.7/linux-usbcore-live`:
+- dualboot ISO SHA256 `101efdd502151905b7976655c341532c805626dd47c49bec0ec8d5ba90a6cff0`;
+- native ISO SHA256 `d41b6a08e2e0f9a15864048edda9b38ce5db776d2e97a8b7199476202d093f50`.
+Exact kernel hashes, frozen source manifest, undefined-symbol allowlist and all
+six receipt hashes: `usbcore-kernel-integration-result.json`.
+Revalidate: `python3 workspace/release-10.1.7-30B8/refresh-usbcore-progress.py`.
+
+Full original core/HCD/hub explicit-controller-MODEL runtime O1/O2 ASan/leaks/
+UBSan also PASS: enumeration, original generic configuration/binding, 3 real
+interrupt URBs, hot unplug, root teardown and allocation-baseline equality.
+Existing canonical binding/NO-I/O contracts and original xHCI sanitized O1/O2
+contracts PASS. Model and guest receipts are intentionally distinct.
+
+Important fixes: driver release before checking hub child emptiness; private
+xHCI standard DeviceRequest uses the correct high-byte encoding; genuine BOS
+bytes/length forwarded; actual xHCI-assigned device address exposed; EHCI uses
+canonical SET_ADDRESS instead of xHCI-style address_device hook; only the USB2
+xHCI root advertises integrated TT; kernel-style -fno-strict-aliasing mandatory;
+orphan undefined symbols removed after ld-r GC, then a strict symbol allowlist
+prevents accidental linkage to an incompatible private Linux ABI.
+
+Still experimental: sleeping work drains in serialized kernel input/IRQ polling,
+only control/interrupt-IN transport is accepted, entropy ingestion has no kernel
+pool API, init/endpoint failure rollback and integrated reset need more coverage.
+Full canonical HID-core/usbhid and final installation/Recovery/UI/license gates
+are NOT certified. Default build remains the earlier private path; no publication.
+
+Unlinked HID follow-on scratch at `/var/tmp/tmc-hidcanonical`: original whole
+usbhid/hid-core.c syntax now compiles against exact original hid.h and canonical
+USB ABI; full HID-core/input service work remains in scratch error logs. No
+private HID/input structs were aliased into the new USB device model.
+
+## Documentation and development commit
+
+Updated root/system READMEs, architecture/validation/quickstart and the Linux
+boundary documentation to distinguish the default private ABI from the opt-in
+canonical xHCI/EHCI/core/hub/Boot experiment. Added `docs/HARDWARE-TEST.md`:
+physical live attempt only on a noncritical machine, exact tested optical ISO,
+no USB-DD/Rufus/Ventoy guarantee, disconnect valuable disks, no installation,
+USB Boot peripherals, Recovery separate, no physical-board validation claim.
+
+The six tested media/kernel receipts and their source snapshot were NOT
+rewritten to describe documentation added later. The progress verifier reports
+`source_snapshot_current=false`, `runtime_sources_current=true` and explicitly
+lists the documentation delta, while still checking media and receipt hashes.
+No runtime source changed during this documentation update. Development commit
+only: no push, tag, release, installer approval or hardware PASS follows.

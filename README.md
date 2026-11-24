@@ -4,7 +4,9 @@ Sistema desktop sperimentale x86-64 con kernel proprio, applicazioni native e am
 
 **Versione pubblicata: 10.1.6 Tramontana · build 30B7.**
 
-La 10.1.7 / 30B8 è in sviluppo: OpenCore unificato, cancellazione delle cartelle e pulizia UI. Sono integrati i driver Boot mouse/tastiera, i moduli core URB e configurazione USB, la funzione DMA qTD EHCI e la libreria di protocollo PS/2 originali di Linux 6.12, oltre alle funzioni originali `psmouse` per pacchetti e rilevamento IntelliMouse/Explorer. I file originali completi `hid-generic` e `hid-input` gestiscono ora anche report USB reali tramite i controller nativi, entro limiti espliciti; verificati 10 profili QEMU BIOS/UEFI. Sono attive anche le funzioni originali HCD per code/completamenti URB e hub USB2 per debounce/reset. Il controller UHCI usa ora i file completi originali Linux per HCD, code, root hub e PCI, con DMA reale e dispatcher a polling; xHCI/EHCI restano nativi. Controller Linux nel complesso, core/hub USB e restante core HID non sono ancora completi; i driver di classe PS/2 sono rimandati alla fine. La tastiera Recovery usa ora i driver firmware OpenCore, con mappatura fisica italiana verificata su UEFI e BIOS. Anche Info riporta ora 10.1.7 / 30B8. Il port Linux completo resta da terminare: nessuna nuova ISO è stata pubblicata.
+La **10.1.7 / 30B8 è in sviluppo e non pubblicata**. I controller UHCI, EHCI e xHCI eseguono ora i driver originali Linux 6.12 su runtime privati a polling. La modalità sperimentale `TMC_USB_CANONICAL=1` collega davvero **xHCI/EHCI → core USB/HCD → hub Linux → driver Boot mouse/tastiera**, con un unico modello canonico USB e confini a handle opachi. Sullo stesso ISO sperimentale passano **6/6 casi QEMU BIOS/UEFI**: login e Terminale via tastiera USB, cursore verificato a pixel, hub esterno, scollegamento con URB attive e ricollegamento. Il vecchio percorso nativo di enumerazione/classe non prende in carico dispositivi in questa modalità.
+
+Questo **non è ancora il port completo HID-core/usbhid**: il percorso canonico usa `usbkbd`/`usbmouse`, non HID universale, e resta opt-in. Il percorso predefinito mantiene l'adattatore di enumerazione/classe precedente, con i moduli HID generici già integrati sul loro ABI separato. PS/2 è escluso dal lavoro residuo richiesto. OpenCore, input firmware di Recupero, layout italiano, cancellazione e identità 10.1.7 / 30B8 hanno prove proprie: i loro risultati storici non costituiscono il gate finale del nuovo ISO. Nessuna nuova release o prova fisica ASRock viene dichiarata.
 
 [Download e note di rilascio](https://github.com/ESPNex/tinymacOS/releases/latest)
 
@@ -19,7 +21,11 @@ La 10.1.7 / 30B8 è in sviluppo: OpenCore unificato, cancellazione delle cartell
 
 L'utente conferma avvio e USB funzionanti in VirtualBox con la 10.1.5. La 10.1.6 mantiene gli stessi driver, ma non è ancora verificata sulla ASRock Q1900M/J1900 fisica: la 10.1.4 lì aveva il mouse immobile al login e in Recovery. Il successo in macchina virtuale non garantisce quello sull'hardware reale.
 
-Safari/WebKit non è incluso. Non sono supportati HID/USB universale, OHCI, hotplug generale o hub SuperSpeed. La ISO non è un'immagine USB-DD ibrida. Per le prove d'installazione usare soltanto dischi virtuali vuoti dedicati, senza dati da conservare.
+Safari/WebKit non è incluso. Non sono supportati HID/USB universale o OHCI; il test hotplug della modalità canonica riguarda soltanto le topologie documentate, non il supporto generale o una certificazione degli hub SuperSpeed. La ISO non è un'immagine USB-DD ibrida. Per le prove d'installazione usare soltanto dischi virtuali vuoti dedicati, senza dati da conservare.
+
+### Prova su hardware reale
+
+È possibile tentare un **avvio live sperimentale su un computer non critico**, ma compatibilità e affidabilità non sono ancora dimostrate. Usare il supporto **ottico BIOS/UEFI** indicato nella [guida hardware](tinymacOS/docs/HARDWARE-TEST.md): la ISO **non** è USB-DD ibrida e non si promette l'avvio da Rufus, Ventoy o copia su chiavetta. Scollegare i dischi con dati, non avviare l'installer né utility distruttive, usare mouse e tastiera USB Boot semplici. Il test non modifica lo stato della release stabile.
 
 ## Sorgenti
 

@@ -161,6 +161,151 @@
       "path": "tinymacOS/vendor/linux-v6.12/pci-quirks.c",
       "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/pci-quirks.c",
       "sha256": "d978f8b878a1c28b9ef5dff0746a2be5830e2c732d68a41c345e93a63c5efb16"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-hcd.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-hcd.c",
+      "sha256": "1f33e9566a6d6da1db8f589f72be45bfd32d5cb4ebf195ea7d306686a5127daf"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci.h",
+      "sha256": "72815a18d9e32c04a7fe73536006f6b0b755049f22dadc401c26245cc07fa010"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-dbg.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-dbg.c",
+      "sha256": "f194b15b599634a351445479f49690604796482ffefe7fb1f3711e2e98aada45"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-timer.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-timer.c",
+      "sha256": "a545e2d6b5b0d8087dd5743022cecb8a5cc5333b709dab17298b9f6fafe08320"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-hub.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-hub.c",
+      "sha256": "7263e1b84a39c1f95f6997912480778909d52ba427eb89226518039fd1923ad9"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-mem.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-mem.c",
+      "sha256": "4c2b88f56aa8005cee8cccc6300f47d4fb94ddbb3caebc8e72b51e85f9c615ad"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-sched.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-sched.c",
+      "sha256": "c1efdf3e6e5710992866b9ee0d4bb8f05c0a30f1966b85c065397e9b809ee9ef"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-sysfs.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-sysfs.c",
+      "sha256": "afe428a1858d1cb98596502a5982ccb3ce9650647db97e9a6e00fe2ff9e7f406"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-pci.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/ehci-pci.c",
+      "sha256": "46b60b3d1af8a7cf4dcaa30c96ed8dd1350c23ef1d80e0db5bdbcc169d948f70"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci_def.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/ehci_def.h",
+      "sha256": "275093bbe49fc766dcf389f0e368803ff71bca969f187cac79312e20983d24f5"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/ehci-dbgp.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/usb/ehci-dbgp.h",
+      "sha256": "1dcf1a6765c8c762a6aac1a4e75c3282d7f86a796beb1a6a0d8e85f8b4bd9460"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-dbg.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-dbg.c",
+      "sha256": "ac4abdd5817f88d408979f2e68e5dfc7a0b9e15a34e8299c0f6873bcf0147403"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci.c",
+      "sha256": "97aaffca8c3b216a3a14e4659e90cfbf2fc669a7a94337e00730070e83bc8175"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-pci.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-pci.c",
+      "sha256": "39d3f4838d7e9170420d6ba5c5f61bfde0c55f292286c9211925d8bc23016b84"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-ext-caps.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-ext-caps.c",
+      "sha256": "cb5b97acfd8aa9497104a7f27f0f29ac8240e8f6a8c29cf7cb81f243560fb73b"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-ring.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-ring.c",
+      "sha256": "db650d3b8f65a795391ae30c7b9dfa06a1f77bb54fc1e6967bdb5c18a416dc1a"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-hub.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-hub.c",
+      "sha256": "7cc388b724285c0bee84fa54691a5c23b21a9b29416398cd4e6338b6ba3e008e"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-mem.c",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-mem.c",
+      "sha256": "0f08d57f08bebc82cdcbae2764255da5bdd152d95d4fedfb37035a74e313364c"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-pci.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-pci.h",
+      "sha256": "f334c6dbb42f49886e185e1d25d84b28e5e11b3296cb3fb757e68a293b688de5"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-port.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-port.h",
+      "sha256": "a2ccd447b34c2a4111c7e2f9db4d935fe5c6741c0d1f40300667bbf63f4650f5"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-trace.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-trace.h",
+      "sha256": "a95bdebb8a0bf189ef5df6b49d15e1e806f26fe61cf426656b0dbb95f8110ee1"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-pci-ids.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/linux/pci_ids.h",
+      "sha256": "eea958f8ad7bc107fd5547455d4ff50ae00eeecd5d964f85b6ef8468e3ab6901"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-ext-caps.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-ext-caps.h",
+      "sha256": "fda6202346115b8af9559fd64b1e721f88503023b9667eaa0da68af33793581a"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-uapi-ch11.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/ch11.h",
+      "sha256": "df7cbd5071e44fd2c9140541e99c00ac471d2f158ecd822273bff300c3c23256"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-dbgcap.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-dbgcap.h",
+      "sha256": "7319342136c227503345f54987831f8702c0eae5df8336be4c13362beab8c2af"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-uapi-ch9.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/include/uapi/linux/usb/ch9.h",
+      "sha256": "9c20d00059603795bfad32b18331c54d2c1bfc3413d2c888f03201ac50180f7a"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-caps.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-caps.h",
+      "sha256": "51f3325484de7be16c8c1d058ee6af0215836faff31302ea0a680e1df9a9befa"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci-debugfs.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci-debugfs.h",
+      "sha256": "dda0552457eec0f86db196997ed5146ab0d3e9f2cb43b782bb4edf65cccb8f6c"
+    },
+    {
+      "path": "tinymacOS/vendor/linux-v6.12/xhci.h",
+      "upstream": "https://raw.githubusercontent.com/torvalds/linux/v6.12/drivers/usb/host/xhci.h",
+      "sha256": "15df205b61c7ca4eb49899c1ba11a7301004c7f6e0a09f4442032f335322a0cf"
     }
   ],
   "modifications": "Upstream files byte-exact; EHCI and psmouse function extractions exact; compatibility and OS bridge separate GPL-2.0-or-later sources",
@@ -336,6 +481,38 @@
       "end_marker": "\n/*-------------------------------------------------------------------------*/",
       "sha256": "c5a2614afd146e93e95fda8e8edca8f883019d969efadff58c6f603bca623c57",
       "modifications": "none: complete upstream functions and intervening comments, byte-exact"
+    },
+    {
+      "function": "hub_clear_tt_buffer / hub_tt_work / usb_hub_set_port_power / usb_hub_clear_tt_buffer",
+      "source": "hub.c",
+      "output": "hub-tt.inc",
+      "start_marker": "static inline int\nhub_clear_tt_buffer(",
+      "end_marker": "\nstatic void hub_power_on(struct usb_hub *hub, bool do_delay)\n{\n\tint port1;\n\n\t/*",
+      "sha256": "3dadefdbd30714eb328a50b936ff65810e7976c4ce9cea0d3861658ed69ff186"
+    },
+    {
+      "source": "hcd.c",
+      "output": "hcd-giveback-bh.inc",
+      "function": "usb_giveback_urb_bh / usb_hcd_giveback_urb",
+      "start_marker": "static void usb_giveback_urb_bh(struct work_struct *work)",
+      "end_marker": "\nEXPORT_SYMBOL_GPL(usb_hcd_giveback_urb);",
+      "sha256": "92e1cd0511d108e5d706b35e3534d44955ca6eb931c0ff45972cbdc310357ab4"
+    },
+    {
+      "source": "pci-quirks.c",
+      "output": "xhci-pci-asmedia.inc",
+      "function": "xhci-pci-asmedia.inc",
+      "start_marker": "#define ASMT_DATA_WRITE0_REG",
+      "end_marker": "\nstatic inline int io_type_enabled",
+      "sha256": "98849eeaa5fecd837b266f6c78b8e2076365ab9d22ffac884580f565125b0113"
+    },
+    {
+      "source": "pci-quirks.c",
+      "output": "xhci-pci-disable.inc",
+      "function": "xhci-pci-disable.inc",
+      "start_marker": "void usb_disable_xhci_ports(",
+      "end_marker": "\n/*",
+      "sha256": "e41ce922aefe5f007825132d21103b446bff5daba8ea02b2e1cfd692adaa88f2"
     }
   ]
 }
