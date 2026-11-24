@@ -13,6 +13,8 @@ Questa revisione non e una pubblicazione automatica su GitHub.
 - Dock: vetro piu uniforme sulla superficie completa.
 
 ## Video e Recovery
+- Titoli delle cinque card nella schermata principale Recovery: Regular reale
+  a 14 px, senza Bold/Semibold. Gli altri titoli non cambiano peso.
 - Nessuna chiamata GOP dopo ExitBootServices. Cambio runtime limitato al
   backend emulatori riconosciuto; sulle altre GPU scelta salvata e verificata
   in Recovery/BOOTCFG.BIN, applicata dal loader al successivo avvio.
@@ -29,7 +31,10 @@ senza simulare pesi o riscrivere metadati. Il profilo viene selezionato con
 restano esterni alla repository; la build standard usa gli asset liberi
 preesistenti. La provenienza/licenza dei file utente non e certificata come
 Inter/OFL. Il successivo archivio di riferimento ap2ky2.zip risultava troncato
-nel taglio Semibold e non e stato integrato.
+nel taglio Semibold e non e stato integrato. L'archivio 0bd59h.zip e stato
+fornito solo come riferimento e, su conferma esplicita dell'utente, non viene
+usato. Questa build mantiene esattamente il profilo della ISO UI-fix precedente
+(o24pkl.zip; TFN SHA-256 b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2).
 
 ## Verifiche e limiti
 - Lettore metriche reale testato con ASan/UBSan: font standard e fornito,

@@ -148,7 +148,8 @@ static void paint(void)
             int yy = y + 36 + 62 * j;
             fill(x0 + 18, yy, ww - 36, 57, 10, j == menu ? 0xe4efff : 0xfdfdfe);
             glyph(x0 + 32, yy + 9, 39, ico[j]);
-            label(x0 + 85, yy + 6, 2, items[j], 0x242532);
+            /* Card titles use the real 14px Regular face, not Bold/Semibold. */
+            label(x0 + 85, yy + 6, 1, items[j], 0x242532);
             label(x0 + 85, yy + 30, 0, desc[j], 0x616473);
         }
     }
