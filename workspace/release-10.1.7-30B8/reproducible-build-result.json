@@ -1,5 +1,5 @@
 {
-  "passed": false,
+  "passed": true,
   "scope": "Two normal builds + dualboot packaging; updated About, firmware-only Recovery keyboard and upstream Linux Boot mouse/keyboard/core urb.c/config.c/EHCI qTD function and complete libps2 plus psmouse packet/detect and hid-core descriptor parser functions; all component notices in optical/installed FAT; not an HCD/atkbd/psmouse/full-stack port; bounded original hid-generic/hid-input now active",
   "sha256": "c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3",
   "bytes": 225814528,
@@ -7,6 +7,6 @@
     "/var/tmp/tmc-10.1.7/linux-message-v15/build",
     "/var/tmp/tmc-10.1.7/linux-message-v15-independent/build"
   ],
-  "byte_comparison_exit_code": 1,
+  "byte_comparison_exit_code": 0,
   "published": false
 }

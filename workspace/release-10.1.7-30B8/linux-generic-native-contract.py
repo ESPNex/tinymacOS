@@ -9,6 +9,7 @@ paths=['compat/linux/usb_generic.c','compat/linux/usb_input.c','compat/linux/usb
 paths+=sorted(str(p.relative_to(root)) for p in (root/'compat/linux/include').rglob('*') if p.is_file())
 paths+=sorted(str(p.relative_to(root)) for p in (root/'vendor/linux-v6.12').glob('*') if p.is_file())
 paths+=['compat/linux/hcd_runtime.inc', 'compat/linux/include/linux/tmc_hcd_core.h', 'vendor/linux-v6.12/hcd.c', 'vendor/linux-v6.12/hcd-endpoint.inc', 'vendor/linux-v6.12/hcd-lifecycle.inc']
+paths+=['compat/linux/message_runtime.inc', 'vendor/linux-v6.12/message-control.inc', 'vendor/linux-v6.12/message-descriptor.inc', 'vendor/linux-v6.12/message.c']
 r={'passed':False,'scope':'Native generic adapter, whole original Linux generic/input and actual shared Italian keyboard/pointer consumer; host EP0 fault injection, not complete Linux HCD/core/hub','native_endpoint_wiring_present':True,'native_hcd_transport':True,'full_linux_hcd':False,'full_linux_usb_core_hub':False,'ps2_class_drivers_deferred':True,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  with tempfile.TemporaryDirectory(prefix='tmc-generic-native-contract-',dir='/var/tmp') as tmp:

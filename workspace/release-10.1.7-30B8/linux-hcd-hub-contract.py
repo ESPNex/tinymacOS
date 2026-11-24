@@ -6,6 +6,7 @@ q=Path(__file__).resolve().parent;root=q.parents[1]/'tinymacOS'
 paths=['compat/linux/usb_input.c','compat/linux/hcd_runtime.inc','compat/linux/usb_hub.c','compat/linux/usb_keyboard.c','drivers/usbinput.c','drivers/xhci.c','drivers/ehci.c','include/linux_usb.h','include/usbhost.h','tests/linux_urb.c','tests/linux_usbmouse.c','tests/linux_hub.c','build.sh']
 paths+=sorted(str(p.relative_to(root)) for p in (root/'compat/linux/include').rglob('*') if p.is_file())
 paths+=sorted(str(p.relative_to(root)) for p in (root/'vendor/linux-v6.12').glob('*') if p.is_file())
+paths+=['compat/linux/message_runtime.inc', 'vendor/linux-v6.12/message-control.inc', 'vendor/linux-v6.12/message-descriptor.inc', 'vendor/linux-v6.12/message.c']
 r={'passed':False,'scope':'Unmodified complete Linux hcd.c endpoint/link/submit/unlink/direct-giveback functions and hub.c USB2 debounce/reset functions on native copying HCD/EP0 services; NOT whole hcd.c/hub.c or physical Linux controllers','original_hcd_lifecycle_active':True,'original_hub_debounce_reset_active':True,'complete_hcd_file_ported':False,'complete_hub_file_ported':False,'complete_physical_linux_hcd':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)

@@ -2,14 +2,24 @@
   "passed": true,
   "firmware": "bios",
   "profile": "uhci",
-  "iso_sha256": "6f693038ff80c009b2b7f06bf9900c145512359aa32ca8c672845de0c14ca59a",
-  "work": "/var/tmp/tmc-linux-usb-bios-uhci-hofcla3y",
+  "iso_sha256": "c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3",
+  "work": "/var/tmp/tmc-linux-usb-bios-uhci-ih00wjp9",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
   "native_hcd_transport_adapter": true,
   "physical_hardware_tested": false,
   "actual_iso_kernel_equals_build": true,
+  "message_core": {
+    "requests": 10,
+    "completed": 10,
+    "errors": 0,
+    "rejected": 0,
+    "detached": 0,
+    "waits": 10,
+    "timeouts": 0
+  },
+  "actual_upstream_message_control_functions_executed": true,
   "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n",
   "ehci_qtd_before": {
     "calls": 0,
@@ -43,19 +53,19 @@
   "actual_upstream_hid_parser_functions_executed": true,
   "whole_linux_hid_core_or_hid_generic_driver": false,
   "urb_core_before": {
-    "submits": 1,
-    "givebacks": 0,
+    "submits": 11,
+    "givebacks": 10,
     "unlinks": 0,
     "rejected": 0,
     "active": 1,
     "highwater": 1
   },
   "hcd_core_before": {
-    "links": 1,
+    "links": 11,
     "unlinks": 0,
-    "queued": 1,
-    "givebacks": 0,
-    "map_checks": 1,
+    "queued": 11,
+    "givebacks": 10,
+    "map_checks": 11,
     "map_rejected": 0,
     "root_rejected": 0
   },
@@ -77,8 +87,8 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 4,
-    "frees": 0
+    "allocations": 24,
+    "frees": 20
   },
   "after": {
     "probes": 1,
@@ -88,8 +98,8 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 4,
-    "frees": 0
+    "allocations": 24,
+    "frees": 20
   },
   "ehci_qtd_after": {
     "calls": 0,
@@ -97,8 +107,8 @@
     "rejected": 0
   },
   "urb_core_after": {
-    "submits": 172,
-    "givebacks": 171,
+    "submits": 182,
+    "givebacks": 181,
     "unlinks": 0,
     "rejected": 0,
     "active": 1,
@@ -106,11 +116,11 @@
   },
   "actual_upstream_core_urb_file_executed": true,
   "hcd_core_after": {
-    "links": 172,
+    "links": 182,
     "unlinks": 0,
-    "queued": 172,
-    "givebacks": 171,
-    "map_checks": 172,
+    "queued": 182,
+    "givebacks": 181,
+    "map_checks": 182,
     "map_rejected": 0,
     "root_rejected": 0
   },

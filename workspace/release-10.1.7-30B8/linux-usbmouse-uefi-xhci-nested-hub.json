@@ -2,14 +2,24 @@
   "passed": true,
   "firmware": "uefi",
   "profile": "xhci-nested-hub",
-  "iso_sha256": "6f693038ff80c009b2b7f06bf9900c145512359aa32ca8c672845de0c14ca59a",
-  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-nested-hub-6pfplgs8",
+  "iso_sha256": "c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3",
+  "work": "/var/tmp/tmc-linux-usb-uefi-xhci-nested-hub-z41ulou9",
   "actual_upstream_boot_mouse_driver": true,
   "linux_hcd_port": false,
   "linux_full_usb_core_port": false,
   "native_hcd_transport_adapter": true,
   "physical_hardware_tested": false,
   "actual_iso_kernel_equals_build": true,
+  "message_core": {
+    "requests": 72,
+    "completed": 72,
+    "errors": 0,
+    "rejected": 0,
+    "detached": 0,
+    "waits": 72,
+    "timeouts": 0
+  },
+  "actual_upstream_message_control_functions_executed": true,
   "usb": "  Device 0.1, Port 1, Speed 12 Mb/s, Product QEMU USB Hub, ID: hub\r\n  Device 0.2, Port 1.3, Speed 12 Mb/s, Product QEMU USB Hub, ID: hub2\r\n  Device 0.3, Port 1.3.2, Speed 12 Mb/s, Product QEMU USB Mouse, ID: pointer\r\n",
   "ehci_qtd_before": {
     "calls": 0,
@@ -43,19 +53,19 @@
   "actual_upstream_hid_parser_functions_executed": true,
   "whole_linux_hid_core_or_hid_generic_driver": false,
   "urb_core_before": {
-    "submits": 1,
-    "givebacks": 0,
+    "submits": 73,
+    "givebacks": 72,
     "unlinks": 0,
     "rejected": 0,
     "active": 1,
-    "highwater": 1
+    "highwater": 2
   },
   "hcd_core_before": {
-    "links": 1,
+    "links": 73,
     "unlinks": 0,
-    "queued": 1,
-    "givebacks": 0,
-    "map_checks": 1,
+    "queued": 73,
+    "givebacks": 72,
+    "map_checks": 73,
     "map_rejected": 0,
     "root_rejected": 0
   },
@@ -78,8 +88,8 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 4,
-    "frees": 0
+    "allocations": 148,
+    "frees": 144
   },
   "after": {
     "probes": 1,
@@ -89,8 +99,8 @@
     "errors": 0,
     "rejected": 0,
     "disconnected": 0,
-    "allocations": 4,
-    "frees": 0
+    "allocations": 148,
+    "frees": 144
   },
   "ehci_qtd_after": {
     "calls": 0,
@@ -98,20 +108,20 @@
     "rejected": 0
   },
   "urb_core_after": {
-    "submits": 172,
-    "givebacks": 171,
+    "submits": 244,
+    "givebacks": 243,
     "unlinks": 0,
     "rejected": 0,
     "active": 1,
-    "highwater": 1
+    "highwater": 2
   },
   "actual_upstream_core_urb_file_executed": true,
   "hcd_core_after": {
-    "links": 172,
+    "links": 244,
     "unlinks": 0,
-    "queued": 172,
-    "givebacks": 171,
-    "map_checks": 172,
+    "queued": 244,
+    "givebacks": 243,
+    "map_checks": 244,
     "map_rejected": 0,
     "root_rejected": 0
   },

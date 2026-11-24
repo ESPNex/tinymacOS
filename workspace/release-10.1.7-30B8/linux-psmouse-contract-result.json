@@ -10,12 +10,12 @@
     "vendor/linux-v6.12/psmouse.h": "8d65fe6d5c03d87da2aa63a0e3931db6667bc460868656b90214498aa8efe7b8",
     "vendor/linux-v6.12/psmouse-packets.inc": "073151d62d330224acc18efc494b2aa3d68d33c5552b44f09f8a34124b3bf307",
     "vendor/linux-v6.12/psmouse-detect.inc": "b730540221130ffa588cfe37ba4ef4f297fc57924a40cc0229a8072efa1c3956",
-    "vendor/linux-v6.12/manifest.json": "1765de0d2d1c5c41d4187de4080233540b62c70a2b296d4dc69c01db6b959f61",
+    "vendor/linux-v6.12/manifest.json": "cc1a14a135704ea9ea98c8f35e9a6551c3f6f5142ce9b1cfd564811f30d87c6f",
     "compat/linux/psmouse_input.c": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
     "compat/linux/ps2_protocol.c": "43194c315568e9754ab813e858e174390804d7d1d02c89f149a7dab2a087c8de",
     "compat/linux/ps2_input.c": "5458e420cc706bc617acd20268a7faa45888c91768505b7fb8f3369d88fb1c14",
-    "compat/linux/usb_input.c": "0f914067fbeafbb3c1a0f179f7d041407ec3b8c40d1089c6a93eeb54c9790026",
-    "compat/linux/include/linux/tmc_compat.h": "3af2e6e3e046e3c2c69fd6eb3c9a5d3d20398d13102f8f7b0ddc2e5129d30aa7",
+    "compat/linux/usb_input.c": "42d8ef8d639fae9c886c51bd7df0e05566b00ea86ca2e05b230f06cf860d896e",
+    "compat/linux/include/linux/tmc_compat.h": "a9f0f25e583276ae638992a93fc4765460945da41e01d252b7a64e623dad6ac6",
     "include/linux_ps2.h": "0ce1ace1dc15ba119ab54cb82bdc7eb3ed2056739808b1cfa455298d5777077c",
     "tests/linux_psmouse.c": "3e792c2f0cdd3f1319997ccdcf37fe92cea87458fa92e5764dabe0f309083578",
     "tests/linux_usbmouse.c": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2",
@@ -27,7 +27,11 @@
     "compat/linux/include/linux/tmc_hcd_core.h": "86896103e8235c3b8d6da265a6b0b774a59ef6075524821335d82c502a478a0b",
     "vendor/linux-v6.12/hcd.c": "deeb79afb85362dfeda477e240e70b1b44bd2995b75d06aa92cf3a49d711e495",
     "vendor/linux-v6.12/hcd-endpoint.inc": "0df675175c00483ffc201697186bb7164f90dce66091089ad725064b7e41664b",
-    "vendor/linux-v6.12/hcd-lifecycle.inc": "b4fc8f8977492de955853f5f267f7dc0efc2ead6d9b4f9ee7b53fc5fe6cb7f86"
+    "vendor/linux-v6.12/hcd-lifecycle.inc": "b4fc8f8977492de955853f5f267f7dc0efc2ead6d9b4f9ee7b53fc5fe6cb7f86",
+    "compat/linux/message_runtime.inc": "14bffc384c97c6190e91f0d25c4014690bc50e96e56f23a89accdaf03386dc31",
+    "vendor/linux-v6.12/message-control.inc": "b6fc6936753d7e4687c4d7c03e04f867fba826a67dac960f93fbafdea3717c91",
+    "vendor/linux-v6.12/message-descriptor.inc": "81cba013497239ff0152d2c01c15faa88103e62a05aa25f495ddea1f9fe7abca",
+    "vendor/linux-v6.12/message.c": "6ba31eeacd7d3cff93bff40f0f8b83d94ee381b3a18244b0e93edf808a91d831"
   },
   "runs": [
     {

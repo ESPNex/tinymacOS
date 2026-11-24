@@ -9,7 +9,7 @@ paths+=sorted(str(p.relative_to(root)) for p in (root/'vendor/linux-v6.12').glob
 r={'passed':False,'scope':'Byte-exact complete Linux message.c synchronous control/send/recv/get-descriptor functions on original urb.c/hcd.c and bounded native EP0; native enumeration/config/hub/generic call sites wired, NOT complete message.c/core/HCD','complete_message_file_ported':False,'complete_physical_linux_hcd':False,'physical_hardware_tested':False,'sources':{p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths},'runs':[]}
 try:
  subprocess.run(['python3','tools/linux-source-contract.py'],cwd=root,check=True)
- with tempfile.TemporaryDirectory(prefix='tmc-hcd-hub-contract-',dir='/var/tmp') as tmp:
+ with tempfile.TemporaryDirectory(prefix='tmc-message-contract-',dir='/var/tmp') as tmp:
   for optimization in ['-O1','-O2']:
    for name,sources in [('message',['tests/linux_message.c','compat/linux/usb_keyboard.c','vendor/linux-v6.12/urb.c','vendor/linux-v6.12/usbmouse.c'])]:
     out=Path(tmp)/(name+optimization)

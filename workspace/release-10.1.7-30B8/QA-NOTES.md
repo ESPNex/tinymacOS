@@ -105,7 +105,7 @@ All component notices are now copied to both optical EFI.IMG and Install.esp, no
 Source-first milestone `4a166d63ee825c5295b42c6c9b098bba87bc1e2f` was publicly verified before completing the new guest matrix. Builds/evidence remain external; disposable OCR/snapshot PPMs were reclaimed while evidence PNGs and receipts were retained. Workspace remains below 128000000 bytes and the stricter 120 MiB guard. **Full Linux HCD/core/hub, HID bus/generic input drivers and PS/2 class-driver port remain incomplete. No binary deployment or physical ASRock certification. Stable 10.1.6 is unchanged.**
 
 
-## Current v14: original HCD lifecycle and USB2 hub debounce/reset
+## Historical v14: original HCD lifecycle and USB2 hub debounce/reset
 
 The four-part request is still **incomplete**. Whole original Linux generic/input remains active on native endpoint transports. This increment additionally replaces manual URB submission/unlink/direct-giveback and endpoint queue/state handling with complete byte-exact original functions from `hcd.c`. Physical xHCI/EHCI/UHCI DMA, schedulers, rings and most device/root-hub lifecycle are still native/unported. Merely vendoring full hcd.c is not compiling its remaining functions.
 
@@ -117,8 +117,10 @@ The current ISO and source hashes are in `linux-hid-generic-integration-result.j
 
 V14 validation: ISO 225810432 bytes, SHA-256 `6f693038ff80c009b2b7f06bf9900c145512359aa32ca8c672845de0c14ca59a`; all 34 current BIOS/UEFI input profiles, 11 source-bound host contracts, maintenance/legacy suites and identity/three-path media-license checks pass. Twelve mouse profiles additionally observe original HCD lifecycle execution; four hub/nested-hub profiles observe original hub debounce/reset execution. No full-stack/kernel/install/Recovery release gate is inferred.
 
-## v15 in progress: original synchronous Linux USB control pipeline
+## Current v15: original synchronous Linux USB control pipeline
 
 The complete requested controller/core/hub/HID macroblock is **still incomplete**. This increment compiles complete unmodified message.c synchronous control/send/recv/get-descriptor functions into the original URB/HCD pipeline and wires native xHCI/EHCI/UHCI enumeration, configuration, hub requests and generic HID EP0 through it. Native physical controllers are not relabeled Linux HCDs. Boot LED URBs keep their direct original-HCD worker to avoid recursive synchronous calls.
 
 The message facade serializes up to 1024 bytes, copies only actual valid IN bytes, rejects late callbacks and overrun, preserves STALL/errors, bounds timeout/records and protects detach/reentrant/cross-thread ownership. Waiting is polled, not a sleepable scheduler, and cannot preempt native callbacks. Generic LED output defers while another EP0 worker owns transport. ASan/UBSan O1/O2 tests include source-exact descriptor retries, send/recv short-read policy, error and allocation rollback, cancel, record exhaustion and 1024 leak-free sessions. Final v15 guest/contract counts must be read from current ISO-bound receipts, not inferred from v14. No deployment; PS/2 class drivers remain last.
+
+V15 final input validation: **34/34 BIOS+UEFI profiles**, **12 source-bound host contracts**, maintenance/legacy suites and identity/three-path OpenCore/license media checks pass. **28** USB mouse/keyboard/generic guest receipts observe the original message-control pipeline. Two independent normal builds and dualboot packaging are byte-identical: 225814528 bytes, SHA-256 `c2293f5037fa427b88e5a99632c7f4eb7958333c1200c44e07e476fbd8ada8c3`. This is an input increment, not complete physical Linux controllers/core/hub/usbhid, full kernel/install/Recovery final gate or deployment. Source-first commit: `53a81e344374f18e80b81d5b97460a13570993de`.
