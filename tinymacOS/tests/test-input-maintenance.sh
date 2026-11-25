@@ -8,6 +8,8 @@ C='-O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -We
 LX='tests/linux_usb_host_runtime.c tests/linux_hid_runtime.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c'
 C="$C -Icompat/linux/include -Wno-unused-parameter -Wno-misleading-indentation -Wno-sign-compare"
 
+gcc $C tests/click_pair.c -o "$out/click-pair"
+"$out/click-pair"
 gcc $C tests/input_maintenance.c $LX compat/linux/usb_hub.c drivers/hidconfig.c compat/linux/usb_config.c tests/linux_config_runtime.c drivers/hidtablet.c -o "$out/queue"
 "$out/queue"
 # Actual shared enumeration/class adapter; scripted EP0, not HCD proof.

@@ -25,6 +25,7 @@ static void put(Event e)
 {
     u32 fl;
     spin_lock(&input_lock, &fl);
+    e.when=ticks;
     int mergeable=0;
     if(e.type==EV_MOUSE||e.type==EV_POINTER_ABS) {
         mergeable=e.c==pointer_buttons && !e.d;
@@ -40,6 +41,7 @@ static void put(Event e)
             if(e.type==EV_POINTER_ABS || (x>=-2147483647 && x<=2147483647 && y>=-2147483647 && y<=2147483647)) {
                 q[last].a=e.type==EV_MOUSE?(int)x:e.a;
                 q[last].b=e.type==EV_MOUSE?(int)y:e.b;
+                q[last].when=e.when;
                 input_diag.merged++;
                 spin_unlock(&input_lock,fl);return;
             }

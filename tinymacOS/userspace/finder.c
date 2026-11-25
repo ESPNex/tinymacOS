@@ -1,6 +1,8 @@
 #include "preview.h"
 #include "volume.h"
 #include "filebrowser.h"
+#include "click_pair.h"
+static ClickPair item_click;
 static char cwd[PATHLEN] = HOME, clipfile[PATHLEN], field[PATHLEN], note[96], cwdarg[PATHLEN];
 static Dirent files[NSLOTS];
 static int n, sel = -1, listview, offset, dialog;
@@ -99,6 +101,7 @@ static void go(const char *p)
         listview = 1;
     } else if (!bootpath(p) && bootpath(cwd))listview = personalView;
     strset(cwd, p, PATHLEN);
+    item_click.armed=0;
     sel = -1;
     prefix[0] = 0;
     offset = 0;
@@ -349,8 +352,9 @@ static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<si
     if(writable&&clipfile[0])m|=AMASK(ACT_PASTE);sc(S_CONTEXT,m,e->d,0,0);}
 static void event(Event *e)
 {
-    if(e->type==EV_CONTEXT){context(e);return;}
+    if(e->type==EV_CONTEXT){item_click.armed=0;context(e);return;}
     if (e->type == EV_SCROLL) {
+        item_click.armed=0;
         if (dialog == 7) inspect_nav(e->a>0 ? K_UP : K_DOWN);
         else if (!dialog) offset = MAX(0, MIN(MAX(0,n-visible()), offset-e->a*(listview ? 3 : cols())));
         return;
@@ -392,10 +396,12 @@ static void event(Event *e)
         return;
     }
     if (e->type == EV_ACTION) {
+        item_click.armed=0;
         act(e->a);
         return;
     }
     if (e->type == EV_KEY) {
+        item_click.armed=0;
         int k = e->a;
         if (e->b) {
             if (e->c && (k == 'K' || k == 'k')) {
@@ -480,15 +486,17 @@ static void event(Event *e)
     } else if (x >= aw - 99 && y > 13 && y < 53)
         act(ACT_VIEW);
     else if (y >= 102) {
-        int colw = (aw - S - 27) / cols();
-        int j = listview ? (y - 102) / 31 : (y - 103) / 82 * cols() + (x - (S + 15)) / MAX(1, colw);
-        if (j >= 0 && j < visible() && j + offset < n) {
-            sel = j + offset;
+        int item=entryat(x,y);
+        if (item>=0) {
+            sel = item;
             ui_motion(FX_SELECT);
-            if (e->c)
+            /* Pair clicks on this actual item, not just nearby screen pixels.
+             * A successful navigation clears the pair before the next item. */
+            if (click_pair(&item_click,e->when?e->when:sc(S_TICKS,0,0,0,0),
+                           (u64)(u32)files[sel].id,x,y))
                 openfile();
-        }
-    }
+        } else item_click.armed=0;
+    } else item_click.armed=0;
 }
 void app_main(void)
 {

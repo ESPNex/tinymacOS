@@ -24,4 +24,17 @@ int main(void)
     puts("PASS queue: 10000 motion reports, exact sum, buttons/wheel/key barriers, absolute newest, full-queue counter");
     InputDiag d;input_diagnostics(&d);assert(d.version==1&&d.bytes==sizeof d);
     puts("PASS diagnostic snapshot ABI; no keyboard content or DMA pointers exposed");
+    ticks=100;hid_relative(0,0,1,0);
+    ticks=110;hid_relative(0,0,0,0);
+    ticks=145;hid_relative(0,0,1,0);
+    ticks=150;hid_relative(0,0,0,0);
+    ticks=900; /* dequeue/paint delay cannot change occurrence timestamps */
+    assert(take(EV_MOUSE,0,0,1).when==100);
+    assert(take(EV_MOUSE,0,0,0).when==110);
+    assert(take(EV_MOUSE,0,0,1).when==145);
+    assert(take(EV_MOUSE,0,0,0).when==150);
+    ticks=910;hid_relative(1,0,0,0);
+    ticks=920;hid_relative(2,0,0,0);
+    assert(take(EV_MOUSE,3,0,0).when==920);
+    puts("PASS input timestamps: button edges retain capture time across queue delays; merged motion carries latest capture time");
 }

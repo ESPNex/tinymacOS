@@ -36,6 +36,7 @@ enum {F_SMALL, F_BODY, F_BOLD, F_TITLE, F_DISPLAY, F_MONO, F_MICRO, F_HERO, F_CA
 enum {I_BG = 0, I_PANEL, I_TXT, I_SUB, I_LINE, I_ACC, I_SEL, I_ACC_TXT, I_CARD, I_SOFT};
 typedef struct {
     int type, a, b, c, d;
+    u64 when; /* Input occurrence ticks; retained across compositor delivery. */
     char text[PATHLEN];
 } Event;
 typedef struct {

@@ -1,12 +1,14 @@
 #include "desk.h"
 #include "pointer_scale.h"
+#include "click_pair.h"
 View views[NPROC];
 u32 *desk_ras;               /* global C_RASTER staging (one payload at a time) */
 int order[NPROC], nz, dirty = 1, mx, my, buttons;
 SysInfo sys;
-static int pend = -1, drag = -1, mode, ax, ay, clickPid, cx, cy, wallEpoch;
+static int pend = -1, drag = -1, mode, ax, ay, wallEpoch;
 static Rect drag0;
-static u64 clickTime;
+static ClickPair client_click;
+static u64 pointer_when;
 static u32 undo[1920 * 1080];
 int cursorDirty = 1;
 static int curx, cury, curw, curh;
@@ -614,15 +616,10 @@ static void down(void)
             drag = i;
             mode = 2;
         } else {
-            int dbl = clickPid == v->s.pid && sys.ticks - clickTime < 42 && mx >= cx - 4 && mx <= cx + 4 && my >= cy - 4 &&
-                      my <= cy + 4;
+            int dbl=click_pair(&client_click,pointer_when,(u64)v->s.pid,mx,my);
             eventto(i, (Event) {
-                .type = EV_CLICK, .a = x - 1, .b = y - TITLE, .c = dbl
+                .type = EV_CLICK, .a = x - 1, .b = y - TITLE, .c = dbl, .when=pointer_when
             });
-            clickTime = sys.ticks;
-            clickPid = v->s.pid;
-            cx = mx;
-            cy = my;
             return;
         }
         ax = mx;
@@ -668,6 +665,7 @@ static void input(Event *e)
         }
         eventto(topwin(), *e);
     } else if (e->type == EV_MOUSE || e->type == EV_POINTER_ABS) {
+        pointer_when=e->when?e->when:sys.ticks;
         pointer_position(e);
         lightx = mx;
         lighty = my;
