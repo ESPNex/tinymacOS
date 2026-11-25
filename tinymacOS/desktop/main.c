@@ -441,7 +441,7 @@ static void render(int dt)
         }
         j++;
     }
-    if(!sys.recovery)shell_draw();
+    if(sys.recovery)recovery_bar_draw();else shell_draw();
     drawcursor();
     sc(S_PRESENT, canvas, 0, 0, ((u64)(u32)W << 32) | (u32)H);
     cursorDirty = 0;
@@ -580,6 +580,7 @@ void action(int a)
 static void down(void)
 {
     if(sys.recovery){
+        if(recovery_bar_click(mx,my))return;
         int hit=0;for(int j=nz;j--;){View *v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
         if(!hit&&recovery_click(mx,my))return;
     }else if (shell_click(mx, my))return;
@@ -643,6 +644,7 @@ static void input_wheel(int amount)
 static void input(Event *e)
 {
     if (e->type == EV_KEY) {
+        if(sys.recovery&&recovery_key(e))return;
         if (e->b && e->c && (e->a == 'q' || e->a == 'Q')) {
             action(152);
             return;
@@ -679,7 +681,7 @@ static void input(Event *e)
             lights = hl;
             dirty = 1;
         }
-        if(!sys.recovery){shell_mouse();shell_control_pointer(e->c & 1);}
+        if(sys.recovery)dirty=1;else{shell_mouse();shell_control_pointer(e->c & 1);}
         if ((e->c & 2) && !(buttons & 2)){drag=-1;if(!sys.recovery)shell_context();}
         else if ((e->c & 1) && !(buttons & 1))down();
         else if ((e->c & 1) && drag >= 0) {
@@ -706,6 +708,7 @@ static void input(Event *e)
 void app_main(void)
 {
     sc(S_INFO, &sys, 0, 0, 0);
+    recovery_mode=!!sys.recovery;
     initgfx(sys.w, sys.h);
     lite = sys.opaque;
     if(sys.recovery)recovery_background();else background(sys.wall, sys.theme, sys.dark);

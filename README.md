@@ -11,7 +11,7 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 - Desktop con Finder, Terminale, editor, utility e temi chiaro/scuro.
 - Interfaccia Liquid Glass, Dock e Centro di Controllo.
 - Tastiera italiana e input USB con controller xHCI/EHCI/UHCI; percorso canonico USB/HID Linux su xHCI/EHCI.
-- Avvio ottico BIOS/UEFI, installazione su SATA e Recovery offline.
+- Avvio ottico BIOS/UEFI, installazione su SATA e Recovery nativa offline, scura e opaca.
 
 ## Da sapere
 

@@ -32,16 +32,18 @@ try:
  assert fat(w/'recovery.fat','/EFI/BOOT/BOOTX64.EFI')==(build/'RECBOOT.EFI').read_bytes();assert fat(w/'recovery.fat','/Recovery/BaseSystem.dmg')==dmg
  esp=installed.read_bytes();assert fat(optical,'/Recovery/Payload.sha')==hashlib.sha256(esp).digest()+hashlib.sha256(rec).digest()
  ok('Installed Recovery partition, optical BaseSystem and installer payload readback seals agree')
- font=Path(os.environ['TMC_FONT']).read_bytes();counts={}
+ font=Path(os.environ['TMC_FONT']).read_bytes();assert sha(font)=='b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2';counts={};renderers={}
  for label,raw in [('live',fat(optical,'/System/Library/CoreServices/System.vol')),('installed',fat(installed,'/System/Library/CoreServices/System.vol')),('recovery',recvol)]:
-  files=catalog(raw);assert files['/System/Library/Fonts/Interface.tfn']==font;plists=[(p,plistlib.loads(v)) for p,v in files.items() if v and p.endswith('.plist')];assert plists
+  files=catalog(raw);renderers[label]=files['/System/Library/CoreServices/WindowServer'];assert files['/System/Library/Fonts/Interface.tfn']==font;plists=[(p,plistlib.loads(v)) for p,v in files.items() if v and p.endswith('.plist')];assert plists
   for p,v in plists:
    assert isinstance(v,dict)
    if p.endswith('SystemVersion.plist'):assert v=={'ProductName':'tinymacOS','ProductVersion':'10.2.1','ProductBuildVersion':'30B12'}
    if v.get('CFBundlePackageType')=='APPL':assert v['CFBundleShortVersionString']=='10.2.1' and v['CFBundleVersion']=='30B12'
   counts[label]=len(plists)
   if label=='recovery':assert not any('Desktop Pictures/' in p for p in files) and not any('/Users/' in p for p in files)
- r['plist_counts']=counts;r['font_sha256']=sha(font);r['recovery_kernel_sha256']=sha(kernel);r['desktop_kernel_sha256']=sha((build/'kernel.elf').read_bytes())
+ assert len(set(renderers.values()))==1
+ r['same_font_renderer_binary_all_volumes']=True
+ r['font_identical_desktop_and_recovery']=True;r['plist_counts']=counts;r['font_sha256']=sha(font);r['recovery_kernel_sha256']=sha(kernel);r['desktop_kernel_sha256']=sha((build/'kernel.elf').read_bytes())
  ok('Every packaged .plist parses with plistlib; all three system volumes are 10.2.1/30B12 and retain the exact accepted font')
  assert fat(installed,'/EFI/TMC/BOOTX64.EFI')==(build/'BOOTX64.EFI').read_bytes()
  assert b'10.2.1' in extract('/BIOS-README.TXT','bios-readme.txt').read_bytes()

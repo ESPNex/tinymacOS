@@ -15,7 +15,7 @@ static inline u32 blend(u32 a, u32 b, int t) {
             (b & 0xff00) * t) >> 8) & 0xff00));
 }
 enum {MAT_WINDOW, MAT_BAR, MAT_DOCK, MAT_MENU, MAT_WIDGET, MAT_SHEET, MAT_DIALOG = MAT_DOCK};
-extern int W, H, PW, PH, night, lite, lightx, lighty;
+extern int W, H, PW, PH, night, lite, lightx, lighty, recovery_mode;
 extern u32 canvas[], back[];
 extern int x1, y1, x2, y2;
 void initgfx(int, int);

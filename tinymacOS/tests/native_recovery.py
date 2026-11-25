@@ -43,15 +43,30 @@ try:
  with Rec(iso,w,ev,'recovery',live=True,launcher=Path(os.environ['TMC_RECOVERY_LAUNCHER']) if os.environ.get('TMC_RECOVERY_LAUNCHER') else root/'tools/run-bios-iso.sh' if fw=='bios' else None) as g:
   g.shot('native-recovery-home');ok('Separate native Recovery desktop reached through ordinary R key')
   img=np.asarray(g.snap());assert int(img[80,16].max())<=8 and int(img[80,640,0])>=20;ok('Black background and soft neutral glow retained')
+  # Opaque, neutral dark panel: widely separated clear samples must all be
+  # exactly the same color despite the radial background behind them.
+  assert all(tuple(img[y,x])==(45,45,45) for x,y in [(325,250),(325,500),(955,250),(955,500)])
+  assert tuple(img[10,800])==(36,36,36)
+  home=g.snap().crop((310,205,970,595))
+  for label in ['Recupero tinymacOS','10.2.1','kernel','USB','RAM','Riavvia','Spegni','Terminale']:
+   assert pixels.locate(home,label,faces=(0,1,2,3,8),threshold=.98) is None,label
+  ok('Home window has only three real recovery choices and Continue; technical text and extra commands are absent')
+  g.visible('Utility',box=(0,0,800,34));g.visible('Finestra',box=(0,0,800,34))
+  ok('Recovery home is neutral dark and opaque; actual top menu bar is present, without a Dock')
   x,y=position(g);step(g,-60,0);step(g,0,-37);ok('Independent horizontal and vertical native USB mouse motion, exact cursor pixels')
   move(g,850,175);start=time.monotonic();events=0
   while time.monotonic()-start<75:
    for dx,dy in [(13,0),(0,9),(-13,0),(0,-9)]:step(g,dx,dy);events+=1
   r['sustained_motion']={'seconds':time.monotonic()-start,'events':events};ok('At least 75 seconds continuous native USB motion without freezing')
-  # A real mouse click, not a keyboard shortcut, launches the native Terminal.
-  move(g,550,385);g.mouse(True);g.mouse(False);g.visible('Sessione locale');g.shot('native-terminal');ok('Mouse click opens native Terminal above Recovery')
+  # Functional top menu opens Terminal; screenshots cover menu and dark app.
+  ux,uy=g.visible('Utility',box=(0,0,800,34));move(g,ux+15,uy+8);g.mouse(True);g.mouse(False)
+  g.visible('Terminale',box=(0,34,800,180));g.shot('native-recovery-menu')
+  tx,ty=g.visible('Terminale',box=(0,34,800,180));move(g,tx+25,ty+8);g.mouse(True);g.mouse(False)
+  g.visible('Sessione locale');g.shot('native-terminal-menu')
+  ok('Opaque Utility menu launches native Terminal by mouse; top bar remains visible above the app')
+  g.shot('native-terminal');ok('Native Terminal stays above the dark opaque Recovery home')
   g.cmd('sw_vers -productVersion','10.2.1');g.cmd('sw_vers -buildVersion','30B12');ok('Native shell executes actual system commands with current version')
   g.cmd('echo RECOVERY-RAM-ONLY > /Users/User/Documents/rec-test.txt');g.cmd('cat /Users/User/Documents/rec-test.txt','RECOVERY-RAM-ONLY');ok('Recovery has its own working RAM filesystem, no installed home mounted')
-  g.key('ctrl-w');time.sleep(.8);g.visible('Recupero tinymacOS');move(g,550,335);g.mouse(True);g.mouse(False);g.visible('Utility Disco');g.shot('native-disk-utility');ok('Native Disk Utility opens by mouse; hub stays behind it')
+  g.key('ctrl-w');time.sleep(.8);g.visible('Recupero tinymacOS');move(g,550,440);g.mouse(True);g.mouse(False);move(g,880,557);g.mouse(True);g.mouse(False);g.visible('Utility Disco');g.shot('native-disk-utility');ok('Native Disk Utility opens by mouse; hub stays behind it')
  r['passed']=True
 finally:(base/f'recovery-{fw}-result.json').write_text(json.dumps(r,indent=2)+'\n')

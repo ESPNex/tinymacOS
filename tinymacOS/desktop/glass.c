@@ -98,6 +98,9 @@ void shadow(Rect q, int r, int strength)
 void glass(Rect q, int r, int kind)
 {
     if (q.w < 2 || q.h < 2)return;
+    /* Recovery has no Liquid Glass: no capture, blur, refraction, shine or
+     * backdrop blending. This applies equally to native app windows/dialogs. */
+    if(recovery_mode){roundr(q.x,q.y,q.w,q.h,r,INK(I_PANEL),255);return;}
     initroot();
     r = clampi(r, 0, MIN(60, MIN(q.w, q.h) / 2));
     int sheet=kind==MAT_SHEET;

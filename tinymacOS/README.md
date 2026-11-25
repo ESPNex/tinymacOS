@@ -43,7 +43,7 @@ Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tm
 
 ## Organizzazione tecnica
 
-- `boot/`, `recovery/`: loader e runtime UEFI di Recupero.
+- `boot/`, `kernel/`, `desktop/recovery.c`: bootstrap BIOS/UEFI e Recupero con kernel nativo separato; `recovery/background.h` genera lo sfondo.
 - `arch/`, `kernel/`, `drivers/`: architettura x86-64, kernel e dispositivi.
 - `desktop/`, `userspace/`: compositor, login, applicazioni e comandi.
 - `fs/`, `storage/`: namespace, volumi e manutenzione disco.

@@ -1,7 +1,7 @@
 #include "gfx.h"
 extern const u8 icons[];static u8 fontdata[3*1024*1024],compressed[4*1024*1024];
 static int asset(int id,u8*b,u32 cap){long n=sc(S_ART,id,0,0,0);if(n<=0||n>cap)return -1;for(int i=0;i<n;i+=65536){int z=MIN(n-i,65536);if(sc(S_ART,id,i,b+i,z)!=z)return -1;}return n;}
-int W, H, night;
+int W, H, night, recovery_mode;
 /* Physical scanout size vs logical render size: above 1280 wide the desktop
  * renders a 1280-wide logical canvas that is scaled on present, so widgets and
  * text keep the SAME on-screen size (constant readable DPI) in every mode. */
@@ -27,6 +27,10 @@ static int loaded[NWALL];
 static int palette;
 u32 color(u32 i)
 {
+    if(recovery_mode && (i&0x80000000u)){
+        static const u32 neutral[]={0x242424,0x2d2d2d,0xf2f2f2,0xb8b8bc,0x505054,0x8ab4f8,0x3b4d67,0xffffff,0x333336,0x29292c};
+        return neutral[(i&255)<10?(i&255):0];
+    }
     return tmc_system_color((u32)palette, (u32)night, i);
 }
 u32 mix(u32 a, u32 b, int o)

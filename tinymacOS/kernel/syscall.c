@@ -76,8 +76,8 @@ static void info(SysInfo *s)
     s->wall = wall;
     s->dock = dock;
     s->reduce_motion = reduce_motion;
-    s->opaque = opaque;
-    s->dark = dark;
+    s->opaque = boot.recovery?1:opaque;
+    s->dark = boot.recovery?1:dark;
     s->csr = boot.csr;
     s->recovery=boot.recovery;
     s->busy_ticks = busy_ticks;

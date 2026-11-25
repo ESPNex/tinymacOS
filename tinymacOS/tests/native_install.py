@@ -48,10 +48,12 @@ try:
  class InstalledRecovery(RecoveryKey,Retail):recovery_text='Ripristina da una copia locale'
  with InstalledRecovery('/not-attached',w,ev,'recovery-hdd',disk='target',boot_disk=True) as g:
   assert str(iso) not in str(g.req('query-block'))
-  g.visible('QEMU HARDDISK');g.click(550,480);g.visible('Confermi l’operazione');g.click(820,448);g.visible('Operazione completata.',60);g.shot('recovery-native-backup')
-  g.click(550,230);g.visible('Confermi l’operazione');g.click(820,448);g.visible('Operazione completata.',60);g.shot('recovery-native-restore')
-  g.click(550,280);g.visible('Confermi l’operazione');g.click(820,448);g.visible('Operazione completata.',60);g.shot('recovery-native-reinstall')
-  g.click(550,385);g.visible('Sessione locale');g.cmd('csrutil disable','Preferenza SIP verificata');g.cmd('off');g.p.wait(timeout=15)
+  def utility(label):
+   x,y=g.visible('Utility',box=(0,0,800,34));g.click(x+12,y+8);x,y=g.visible(label,box=(0,34,900,240));g.click(x+24,y+8)
+  utility('Crea una copia locale');g.visible('QEMU HARDDISK');g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-backup');g.key('ret')
+  g.click(550,270);g.click(880,557);g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-restore');g.key('ret')
+  g.click(550,355);g.click(880,557);g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-reinstall');g.key('ret')
+  utility('Terminale');g.visible('Sessione locale');g.cmd('csrutil disable','Preferenza SIP verificata');g.cmd('off');g.p.wait(timeout=15)
  report['installed_recovery_without_iso']=True;report['native_sata_backup_restore_reinstall']=True
  with Installed('/not-attached',w,ev,'after-recovery',disk='target',boot_disk=True) as g:
   g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('csrutil status','System Integrity Protection: disattiva.');g.cmd('csrutil enable','solo la Shell di Recupero');g.shot('after-native-recovery');g.cmd('off');g.p.wait(timeout=15)

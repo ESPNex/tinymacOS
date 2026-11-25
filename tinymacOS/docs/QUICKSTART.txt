@@ -54,6 +54,10 @@ Dal sistema installato: Utility Disco → Recupero… .
 
 Il kernel e il volume Recovery sono estratti dal BaseSystem verificato.
 ExitBootServices viene eseguito prima del kernel: nessun input firmware.
+Il Recupero usa tema scuro opaco, senza Dock o Liquid Glass. Nella finestra
+principale: Ripristina, Reinstalla, Utility Disco e Continua. Terminale e
+altre utility sono nella barra dei menu; il disco si sceglie nella conferma.
+Il font è lo stesso identico del desktop. Versione solo nel menu Info.
 Il Terminale Recovery lavora su una home RAM isolata, non sui documenti
 del sistema installato. Le azioni del pannello operano sul disco selezionato.
 csrutil enable/disable salva SIP sul primo disco tinymacOS trovato, da Recovery.
