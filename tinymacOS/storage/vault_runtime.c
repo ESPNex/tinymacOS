@@ -72,3 +72,10 @@ int filevault_control(int op,VaultRequest*q,VaultInfo*out)
  }
  erase(entropy,sizeof entropy);status(v,out,r<0?r:0);rec_unlock(&fs_gate,flags);return r;
 }
+
+/* Called with fs_gate held before offline partition mutations, including those
+ * which later fail. No cached layout/key may target a deleted or moved extent. */
+void volume_forget(int d)
+{
+ if(d>=0&&d<MAXVAULT){vault_lock(&volumes[d].v);erase(&volumes[d],sizeof volumes[d]);}
+}

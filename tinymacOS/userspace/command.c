@@ -82,6 +82,19 @@ static int diskid(const char *s)
     if (memcmp(s, "disk", 4) || s[4] < '0' || s[4] > '7' || s[5])return -1;
     return s[4] - '0';
 }
+static int disk_uint(const char*s,u32*out)
+{
+    u64 n=0;if(!*s)return -1;
+    for(;*s;s++){if(*s<'0'||*s>'9')return -1;n=n*10+*s-'0';if(n>268435456)return -1;}
+    *out=n;return 0;
+}
+static int disk_partition_id(const char*s,int*disk,int*part)
+{
+    if(!memcmp(s,"/dev/",5))s+=5;
+    if(memcmp(s,"disk",4)||s[4]<'0'||s[4]>'7'||s[5]!='s')return -1;
+    u32 p;if(disk_uint(s+6,&p)||!p||p>128)return -1;
+    *disk=s[4]-'0';*part=p;return 0;
+}
 static int remove_command(int directory)
 {
     unsigned flags=directory?REMOVE_DIR_ONLY:REMOVE_FILE_ONLY;
@@ -717,6 +730,27 @@ static int run(void)
             }
             if(!di.count)ln("Nessun disco collegato.");return 0;
         }
+        if(n>=2&&(eq(V(1),"deletePartition")||eq(V(1),"addPartition")||eq(V(1),"resizeVolume"))){
+            int create=eq(V(1),"addPartition"),del=eq(V(1),"deletePartition");
+            int args=create?6:del?3:4,apply=n==args+1&&eq(V(args),"--confirm");
+            if(n!=args&&!apply)return fail("Uso: diskutil deletePartition diskNsM [--confirm] | resizeVolume diskNsM MiB [--confirm] | addPartition diskN LBA MiB nome [--confirm]");
+            DiskEdit q={.op=create?DISK_EDIT_CREATE:del?DISK_EDIT_DELETE:DISK_EDIT_RESIZE};
+            if(create){
+                q.disk=diskid(V(2));u32 mb;
+                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_uint(V(4),&mb)||!mb||mb>131072)return fail("Disco, LBA o dimensione non validi.");
+                q.size=mb*2048;strset(q.name,V(5),sizeof q.name);
+            }else{
+                if(disk_partition_id(V(2),&q.disk,&q.number)||q.disk>=di.count)return fail("Identificatore partizione non valido.");
+                DiskPartition*p=0;DiskMap*m=&di.disk[q.disk].map;
+                for(int j=0;j<m->count;j++)if(m->part[j].number==q.number)p=m->part+j;
+                if(!p)return fail("Partizione non trovata.");
+                q.start=p->start;q.sectors=p->sectors;
+                if(!del){u32 mb;if(disk_uint(V(3),&mb)||!mb||mb>131072)return fail("Dimensione MiB non valida.");q.size=mb*2048;}
+            }
+            int r=sc(S_DISK,10,&q,0,0);ln(q.message);if(r)return 1;
+            if(!apply){ln("Solo anteprima: nessuna scrittura. Esegui un backup; aggiungi --confirm per applicare.");return 0;}
+            q.confirm=DISK_EDIT_CONFIRM;r=sc(S_DISK,11,&q,0,0);ln(q.message);return !!r;
+        }
         if (n >= 3 && eq(V(1), "apfs")) {
             SnapInfo sn[8];
             FsInfo fi;
@@ -833,7 +867,7 @@ static int run(void)
             }
         }
 
-        return fail("diskutil list | info diskN | verifyVolume diskN | repairVolume diskN");
+        return fail("diskutil list | info diskN | verifyVolume diskN | repairVolume diskN | deletePartition | addPartition | resizeVolume (senza --confirm: anteprima)");
     }
     if (IS("fsck_apfs")) {
         static DiskInfo di;

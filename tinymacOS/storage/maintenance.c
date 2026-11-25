@@ -108,8 +108,8 @@ int tiny_check(const void *v)
 {
     const u8 *r = v;
     const u32 *h = v;
-    // BTRFS-subset header (sectors 0) or legacy TinyFS (import sources).
-    // Legacy TinyFS (96 slots, h[4]=16) vs TMCBFS1 subset (NSLOTS slots, h[4]=DATA).
+    // BTRFS-subset header (sectors 0) or legacy v1 (import sources).
+    // Legacy v1 (96 slots, h[4]=16) vs TMCBFS1 subset (NSLOTS slots, h[4]=DATA).
     int legacy = !memcmp(r, "TINYFS1\0", 8) && h[2] == 1 && h[3] == 96 && h[4] == 16 && h[5] <= 1;
     int subset = !memcmp(r, "TMCBFS1\0", 8) && h[2] == 2 && h[3] == NSLOTS && h[4] == FSDATA && h[5] <= 1;
     if (!legacy && !subset)return 0;

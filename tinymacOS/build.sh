@@ -27,7 +27,7 @@ for a in "${APPS[@]}"; do
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
  settings) objects=(u-ui.c.o);units=(userspace/fontmetrics.c userspace/vaultpanel.c);;
  about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
- diskutility) objects=(u-ui.c.o);;
+ diskutility) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"

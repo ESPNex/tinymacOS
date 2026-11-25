@@ -60,3 +60,6 @@ int tiny_check(const void *);
 
 int partition_scan(Medium *, DiskMap *);
 int filesystem_probe(Medium *,u32,u32);
+
+#include "diskedit.h"
+int partition_edit(Medium *,DiskEdit *,int);

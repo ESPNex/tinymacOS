@@ -6,6 +6,8 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 
 [Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.3) · [Novità della 10.2.3](tinymacOS/docs/NOTE-10.2.3.md)
 
+**Sviluppo non rilasciato:** [Utility Disco/OpenCore: stato e limiti](tinymacOS/docs/DISK-UTILITY-DEVELOPMENT.md).
+
 ## Funzioni principali
 
 - Installer su spazio non allocato GPT/MBR; riconoscimento FAT32, NTFS e RAW in Installer, Utility Disco e Terminale.

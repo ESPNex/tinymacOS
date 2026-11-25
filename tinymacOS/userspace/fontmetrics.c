@@ -1,6 +1,6 @@
 #include "ui.h"
 /* Measure the same TFN2 advances as the compositor, without reading pixels or
- * hardcoding a particular family. Only About and Settings link this helper. */
+ * hardcoding a particular family. About, Settings and Utility Disco link this helper. */
 #define METRIC_GLYPHS 256
 #define METRIC_BYTES (12+4*METRIC_GLYPHS+NFONTS*(4+8*METRIC_GLYPHS))
 static u8 table[METRIC_BYTES];

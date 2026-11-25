@@ -240,3 +240,6 @@ int filevault_control(int,VaultRequest*,VaultInfo*);
 int session_check_password(const char*);
 
 int session_record_password(const void*,const char*);
+
+int disk_edit(DiskEdit *,int);
+void volume_forget(int);

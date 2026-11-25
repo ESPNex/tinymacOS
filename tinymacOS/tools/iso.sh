@@ -16,7 +16,14 @@ F="$P/BaseSystem.dmg";V="$P/RecoveryHD.fat";: >"$V";truncate -s 10M "$V"  # == N
 mkfs.fat --invariant -F16 -s1 -n RECOVERYHD "$V" >/dev/null
 mmd -i "$V" ::/EFI ::/EFI/BOOT ::/Recovery
 mcopy -i "$V" "$D/RECBOOT.EFI" ::/EFI/BOOT/BOOTX64.EFI
-mcopy -i "$V" "$D/BootConfig.bin" ::/BOOTCFG.BIN
+# Only the installed Recovery config requests a dedicated OpenCore default.
+# The optical/live root retains flags=0. Microsoft loader files are untouched.
+python3 - "$D/BootConfig.bin" "$D/DiskBootConfig.bin" <<'PYBOOT'
+import hashlib,struct,sys
+from pathlib import Path
+p=bytearray(Path(sys.argv[1]).read_bytes());struct.pack_into('<I',p,12,1<<28);p[16:48]=hashlib.sha256(p[:16]).digest();Path(sys.argv[2]).write_bytes(p)
+PYBOOT
+mcopy -i "$V" "$D/DiskBootConfig.bin" ::/BOOTCFG.BIN
 mcopy -i "$V" "$F" ::/Recovery/BaseSystem.dmg
 cp "$F" "$R/Recovery/BaseSystem.dmg"
 python3 - "$V" "$F" "$P/Volume.hdr" "$D" <<'PYF'

@@ -5,29 +5,22 @@ installed as ordinary filesystem resources. Application artwork is imported; sys
 Only unchanged UI controls/cursor/branding use the legacy control sprite sheet.
 """
 from pathlib import Path
-from PIL import Image,ImageDraw
+from PIL import Image
 import hashlib,json,struct,sys
 D=Path(sys.argv[1]);a=Path('assets');source=a/'icons';m=json.loads((source/'manifest.json').read_text());APP_SLOTS={1,2,3,4,5,13,16,17,18,19,39,40,41,42}
 mapping={x['slot']:x['file'] for x in m['icons'] if x['slot'] in APP_SLOTS}
 # All folder/file/drive/library/settings/control symbols use the original sheet.
-# Installer is the explicit procedural exception: an original Tramontana badge.
-S=4;im=Image.new('RGBA',(256*S,256*S));draw=ImageDraw.Draw(im)
-def xy(v):return tuple(round(a*S) for a in v)
-draw.rounded_rectangle(xy((15,12,241,239)),radius=48*S,fill='#0c333e',outline='#91ddd8',width=3*S)
-draw.rounded_rectangle(xy((25,22,231,229)),radius=39*S,fill='#165667')
-draw.polygon([xy(q) for q in [(36,159),(88,75),(124,128),(153,91),(222,178)]],fill='#cde9e6')
-draw.polygon([xy(q) for q in [(69,106),(88,75),(107,105),(92,100),(84,109)]],fill='#ffffff')
-draw.rounded_rectangle(xy((41,182,215,211)),radius=10*S,fill='#092b39',outline='#72d5cf',width=2*S)
-draw.line([xy((136,45)),xy((136,134))],fill='#fff9df',width=13*S)
-draw.polygon([xy(q) for q in [(111,116),(136,143),(161,116)]],fill='#fff9df')
-draw.ellipse(xy((191,191,199,199)),fill='#baf4d5')
-im.resize((256,256),Image.Resampling.LANCZOS).save(D/'installer-tramontana.png',optimize=True)
-mapping[38]='installer-tramontana.png'
+# Installer uses original generated raster artwork, not procedural vector art.
+installer_meta=json.loads((source/'installer-generated.json').read_text())
+installer=source/installer_meta['file']
+assert hashlib.sha256(installer.read_bytes()).hexdigest()==installer_meta['sha256']
+assert Image.open(installer).mode=='RGBA'
+mapping[38]=installer.name
 SIZES=(16,24,32,48,64,128);header=bytearray(43*len(SIZES)*4);body=bytearray();seen={};legacy=(a/'symbols.rgba').read_bytes();base64=[]
 for slot in range(43):
     name=mapping.get(slot)
     if name:
-        path=D/name if slot==38 else source/name
+        path=source/name
         raw=path.read_bytes();image=Image.open(path).convert('RGBA')
         if slot!=38:
             expected=next(x['sha256'] for x in m['icons'] if x['file']==name);assert hashlib.sha256(raw).hexdigest()==expected

@@ -5,7 +5,7 @@
 // tinymacOS BTRFS subset (APFS-style wrapper). Layout inside the data volume:
 //   0 container header | 1..12 legacy | 13..14 accounts | 15 factory |
 //   64.. node table (NODE0, NSLOTS/8 sectors) |
-//   128..135 superblock at 64 KiB (real BTRFS super, crc32c) | 136..143 snapshot catalog |
+//   128..135 superblock at 64 KiB (metadata proprietari con magic Btrfs e CRC32C) | 136..143 snapshot catalog |
 //   144.. file data (16 sectors/node) | IMG0.. snapshot images | BACKUP_OFF backup area.
 #define DATA 144
 #define SUPER 128
@@ -606,9 +606,9 @@ static u32 crc32c(const void *p, u32 n)
 {
     return ~crc32c_cont(~0u, p, n);
 }
-// Real BTRFS superblock at 64 KiB: magic _BHRfS_M, crc32c csum, subset fields.
-// btrfs-progs `inspect-internal dump-super` / blkid accept it; tree chunks are
-// not implemented (documented subset — `btrfs check` full trees unsupported).
+// Proprietary metadata at 64 KiB carrying the Btrfs magic and CRC32C.
+// Signature recognition is NOT Linux Btrfs compatibility: no Linux tree/chunk
+// implementation exists here. Do not mount or repair this format with btrfs-progs.
 static int super_write(u32 gen)
 {
     u8 sb[4096];
@@ -670,7 +670,7 @@ static int legacy_header(u8 *h)
     return !memcmp(h, "TINYFS1\0", 8) && ((u32 *)h)[2] == 1 && ((u32 *)h)[3] == NSLOTS && ((u32 *)h)[4] == 16
            && ((u32 *)h)[5] <= 1;
 }
-// Relocate a legacy TinyFS image (data at 16) into the BTRFS-subset layout
+// Relocate a legacy v1 image (data at 16) into the BTRFS-subset layout
 // (data at 144) inside `out`, preserving nodes, accounts and factory marker.
 // In-place on ram[]: legacy data at 16 → subset data at 144, descending so
 // dst(i) never clobbers a not-yet-copied src (dst(i) = src(i+8), i+8 first).
@@ -863,7 +863,7 @@ void fs_init(void)
 #endif
     if (vm && disk.sectors >= SECTORS && !disk.read(0, h)) {
         if (legacy_header(h)) {
-            // Legacy TinyFS on this volume: import it into the subset layout in
+            // Legacy v1 on this volume: import it into the subset layout in
             // RAM; on an installed disk write the migrated image back in place.
             int ok = 1;
             for (u32 i = 0; i < 1552; i++)

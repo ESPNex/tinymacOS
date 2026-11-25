@@ -366,6 +366,10 @@ static Frame *syscall_inner(Frame *f)
         if (a == 0 && OUT(b, sizeof(DiskInfo))) {
             disk_info((void *)b);
             r = 0;
+        } else if((a==10||a==11)&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskEdit))&&OUT(b,sizeof(DiskEdit))){
+            DiskEdit request;memcpy(&request,(void*)b,sizeof request);
+            request.name[sizeof request.name-1]=0;
+            r=disk_edit(&request,a==11);memcpy((void*)b,&request,sizeof request);
         } else if(boot.recovery && desktop && a>=5 && a<=9)r=disk_operation((int)a,(int)b);
         else if (a == 4)r = disk_operation(4, (int)b);
         else if ((p->app == DISKUTIL || (a == 1 && p->app == COMMAND &&

@@ -74,7 +74,7 @@ static void paint(void)
     int r = rail(), x = r + 24, w = aw - x - 23, foot = ah - 52;
     Box(0, 0, aw, ah, 0, CARD);
     if (!page) {
-        Photo(aw/2-67, 24, 134, 134, 67, 12);
+        Icon(aw/2-64, 30, 128, 38);
         Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
         Center(aw/2, 229, "Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
         Center(aw/2, 266, "Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);

@@ -29,7 +29,7 @@ int filesystem_probe(Medium*m,u32 at,u32 n)
             if(!fat32&&roots&&c<4085&&(u64)f*1024>=(c+2)*3)return FS_FAT12;
         }
     }
-    if(n>128&&!m->io(m->d,at+128,1,b,0)&&!memcmp(b+64,"_BHRfS_M",8))return FS_OTHER;
+    if(n>128&&!m->io(m->d,at+128,1,b,0)&&!memcmp(b+64,"_BHRfS_M",8))return FS_BTRFS;
     return FS_RAW;
 }
 static int bad(DiskMap*x,const char*s){x->safe=0;strset(x->reason,s,sizeof x->reason);return 0;}
@@ -63,6 +63,7 @@ static int extended(Medium*m,DiskMap*x,u32 base,u32 size,int *number)
         for(int j=0;j<used;j++)if(seen[j]==ebr)return bad(x,"Ciclo nella catena EBR");seen[used++]=ebr;
         u8 b[512];if(m->io(m->d,ebr,1,b,0)||b[510]!=85||b[511]!=170||nz(b+478,32))return bad(x,"EBR non valida");
         u8*p=b+446,*next=b+462;u32 rel=rd32(p+8),n=rd32(p+12);u64 a=(u64)ebr+rel;
+        if(ebr==base&&!nz(p,32))break; /* empty retained extended container */
         if(!p[4]||!rel||a<base||a+n>(u64)base+size||!add(m,x,a,n,(*number)++,p+4,1))return bad(x,"Volume logico fuori limite");
         x->part[x->count-1].logical=1;
         if(!next[4]){if(nz(next+8,8))return bad(x,"Collegamento EBR ambiguo");break;}

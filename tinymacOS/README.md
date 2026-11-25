@@ -1,5 +1,7 @@
 > **10.2.3 / 30B14**: [installer GPT/MBR su spazio non allocato](docs/NOTE-10.2.3.md), riconoscimento FAT32/NTFS/RAW in sola lettura. Backup completo obbligatorio per le prove. La voce UEFI può richiedere aggiunta manuale nel firmware; nessuna certificazione Windows/hardware fisico.
 
+> **Branch di sviluppo, non ancora rilasciato:** [stato Utility Disco/OpenCore e requisiti mancanti](docs/DISK-UTILITY-DEVELOPMENT.md). Le limitazioni sopra descrivono la 10.2.3 attualmente pubblicata.
+
 # Sviluppare tinymacOS
 
 Guida alla compilazione dell'albero di sistema. Presentazione, stato hardware e download sono nel README alla radice; i cambiamenti di ciascuna versione sono nelle note di rilascio.
@@ -20,13 +22,13 @@ export TMC_USB_CANONICAL=1
 bash build.sh
 ```
 
-La build produce `tinymacOS-10.2.2-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
+La build produce `tinymacOS-10.2.3-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
 
 ```sh
 mkdir -p /var/tmp/tmc-optical
 python3 tools/dualboot-iso.py \
-  "$TMC_BUILD/tinymacOS-10.2.2-x86_64.iso" \
-  /var/tmp/tmc-optical/tinymacOS-10.2.2-x86_64.iso
+  "$TMC_BUILD/tinymacOS-10.2.3-x86_64.iso" \
+  /var/tmp/tmc-optical/tinymacOS-10.2.3-x86_64.iso
 ```
 
 Toolchain, immagini disco e output non devono finire nel checkout. Il font e gli asset richiesti sono inclusi; `tools/control-svg.py` compila gli SVG in maschere alpha deterministiche, senza un interprete SVG a runtime.
@@ -41,7 +43,7 @@ STATE=/var/tmp/tmc-vm LIVE=1 bash run.sh
 
 Il launcher usa Q35/AHCI, 2 vCPU, 1 GiB RAM, OVMF, tastiera USB e tablet xHCI. `TMC_POINTER=mouse` seleziona invece il mouse relativo. Il prefisso degli strumenti supporta l'avvio headless; per un display interattivo occorre un frontend QEMU disponibile sull'host, oppure aggiungere `-display vnc=127.0.0.1:0` e usare un client VNC locale.
 
-Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.2.2-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
+Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.2.3-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
 
 ## Organizzazione tecnica
 
@@ -54,7 +56,7 @@ Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tm
 
 Gli overlay e gli header ABI sotto `workspace/webkit-tmc/` sono copie d'integrazione: non eliminarli come duplicati e non sincronizzarli alla cieca sopra il codice autorevole. Le directory `sources/` delle vecchie manutenzioni sono snapshot, non un secondo sistema da compilare.
 
-[Architettura](docs/ARCHITECTURE.md) · [Dischi e TinyFS](docs/TINYFS.md) · [Validazione](docs/VALIDATION.md)
+[Architettura](docs/ARCHITECTURE.md) · [Dischi e BTRFS](docs/BTRFS.md) · [Validazione](docs/VALIDATION.md)
 
 Le licenze sono specifiche dei componenti: vedere `licenses/` e i file vendor. I sorgenti corrispondenti Syslinux, con patch Debian, sono nel branch `vendor/syslinux-6.04` della stessa repository.
 

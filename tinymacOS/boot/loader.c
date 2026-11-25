@@ -5,6 +5,7 @@
 #include "recoveryboot.h"
 #include "bootconfig.h"
 #include "bootconsole.h"
+#include "bootdefault.h"
 #define FAIL(s) do{st->ConOut->OutputString(st->ConOut,L"Impossibile avviare tinymacOS.\r\n");return EFI_LOAD_ERROR;}while(0)
 static struct Boot bi;
 static EFI_SYSTEM_TABLE *ginst;
@@ -228,6 +229,14 @@ recover:
         sha_bytes((void *)bi.recovery_img, bi.recovery_len, sum);
         if (memcmp(sum, (u8 *)sig + 32, 32))goto recover;
     } else if (inst != EFI_NOT_FOUND)FAIL("Cannot inspect boot volume");
+#ifndef TMC_RECOVERY_ENTRY
+    if(inst==EFI_NOT_FOUND&&(bi.boot_flags&TMC_BOOT_DEFAULT)){
+        EFI_DEVICE_PATH*target=filepath(li->DeviceHandle,L"\\EFI\\BOOT\\BOOTX64.EFI");
+        if(target){EFI_STATUS result=boot_set_default(st->RuntimeServices,target,dpsize(target));bs->FreePool(target);
+            if(EFI_ERROR(result))vmsg("[boot] OpenCore preference not verified; inspect firmware boot settings\n");
+        }
+    }
+#endif
     if (want_rec)goto recover;   /* R premuto durante la mela */
     EFI_DEVICE_PATH *dp = devpath(li->DeviceHandle);
     for (int k = 0; dp && !IsDevicePathEnd(dp) && k < 64; k++, dp = NextDevicePathNode(dp)) {

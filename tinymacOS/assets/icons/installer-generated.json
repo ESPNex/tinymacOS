@@ -1,0 +1,11 @@
+{
+  "kind": "AI-generated raster artwork",
+  "file": "installer-tramontana.png",
+  "sha256": "0c7d0954f3f0dc2c9ae949885769d70604f7fa6d243f65523f2be69fccdf7b5d",
+  "dimensions": [
+    512,
+    512
+  ],
+  "real_alpha": true,
+  "background": "Painted checkerboard removed with foreground segmentation; no Apple artwork or logo."
+}

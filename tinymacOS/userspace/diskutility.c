@@ -4,7 +4,102 @@ static SnapInfo sn[8];
 static FsInfo fi;
 static EncInfo ei;
 static int sel, view, dialog, op, nsn,side_scroll;
-static char msg[130], snapname[32];
+static char msg[160], snapname[32];
+static DiskEdit edit;
+static char editsize[16],editname[48];
+static int editfield;
+static int decimal(const char*s,u32*n)
+{
+    u32 v=0;if(!*s)return -1;
+    for(;*s;s++){if(*s<'0'||*s>'9'||v>131072)return -1;v=v*10+*s-'0';}
+    if(!v||v>131072)return -1;*n=v;return 0;
+}
+static void edit_begin(int operation)
+{
+    if(sel<0||sel>=d.count||view<200)return;
+    DiskMap*m=&d.disk[sel].map;memset(&edit,0,sizeof edit);
+    edit.disk=sel;edit.op=operation;editfield=0;msg[0]=0;
+    if(operation==DISK_EDIT_CREATE){
+        int j=view-400;if(j<0||j>=m->gaps)return;
+        DiskGap*g=m->gap+j;edit.start=((u64)g->start+2047)&~2047ull;
+        if(edit.start>=g->start+g->sectors)return;
+        edit.size=(g->sectors-(edit.start-g->start))&~2047u;
+        strset(editname,"Senza titolo",sizeof editname);
+    }else{
+        int j=view-200;if(j<0||j>=m->count)return;
+        DiskPartition*p=m->part+j;edit.number=p->number;edit.start=p->start;edit.sectors=p->sectors;edit.size=p->sectors;
+        editname[0]=0;
+    }
+    editsize[0]=0;addnum(editsize,edit.size/2048,sizeof editsize);dialog=3;
+}
+static void edit_preview(void)
+{
+    if(edit.op==DISK_EDIT_DELETE){
+        if(!eq(editname,"ELIMINA")){strset(msg,"Digita ELIMINA per confermare la selezione.",sizeof msg);return;}
+    }else{
+        u32 mb;if(decimal(editsize,&mb)){strset(msg,"Inserisci una dimensione intera in MiB.",sizeof msg);return;}
+        edit.size=mb*2048;strset(edit.name,editname,sizeof edit.name);
+    }
+    if(!sc(S_DISK,10,&edit,0,0)){dialog=4;msg[0]=0;}
+    else strset(msg,edit.message,sizeof msg);
+}
+static void lines(int x,int y,int w,const char*text)
+{
+    char b[160];int n=0;const char*p=text;
+    while(*p){
+        int last=0;n=0;
+        while(p[n]&&n<158){b[n]=p[n];b[n+1]=0;if(b[n]==' ')last=n;
+            if(TextWidth(b,F_SMALL)>w)break;n++;}
+        if(!n)n=1;else if(p[n]&&last)n=last;
+        memcpy(b,p,n);b[n]=0;Text(x,y,b,F_SMALL,SUB);y+=20;p+=n;while(*p==' ')p++;
+    }
+}
+static void edit_paint(void)
+{
+    int tw=MIN(440,aw-48),xx=(aw-tw)/2,yy=(ah-282)/2;
+    Sheet(xx,yy,tw,282,14);Icon(xx+20,yy+19,38,33);
+    Text(xx+72,yy+23,edit.op==DISK_EDIT_CREATE?"Nuova partizione":edit.op==DISK_EDIT_DELETE?"Elimina partizione":"Ridimensiona partizione",F_CAPTION,TX);
+    char target[64]="Disco ";addnum(target,edit.disk,sizeof target);
+    if(edit.number){append(target," · partizione ",sizeof target);addnum(target,edit.number,sizeof target);}
+    else{append(target," · LBA ",sizeof target);addnum(target,edit.start,sizeof target);}
+    Text(xx+20,yy+66,target,F_SMALL,SUB);
+    if(dialog==3){
+        Text(xx+20,yy+101,edit.op==DISK_EDIT_DELETE?"Conferma":"Dimensione (MiB)",F_SMALL,TX);
+        Box(xx+157,yy+94,tw-178,30,6,editfield==0?ACC:EDGE);Box(xx+158,yy+95,tw-180,28,5,CARD);
+        Text(xx+168,yy+101,edit.op==DISK_EDIT_DELETE?editname:editsize,F_BODY,TX);
+        if(edit.op==DISK_EDIT_CREATE){
+            Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);Text(xx+168,yy+143,editname,F_BODY,TX);
+        }
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"FAT32: solo coda libera, senza rilocazione. NTFS e nativo non ancora disponibili.");
+    }else{
+        lines(xx+20,yy+105,tw-40,edit.message);
+        Text(xx+20,yy+188,"Esegui prima un backup. Non scollegare il disco.",F_SMALL,TX);
+    }
+    button(xx+tw-218,yy+237,88,"Annulla",0);
+    button(xx+tw-119,yy+237,97,dialog==3?"Continua":dialog==5?"Attendi…":edit.op==DISK_EDIT_DELETE?"Elimina":"Applica",1);
+}
+static void edit_event(Event*e)
+{
+    int tw=MIN(440,aw-48),xx=(aw-tw)/2,yy=(ah-282)/2;
+    if(e->type==EV_KEY){
+        if(e->a==27){dialog=0;msg[0]=0;return;}
+        if(e->a=='\n'){if(dialog==3)edit_preview();else if(dialog==4)dialog=5;return;}
+        if(dialog!=3)return;
+        if(e->a=='\t'&&edit.op==DISK_EDIT_CREATE){editfield=!editfield;return;}
+        char*s=edit.op==DISK_EDIT_DELETE||editfield?editname:editsize;int cap=s==editname?sizeof editname:sizeof editsize,n=strlen(s);
+        if((e->a==8||e->a==127)&&n)s[n-1]=0;
+        else if(e->a>=32&&e->a<=126&&n<cap-1&&(s==editname||(e->a>='0'&&e->a<='9'))){s[n]=e->a;s[n+1]=0;}
+        msg[0]=0;
+    }
+    if(e->type==EV_CLICK){
+        if(dialog==3&&e->a>=xx+157&&e->a<xx+tw-21){if(e->b>=yy+94&&e->b<yy+124)editfield=0;if(e->b>=yy+136&&e->b<yy+166&&edit.op==DISK_EDIT_CREATE)editfield=1;}
+        if(e->b>=yy+233&&e->b<yy+271){
+            if(e->a>=xx+tw-218&&e->a<xx+tw-130){dialog=0;msg[0]=0;}
+            if(e->a>=xx+tw-119&&e->a<xx+tw-22){if(dialog==3)edit_preview();else if(dialog==4)dialog=5;}
+        }
+    }
+}
+
 static void refresh(void)
 {
     sc(S_DISK, 0, &d, 0, 0);
@@ -208,11 +303,14 @@ static void paint(void)
         u32 start=0,sectors=0;const char*title="Partizione",*format="Spazio non allocato";
         if(free){if(j>=m->gaps){view=-1;finish();return;}start=m->gap[j].start;sectors=m->gap[j].sectors;title="Spazio non allocato";}
         else{if(j>=m->count){view=-1;finish();return;}DiskPartition*p=m->part+j;start=p->start;sectors=p->sectors;format=filesystem_name(p->fs);title=p->name[0]?p->name:format;}
-        Icon(x,75,57,33);Text(x+69,77,title,F_CAPTION,TX);Text(x+70,109,free?"Nessuna partizione in questa estensione":"Partizione esistente · sola lettura",F_SMALL,SUB);
+        Icon(x,75,57,33);Text(x+69,77,title,F_CAPTION,TX);Text(x+70,109,free?"Nessuna partizione in questa estensione":"Partizione del disco",F_SMALL,SUB);
         char b[64]="";addnum(b,sectors/2048,64);append(b," MiB",64);pair(x,155,"Capacità",b);pair(x,188,"Formato",format);
         b[0]=0;addnum(b,start,64);pair(x,221,"Inizio LBA",b);b[0]=0;addnum(b,sectors,64);pair(x,254,"Settori",b);
-        Text(x,300,free?"L’installer usa solo spazio non allocato verificato.":"RAW non significa vuoto. Nessuna inizializzazione automatica.",F_SMALL,SUB);
-        Box(r+1,ah-45,aw-r-1,1,0,EDGE);Text(x,ah-31,msg[0]?msg:"Le partizioni esistenti sono protette dalle operazioni native.",F_SMALL,SUB);
+        if(free)button(x,288,150,"Crea partizione…",1);
+        else{button(x,288,110,"Elimina…",0);button(x+120,288,160,"Ridimensiona…",0);}
+        Text(x,336,free?"Crea un volume dati nativo nello spazio selezionato.":"RAW non significa vuoto. Ogni modifica richiede conferma.",F_SMALL,SUB);
+        Box(r+1,ah-45,aw-r-1,1,0,EDGE);Text(x,ah-31,msg[0]?msg:"Per modificare il disco di avvio, usa Recupero o il supporto live.",F_SMALL,SUB);
+        if(dialog>=3)edit_paint();
         finish();return;
     }
     Icon(x, 75, 57, view == -1 ? 33 : 39);
@@ -253,7 +351,7 @@ static void paint(void)
         }
     } else {
         Box(x, 275, sw, 14, 6, SOFT);
-        Text(x, 305, "Seleziona una partizione: FAT32, NTFS o RAW sono in sola lettura.", F_SMALL, SUB);
+        Text(x, 305, "Seleziona una partizione o lo spazio non allocato nella barra laterale.", F_SMALL, SUB);
     }
     Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
     Text(x, ah - 31, msg[0] ? msg : d.disk[sel].backup ? "Copia dei dati disponibile in Recupero." :
@@ -291,6 +389,7 @@ void app_main(void)
             changed = 1;
             if (baseevent(&e))continue;
             if (e.type == EV_CLOSE)quit();
+            if(dialog>=3){edit_event(&e);continue;}
             if (dialog) {
                 if (e.type == EV_KEY) {
                     if (e.a == 27)dialog = 0;
@@ -325,6 +424,9 @@ void app_main(void)
                     else if (e.a >= x + 65 && e.a < x + 155)start(2);
                     else if (e.a >= x + 162 && e.a < x + 255)start(3);
                     else if (e.a >= x + 262 && e.a < x + 366)start(4);
+                } else if(view>=200&&e.b>=284&&e.b<325){
+                    if(view>=400&&e.a>=x&&e.a<x+150)edit_begin(DISK_EDIT_CREATE);
+                    else if(view<400){if(e.a>=x&&e.a<x+110)edit_begin(DISK_EDIT_DELETE);else if(e.a>=x+120&&e.a<x+280)edit_begin(DISK_EDIT_RESIZE);}
                 } else if (view >= 100 && view<200 && e.b >= 278 && e.b < 316) {
                     if (e.a >= x && e.a < x + 110)start(5);
                     else if (e.a >= x + 118 && e.a < x + 214)verify_now();
@@ -333,6 +435,12 @@ void app_main(void)
             }
         }
         if (changed)paint();
+        if(dialog==5){
+            edit.confirm=DISK_EDIT_CONFIRM;
+            int result=sc(S_DISK,11,&edit,0,0);
+            strset(msg,edit.message,sizeof msg);dialog=0;
+            refresh();if(!result){view=-1;side_scroll=0;}paint();
+        }
         if (dialog == 2) {
             int rr;
             const char *okmsg;

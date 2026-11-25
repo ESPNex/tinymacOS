@@ -1,5 +1,6 @@
 #pragma once
 #include "base.h"
+#include "diskedit.h"
 #define UBASE 0x8000000000ull
 #define UEND (UBASE+0x40000000ull)
 #define NAPPS 17

@@ -97,7 +97,7 @@ static void refresh(void)
         Medium medium={sata_io,sata_flush,i,q->sectors};
         partition_scan(&medium,&inventory);q->scheme=inventory.scheme;q->start=inventory.start;q->available=inventory.sectors;
         strset(q->reason,inventory.reason,sizeof q->reason);q->formats[0]=0;
-        int seen[9]={0};for(int j=0;j<inventory.count;j++){int f=inventory.part[j].fs;if(f>=0&&f<9&&!seen[f]){if(q->formats[0])append(q->formats,", ",sizeof q->formats);append(q->formats,filesystem_name(f),sizeof q->formats);seen[f]=1;}}
+        int seen[FS_COUNT]={0};for(int j=0;j<inventory.count;j++){int f=inventory.part[j].fs;if(f>=0&&f<FS_COUNT&&!seen[f]){if(q->formats[0])append(q->formats,", ",sizeof q->formats);append(q->formats,filesystem_name(f),sizeof q->formats);seen[f]=1;}}
         q->usable=st.live&&i!=mounted&&inventory.safe&&inventory.slot>=0&&
             (inventory.scheme==MAP_EMPTY?q->sectors>=196608u:inventory.sectors>=TC_SECTORS);
         if(q->usable&&inventory.scheme!=MAP_EMPTY){
@@ -497,4 +497,22 @@ int bootconfig_disk(int write,u32 flags)
         break;
     }
     spin_unlock(&cfg_lock,irq);return result;
+}
+
+/* Offline edits share the same recursive gate as the installer, filesystem,
+ * snapshots and FileVault. The mounted disk is rejected wholesale, including
+ * its EFI/Recovery and extended partitions; reboot into RAM Recovery to edit.
+ * Raw IO is intentional: never run partition metadata through FileVault. */
+int disk_edit(DiskEdit *q,int apply)
+{
+    u32 fl;rec_lock(&fs_gate,&fl);int r;
+    if(isbusy()||q->disk<0||q->disk>=sata_count()||q->disk==mounted){
+        r=q->result=DE_PROTECTED;
+        strset(q->message,"Disco in uso: avvia da Recupero o dal supporto live.",sizeof q->message);
+    }else{
+        Medium m={sata_io,sata_flush,q->disk,sata_size(q->disk)};
+        if(apply)volume_forget(q->disk);
+        r=partition_edit(&m,q,apply);
+    }
+    rec_unlock(&fs_gate,fl);return r;
 }
