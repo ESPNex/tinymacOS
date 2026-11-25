@@ -313,7 +313,7 @@ static void paint(void)
         Text(x, 278, "Data e ora lette dall'orologio del computer.", F_SMALL, SUB);
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.2.3 (30B14)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.2.4 (30B15)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");

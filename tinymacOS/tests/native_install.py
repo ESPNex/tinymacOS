@@ -10,7 +10,7 @@ from retail_guest import Retail
 import pixels
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 from riviera_media import gpt
-iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.2.3/linux-hid-v12/tinymacOS-10.2.3-x86_64.iso'))
+iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.2.4/linux-hid-v12/tinymacOS-10.2.4-x86_64.iso'))
 w=Path(tempfile.mkdtemp(prefix='tmc-bios-install-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get("TMC_STAGE_BUILD",str(iso.parent/"build")),TMC_MEM="512",TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_SMP='2')
 launcher=root/'tinymacOS/tools/run-bios-installed.sh';report={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'external_work':str(w),'physical_hardware_tested':False,'scope':'actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU'}
@@ -28,7 +28,7 @@ if resume:
 try:
  if not resume:
   with Retail(iso,w,ev,'bios-install',disk='target',live=False,launcher=launcher) as g:
-   g.enroll(name='BiosDisk');g.key('f11');g.visible('tinymacOS Tramontana');g.key('ret');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',150,faces=(3,));g.shot('bios-install-complete');g.key('ret');g.p.wait(timeout=15);assert g.p.returncode==0
+   g.enroll(name='BiosDisk');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',150,faces=(3,));g.shot('bios-install-complete');g.key('ret');g.p.wait(timeout=15);assert g.p.returncode==0
   disk=w/'target/system.raw';layout=gpt(disk)
   installed_esp=w/'installed-esp-readback.fat';installed_esp.write_bytes(layout['esp'])
   tool='/var/tmp/tmc/tools/root';installed_kernel=subprocess.check_output([tool+'/usr/bin/mtype','-i',str(installed_esp),'::/System/Library/KernelCollections/KernelCache'],env={**os.environ,'LD_LIBRARY_PATH':tool+'/usr/lib/x86_64-linux-gnu'})
@@ -44,7 +44,7 @@ try:
   assert mbr[:440]==(Path(os.environ['TMC_BUILD'])/'bios-mbr.bin').read_bytes();assert mbr[450]==0xee and mbr[510:]==b'\x55\xaa'
   assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64').read_bytes()
   with Installed('/not-attached',w,ev,'bios-hdd-only',disk='target',boot_disk=True,launcher=launcher) as g:
-   no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    10.2.3');g.cmd('bootverbose log','[boot] CPUs online: 2');g.cmd('echo BIOS_DISK_PERSISTENT > Documents/bios-proof.txt');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('bios-hdd-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
+   no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    10.2.4');g.cmd('bootverbose log','[boot] CPUs online: 2');g.cmd('echo BIOS_DISK_PERSISTENT > Documents/bios-proof.txt');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('bios-hdd-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
   with Installed('/not-attached',w,ev,'bios-reboot',disk='target',boot_disk=True,launcher=launcher) as g:
    no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose status','Verbose avvio corrente: attivo');g.shot('bios-reboot-persistence-verbose');g.cmd('bootverbose off','Preferenza verificata su disco');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
   # No previous OVMF state exists: this firmware must discover the native GPT ESP.
@@ -59,7 +59,21 @@ try:
    x,y=g.visible('Utility',box=(0,0,800,34));g.click(x+12,y+8);x,y=g.visible(label,box=(0,34,900,240));g.click(x+24,y+8)
   utility('Crea una copia locale');g.visible('QEMU HARDDISK');g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-backup');g.key('ret')
   g.click(550,270);g.click(880,557);g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-restore');g.key('ret')
-  g.click(550,355);g.click(880,557);g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',60);g.shot('recovery-native-reinstall');g.key('ret')
+  # The Recovery row now launches the same ordinary Ring-3 installer as the
+  # desktop, not the compositor's old direct confirmation/maintenance dialog.
+  def data_digest():
+   with disk.open('rb') as f:
+    a,b=gpt(disk)['parts'][1];f.seek(a*512);return hashlib.sha256(f.read((b-a+1)*512)).hexdigest()
+  before_reinstall=data_digest()
+  g.visible('Reinstalla tinymacOS Tramontana');g.click(550,355);g.click(880,557)
+  g.visible('Reinstalla tinymacOS Tramontana',box=(0,0,1280,210));g.visible('Per reinstallare il sistema')
+  g.shot('recovery-shared-installer-welcome');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma la reinstallazione')
+  g.key('ret');g.visible('Conferma la reinstallazione');assert data_digest()==before_reinstall
+  g.key('spc');g.key('ret');g.visible('Reinstallazione completata',90);g.shot('recovery-native-reinstall')
+  assert data_digest()==before_reinstall
+  raw=gpt(disk);assert raw['esp']==raw['src']
+  report['same_installer_recovery_wizard']=True;report['reinstall_native_data_partition_sha256_unchanged']=before_reinstall;report['reinstalled_system_equals_sealed_source']=True
+  g.key('ret');g.visible('Ripristina da una copia locale')
   utility('Terminale');g.visible('Sessione locale');g.cmd('csrutil disable','Preferenza SIP verificata');g.cmd('off');g.p.wait(timeout=15)
  report['installed_recovery_without_iso']=True;report['native_sata_backup_restore_reinstall']=True
  with Installed('/not-attached',w,ev,'after-recovery',disk='target',boot_disk=True) as g:

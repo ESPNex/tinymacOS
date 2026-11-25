@@ -65,5 +65,11 @@ class Retail(Guest):
         self.type(name);self.key('tab');self.type(password);self.key('tab');self.type(password);self.key('ret');self.visible('Preferiti',34);time.sleep(.65)
     def unlock(self,password='local-test-285'):
         self.type(password);self.key('ret');self.visible('Preferiti',34);time.sleep(.65)
-    def cmd(self,s,expect=None):self.type(s);self.key('ret',.2);return self.visible(expect) if expect else None
+    def cmd(self,s,expect=None,timeout=24):
+        # Wait for the actual terminal footer, not the permanent welcome text
+        # (which is F_MONO). A preceding echo/write may still be finishing and
+        # must not eat the first USB key of the next command.
+        self.visible('Sessione locale',max(timeout,180),faces=(0,))
+        self.type(s);self.key('ret',.2)
+        return self.visible(expect,timeout) if expect else None
     def app(self,key,s):self.key(key);self.visible(s);time.sleep(.48)

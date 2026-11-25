@@ -2,14 +2,15 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery con kernel dedicato. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.2.3 Tramontana · build 30B14 · pre-release.**
+**Versione attuale: 10.2.4 Tramontana · build 30B15 · pre-release.**
 
-[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.3) · [Novità della 10.2.3](tinymacOS/docs/NOTE-10.2.3.md)
+[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.4) · [Novità della 10.2.4](tinymacOS/docs/NOTE-10.2.4.md)
 
-**Revisione 10.2.3:** snapshot CoW reali, resize nativo a capacità variabile e motore NTFS freestanding. [Dettagli e limiti](tinymacOS/docs/DISK-UTILITY-DEVELOPMENT.md).
+**Revisione 10.2.4:** Recovery senza residui della barra; dischi SATA/AHCI da 512 B per settore fino a **1 TiB**, inclusi i dischi commerciali da 1 TB. Conservati snapshot CoW reali, resize nativo e motore NTFS freestanding. Il volume dati nativo resta da 8–32 MiB. [Dettagli e limiti](tinymacOS/docs/DISK-UTILITY-DEVELOPMENT.md).
 
 ## Funzioni principali
 
+- Un solo assistente «Installa tinymacOS Tramontana» nel desktop e «Reinstalla tinymacOS Tramontana» in Recovery.
 - Installer su spazio non allocato GPT/MBR; riconoscimento FAT32, NTFS e RAW in Installer, Utility Disco e Terminale.
 - Snapshot CoW: dati iniziali condivisi, vecchi blocchi conservati una sola volta e recupero dello spazio all’ultimo riferimento.
 - Utility Disco offline: creazione/eliminazione e resize FAT32, NTFS nativo e formato proprietario a capacità variabile 8–32 MiB.

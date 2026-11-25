@@ -11,8 +11,8 @@ static int editfield;
 static int decimal(const char*s,u32*n)
 {
     u32 v=0;if(!*s)return -1;
-    for(;*s;s++){if(*s<'0'||*s>'9'||v>131072)return -1;v=v*10+*s-'0';}
-    if(!v||v>131072)return -1;*n=v;return 0;
+    for(;*s;s++){if(*s<'0'||*s>'9'||v>TMC_DISK_MAX_MIB)return -1;v=v*10+*s-'0';}
+    if(!v||v>TMC_DISK_MAX_MIB)return -1;*n=v;return 0;
 }
 static void edit_begin(int operation)
 {

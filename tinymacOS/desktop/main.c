@@ -134,7 +134,7 @@ int focuswin(int i)
 }
 void openarg(int a, const char *arg)
 {
-    if(sys.recovery&&a!=TERMINAL&&a!=DISKUTIL)return;
+    if(sys.recovery&&a!=TERMINAL&&a!=DISKUTIL&&a!=INSTALLER)return;
     if (sc(S_SPAWN, a, arg, 0, 0) > 0) {
         pend = a;
         shell_pop(a);
@@ -144,7 +144,7 @@ void openarg(int a, const char *arg)
 void launch(int a)
 {
     if (a < FINDER || a > lastapp(sys.live_cd))return;
-    if (a == INSTALLER && !sys.live_cd)return;
+    if (a == INSTALLER && !sys.live_cd && !sys.recovery)return;
     for (int j = nz; j--;) {
         int i = order[j];
         if (!views[i].dead && views[i].s.app == a) {

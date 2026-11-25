@@ -66,7 +66,7 @@ int layout_read(Medium *m, Layout *x)
             return 2;
         }
     }
-    if (m->z < MINSECT || m->z > 268435456u)return 0;
+    if (m->z < MINSECT || m->z > TMC_DISK_MAX_SECTORS)return 0;
     Gpt h;
     x->pv = readh(m, 1, &h);
     if (x->pv) {

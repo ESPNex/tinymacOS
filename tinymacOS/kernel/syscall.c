@@ -427,6 +427,9 @@ static Frame *syscall_inner(Frame *f)
             } else if (a == 1)r = install_begin((int)b);
             else if (a == 2)r = install_step();
             else if (a == 3)r = install_cancel();
+            /* Same installer executable in Recovery; only the sealed system
+             * restore operation is exposed, never user-data reset/restore. */
+            else if (a == 4 && boot.recovery)r = disk_operation(6,(int)b);
         }
         break;
     case S_SETUP_CODE:

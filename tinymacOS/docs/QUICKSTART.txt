@@ -1,4 +1,4 @@
-tinymacOS 10.2.3 Tramontana / 30B14 — installazione e Recupero
+tinymacOS 10.2.4 Tramontana / 30B15 — installazione e Recupero
 
 Configurazione consigliata: VM x86-64 Q35/AHCI, 1 GiB RAM, Secure Boot
 spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara
@@ -37,9 +37,9 @@ Sono aggiornati tabella partizioni e codice MBR, il cui settore originale
 è conservato nel nuovo volume (settore relativo 10). Non vengono scritti
 i filesystem preesistenti. Interruzioni durante GPT/MBR possono comunque
 richiedere riparazione esterna dell’avvio: non è una transazione atomica.
-Limiti: SATA/AHCI, settori 512 B, dischi fino a 128 GiB, 96 MiB contigui e
+Limiti: SATA/AHCI, settori 512 B, dischi fino a 1 TiB, 96 MiB contigui e
 una voce primaria/GPT libera. Le partizioni estese restano riservate.
-Vedere docs/NOTE-10.2.3.md per struttura, vincoli e portata dei test.
+Vedere docs/NOTE-10.2.4.md per struttura, vincoli e portata dei test.
 
 La ISO distribuita include avvio ottico BIOS/OpenDuet/OpenCore e UEFI.
 Non è un'immagine USB-DD ibrida. Il funzionamento con Rufus o su firmware

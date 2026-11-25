@@ -85,7 +85,7 @@ static int diskid(const char *s)
 static int disk_uint(const char*s,u32*out)
 {
     u64 n=0;if(!*s)return -1;
-    for(;*s;s++){if(*s<'0'||*s>'9')return -1;n=n*10+*s-'0';if(n>268435456)return -1;}
+    for(;*s;s++){if(*s<'0'||*s>'9')return -1;n=n*10+*s-'0';if(n>TMC_DISK_MAX_SECTORS)return -1;}
     *out=n;return 0;
 }
 static int disk_partition_id(const char*s,int*disk,int*part)
@@ -211,10 +211,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.2.3");
-            ln("BuildVersion:      30B14");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.3");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B14");
+            ln("ProductVersion:    10.2.4");
+            ln("BuildVersion:      30B15");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.4");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B15");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -222,8 +222,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.2.3");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.3 30B14 x86_64");
+        else if (eq(V(1), "-r"))ln("10.2.4");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.4 30B15 x86_64");
         else return 2;
         return 0;
     }
@@ -737,7 +737,7 @@ static int run(void)
             DiskEdit q={.op=create?DISK_EDIT_CREATE:del?DISK_EDIT_DELETE:DISK_EDIT_RESIZE};
             if(create){
                 q.disk=diskid(V(2));u32 mb;
-                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_uint(V(4),&mb)||!mb||mb>131072)return fail("Disco, LBA o dimensione non validi.");
+                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_uint(V(4),&mb)||!mb||mb>TMC_DISK_MAX_MIB)return fail("Disco, LBA o dimensione non validi.");
                 q.size=mb*2048;strset(q.name,V(5),sizeof q.name);
             }else{
                 if(disk_partition_id(V(2),&q.disk,&q.number)||q.disk>=di.count)return fail("Identificatore partizione non valido.");
@@ -745,7 +745,7 @@ static int run(void)
                 for(int j=0;j<m->count;j++)if(m->part[j].number==q.number)p=m->part+j;
                 if(!p)return fail("Partizione non trovata.");
                 q.start=p->start;q.sectors=p->sectors;
-                if(!del){u32 mb;if(disk_uint(V(3),&mb)||!mb||mb>131072)return fail("Dimensione MiB non valida.");q.size=mb*2048;}
+                if(!del){u32 mb;if(disk_uint(V(3),&mb)||!mb||mb>TMC_DISK_MAX_MIB)return fail("Dimensione MiB non valida.");q.size=mb*2048;}
             }
             int r=sc(S_DISK,10,&q,0,0);ln(q.message);if(r)return 1;
             if(!apply){ln("Solo anteprima: nessuna scrittura. Esegui un backup; aggiungi --confirm per applicare.");return 0;}
@@ -895,7 +895,7 @@ static int run(void)
     }
     if (IS("newfs_apfs")) {
         ln("newfs_apfs: l'inizializzazione del disco richiede l'Installatore tinymacOS.");
-        ln("Avvia «Installa tinymacOS» e usa Utility Disco → Inizializza disco.");
+        ln("Avvia «" INSTALLER_TITLE "» e usa Utility Disco → Inizializza disco.");
         return 1;
     }
     if (IS("apfs_unlockfv")) {

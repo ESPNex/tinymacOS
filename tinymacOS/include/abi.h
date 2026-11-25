@@ -76,9 +76,12 @@ typedef struct {
     int id, parent, dir, ro, size;
     char name[48];
 } Dirent;
+#define INSTALLER_TITLE "Installa tinymacOS Tramontana"
+#define REINSTALLER_TITLE "Reinstalla tinymacOS Tramontana"
+static inline const char *installer_title(int recovery){return recovery?REINSTALLER_TITLE:INSTALLER_TITLE;}
 static inline const char *appname(int a)
 {
-    const char *const n[] = {"Scrivania", "Finder", "Terminale", "TextEdit", "Impostazioni", "Info su tinymacOS", "Calcolatrice", "Calendario", "Monitor Attività", "Galleria", "Installa tinymacOS", "Utility Disco", "Note", "Memo", "Time Machine", "NetSurf", "Comando"};
+    const char *const n[] = {"Scrivania", "Finder", "Terminale", "TextEdit", "Impostazioni", "Info su tinymacOS", "Calcolatrice", "Calendario", "Monitor Attività", "Galleria", INSTALLER_TITLE, "Utility Disco", "Note", "Memo", "Time Machine", "NetSurf", "Comando"};
     return a >= 0 && a < NAPPS ? n[a] : "Idle";
 }
 

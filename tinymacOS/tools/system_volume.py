@@ -16,17 +16,17 @@ def macho(p):
     cmds=b''.join(segs)+struct.pack('<IIQQ',0x80000028,24,ep,0);head=struct.pack('<8I',0xfeedfacf,0x1000007,3,2,len(segs)+1,len(cmds),1,0)+cmds;body[:len(head)]=head;return bytes(body)
 apps=[('finder','Finder','/System/Library/CoreServices'),('terminal','Terminal','/Applications/Utilities'),('textedit','TextEdit','/Applications'),('settings','System Settings','/Applications'),('about','About This Computer','/System/Library/CoreServices'),('calculator','Calculator','/Applications'),('calendar','Calendar','/Applications'),('monitor','Activity Monitor','/Applications/Utilities'),('gallery','Gallery','/Applications'),('diskutility','Disk Utility','/Applications/Utilities'),('notes','Notes','/Applications'),('stickies','Stickies','/Applications'),('timemachine','Time Machine','/Applications')]
 if mode=='recovery':apps=[x for x in apps if x[0] in ('terminal','diskutility','settings')]
-if mode=='live':apps+=[('installer','Install tinymacOS','/Applications')]
+if mode in ('live','recovery'):apps+=[('installer','Install tinymacOS','/Applications')]
 files={};paths=['/'];entries=[(-1,1,'',None)]
 def add(p,data):
     if p in paths:return paths.index(p)
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.3','CFBundleVersion':'30B14','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleDisplayName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.4','CFBundleVersion':'30B15','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
 for svg in sorted(Path('assets/control-center').glob('*.svg')):add('/System/Library/CoreServices/ControlCenter/Symbols/'+svg.name,svg.read_bytes())
 add('/System/Library/CoreServices/ControlCenter/Symbols/manifest.json',(D/'control-svg.json').read_bytes())
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.3','ProductBuildVersion':'30B14'}));add('/System/Library/KernelCollections',None)
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.4','ProductBuildVersion':'30B15'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes())
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json

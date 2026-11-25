@@ -3,6 +3,7 @@
 #include "handoff.h"
 #include "bootconsole.h"
 #include "bootconfig.h"
+#include "../boot/splash.h"
 extern struct Boot boot;
 static const u8 font[] = {
 #include "../assets/panicfont.inc"
@@ -23,10 +24,19 @@ static void txt(int x, int y, const char *s, u32 c) {
 }
 static Spin slog;
 static BootConsole console;
-static int console_live,log_capture=1;
+static int console_live,log_capture=1,splash_live=1;
 static char logring[16384];static unsigned loghead,logused;
 void boot_loginit(void){console_live=!!(boot.boot_flags&TMC_BOOT_VERBOSE);if(console_live)bootconsole_clear(&boot,&console);}
-void boot_console_stop(void){u32 f;spin_lock(&slog,&f);console_live=0;log_capture=0;spin_unlock(&slog,f);}
+/* The Recovery compositor can present on an AP before BSP smp_start()
+ * returns. Serialize all kernel splash writes with the first-present handoff:
+ * a late 100% update must never paint over a userspace frame. */
+void boot_progress(int percent)
+{
+    u32 f;spin_lock(&slog,&f);
+    if(splash_live)splash_bar(&boot,percent);
+    spin_unlock(&slog,f);
+}
+void boot_console_stop(void){u32 f;spin_lock(&slog,&f);console_live=0;log_capture=0;splash_live=0;spin_unlock(&slog,f);}
 static void com1(const char *s)
 {
 #ifdef TMC_DEBUG

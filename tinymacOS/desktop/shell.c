@@ -417,8 +417,15 @@ void shell_base(void)
 {
     if(deskRev!=sys.fsrev){ndesk=MAX(0,sc(S_LIST,HOME "/Desktop",ondesk,NSLOTS,0));deskRev=sys.fsrev;deskSel=-2;}
     for(int k=0;k<dcount();k++){
-        int i=entryid(k);Rect q=deskcell(k);const char *name=i<0?"Installa tinymacOS":ondesk[i].name;
-        icon(q.x+36,q.y+2,50,i<0?38:ondesk[i].dir?6:7);char label[24];strset(label,name,20);
+        int i=entryid(k);Rect q=deskcell(k);const char *name=i<0?INSTALLER_TITLE:ondesk[i].name;
+        icon(q.x+36,q.y+2,50,i<0?38:ondesk[i].dir?6:7);
+        if(i<0){
+            roundr(q.x,q.y+54,q.w,29,7,i==deskSel?0x146be3:0x181a24,i==deskSel?245:136);
+            center(q.x+q.w/2,q.y+55,"Installa",F_MICRO,0xffffff);
+            center(q.x+q.w/2,q.y+68,"tinymacOS Tramontana",F_MICRO,0xffffff);
+            continue;
+        }
+        char label[24];strset(label,name,20);
         if(strlen(name)>=20){label[16]='.';label[17]='.';label[18]=0;}
         int nw=MIN(124,textw(label,F_SMALL)+12);roundr(q.x+(q.w-nw)/2,q.y+56,nw,23,7,i==deskSel?0x146be3:0x181a24,i==deskSel?245:136);center(q.x+q.w/2,q.y+59,label,F_SMALL,0xffffff);
     }
@@ -735,7 +742,7 @@ void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;di
         cmadd("Contrai finestra",141);cmadd("Zoom / ripristina",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina…",205);cmadd("Elimina…",206);}}
     else if(inside(mx,my,widget)){cmadd("Apri Calendario",100+CALENDAR);}
-    else {cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd("Installa tinymacOS…",100+INSTALLER);}showctx();}
+    else {cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd(INSTALLER_TITLE "…",100+INSTALLER);}showctx();}
 int shell_key(Event *e)
 {
     pending=0;int k = e->a;

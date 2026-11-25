@@ -42,13 +42,14 @@ def move(g,x,y):
 try:
  with Rec(iso,w,ev,'recovery',live=True,launcher=Path(os.environ['TMC_RECOVERY_LAUNCHER']) if os.environ.get('TMC_RECOVERY_LAUNCHER') else root/'tools/run-bios-iso.sh' if fw=='bios' else None) as g:
   g.shot('native-recovery-home');ok('Separate native Recovery desktop reached through ordinary R key')
-  img=np.asarray(g.snap());assert int(img[80,16].max())<=8 and int(img[80,640,0])>=20;ok('Black background and soft neutral glow retained')
+  img=np.asarray(g.snap());assert np.all(img[489:495,544:736]==45),'Boot progress bar survived Recovery handoff';ok('Boot progress region is fully replaced by the opaque Recovery panel')
+  assert int(img[80,16].max())<=8 and int(img[80,640,0])>=20;ok('Black background and soft neutral glow retained')
   # Opaque, neutral dark panel: widely separated clear samples must all be
   # exactly the same color despite the radial background behind them.
   assert all(tuple(img[y,x])==(45,45,45) for x,y in [(325,250),(325,500),(955,250),(955,500)])
   assert tuple(img[10,800])==(36,36,36)
   home=g.snap().crop((310,205,970,595))
-  for label in ['Recupero tinymacOS','10.2.3','kernel','USB','RAM','Riavvia','Spegni','Terminale']:
+  for label in ['Recupero tinymacOS','10.2.4','kernel','USB','RAM','Riavvia','Spegni','Terminale']:
    assert pixels.locate(home,label,faces=(0,1,2,3,8),threshold=.98) is None,label
   ok('Home window has only three real recovery choices and Continue; technical text and extra commands are absent')
   g.visible('Utility',box=(0,0,800,34));g.visible('Finestra',box=(0,0,800,34))
@@ -65,7 +66,7 @@ try:
   g.visible('Sessione locale');g.shot('native-terminal-menu')
   ok('Opaque Utility menu launches native Terminal by mouse; top bar remains visible above the app')
   g.shot('native-terminal');ok('Native Terminal stays above the dark opaque Recovery home')
-  g.cmd('sw_vers -productVersion','10.2.3');g.cmd('sw_vers -buildVersion','30B14');ok('Native shell executes actual system commands with current version')
+  g.cmd('sw_vers -productVersion','10.2.4');g.cmd('sw_vers -buildVersion','30B15');ok('Native shell executes actual system commands with current version')
   g.cmd('echo RECOVERY-RAM-ONLY > /Users/User/Documents/rec-test.txt');g.cmd('cat /Users/User/Documents/rec-test.txt','RECOVERY-RAM-ONLY');ok('Recovery has its own working RAM filesystem, no installed home mounted')
   g.key('ctrl-w');time.sleep(.8);g.visible('Recupero tinymacOS');move(g,550,440);g.mouse(True);g.mouse(False);move(g,880,557);g.mouse(True);g.mouse(False);g.visible('Utility Disco');g.shot('native-disk-utility');ok('Native Disk Utility opens by mouse; hub stays behind it')
  r['passed']=True

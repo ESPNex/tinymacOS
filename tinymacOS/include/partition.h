@@ -1,5 +1,9 @@
 #pragma once
 #include "base.h"
+/* 512-byte logical sectors. 1 TiB includes commercial 1 TB drives and
+ * remains within the unsigned 32-bit LBA ABI (including the last GPT copy). */
+#define TMC_DISK_MAX_SECTORS 2147483648u
+#define TMC_DISK_MAX_MIB (TMC_DISK_MAX_SECTORS/2048u)
 #define DISK_PARTS 128
 #define DISK_GAPS 129
 enum { MAP_UNKNOWN, MAP_EMPTY, MAP_GPT, MAP_MBR };

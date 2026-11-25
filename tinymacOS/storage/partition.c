@@ -79,7 +79,7 @@ static int extended(Medium*m,DiskMap*x,u32 base,u32 size,int *number)
 int partition_scan(Medium*m,DiskMap*x)
 {
     memset(x,0,sizeof *x);x->slot=-1;
-    if(m->z<4||m->z>268435456u)return bad(x,"Disco oltre i limiti del driver (512 B, 128 GiB)");
+    if(m->z<4||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Disco oltre i limiti del driver (512 B, 1 TiB)");
     if(m->io(m->d,0,1,sector,0)||m->io(m->d,1,1,other,0))return bad(x,"Errore di lettura della tabella");
     if(!nz(sector,512)&&!nz(other,512)){
         /* A zero first sector is NOT proof of an empty disk. The legacy blank

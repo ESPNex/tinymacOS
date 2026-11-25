@@ -2,9 +2,25 @@
 // The assistant is an ordinary Ring-3 window. Only the kernel owns disk addresses.
 static InstallInfo info;
 static int page, choice = -1, confirm, dirty = 1;
+static int reinstall, reinstall_pending;
+static DiskInfo recovery_disks;
+static void paint(void);
 static void refresh(void)
 {
     sc(S_INSTALL, 0, &info, 0, 0);
+    if(reinstall){
+        sc(S_DISK,0,&recovery_disks,0,0);
+        info.count=recovery_disks.count;
+        for(int i=0;i<info.count;i++){
+            InstallDisk*q=info.disk+i;
+            q->sectors=recovery_disks.disk[i].sectors;
+            q->scheme=recovery_disks.disk[i].map.scheme;
+            strset(q->model,recovery_disks.disk[i].model,sizeof q->model);
+            q->usable=recovery_disks.disk[i].layout==2&&recovery_disks.disk[i].healthy;
+            strset(q->reason,q->usable?"Sistema nativo rilevato; documenti conservati.":"Serve un’installazione nativa con tabelle integre.",sizeof q->reason);
+        }
+        return;
+    }
     if (info.state == INSTALL_DONE)
         page = 4;
     else if (info.state == INSTALL_ERROR)
@@ -28,19 +44,18 @@ static void next(void)
 {
     if (page == 0) {
         refresh();
-        if (info.live)
+        if (info.live || reinstall)
             go(1);
     } else if (page == 1 && can()) {
         confirm = 0;
         go(2);
     } else if (page == 2 && confirm && can()) {
-        sc(S_INSTALL, 1, choice, 0, 0);
-        refresh();
-        dirty = 1;
+        if(reinstall){reinstall_pending=1;go(3);}
+        else{sc(S_INSTALL, 1, choice, 0, 0);refresh();dirty=1;}
     } else if (page == 4) {
-        sc(S_POWER, 0, 0, 0, 0);
+        if(reinstall)quit();else sc(S_POWER, 0, 0, 0, 0);
     } else if (page == 5) {
-        sc(S_INSTALL, 3, 0, 0, 0);
+        if(!reinstall)sc(S_INSTALL, 3, 0, 0, 0);
         refresh();
         choice = -1;
         go(1);
@@ -54,7 +69,7 @@ static void back(void)
     else if (page == 2) {
         confirm = 0;
         go(1);
-    } else if (page == 3 && info.state == INSTALL_SCAN && sc(S_INSTALL, 3, 0, 0, 0) == 0) {
+    } else if (page == 3 && !reinstall && info.state == INSTALL_SCAN && sc(S_INSTALL, 3, 0, 0, 0) == 0) {
         refresh();
         go(1);
     } else if (page == 0 || page >= 4)
@@ -76,14 +91,14 @@ static void paint(void)
     if (!page) {
         Icon(aw/2-64, 30, 128, 38);
         Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
-        Center(aw/2, 229, "Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
-        Center(aw/2, 266, "Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
+        Center(aw/2, 229, reinstall?"Per reinstallare il sistema, fai clic su Continua.":"Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
+        Center(aw/2, 266, reinstall?"Documenti, account e snapshot non verranno inizializzati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
     } else if (page == 1) {
         Center(aw/2, 19, "Seleziona la destinazione", F_TITLE, TX);
-        Center(aw/2, 61, "tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
+        Center(aw/2, 61, reinstall?"Scegli il sistema nativo da reinstallare senza inizializzare i dati.":"tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
         if (!info.count) {
             Text(x, 122, "Nessun disco SATA rilevato.", F_BOLD, TX);
-            Text(x, 154, "Collega un disco con almeno 96 MiB non allocati.", F_SMALL, SUB);
+            Text(x, 154, reinstall?"Collega il disco con l’installazione da ripristinare.":"Collega un disco con almeno 96 MiB non allocati.", F_SMALL, SUB);
         }
         int slots = MAX(1, (foot - 104) / 64), first = MAX(0, choice - slots + 1);
         for (int i = first; i < info.count && i < first + slots; i++) {
@@ -94,26 +109,26 @@ static void paint(void)
             diskname(s, i);
             Text(x + 53, y + 3, s, F_SMALL, TX);
             s[0] = 0;
-            addnum(s, info.disk[i].available / 2048, 80);
-            append(s, " MiB non allocati · ",80);append(s,partition_scheme(info.disk[i].scheme),80);
+            addnum(s, (reinstall?info.disk[i].sectors:info.disk[i].available) / 2048, 80);
+            append(s, reinstall?" MiB · ":" MiB non allocati · ",80);append(s,partition_scheme(info.disk[i].scheme),80);
             append(s,info.disk[i].usable?"":" · Non disponibile",80);
             Text(x + 53, y + 23, s, F_MICRO, SUB);
-            Text(x + 53, y + 41, info.disk[i].usable?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
+            Text(x + 53, y + 41, !reinstall&&info.disk[i].usable?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
         }
     } else if (page == 2) {
-        Text(x, 20, "Conferma l’installazione", F_TITLE, TX);
+        Text(x, 20, reinstall?"Conferma la reinstallazione":"Conferma l’installazione", F_TITLE, TX);
         char s[80];
         diskname(s, choice);
         Icon(x, 77, 46, 33);
         Text(x + 58, 82, s, F_BOLD, TX);
         s[0] = 0;
-        addnum(s, info.disk[choice].available / 2048, 80);
-        append(s, " MiB non allocati · ",80);append(s,partition_scheme(info.disk[choice].scheme),80);
+        addnum(s, (reinstall?info.disk[choice].sectors:info.disk[choice].available) / 2048, 80);
+        append(s, reinstall?" MiB · ":" MiB non allocati · ",80);append(s,partition_scheme(info.disk[choice].scheme),80);
         Text(x + 58, 106, s, F_SMALL, SUB);
         Box(x, 146, w, 1, 0, EDGE);
-        Text(x, 164, "Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
-        Text(x, 189, "Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
-        Text(x, 209, "L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
+        Text(x, 164, reinstall?"Verrà riscritto soltanto il volume di sistema selezionato.":"Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
+        Text(x, 189, reinstall?"Documenti, account, FileVault e snapshot restano invariati.":"Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
+        Text(x, 209, reinstall?"Si usa la copia locale verificata, non un aggiornamento online.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
         Box(x, foot - 66, w, 48, 9, SOFT);
         Box(x + 12, foot - 52, 20, 20, 5, confirm ? ACC : EDGE);
         if (confirm)
@@ -121,30 +136,30 @@ static void paint(void)
         Text(x + 42, foot - 51, "Confermo la destinazione selezionata", F_SMALL, TX);
     } else if (page == 3) {
         Icon(x, 23, 52, 38);
-        Text(x, 95, "Installazione in corso", F_TITLE, TX);
-        Text(x, 150, info.message, F_BODY, SUB);
-        int pct = info.total ? (u64)info.done * 100 / info.total : 0;
+        Text(x, 95, reinstall?"Reinstallazione in corso":"Installazione in corso", F_TITLE, TX);
+        Text(x, 150, reinstall?"Verifica della copia locale e ripristino del sistema…":info.message, F_BODY, SUB);
+        int pct = !reinstall && info.total ? (u64)info.done * 100 / info.total : 0;
         Box(x, 198, w, 8, 4, EDGE);
         if (pct)
             Box(x, 198, MAX(5, w * pct / 100), 8, 4, ACC);
         char s[24] = "";
         addnum(s, pct, 24);
         append(s, "%", 24);
-        Text(x, 223, s, F_SMALL, EMP);
+        Text(x, 223, reinstall?"Non spegnere il computer.":s, F_SMALL, EMP);
         Text(x, foot - 30, "Lascia acceso il computer fino alla verifica finale.", F_SMALL, SUB);
     } else if (page == 4) {
         Photo(x, 15, w, MAX(57, foot - 212), 12, 11);
         int y = MAX(57, foot - 212) + 32;
-        Text(x, y, "Il disco è pronto", F_TITLE, TX);
-        Text(x, y + 47, "Puoi avviare tinymacOS senza il supporto di installazione.", F_SMALL, SUB);
-        Text(x, y + 81, "1.  Spegni il computer.", F_BODY, TX);
-        Text(x, y + 112, "2.  Rimuovi il supporto di installazione.", F_BODY, TX);
-        Text(x, y + 143, "3.  BIOS: scegli 2. UEFI: avvia EFI/BOOT/BOOTX64.EFI dal nuovo volume.", F_BODY, TX);
+        Text(x, y, reinstall?"Reinstallazione completata":"Il disco è pronto", F_TITLE, TX);
+        Text(x, y + 47, reinstall?"Il sistema è stato verificato dopo la riscrittura.":"Puoi avviare tinymacOS senza il supporto di installazione.", F_SMALL, SUB);
+        Text(x, y + 81, reinstall?"Documenti e account sono stati conservati.":"1.  Spegni il computer.", F_BODY, TX);
+        Text(x, y + 112, reinstall?"Chiudi l’assistente e riavvia dal menu Recupero.":"2.  Rimuovi il supporto di installazione.", F_BODY, TX);
+        Text(x, y + 143, reinstall?"":"3.  BIOS: scegli 2. UEFI: avvia EFI/BOOT/BOOTX64.EFI dal nuovo volume.", F_BODY, TX);
     } else {
         Icon(x, 18, 58, page == 5 ? 33 : 38);
-        Text(x, 106, page == 5 ? "Installazione interrotta" : "Sistema già installato", F_TITLE, TX);
+        Text(x, 106, page == 5 ? (reinstall?"Reinstallazione non riuscita":"Installazione interrotta") : "Sistema già installato", F_TITLE, TX);
         if (page == 5) {
-            Text(x, 168, "Il disco non è stato attivato dall’assistente.", F_BODY, TX);
+            Text(x, 168, reinstall?"Il ripristino non è completo: non forzare l’avvio del sistema.":"Il disco non è stato attivato dall’assistente.", F_BODY, TX);
             Text(x, 212, info.message, F_SMALL, SUB);
         } else {
             Text(x, 167, "Stai usando il sistema avviato dal disco.", F_BODY, TX);
@@ -153,12 +168,12 @@ static void paint(void)
     }
     Box(r, foot, aw - r, 1, 0, EDGE);
     if (page == 3) {
-        if (info.state == INSTALL_SCAN)
+        if (!reinstall && info.state == INSTALL_SCAN)
             button(aw - 117, foot + 13, 95, "Annulla", 0);
     } else {
         if (page != 6)
             button(x, foot + 13, 85, page == 0 || page >= 4 ? "Chiudi" : "Indietro", 0);
-        const char *label = page == 2 ? "Installa" : page == 4 ? "Spegni" : page == 5 ? "Torna ai dischi" : page == 6 ? "Fine" :
+        const char *label = page == 2 ? (reinstall?"Reinstalla":"Installa") : page == 4 ? (reinstall?"Fine":"Spegni") : page == 5 ? "Torna ai dischi" : page == 6 ? "Fine" :
                             "Continua";
         int enabled = (page != 1 || can()) && (page != 2 || confirm);
         if (enabled)
@@ -172,7 +187,9 @@ static void paint(void)
 }
 void app_main(void)
 {
-    win(760, 440, "Installa tinymacOS");
+    sc(S_INFO,&si,0,0,0);
+    win(760, 440, installer_title(si.recovery));
+    reinstall=!!si.recovery;
     refresh();
     paint();
     for (;;) {
@@ -217,7 +234,15 @@ void app_main(void)
                     confirm = !confirm;
             }
         }
-        if (page == 3) {
+        if(page==3&&reinstall_pending){
+            /* Present the same wizard's busy page before the synchronous,
+             * kernel-serialized restore; no invented percentage or success. */
+            paint();reinstall_pending=0;
+            int r=sc(S_INSTALL,4,choice,0,0);
+            if(r)strset(info.message,"Copie locali, tabelle o I/O non validi. Nessun esito positivo dichiarato.",sizeof info.message);
+            go(r?5:4);
+        }
+        if (page == 3 && !reinstall) {
             if (sc(S_INSTALL, 2, 0, 0, 0) >= 0 || info.live) {
                 refresh();
                 dirty = 1;

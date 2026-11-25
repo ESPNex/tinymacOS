@@ -1,4 +1,4 @@
-> **10.2.3 / 30B14**: [snapshot CoW reali, Utility Disco e avvio BIOS/UEFI](docs/NOTE-10.2.3.md). Resize effettivo FAT32, NTFS nativo e formato proprietario a geometria variabile; backup esterno verificato obbligatorio. Nessuna certificazione Windows/hardware fisico.
+> **10.2.4 / 30B15**: [Recovery senza barra residua e dischi SATA/AHCI fino a 1 TiB](docs/NOTE-10.2.4.md), inclusi i dischi commerciali da 1 TB. Stesso assistente «Installa tinymacOS Tramontana» nel desktop e «Reinstalla tinymacOS Tramontana» in Recovery. Conservati snapshot CoW, resize FAT32/NTFS e volume nativo 8–32 MiB. Backup esterno verificato obbligatorio; nessuna certificazione hardware/Windows.
 
 > [Dettagli dell’implementazione e limiti](docs/DISK-UTILITY-DEVELOPMENT.md) · [Formato e snapshot CoW](docs/NATIVE-COW.md).
 
@@ -22,13 +22,13 @@ export TMC_USB_CANONICAL=1
 bash build.sh
 ```
 
-La build produce `tinymacOS-10.2.3-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
+La build produce `tinymacOS-10.2.4-x86_64.iso` nel percorso esterno indicato. Questo primo supporto usa l'avvio UEFI nativo. Per aggiungere l'avvio ottico BIOS/OpenDuet/OpenCore, usare un output distinto:
 
 ```sh
 mkdir -p /var/tmp/tmc-optical
 python3 tools/dualboot-iso.py \
-  "$TMC_BUILD/tinymacOS-10.2.3-x86_64.iso" \
-  /var/tmp/tmc-optical/tinymacOS-10.2.3-x86_64.iso
+  "$TMC_BUILD/tinymacOS-10.2.4-x86_64.iso" \
+  /var/tmp/tmc-optical/tinymacOS-10.2.4-x86_64.iso
 ```
 
 Toolchain, immagini disco e output non devono finire nel checkout. Il font e gli asset richiesti sono inclusi; `tools/control-svg.py` compila gli SVG in maschere alpha deterministiche, senza un interprete SVG a runtime.
@@ -43,7 +43,7 @@ STATE=/var/tmp/tmc-vm LIVE=1 bash run.sh
 
 Il launcher usa Q35/AHCI, 2 vCPU, 1 GiB RAM, OVMF, tastiera USB e tablet xHCI. `TMC_POINTER=mouse` seleziona invece il mouse relativo. Il prefisso degli strumenti supporta l'avvio headless; per un display interattivo occorre un frontend QEMU disponibile sull'host, oppure aggiungere `-display vnc=127.0.0.1:0` e usare un client VNC locale.
 
-Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.2.3-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
+Per utilizzare il supporto BIOS/UEFI appena generato, impostare `ISO=/var/tmp/tmc-optical/tinymacOS-10.2.4-x86_64.iso`. Il launcher `tools/run-bios-qemu.sh` seleziona il percorso BIOS. Per installazione e Recupero seguire `docs/QUICKSTART.txt`; non usare dischi fisici.
 
 ## Organizzazione tecnica
 

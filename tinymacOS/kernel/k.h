@@ -220,7 +220,7 @@ int bootfile(const char*,const u8**,u32*);void execpath(int,char*);int spawn_com
 void disk_info(DiskInfo*);int disk_operation(int,int);int fs_touch(const char*);
 /* Retail logs stay in a bounded boot ring; GOP only until first frame and only
  * when requested. COM1 remains a diagnostic-build-only channel. */
-void boot_loginit(void);void boot_logstr(const char *);void boot_lognum(u64);void boot_console_stop(void);int boot_logcopy(char *,unsigned,unsigned);
+void boot_progress(int);void boot_loginit(void);void boot_logstr(const char *);void boot_lognum(u64);void boot_console_stop(void);int boot_logcopy(char *,unsigned,unsigned);
 int bootconfig_disk(int,u32);
 
 /* Detailed runtime tracing is never linked into retail images. */

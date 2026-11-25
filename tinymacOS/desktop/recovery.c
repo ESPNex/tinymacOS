@@ -5,7 +5,7 @@
 static DiskInfo disks;
 static int selected, choice, armed=-1;
 static char result[100];
-static const char *titles[]={"Ripristina da una copia locale","Reinstalla tinymacOS","Utility Disco","Terminale","Disco di avvio","Crea una copia locale","Inizializza i dati utente"};
+static const char *titles[]={"Ripristina da una copia locale",REINSTALLER_TITLE,"Utility Disco","Terminale","Disco di avvio","Crea una copia locale","Inizializza i dati utente"};
 static const char *details[]={"Recupera documenti, account e preferenze salvati.","Ripristina il sistema senza modificare i documenti.","Controlla e ripara i volumi di questo computer."};
 static Rect card(void){return (Rect){(W-660)/2,MAX(50,(H-390)/2),660,390};}
 static Rect row(int i){Rect q=card();return (Rect){q.x+24,q.y+28+86*i,q.w-48,76};}
@@ -15,7 +15,8 @@ static void refresh(void){sc(S_DISK,0,&disks,0,0);if(selected>=disks.count)selec
 static void begin_operation(int op)
 {
     refresh();
-    if(op==2)launch(DISKUTIL);
+    if(op==1)launch(INSTALLER);
+    else if(op==2)launch(DISKUTIL);
     else if(op==3)launch(TERMINAL);
     else if(op==4||disks.count)armed=op;
     else strset(result,"Nessun disco disponibile.",sizeof result);
@@ -115,7 +116,7 @@ void recovery_bar_draw(void)
     rect(0,0,W,BAR,0x242424);
     icon(11,3,24,31);
     int active=topwin(),x=43;
-    const char *labels[]={"",active<0?"Recupero tinymacOS":appname(views[active].s.app),"File","Modifica","Utility","Finestra","Aiuto"};
+    const char *labels[]={"",active<0?"Recupero tinymacOS":(views[active].s.app==INSTALLER?REINSTALLER_TITLE:appname(views[active].s.app)),"File","Modifica","Utility","Finestra","Aiuto"};
     bar_hits[0]=(Rect){5,0,35,BAR};
     for(int k=0;k<7;k++){
         if(k){int w=textw(labels[k],k==1?F_BOLD:F_BODY)+22;bar_hits[k]=(Rect){x,0,w,BAR};x+=w;}
@@ -138,9 +139,9 @@ void recovery_bar_draw(void)
     }
     if(info_open||power_confirm||result[0]){
         Rect a=message_box();shadow(a,14,52);roundr(a.x,a.y,a.w,a.h,14,0x303033,255);
-        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.3":power_confirm==1?"Riavviare il computer?":"Spegnere il computer?";
+        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.4":power_confirm==1?"Riavviare il computer?":"Spegnere il computer?";
         center(W/2,a.y+20,title,F_BOLD,0xf2f2f2);
-        center(W/2,a.y+59,result[0]?result:info_open?"Versione 10.2.3 · 30B14":"Le operazioni non salvate andranno perse.",F_BODY,0xc0c0c4);
+        center(W/2,a.y+59,result[0]?result:info_open?"Versione 10.2.4 · 30B15":"Le operazioni non salvate andranno perse.",F_BODY,0xc0c0c4);
         if(info_open||result[0]){button_face((Rect){a.x+a.w-126,a.y+118,102,34},0);center(a.x+a.w-75,a.y+124,"Fine",F_BODY,TX);}
         else{
             button_face((Rect){a.x+24,a.y+118,134,34},0);center(a.x+91,a.y+124,"Annulla",F_BODY,TX);
