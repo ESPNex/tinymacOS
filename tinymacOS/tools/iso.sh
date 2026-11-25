@@ -5,6 +5,11 @@ export SOURCE_DATE_EPOCH=1735689600 LC_ALL=C TZ=UTC MTOOLS_SKIP_CHECK=1 MTOOLS_D
 D=$TMC_BUILD;python3 tools/media_path.py "$D" "$D/$TMC_ISO";R=$(mktemp -d "$D/disc.XXXXXXXX");trap 'rm -rf "$R"' EXIT
 mkdir -p "$R/EFI/TMC" "$R/EFI/OC/Drivers" "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/TMC/BOOTX64.EFI";cp vendor/opencore-1.0.8/BOOTx64.efi "$R/EFI/BOOT/BOOTX64.EFI";cp vendor/opencore-1.0.8/OpenCore.efi "$R/EFI/OC/";cp boot/opencore.plist "$R/EFI/OC/config.plist";python3 tools/firmware_drivers.py "$R/EFI/OC/Drivers";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
 # BaseSystem is created in external scratch. Only the finished ISO is distributed.
+# Firmware still launches these files normally. Only OpenCore's OS scan must
+# hide its own bootstrap/manager, or a registered Boot#### can recurse.
+printf 'Disabled\n' > "$D/opencore.contentVisibility"
+cp "$D/opencore.contentVisibility" "$R/EFI/BOOT/.contentVisibility"
+cp "$D/opencore.contentVisibility" "$R/EFI/OC/.contentVisibility"
 P=${1:-};if [ -z "$P" ];then P="$R/work";mkdir "$P";python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol";fi
 python3 tools/media_path.py "$P" "$P/RecoveryHD.fat"
 python3 - "$D/BootConfig.bin" <<'PYCFG'
@@ -55,6 +60,8 @@ p=plistlib.loads(Path('boot/opencore.plist').read_bytes());p['NVRAM']['Add']={}
 Path(sys.argv[1]).write_bytes(plistlib.dumps(p,sort_keys=False))
 PYOC
 mcopy -i "$D/install.esp" "$D/installed-opencore.plist" ::/EFI/OC/config.plist
+mcopy -i "$D/install.esp" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibility
+mcopy -i "$D/install.esp" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
 # Installed media must retain Linux GPL and all bundled component notices,
 # not only the firmware notices visible on the optical root.
@@ -67,6 +74,8 @@ mcopy -i "$R/EFI.IMG" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -o -i "$R/EFI.IMG" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -i "$R/EFI.IMG" boot/opencore.plist ::/EFI/OC/config.plist
+mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibility
+mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility
 for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe;do mcopy -i "$R/EFI.IMG" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi";done
 mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,

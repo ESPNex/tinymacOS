@@ -231,7 +231,10 @@ recover:
     } else if (inst != EFI_NOT_FOUND)FAIL("Cannot inspect boot volume");
 #ifndef TMC_RECOVERY_ENTRY
     if(inst==EFI_NOT_FOUND&&(bi.boot_flags&TMC_BOOT_DEFAULT)){
-        EFI_DEVICE_PATH*target=filepath(li->DeviceHandle,L"\\EFI\\BOOT\\BOOTX64.EFI");
+        /* Register OpenCore itself, not its removable-media bootstrap. The
+         * fallback alias can be rediscovered as an OS entry on later boots,
+         * recursively launching the picker instead of the native stage. */
+        EFI_DEVICE_PATH*target=filepath(li->DeviceHandle,L"\\EFI\\OC\\OpenCore.efi");
         if(target){EFI_STATUS result=boot_set_default(st->RuntimeServices,target,dpsize(target));bs->FreePool(target);
             if(EFI_ERROR(result))vmsg("[boot] OpenCore preference not verified; inspect firmware boot settings\n");
         }

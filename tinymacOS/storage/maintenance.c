@@ -1,5 +1,7 @@
 #include "disklayout.h"
 #include "container.h"
+#include "nativefs.h"
+#include "nativecow.h"
 #include "abi.h"   /* NSLOTS (384): inode slots of the TMCBFS1 subset volume */
 #define FSDATA 144u /* TMCBFS1 subset header h[4] (fs/btrfs.c DATA) */
 #define FNODE 64u   /* disk inode table location, in sectors (fs/btrfs.c NODE0) */
@@ -8,6 +10,15 @@ static Part pt[128];
 static Layout map;
 static u8 buf[CHUNK * 512] ALIGNED(4096), data[NDATA * 512] ALIGNED(512);
 static Seal seal;
+static NativeCow maintenance_cow;
+static Medium*cow_medium;
+static int cow_read(void*x,u32 l,void*p){(void)x;return cow_medium->io(cow_medium->d,map.data+l,1,p,0);}
+static int cow_write(void*x,u32 l,const void*p){(void)x;return cow_medium->io(cow_medium->d,map.data+l,1,(void*)p,1)||cow_medium->flush(cow_medium->d);}
+static int cow_open(Medium*m,NativeGeometry*g,int repair){
+    cow_medium=m;CowIo io={0,map.parts[1].end-map.data+1,cow_read,cow_write};
+    return repair?native_cow_mount(&maintenance_cow,io,g->image,g->backup-1):native_cow_mount_readonly(&maintenance_cow,io,g->image,g->backup-1);
+}
+
 u32 crc32(const void *v, size_t n)
 {
     static u32 table[256];
@@ -73,8 +84,9 @@ int layout_read(Medium *m, Layout *x)
     u32 z = m->z;
     if (memcmp(p[0].type, esp_type, 16) || p[0].start != LESP || p[0].end != LDATA - 1 ||
         memcmp(p[1].type, dat_type, 16) || p[1].start != LDATA)return 0;
-    int type = p[1].end == z - 34 ? 1 : 2;
-    if (type == 2 && (p[1].end != REC_AT(z) - 1 || p[1].end < LDATA + BACKUP_OFF + NDATA ||
+    int type = !memcmp(p[2].type,esp_type,16)?2:1;
+    if(p[1].end>z-34||p[1].end<LDATA+NF_MIN_VOLUME-1)return 0;
+    if (type == 2 && (p[1].end >= REC_AT(z) ||
                       memcmp(p[2].type, esp_type, 16) || p[2].start != REC_AT(z) || p[2].end != RESTORE_AT(z) - 1 ||
                       memcmp(p[3].type, src_type, 16) || p[3].start != RESTORE_AT(z) || p[3].end != z - 34))return 0;
     u8 zero[16] = {0};
@@ -111,14 +123,15 @@ int tiny_check(const void *v)
     // BTRFS-subset header (sectors 0) or legacy v1 (import sources).
     // Legacy v1 (96 slots, h[4]=16) vs TMCBFS1 subset (NSLOTS slots, h[4]=DATA).
     int legacy = !memcmp(r, "TINYFS1\0", 8) && h[2] == 1 && h[3] == 96 && h[4] == 16 && h[5] <= 1;
-    int subset = !memcmp(r, "TMCBFS1\0", 8) && h[2] == 2 && h[3] == NSLOTS && h[4] == FSDATA && h[5] <= 1;
+    int subset = !memcmp(r, "TMCBFS1\0", 8) && h[2] == 2 && h[3]>=NF_MIN && h[3]<=NSLOTS && !(h[3]%8) && h[4] == FSDATA && h[5] <= 1;
     if (!legacy && !subset)return 0;
     if (legacy)return check_nodes(r + 512, 96);   /* legacy inode table lives at sector 1 */
     // Subset: superblock with BTRFS magic at sector FSUPER, disk inode table of
     // NSLOTS×64 B at sector FNODE (fs/btrfs.c NODE0); h[3] is the live slot count.
     const u8 *sb = r + FSUPER * 512;
     if (memcmp(sb + 0x40, "_BHRfS_M", 8))return 0;
-    return check_nodes(r + FNODE * 512, NSLOTS);
+    NativeGeometry geom;if(!native_geometry(v,&geom))return 0;
+    return check_nodes(r + FNODE * 512, geom.slots);
 }
 static int bulk(Medium *m, u32 at, u32 n, u8 *p, int wr)
 {
@@ -130,6 +143,7 @@ static int bulk(Medium *m, u32 at, u32 n, u8 *p, int wr)
     return wr ? m->flush(m->d) : 0;
 }
 static int getseal(Medium *, u32, const char *, u32);
+static int data_geometry(Medium*,NativeGeometry*);
 static int hashdisk(Medium *, u32, u32, u8[32]);
 static int verify_system(Medium *m)
 {
@@ -140,6 +154,9 @@ static int verify_system(Medium *m)
 int firstaid(Medium *m, int fix)
 {
     if (!layout_read(m, &map) || bulk(m, map.data, NDATA, data, 0) || !tiny_check(data))return -1;
+    NativeGeometry geometry;if(!data_geometry(m,&geometry))return -1;
+    int cow=cow_open(m,&geometry,fix);if(cow<0)return -1;
+    if(cow)for(int k=0;k<8;k++)if((maintenance_cow.active&(1u<<k))&&native_cow_verify(&maintenance_cow,k))return -1;
     if (map.type == 2 && !verify_system(m))return -1;
     if (map.pv && map.bv)return 0;
     if (!fix)return 1;
@@ -158,34 +175,44 @@ static int getseal(Medium *m, u32 l, const char *magic, u32 n)
     return !m->io(m->d, l, 1, &seal, 0) && !memcmp(seal.magic, magic, 8) && seal.ver == 1 && seal.sectors == n &&
            !memcmp(seal.disk, map.g.guid, 16);
 }
+static int data_geometry(Medium*m,NativeGeometry*g){
+    u8 h[512];return !m->io(m->d,map.data,1,h,0)&&native_geometry(h,g)&&g->payload<=map.parts[1].end-map.data+1;
+}
 int has_copy(Medium *m)
 {
-    return layout_read(m, &map) == 2 && getseal(m, map.data + BACKUP_OFF - 1, "TMCSNAP2", NDATA);
+    NativeGeometry g;
+    return layout_read(m,&map)==2&&data_geometry(m,&g)&&getseal(m,map.data+g.backup-1,"TMCSNAP2",g.image);
 }
 int save_copy(Medium *m, const void *p)
 {
-    if (layout_read(m, &map) != 2 || !map.pv || !map.bv || !tiny_check(p))return -1;
-    u32 l = map.data + BACKUP_OFF;
-    memset(&seal, 0, sizeof seal);
-    if (commit(m, l - 1, 1, &seal) || bulk(m, l, NDATA, (u8 *)p, 1) || bulk(m, l, NDATA, data, 0) ||
-        memcmp(p, data, sizeof data))return -1;
-    memcpy(seal.magic, "TMCSNAP2", 8);
-    memcpy(seal.disk, map.g.guid, 16);
-    seal.sectors = NDATA;
-    seal.ver = 1;
-    sha_bytes(data, sizeof data, seal.digest);
-    return commit(m, l - 1, 1, &seal);
+    NativeGeometry g;
+    if(layout_read(m,&map)!=2||!map.pv||!map.bv||!tiny_check(p)||!native_geometry(p,&g)||g.payload>map.parts[1].end-map.data+1)return -1;
+    u32 l=map.data+g.backup;
+    memset(&seal,0,sizeof seal);
+    if(commit(m,l-1,1,&seal)||bulk(m,l,g.image,(u8*)p,1)||bulk(m,l,g.image,data,0)||memcmp(p,data,g.image*512))return -1;
+    memcpy(seal.magic,"TMCSNAP2",8);memcpy(seal.disk,map.g.guid,16);seal.sectors=g.image;seal.ver=1;
+    sha_bytes(data,g.image*512,seal.digest);return commit(m,l-1,1,&seal);
 }
 int restore_copy(Medium *m)
 {
-    if (!has_copy(m) || !map.pv || !map.bv || bulk(m, map.data + BACKUP_OFF, NDATA, data, 0) ||
-        !tiny_check(data))return -1;
-    u8 sum[32];
-    sha_bytes(data, sizeof data, sum);
-    if (memcmp(sum, seal.digest, 32))return -1;
-    for (u32 j = 0; j < NDATA; j += CHUNK) {
-        u32 k = MIN(CHUNK, NDATA - j);
-        if (commit(m, map.data + j, k, data + j * 512))return -1;
+    NativeGeometry g;
+    if(!has_copy(m)||!map.pv||!map.bv||!data_geometry(m,&g)||bulk(m,map.data+g.backup,g.image,data,0)||!tiny_check(data))return -1;
+    u8 sum[32];sha_bytes(data,g.image*512,sum);if(memcmp(sum,seal.digest,32))return -1;
+    NativeGeometry saved;if(!native_geometry(data,&saved)||saved.slots!=g.slots||saved.image!=g.image||saved.backup!=g.backup)return -1;
+    int cow=cow_open(m,&g,1);if(cow<0)return -1;
+    if(cow){
+        for(u32 j=0;j<g.image;j++){
+            if(j==NF_CAT||j==NC_SUPER||j==NC_JOURNAL||j==NC_STAGED)continue;
+            if(native_cow_write(&maintenance_cow,j,data+j*512))return -1;
+        }
+        return 0;
+    }
+    for(u32 j=0;j<g.image;j+=8){
+        u32 k=MIN(8,g.image-j);
+        /* Snapshot allocation belongs to the current geometry/catalog, not
+         * to the historical live state captured by the local data backup. */
+        if(j==NF_CAT){if(commit(m,map.data+j+1,k-1,data+(j+1)*512))return -1;}
+        else if(commit(m,map.data+j,k,data+j*512))return -1;
     }
     return 0;
 }
@@ -216,13 +243,15 @@ int restore_os(Medium *m)
 int reset_data(Medium *m)
 {
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv)return -1;
+    NativeGeometry g;if(!data_geometry(m,&g))return -1;
     memset(data, 0, sizeof data);
-    if (bulk(m, map.data, NDATA, data, 1) || commit(m, map.data + BACKUP_OFF - 1, 1, data) ||
-        bulk(m, map.data + BACKUP_OFF, NDATA, data, 1))return -1;
+    if (bulk(m, map.data, g.image, data, 1) || commit(m, map.data + g.backup - 1, 1, data) ||
+        bulk(m, map.data + g.backup, g.image, data, 1))return -1;
     memcpy(data, "TMCBFS1\0", 8);
     u32 *h = (void *)data;
     h[2] = 2;
-    h[3] = NSLOTS;   /* TMCBFS1 subset: live inode slot count (kernel requires 384) */
+    h[3] = g.slots;
+    if(g.sectors)native_geometry_store(data,&g);
     h[4] = 144;
     memcpy(data + 15 * 512, "TMFACT20", 8);
     return commit(m, map.data + 15, 1, data + 15 * 512) || commit(m, map.data, 1, data) ? -1 : 0;

@@ -1,4 +1,6 @@
 #include "prefs_plist.h"
+#include "nativefs.h"
+#include "nativecow.h"
 #include "../kernel/k.h"
 #include "../include/disklayout.h"
 #include "../include/sha256.h"
@@ -13,7 +15,9 @@
 #define NODE0 64
 #define NSNAP 8
 #define SNAPREV 2
-#define SECTORS (DATA+NSLOTS*16)
+#define SECTORS frame_sectors
+static u32 active_slots=NSLOTS,frame_sectors=NF_MAX_IMAGE;
+static NativeGeometry native_geo;
 #define IMG0 SECTORS
 typedef struct PACK {
     u8 kind, ro;
@@ -25,7 +29,22 @@ typedef struct PACK {
 _Static_assert(sizeof(Node) == 64, "disk inode");
 static Node nodes[NSLOTS];
 static u8 ram[NPART][512]; // full volume incl. snapshot area (RAM volumes snapshot too)
-static Block block;
+static Block block,cow_backing;
+static NativeCow mounted_cow;
+static int cow_device_read(void*x,u32 l,void*p){(void)x;return cow_backing.read(l,p);}
+static int cow_device_write(void*x,u32 l,const void*p){(void)x;return cow_backing.write(l,p);}
+static int cow_block_read(u32 l,void*p){return native_cow_read(&mounted_cow,l,p);}
+static int cow_block_write(u32 l,const void*p){return native_cow_write(&mounted_cow,l,p);}
+static int cow_attach(int enable){
+    if(mounted_cow.enabled)return 0;
+    cow_backing=block;
+    CowIo io={0,block.sectors,cow_device_read,cow_device_write};
+    u32 limit=(native_geo.backup?native_geo.backup:BACKUP_OFF)-1;
+    int r=enable?native_cow_enable(&mounted_cow,io,SECTORS,limit):native_cow_mount(&mounted_cow,io,SECTORS,limit);
+    if(r<0)return -1;
+    if(mounted_cow.enabled)block=(Block){cow_block_read,cow_block_write,cow_backing.sectors};
+    return 0;
+}
 u32 persistent, fsrev, usednodes, theme, wall, dock, reduce_motion, opaque, dark;
 static int seeding, configid;
 static int ovl_slot = -1;
@@ -74,7 +93,7 @@ static int syncnode(int i)
 }
 static int child(int par, const char *name)
 {
-    for (int i = 1; i < NSLOTS; i++)
+    for (int i = 1; i < active_slots; i++)
         if (nodes[i].kind && nodes[i].parent == par && eq(nodes[i].name, name))
             return i;
     return -1;
@@ -241,7 +260,7 @@ int fs_list_i(const char *p, Dirent *d, int cap, int skip)
             else d[n++] = virt[i];
         }
     }
-    for (int i = 1; i < NSLOTS && n < cap; i++)if (nodes[i].kind && nodes[i].parent == a) {
+    for (int i = 1; i < active_slots && n < cap; i++)if (nodes[i].kind && nodes[i].parent == a) {
             if (!a) {
                 char path[64] = "/";
                 append(path, nodes[i].name, 64);
@@ -261,7 +280,7 @@ int fs_create_i(const char *p, int dir)
     int par = split(p, name);
     if (par < 0 || child(par, name) >= 0)
         return -1;
-    for (int i = 1; i < NSLOTS; i++)
+    for (int i = 1; i < active_slots; i++)
         if (!nodes[i].kind) {
             Node old = nodes[i];
             nodes[i] = (Node) {
@@ -304,9 +323,9 @@ int fs_remove_flags_i(const char *p, unsigned flags)
         unsigned parent=pending[at];
         if (nodes[parent].ro)return -REMOVE_READ_ONLY;
         sectors[parent/8]=1;
-        for(unsigned j=1;j<NSLOTS;j++)if(nodes[j].kind && nodes[j].parent==parent){
+        for(unsigned j=1;j<active_slots;j++)if(nodes[j].kind && nodes[j].parent==parent){
             if(!(flags&REMOVE_RECURSIVE))return -REMOVE_NOT_EMPTY;
-            if(selected[j] || count==NSLOTS)return -REMOVE_BAD_PATH;
+            if(selected[j] || count==active_slots)return -REMOVE_BAD_PATH;
             selected[j]=1;pending[count++]=j;
         }
     }
@@ -314,12 +333,12 @@ int fs_remove_flags_i(const char *p, unsigned flags)
     if(!saved)return -REMOVE_IO;
     memcpy(saved,nodes,sizeof nodes);
     for(unsigned at=0;at<count;at++)nodes[pending[at]].kind=0;
-    for(unsigned sector=0;sector<NSLOTS/8;sector++)if(sectors[sector]){
+    for(unsigned sector=0;sector<active_slots/8;sector++)if(sectors[sector]){
         if(block.write(NODE0+sector,&nodes[sector*8])<0){
             memcpy(nodes,saved,sizeof nodes);
             /* Best-effort on-disk rollback. Persistent device failure is still
              * an I/O error, not a claimed atomic/journalled transaction. */
-            for(unsigned k=0;k<NSLOTS/8;k++)if(sectors[k])block.write(NODE0+k,&nodes[k*8]);
+            for(unsigned k=0;k<active_slots/8;k++)if(sectors[k])block.write(NODE0+k,&nodes[k*8]);
             kfree(saved);return -REMOVE_IO;
         }
     }
@@ -353,12 +372,12 @@ int fs_move_i(const char *p, const char *q)
 // Full path of a node inside an arbitrary node table (live or snapshot image).
 static int idpath_n(Node *arr, int i, char *o, int cap)
 {
-    if (i <= 0 || i >= NSLOTS || !arr[i].kind || cap < 2)
+    if (i <= 0 || i >= active_slots || !arr[i].kind || cap < 2)
         return -1;
     const char *stk[16];
     int d = 0;
     for (int c = i; c > 0 && d < 16; c = arr[c].parent)
-        if (c < 0 || c >= NSLOTS || !arr[c].kind)
+        if (c < 0 || c >= active_slots || !arr[c].kind)
             return -1;
         else
             stk[d++] = arr[c].name;
@@ -426,7 +445,7 @@ static int bytes(int i, int at, void *buf, int n, int wr)
 {
     if (n < 0 || at < 0 || n > MAXFILE - at)
         return -1;
-    int enc = enc_state && i > 0 && i < NSLOTS && nodes[i].reserved;
+    int enc = enc_state && i > 0 && i < active_slots && nodes[i].reserved;
     if (enc && enc_locked)
         return -1;
     int done = 0;
@@ -489,12 +508,12 @@ int fs_close_i(Process *p, int fd)
 static int valid(FD *f)
 {
     int i = f->id;
-    return i > 0 && i < NSLOTS && nodes[i].kind == 2 && (u32)f->gen == nodes[i].gen;
+    return i > 0 && i < active_slots && nodes[i].kind == 2 && (u32)f->gen == nodes[i].gen;
 }
 static int snap_prep(FD *f)
 {
     // Load the snapshot image referenced by an encoded fd; -2 stale, -1 media.
-    int k = (f->id >> 16) & 255, node = f->id & 255;
+    int k = (f->id >> 16) & 255, node = f->id & 0xffff;
     if (cat_load())
         return -1;
     int c = (int)((u32 *)catbuf)[3];
@@ -502,13 +521,13 @@ static int snap_prep(FD *f)
         return -1;
     u32 base = cat_ent(k)->base;
     memcpy(nodes_live, nodes, sizeof nodes);
-    for (int j = 0; j < NSLOTS / 8; j++)
+    for (int j = 0; j < active_slots / 8; j++)
         if (block.read(NODE0 + j + base, nodes + j * 8) < 0) {
             memcpy(nodes, nodes_live, sizeof nodes);
             return -1;
         }
     ovl_slot = k;
-    if (node <= 0 || node >= NSLOTS || nodes[node].kind != 2 || (u32)f->gen != nodes[node].gen)
+    if (node <= 0 || node >= active_slots || nodes[node].kind != 2 || (u32)f->gen != nodes[node].gen)
         return -2;
     return node;
 }
@@ -662,8 +681,7 @@ static int super_ok(const Block *d)
 }
 static int header(u8 *h)
 {
-    return !memcmp(h, "TMCBFS1\0", 8) && ((u32 *)h)[2] == SNAPREV && ((u32 *)h)[3] == NSLOTS
-           && ((u32 *)h)[4] == DATA && ((u32 *)h)[5] <= 1;
+    NativeGeometry g;return native_geometry(h,&g);
 }
 static int legacy_header(u8 *h)
 {
@@ -681,7 +699,7 @@ static void relocate_ram(void)
     memcpy(ram[0], "TMCBFS1\0", 8);
     u32 *h = (u32 *)ram[0];
     h[2] = SNAPREV;
-    h[3] = NSLOTS;
+    h[3] = active_slots;
     h[4] = DATA;
     memset(h + 6, 0, 40); // no encryption on a migrated legacy volume
 }
@@ -699,8 +717,9 @@ static int cat_write(void)
     cat_init(cat);
     return block.write(SNAPCAT, cat);
 }
-// Snapshot catalog (APFS-style): immutable point-in-time images of the whole
-// volume stored at IMG0 + slot*SECTORS; browse read-only under /.snapshots.
+// Snapshot catalog: immutable CoW point-in-time views, browsable read-only
+// under /.snapshots. IMG0 + slot*SECTORS is a virtual address translated by
+// native_cow.c, NOT a physical full-volume copy. Legacy images migrate once.
 #define SNAPMAX 8
 
 static int cat_load(void)
@@ -757,7 +776,7 @@ static int ovl_open(const char *p, const char **inner)
     }
     u32 base = cat_ent(k)->base;
     memcpy(nodes_live, nodes, sizeof nodes);
-    for (int j = 0; j < NSLOTS / 8; j++)
+    for (int j = 0; j < active_slots / 8; j++)
         if (block.read(NODE0 + j + base, nodes + j * 8) < 0) {
             memcpy(nodes, nodes_live, sizeof nodes);
             return -1;
@@ -781,15 +800,15 @@ static int validnodes(void)
 {
     if (nodes[0].kind != 1 || nodes[0].parent)
         return 0;
-    for (int i = 1; i < NSLOTS; i++)
+    for (int i = 1; i < active_slots; i++)
         if (nodes[i].kind) {
             Node *n = nodes + i;
-            if (n->kind > 2 || n->parent >= NSLOTS || nodes[n->parent].kind != 1 || n->size > MAXFILE || n->name[47] != 0
+            if (n->kind > 2 || n->parent >= active_slots || nodes[n->parent].kind != 1 || n->size > MAXFILE || n->name[47] != 0
                 || !n->name[0])
                 return 0;
             int a = i, j = 0;
             while (a && j++ < NSLOTS) {
-                if (a >= NSLOTS)
+                if (a >= active_slots)
                     return 0;
                 a = nodes[a].parent;
             }
@@ -827,6 +846,8 @@ static void libraries(void)
 void fs_init(void)
 {
     persistent=usednodes=0;configid=-1;ovl_slot=-1;
+    active_slots=NSLOTS;frame_sectors=NF_MAX_IMAGE;memset(&native_geo,0,sizeof native_geo);
+    memset(&mounted_cow,0,sizeof mounted_cow);
     erase(nodes,sizeof nodes);erase(ram,sizeof ram);
     enc_state=enc_locked=0;erase(enc_key,sizeof enc_key);
     wall = 12;theme = 7;
@@ -861,7 +882,9 @@ void fs_init(void)
         logstr("\n");
     }
 #endif
-    if (vm && disk.sectors >= SECTORS && !disk.read(0, h)) {
+    if (vm && disk.sectors >= NF_MIN_VOLUME/2 && !disk.read(0, h)) {
+        NativeGeometry candidate;
+        if(native_geometry(h,&candidate)&&candidate.image*9<=disk.sectors){native_geo=candidate;active_slots=candidate.slots;frame_sectors=candidate.image;}
         if (legacy_header(h)) {
             // Legacy v1 on this volume: import it into the subset layout in
             // RAM; on an installed disk write the migrated image back in place.
@@ -916,11 +939,12 @@ void fs_init(void)
     }
     if ((persistent || imported) && ((u32 *)h)[5] == 1) {
         int ok = 1;
-        for (int j = 0; j < NSLOTS / 8; j++)
+        for (int j = 0; j < active_slots / 8; j++)
             if (block.read(NODE0 + j, nodes + j * 8) < 0)
                 ok = 0;
         if (ok && validnodes()) {
-            for (int i = 0; i < NSLOTS; i++)
+            if(cow_attach(0))panic("Snapshot CoW metadata needs recovery",0,0);
+            for (int i = 0; i < active_slots; i++)
                 usednodes += !!nodes[i].kind;
             {
                 u8 eh[512];
@@ -947,7 +971,7 @@ void fs_init(void)
             }
             // Retire old manifest inodes on the imported copy, including the live installer.
             int apps = resolve("/Applications");
-            for (int i = 1; i < NSLOTS; i++)if (nodes[i].kind == 2 && nodes[i].parent == apps && nodes[i].ro) {
+            for (int i = 1; i < active_slots; i++)if (nodes[i].kind == 2 && nodes[i].parent == apps && nodes[i].ro) {
                     u8 zeros[512] = {0};
                     for (int j = 0; j < 16; j++)block.write(DATA + i * 16 + j, zeros);
                     memset(nodes + i, 0, sizeof(Node));
@@ -1000,9 +1024,10 @@ void fs_init(void)
         memcpy(h, "TMCBFS1\0", 8);
         u32 *hh = (u32 *)h;
         hh[2] = SNAPREV;
-        hh[3] = NSLOTS;
+        hh[3] = active_slots;
         hh[4] = DATA;
         hh[5] = 1;
+        if(native_geo.sectors)native_geometry_store(h,&native_geo);
         if (block.write(0, h) < 0)
             panic("filesystem activation failed", 0, 0);
     }
@@ -1064,7 +1089,7 @@ int fs_snapshot_i(void *buf, u32 n)
     memcpy(out, "TMCBFS1\0", 8);
     u32 *h = (void *)out;
     h[2] = SNAPREV;
-    h[3] = NSLOTS;
+    h[3] = active_slots;
     h[4] = DATA;
     h[5] = 1;
     return 0;
@@ -1112,6 +1137,7 @@ static void cat_recount(void)
 }
 static u32 snap_crc(u32 base)
 {
+    if(mounted_cow.enabled){int k=base/SECTORS-1;if(native_cow_verify(&mounted_cow,k))return 0;return cat_ent(k)->crc;}
     u8 buf[512];
     u32 st = ~0u;
     for (u32 i = 0; i < SECTORS; i++) {
@@ -1139,25 +1165,9 @@ int fs_snap_create_i(const char *name)
     }
     if (k < 0)
         return -1;
-    u32 base = IMG0 + k * SECTORS;
-    u8 buf[512];
-    u32 st = ~0u;
-    for (u32 i = 0; i < SECTORS; i++) {
-        if (block.read(i, buf) < 0)
-            return -1;
-        st = crc32c_cont(st, buf, 512);
-        if (block.write(base + i, buf) < 0)
-            return -1;
-    }
-    u32 crc = ~st;
-    st = ~0u;
-    for (u32 i = 0; i < SECTORS; i++) {
-        if (block.read(base + i, buf) < 0)
-            return -1;
-        st = crc32c_cont(st, buf, 512);
-    }
-    if (~st != crc)
-        return -1;
+    if(enc_state||cow_attach(1)||cat_load())return -1;
+    u32 base = IMG0 + k * SECTORS,crc;
+    if(native_cow_prepare(&mounted_cow,k,&crc))return -1;
     SnapEnt *e = cat_ent(k);
     memset(e, 0, sizeof *e);
     strset(e->name, name, 28);
@@ -1234,13 +1244,14 @@ int fs_snap_restore_i(const char *name)
         return -1;
     u8 buf[512];
     for (u32 i = 0; i < SECTORS; i++) {
+        if(i==SNAPCAT)continue; /* Restore contents, never resurrect stale snapshot locations. */
         if (block.read(e->base + i, buf) < 0)
             return -1;
         if (block.write(i, buf) < 0)
             return -1;
     }
     int ok = 1;
-    for (int j = 0; j < NSLOTS / 8; j++)
+    for (int j = 0; j < active_slots / 8; j++)
         if (block.read(NODE0 + j, nodes + j * 8) < 0)
             ok = 0;
     if (!ok || !validnodes()) {
@@ -1362,12 +1373,12 @@ static int enc_scrub(int up)
         SnapEnt *e = cat_ent(k);
         if (!e->name[0])
             continue;
-        for (int s = 0; s < NSLOTS / 8; s++) {
+        for (int s = 0; s < active_slots / 8; s++) {
             if (block.read(e->base + 1 + s, buf) < 0)
                 return -1;
             memcpy((u8 *)im + s * 512, buf, 512);
         }
-        for (int i = 1; i < NSLOTS; i++) {
+        for (int i = 1; i < active_slots; i++) {
             if (im[i].kind != 2)
                 continue;
             int dox = 0;
@@ -1389,7 +1400,7 @@ static int enc_scrub(int up)
             }
             im[i].reserved = up ? 1 : 0;
         }
-        for (int s = 0; s < NSLOTS / 8; s++) {
+        for (int s = 0; s < active_slots / 8; s++) {
             memcpy(buf, (u8 *)im + s * 512, 512);
             if (block.write(e->base + 1 + s, buf) < 0)
                 return -1;
@@ -1410,6 +1421,7 @@ static int enc_scrub(int up)
 }
 static int enc_enable_i(const char *pass)
 {
+    if(mounted_cow.enabled)return -1; /* Legacy per-file cipher is not the whole-volume FileVault path. */
     if (enc_state)
         return -1;
     if (cat_load() < 0)
@@ -1427,7 +1439,7 @@ static int enc_enable_i(const char *pass)
     if (enc_hdrsave() < 0)
         return -1;
     int ch = 0;
-    for (int i = 1; i < NSLOTS; i++) {
+    for (int i = 1; i < active_slots; i++) {
         if (nodes[i].kind != 2 || nodes[i].reserved)
             continue;
         char fp[128];
@@ -1456,6 +1468,7 @@ static int enc_enable_i(const char *pass)
 }
 static int enc_disable_i(const char *pass)
 {
+    if(mounted_cow.enabled)return -1; /* Legacy per-file cipher is not the whole-volume FileVault path. */
     if (!enc_state)
         return -1;
     u8 k[32], v[16];
@@ -1469,7 +1482,7 @@ static int enc_disable_i(const char *pass)
     erase(v, 16);
     if (cat_load() < 0)
         return -1;
-    for (int i = 1; i < NSLOTS; i++) {
+    for (int i = 1; i < active_slots; i++) {
         if (nodes[i].kind != 2 || !nodes[i].reserved)
             continue;
         for (int j = 0; j < 16; j++) {
@@ -1509,7 +1522,7 @@ int fs_enc_i(int sub, const char *pass, EncInfo *out)
         out->state = enc_state ? 1 : 0;
         out->locked = (enc_state && enc_locked) ? 1 : 0;
         u32 f = 0;
-        for (int i = 1; i < NSLOTS; i++)
+        for (int i = 1; i < active_slots; i++)
             if (nodes[i].kind == 2 && nodes[i].reserved)
                 f++;
         out->files = f;
@@ -1551,8 +1564,8 @@ int fs_snap_info_i(FsInfo *f)
     for (int j = 0; j < SNAPMAX; j++)
         if (cat_ent(j)->name[0])
             c++;
-    f->total = (u64)NPART * 512;
-    f->used = (u64)(SECTORS + c * SECTORS) * 512;
+    f->total = (u64)(native_geo.sectors?native_geo.sectors:NPART) * 512;
+    f->used = (u64)(mounted_cow.enabled?native_cow_used(&mounted_cow):SECTORS+c*SECTORS)*512;
     f->snaps = c;
     f->gen = (u32)fsrev;
     return 0;

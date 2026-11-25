@@ -42,7 +42,24 @@ class Retail(Guest):
                 if pos:return (pos[1][0]+(box[0] if box else 0),pos[1][1]+(box[1] if box else 0))
             time.sleep(.22)
         raise AssertionError(f'{self.tag} expected {qs!r}; visible text: '+self.ocr(box))
-    def wait(self,*a,**k):self.visible(self.initial,52)
+    def firmware_picker(self):
+        # A dedicated EFI Boot#### entry may legitimately leave OpenCore's
+        # picker waiting for a choice on subsequent boots. Use real keyboard
+        # input only after recognizing that menu, never edit EFI variables.
+        if time.monotonic()<getattr(self,'_picker_next',0):return
+        self._picker_next=time.monotonic()+2
+        text=self.ocr(box=(0,0,640,180),psm=6)
+        if 'core boot menu' in text.lower() and 'operating system' in text.lower():
+            if not getattr(self,'_picker_first',0):self._picker_first=time.monotonic()
+            elif time.monotonic()-self._picker_first>10:raise AssertionError('OpenCore picker remained stuck for ten seconds; no test input will mask a failed automatic boot')
+        else:self._picker_first=0
+    def wait(self,*a,**k):
+        start=time.monotonic()
+        while time.monotonic()-start<60:
+            if locate(self.snap(),self.initial,(0,1,2,3,5,6,8)):return
+            if time.monotonic()-start>7:self.firmware_picker()
+            time.sleep(.1)
+        self.visible(self.initial,1)
     def shot(self,name):return super().shot(name)
     def enroll(self,name='Elena',password='local-test-285'):
         self.type(name);self.key('tab');self.type(password);self.key('tab');self.type(password);self.key('ret');self.visible('Preferiti',34);time.sleep(.65)

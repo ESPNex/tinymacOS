@@ -6,7 +6,9 @@ Il volume dati corrente usa **BTRFS nativo (subset)**, implementato in `fs/btrfs
 
 Il lettore mantiene la compatibilità di importazione con il formato legacy v1. Le sue firme binarie non vengono rinominate: cambiare una firma non converte un filesystem e renderebbe illeggibili vecchi dati e fixture. I documenti sotto `docs/storico/` restano evidenza delle versioni corrispondenti.
 
-I limiti attuali sono quelli definiti da `NSLOTS`, `NPART`, `NDATA` e dal formato dei nodi; aggiungere capacità alla partizione non aumenta automaticamente il numero o la dimensione massima dei file.
+La geometria nativa della 10.2.3 è variabile entro 8–32 MiB: il resize modifica realmente la tabella dei nodi (64–384 slot), i dati e il layout di snapshot/backup. Il file singolo resta limitato a 8 KiB. Il semplice allargamento della partizione, senza il motore di resize, non cambia questa geometria.
+
+Gli snapshot usano **Copy-on-Write reale a settori**: alla creazione condividono i blocchi correnti, le modifiche conservano una sola versione precedente per tutti gli snapshot interessati e la cancellazione libera i blocchi non più referenziati. Non sono copie integrali del volume. Dettagli, compatibilità legacy e limiti di recupero dopo interruzioni: [NATIVE-COW.md](NATIVE-COW.md).
 
 ## Layout del disco
 

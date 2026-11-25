@@ -70,7 +70,7 @@ static void edit_paint(void)
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);Text(xx+168,yy+143,editname,F_BODY,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"FAT32: coda libera. NTFS: rilocazione dati e controllo Windows successivo.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"Nativo: 8–32 MiB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
         Text(xx+20,yy+188,"Esegui prima un backup. Non scollegare il disco.",F_SMALL,TX);
@@ -279,7 +279,7 @@ static void paint(void)
         button(x + 118, 282, 96, "Verifica", 0);
         button(x + 222, 282, 96, "Elimina", 0);
         Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
-        Text(x, ah - 31, msg[0] ? msg : "Lo snapshot è una copia puntuale del volume.", F_SMALL, SUB);
+        Text(x, ah - 31, msg[0] ? msg : "Snapshot CoW: blocchi condivisi, spazio occupato solo dalle modifiche.", F_SMALL, SUB);
         if (dialog) {
             int tw = MIN(440, aw - 48), xx = (aw - tw) / 2, yy = (ah - 196) / 2;
             Sheet(xx, yy, tw, 196, 14);

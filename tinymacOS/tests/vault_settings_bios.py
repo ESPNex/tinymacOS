@@ -16,7 +16,12 @@ w=Path(tempfile.mkdtemp(prefix='tmc-vault-settings-bios-',dir='/var/tmp'));ev=w/
 data_base=51200
 if mixed:
  with disk.open('rb') as f:
-  f.seek(1024);p=f.read(16384);start,end=struct.unpack_from('<QQ',p,3*128+32)
+  mbr=f.read(512)
+  if mbr[450]==0xee:
+   f.seek(1024);p=f.read(16384);start,end=struct.unpack_from('<QQ',p,3*128+32)
+  else:
+   start,count=struct.unpack_from('<II',mbr,446+3*16+8);end=start+count-1
+  assert start and end>=start
  data_base=start+49152
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 _original=retail_guest.locate

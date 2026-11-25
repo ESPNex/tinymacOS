@@ -39,7 +39,7 @@ def fixture(path,scheme):
    def header(at,other,entries):
     b=bytearray(512);struct.pack_into('<8sIIIIQQQQ16sQIII',b,0,b'EFI PART',65536,92,0,0,at,other,34,SECTORS-34,diskid,entries,128,128,zlib.crc32(p));struct.pack_into('<I',b,16,zlib.crc32(b[:92]));return b
    for at,data in [(1,header(1,SECTORS-1,2)),(2,p),(SECTORS-33,p),(SECTORS-1,header(SECTORS-1,1,SECTORS-33))]:f.seek(at*512);f.write(data)
- fat.unlink();ntfs.unlink();return hashes(path)
+ fat.unlink();ntfs.unlink();subprocess.run(['fallocate','--dig-holes',path],check=True);return hashes(path)
 
 def hashes(path):
  out=[]

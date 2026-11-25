@@ -46,6 +46,9 @@ try:
  r['font_identical_desktop_and_recovery']=True;r['plist_counts']=counts;r['font_sha256']=sha(font);r['recovery_kernel_sha256']=sha(kernel);r['desktop_kernel_sha256']=sha((build/'kernel.elf').read_bytes())
  ok('Every packaged .plist parses with plistlib; all three system volumes are 10.2.3/30B14 and retain the exact accepted font')
  assert fat(installed,'/EFI/TMC/BOOTX64.EFI')==(build/'BOOTX64.EFI').read_bytes()
+ for volume in [installed,optical]:
+  for path in ['/EFI/BOOT/.contentVisibility','/EFI/OC/.contentVisibility']:assert fat(volume,path)==b'Disabled\n'
+ ok('OpenCore hides only its own bootstrap/manager from its OS picker; native second-stage boot remains visible')
  assert b'10.2.3' in extract('/BIOS-README.TXT','bios-readme.txt').read_bytes()
  cfg=fat(w/'recovery.fat','/BOOTCFG.BIN');assert len(cfg)==512 and cfg[:8]==b'TMCBOOT1' and hashlib.sha256(cfg[:16]).digest()==cfg[16:48]
  ok('Optical identity and preallocated checksummed Recovery boot configuration are current')

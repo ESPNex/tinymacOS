@@ -1,6 +1,6 @@
-> **10.2.3 / 30B14**: [installer GPT/MBR su spazio non allocato](docs/NOTE-10.2.3.md), riconoscimento FAT32/NTFS/RAW in sola lettura. Backup completo obbligatorio per le prove. La voce UEFI può richiedere aggiunta manuale nel firmware; nessuna certificazione Windows/hardware fisico.
+> **10.2.3 / 30B14**: [snapshot CoW reali, Utility Disco e avvio BIOS/UEFI](docs/NOTE-10.2.3.md). Resize effettivo FAT32, NTFS nativo e formato proprietario a geometria variabile; backup esterno verificato obbligatorio. Nessuna certificazione Windows/hardware fisico.
 
-> **Branch di sviluppo, non ancora rilasciato:** [stato Utility Disco/OpenCore e requisiti mancanti](docs/DISK-UTILITY-DEVELOPMENT.md). Le limitazioni sopra descrivono la 10.2.3 attualmente pubblicata.
+> [Dettagli dell’implementazione e limiti](docs/DISK-UTILITY-DEVELOPMENT.md) · [Formato e snapshot CoW](docs/NATIVE-COW.md).
 
 # Sviluppare tinymacOS
 

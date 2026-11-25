@@ -16,14 +16,14 @@ static Part parts[128];
 static Gpt primary, backup;
 static int mounted = -1;
 int volume_current(void){return mounted;}
-static u32 offset;
+static u32 offset,mounted_extent=NPART;
 static int bread(u32 l, void *p)
 {
-    return l < NPART ? volume_cipher_io(mounted,offset+l,1,p,0) : -1;
+    return l < MIN(NPART,mounted_extent) ? volume_cipher_io(mounted,offset+l,1,p,0) : -1;
 }
 static int bwrite(u32 l, const void *p)
 {
-    return l < NPART ? volume_cipher_io(mounted,offset+l,1,(void*)p,1) : -1;
+    return l < MIN(NPART,mounted_extent) ? volume_cipher_io(mounted,offset+l,1,(void*)p,1) : -1;
 }
 int volume_mount(Block *b)
 {
@@ -48,12 +48,12 @@ int volume_mount(Block *b)
             static Layout map;
             Medium m = {sata_io, sata_flush, d, z};
             if (!layout_read(&m, &map) || (!boot.install_len && memcmp(map.parts[0].id, boot.esp_id, 16)))continue;
-            offset = map.data;
+            offset = map.data;mounted_extent=map.parts[1].end-map.data+1;
         }
         mounted = d;
         if(offset)volume_vault(d);
         *b = (Block) {
-            bread, bwrite, NPART
+            bread, bwrite, MIN(NPART,mounted_extent)
         };
         return 1;
     }

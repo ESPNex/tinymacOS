@@ -1,36 +1,50 @@
 # tinymacOS 10.2.3 Tramontana · 30B14
 
-## Installer e partizioni
+## Aggiornamento: snapshot CoW reali e Utility Disco
 
-- Installer a pagina unica, senza colonna dei passaggi: immagine centrale, destinazione, conferma e avanzamento, ispirato al flusso di installazione macOS. Non è l’installer Apple e non installa macOS.
-- Inventario condiviso, in sola lettura, di GPT e MBR: FAT12/16/32, NTFS, exFAT, formato dati nativo e RAW/non riconosciuto. Le firme sono controllate con la geometria del volume; il riconoscimento non equivale alla verifica completa del filesystem.
-- Stessi filesystem, dimensioni, identificatori `diskNsM` e LBA in Utility Disco e in `diskutil list`, `diskutil list diskN`, `diskutil info diskNsM` nel Terminale, anche in Recovery.
-- **RAW non è spazio libero**: può contenere dati o un formato non supportato. Nessuna partizione esistente viene scelta o inizializzata dall’installer.
-- Installazione su dischi GPT o MBR con almeno **96 MiB contigui non allocati** e una voce libera nella tabella. Viene mostrata e usata la più grande estensione libera allineata; non si ridimensionano o spostano partizioni.
-- GPT: CRC di intestazioni e voci, entrambe le copie concordanti, limiti e sovrapposizioni controllati. GPT ibride/degradate, dischi dinamici, tabelle piene o strutture ambigue vengono protetti dalle scritture.
-- MBR: conservazione delle partizioni primarie e dei flag attivi; inventario dei volumi logici nella catena EBR. L’intera partizione estesa resta riservata: non viene installato nulla nei suoi buchi interni.
+Questa revisione sostituisce gli asset della 10.2.3, senza cambiare il numero di versione. ISO, sorgenti e `VALIDAZIONE.json` devono appartenere allo stesso commit e agli stessi hash pubblicati. Le release 10.2.2 e 10.2.1 restano invariate.
 
-## Avvio e protezione dei dati
+### Snapshot Copy-on-Write
 
-La nuova destinazione è una singola partizione nativa di 96 MiB, con prefisso FAT16 per l’avvio e aree interne distinte per dati/FileVault, Recupero, sorgente di ripristino e OpenDuet. Non si riutilizza l’ESP di Windows e non si scrive nei filesystem preesistenti. Non è APFS né un container Apple.
+- La creazione scrive mappe e checksum: **i dati iniziali restano condivisi**, non vengono copiati integralmente per ogni snapshot.
+- La prima modifica conserva il vecchio settore una sola volta per tutti gli snapshot che ne hanno bisogno. Generazioni successive conservano versioni diverse; l’eliminazione libera soltanto i blocchi senza più riferimenti.
+- Le viste `/.snapshots/<nome>/` restano di sola lettura. Il ripristino di uno snapshot mantiene gli altri punti storici. Finder, Terminale, Utility Disco e Time Machine usano lo stesso backend.
+- Journal e settore di staging consentono il replay delle scritture interrotte. Mappe/checksum incoerenti vengono rifiutati; un pool pieno rifiuta la nuova scrittura senza cambiare il settore attivo.
+- FileVault cifra e autentica anche mappe, journal e blocchi storici. La copia locale indipendente di Recovery resta distinta dagli snapshot e il suo ripristino li preserva.
+- Le vecchie immagini snapshot vengono migrate senza una seconda copia completa del volume. Migrazione legacy e resize interrotti hanno un marcatore di rifiuto del mount, **non un rollback automatico**.
 
-L’installer modifica necessariamente la tabella delle partizioni e il codice di avvio MBR: **non promette un disco interamente identico**, ma conserva identici i byte delle partizioni preesistenti, i relativi identificatori/estensioni, la firma disco e i flag attivi. Il vecchio settore MBR completo viene salvato nel settore relativo 10 della nuova destinazione; il descrittore con CRC è nel settore relativo 9, entrambi riservati fuori dalle strutture FAT.
+Il formato è proprietario `TMCBFS1`, con presentazione ispirata ad APFS: **non è Apple APFS né Btrfs Linux interoperabile**. Non usare `btrfs-progs` per ripararlo. Restano massimo 8 snapshot, 384 voci complessive e 8 KiB per file; il pool è limitato e gli snapshot sullo stesso disco non sono un backup contro guasti fisici. Dettagli: [NATIVE-COW.md](NATIVE-COW.md).
 
-- **BIOS/Legacy:** menu testuale `1 Previous system` / `2 tinymacOS` (Invio). La prima scelta esegue il precedente MBR conservato; non modifica il suo sistema operativo. La seconda legge OpenDuet dalla nuova destinazione. La scelta 1 richiede un precedente avvio BIOS/Legacy realmente valido: non converte un Windows UEFI in Legacy. Per un sistema UEFI si conserva e usa la sua voce nel firmware.
-- **UEFI:** avviare `\EFI\BOOT\BOOTX64.EFI` sul **nuovo volume tinymacOS**. Se il firmware continua ad avviare Windows, aggiungere/selezionare questa voce dal suo menu di avvio da file. L’installer nativo non registra automaticamente `Boot####` nella NVRAM e non sostituisce Windows Boot Manager. Secure Boot disattivato.
-- Dati, backup, ripristino, Recovery e FileVault usano gli indirizzi della nuova destinazione, non indirizzi fissi nel disco.
-- I dischi completamente vuoti mantengono il percorso BIOS/UEFI della 10.2.2; l’intero disco viene letto e verificato vuoto prima della prima scrittura.
+### Ridimensionamento effettivo del filesystem nativo
 
-## Prima di provare
+Il motore modifica capacità allocabile e tabella dei nodi entro **8–32 MiB**, non soltanto il confine della partizione. Ad esempio 32→24→32 MiB cambia 384→288→384 slot, ricollocando mappe/pool e backup senza materializzare gli snapshot CoW come copie complete. Rifiuta riduzioni incompatibili con dati o snapshot ancora necessari. Il resize di volumi cifrati non è supportato.
 
-**Fare un backup verificato dell’intero disco e dei metadati di partizionamento.** Liberare lo spazio dal sistema che gestisce quel filesystem; tinymacOS non riduce NTFS/FAT. Il progetto è sperimentale: i controlli non garantiscono recupero da guasti, rimozione del disco o interruzione durante l’aggiornamento GPT/MBR. Un’interruzione può richiedere la riparazione della tabella/avvio con strumenti esterni, pur senza sovrascrivere le partizioni esistenti.
+### Editor condiviso e FAT32/NTFS
 
-Limiti attuali: SATA/AHCI, settori logici da 512 byte, fino a 128 GiB e 128 voci GPT. Nessuna creazione di partizioni logiche, conversione MBR/GPT, riparazione NTFS/FAT o aggiornamento automatico di una destinazione tinymacOS già presente. Utility Disco rifiuta le operazioni native su partizioni esterne. Non è certificato il dual boot con Windows reale né l’hardware ASRock Q1900M; le fixture di avvio precedenti sono sintetiche e identificate come tali nei test. La ISO resta ottica, non USB-DD ibrida.
+- Utility Disco ha pannelli per creazione, eliminazione e resize, anteprima delle dimensioni e conferma distinta. Eliminare richiede `ELIMINA`. Non è una cancellazione sicura dei dati.
+- GUI, `diskutil` e Recovery usano lo stesso backend: selezione e digest dei metadati riletti prima di scrivere, I/O limitato alla partizione, flush/rilettura e protezione dell’intero disco attualmente montato. Le modifiche vanno eseguite da Recovery o da un altro supporto.
+- FAT32 primaria: riduzione con coda libera e crescita entro la capacità della FAT esistente, aggiornando BPB/backup/FSINFO. Nessuna rilocazione dei cluster o conversione FAT16/FAT32; dirty, metadati discordanti e allocazioni fuori limite sono rifiutati.
+- **NTFS nativo**: port freestanding originale di ntfsresize/libntfs-3g 2022.10.3, patch Debian 5+deb13u3, con namespace privato e sorgenti/licenze GPL inclusi. Supporta riduzione con rilocazione e crescita nelle geometrie validate, senza processi o syscall Linux. Rifiuta ibernazione, dirty/journal non idonei e corruzioni riconosciute. Dopo il resize resta intenzionalmente impostata la richiesta di controllo: eseguire `chkdsk` da Windows prima di un altro resize, senza forzare il backend.
+- Creazione di una partizione nativa nel gap esplicitamente selezionato di una GPT/MBR già valida, con almeno 32 MiB. Eliminazione di primarie GPT/MBR, contenitori estesi e volumi logici EBR. Nessun montaggio arbitrario dei nuovi volumi separati nel Finder, né creazione di partizioni logiche o nuova tabella da Utility Disco.
 
-La barra desktop trasparente, Recovery scura/opaca e FileVault integrato in Impostazioni senza pulsante Indietro restano invariati.
+Senza `--confirm`, `diskutil addPartition`, `deletePartition` e `resizeVolume` eseguono soltanto l’anteprima. Nessun aggiornamento GPT/MBR o resize è garantito atomico contro ogni perdita di alimentazione; errore dopo l’inizio delle scritture non significa rollback.
 
-## Riferimenti interfaccia e formati
+## Installer e avvio
 
-- Apple: https://support.apple.com/en-us/102655 (flusso Recupero → Installa → scelta del volume → avanzamento).
-- Microsoft: https://learn.microsoft.com/en-us/windows/win32/api/vds/ne-vds-vds_file_system_type (stati/tipi RAW, FAT32 e NTFS).
-- I test e i loro limiti sono pubblicati in `VALIDAZIONE.json`; nessuna verifica virtuale sostituisce il backup o una certificazione hardware.
+L’installer a pagina unica usa ora l’immagine raster con alpha reale. Installa su disco verificato interamente vuoto oppure in almeno **96 MiB contigui non allocati**, con voce GPT/MBR libera. **RAW non significa spazio libero.** L’installer non riduce automaticamente partizioni preesistenti.
+
+L’inventario condiviso riconosce FAT12/16/32, NTFS, exFAT, nativo e RAW. GPT richiede entrambe le copie valide e concordanti, senza ibridi o sovrapposizioni; MBR riserva l’intera estensione delle partizioni estese. Il riconoscimento non certifica l’integrità del filesystem.
+
+La destinazione contiene avvio FAT16, dati/FileVault, Recovery, sorgente di ripristino e OpenDuet. Le partizioni preesistenti, i loro identificatori, le estensioni, la firma disco e i flag attivi sono conservati; tabella delle partizioni e codice MBR vengono invece necessariamente aggiornati. Il vecchio MBR è salvato nella nuova destinazione, fuori dalle strutture FAT.
+
+- **BIOS/Legacy:** menu `1 Previous system` / `2 tinymacOS`. La prima scelta esegue il vecchio MBR conservato e richiede un precedente avvio Legacy valido; non converte Windows UEFI in Legacy.
+- **UEFI:** il primo avvio verificato della destinazione registra una voce dedicata `tinymacOS OpenCore` verso `\EFI\OC\OpenCore.efi` e la antepone a `BootOrder`, conservando il primo ordine precedente in una variabile vendor. Non sovrascrive i file o le variabili Microsoft. Serve NVRAM scrivibile; per raggiungere quel primo avvio può ancora occorrere scegliere il nuovo volume dal firmware. Il fallback rimane `\EFI\BOOT\BOOTX64.EFI` sul volume tinymacOS. Secure Boot disattivato.
+- I filtri `.contentVisibility` impediscono a OpenCore di proporre se stesso come sistema operativo, evitando ricorsioni dopo la registrazione EFI; non disabilitano l’avvio dal firmware né il loader nativo.
+
+FileVault resta integrato nelle Impostazioni senza pulsante Indietro; barra desktop trasparente, Recovery scura/opaca e font desktop/Recovery restano invariati.
+
+## Sicurezza delle prove e limiti
+
+**Backup esterno verificato dell’intero disco obbligatorio prima di installare, migrare o ridimensionare.** Un’interruzione può richiedere riparazioni esterne. Le prove normali, ASan/UBSan, lettori indipendenti e guest BIOS/OVMF sono identificate in `VALIDAZIONE.json` con l’hash esatto dell’ISO. Il test CoW guest confronta anche le mappe reali, non soltanto messaggi sullo schermo.
+
+Limiti della piattaforma: SATA/AHCI, settori logici di 512 byte, dischi fino a 128 GiB e 128 voci GPT. Nessuna conversione MBR/GPT, riparazione generale NTFS/FAT, aggiornamento automatico di una vecchia installazione o ISO USB-DD ibrida. Nessuna certificazione Windows reale, hardware ASRock Q1900M o audit crittografico indipendente; il vecchio sistema nelle fixture BIOS è un sentinel sintetico dichiarato, non Windows.

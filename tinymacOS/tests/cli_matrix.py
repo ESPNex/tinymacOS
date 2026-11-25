@@ -83,7 +83,7 @@ with User(iso, work, ev, 'cli', disk='persistent') as g:
     g.cmd('diskutil apfs list', 'Crittografia: disattiva')
     ok('diskutil apfs decryptVolume: stato tornato a disattiva.')
 
-    g.cmd('diskutil apfs snapshot verify cliuno', 'crc32c verificata')
+    g.cmd('diskutil apfs snapshot verify cliuno', 'integrità verificata')
     g.cmd('diskutil apfs snapshot delete clidue', 'Snapshot eliminato.')
     g.cmd('diskutil apfs snapshot restore cliuno', 'Volume ripristinato.')
     ok('Snapshot verify/delete/restore: crc32c verde, eliminazione confermata, '

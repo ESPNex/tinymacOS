@@ -805,7 +805,7 @@ static int run(void)
                 if (!op)return 1;
                 int r = sc(S_SNAP, op, V(4), 0, 0);
                 if (op == 3 && !r) {
-                    ln("Snapshot valido: integrità crc32c verificata.");
+                    ln("Snapshot valido: integrità verificata.");
                     return 0;
                 }
                 if (r)return fail("Operazione non riuscita.");

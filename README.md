@@ -6,11 +6,13 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 
 [Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.3) · [Novità della 10.2.3](tinymacOS/docs/NOTE-10.2.3.md)
 
-**Sviluppo non rilasciato:** [Utility Disco/OpenCore: stato e limiti](tinymacOS/docs/DISK-UTILITY-DEVELOPMENT.md).
+**Revisione 10.2.3:** snapshot CoW reali, resize nativo a capacità variabile e motore NTFS freestanding. [Dettagli e limiti](tinymacOS/docs/DISK-UTILITY-DEVELOPMENT.md).
 
 ## Funzioni principali
 
 - Installer su spazio non allocato GPT/MBR; riconoscimento FAT32, NTFS e RAW in Installer, Utility Disco e Terminale.
+- Snapshot CoW: dati iniziali condivisi, vecchi blocchi conservati una sola volta e recupero dello spazio all’ultimo riferimento.
+- Utility Disco offline: creazione/eliminazione e resize FAT32, NTFS nativo e formato proprietario a capacità variabile 8–32 MiB.
 - Desktop con Finder a doppio clic, Terminale, editor, utility e temi chiaro/scuro.
 - FileVault nativo: volume dati cifrato, sblocco prima del desktop, chiave di recupero e gestione da Impostazioni/Recovery.
 - Interfaccia Liquid Glass, Dock e Centro di Controllo.
@@ -21,7 +23,8 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 
 - Progetto sperimentale: i test in macchina virtuale non garantiscono compatibilità con l'hardware reale. La verifica sulla ASRock Q1900M/J1900 resta da completare.
 - La ISO **non è USB-DD ibrida**. Prima provare in VM e fare un backup completo: il dual boot è sperimentale, non certificato con Windows reale. Servono 96 MiB non allocati; nessun ridimensionamento automatico.
-- UEFI: può servire aggiungere dal firmware il file `\EFI\BOOT\BOOTX64.EFI` del nuovo volume; Windows Boot Manager non viene sostituito.
+- UEFI: il primo avvio verificato registra OpenCore e conserva il precedente BootOrder, senza sostituire Windows Boot Manager. Per raggiungerlo può ancora servire scegliere il nuovo volume dal firmware.
+- Formato nativo proprietario: massimo 384 voci, 8 KiB/file e 8 snapshot; non Apple APFS o Btrfs Linux. Resize cifrato non supportato; dopo il resize NTFS serve il controllo Windows.
 - Sulle GPU senza cambio risoluzione runtime supportato, la scelta richiede un sistema installato e viene applicata al riavvio.
 - Browser WebKit non incluso; compatibilità USB/HID non universale.
 

@@ -7,6 +7,7 @@
  */
 #include "disklayout.h"
 #include "diskedit.h"
+#include "nativefs.h"
 extern int ntfs_resize_native(Medium*,DiskEdit*,int);
 #define NATIVE_MIN 65536u
 static DiskMap editmap;
@@ -175,19 +176,21 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
         if(p->logical){if(logical_delete(m,p))return say(q,DE_IO,"Errore durante l’aggiornamento EBR. Interrompi le modifiche e verifica il disco.");return say(q,0,"Partizione logica eliminata; contenitore esteso conservato.");}
         if(editmap.scheme==MAP_GPT)memset(table+p->number-1,0,sizeof(Part));else memset(mbrbuf+446+16*(p->number-1),0,16);
     }else{
-        if(p->logical||(p->fs!=FS_FAT32&&p->fs!=FS_NTFS))return say(q,DE_UNSUPPORTED,"Servono partizioni primarie FAT32 o NTFS; capacità nativa variabile non ancora abilitata.");
+        if(p->logical||(p->fs!=FS_FAT32&&p->fs!=FS_NTFS&&p->fs!=FS_TMC))return say(q,DE_UNSUPPORTED,"Servono partizioni primarie native, FAT32 o NTFS.");
         u64 end=(u64)p->start+q->size,max=(u64)p->start+p->sectors;
         for(int j=0;j<editmap.gaps;j++)if(editmap.gap[j].start==max){max+=editmap.gap[j].sectors;break;}
         if(!q->size||q->size%2048||end>max||q->size==p->sectors)return say(q,DE_INVALID,"Dimensione non valida o spazio contiguo insufficiente.");
-        int ntfs=p->fs==FS_NTFS;
-        int r=ntfs?ntfs_resize_native(m,q,0):fattail(m,q,p,0);
+        int ntfs=p->fs==FS_NTFS,native=p->fs==FS_TMC;
+        int r=native?native_resize(m,q,0):ntfs?ntfs_resize_native(m,q,0):fattail(m,q,p,0);
+        if(r&&native)return say(q,r,r==DE_OCCUPIED?"Nodi allocati nella coda di dati o snapshot: libera spazio prima di ridurre.":"Nativo: capacità 8–32 MiB con numero di slot variabile; decifra FileVault e verifica dati/snapshot prima di riprovare.");
+        if(!apply&&native&&!r)return say(q,0,"Ridimensiona la capacità nativa e ricolloca snapshot e copia locale; conserva tutti i file. Backup esterno obbligatorio.");
         if(r&&ntfs)return say(q,r,"NTFS non idoneo: volume sporco, ibernato, incoerente o risorse insufficienti. Nessuna scrittura.");
         if(r)return say(q,r,r==DE_OCCUPIED?"La coda contiene cluster allocati: nessuna scrittura. Serve uno strumento con rilocazione.":"FAT32 non idonea: controlla pulizia, copie FAT, backup e capacità della FAT.");
         if(!apply&&ntfs)return say(q,0,"NTFS verificato: rilocazione dei dati se necessaria. Dopo il resize esegui il controllo Windows.");
         if(!apply)return say(q,0,"Ridimensiona realmente FAT32 senza spostare dati; la coda rimossa deve essere libera.");
         if(editmap.scheme==MAP_GPT)table[p->number-1].end=end-1;else w32(mbrbuf+446+16*(p->number-1)+12,q->size);
         if(q->size>p->sectors&&tablewrite(m))return say(q,DE_IO,"Errore tabella durante la crescita: interrompi e verifica il disco.");
-        r=ntfs?ntfs_resize_native(m,q,1):fattail(m,q,p,1);if(r)return say(q,DE_IO,"Aggiornamento filesystem interrotto: non usare il volume prima di una verifica indipendente.");
+        r=native?native_resize(m,q,1):ntfs?ntfs_resize_native(m,q,1):fattail(m,q,p,1);if(r)return say(q,DE_IO,"Aggiornamento filesystem interrotto: non usare il volume prima di una verifica indipendente.");
         if(q->size>p->sectors)return say(q,0,"Filesystem e partizione ridimensionati; verifica il volume prima dell’uso.");
     }
     if(tablewrite(m))return say(q,DE_IO,"Aggiornamento tabella interrotto: interrompi e verifica entrambe le copie GPT/MBR.");

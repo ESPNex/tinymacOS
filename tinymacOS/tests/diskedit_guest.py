@@ -36,6 +36,8 @@ try:
         g.cmd('diskutil resizeVolume disk0s2 1 --confirm','NTFS non idoneo');g.shot('ntfs-honest-refusal')
         g.cmd('diskutil addPartition disk0 159744 32 Dati --confirm','Partizione nativa creata e verificata.')
         g.cmd('diskutil list','BTRFS nativo (subset)');g.shot('native-created')
+        g.cmd('diskutil resizeVolume disk0s4 24 --confirm','Filesystem e partizione ridimensionati');g.shot('native-shrunk')
+        g.cmd('diskutil resizeVolume disk0s4 32 --confirm','Filesystem e partizione ridimensionati');g.shot('native-grown')
         g.cmd('open -a "Disk Utility"');g.visible('Utility Disco');g.key('down');g.visible('Ridimensiona…')
         x,y=g.visible('Ridimensiona…');g.click(x+28,y+9);g.visible('Ridimensiona partizione');g.shot('resize-sheet');g.key('esc')
         g.key('down');g.visible('Elimina…');x,y=g.visible('Elimina…');g.click(x+25,y+8);g.visible('Elimina partizione');g.shot('delete-explicit-confirmation');g.key('ret');g.visible('Digita ELIMINA');g.key('esc')
@@ -55,7 +57,7 @@ try:
     globalguid=uuid.UUID('8be4df61-93ca-11d2-aa0d-00e098032b8c').bytes_le
     vendorguid=uuid.UUID('3f9a25c4-71b2-4e83-a4c1-5e9d278b6c10').bytes_le
     variables=vars_active(w/'target/vars.fd');order=variables[(globalguid,'BootOrder')];first=struct.unpack_from('<H',order)[0]
-    option=variables[(globalguid,f'Boot{first:04X}')];assert 'tinymacOS OpenCore'.encode('utf-16le') in option and '\\EFI\\BOOT\\BOOTX64.EFI'.encode('utf-16le') in option
+    option=variables[(globalguid,f'Boot{first:04X}')];assert 'tinymacOS OpenCore'.encode('utf-16le') in option and '\\EFI\\OC\\OpenCore.efi'.encode('utf-16le') in option
     assert variables[(vendorguid,'tinymacOS-previousBootOrder')].startswith(b'TMCBOOT2')
     r['uefi_default_entry']=f'Boot{first:04X}'
     ok('Independent OVMF NVRAM parse finds dedicated OpenCore load option FIRST in BootOrder and retained previousBootOrder backup after real installed boot')
