@@ -5,12 +5,12 @@ La cifratura del volume dati di tinymacOS è un formato nativo: **non è compati
 ## Utilizzo
 
 - Installare tinymacOS su un disco di prova dedicato. Conservare una copia esterna dei dati prima di modificare la cifratura.
-- In **Impostazioni → Privacy**, aprire FileVault e scegliere **Attiva FileVault**. Nella sessione ordinaria occorre la password dell'account.
+- In **Impostazioni → Sicurezza e privacy → FileVault**, aprire la sezione integrata e scegliere **Attiva FileVault**. Nella sessione ordinaria occorre la password dell'account.
 - Salvare la chiave di recupero fuori dal disco: viene mostrata una sola volta. Confermare gli ultimi otto caratteri per avviare la conversione.
 - La conversione avviene sul volume esistente, senza formattazione automatica. Il progresso è persistente; dopo un riavvio lo sblocco riprende la conversione prima dell'accesso al desktop.
 - Al successivo avvio, inserire la password del volume o la chiave di recupero. La chiave di recupero sblocca il volume, ma non sostituisce la password dell'account per l'accesso alla sessione.
-- La stessa utility consente disattivazione, cambio della password del volume e rigenerazione della chiave di recupero. La password del volume e quella dell'account sono credenziali distinte dopo un cambio della sola password del volume.
-- In **Recovery → Utility → FileVault**, selezionare il disco e sbloccarlo prima delle operazioni sui dati. Le copie locali sullo stesso volume passano attraverso lo stesso livello di cifratura.
+- La stessa sezione consente disattivazione, cambio della password del volume e rigenerazione della chiave di recupero. La password del volume e quella dell'account sono credenziali distinte dopo un cambio della sola password del volume.
+- In **Recovery → Utility → Terminale**, eseguire `fdesetup manage`: si apre la sezione FileVault di Impostazioni. Selezionare il disco e sbloccarlo prima delle operazioni sui dati. Non è presente una voce FileVault nel menu Recovery. Le copie locali sullo stesso volume passano attraverso lo stesso livello di cifratura.
 - Nel Terminale: `fdesetup status` e `fdesetup manage`.
 
 ## Cosa è protetto

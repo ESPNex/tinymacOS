@@ -126,7 +126,9 @@ static int run(void)
     if(IS("fdesetup")){
         VaultRequest q={.disk=-1};VaultInfo vi={0};
         if(eq(V(1),"status")){sc(S_FILEVAULT,0,&q,&vi,0);ln(vi.error?"FileVault: volume non disponibile.":!vi.enabled?"FileVault is Off.":vi.locked?"FileVault is On. Volume locked.":vi.state==1?"FileVault encryption in progress.":vi.state==3?"FileVault decryption in progress.":"FileVault is On.");return vi.error?1:0;}
-        sc(S_SPAWN,DISKUTIL,"@vault",0,0);ln("Gestione FileVault aperta. Inserisci i segreti solo nella finestra protetta, non negli argomenti della shell.");return 0;
+        if(A.argc!=2||!eq(V(1),"manage"))return fail("Uso: fdesetup status | manage");
+        if(sc(S_SPAWN,SETTINGS,"@vault",0,0)<0)return fail("Impossibile aprire Impostazioni.");
+        ln("FileVault aperto in Impostazioni.");return 0;
     }
 
     int n = A.argc;

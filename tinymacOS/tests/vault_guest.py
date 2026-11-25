@@ -23,14 +23,14 @@ class Installed(PrivateRetail):initial='BiosDisk'
 class Locked(PrivateRetail):initial='Sblocca Macintosh HD'
 class Recovery(RecoveryKey,PrivateRetail):recovery_text='Ripristina da una copia locale'
 def origin(g):
- x,y=g.visible('FileVault nativo',faces=(3,));return x-28,y-22
+ x,y=g.visible('FileVault',faces=(3,));return x-28,y-22
 def click(g,X,Y,x,y):g.click(X+x,Y+y)
 def fields(g,values):
  for i,t in enumerate(values):
   if i:g.key('tab')
   g.type(t)
  g.key('ret')
-def panel(g):g.cmd('fdesetup manage');g.visible('FileVault nativo');return origin(g)
+def panel(g):g.cmd('fdesetup manage');g.visible('FileVault');return origin(g)
 def header():
  with disk.open('rb') as f:f.seek((51200+63632)*512);return f.read(512)
 def verify_key(key):
@@ -74,7 +74,7 @@ try:
  with Locked('/not-attached',w,ev,'password-boot',disk='target',boot_disk=True) as g:
   g.type(password);g.key('ret');g.visible('Preferiti',180);g.key('f2');g.visible('Sessione locale');g.cmd(f'cat Documents/{name}',secret);g.cmd('off');g.p.wait(15);ok('Password unlock and account authentication complete before the desktop; file bytes survive a second cold boot')
  with Recovery('/not-attached',w,ev,'recovery',disk='target',boot_disk=True) as g:
-  utility(g,'FileVault');g.visible('FileVault nativo');X,Y=origin(g);g.visible('Bloccato');click(g,X,Y,140,260);g.visible('Sblocca il volume');fields(g,['incorrect-password']);g.visible('Password errata',150);fields(g,[recovery]);g.visible('Attivo',150);g.shot('04-recovery-unlocked');close(g)
+  utility(g,'Terminale');g.visible('Sessione locale');g.cmd('fdesetup manage');g.visible('FileVault',faces=(3,));X,Y=origin(g);g.visible('Bloccato');click(g,X,Y,140,260);g.visible('Sblocca il volume');fields(g,['incorrect-password']);g.visible('Password errata',150);fields(g,[recovery]);g.visible('Attivo',150);g.shot('04-recovery-unlocked');close(g);close(g)
   utility(g,'Crea una copia locale');g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',240);g.key('ret')
   g.click(550,270);g.click(880,557);g.visible('Confermi l’operazione');g.click(820,470);g.visible('Operazione completata.',240);g.key('ret');g.shot('05-recovery-encrypted-restore');ok('Recovery rejects an incorrect password; recovery key unlocks the native disk and real backup/restore run through encrypted sector I/O')
   utility(g,'Terminale');g.visible('Sessione locale');g.cmd('off');g.p.wait(15)

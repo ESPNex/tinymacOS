@@ -160,7 +160,8 @@ bad:
 int spawn(int app, const char *arg)
 {
     if (app < 0 || app > LASTAPP)return -1;
-    if(boot.recovery&&app!=DESKTOP&&app!=TERMINAL&&app!=DISKUTIL)return -1;
+    if(boot.recovery&&app!=DESKTOP&&app!=TERMINAL&&app!=DISKUTIL&&
+       !(app==SETTINGS&&arg&&eq(arg,"@vault")))return -1;
     char path[PATHLEN];
     execpath(app, path);
     u32 fl;

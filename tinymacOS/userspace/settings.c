@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "vaultview.h"
+static int vault_open;
 // Impostazioni di Sistema, layout "System Settings" di macOS: colonna
 // laterale cercabile a sinistra, schede raggruppate a destra. Ogni controllo
 // è collegato a una API reale (S_PREF, S_SNAP, S_INFO, S_SESSION).
@@ -60,7 +62,8 @@ static void refresh(void)
 }
 static void setpane(int p)
 {
-    pane = p;res_open=0;
+    if(si.recovery||!vault_view_can_leave())return;
+    vault_view_leave();pane = p;res_open=0;vault_open=0;
     focus_search = 0;
     if (p == 2 || p == 3)refresh();
     ui_motion(FX_SLIDE);
@@ -162,7 +165,7 @@ static void paint(void)
     nhpane = 0;
     int y = 56;
     for (int i = 0; i < NP && y + 30 < ah - 8; i++) {
-        if (!match(pname[i]))continue;
+        if ((si.recovery&&i!=2)||!match(pname[i]))continue;
         hpane[nhpane] = (R) {7, y - 3, S - 14, 30};
         hitpane[nhpane] = i;
         nhpane++;
@@ -242,12 +245,16 @@ static void paint(void)
         if(!(caps&1)&&!(caps&2))Text(x,413,"Avvio live: per salvare la scelta serve un sistema installato.",F_MICRO,SUB);
         if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
-        Text(x,78,"FILEVAULT",F_MICRO,SUB);
+        if(vault_open){
+            if(!si.recovery)button(aw-150,30,120,"Indietro",0);
+            vault_view_draw(x,70,w,ah-82);
+        }else{
+        Text(x,78,"SICUREZZA",F_MICRO,SUB);
         VaultRequest vq={.disk=-1};VaultInfo vinfo={0};sc(S_FILEVAULT,0,&vq,&vinfo,0);
         int r0=rowcard(x,96,w,2);
         row2(x,r0,w,"VOLUME DATI",vinfo.enabled?(vinfo.locked?"Bloccato":"Cifrato"):ei.state?"Vecchia cifratura dei file":"Non cifrato");
         row2(x,r0+40,w,"PROTEZIONE","Dati, nomi e metadati");
-        nenc=1;enclab[0]="Gestisci FileVault…";encact[0]=100;encpass[0]=0;henc[0]=(R){x,196,210,28};
+        nenc=1;enclab[0]="FileVault…";encact[0]=100;encpass[0]=0;henc[0]=(R){x,196,210,28};
         if(ei.state&&!vinfo.enabled){enclab[1]="Disattiva vecchia cifratura";encact[1]=2;encpass[1]=1;henc[1]=(R){x+222,196,235,28};nenc=2;}
         for(int i=0;i<nenc;i++)button(henc[i].x,henc[i].y,henc[i].w,enclab[i],i==0);
         if(msg[0])Text(x,232,msg,F_SMALL,SUB);
@@ -256,6 +263,7 @@ static void paint(void)
         row2(x, r1, w, "NOME", acct.name[0] ? acct.name : "—");
         row2(x, r1 + 40, w, "ACCESSO", "All’avvio del sistema");
         Text(x, 390, "Se l’account non è leggibile, il login offre «Reimposta l’account».", F_SMALL, SUB);
+        }
     } else if (pane == 3) {
         Text(x, 78, "TIME MACHINE", F_MICRO, SUB);
         int r0 = rowcard(x, 96, w, 3);
@@ -367,6 +375,11 @@ static void apply_resolution(int i){
 static void click(int ax, int ay)
 {
     if (modal_mode)return;
+    if(pane==2&&vault_open){
+        if(si.recovery){Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);return;}
+        if(ax>=208){if(ay>=30&&ay<62&&ax>=aw-150){if(vault_view_can_leave()){vault_view_leave();vault_open=0;}}else{Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);}return;}
+        if(!vault_view_can_leave())return;
+    }
     if(res_open){if(hit(hresmenu,ax,ay)){int j=(ay-hresmenu.y-RES_PAD)/RES_ROW;if(ay>=hresmenu.y+RES_PAD&&j<MIN((int)si.nmodes-res_scroll,RES_ROWS))apply_resolution(res_scroll+j);return;}res_open=0;if(!hit(hres,ax,ay))return;}
     if (hit(hsearch, ax, ay)) {
         focus_search = 1;
@@ -403,7 +416,7 @@ static void click(int ax, int ay)
     } else if (pane == 2) {
         for (int i = 0; i < nenc;i++)if (hit(henc[i], ax, ay)) {
                 msg[0] = 0;
-                if(encact[i]==100){sc(S_SPAWN,DISKUTIL,"@vault",0,0);return;}
+                if(encact[i]==100){vault_open=1;return;}
                 if (encpass[i]) {
                     modal_mode = 1;
                     modal_op = encact[i];
@@ -448,6 +461,7 @@ static void click(int ax, int ay)
 static void key(Event *e)
 {
     int k = e->a;
+    if(pane==2&&vault_open&&!focus_search){vault_view_event(e);return;}
     if(res_open){if(k==27)res_open=0;else if(k=='\n'||k=='\r')apply_resolution(res_pick);else if(k==K_UP||k==K_DOWN){res_pick=MAX(0,MIN((int)si.nmodes-1,res_pick+(k==K_UP?-1:1)));if(res_pick<res_scroll)res_scroll=res_pick;if(res_pick>=res_scroll+RES_ROWS)res_scroll=res_pick-RES_ROWS+1;}return;}
     if (modal_mode == 1) {
         if (k == 27)modal_mode = 0;
@@ -493,6 +507,8 @@ static void key(Event *e)
 void app_main(void)
 {
     win(860, 540, "Impostazioni di Sistema");
+    vault_view_init();
+    char arg[PATHLEN];sc(S_STARTARG,arg,0,0,0);if(eq(arg,"@vault")){pane=2;vault_open=1;}
     refresh();
     paint();
     for (;;) {
@@ -507,12 +523,13 @@ void app_main(void)
         while (sc(S_EVENT, &e, 0, 0, 0) > 0) {
             d = 1;
             if (baseevent(&e))continue;
-            if (e.type == EV_CLOSE)quit();
+            if (e.type == EV_CLOSE){if(vault_view_can_close())quit();continue;}
             if (e.type == EV_CLICK)click(e.a, e.b);
             if (e.type == EV_KEY)key(&e);
             if(e.type==EV_SCROLL&&res_open){res_scroll=MAX(0,MIN(MAX(0,(int)si.nmodes-RES_ROWS),res_scroll-(e.a>0?1:-1)));res_pick=res_scroll;}
         }
         if (pane == 4 && (int)si.second != oldsec)d = 1;
+        if(vault_view_tick())d=1;
         if (d)paint();
         slp(4);
     }

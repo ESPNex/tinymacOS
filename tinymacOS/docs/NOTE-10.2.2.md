@@ -15,7 +15,7 @@ Recovery con kernel separato, barra dei menu, tema scuro opaco e sfondo nero con
 
 ## Utilizzo e sicurezza
 
-Per attivare: **Impostazioni → Privacy → FileVault**. Salvare la chiave di recupero su un supporto esterno e confermare gli ultimi otto caratteri. In Recovery: **Utility → FileVault**, selezionare il disco, quindi sbloccarlo prima delle operazioni sui dati. La vecchia cifratura per-file deve essere disattivata prima dell'attivazione del nuovo formato.
+Per attivare: **Impostazioni → Sicurezza e privacy → FileVault**. Salvare la chiave di recupero su un supporto esterno e confermare gli ultimi otto caratteri. In Recovery: **Utility → Terminale**, eseguire `fdesetup manage`, selezionare il disco nella sezione FileVault di Impostazioni e sbloccarlo prima delle operazioni sui dati. La vecchia cifratura per-file deve essere disattivata prima dell'attivazione del nuovo formato.
 
 EFI, partizioni di avvio e sistema Recovery restano pubblici. La cifratura protegge i dati a riposo, non RAM, firmware o sessioni già compromesse. Non impedisce il ripristino di una vecchia immagine completa del disco. Senza password e chiave di recupero non è previsto un accesso alternativo. Le copie locali sullo stesso disco non sono un backup contro i guasti fisici.
 
@@ -30,3 +30,11 @@ Sistema sperimentale x86-64: non è macOS e non esegue applicazioni macOS. Brows
 **ASRock Q1900M/J1900 non collaudata fisicamente.** Le verifiche virtuali non dimostrano compatibilità con quella scheda. Il formato cifrato è nuovo e sperimentale: non usarlo come unica copia di dati importanti.
 
 La pubblicazione 10.2.2 è separata: non sostituisce la 10.2.1.
+
+## Rimpiazzo della stessa 10.2.2
+
+FileVault è ora una **sezione interna di Impostazioni di Sistema**, raggiungibile da Sicurezza e privacy: nessuna app FileVault separata e nessun avvio di Utility Disco per gestire la cifratura. La schermata mantiene solo stato, azioni, progresso e istruzioni essenziali per le credenziali. Le indicazioni tecniche restano nella documentazione.
+
+In Recovery la voce FileVault è rimossa dal menu Utility. L'accesso avviene dal Terminale con `fdesetup status` e `fdesetup manage`; quest'ultimo apre la stessa sezione integrata in Impostazioni per inserire i segreti nei campi mascherati, senza salvarli negli argomenti o nella cronologia della shell.
+
+Versione 10.2.2 e build 30B13 conservate; ISO, sorgenti, impronte e validazione della release sono sostituiti. Le modifiche sono integrate nel ramo `main`. Nessuna modifica al formato cifrato e nessuna sostituzione della 10.2.1.

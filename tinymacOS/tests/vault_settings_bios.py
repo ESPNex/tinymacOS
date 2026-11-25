@@ -24,7 +24,7 @@ password='local-test-285';name='settings-bios-cipher.txt';secret='SETTINGS-BIOS-
 try:
  with Installed('/not-attached',w,ev,'settings',disk='target',boot_disk=True) as g:
   g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd(f'echo {secret} > Documents/{name}');g.cmd(f'cat Documents/{name}',secret)
-  g.key('f4');x,y=g.visible('Sicurezza e privacy');g.click(x+45,y+8);x,y=g.visible('Gestisci FileVault');g.click(x+60,y+8);g.visible('FileVault nativo');g.visible('Disattivo');x,y=g.visible('Attiva FileVault');g.click(x+50,y+7);g.visible('Attivazione FileVault')
+  g.key('f4');x,y=g.visible('Sicurezza e privacy');g.click(x+45,y+8);x,y=g.visible('FileVault…');g.click(x+60,y+8);g.visible('FileVault',faces=(3,));g.visible('Impostazioni di Sistema');g.visible('Indietro');g.shot('settings-filevault-embedded');g.visible('Disattivo');x,y=g.visible('Indietro');g.click(x+30,y+7);g.visible('ACCOUNT');x,y=g.visible('FileVault…');g.click(x+50,y+7);g.visible('Disattivo');x,y=g.visible('Attiva FileVault');g.click(x+50,y+7);g.visible('Attivazione FileVault')
   g.type('wrong-password');g.key('tab');g.type('wrong-password');g.key('ret');g.visible('Password errata',180)
   # The panel erases both fields after a rejected operation and leaves focus
   # on the second field. Tab returns to the first without retaining a secret.
@@ -32,7 +32,7 @@ try:
   with disk.open('rb') as f:f.seek((51200+63632)*512);h=f.read(512)
   assert h[:8]==b'TMCFV002' and struct.unpack_from('<I',h,20)[0]==0
   g.p.terminate();g.p.wait(10)
-  ok('Settings Privacy launches the actual FileVault app, rejects a wrong account password and creates the volume without formatting; power cut before key confirmation leaves payload unconverted')
+  ok('Settings Privacy embeds FileVault inside the existing Settings window, rejects a wrong account password and creates the volume without formatting; power cut before key confirmation leaves payload unconverted')
  with Locked('/not-attached',w,ev,'bios',disk='target',boot_disk=True,launcher=root/'tools/run-bios-installed.sh') as g:
   g.type(password);g.key('ret');g.visible('Preferiti',1000);g.key('f2');g.visible('Sessione locale');g.cmd(f'cat Documents/{name}',secret);g.cmd('fdesetup status','FileVault is On.');g.shot('bios-encrypted-desktop');g.cmd('off');g.p.wait(15)
  data=disk.read_bytes();assert name.encode() not in data and secret.encode() not in data

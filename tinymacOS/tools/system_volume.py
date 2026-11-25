@@ -15,7 +15,7 @@ def macho(p):
         segs.append(struct.pack('<II16sQQQQiiII',0x19,72,name.encode(),a,(ms+4095)&~4095,off,fs,prot,prot,0,0))
     cmds=b''.join(segs)+struct.pack('<IIQQ',0x80000028,24,ep,0);head=struct.pack('<8I',0xfeedfacf,0x1000007,3,2,len(segs)+1,len(cmds),1,0)+cmds;body[:len(head)]=head;return bytes(body)
 apps=[('finder','Finder','/System/Library/CoreServices'),('terminal','Terminal','/Applications/Utilities'),('textedit','TextEdit','/Applications'),('settings','System Settings','/Applications'),('about','About This Computer','/System/Library/CoreServices'),('calculator','Calculator','/Applications'),('calendar','Calendar','/Applications'),('monitor','Activity Monitor','/Applications/Utilities'),('gallery','Gallery','/Applications'),('diskutility','Disk Utility','/Applications/Utilities'),('notes','Notes','/Applications'),('stickies','Stickies','/Applications'),('timemachine','Time Machine','/Applications')]
-if mode=='recovery':apps=[x for x in apps if x[0] in ('terminal','diskutility')]
+if mode=='recovery':apps=[x for x in apps if x[0] in ('terminal','diskutility','settings')]
 if mode=='live':apps+=[('installer','Install tinymacOS','/Applications')]
 files={};paths=['/'];entries=[(-1,1,'',None)]
 def add(p,data):

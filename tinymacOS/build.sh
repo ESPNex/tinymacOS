@@ -25,8 +25,9 @@ for a in "${APPS[@]}"; do
  finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c userspace/filebrowser.c);;
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
- settings|about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
- diskutility) objects=(u-ui.c.o);units=(userspace/vaultpanel.c);;
+ settings) objects=(u-ui.c.o);units=(userspace/fontmetrics.c userspace/vaultpanel.c);;
+ about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
+ diskutility) objects=(u-ui.c.o);;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"

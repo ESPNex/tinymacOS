@@ -79,7 +79,7 @@ static int bar_menu=-1, bar_pick, info_open, power_confirm;
 static Rect bar_hits[7], bar_popup;
 static struct {const char *label;int action,enabled;} bar_items[8];
 static int bar_count;
-enum {RM_INFO=1001,RM_RESTART,RM_OFF,RM_STARTUP,RM_TERMINAL,RM_DISK,RM_CLOSE,RM_MIN,RM_COPY,RM_PASTE,RM_BACKUP,RM_ERASE,RM_VAULT};
+enum {RM_INFO=1001,RM_RESTART,RM_OFF,RM_STARTUP,RM_TERMINAL,RM_DISK,RM_CLOSE,RM_MIN,RM_COPY,RM_PASTE,RM_BACKUP,RM_ERASE};
 static void recovery_power(int restart){power_confirm=restart?1:2;bar_menu=-1;dirty=1;}
 static void menu_item(const char *s,int a,int enabled){if(bar_count<8){bar_items[bar_count].label=s;bar_items[bar_count].action=a;bar_items[bar_count++].enabled=enabled;}}
 static void menu_contents(void)
@@ -90,7 +90,7 @@ static void menu_contents(void)
     case 1:menu_item("Info sul Recupero",RM_INFO,1);if(active)menu_item("Esci dall’app",RM_CLOSE,1);break;
     case 2:menu_item("Chiudi finestra",RM_CLOSE,active);break;
     case 3:/* The maintenance clients expose no clipboard action. */menu_item("Copia",RM_COPY,0);menu_item("Incolla",RM_PASTE,0);break;
-    case 4:menu_item("FileVault…",RM_VAULT,1);menu_item("Terminale",RM_TERMINAL,1);menu_item("Utility Disco",RM_DISK,1);menu_item("Disco di avvio…",RM_STARTUP,1);menu_item("Crea una copia locale…",RM_BACKUP,1);menu_item("Inizializza i dati utente…",RM_ERASE,1);break;
+    case 4:menu_item("Terminale",RM_TERMINAL,1);menu_item("Utility Disco",RM_DISK,1);menu_item("Disco di avvio…",RM_STARTUP,1);menu_item("Crea una copia locale…",RM_BACKUP,1);menu_item("Inizializza i dati utente…",RM_ERASE,1);break;
     case 5:menu_item("Riduci a icona",RM_MIN,active);menu_item("Terminale",RM_TERMINAL,1);menu_item("Utility Disco",RM_DISK,1);break;
     case 6:menu_item("Info sul Recupero",RM_INFO,1);break;
     }
@@ -103,7 +103,6 @@ static void menu_action(int a)
     else if(a==RM_STARTUP)begin_operation(4);
     else if(a==RM_BACKUP)begin_operation(5);
     else if(a==RM_ERASE)begin_operation(6);
-    else if(a==RM_VAULT)openarg(DISKUTIL,"@vault");
     else if(a==RM_TERMINAL)launch(TERMINAL);
     else if(a==RM_DISK)launch(DISKUTIL);
     else if(a==RM_CLOSE)action(142);
