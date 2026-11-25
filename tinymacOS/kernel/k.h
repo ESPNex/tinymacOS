@@ -229,3 +229,14 @@ int bootconfig_disk(int,u32);
 #define lognum(...) ((void)0)
 #define loghex(...) ((void)0)
 #endif
+
+#include "vault.h"
+int vault_random(u8*,size_t);
+Vault *volume_vault(int);
+int volume_current(void);
+int volume_locked(void);
+int volume_cipher_io(int,u32,u32,void*,int);
+int filevault_control(int,VaultRequest*,VaultInfo*);
+int session_check_password(const char*);
+
+int session_record_password(const void*,const char*);

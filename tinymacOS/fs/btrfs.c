@@ -826,6 +826,9 @@ static void libraries(void)
 }
 void fs_init(void)
 {
+    persistent=usednodes=0;configid=-1;ovl_slot=-1;
+    erase(nodes,sizeof nodes);erase(ram,sizeof ram);
+    enc_state=enc_locked=0;erase(enc_key,sizeof enc_key);
     wall = 12;theme = 7;
     int imported = 0;
     u8 h[512], factory[512];
@@ -1497,6 +1500,9 @@ static int enc_disable_i(const char *pass)
 // sub: 0 status, 1 encrypt, 2 decrypt, 3 lock, 4 unlock (FileVault-style).
 int fs_enc_i(int sub, const char *pass, EncInfo *out)
 {
+    Vault *vault=volume_vault(volume_current());
+    if(vault&&vault->present){if(sub||!out)return -1;*out=(EncInfo){.state=1,.locked=!vault->unlocked,.files=0};return 0;}
+    if(sub==1)return -1; /* New encryption uses the authenticated volume format only. */
     if (sub == 0) {
         if (!out)
             return -1;

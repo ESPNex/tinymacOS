@@ -26,6 +26,7 @@ for a in "${APPS[@]}"; do
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
  settings|about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
+ diskutility) objects=(u-ui.c.o);units=(userspace/vaultpanel.c);;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"
@@ -42,7 +43,7 @@ LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/l
       net/lwip/core/ipv4/icmp.c net/lwip/core/ipv4/igmp.c net/lwip/core/ipv4/ip4.c
       net/lwip/core/ipv4/ip4_addr.c net/lwip/core/ipv4/ip4_frag.c net/lwip/netif/ethernet.c
       net/lwip/core/tcp.c net/lwip/core/tcp_in.c net/lwip/core/tcp_out.c)
-for f in arch/*.S arch/*.c kernel/*.c drivers/*.c fs/*.c storage/*.c crypto/*.c "${LWIP[@]}";do o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Inet/include -Inet/lwip/include -c "$f" -o "$D/$o";KOBJ+=("$o");done
+for f in arch/*.S arch/*.c kernel/*.c drivers/*.c fs/*.c storage/*.c crypto/*.c crypto/monocypher/monocypher.c "${LWIP[@]}";do o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Inet/include -Inet/lwip/include -c "$f" -o "$D/$o";KOBJ+=("$o");done
 # Real pinned upstream Linux Boot mouse/keyboard + implemented USB/input compatibility.
 # xHCI remains native; whole original UHCI/EHCI feed the class adapter.
 # Whole original Linux DMA pool allocator uses its own private kernel ABI.

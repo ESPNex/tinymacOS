@@ -175,7 +175,7 @@ static void field_draw(int i)
     carets[i]=MAX(0,MIN(carets[i],len));
     int col=text_columns(s,carets[i]),startcol=MAX(0,col-(secret?18:21));
     roundr(r.x,r.y,r.w,r.h,17,i==field?0x284969:0x172c45,238);
-    const char *hint = !setup() ? "Inserisci la password" : i == 0 ? "Nome utente" : i == 1 ?
+    const char *hint = !setup() ? (account.volume_locked?"Password o chiave di recupero":"Inserisci la password") : i == 0 ? "Nome utente" : i == 1 ?
                        "Password · almeno 8 caratteri" : "Conferma password";
     int cx=r.x+16;
     if (!s[0])text(r.x+(i==field?24:17),r.y+8,hint,F_SMALL,0xf3f5fc);
@@ -222,7 +222,7 @@ void login_draw(void)
             Rect r = inputbox(0);
             int cy = r.y + r.h / 2;
             login_activity(cx, cy, lastPhase < 0 ? 0 : lastPhase);
-            center(cx, cy + 22, setup() ? "Creazione dell’account…" : "Verifica della password…", F_SMALL, 0xf4f5fa);
+            center(cx, cy + 22, setup() ? "Creazione dell’account…" : account.volume_locked?"Sblocco del volume FileVault…":"Verifica della password…", F_SMALL, 0xf4f5fa);
         } else if (account.state != SESSION_BROKEN) {
             for (int i = 0; i < (setup() ? 3 : 1); i++)field_draw(i);
             Rect r = submitbox();
@@ -235,7 +235,7 @@ void login_draw(void)
             }
             int yy = r.y + r.h + 9;
             center(cx, yy, notice[0] ? notice : (!setup() &&
-                                                 !sys.persistent ? "Sessione temporanea" : ""), F_SMALL, 0xfff2e6);
+                                                 !sys.persistent ? (account.volume_locked?"Volume cifrato · dati ancora bloccati":"Sessione temporanea") : ""), F_SMALL, 0xfff2e6);
         } else {
             center(cx, y + sz + 50, "Impossibile leggere l’account. Il disco non è stato reimpostato.", F_SMALL,
                    0xffe6d6);
@@ -453,7 +453,7 @@ int login_step(void)
         }
         if (res < 0) {
             shake = sys.reduce_motion ? 0 : 8;
-            notice_set(res == -2 ? "Password non corretta. Riprova." : "Impossibile salvare l’account.");
+            notice_set(res == -2 ? "Password non corretta. Riprova." : res == -4?"Volume non disponibile. Usa Recupero senza inizializzare il disco.":"Impossibile salvare l’account.");
         }
     }
     sc(S_SESSION, &account, 0, 0, 0);

@@ -90,3 +90,17 @@ int decode_salt(const char text[33], u8 out[16])
     erase(tmp, 16);
     return ok;
 }
+
+/* Secret key entropy: fresh RDSEED/RDRAND or FIPS-health-tested jitterentropy.
+ * Deliberately NOT enrollment_salt(): no public boot/setup-code reuse, clocks,
+ * addresses, or deterministic fallback. Fail closed if all sources decline. */
+int vault_random(u8 *out,size_t n)
+{
+ u32 a[4];cpuid(0,a);u32 max=a[0];int hw=0,seed=0;
+ if(max>=7){cpuid(7,a);seed=!!(a[1]&(1u<<18));}
+ cpuid(1,a);hw=!!(a[2]&(1u<<30));
+ if(seed||hw){u8 prev[16]={0},b[16];size_t at=0;while(at<n){if(!cpu_salt(b,seed)||!memcmp(prev,b,16)){erase(out,n);erase(b,16);return 0;}memcpy(prev,b,16);size_t z=MIN(n-at,16);memcpy(out+at,b,z);at+=z;}erase(b,16);erase(prev,16);return 1;}
+ const unsigned flags=JENT_FORCE_FIPS|JENT_DISABLE_INTERNAL_TIMER;
+ if(!jent_entropy_init_ex(3,flags)){struct rand_data*ec=jent_entropy_collector_alloc(3,flags);if(ec){int ok=jent_read_entropy(ec,(char*)out,n)==(long)n;jent_entropy_collector_free(ec);if(ok)return 1;}}
+ erase(out,n);return 0;
+}

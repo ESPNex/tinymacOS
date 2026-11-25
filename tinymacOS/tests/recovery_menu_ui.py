@@ -17,8 +17,8 @@ def menu(g,title,item):
 try:
  with Recovery(iso,w,ev,'menu',live=True) as g:
   g.click(23,16);g.visible('Riavvia',box=(0,34,300,180));g.shot('apple-menu');x,y=g.visible('Riavvia',box=(0,34,300,180));g.click(x+20,y+8);g.visible('Riavviare il computer?');g.key('esc');g.visible('Ripristina da una copia locale');ok('Apple menu opens a real restart confirmation; Escape cancels without reboot')
-  menu(g,'Aiuto','Info sul Recupero');g.visible('Versione 10.2.1');g.shot('info-menu-only');g.key('ret');ok('Version is available only on explicit menu request, not in the home window')
-  g.key('f10');g.visible('Terminale',box=(0,34,900,240));g.key('down');g.key('ret');g.visible('Sessione locale');g.shot('keyboard-menu-terminal');ok('F10, Down and Enter activate the native Terminal through Utility')
+  menu(g,'Aiuto','Info sul Recupero');g.visible('Versione 10.2.2');g.shot('info-menu-only');g.key('ret');ok('Version is available only on explicit menu request, not in the home window')
+  g.key('f10');g.visible('Terminale',box=(0,34,900,240));g.key('down');g.key('down');g.key('ret');g.visible('Sessione locale');g.shot('keyboard-menu-terminal');ok('F10, Down and Enter activate the native Terminal through Utility')
   menu(g,'File','Chiudi finestra');g.visible('Recupero tinymacOS',box=(0,0,800,34));ok('File > Close closes the native client and restores the Recovery app menu')
   menu(g,'Utility','Terminale');g.visible('Sessione locale');menu(g,'Finestra','Riduci a icona');g.visible('Recupero tinymacOS',box=(0,0,800,34));menu(g,'Finestra','Terminale');g.visible('Sessione locale');ok('Window menu minimizes and restores the app without needing a Dock')
   menu(g,'File','Chiudi finestra');menu(g,'Utility','Inizializza i dati utente');g.visible('Nessun disco disponibile.');g.key('ret');ok('Destructive utility refuses to run without an eligible disk')

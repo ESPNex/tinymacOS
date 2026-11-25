@@ -38,3 +38,5 @@
 /usr/bin/host
 /usr/bin/fetch
 /usr/bin/bootverbose
+
+/usr/bin/fdesetup

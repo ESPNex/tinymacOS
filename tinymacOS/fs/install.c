@@ -14,14 +14,15 @@ static u8 io[CHUNK * 512] ALIGNED(4096), snapshot[NDATA * 512] ALIGNED(512), mbr
 static Part parts[128];
 static Gpt primary, backup;
 static int mounted = -1;
+int volume_current(void){return mounted;}
 static u32 offset;
 static int bread(u32 l, void *p)
 {
-    return l < NPART ? sata_io(mounted, offset + l, 1, p, 0) : -1;
+    return l < NPART ? volume_cipher_io(mounted,offset+l,1,p,0) : -1;
 }
 static int bwrite(u32 l, const void *p)
 {
-    return l < NPART && !sata_io(mounted, offset + l, 1, (void *)p, 1) ? sata_flush(mounted) : -1;
+    return l < NPART ? volume_cipher_io(mounted,offset+l,1,(void*)p,1) : -1;
 }
 int volume_mount(Block *b)
 {
@@ -49,6 +50,7 @@ int volume_mount(Block *b)
             offset = LDATA;
         }
         mounted = d;
+        if(offset==LDATA)volume_vault(d);
         *b = (Block) {
             bread, bwrite, NPART
         };
@@ -267,7 +269,7 @@ void disk_info_i(DiskInfo *r)
     r->count = sata_count();
     r->current = mounted;
     for (int d = 0; d < r->count; d++) {
-        Medium m = {sata_io, sata_flush, d, sata_size(d)};
+        Medium m = {volume_cipher_io, sata_flush, d, sata_size(d)};
         r->disk[d].sectors = m.z;
         strset(r->disk[d].model, sata_model(d), 44);
         int t = layout_read(&m, &layout_info);
@@ -279,7 +281,7 @@ void disk_info_i(DiskInfo *r)
 int disk_operation_i(int op, int d)
 {
     if (isbusy() || d < 0 || d >= sata_count())return -1;
-    Medium m = {sata_io, sata_flush, d, sata_size(d)};
+    Medium m = {volume_cipher_io, sata_flush, d, sata_size(d)};
     if(boot.recovery && op>=5 && op<=9){
         if(layout_read(&m,&layout_info)!=2)return -1;
         if(op==5)return restore_copy(&m);
@@ -287,7 +289,7 @@ int disk_operation_i(int op, int d)
         if(op==7)return reset_data(&m);
         if(op==9)return firstaid(&m,0);
         int ok=1;
-        for(u32 i=0;i<NDATA;i+=CHUNK)if(sata_io(d,LDATA+i,MIN(CHUNK,NDATA-i),snapshot+512*i,0)){ok=0;break;}
+        for(u32 i=0;i<NDATA;i+=CHUNK)if(volume_cipher_io(d,LDATA+i,MIN(CHUNK,NDATA-i),snapshot+512*i,0)){ok=0;break;}
         int r=ok?save_copy(&m,snapshot):-1;erase(snapshot,sizeof snapshot);return r;
     }
     if (op == 4 || op == 1)return firstaid(&m, op == 1);

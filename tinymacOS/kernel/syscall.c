@@ -162,6 +162,15 @@ static Frame *syscall_inner(Frame *f)
         return f;
     }
     switch (n) {
+    case S_FILEVAULT:
+        if(IN(b,sizeof(VaultRequest))&&OUT(b,sizeof(VaultRequest))&&OUT(c,sizeof(VaultInfo))&&
+           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND)){
+            VaultRequest q=*(VaultRequest*)b;VaultInfo out;
+            if(q.password[64]||q.replacement[64]||q.recovery[64]){erase(&q,sizeof q);break;}
+            if(a<=8){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
+            erase(&q,sizeof q);
+        }
+        break;
     case S_SESSION:
         if (desktop && OUT(a, sizeof(SessionInfo))) {
             session_status((SessionInfo *)a);

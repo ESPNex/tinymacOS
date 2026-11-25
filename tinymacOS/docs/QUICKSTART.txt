@@ -1,4 +1,4 @@
-tinymacOS 10.2.1 Tramontana / 30B12 — installazione e Recupero
+tinymacOS 10.2.2 Tramontana / 30B13 — installazione e Recupero
 
 Configurazione consigliata: VM x86-64 Q35/AHCI, 1 GiB RAM, Secure Boot
 spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara

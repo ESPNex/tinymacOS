@@ -242,35 +242,15 @@ static void paint(void)
         if(!(caps&1)&&!(caps&2))Text(x,413,"Avvio live: per salvare la scelta serve un sistema installato.",F_MICRO,SUB);
         if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
-        Text(x, 78, "CRITTOGRAFIA DEI FILE", F_MICRO, SUB);
-        int r0 = rowcard(x, 96, w, 2);
-        row2(x, r0, w, "STATO", !ei.state ? "Disattiva" : ei.locked ? "Bloccata" : "Attiva");
-        char nf[24] = "";
-        addnum(nf, ei.files, 24);
-        row2(x, r0 + 40, w, "FILE PROTETTI", nf);
-        nenc = 0;
-        if (!ei.state) {
-            enclab[nenc] = "Attiva crittografia";
-            encact[nenc] = 1;
-            encpass[nenc] = 1;
-            henc[nenc++] = (R) {x, 196, 190, 26};
-        } else if (!ei.locked) {
-            enclab[nenc] = "Blocca";
-            encact[nenc] = 3;
-            encpass[nenc] = 0;
-            henc[nenc++] = (R) {x, 196, 110, 26};
-            enclab[nenc] = "Disattiva crittografia";
-            encact[nenc] = 2;
-            encpass[nenc] = 1;
-            henc[nenc++] = (R) {x + 122, 196, 200, 26};
-        } else {
-            enclab[nenc] = "Sblocca";
-            encact[nenc] = 4;
-            encpass[nenc] = 1;
-            henc[nenc++] = (R) {x, 196, 120, 26};
-        }
-        for (int i = 0; i < nenc;i++)button(henc[i].x, henc[i].y, henc[i].w, enclab[i], i == 0);
-        if (msg[0])Text(x, 232, msg, F_SMALL, SUB);
+        Text(x,78,"FILEVAULT",F_MICRO,SUB);
+        VaultRequest vq={.disk=-1};VaultInfo vinfo={0};sc(S_FILEVAULT,0,&vq,&vinfo,0);
+        int r0=rowcard(x,96,w,2);
+        row2(x,r0,w,"VOLUME DATI",vinfo.enabled?(vinfo.locked?"Bloccato":"Cifrato"):ei.state?"Vecchia cifratura dei file":"Non cifrato");
+        row2(x,r0+40,w,"PROTEZIONE","Dati, nomi e metadati");
+        nenc=1;enclab[0]="Gestisci FileVault…";encact[0]=100;encpass[0]=0;henc[0]=(R){x,196,210,28};
+        if(ei.state&&!vinfo.enabled){enclab[1]="Disattiva vecchia cifratura";encact[1]=2;encpass[1]=1;henc[1]=(R){x+222,196,235,28};nenc=2;}
+        for(int i=0;i<nenc;i++)button(henc[i].x,henc[i].y,henc[i].w,enclab[i],i==0);
+        if(msg[0])Text(x,232,msg,F_SMALL,SUB);
         Text(x, 268, "ACCOUNT", F_MICRO, SUB);
         int r1 = rowcard(x, 286, w, 2);
         row2(x, r1, w, "NOME", acct.name[0] ? acct.name : "—");
@@ -326,7 +306,7 @@ static void paint(void)
         Text(x, 278, "Data e ora lette dall'orologio del computer.", F_SMALL, SUB);
     } else {
         int r0 = rowcard(x, 84, w, 4);
-        row2(x, r0, w, "VERSIONE", "tinymacOS 10.2.1 (30B12)");
+        row2(x, r0, w, "VERSIONE", "tinymacOS 10.2.2 (30B13)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
         row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
@@ -423,6 +403,7 @@ static void click(int ax, int ay)
     } else if (pane == 2) {
         for (int i = 0; i < nenc;i++)if (hit(henc[i], ax, ay)) {
                 msg[0] = 0;
+                if(encact[i]==100){sc(S_SPAWN,DISKUTIL,"@vault",0,0);return;}
                 if (encpass[i]) {
                     modal_mode = 1;
                     modal_op = encact[i];

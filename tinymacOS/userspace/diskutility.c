@@ -1,4 +1,5 @@
 #include "volume.h"
+void vault_panel(void);
 static DiskInfo d;
 static SnapInfo sn[8];
 static FsInfo fi;
@@ -271,6 +272,7 @@ static void paint(void)
 }
 void app_main(void)
 {
+    char argument[PATHLEN];sc(S_STARTARG,argument,0,0,0);if(eq(argument,"@vault")){vault_panel();return;}
     win(693, 384, "Utility Disco");
     refresh();
     sel = d.current >= 0 ? d.current : 0;

@@ -17,6 +17,8 @@ static u8 pending_salt[16];
 static int salt_ready;
 static int state = SESSION_BROKEN, busy, attempts;
 static u64 retry_at;
+static char volume_pass[65];
+static int volume_job;
 static int same(const u8 *a, const u8 *b, int n)
 {
     u32 d = 0;
@@ -45,6 +47,7 @@ void session_init(void)
     /* Recovery has an ephemeral maintenance session, not the installed account.
      * Never read credentials, run enrollment or unlock a mounted user volume. */
     if(boot.recovery){state=SESSION_OPEN;logstr("[session] isolated Recovery, no account authentication\n");return;}
+    if(volume_locked()){state=SESSION_LOCKED;erase(&saved,sizeof saved);return;}
     Account a, b;
     int x = account_sector(0, &a, 0), y = account_sector(1, &b, 0);
     if (!x && valid(&a)) {
@@ -80,7 +83,9 @@ void session_status(SessionInfo *q)
                                    !salt_ready, .wait_seconds = ticks < retry_at ? (retry_at - ticks + 99) / 100 : 0,
                                                 .fraction = busy ? job.done * 100 / ROUNDS : 0
     };
-    strset(q->name, state == SESSION_SETUP ? "Utente" : saved.name, sizeof q->name);
+    q->volume_locked=volume_locked();
+    if(volume_job){VaultRequest vq={.disk=-1};VaultInfo vi;filevault_control(0,&vq,&vi);q->fraction=vi.progress;}
+    strset(q->name,q->volume_locked?"Sblocca Macintosh HD":state == SESSION_SETUP ? "Utente" : saved.name, sizeof q->name);
 }
 int session_setup_code(const char text[33])
 {
@@ -109,10 +114,11 @@ static int session_reset(void)
 }
 int session_begin(const AuthRequest *q)
 {
-    if (q->op == 1)return session_reset();
+    if (q->op == 1)return volume_locked()?-1:session_reset();
     if (busy || ticks < retry_at || (state != SESSION_SETUP && state != SESSION_LOCKED))return -1;
     int n = field(q->password, sizeof q->password);
     if (n < 1)return -1;
+    if(volume_locked()){strset(volume_pass,q->password,sizeof volume_pass);volume_job=1;busy=1;return 0;}
     if (state == SESSION_SETUP) {
         if (n < 0 || text_columns(q->password,n) < 8 || field(q->name, 32) < 1)return -1;
         memset(&draft, 0, sizeof draft);
@@ -130,6 +136,18 @@ int session_begin(const AuthRequest *q)
 int session_work(void)
 {
     if (!busy)return -1;
+    if(volume_job){
+        VaultRequest q={.disk=-1};VaultInfo vi;int r=0;
+        if(volume_job==1){strset(q.password,volume_pass,65);r=filevault_control(4,&q,&vi);erase(&q,sizeof q);if(!r)volume_job=2;}
+        else{r=filevault_control(0,&q,&vi);if(!r&&(vi.state==FV_ENCRYPTING||vi.state==FV_DECRYPTING))r=filevault_control(3,&q,&vi);
+            if(r>=0&&vi.state!=FV_ENCRYPTING&&vi.state!=FV_DECRYPTING){
+                AuthRequest request={0};strset(request.password,volume_pass,65);erase(volume_pass,65);volume_job=busy=0;
+                fs_init();session_init();int begin=session_begin(&request);erase(&request,sizeof request);return begin<0?-4:0;
+            }
+        }
+        if(r<0){erase(volume_pass,65);volume_job=busy=0;attempts=MIN(attempts+1,5);retry_at=ticks+(100ull<<(attempts-1));return r==FV_AUTH?-2:-4;}
+        return 0;
+    }
     pbk_run(&job, MIN(512u, ROUNDS - job.done));
     if (job.done < ROUNDS)return 0;
     int ok = 0, io = 0;
@@ -182,4 +200,16 @@ int session_lock(void)
     state = SESSION_LOCKED;
     logstr("[session] locked; clients suspended\n");
     return 0;
+}
+
+int session_check_password(const char*pass)
+{
+ if(!session_open()||!valid(&saved)||strlen(pass)>64)return 0;
+ PBKDF p;pbk_begin(&p,(const u8*)pass,strlen(pass),saved.salt);pbk_run(&p,ROUNDS-1);int ok=same(p.sum,saved.verifier,32);erase(&p,sizeof p);return ok;
+}
+
+int session_record_password(const void*record,const char*pass)
+{
+ const Account*a=record;if(!valid(a)||strlen(pass)>64)return 0;PBKDF p;
+ pbk_begin(&p,(const u8*)pass,strlen(pass),a->salt);pbk_run(&p,ROUNDS-1);int ok=same(p.sum,a->verifier,32);erase(&p,sizeof p);return ok;
 }

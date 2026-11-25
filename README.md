@@ -2,13 +2,14 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery con kernel dedicato. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.2.1 Tramontana · build 30B12 · pre-release.**
+**Versione attuale: 10.2.2 Tramontana · build 30B13 · pre-release.**
 
-[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.1) · [Novità della 10.2.1](tinymacOS/docs/NOTE-10.2.1.md)
+[Scarica ISO e sorgenti](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.2) · [Novità della 10.2.2](tinymacOS/docs/NOTE-10.2.2.md)
 
 ## Funzioni principali
 
-- Desktop con Finder, Terminale, editor, utility e temi chiaro/scuro.
+- Desktop con Finder a doppio clic, Terminale, editor, utility e temi chiaro/scuro.
+- FileVault nativo: volume dati cifrato, sblocco prima del desktop, chiave di recupero e gestione da Impostazioni/Recovery.
 - Interfaccia Liquid Glass, Dock e Centro di Controllo.
 - Tastiera italiana e input USB con controller xHCI/EHCI/UHCI; percorso canonico USB/HID Linux su xHCI/EHCI.
 - Avvio ottico BIOS/UEFI, installazione su SATA e Recovery nativa offline, scura e opaca.

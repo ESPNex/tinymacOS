@@ -1,0 +1,3 @@
+02174117935699d418443c75a558a287deb06ef8cf7c1adced61d9047d2f323d  tinymacOS/crypto/monocypher/monocypher.c
+fcaf6ed771358bb4f40fba016f6518ae86ec02b1b877d2cc35ad92d3a26fd7b3  tinymacOS/crypto/monocypher/monocypher.h
+a5781770269d2516e52ba4863f790c10a16da4089a1e81823aee19ff1e9026b0  tinymacOS/crypto/monocypher/LICENCE.md

@@ -37,16 +37,16 @@ try:
   files=catalog(raw);renderers[label]=files['/System/Library/CoreServices/WindowServer'];assert files['/System/Library/Fonts/Interface.tfn']==font;plists=[(p,plistlib.loads(v)) for p,v in files.items() if v and p.endswith('.plist')];assert plists
   for p,v in plists:
    assert isinstance(v,dict)
-   if p.endswith('SystemVersion.plist'):assert v=={'ProductName':'tinymacOS','ProductVersion':'10.2.1','ProductBuildVersion':'30B12'}
-   if v.get('CFBundlePackageType')=='APPL':assert v['CFBundleShortVersionString']=='10.2.1' and v['CFBundleVersion']=='30B12'
+   if p.endswith('SystemVersion.plist'):assert v=={'ProductName':'tinymacOS','ProductVersion':'10.2.2','ProductBuildVersion':'30B13'}
+   if v.get('CFBundlePackageType')=='APPL':assert v['CFBundleShortVersionString']=='10.2.2' and v['CFBundleVersion']=='30B13'
   counts[label]=len(plists)
   if label=='recovery':assert not any('Desktop Pictures/' in p for p in files) and not any('/Users/' in p for p in files)
  assert len(set(renderers.values()))==1
  r['same_font_renderer_binary_all_volumes']=True
  r['font_identical_desktop_and_recovery']=True;r['plist_counts']=counts;r['font_sha256']=sha(font);r['recovery_kernel_sha256']=sha(kernel);r['desktop_kernel_sha256']=sha((build/'kernel.elf').read_bytes())
- ok('Every packaged .plist parses with plistlib; all three system volumes are 10.2.1/30B12 and retain the exact accepted font')
+ ok('Every packaged .plist parses with plistlib; all three system volumes are 10.2.2/30B13 and retain the exact accepted font')
  assert fat(installed,'/EFI/TMC/BOOTX64.EFI')==(build/'BOOTX64.EFI').read_bytes()
- assert b'10.2.1' in extract('/BIOS-README.TXT','bios-readme.txt').read_bytes()
+ assert b'10.2.2' in extract('/BIOS-README.TXT','bios-readme.txt').read_bytes()
  cfg=fat(w/'recovery.fat','/BOOTCFG.BIN');assert len(cfg)==512 and cfg[:8]==b'TMCBOOT1' and hashlib.sha256(cfg[:16]).digest()==cfg[16:48]
  ok('Optical identity and preallocated checksummed Recovery boot configuration are current')
  r['passed']=True

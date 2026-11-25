@@ -123,6 +123,12 @@ error:
 }
 static int run(void)
 {
+    if(IS("fdesetup")){
+        VaultRequest q={.disk=-1};VaultInfo vi={0};
+        if(eq(V(1),"status")){sc(S_FILEVAULT,0,&q,&vi,0);ln(vi.error?"FileVault: volume non disponibile.":!vi.enabled?"FileVault is Off.":vi.locked?"FileVault is On. Volume locked.":vi.state==1?"FileVault encryption in progress.":vi.state==3?"FileVault decryption in progress.":"FileVault is On.");return vi.error?1:0;}
+        sc(S_SPAWN,DISKUTIL,"@vault",0,0);ln("Gestione FileVault aperta. Inserisci i segreti solo nella finestra protetta, non negli argomenti della shell.");return 0;
+    }
+
     int n = A.argc;
     Dirent d, b;
     SysInfo t;
@@ -190,10 +196,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.2.1");
-            ln("BuildVersion:      30B12");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.1");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B12");
+            ln("ProductVersion:    10.2.2");
+            ln("BuildVersion:      30B13");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.2");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B13");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -201,8 +207,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.2.1");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.1 30B12 x86_64");
+        else if (eq(V(1), "-r"))ln("10.2.2");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.2 30B13 x86_64");
         else return 2;
         return 0;
     }
