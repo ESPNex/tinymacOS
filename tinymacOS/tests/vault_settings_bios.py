@@ -24,7 +24,7 @@ password='local-test-285';name='settings-bios-cipher.txt';secret='SETTINGS-BIOS-
 try:
  with Installed('/not-attached',w,ev,'settings',disk='target',boot_disk=True) as g:
   g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd(f'echo {secret} > Documents/{name}');g.cmd(f'cat Documents/{name}',secret)
-  g.key('f4');x,y=g.visible('Sicurezza e privacy');g.click(x+45,y+8);x,y=g.visible('FileVault…');g.click(x+60,y+8);g.visible('FileVault',faces=(3,));g.visible('Impostazioni di Sistema');g.visible('Indietro');g.shot('settings-filevault-embedded');g.visible('Disattivo');x,y=g.visible('Indietro');g.click(x+30,y+7);g.visible('ACCOUNT');x,y=g.visible('FileVault…');g.click(x+50,y+7);g.visible('Disattivo');x,y=g.visible('Attiva FileVault');g.click(x+50,y+7);g.visible('Attivazione FileVault')
+  g.key('f4');x,y=g.visible('Sicurezza e privacy');g.click(x+45,y+8);x,y=g.visible('FileVault…');g.click(x+60,y+8);g.visible('FileVault',faces=(3,));g.visible('Impostazioni di Sistema');assert pixels.locate(g.snap(),'Indietro',threshold=.98) is None;g.shot('settings-filevault-embedded');g.visible('Disattivo');x,y=g.visible('Sicurezza e privacy',box=(0,150,500,500),faces=(0,));g.click(x+40,y+7);g.visible('ACCOUNT');x,y=g.visible('FileVault…');g.click(x+50,y+7);g.visible('Disattivo');x,y=g.visible('Attiva FileVault');g.click(x+50,y+7);g.visible('Attivazione FileVault')
   g.type('wrong-password');g.key('tab');g.type('wrong-password');g.key('ret');g.visible('Password errata',180)
   # The panel erases both fields after a rejected operation and leaves focus
   # on the second field. Tab returns to the first without retaining a secret.

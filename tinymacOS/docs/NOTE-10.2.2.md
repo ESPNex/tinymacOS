@@ -38,3 +38,7 @@ FileVault è ora una **sezione interna di Impostazioni di Sistema**, raggiungibi
 In Recovery la voce FileVault è rimossa dal menu Utility. L'accesso avviene dal Terminale con `fdesetup status` e `fdesetup manage`; quest'ultimo apre la stessa sezione integrata in Impostazioni per inserire i segreti nei campi mascherati, senza salvarli negli argomenti o nella cronologia della shell.
 
 Versione 10.2.2 e build 30B13 conservate; ISO, sorgenti, impronte e validazione della release sono sostituiti. Le modifiche sono integrate nel ramo `main`. Nessuna modifica al formato cifrato e nessuna sostituzione della 10.2.1.
+
+### Barra dei menu e FileVault
+
+Rimosso il pulsante «Indietro» da FileVault, compresa la relativa area cliccabile: per cambiare sezione si usa la barra laterale di Impostazioni. Sul desktop la barra dei menu è completamente trasparente, senza tinta o blur sullo sfondo, anche con la preferenza di trasparenza ridotta. Menu aperti, finestre, Dock e Centro di Controllo conservano il materiale precedente. **Recovery esclusa:** la sua barra rimane opaca e scura. Ripubblicata la stessa 10.2.2 / 30B13.

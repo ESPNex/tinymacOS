@@ -25,7 +25,8 @@ int main(void){
     Rect q={45,35,220,170};
     for(night=0;night<2;night++)for(lite=0;lite<2;lite++){
         scene();glass(q,14,MAT_DOCK);memcpy(expected,canvas,W*H*sizeof(u32));
-        for(int kind=MAT_WINDOW;kind<=MAT_SHEET;kind++){scene();glass(q,14,kind);assert(!memcmp(expected,canvas,W*H*sizeof(u32)));}
+        for(int kind=MAT_WINDOW;kind<=MAT_SHEET;kind++){if(kind==MAT_BAR)continue;scene();glass(q,14,kind);assert(!memcmp(expected,canvas,W*H*sizeof(u32)));}
+        scene();memcpy(expected,canvas,W*H*sizeof(u32));glass(q,0,MAT_BAR);assert(!memcmp(expected,canvas,W*H*sizeof(u32)));
     }
     recovery_mode=1;night=1;lite=0;
     for(int kind=MAT_WINDOW;kind<=MAT_SHEET;kind++){
@@ -33,5 +34,5 @@ int main(void){
         for(int y=q.y+20;y<q.y+q.h-20;y++)for(int x=q.x+20;x<q.x+q.w-20;x++)assert(canvas[y*W+x]==color(INK(I_PANEL)));
     }
     puts("PASS Recovery: every material bypasses glass and is fully opaque, independent of the captured backdrop and lite preference");
-    puts("PASS actual glass shader: all six Liquid Glass surfaces and Control Center are pixel-identical in light/dark and opaque fallback; no independent alpha");
+    puts("PASS actual glass shader: non-bar Liquid Glass surfaces match Control Center; desktop menu bar preserves every backdrop pixel in light/dark and opaque preference");
 }

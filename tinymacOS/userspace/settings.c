@@ -246,7 +246,6 @@ static void paint(void)
         if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
         if(vault_open){
-            if(!si.recovery)button(aw-150,30,120,"Indietro",0);
             vault_view_draw(x,70,w,ah-82);
         }else{
         Text(x,78,"SICUREZZA",F_MICRO,SUB);
@@ -377,7 +376,7 @@ static void click(int ax, int ay)
     if (modal_mode)return;
     if(pane==2&&vault_open){
         if(si.recovery){Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);return;}
-        if(ax>=208){if(ay>=30&&ay<62&&ax>=aw-150){if(vault_view_can_leave()){vault_view_leave();vault_open=0;}}else{Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);}return;}
+        if(ax>=208){Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);return;}
         if(!vault_view_can_leave())return;
     }
     if(res_open){if(hit(hresmenu,ax,ay)){int j=(ay-hresmenu.y-RES_PAD)/RES_ROW;if(ay>=hresmenu.y+RES_PAD&&j<MIN((int)si.nmodes-res_scroll,RES_ROWS))apply_resolution(res_scroll+j);return;}res_open=0;if(!hit(hres,ax,ay))return;}
