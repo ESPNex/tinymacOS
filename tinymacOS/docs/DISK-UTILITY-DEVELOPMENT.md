@@ -13,13 +13,17 @@
 - Creazione di una partizione nativa nel **gap selezionato di una tabella GPT/MBR già valida**, con voce libera, LBA/dimensione allineati a 1 MiB e almeno 32 MiB. Formato attuale a slot fissi: non Linux Btrfs. Il limite dei file non cresce con l’estensione assegnata. Non è ancora disponibile il montaggio arbitrario di questi volumi separati nel Finder.
 - Ridimensionamento reale **FAT32 primaria, con coda libera**, senza spostamento di cluster e senza modificare l’inizio dell’area dati. Aggiorna BPB principale/backup, FSINFO, FAT per eventuali cluster aggiunti e tabella. La FAT preesistente deve avere capacità sufficiente; niente conversione FAT16/FAT32, rilocazione o cambio della dimensione dei cluster. Rifiuta volume sporco, copie FAT discordanti, backup non coerenti, cluster allocati/riferimenti oltre il nuovo limite e strutture non supportate.
 
+- **Ridimensionamento NTFS nativo**: ora è presente il motore originale `ntfsresize`/libntfs-3g 2022.10.3 con patch Debian 5+deb13u3, compilato freestanding e con namespace privato, senza eseguibili Linux o syscall Linux. Adapter a blocchi limitato alla partizione, anteprima read-only, controllo esplicito ibernazione/journal/dirty, arena recuperata anche in errore, flush/rilettura delle scritture. Sorgenti GPL e provenienza riproducibile in `vendor/ntfs-native/`. Test host normali e ASan/UBSan: 64→24 MiB con rilocazione e 64→80 MiB, contenuti verificati da lettori indipendenti. Test nel kernel UEFI: GPT 8→6 MiB e MBR 8→9 MiB, con file conservati e hash FAT32/RAW invariati. La matrice completa di release rimane necessaria. Dopo una modifica reale conserva il flag dirty previsto da upstream: è necessario il controllo Windows, non un’altra riduzione forzata.
+
 ## Non completato: blocca la sostituzione della release
 
-- **Ridimensionamento NTFS**: manca il motore nativo per bitmap, runlist, MFT/MFTMirr, BadClus, Boot, LogFile, rilocazione e verifica di coerenza. Non si esegue il binario Linux `ntfsresize` nel kernel tinymacOS: ABI ed eseguibili sono diversi. La richiesta viene rifiutata senza scritture.
 - Ridimensionamento del filesystem nativo con capacità realmente variabile, anziché il solo confine della partizione.
-- Sostituzione del formato proprietario con un filesystem **Btrfs realmente interoperabile**, più migrazione dei dati, snapshot e FileVault. Le firme legacy rimangono leggibili: rinominarle corromperebbe l’importazione.
 - Creazione di una tabella su disco non inizializzato direttamente da Utility Disco, creazione di partizioni logiche e montaggio di volumi dati arbitrari.
 - Verifica del percorso UEFI su firmware reale e del boot di Windows reale. Le prove unitarie delle variabili EFI sono simulate; una prova guest aggiuntiva ha eseguito davvero installer, avvio nativo e registrazione in OVMF, rileggendo indipendentemente `BootOrder` dal file NVRAM. Nessuna delle due dimostra una certificazione Windows/ASRock.
+
+## Formato proprietario conservato
+
+Il formato proprietario viene **conservato**, come richiesto: non serve sostituirlo con Btrfs Linux. Il filesystem attivo è `fs/btrfs.c` con intestazione `TMCBFS1`, non TinyFS; `TINYFS1` rimane unicamente per importazione legacy. Il magic Btrfs non prova derivazione dal codice Btrfs né interoperabilità.
 
 ## Terminale
 
@@ -41,6 +45,9 @@ Dalla directory sorgente, con `TOOLROOT` configurato:
 bash tests/test-boot-default.sh
 bash tests/test-diskedit.sh
 bash tests/test-partitions.sh
+# Con gli strumenti ntfs-3g host indipendenti nel PATH:
+python3 tests/test-ntfs-native.py
+TMC_NTFS_SANITIZE=1 python3 tests/test-ntfs-native.py
 ```
 
 Le prove disco usano esclusivamente fixture temporanee sotto `/var/tmp`, mai device fisici. `test-diskedit.sh` usa un filesystem creato da `mkfs.fat`, vi copia un file con `mcopy`, esegue il backend effettivo su GPT e MBR, riduce 64 → 48 MiB e ricresce a 64 MiB. `fsck.fat -n` e `mtype` verificano indipendentemente struttura e contenuto. Si eseguono anche ASan/UBSan, rifiuto della coda allocata, conferma obbligatoria, metadati obsoleti, eliminazione EBR e guasti sulle scritture della tabella.
@@ -52,3 +59,7 @@ Le scritture sono seguite da flush/rilettura ma **non sono transazioni resistent
 Build completa UEFI riuscita. Le suite host per editor e registrazione EFI passano sia normalmente sia con AddressSanitizer/UndefinedBehaviorSanitizer; passa anche la regressione dell’installer GPT/MBR. La prova guest esegue il nuovo ABI dal kernel, verifica i pannelli GUI, riduce FAT32, rifiuta correttamente NTFS, crea/elimina la partizione nativa, installa nello spazio rimasto libero, controlla i file con lettori indipendenti e avvia la destinazione senza ISO. La NVRAM OVMF contiene poi OpenCore al primo posto e la copia del vecchio ordine.
 
 Questi risultati **non comprendono una nuova matrice completa FileVault/BIOS/Recovery né una pubblicazione della ISO di sviluppo**. Non convalidano funzionalità ancora assenti. Main, tag e asset della release esistente non vanno sostituiti finché i requisiti mancanti non sono completati.
+
+### Aggiornamento del port NTFS
+
+Le prove storiche sopra precedono il motore NTFS: il vecchio rifiuto non descrive più il codice corrente. La nuova suite `test-ntfs-native.py` prova riduzione 64→24 MiB con rilocazione, crescita 64→80 MiB, tre anteprime consecutive senza scritture per operazione, BPB di backup, file binario da 307200 byte letto con `ntfscat`, scansione con `ntfsresize -fi`, ibernazione, boot sector corrotto e guasto durante la terza scrittura. Gli strumenti esterni usano `-f` solo per **leggere e verificare** il dirty flag prodotto dal resize; il backend nativo non forza mai un volume dirty. Il test guest nuovo è `tests/ntfs_native_guest.py`. Nessuna pubblicazione parziale autorizzata da questi soli test.

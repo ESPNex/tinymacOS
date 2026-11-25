@@ -32,8 +32,8 @@ try:
     with Retail(iso,w,ev,'edit-live',disk='target',live=False) as g:
         g.enroll(name='DiskEdit');g.key('f2');g.visible('Sessione locale')
         g.cmd('diskutil resizeVolume disk0s1 48','Solo anteprima');g.shot('fat32-preview')
-        g.cmd('diskutil resizeVolume disk0s1 48 --confirm','FAT32 e partizione ridimensionate.')
-        g.cmd('diskutil resizeVolume disk0s2 4 --confirm','Ridimensionamento disponibile solo per FAT32');g.shot('ntfs-honest-refusal')
+        g.cmd('diskutil resizeVolume disk0s1 48 --confirm','Filesystem e partizione ridimensionati.')
+        g.cmd('diskutil resizeVolume disk0s2 1 --confirm','NTFS non idoneo');g.shot('ntfs-honest-refusal')
         g.cmd('diskutil addPartition disk0 159744 32 Dati --confirm','Partizione nativa creata e verificata.')
         g.cmd('diskutil list','BTRFS nativo (subset)');g.shot('native-created')
         g.cmd('open -a "Disk Utility"');g.visible('Utility Disco');g.key('down');g.visible('Ridimensiona…')
@@ -41,7 +41,7 @@ try:
         g.key('down');g.visible('Elimina…');x,y=g.visible('Elimina…');g.click(x+25,y+8);g.visible('Elimina partizione');g.shot('delete-explicit-confirmation');g.key('ret');g.visible('Digita ELIMINA');g.key('esc')
         g.key('f2');g.visible('Sessione locale');g.cmd('diskutil deletePartition disk0s4 --confirm','Partizione eliminata. I dati non sono stati sovrascritti.')
         g.key('f11');g.visible('tinymacOS Tramontana');g.shot('installer-raster');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.shot('install-after-edits');g.key('ret');g.p.wait(timeout=20)
-    ok('Native kernel executes real FAT32 shrink, refuses NTFS resize, creates/deletes native partition; GUI presents editable sheets and explicit deletion confirmation; installer uses generated raster')
+    ok('Native kernel executes real FAT32 shrink, refuses undersized NTFS resize, creates/deletes native partition; GUI presents editable sheets and explicit deletion confirmation; installer uses generated raster')
     assert hashes(disk)[1:]==before[1:]
     fat=w/'shrunk.fat'
     with disk.open('rb') as f:f.seek(PARTS[0][0]*512);fat.write_bytes(f.read(98304*512))

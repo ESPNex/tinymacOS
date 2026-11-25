@@ -70,7 +70,7 @@ static void edit_paint(void)
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);Text(xx+168,yy+143,editname,F_BODY,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"FAT32: solo coda libera, senza rilocazione. NTFS e nativo non ancora disponibili.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"FAT32: coda libera. NTFS: rilocazione dati e controllo Windows successivo.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
         Text(xx+20,yy+188,"Esegui prima un backup. Non scollegare il disco.",F_SMALL,TX);
