@@ -1,5 +1,6 @@
 #pragma once
 #include "sha256.h"
+#include "partition.h"
 #define LESP 2048u
 #define NESP 49152u /* 24 MiB: Install.esp payload (System-disk.vol + anchors) */
 #define LDATA (LESP+NESP)
@@ -39,9 +40,11 @@ typedef struct {
     int(*flush)(int);
     int d;
     u32 z;
+    int(*raw)(int,u32,u32,void*,int); /* optional metadata-only raw path */
 } Medium;
 typedef struct {
-    int pv, bv, type;
+    int pv, bv, type, container;
+    u32 esp,data,rec,source;
     Gpt g;
     Part parts[128];
 } Layout;
@@ -54,3 +57,6 @@ int restore_copy(Medium *);
 int restore_os(Medium *);
 int reset_data(Medium *);
 int tiny_check(const void *);
+
+int partition_scan(Medium *, DiskMap *);
+int filesystem_probe(Medium *,u32,u32);

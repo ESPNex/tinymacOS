@@ -2,6 +2,7 @@
 #include "sha256.h"
 #include "disklayout.h"
 #include "biosboot.h"
+#include "container.h"
 static int iszero(const void *p, u32 n)
 {
     const u64 *q = p;
@@ -47,10 +48,10 @@ int volume_mount(Block *b)
             static Layout map;
             Medium m = {sata_io, sata_flush, d, z};
             if (!layout_read(&m, &map) || (!boot.install_len && memcmp(map.parts[0].id, boot.esp_id, 16)))continue;
-            offset = LDATA;
+            offset = map.data;
         }
         mounted = d;
-        if(offset==LDATA)volume_vault(d);
+        if(offset)volume_vault(d);
         *b = (Block) {
             bread, bwrite, NPART
         };
@@ -60,6 +61,14 @@ int volume_mount(Block *b)
 }
 static InstallInfo st;
 static u32 pos;
+static DiskMap inventory;
+static int coexist;
+static u32 install_start,install_end,install_esp,install_data,install_rec,install_source,install_duet;
+static NativeContainer descriptor;
+static Part oldparts[128];
+static Gpt oldprimary,oldbackup;
+static u8 oldmbr[512];
+
 static int isbusy(void)
 {
     return st.state >= INSTALL_SCAN && st.state <= INSTALL_VERIFY;
@@ -85,9 +94,19 @@ static void refresh(void)
         InstallDisk *q = st.disk + i;
         q->sectors = sata_size(i);
         strset(q->model, sata_model(i), 41);
-        q->usable = st.live && i != mounted && q->sectors >= MINSECT && q->sectors <= 268435456u &&
-                    !sata_io(i, 0, 2, io, 0)
-                    && iszero(io, 1024) && !sata_io(i, q->sectors - 1, 1, io, 0) && iszero(io, 512);
+        Medium medium={sata_io,sata_flush,i,q->sectors};
+        partition_scan(&medium,&inventory);q->scheme=inventory.scheme;q->start=inventory.start;q->available=inventory.sectors;
+        strset(q->reason,inventory.reason,sizeof q->reason);q->formats[0]=0;
+        int seen[9]={0};for(int j=0;j<inventory.count;j++){int f=inventory.part[j].fs;if(f>=0&&f<9&&!seen[f]){if(q->formats[0])append(q->formats,", ",sizeof q->formats);append(q->formats,filesystem_name(f),sizeof q->formats);seen[f]=1;}}
+        q->usable=st.live&&i!=mounted&&inventory.safe&&inventory.slot>=0&&
+            (inventory.scheme==MAP_EMPTY?q->sectors>=196608u:inventory.sectors>=TC_SECTORS);
+        if(q->usable&&inventory.scheme!=MAP_EMPTY){
+            static Layout existing;
+            if(layout_read(&medium,&existing)){
+                q->usable=0;strset(q->reason,"tinymacOS già presente: usa Recupero",sizeof q->reason);
+            }
+        }
+
     }
 }
 void install_status_i(InstallInfo *q)
@@ -106,8 +125,19 @@ int install_begin_i(int d)
         return err("Disco non disponibile: nessuna modifica.");
     st.target = d;
     st.done = pos = 0;
-    st.total = sata_size(d) + 2 * (2 * NESP + NREC + NDATA);
-    note(INSTALL_SCAN, "Controllo del disco vuoto");
+    Medium medium={sata_io,sata_flush,d,sata_size(d)};
+    if(!partition_scan(&medium,&inventory)||!inventory.safe)return err("Tabella cambiata: nessuna modifica.");
+    coexist=inventory.scheme!=MAP_EMPTY;
+    install_start=coexist?inventory.start:0;install_end=coexist?install_start+TC_SECTORS:medium.z;
+    install_esp=coexist?install_start:LESP;install_data=coexist?install_start+TC_DATA:LDATA;
+    install_rec=coexist?install_start+TC_REC:REC_AT(medium.z);install_source=coexist?install_start+TC_SOURCE:RESTORE_AT(medium.z);
+    install_duet=coexist?install_start+TC_DUET:TMC_DUET_LBA;
+    if(sata_io(d,0,1,oldmbr,0))return err("Lettura MBR non riuscita.");
+    if(coexist&&inventory.scheme==MAP_GPT){
+        if(sata_io(d,1,1,&oldprimary,0)||sata_io(d,medium.z-1,1,&oldbackup,0)||sata_io(d,oldprimary.entries,(oldprimary.num*128+511)/512,oldparts,0))return err("Lettura GPT non riuscita.");
+    }
+    st.total=install_end-install_start+2*(2*NESP+NREC+NDATA);
+    note(INSTALL_SCAN,coexist?"Verifica dello spazio non allocato":"Controllo del disco vuoto");
     return 0;
 }
 int install_cancel_i()
@@ -143,6 +173,43 @@ static void part(int i, const u8 *t, u32 l, u32 end, const char *n)
     p->end = end;
     for (int j = 0; n[j] && j < 35; j++)
         p->name[j] = n[j];
+}
+static int unchanged(int d)
+{
+    if(sata_io(d,0,1,io,0)||memcmp(io,oldmbr,512))return 0;
+    if(inventory.scheme==MAP_GPT){
+        if(sata_io(d,1,1,io,0)||memcmp(io,&oldprimary,512)||sata_io(d,sata_size(d)-1,1,io,0)||memcmp(io,&oldbackup,512)||
+           sata_io(d,oldprimary.entries,(oldprimary.num*128+511)/512,io,0)||memcmp(io,oldparts,oldprimary.num*128))return 0;
+        if(sata_io(d,oldbackup.entries,(oldbackup.num*128+511)/512,io,0)||memcmp(io,oldparts,oldbackup.num*128))return 0;
+    }
+    return 1;
+}
+static int coexist_plan(void)
+{
+    if(!unchanged(st.target))return -1;
+    descriptor=(NativeContainer){.version=1,.sectors=TC_SECTORS,.data=TC_DATA,.rec=TC_REC,.source=TC_SOURCE,.duet=TC_DUET};
+    memcpy(descriptor.magic,TC_MAGIC,8);guid(descriptor.id,31);guid(descriptor.esp_id,32);
+    descriptor.crc=crc32(&descriptor,sizeof descriptor);
+    /* Reserved FAT sectors 9/10 are outside its allocation tables and files. */
+    u8*esp=(u8*)boot.install_esp;
+    memcpy(esp+TC_HEADER*512,&descriptor,512);memcpy(esp+TC_OLD_MBR*512,oldmbr,512);
+    memcpy(mbr,oldmbr,512);memcpy(mbr,bios_coexist_mbr,440);
+    for(int i=0;i<=432;i++){
+        u64 v;memcpy(&v,mbr+i,8);
+        if(v==0x1badb002aabbccddull){v=install_duet;memcpy(mbr+i,&v,8);}
+        if(v==0x1badb003aabbccddull){v=install_start+TC_OLD_MBR;memcpy(mbr+i,&v,8);}
+    }
+    if(inventory.scheme==MAP_GPT){
+        primary=oldprimary;backup=oldbackup;memcpy(parts,oldparts,sizeof parts);
+        Part*p=parts+inventory.slot;memset(p,0,sizeof *p);memcpy(p->type,esp_type,16);memcpy(p->id,descriptor.esp_id,16);
+        p->start=install_start;p->end=install_end-1;const char*n="tinymacOS";for(int j=0;n[j];j++)p->name[j]=n[j];
+        primary.ecrc=backup.ecrc=crc32(parts,primary.num*128);primary.crc=backup.crc=0;
+        primary.crc=crc32(&primary,primary.size);backup.crc=crc32(&backup,backup.size);
+    }else{
+        u8*p=mbr+446+inventory.slot*16;memset(p,0,16);p[1]=p[5]=254;p[2]=p[3]=p[6]=p[7]=255;p[4]=0xef;
+        memcpy(p+8,&install_start,4);u32 n=TC_SECTORS;memcpy(p+12,&n,4);
+    }
+    return 0;
 }
 static void layout(u32 n)
 {
@@ -180,10 +247,10 @@ static int commit(int d, u32 l, u32 n, void *p)
 static int install_bios(int d)
 {
     u64 bytes=bios_duet_end-bios_duet;
-    if(!bytes || bytes%512 || TMC_DUET_LBA<34 || bytes/512>LESP-TMC_DUET_LBA)return -1;
+    if(!bytes || bytes%512 || (coexist?bytes/512>install_end-install_duet:bytes/512>LESP-TMC_DUET_LBA))return -1;
     for(u32 j=0;j<bytes/512;){
         u32 n=MIN(CHUNK,(u32)(bytes/512)-j);
-        if(commit(d,TMC_DUET_LBA+j,n,(void *)(bios_duet+(u64)j*512)))return -1;
+        if(commit(d,install_duet+j,n,(void *)(bios_duet+(u64)j*512)))return -1;
         j+=n;
     }
     return 0;
@@ -195,7 +262,7 @@ int install_step_i()
     int d = st.target;
     u32 z = sata_size(d);
     for (int j = 0; j < (st.state == INSTALL_SCAN && z > 2097152 ? 32 : 8) && isbusy(); j++) {
-        u32 span = 2 * NESP + NREC, limit = st.state == INSTALL_SCAN ? z : st.state == INSTALL_ESP ? span : st.state ==
+        u32 span = 2 * NESP + NREC, limit = st.state == INSTALL_SCAN ? install_end-install_start : st.state == INSTALL_ESP ? span : st.state ==
                                             INSTALL_DATA ? NDATA : span + NDATA;
         u32 idx = st.state == INSTALL_DATA ? span + pos : pos,
             off = idx < NESP ? idx : idx < NESP + NREC ? idx - NESP : idx < span ? idx - NESP - NREC : idx - span;
@@ -203,14 +270,14 @@ int install_step_i()
         if (st.state != INSTALL_SCAN)n = MIN(n,
                                                  (idx < NESP ? NESP : idx < NESP + NREC ? NREC : idx < span ? NESP : NDATA) - off);
         if (st.state == INSTALL_SCAN) {
-            if (sata_io(d, pos, n, io, 0))
+            if (sata_io(d, install_start+pos, n, io, 0))
                 return err("Errore di lettura: nessuna scrittura.");
-            if (!iszero(io, n * 512))
+            if (!coexist && !iszero(io, n * 512))
                 return err("Il disco contiene dati: installazione annullata senza scrivere.");
         } else {
             u8 *src = (idx < NESP ? (u8 *)boot.install_esp : idx < NESP + NREC ? (u8 *)boot.recovery_img : idx < span ?
                        (u8 *)boot.install_esp : snapshot) + (u64)off * 512;
-            u32 l = (idx < NESP ? LESP : idx < NESP + NREC ? REC_AT(z) : idx < span ? RESTORE_AT(z) + 1 : LDATA) + off;
+            u32 l = (idx < NESP ? install_esp : idx < NESP + NREC ? install_rec : idx < span ? install_source + 1 : install_data) + off;
             if (st.state == INSTALL_VERIFY) {
                 if (sata_io(d, l, n, io, 0) || memcmp(io, src, n * 512))
                     return err("Rilettura non riuscita: disco non attivato.");
@@ -223,11 +290,12 @@ int install_step_i()
             continue;
         pos = 0;
         if (st.state == INSTALL_SCAN) {
-            if (REC_AT(z) - 1 < LDATA + BACKUP_OFF + NDATA)
+            if (install_rec - 1 < install_data + BACKUP_OFF + NDATA)
                 return err("Disco troppo piccolo per il layout: servono almeno 96 MiB.");
             if (fs_snapshot(snapshot, sizeof snapshot))
                 return err("Copia del volume utente non riuscita.");
-            layout(z);
+            if(coexist){if(coexist_plan())return err("Tabella cambiata: nessuna scrittura eseguita.");}
+            else layout(z);
             note(INSTALL_ESP, "Installazione di tinymacOS e di Recupero");
         } else if (st.state == INSTALL_ESP)
             note(INSTALL_DATA, "Copia di account e documenti");
@@ -238,13 +306,14 @@ int install_step_i()
         } else {
             Seal seal = {.sectors = NESP, .ver = 1};
             memcpy(seal.magic, "TMCSYS20", 8);
-            memcpy(seal.disk, primary.guid, 16);
+            memcpy(seal.disk, coexist?descriptor.id:primary.guid, 16);
             sha_bytes((void *)boot.install_esp, boot.install_len, seal.digest);
-            /* BIOS payload is read-back verified BEFORE GPT activation and MBR. */
-            if (install_bios(d) || commit(d, RESTORE_AT(z), 1, &seal) || commit(d, z - 33, 32, parts) || commit(d, z - 1, 1, &backup) ||
-                commit(d, 2, 32, parts) || commit(d, 1, 1, &primary)
-                || commit(d, 0, 1, mbr))
-                return err("Finalizzazione GPT non riuscita. Non usare questo disco.");
+            if(coexist&&!unchanged(d))return err("Tabella cambiata: attivazione annullata.");
+            if(install_bios(d)||commit(d,install_source,1,&seal))return err("Payload di avvio non verificato.");
+            if(coexist){
+                if(inventory.scheme==MAP_GPT && (commit(d,backup.entries,(backup.num*128+511)/512,parts)||commit(d,backup.at,1,&backup)||commit(d,primary.entries,(primary.num*128+511)/512,parts)||commit(d,primary.at,1,&primary)))return err("Aggiornamento GPT interrotto: usa la copia GPT valida.");
+                if(commit(d,0,1,mbr))return err("Aggiornamento avvio fallito: MBR originale conservato nel volume.");
+            }else if(commit(d,z-33,32,parts)||commit(d,z-1,1,&backup)||commit(d,2,32,parts)||commit(d,1,1,&primary)||commit(d,0,1,mbr))return err("Finalizzazione GPT non riuscita. Non usare questo disco.");
             erase(snapshot, sizeof snapshot);
             note(INSTALL_DONE, "Installazione completata e verificata");
         }
@@ -269,9 +338,10 @@ void disk_info_i(DiskInfo *r)
     r->count = sata_count();
     r->current = mounted;
     for (int d = 0; d < r->count; d++) {
-        Medium m = {volume_cipher_io, sata_flush, d, sata_size(d)};
+        Medium m = {volume_cipher_io, sata_flush, d, sata_size(d),sata_io};
         r->disk[d].sectors = m.z;
         strset(r->disk[d].model, sata_model(d), 44);
+        Medium raw={sata_io,sata_flush,d,m.z};partition_scan(&raw,&r->disk[d].map);
         int t = layout_read(&m, &layout_info);
         r->disk[d].layout = t;
         r->disk[d].healthy = t && layout_info.pv && layout_info.bv;
@@ -281,7 +351,7 @@ void disk_info_i(DiskInfo *r)
 int disk_operation_i(int op, int d)
 {
     if (isbusy() || d < 0 || d >= sata_count())return -1;
-    Medium m = {volume_cipher_io, sata_flush, d, sata_size(d)};
+    Medium m = {volume_cipher_io, sata_flush, d, sata_size(d),sata_io};
     if(boot.recovery && op>=5 && op<=9){
         if(layout_read(&m,&layout_info)!=2)return -1;
         if(op==5)return restore_copy(&m);
@@ -289,7 +359,7 @@ int disk_operation_i(int op, int d)
         if(op==7)return reset_data(&m);
         if(op==9)return firstaid(&m,0);
         int ok=1;
-        for(u32 i=0;i<NDATA;i+=CHUNK)if(volume_cipher_io(d,LDATA+i,MIN(CHUNK,NDATA-i),snapshot+512*i,0)){ok=0;break;}
+        for(u32 i=0;i<NDATA;i+=CHUNK)if(volume_cipher_io(d,layout_info.data+i,MIN(CHUNK,NDATA-i),snapshot+512*i,0)){ok=0;break;}
         int r=ok?save_copy(&m,snapshot):-1;erase(snapshot,sizeof snapshot);return r;
     }
     if (op == 4 || op == 1)return firstaid(&m, op == 1);
@@ -303,7 +373,7 @@ int disk_operation_i(int op, int d)
     if (op == 3) {
         u8 flag[512] = {0};
         memcpy(flag, "TMRECOV2", 8);
-        if (commit(d, LESP + 8, 1, flag))return -1;
+        if (commit(d, layout_info.esp + 8, 1, flag))return -1;
         return power(1);
     }
     return -1;

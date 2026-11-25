@@ -10,8 +10,8 @@ Vault *volume_vault(int d)
 {
  if(d<0||d>=sata_count()||d>=MAXVAULT)return 0;Runtime*r=volumes+d;if(r->initialized)return &r->v;
  static Layout map;Medium m={sata_io,sata_flush,d,sata_size(d)};
- if(layout_read(&m,&map)!=2||map.parts[1].start!=LDATA)return 0;
- r->base=LDATA;r->extent=map.parts[1].end-LDATA+1;r->d=d;r->initialized=1;
+ if(layout_read(&m,&map)!=2)return 0;
+ r->base=map.data;r->extent=map.parts[1].end-map.data+1;r->d=d;r->initialized=1;
  FvIo io={r,r->extent,rawread,rawwrite,rawflush};vault_probe(&r->v,io);return &r->v;
 }
 int volume_locked(void){Vault*v=volume_vault(volume_current());return v&&v->present&&(!v->unlocked||v->poison);}
@@ -19,16 +19,15 @@ int volume_locked(void){Vault*v=volume_vault(volume_current());return v&&v->pres
  * Recovery backup/restore. GPT/EFI/Recovery OS remain intentionally public. */
 int volume_cipher_io(int d,u32 l,u32 n,void*p,int write)
 {
- if(!n)return 0;Vault*v=volume_vault(d);
- if(!v || l<LDATA || l>=LDATA+FV_PAYLOAD){
-  if(v&&v->present&&l<LDATA+FV_REQUIRED&&l+n>LDATA+FV_PAYLOAD)return FV_STATE;
-  /* Do not permit a raw span that straddles the protected range. */
-  if(v&&v->present&&l<LDATA&&n>LDATA-l)return FV_STATE;
+ if(!n)return 0;Vault*v=volume_vault(d);u32 base=v?volumes[d].base:0;
+ if(!v || l<base || l>=base+FV_PAYLOAD){
+  if(v&&v->present&&l<base+FV_REQUIRED&&l+n>base+FV_PAYLOAD)return FV_STATE;
+  if(v&&v->present&&l<base&&n>base-l)return FV_STATE;
   return sata_io(d,l,n,p,write)?FV_IO:write?sata_flush(d):0;
  }
- if(n>LDATA+FV_PAYLOAD-l)return FV_STATE;
+ if(n>base+FV_PAYLOAD-l)return FV_STATE;
  if(!v->present)return sata_io(d,l,n,p,write)?FV_IO:write?sata_flush(d):0;
- for(u32 i=0;i<n;i++){int r=write?vault_write(v,l-LDATA+i,(u8*)p+i*512):vault_read(v,l-LDATA+i,(u8*)p+i*512);if(r)return r;}return 0;
+ for(u32 i=0;i<n;i++){int r=write?vault_write(v,l-base+i,(u8*)p+i*512):vault_read(v,l-base+i,(u8*)p+i*512);if(r)return r;}return 0;
 }
 static void status(Vault*v,VaultInfo*out,int error)
 {

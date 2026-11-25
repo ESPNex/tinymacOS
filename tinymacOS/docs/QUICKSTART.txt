@@ -1,4 +1,4 @@
-tinymacOS 10.2.2 Tramontana / 30B13 — installazione e Recupero
+tinymacOS 10.2.3 Tramontana / 30B14 — installazione e Recupero
 
 Configurazione consigliata: VM x86-64 Q35/AHCI, 1 GiB RAM, Secure Boot
 spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara
@@ -14,17 +14,32 @@ critico, dischi con dati scollegati, nessuna installazione. La compatibilità
 ASRock fisica non è ancora dimostrata. Recovery ora usa un kernel separato con gli stessi driver USB nativi.
 Il superamento dei test virtuali non certifica il mouse su hardware fisico.
 
-INSTALLAZIONE (PROVE SU DISCHI VIRTUALI)
-1. Collegare la ISO al lettore virtuale e un nuovo disco virtuale SATA
-   vuoto dedicato, almeno 96 MiB consigliati. Non usare dischi fisici o dati
-   da conservare. La nuova ISO non aggiorna una precedente installazione.
-2. Avviare e creare l'account locale con password di almeno 8 caratteri.
-   Non c'è una password di fabbrica. La sessione live è temporanea.
-3. Aprire «Installa tinymacOS» dalla scrivania. Controllare la capacità e
-   confermare il disco di destinazione. Il controllo del disco vuoto non
-   sostituisce il backup e non rende sicuro l'uso su dischi reali.
-4. Dopo «Il disco è pronto», spegnere, scollegare la ISO e avviare dallo
-   stesso disco. Nel launcher: conservare STATE e impostare BOOT_DISK=1.
+INSTALLAZIONE E DUAL BOOT (PRIMA PROVARE SU DISCHI VIRTUALI)
+1. Fare un backup verificato dell’intero disco. Il progetto è sperimentale.
+   Per il dual boot liberare almeno 96 MiB contigui dal sistema esistente.
+   Non basta una partizione RAW: deve essere spazio NON ALLOCATO.
+2. Avviare la ISO e creare l’account locale (password di almeno 8 caratteri).
+3. Controllare Utility Disco o «diskutil list» nel Terminale: GPT/MBR,
+   FAT32, NTFS e RAW sono riconosciuti in sola lettura. RAW resta protetto.
+4. Aprire «Installa tinymacOS», selezionare il disco e controllare lo spazio
+   non allocato proposto prima di confermare. Le altre partizioni non sono
+   inizializzate. Tabelle degradate/ibride, dischi dinamici e sovrapposizioni
+   bloccano l’installazione. Nessun ridimensionamento automatico.
+5. Spegnere e rimuovere la ISO. BIOS: scegliere 1 per il precedente avvio,
+   2/Invio per tinymacOS. UEFI: aggiungere/selezionare dal firmware il file
+   \EFI\BOOT\BOOTX64.EFI sul NUOVO volume tinymacOS, non sull’ESP Windows.
+   La voce UEFI non è registrata automaticamente; Windows Boot Manager
+   non viene sostituito. Secure Boot spento.
+6. Nel launcher mantenere STATE e impostare BOOT_DISK=1. Su un disco
+   interamente vuoto resta disponibile il precedente percorso dedicato.
+
+Sono aggiornati tabella partizioni e codice MBR, il cui settore originale
+è conservato nel nuovo volume (settore relativo 10). Non vengono scritti
+i filesystem preesistenti. Interruzioni durante GPT/MBR possono comunque
+richiedere riparazione esterna dell’avvio: non è una transazione atomica.
+Limiti: SATA/AHCI, settori 512 B, dischi fino a 128 GiB, 96 MiB contigui e
+una voce primaria/GPT libera. Le partizioni estese restano riservate.
+Vedere docs/NOTE-10.2.3.md per struttura, vincoli e portata dei test.
 
 La ISO distribuita include avvio ottico BIOS/OpenDuet/OpenCore e UEFI.
 Non è un'immagine USB-DD ibrida. Il funzionamento con Rufus o su firmware

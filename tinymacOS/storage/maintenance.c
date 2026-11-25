@@ -1,4 +1,5 @@
 #include "disklayout.h"
+#include "container.h"
 #include "abi.h"   /* NSLOTS (384): inode slots of the TMCBFS1 subset volume */
 #define FSDATA 144u /* TMCBFS1 subset header h[4] (fs/btrfs.c DATA) */
 #define FNODE 64u   /* disk inode table location, in sectors (fs/btrfs.c NODE0) */
@@ -37,7 +38,23 @@ static int readh(Medium *m, u32 l, Gpt *h)
 }
 int layout_read(Medium *m, Layout *x)
 {
+    Medium metadata=*m;if(m->raw){metadata.io=m->raw;metadata.raw=0;m=&metadata;}
     memset(x, 0, sizeof * x);
+    static DiskMap inventory;
+    if(partition_scan(m,&inventory)&&inventory.safe){
+        for(int i=0;i<inventory.count;i++){
+            DiskPartition*p=inventory.part+i;NativeContainer h;
+            if(p->logical||(inventory.scheme==MAP_GPT?memcmp(p->type,esp_type,16):p->type[0]!=0xef))continue;
+            if(p->sectors<TC_SECTORS||m->io(m->d,p->start+TC_HEADER,1,&h,0)||!container_bounds(&h,p->sectors))continue;
+            u32 c=h.crc;h.crc=0;if(c!=crc32(&h,sizeof h))continue;
+            x->pv=x->bv=1;x->type=2;x->container=1;
+            x->esp=p->start;x->data=p->start+h.data;x->rec=p->start+h.rec;x->source=p->start+h.source;
+            memcpy(x->g.guid,h.id,16);memcpy(x->parts[0].id,h.esp_id,16);
+            u32 a[]={x->esp,x->data,x->rec,x->source},n[]={NESP,TC_DATA_N,NREC,NESP+1};
+            for(int j=0;j<4;j++){x->parts[j].start=a[j];x->parts[j].end=a[j]+n[j]-1;}
+            return 2;
+        }
+    }
     if (m->z < MINSECT || m->z > 268435456u)return 0;
     Gpt h;
     x->pv = readh(m, 1, &h);
@@ -62,6 +79,7 @@ int layout_read(Medium *m, Layout *x)
                       memcmp(p[3].type, src_type, 16) || p[3].start != RESTORE_AT(z) || p[3].end != z - 34))return 0;
     u8 zero[16] = {0};
     for (int i = type == 1 ? 2 : 4; i < 128; i++)if (memcmp(p[i].type, zero, 16))return 0;
+    x->esp=LESP;x->data=LDATA;x->rec=REC_AT(m->z);x->source=RESTORE_AT(m->z);
     x->type = type;
     return type;
 }
@@ -116,12 +134,12 @@ static int hashdisk(Medium *, u32, u32, u8[32]);
 static int verify_system(Medium *m)
 {
     u8 sum[32];
-    u32 l = RESTORE_AT(m->z);
-    return getseal(m, l, "TMCSYS20", NESP) && !hashdisk(m, LESP, NESP, sum) && !memcmp(sum, seal.digest, 32);
+    u32 l = map.source;
+    return getseal(m, l, "TMCSYS20", NESP) && !hashdisk(m, map.esp, NESP, sum) && !memcmp(sum, seal.digest, 32);
 }
 int firstaid(Medium *m, int fix)
 {
-    if (!layout_read(m, &map) || bulk(m, LDATA, NDATA, data, 0) || !tiny_check(data))return -1;
+    if (!layout_read(m, &map) || bulk(m, map.data, NDATA, data, 0) || !tiny_check(data))return -1;
     if (map.type == 2 && !verify_system(m))return -1;
     if (map.pv && map.bv)return 0;
     if (!fix)return 1;
@@ -142,12 +160,12 @@ static int getseal(Medium *m, u32 l, const char *magic, u32 n)
 }
 int has_copy(Medium *m)
 {
-    return layout_read(m, &map) == 2 && getseal(m, LDATA + BACKUP_OFF - 1, "TMCSNAP2", NDATA);
+    return layout_read(m, &map) == 2 && getseal(m, map.data + BACKUP_OFF - 1, "TMCSNAP2", NDATA);
 }
 int save_copy(Medium *m, const void *p)
 {
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv || !tiny_check(p))return -1;
-    u32 l = LDATA + BACKUP_OFF;
+    u32 l = map.data + BACKUP_OFF;
     memset(&seal, 0, sizeof seal);
     if (commit(m, l - 1, 1, &seal) || bulk(m, l, NDATA, (u8 *)p, 1) || bulk(m, l, NDATA, data, 0) ||
         memcmp(p, data, sizeof data))return -1;
@@ -160,14 +178,14 @@ int save_copy(Medium *m, const void *p)
 }
 int restore_copy(Medium *m)
 {
-    if (!has_copy(m) || !map.pv || !map.bv || bulk(m, LDATA + BACKUP_OFF, NDATA, data, 0) ||
+    if (!has_copy(m) || !map.pv || !map.bv || bulk(m, map.data + BACKUP_OFF, NDATA, data, 0) ||
         !tiny_check(data))return -1;
     u8 sum[32];
     sha_bytes(data, sizeof data, sum);
     if (memcmp(sum, seal.digest, 32))return -1;
     for (u32 j = 0; j < NDATA; j += CHUNK) {
         u32 k = MIN(CHUNK, NDATA - j);
-        if (commit(m, LDATA + j, k, data + j * 512))return -1;
+        if (commit(m, map.data + j, k, data + j * 512))return -1;
     }
     return 0;
 }
@@ -186,26 +204,26 @@ static int hashdisk(Medium *m, u32 l, u32 n, u8 out[32])
 int restore_os(Medium *m)
 {
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv)return -1;
-    u32 l = RESTORE_AT(m->z);
+    u32 l = map.source;
     u8 sum[32];
     if (!getseal(m, l, "TMCSYS20", NESP) || hashdisk(m, l + 1, NESP, sum) || memcmp(sum, seal.digest, 32))return -1;
     for (u32 j = 0; j < NESP; j += CHUNK) {
         u32 k = MIN(CHUNK, NESP - j);
-        if (m->io(m->d, l + 1 + j, k, buf, 0) || m->io(m->d, LESP + j, k, buf, 1))return -1;
+        if (m->io(m->d, l + 1 + j, k, buf, 0) || m->io(m->d, map.esp + j, k, buf, 1))return -1;
     }
-    return m->flush(m->d) || hashdisk(m, LESP, NESP, sum) || memcmp(sum, seal.digest, 32) ? -1 : 0;
+    return m->flush(m->d) || hashdisk(m, map.esp, NESP, sum) || memcmp(sum, seal.digest, 32) ? -1 : 0;
 }
 int reset_data(Medium *m)
 {
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv)return -1;
     memset(data, 0, sizeof data);
-    if (bulk(m, LDATA, NDATA, data, 1) || commit(m, LDATA + BACKUP_OFF - 1, 1, data) ||
-        bulk(m, LDATA + BACKUP_OFF, NDATA, data, 1))return -1;
+    if (bulk(m, map.data, NDATA, data, 1) || commit(m, map.data + BACKUP_OFF - 1, 1, data) ||
+        bulk(m, map.data + BACKUP_OFF, NDATA, data, 1))return -1;
     memcpy(data, "TMCBFS1\0", 8);
     u32 *h = (void *)data;
     h[2] = 2;
     h[3] = NSLOTS;   /* TMCBFS1 subset: live inode slot count (kernel requires 384) */
     h[4] = 144;
     memcpy(data + 15 * 512, "TMFACT20", 8);
-    return commit(m, LDATA + 15, 1, data + 15 * 512) || commit(m, LDATA, 1, data) ? -1 : 0;
+    return commit(m, map.data + 15, 1, data + 15 * 512) || commit(m, map.data, 1, data) ? -1 : 0;
 }

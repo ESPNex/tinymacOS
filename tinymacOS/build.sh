@@ -10,7 +10,7 @@ C=(-O2 ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-bu
 if [[ "${TMC_USB_CANONICAL:-0}" == 1 ]];then C+=(-DTMC_USB_CANONICAL);fi
 U=("${C[@]}" -fpie -fno-plt -Iuserspace -Idesktop);L=(-nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000)
 E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFIINC" -I"$EFIINC/x86_64")
-for f in crypto/sha256.c kernel/string.c storage/maintenance.c;do gcc "${E[@]}" -c "$f" -o "$D/efi-${f##*/}.o";done
+for f in crypto/sha256.c kernel/string.c storage/maintenance.c storage/partition.c;do gcc "${E[@]}" -c "$f" -o "$D/efi-${f##*/}.o";done
 efilink(){ local name=$1;shift;ld -nostdlib --build-id=none -znocombreloc -T "$EFILIB/elf_x86_64_efi.lds" -shared -Bsymbolic "$EFILIB/crt0-efi-x86_64.o" "$@" "$D/efi-sha256.c.o" "$D/efi-string.c.o" -L"$EFILIB" -lgnuefi -o "$D/$name.so";objcopy --strip-all -j .text -j .rodata -j .sdata -j .data -j .dynamic -j .dynsym -j .rel -j .rela -j .reloc --target=efi-app-x86_64 "$D/$name.so" "$D/$name.EFI";}
 python3 tools/tramontana-assets.py "$D"
 python3 tools/control-svg.py "$D"
@@ -34,6 +34,7 @@ for a in "${APPS[@]}"; do
  (cd "$D" && ld "${L[@]}" -T "$ROOT/userspace/layout.ld" u-start.S.o u-string.c.o "u-$a.o" "${objects[@]}" -o "$a.debug" && objcopy --strip-all "$a.debug" "$a.elf")
 done
 python3 tools/bios-image.py "$D"
+C+=(-DTMC_COEXIST_PATH=\""$D/bios-coexist.bin"\")
 C+=(-DTMC_MBR_PATH=\""$D/bios-mbr.bin"\")
 KOBJ=()
 # lwIP (IPv4 core) + in-kernel network glue

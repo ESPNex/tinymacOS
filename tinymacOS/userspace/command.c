@@ -198,10 +198,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.2.2");
-            ln("BuildVersion:      30B13");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.2");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B13");
+            ln("ProductVersion:    10.2.3");
+            ln("BuildVersion:      30B14");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.3");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B14");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -209,8 +209,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.2.2");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.2 30B13 x86_64");
+        else if (eq(V(1), "-r"))ln("10.2.3");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.3 30B14 x86_64");
         else return 2;
         return 0;
     }
@@ -701,26 +701,21 @@ static int run(void)
         return IS("grep") && !hit;
     }
     if (IS("diskutil")) {
-        DiskInfo di;
+        static DiskInfo di;
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
-        if (n == 2 && eq(V(1), "list")) {
-            for (int i = 0; i < di.count; i++) {
-                say("/dev/disk");
-                num(i);
-                say(" (internal, physical): ");
-                num(di.disk[i].sectors / 2048);
-                ln(" MiB");
-                if (di.disk[i].layout) {
-                    ln("  1: EFI              Macintosh HD");
-                    ln("  2: BTRFS subset     Macintosh HD - Dati");
-                    if (di.disk[i].layout == 2) {
-                        ln("  3: EFI              Recovery");
-                        ln("  4: Restore          Sistema locale");
-                    }
-                } else ln("  Nessun volume tinymacOS montato");
+        if ((n==2||n==3)&&eq(V(1),"list")) {
+            int only=n==3?diskid(V(2)):-1;if(n==3&&only<0)return fail("Identificatore disco non valido.");
+            for(int i=0;i<di.count;i++){
+                if(only>=0&&i!=only)continue;
+                DiskMap*m=&di.disk[i].map;
+                say("/dev/disk");num(i);say(" (internal, physical): ");num(di.disk[i].sectors/2048);say(" MiB · ");ln(partition_scheme(m->scheme));
+                for(int j=0;j<m->count;j++){DiskPartition*p=m->part+j;
+                    say("  disk");num(i);say("s");num(p->number);say("  ");say(filesystem_name(p->fs));say("  ");num(p->sectors/2048);say(" MiB  LBA ");num(p->start);say("  ");ln(p->name);
+                }
+                for(int j=0;j<m->gaps;j++){say("  Spazio non allocato  ");num(m->gap[j].sectors/2048);say(" MiB  LBA ");num(m->gap[j].start);ln("");}
+                if(!m->safe){say("  Protetto: ");ln(m->reason);}
             }
-            if (!di.count)ln("Nessun disco collegato.");
-            return 0;
+            if(!di.count)ln("Nessun disco collegato.");return 0;
         }
         if (n >= 3 && eq(V(1), "apfs")) {
             SnapInfo sn[8];
@@ -812,15 +807,25 @@ static int run(void)
                         "apfs encryptVolume|decryptVolume|unlockVolume <pass> | apfs lockVolume");
         }
         if (n == 3) {
-            int i = diskid(V(2));
-            if (i < 0 || i >= di.count)return 1;
-            if (eq(V(1), "info")) {
-                ln(di.disk[i].model);
-                num(di.disk[i].sectors / 2048);
-                say(" MiB · ");
-                ln(di.disk[i].layout ? "GPT" : "Nessun volume compatibile");
+            const char*id=V(2);if(!memcmp(id,"/dev/",5))id+=5;
+            int partno=-1,i=-1;
+            if(!memcmp(id,"disk",4)&&id[4]>='0'&&id[4]<='7'){
+                i=id[4]-'0';if(id[5]){if(id[5]!='s'||!id[6])return 1;partno=0;for(int k=6;id[k];k++){if(id[k]<'0'||id[k]>'9'||partno>128)return 1;partno=partno*10+id[k]-'0';}}
+            }
+            if(i<0||i>=di.count)return 1;
+            DiskMap*m=&di.disk[i].map;
+            if(eq(V(1),"info")){
+                if(partno>=0){
+                    DiskPartition*p=0;for(int j=0;j<m->count;j++)if(m->part[j].number==partno)p=m->part+j;
+                    if(!p)return fail("Partizione non trovata.");
+                    ln(p->name);say("Filesystem: ");ln(filesystem_name(p->fs));say("Inizio LBA: ");num(p->start);say(" · settori: ");num(p->sectors);ln("");
+                    ln("Riconoscimento in sola lettura. RAW non significa spazio libero.");
+                }else{
+                    ln(di.disk[i].model);num(di.disk[i].sectors/2048);say(" MiB · ");ln(partition_scheme(m->scheme));ln(m->reason);
+                }
                 return 0;
             }
+            if(partno>=0)return fail("SOS delle partizioni esterne non supportato: nessuna scrittura.");
             if (eq(V(1), "verifyVolume") || eq(V(1), "repairVolume")) {
                 int r = sc(S_DISK, eq(V(1), "repairVolume") ? 1 : 4, i, 0, 0);
                 ln(r ? "Verifica non riuscita." : "Il volume risulta valido.");
@@ -831,7 +836,7 @@ static int run(void)
         return fail("diskutil list | info diskN | verifyVolume diskN | repairVolume diskN");
     }
     if (IS("fsck_apfs")) {
-        DiskInfo di;
+        static DiskInfo di;
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
         int repair = 0;
         for (int i = 1; i < A.argc; i++)if (eq(V(i), "-y") || eq(V(i), "-f"))repair = 1;
@@ -845,7 +850,7 @@ static int run(void)
         return 0;
     }
     if (IS("mount_apfs")) {
-        DiskInfo di;
+        static DiskInfo di;
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
         int dsk = di.current;
         if (dsk >= 0 && dsk < di.count && di.disk[dsk].layout) {

@@ -9,3 +9,8 @@ bios_duet:
 .incbin "vendor/opencore-1.0.8/bootX64"
 bios_duet_end:
 .section .note.GNU-stack,"",@progbits
+
+.section .rodata
+.global bios_coexist_mbr
+bios_coexist_mbr:
+.incbin TMC_COEXIST_PATH

@@ -15,3 +15,6 @@ subprocess.run(['as','--32','--defsym','DUET_LBA='+str(lba),'--defsym','DUET_SEC
 subprocess.run(['ld','-m','elf_i386','--oformat','binary','-Ttext','0x7c00','-e','_start',str(out/'bios-mbr.o'),'-o',str(out/'bios-mbr.bin')],check=True)
 assert (out/'bios-mbr.bin').stat().st_size==440
 print('Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI',count,'sectors at LBA',lba)
+subprocess.run(['as','--32','--defsym','DUET_SECTORS='+str(count),str(r/'boot/bios-coexist.S'),'-o',str(out/'bios-coexist.o')],check=True)
+subprocess.run(['ld','-m','elf_i386','--oformat','binary','-Ttext','0x600','-e','_start',str(out/'bios-coexist.o'),'-o',str(out/'bios-coexist.bin')],check=True)
+assert (out/'bios-coexist.bin').stat().st_size==440

@@ -66,6 +66,6 @@ int main(int argc,char**argv){(void)argc;(void)argv;size_t bytes=(size_t)NSECT*5
   puts("PASS 208 interrupted-decryption write/flush/torn-sector cases: authenticated resume and every original plaintext byte restored");
  }
  /* Export a deterministic independent-test vector from actual on-disk bytes. */
- reset();FILE*f=fopen(argc>1?argv[1]:"/var/tmp/tmc-10.2.2/vault-vector.bin","wb");assert(f);fwrite(disk+FV_META*512,1,512,f);fwrite(disk+3*512,1,512,f);fwrite(disk+(FV_META+6)*512+(3%16)*32,1,32,f);fclose(f);
+ reset();FILE*f=fopen(argc>1?argv[1]:"/var/tmp/tmc-10.2.3/vault-vector.bin","wb");assert(f);fwrite(disk+FV_META*512,1,512,f);fwrite(disk+3*512,1,512,f);fwrite(disk+(FV_META+6)*512+(3%16)*32,1,32,f);fclose(f);
  free(disk);free(cache);free(backup);free(migration);puts("PASS native authenticated volume engine");return 0;
 }

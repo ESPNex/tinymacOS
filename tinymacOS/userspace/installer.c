@@ -67,57 +67,38 @@ static void diskname(char*s, int d)
     append(s, "  ·  ", 80);
     append(s, info.disk[d].model, 80);
 }
-static int rail(void)
-{
-    return aw > 550 ? 154 : 0;
-}
+static int rail(void){return 0;}
 static void paint(void)
 {
     begin();
     int r = rail(), x = r + 24, w = aw - x - 23, foot = ah - 52;
     Box(0, 0, aw, ah, 0, CARD);
-    if (r) {
-        Box(0, 0, r, ah, 0, PANEL);
-        Box(r - 1, 0, 1, ah, 0, EDGE);
-        Icon(15, 16, 45, 38);
-        Text(17, 70, "TRAMONTANA", F_MICRO, SUB);
-        Text(16, 90, "Installazione", F_CAPTION, TX);
-        const char *lab[] = {"Introduzione", "Destinazione", "Riepilogo", "Installazione", "Fine"};
-        for (int i = 0; i < 5; i++) {
-            int y = 145 + 31 * i, active = MIN(page, 4) == i;
-            if (active)
-                Box(8, y - 4, r - 17, 26, 7, SEL);
-            Box(17, y + 5, 8, 8, 4, active ? ACC : EDGE);
-            Text(35, y, lab[i], F_SMALL, active ? EMP : SUB);
-        }
-        Text(17, ah - 29, "tinymacOS 10.1.9", F_MICRO, SUB);
-    }
     if (!page) {
-        Photo(x, 16, w, MAX(65, foot - 161), 12, 12);
-        int y = MAX(65, foot - 161) + 32;
-        Text(x, y, "Installa tinymacOS", F_TITLE, TX);
-        Text(x, y + 43, "Sistema e Recupero in una sola ISO.", F_BODY, TX);
-        Text(x, y + 76, "L’assistente copia anche l’account e i documenti", F_SMALL, SUB);
-        Text(x, y + 96, "di questa sessione. Serve un disco vuoto dedicato.", F_SMALL, SUB);
+        Photo(aw/2-67, 24, 134, 134, 67, 12);
+        Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
+        Center(aw/2, 229, "Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
+        Center(aw/2, 266, "Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
     } else if (page == 1) {
-        Text(x, 19, "Scegli un disco", F_TITLE, TX);
-        Text(x, 68, "Destinazione SATA · da 64 MiB a 128 GiB", F_SMALL, SUB);
+        Center(aw/2, 19, "Seleziona la destinazione", F_TITLE, TX);
+        Center(aw/2, 61, "tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
         if (!info.count) {
             Text(x, 122, "Nessun disco SATA rilevato.", F_BOLD, TX);
-            Text(x, 154, "Spegni e collega un disco virtuale vuoto.", F_SMALL, SUB);
+            Text(x, 154, "Collega un disco con almeno 96 MiB non allocati.", F_SMALL, SUB);
         }
-        int slots = MAX(1, (foot - 104) / 49), first = MAX(0, choice - slots + 1);
+        int slots = MAX(1, (foot - 104) / 64), first = MAX(0, choice - slots + 1);
         for (int i = first; i < info.count && i < first + slots; i++) {
-            int y = 98 + (i - first) * 49;
-            Box(x, y, w, 44, 9, i == choice ? SEL : SOFT);
+            int y = 98 + (i - first) * 64;
+            Box(x, y, w, 59, 9, i == choice ? SEL : SOFT);
             Icon(x + 7, y + 4, 35, 33);
             char s[80];
             diskname(s, i);
             Text(x + 53, y + 3, s, F_SMALL, TX);
             s[0] = 0;
-            addnum(s, info.disk[i].sectors / 2048, 80);
-            append(s, info.disk[i].usable ? " MiB  ·  Da verificare" : " MiB  ·  Non disponibile", 80);
+            addnum(s, info.disk[i].available / 2048, 80);
+            append(s, " MiB non allocati · ",80);append(s,partition_scheme(info.disk[i].scheme),80);
+            append(s,info.disk[i].usable?"":" · Non disponibile",80);
             Text(x + 53, y + 23, s, F_MICRO, SUB);
+            Text(x + 53, y + 41, info.disk[i].usable?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
         }
     } else if (page == 2) {
         Text(x, 20, "Conferma l’installazione", F_TITLE, TX);
@@ -126,13 +107,13 @@ static void paint(void)
         Icon(x, 77, 46, 33);
         Text(x + 58, 82, s, F_BOLD, TX);
         s[0] = 0;
-        addnum(s, info.disk[choice].sectors / 2048, 80);
-        append(s, " MiB  ·  GPT / UEFI", 80);
+        addnum(s, info.disk[choice].available / 2048, 80);
+        append(s, " MiB non allocati · ",80);append(s,partition_scheme(info.disk[choice].scheme),80);
         Text(x + 58, 106, s, F_SMALL, SUB);
         Box(x, 146, w, 1, 0, EDGE);
-        Text(x, 164, "BaseSystem.dmg verrà copiato nella partizione Recovery.", F_SMALL, TX);
-        Text(x, 189, "Per proteggere i tuoi file, su un disco non vuoto", F_SMALL, SUB);
-        Text(x, 209, "non verrà scritto nulla.", F_SMALL, SUB);
+        Text(x, 164, "Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
+        Text(x, 189, "Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
+        Text(x, 209, "L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
         Box(x, foot - 66, w, 48, 9, SOFT);
         Box(x + 12, foot - 52, 20, 20, 5, confirm ? ACC : EDGE);
         if (confirm)
@@ -158,7 +139,7 @@ static void paint(void)
         Text(x, y + 47, "Puoi avviare tinymacOS senza il supporto di installazione.", F_SMALL, SUB);
         Text(x, y + 81, "1.  Spegni il computer.", F_BODY, TX);
         Text(x, y + 112, "2.  Rimuovi il supporto di installazione.", F_BODY, TX);
-        Text(x, y + 143, "3.  Avvia dal disco e usa lo stesso account.", F_BODY, TX);
+        Text(x, y + 143, "3.  BIOS: scegli 2. UEFI: avvia EFI/BOOT/BOOTX64.EFI dal nuovo volume.", F_BODY, TX);
     } else {
         Icon(x, 18, 58, page == 5 ? 33 : 38);
         Text(x, 106, page == 5 ? "Installazione interrotta" : "Sistema già installato", F_TITLE, TX);
@@ -191,7 +172,7 @@ static void paint(void)
 }
 void app_main(void)
 {
-    win(694, 394, "Installa tinymacOS");
+    win(760, 440, "Installa tinymacOS");
     refresh();
     paint();
     for (;;) {
@@ -229,7 +210,7 @@ void app_main(void)
                     } else if (e.a >= x && e.a <= x + 85)
                         back();
                 } else if (e.a >= x && e.a < aw - 21 && page == 1 && e.b >= 98 && e.b < foot) {
-                    int i = MAX(0, choice - MAX(1, (foot - 104) / 49) + 1) + (e.b - 98) / 49;
+                    int i = MAX(0, choice - MAX(1, (foot - 104) / 64) + 1) + (e.b - 98) / 64;
                     if (i < info.count)
                         choice = i;
                 } else if (page == 2 && e.b >= foot - 66 && e.b < foot - 18 && e.a >= x)

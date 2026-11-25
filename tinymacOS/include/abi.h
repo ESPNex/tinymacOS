@@ -148,11 +148,14 @@ static inline const char *wallname(unsigned v)
     return a[v % NWALL];
 }
 
+#include "partition.h"
 #define SETUP_MAX_DISKS 8
 enum { INSTALL_IDLE, INSTALL_SCAN, INSTALL_ESP, INSTALL_DATA, INSTALL_VERIFY, INSTALL_DONE, INSTALL_ERROR };
 typedef struct {
     u32 sectors;
-    int usable;
+    int usable,scheme;
+    u32 start,available;
+    char formats[72],reason[96];
     char model[41];
 } InstallDisk;
 typedef struct {
@@ -213,6 +216,7 @@ typedef struct {
         u32 sectors;
         int layout, healthy, backup;
         char model[44];
+        DiskMap map;
     } disk[8];
 } DiskInfo;
 

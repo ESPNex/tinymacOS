@@ -66,6 +66,7 @@ static int read_asset(EFI_BOOT_SERVICES *bs, EFI_FILE_PROTOCOL *f, UINTN max, in
     return 1;
 }
 #include "fatimage.h"
+#include "containerboot.h"
 EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
 {
     fw = st->BootServices;
@@ -83,8 +84,10 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))
         || EFI_ERROR(bs->HandleProtocol(li->DeviceHandle, &sg, (void **)&fs)) || EFI_ERROR(fs->OpenVolume(fs, &root))
        )FAIL("volume");
-    EFI_HANDLE rd = sibling(bs, li->DeviceHandle, 3);
+    int native_container=boot_container(bs,li->DeviceHandle);
+    EFI_HANDLE rd = native_container?0:sibling(bs, li->DeviceHandle, 3);
     load_boot_config(root);
+    if(native_container)container_boot_config(bs,&bi);
     if(rd){EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *rfs=0;EFI_FILE_PROTOCOL *rr=0;
         if(!EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&rfs))&&!EFI_ERROR(rfs->OpenVolume(rfs,&rr))){load_boot_config(rr);rr->Close(rr);}}
     int best = -1, preferred=-1, score = -1, nm = 0;
@@ -171,7 +174,7 @@ recover:
             EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *part=0;
             if (EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&part)) || EFI_ERROR(part->OpenVolume(part,&rr)))return bad_base(st);
         }
-        if(!native_recovery(bs,rr,&bi))return bad_base(st);
+        if(native_container?!container_recovery(bs,&bi):!native_recovery(bs,rr,&bi))return bad_base(st);
         goto recovery_loaded;
     }
     UINT64 filelen;
@@ -234,6 +237,7 @@ recover:
             if (part->SignatureType == 2)bs->CopyMem(bi.esp_id, part->Signature, 16);
         }
     }
+    if(native_container)bs->CopyMem(bi.esp_id,container_boot.esp_id,16);
     root->Close(root);
     file=(u8 *)bi.image+64;filelen=got=bi.image_len-64;
     goto kernel_loaded;

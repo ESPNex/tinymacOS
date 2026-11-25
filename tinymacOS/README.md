@@ -1,3 +1,5 @@
+> **10.2.3 / 30B14**: [installer GPT/MBR su spazio non allocato](docs/NOTE-10.2.3.md), riconoscimento FAT32/NTFS/RAW in sola lettura. Backup completo obbligatorio per le prove. La voce UEFI può richiedere aggiunta manuale nel firmware; nessuna certificazione Windows/hardware fisico.
+
 # Sviluppare tinymacOS
 
 Guida alla compilazione dell'albero di sistema. Presentazione, stato hardware e download sono nel README alla radice; i cambiamenti di ciascuna versione sono nelle note di rilascio.

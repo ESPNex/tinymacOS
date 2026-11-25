@@ -13,7 +13,7 @@ base=Path(os.environ['TMC_QA_DIR']);iso=Path(os.environ['TMC_STAGE_ISO']);source
 w=Path(tempfile.mkdtemp(prefix='tmc-vault-native-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir();(w/'target').mkdir();disk=w/'target/system.raw';shutil.copyfile(source,disk)
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 os.environ.update(OCR_ROOT=os.environ['TOOLROOT'],TMC_MEM='512',TMC_POINTER='tablet')
-password='local-test-285';name='private-vault-qa-10-2-2.txt';secret='TMC-NATIVE-CIPHER-SECRET-30B13'
+password='local-test-285';name='private-vault-qa-10-2-2.txt';secret='TMC-NATIVE-CIPHER-SECRET-30B14'
 r={'passed':False,'work':str(w),'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'physical_hardware_tested':False,'checks':[]}
 def ok(s):r['checks'].append(s);print('PASS',s,flush=True)
 class PrivateRetail(Retail):

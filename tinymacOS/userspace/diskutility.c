@@ -3,7 +3,7 @@ static DiskInfo d;
 static SnapInfo sn[8];
 static FsInfo fi;
 static EncInfo ei;
-static int sel, view, dialog, op, nsn;
+static int sel, view, dialog, op, nsn,side_scroll;
 static char msg[130], snapname[32];
 static void refresh(void)
 {
@@ -16,7 +16,7 @@ static void refresh(void)
         nsn = 0;
         memset(&fi, 0, sizeof fi);
     }
-    if (view >= 100 && view - 100 >= nsn)view = -1;
+    if (view >= 100 && view < 200 && view - 100 >= nsn)view = -1;
 }
 static int installed(void)
 {
@@ -51,7 +51,7 @@ static void d2(char *s, int cap, unsigned v)
 }
 static void start(int a)
 {
-    if (sel < 0 || sel >= d.count || !d.disk[sel].layout) {
+    if (view>=200 || sel < 0 || sel >= d.count || !d.disk[sel].layout) {
         strset(msg, "Seleziona un disco con un volume tinymacOS.", sizeof msg);
         return;
     }
@@ -108,7 +108,29 @@ static const char *names[] = {"Macintosh HD", "Macintosh HD - Dati", "Recovery",
 static u32 colors[] = {0x65a9f3, 0x85c4bb, 0xd5aff0, 0xa6b5c6};
 static int rail(void)
 {
-    return aw < 600 ? 145 : 176;
+    return aw < 600 ? 160 : 205;
+}
+static int side_row(int wanted,int *disk,int *v,char *label)
+{
+    int row=0;
+    for(int i=0;i<d.count;i++){
+        if(row++==wanted){*disk=i;*v=-1;strset(label,"Disco ",64);addnum(label,i,64);return 1;}
+        if(i!=sel)continue;
+        int native=nvol();
+        for(int j=0;j<native;j++)if(row++==wanted){*disk=i;*v=j;strset(label,j==1?"Dati tinymacOS":names[j],64);return 1;}
+        if(native==4)for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
+        DiskMap*m=&d.disk[i].map;
+        for(int j=0;j<m->count;j++)if(row++==wanted){*disk=i;*v=200+j;strset(label,"s",64);addnum(label,m->part[j].number,64);append(label,"  ",64);append(label,filesystem_name(m->part[j].fs),64);return 1;}
+        for(int j=0;j<m->gaps;j++)if(row++==wanted){*disk=i;*v=400+j;strset(label,"Non allocato · ",64);addnum(label,m->gap[j].sectors/2048,64);append(label," MiB",64);return 1;}
+    }
+    return 0;
+}
+static void side_move(int delta)
+{
+    char label[64];int disk,v,current=0,total=0;
+    while(side_row(total,&disk,&v,label)){if(disk==sel&&v==view)current=total;total++;}
+    int next=MAX(0,MIN(total-1,current+delta));if(side_row(next,&disk,&v,label)){sel=disk;view=v;}
+    int slots=MAX(1,(ah-59)/27);if(next<side_scroll)side_scroll=next;if(next>=side_scroll+slots)side_scroll=next-slots+1;
 }
 static void pair(int x, int y, const char *k, const char *v)
 {
@@ -124,38 +146,12 @@ static void paint(void)
     Box(r, 0, 1, ah, 0, EDGE);
     Box(r + 1, 0, aw - r - 1, ah, 0, CARD);
     Text(15, 18, "Interni", F_BOLD, SUB);
-    int y = 54;
-    for (int i = 0; i < d.count; i++) {
-        if (i == sel && view < 0)Box(7, y - 3, r - 14, 30, 7, SEL);
-        Icon(12, y, 25, 33);
-        char s[30] = "Disco ";
-        addnum(s, i + 1, 30);
-        Text(46, y + 3, s, F_BODY, TX);
-        y += 33;
-        if (i == sel && d.disk[i].layout) {
-            int n = d.disk[i].layout == 2 ? 4 : 2;
-            for (int j = 0; j < n; j++, y += 29) {
-                if (j == view)Box(10, y - 2, r - 17, 27, 7, SEL);
-                Box(23, y + 8, 7, 7, 3, colors[j]);
-                Text(38, y + 3, j == 1 ? "Dati" : names[j], F_SMALL, TX);
-            }
-            if (i == sel && d.disk[i].layout == 2) {
-                for (int k = 0; k < nsn; k++, y += 26) {
-                    if (100 + k == view)Box(10, y - 2, r - 17, 24, 7, SEL);
-                    Box(31, y + 6, 6, 6, 3, 0xd5aff0);
-                    char t[24];
-                    int q = 0;
-                    for (; sn[k].name[q] && q < 17; q++)t[q] = sn[k].name[q];
-                    if (sn[k].name[q]) {
-                        t[q++] = '.';
-                        t[q++] = '.';
-                        t[q++] = '.';
-                    }
-                    t[q] = 0;
-                    Text(44, y + 2, t, F_MICRO, TX);
-                }
-            }
-        }
+    int y=54;
+    for(int row=side_scroll;y+23<ah;row++,y+=27){int disk,v;char label[64];if(!side_row(row,&disk,&v,label))break;
+        int selected=disk==sel&&v==view;if(selected)Box(7,y-3,r-14,26,7,SEL);
+        Box(v<0?16:23,y+7,7,7,3,selected?ACC:SUB);
+        if(strlen(label)>24){label[23]='.';label[24]=0;} /* narrow labels; full info at right */
+        Text(v<0?32:38,y+2,label,F_SMALL,TX);
     }
     button(x, 13, 57, "SOS", 0);
     button(x + 65, 13, 89, "Copia dati", 0);
@@ -207,6 +203,18 @@ static void paint(void)
         finish();
         return;
     }
+    if(view>=200){
+        DiskMap*m=&d.disk[sel].map;int free=view>=400,j=view-(free?400:200);
+        u32 start=0,sectors=0;const char*title="Partizione",*format="Spazio non allocato";
+        if(free){if(j>=m->gaps){view=-1;finish();return;}start=m->gap[j].start;sectors=m->gap[j].sectors;title="Spazio non allocato";}
+        else{if(j>=m->count){view=-1;finish();return;}DiskPartition*p=m->part+j;start=p->start;sectors=p->sectors;format=filesystem_name(p->fs);title=p->name[0]?p->name:format;}
+        Icon(x,75,57,33);Text(x+69,77,title,F_CAPTION,TX);Text(x+70,109,free?"Nessuna partizione in questa estensione":"Partizione esistente · sola lettura",F_SMALL,SUB);
+        char b[64]="";addnum(b,sectors/2048,64);append(b," MiB",64);pair(x,155,"Capacità",b);pair(x,188,"Formato",format);
+        b[0]=0;addnum(b,start,64);pair(x,221,"Inizio LBA",b);b[0]=0;addnum(b,sectors,64);pair(x,254,"Settori",b);
+        Text(x,300,free?"L’installer usa solo spazio non allocato verificato.":"RAW non significa vuoto. Nessuna inizializzazione automatica.",F_SMALL,SUB);
+        Box(r+1,ah-45,aw-r-1,1,0,EDGE);Text(x,ah-31,msg[0]?msg:"Le partizioni esistenti sono protette dalle operazioni native.",F_SMALL,SUB);
+        finish();return;
+    }
     Icon(x, 75, 57, view == -1 ? 33 : 39);
     Text(x + 69, 77, view < 0 ? "Disco interno" : names[view], F_CAPTION, TX);
     Text(x + 70, 109, view < 0 ? d.disk[sel].model : "Volume del disco interno", F_SMALL, SUB);
@@ -220,7 +228,7 @@ static void paint(void)
         addnum(s, view >= 0 ? z[view] : mb, 64);
     append(s, " MiB", 64);
     pair(x, 155, view == 1 && installed() ? "Utilizzo" : "Capacità", s);
-    pair(x, 188, "Formato", view < 0 ? (d.disk[sel].layout ? "Mappa partizione GUID" : "Non riconosciuto") : view == 1 ?
+    pair(x, 188, "Formato", view < 0 ? partition_scheme(d.disk[sel].map.scheme) : view == 1 ?
          "BTRFS subset (struttura APFS)" : view == 3 ? "Immagine di ripristino" : "Volume EFI (FAT16)");
     if (view == 1 && installed()) {
         char k[24] = "";
@@ -245,7 +253,7 @@ static void paint(void)
         }
     } else {
         Box(x, 275, sw, 14, 6, SOFT);
-        Text(x, 305, "Nessun volume tinymacOS riconosciuto.", F_SMALL, SUB);
+        Text(x, 305, "Seleziona una partizione: FAT32, NTFS o RAW sono in sola lettura.", F_SMALL, SUB);
     }
     Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
     Text(x, ah - 31, msg[0] ? msg : d.disk[sel].backup ? "Copia dei dati disponibile in Recupero." :
@@ -271,7 +279,7 @@ static void paint(void)
 }
 void app_main(void)
 {
-    win(693, 384, "Utility Disco");
+    win(810, 460, "Utility Disco");
     refresh();
     sel = d.current >= 0 ? d.current : 0;
     view = -1;
@@ -303,52 +311,21 @@ void app_main(void)
                 if (e.a == 'r')start(3);
                 if (e.a == 'n')start(4);
                 if (e.a == K_UP || e.a == K_DOWN) {
-                    int rows = 1 + nvol() + (nvol() == 4 ? nsn : 0);
-                    int cur = view + 1;
-                    cur += e.a == K_DOWN ? 1 : -1;
-                    if (cur < 0)cur = 0;
-                    if (cur >= rows)cur = rows - 1;
-                    view = cur - 1;
+                    side_move(e.a==K_DOWN?1:-1);
                     msg[0] = 0;
                 }
             }
             if (e.type == EV_CLICK) {
                 int r = rail(), x = r + 22;
                 if (e.a < r) {
-                    int y = 54;
-                    for (int i = 0; i < d.count; i++) {
-                        if (e.b >= y - 3 && e.b < y + 28) {
-                            sel = i;
-                            view = -1;
-                            msg[0] = 0;
-                            break;
-                        }
-                        y += 33;
-                        if (i == sel && d.disk[i].layout) {
-                            int n = d.disk[i].layout == 2 ? 4 : 2;
-                            if (e.b >= y - 2 && e.b < y + n * 29 - 2) {
-                                view = (e.b - y + 2) / 29;
-                                msg[0] = 0;
-                                break;
-                            }
-                            y += n * 29;
-                            if (i == sel && d.disk[i].layout == 2 && nsn) {
-                                if (e.b >= y - 2 && e.b < y + nsn * 26 - 2) {
-                                    view = 100 + (e.b - y + 2) / 26;
-                                    if (view - 100 >= nsn)view = 100 + nsn - 1;
-                                    msg[0] = 0;
-                                    break;
-                                }
-                                y += nsn * 26;
-                            }
-                        }
-                    }
+                    int row=side_scroll+(e.b-54)/27,dd,vv;char label[64];
+                    if(e.b>=51&&side_row(row,&dd,&vv,label)){sel=dd;view=vv;msg[0]=0;}
                 } else if (e.b >= 10 && e.b < 43) {
                     if (e.a >= x && e.a < x + 58)start(1);
                     else if (e.a >= x + 65 && e.a < x + 155)start(2);
                     else if (e.a >= x + 162 && e.a < x + 255)start(3);
                     else if (e.a >= x + 262 && e.a < x + 366)start(4);
-                } else if (view >= 100 && e.b >= 278 && e.b < 316) {
+                } else if (view >= 100 && view<200 && e.b >= 278 && e.b < 316) {
                     if (e.a >= x && e.a < x + 110)start(5);
                     else if (e.a >= x + 118 && e.a < x + 214)verify_now();
                     else if (e.a >= x + 222 && e.a < x + 318)start(7);

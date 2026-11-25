@@ -138,9 +138,9 @@ void recovery_bar_draw(void)
     }
     if(info_open||power_confirm||result[0]){
         Rect a=message_box();shadow(a,14,52);roundr(a.x,a.y,a.w,a.h,14,0x303033,255);
-        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.2":power_confirm==1?"Riavviare il computer?":"Spegnere il computer?";
+        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.3":power_confirm==1?"Riavviare il computer?":"Spegnere il computer?";
         center(W/2,a.y+20,title,F_BOLD,0xf2f2f2);
-        center(W/2,a.y+59,result[0]?result:info_open?"Versione 10.2.2 · 30B13":"Le operazioni non salvate andranno perse.",F_BODY,0xc0c0c4);
+        center(W/2,a.y+59,result[0]?result:info_open?"Versione 10.2.3 · 30B14":"Le operazioni non salvate andranno perse.",F_BODY,0xc0c0c4);
         if(info_open||result[0]){button_face((Rect){a.x+a.w-126,a.y+118,102,34},0);center(a.x+a.w-75,a.y+124,"Fine",F_BODY,TX);}
         else{
             button_face((Rect){a.x+24,a.y+118,134,34},0);center(a.x+91,a.y+124,"Annulla",F_BODY,TX);

@@ -69,6 +69,14 @@ static int base_file(EFI_BOOT_SERVICES *bs,FatImage *fs,const char *name,u64 *ad
         memcpy((void *)(p+at),fs->b+fs->data+(c-2)*fs->spc,n);c=nextcl(fs,c);at+=n;}
     if(c<0xfff8)return 0;*addr=p;*len=z;return 1;
 }
+static int native_recovery_data(EFI_BOOT_SERVICES *bs,u8 *data,struct Boot*b)
+{
+    if(!check_base(data,BASE_LEN))return 0;
+    FatImage fs;if(!geometry(&fs,data,BASE_FORK))return 0;
+    if(!base_file(bs,&fs,"RECOVERYELF",&b->image,&b->image_len)||!base_file(bs,&fs,"RECOVERYVOL",&b->volume,&b->volume_len))return 0;
+    if(b->volume_len<48)return 0;u8 sum[32];b->volume_len-=32;sha_bytes((void *)b->volume,b->volume_len,sum);
+    if(memcmp(sum,(void *)(b->volume+b->volume_len),32))return 0;return 1;
+}
 static int native_recovery(EFI_BOOT_SERVICES *bs,EFI_FILE_PROTOCOL *root,struct Boot *b)
 {
     EFI_FILE_PROTOCOL *f=0;u8 *data=0;UINTN n=BASE_LEN;UINT64 size=0;int ok=0;
@@ -76,10 +84,7 @@ static int native_recovery(EFI_BOOT_SERVICES *bs,EFI_FILE_PROTOCOL *root,struct 
     if(EFI_ERROR(f->SetPosition(f,~(UINT64)0))||EFI_ERROR(f->GetPosition(f,&size))||size!=n||EFI_ERROR(f->SetPosition(f,0)))goto done;
     if(EFI_ERROR(bs->AllocatePool(EfiLoaderData,n,(void **)&data)))goto done;
     if(EFI_ERROR(f->Read(f,&n,data))||!check_base(data,n))goto done;
-    FatImage fs;if(!geometry(&fs,data,BASE_FORK))goto done;
-    if(!base_file(bs,&fs,"RECOVERYELF",&b->image,&b->image_len)||!base_file(bs,&fs,"RECOVERYVOL",&b->volume,&b->volume_len))goto done;
-    if(b->volume_len<48)goto done;u8 sum[32];b->volume_len-=32;sha_bytes((void *)b->volume,b->volume_len,sum);
-    if(memcmp(sum,(void *)(b->volume+b->volume_len),32))goto done;ok=1;
+    ok=native_recovery_data(bs,data,b);
 done:
     f->Close(f);if(data)bs->FreePool(data);return ok;
 }
