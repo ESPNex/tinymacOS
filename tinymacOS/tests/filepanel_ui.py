@@ -31,7 +31,7 @@ def filename(g,X,Y,name):
 def accept(g,X,Y):g.click(X+690,Y+452-6)
 try:
  with Retail(iso,b,ev,'filepanel',live=True) as g:
-  g.type('Elena');g.key('tab');r['password_caret_samples']=caret(g,513,473);g.type('local-test-28');g.key('left');g.type('X');g.key('delete');g.key('backspace');g.key('end');g.type('85');g.key('tab');g.type('local-test-285');g.key('ret');g.visible('Preferiti',35);ok('Setup password field blinks without plaintext; UTF8-safe caret editing authenticates the resulting password')
+  g.type('Elena');g.key('tab');time.sleep(.4);assert int(np.sum(np.all(np.asarray(g.snap())[481:498,529,:]==255,axis=1)))<3;g.type('l');g.key('left');r['password_caret_samples']=caret(g,513,473);g.key('right');g.type('ocal-test-28');g.key('left');g.type('X');g.key('delete');g.key('backspace');g.key('end');g.type('85');g.key('tab');g.type('local-test-285');g.key('ret');g.visible('Preferiti',35);ok('Setup password caret hidden until typing, then blinks without plaintext; UTF8-safe caret editing authenticates the resulting password')
   g.app('f3','Testo semplice');X,Y=origin(g);g.type('HELLO19');g.key('ctrl-s');g.visible('Salva documento');time.sleep(.5)
   assert pixels.locate(g.snap().crop((X,Y-42,X+750,Y)),'Untitled.txt',faces=(2,),threshold=.94) is None
   assert pixels.locate(g.snap(),'Testo semplice',faces=(0,),threshold=.98) is None
@@ -52,6 +52,6 @@ try:
   g.key('ctrl-shift-s');g.visible('Salva documento');g.click(X+300,Y+383);g.type('/System/Nope19.txt');g.click(X+690,Y+446);g.visible('La destinazione non e scrivibile.');g.key('esc');ok('Readonly destinations rejected in the actual save sheet')
   g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');ok('Canceled and rejected saves leave existing file bytes unchanged')
   # Lock via real Apple menu, then prove login caret and password editing.
-  g.click(23,16);px,py=g.visible('Blocca schermo');g.click(px+35,py+6);g.visible('Inserisci la password');r['locked_caret_samples']=caret(g,518,613);g.type('local-test-285');g.key('ret');g.visible('Terminale',35);ok('Locked-session password caret and unlock work')
+  g.click(23,16);px,py=g.visible('Blocca schermo');g.click(px+35,py+6);g.visible('Inserisci la password');time.sleep(.4);assert int(np.sum(np.all(np.asarray(g.snap())[621:638,534,:]==255,axis=1)))<3;g.type('l');g.key('left');r['locked_caret_samples']=caret(g,518,613);g.key('right');g.type('ocal-test-285');g.key('ret');g.visible('Terminale',35);ok('Locked-session password caret and unlock work')
   r['passed']=True
 finally:(b/'filepanel-result.json').write_text(json.dumps(r,indent=2)+'\n')

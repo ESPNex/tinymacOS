@@ -12,7 +12,7 @@ env={**os.environ,'LC_ALL':'C','TZ':'UTC','MTOOLS_SKIP_CHECK':'1','MTOOLS_DATE_S
 def run(*args):subprocess.run(args,env=env,stdout=subprocess.DEVNULL,check=True)
 with raw.open('wb') as f:f.truncate(8<<20)
 run('mkfs.fat','--invariant','-F16','-s1','-n','BASE SYSTEM',raw)
-run('mmd','-i',raw,'::/EFI','::/EFI/BOOT');run('mcopy','-i',raw,runtime,'::/EFI/BOOT/BOOTX64.EFI')
+run('mcopy','-i',raw,runtime,'::/RECOVERY.ELF');run('mcopy','-i',raw,Path(sys.argv[3]).resolve(),'::/RECOVERY.VOL')
 data=raw.read_bytes();n=len(data)//512;crc=zlib.crc32(data)
 def checksum(c):return struct.pack('>III',2,32,c)+bytes(124)
 def extent(kind,sector,count,offset,size):return struct.pack('>IIQQQQ',kind,0,sector,count,offset,size)

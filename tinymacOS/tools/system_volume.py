@@ -15,6 +15,7 @@ def macho(p):
         segs.append(struct.pack('<II16sQQQQiiII',0x19,72,name.encode(),a,(ms+4095)&~4095,off,fs,prot,prot,0,0))
     cmds=b''.join(segs)+struct.pack('<IIQQ',0x80000028,24,ep,0);head=struct.pack('<8I',0xfeedfacf,0x1000007,3,2,len(segs)+1,len(cmds),1,0)+cmds;body[:len(head)]=head;return bytes(body)
 apps=[('finder','Finder','/System/Library/CoreServices'),('terminal','Terminal','/Applications/Utilities'),('textedit','TextEdit','/Applications'),('settings','System Settings','/Applications'),('about','About This Computer','/System/Library/CoreServices'),('calculator','Calculator','/Applications'),('calendar','Calendar','/Applications'),('monitor','Activity Monitor','/Applications/Utilities'),('gallery','Gallery','/Applications'),('diskutility','Disk Utility','/Applications/Utilities'),('notes','Notes','/Applications'),('stickies','Stickies','/Applications'),('timemachine','Time Machine','/Applications')]
+if mode=='recovery':apps=[x for x in apps if x[0] in ('terminal','diskutility')]
 if mode=='live':apps+=[('installer','Install tinymacOS','/Applications')]
 files={};paths=['/'];entries=[(-1,1,'',None)]
 def add(p,data):
@@ -22,15 +23,15 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2','CFBundleVersion':'30B11','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':name,'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.1','CFBundleVersion':'30B12','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
 for svg in sorted(Path('assets/control-center').glob('*.svg')):add('/System/Library/CoreServices/ControlCenter/Symbols/'+svg.name,svg.read_bytes())
 add('/System/Library/CoreServices/ControlCenter/Symbols/manifest.json',(D/'control-svg.json').read_bytes())
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2','ProductBuildVersion':'30B11'}));add('/System/Library/KernelCollections',None)
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.1','ProductBuildVersion':'30B12'}));add('/System/Library/KernelCollections',None)
 add('/System/Library/Fonts/Interface.tfn',Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes())
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json
 atlas=json.loads((D/'icon-atlas.json').read_text());slots={int(k):v for k,v in atlas['slots'].items()}
-for slot,name in slots.items():
+for slot,name in ([] if mode=='recovery' else slots.items()):
     source=D/name if slot==38 else Path('assets/icons')/name
     add('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/'+name,source.read_bytes())
 appslots={'finder':1,'terminal':2,'textedit':3,'settings':4,'about':5,'calculator':16,'calendar':17,'monitor':18,'gallery':19,'installer':38,'diskutility':39,'notes':40,'stickies':41,'timemachine':42}
@@ -43,7 +44,7 @@ add('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/IconsManif
 add('/System/Library/Fonts/Display-Semibold-OFL.txt',Path('assets/font-source/OFL.txt').read_bytes())
 
 # No browser resources in this baseline image. WebKit is developed separately.
-for name,src in zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza','Tramontana'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza','tramontana')):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())
+for name,src in ([] if mode=='recovery' else zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza','Tramontana'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza','tramontana'))):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())
 commands=(Path('include/commands.def').read_text().splitlines());tool=macho(D/'command.elf')
 for path in commands:
     if path:add(path,tool)

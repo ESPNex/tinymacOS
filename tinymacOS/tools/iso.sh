@@ -5,7 +5,7 @@ export SOURCE_DATE_EPOCH=1735689600 LC_ALL=C TZ=UTC MTOOLS_SKIP_CHECK=1 MTOOLS_D
 D=$TMC_BUILD;python3 tools/media_path.py "$D" "$D/$TMC_ISO";R=$(mktemp -d "$D/disc.XXXXXXXX");trap 'rm -rf "$R"' EXIT
 mkdir -p "$R/EFI/TMC" "$R/EFI/OC/Drivers" "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/TMC/BOOTX64.EFI";cp vendor/opencore-1.0.8/BOOTx64.efi "$R/EFI/BOOT/BOOTX64.EFI";cp vendor/opencore-1.0.8/OpenCore.efi "$R/EFI/OC/";cp boot/opencore.plist "$R/EFI/OC/config.plist";python3 tools/firmware_drivers.py "$R/EFI/OC/Drivers";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
 # BaseSystem is created in external scratch. Only the finished ISO is distributed.
-P=${1:-};if [ -z "$P" ];then P="$R/work";mkdir "$P";python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI";fi
+P=${1:-};if [ -z "$P" ];then P="$R/work";mkdir "$P";python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol";fi
 python3 tools/media_path.py "$P" "$P/RecoveryHD.fat"
 python3 - "$D/BootConfig.bin" <<'PYCFG'
 import sys,struct,hashlib
@@ -73,4 +73,4 @@ cp "$P/Volume.hdr" "$R/Recovery/Volume.hdr"
 cp "$D/Payload.sha" "$R/Recovery/Payload.sha"
 if [ "$P" = "$R/work" ];then rm -rf "$P";fi
 find "$R" -exec touch -h -d @1735689600 {} +
-xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_1_9 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
+xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_2_1 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"

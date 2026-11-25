@@ -45,7 +45,7 @@ void bootfs_init(void)
             count = 1;
         } else if (add(e[0], name, e[1], v + e[2], e[3]) != (int)i)panic("system entry", 0, 0);
     }
-    for (int i = 0; i <= NWALL; i++) {
+    for (int i = 0; i <= (boot.recovery?0:NWALL); i++) {
         char path[PATHLEN] = "/System/Library/Fonts/Interface.tfn";
         if (i) {
             strset(path, "/System/Library/Desktop Pictures/", PATHLEN);

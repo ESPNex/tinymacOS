@@ -93,3 +93,6 @@ gcc -Icompat/linux/dma-include $C -fno-pie -no-pie tests/linux_dma_native.c -o "
 # is disabled only for upstream list_entry sentinel pseudo-objects; actual
 # DMA object alignment is checked separately, ASan/other UBSan stay enabled.
 gcc -Icompat/linux/uhci-include -Icompat/linux/dma-include $C -fwrapv -fno-sanitize=alignment -Wno-unused-function -Wno-unused-but-set-variable -fno-pie -no-pie tests/linux_uhci.c -o "$out/linux-uhci";"$out/linux-uhci"
+
+# Actual XML property-list serializer/parser, no fake .plist blobs.
+gcc $C -fno-builtin -Iinclude tests/prefs_plist.c -o "$out/prefs-plist";"$out/prefs-plist"

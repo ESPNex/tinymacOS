@@ -42,6 +42,9 @@ static int valid(const Account *a)
 }
 void session_init(void)
 {
+    /* Recovery has an ephemeral maintenance session, not the installed account.
+     * Never read credentials, run enrollment or unlock a mounted user volume. */
+    if(boot.recovery){state=SESSION_OPEN;logstr("[session] isolated Recovery, no account authentication\n");return;}
     Account a, b;
     int x = account_sector(0, &a, 0), y = account_sector(1, &b, 0);
     if (!x && valid(&a)) {
@@ -92,6 +95,7 @@ static int session_reset(void)
 {
     if (state != SESSION_BROKEN || busy)return -1;
     u8 z[512] = {0};
+    if(boot.recovery)return -1;
     Account a, b;
     if (account_sector(0, z, 1) || account_sector(1, z, 1))return -1;
     if (account_sector(0, &a, 0) || account_sector(1, &b, 0) ||
@@ -174,7 +178,7 @@ int session_work(void)
 }
 int session_lock(void)
 {
-    if (state != SESSION_OPEN)return -1;
+    if (boot.recovery || state != SESSION_OPEN)return -1;
     state = SESSION_LOCKED;
     logstr("[session] locked; clients suspended\n");
     return 0;

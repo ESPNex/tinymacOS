@@ -21,31 +21,6 @@ static inline UINTN hd_prefix(EFI_DEVICE_PATH *p, int *number)
     }
     return 0;
 }
-static inline EFI_STATUS start_file(EFI_HANDLE self, EFI_SYSTEM_TABLE *st, EFI_HANDLE dev, CHAR16 *name,
-                                    void *buffer, UINTN len, UINTN dmg_bytes)
-{
-    EFI_DEVICE_PATH *p = filepath(dev, name);
-    if (!p)return EFI_NOT_FOUND;
-    EFI_HANDLE child = 0;
-    EFI_STATUS s = st->BootServices->LoadImage(FALSE, self, p, buffer, len, &child);
-    st->BootServices->FreePool(p);
-    if (!EFI_ERROR(s)) {
-        EFI_GUID lg=LOADED_IMAGE_PROTOCOL; EFI_LOADED_IMAGE *li=0;
-        struct RecoveryOrigin origin={.magic=ORIGIN_MAGIC,.image_bytes=(u32)dmg_bytes};
-        EFI_DEVICE_PATH *node=devpath(dev);
-        for (int i=0; node && i<64 && !IsDevicePathEnd(node); i++,node=NextDevicePathNode(node)) {
-            unsigned n=DevicePathNodeLength(node);if (n<4 || n>4096)break;
-            if (DevicePathType(node)!=MEDIA_DEVICE_PATH)continue;
-            if (DevicePathSubType(node)==MEDIA_CDROM_DP)origin.optical=1;
-            if (DevicePathSubType(node)==MEDIA_HARDDRIVE_DP && n>=42)origin.partition=((HARDDRIVE_DEVICE_PATH *)node)->PartitionNumber;
-        }
-        if (!EFI_ERROR(st->BootServices->HandleProtocol(child,&lg,(void **)&li))) {
-            li->LoadOptions=&origin;li->LoadOptionsSize=sizeof origin;
-        }
-        s=st->BootServices->StartImage(child,0,0);
-    }
-    return s;
-}
 static inline EFI_HANDLE sibling(EFI_BOOT_SERVICES *bs, EFI_HANDLE dev, int which)
 {
     EFI_DEVICE_PATH *dp = devpath(dev);

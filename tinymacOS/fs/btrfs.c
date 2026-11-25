@@ -1,3 +1,4 @@
+#include "prefs_plist.h"
 #include "../kernel/k.h"
 #include "../include/disklayout.h"
 #include "../include/sha256.h"
@@ -812,7 +813,7 @@ static void libraries(void)
             syncnode(i);
         }
     }
-    const char *path = HOME "/Library/Preferences/com.tinymacos.appearance";
+    const char *path = HOME "/Library/Preferences/com.tinymacos.appearance.plist";
     int id = resolve(path);
     if (id < 0)id = fs_create(path, 0);
     if (id > 0) {
@@ -923,11 +924,17 @@ void fs_init(void)
                 if (block.read(0, eh) == 0)
                     enc_load(eh);
             }
-            configid = resolve(HOME "/Library/Preferences/com.tinymacos.appearance");
+            configid = resolve(HOME "/Library/Preferences/com.tinymacos.appearance.plist");
             if (configid < 0)configid = resolve("/System/Configuration/Appearance");
-            u8 conf[6] = {0};
+            if(configid<0)configid=resolve(HOME "/Library/Preferences/com.tinymacos.appearance");
+            u8 conf[6] = {0};char xml[1024]={0};
             int cn = configid > 0 ? nodes[configid].size : 0;
-            if (configid > 0 && (cn == 3 || cn == 5 || cn == 6) && bytes(configid, 0, conf, cn, 0) == cn) {
+            int valid=0;
+            if(configid>0&&cn>0&&cn<(int)sizeof xml&&bytes(configid,0,xml,cn,0)==cn){
+                if(cn==3||cn==5||cn==6){memcpy(conf,xml,cn);valid=1;}
+                else if(prefs_plist_read(xml,conf)){cn=6;valid=1;}
+            }
+            if (valid) {
                 theme = conf[0] % NTHEME;
                 wall = conf[1] % NWALL;
                 reduce_motion = conf[3] & 1;
@@ -944,7 +951,7 @@ void fs_init(void)
                     syncnode(i);
                     usednodes--;
                 }
-            if (resolve(HOME "/Library/Preferences/com.tinymacos.appearance") < 0)libraries();
+            if (resolve(HOME "/Library/Preferences/com.tinymacos.appearance.plist") < 0)libraries();
             logstr("[prefs] loaded theme,wall,dock,reduce,opaque: ");
             lognum(theme);
             lognum(wall);
@@ -1003,10 +1010,11 @@ void fs_init(void)
 int fs_saveprefs_i()
 {
     if (configid <= 0)return -1;
-    u8 c[6] = {theme, wall, dock, reduce_motion, opaque, dark};
-    if (bytes(configid, 0, c, 6, 1) == 6) {
+    u8 values[6]={theme,wall,dock,reduce_motion,opaque,dark};char c[1024];
+    int size=prefs_plist_write(c,sizeof c,values);if(size<0)return -1;
+    if (bytes(configid, 0, c, size, 1) == size) {
         u32 old = nodes[configid].size;
-        nodes[configid].size = 6;
+        nodes[configid].size = size;
         if (!syncnode(configid))return 0;
         nodes[configid].size = old;
     }
@@ -1195,12 +1203,16 @@ int fs_snap_list_i(void *out, int cap)
 }
 static void prefs_reload(void)
 {
-    configid = resolve(HOME "/Library/Preferences/com.tinymacos.appearance");
+    configid = resolve(HOME "/Library/Preferences/com.tinymacos.appearance.plist");
     if (configid < 0)
         configid = resolve("/System/Configuration/Appearance");
-    u8 conf[6] = {0};
-    int cn = configid > 0 ? nodes[configid].size : 0;
-    if (configid > 0 && (cn == 3 || cn == 5 || cn == 6) && bytes(configid, 0, conf, cn, 0) == cn) {
+    if(configid<0)configid=resolve(HOME "/Library/Preferences/com.tinymacos.appearance");
+    u8 conf[6]={0};char xml[1024]={0};int cn=configid>0?nodes[configid].size:0,valid=0;
+    if(configid>0&&cn>0&&cn<(int)sizeof xml&&bytes(configid,0,xml,cn,0)==cn){
+        if(cn==3||cn==5||cn==6){memcpy(conf,xml,cn);valid=1;}
+        else if(prefs_plist_read(xml,conf)){cn=6;valid=1;}
+    }
+    if(valid){
         theme = conf[0] % NTHEME;
         wall = conf[1] % NWALL;
         reduce_motion = conf[3] & 1;

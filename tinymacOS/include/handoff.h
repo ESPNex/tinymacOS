@@ -9,6 +9,7 @@ struct Boot {
     uint32_t nmodes;              /* runtime-switchable GOP modes (w<<16|h) */
     uint32_t modes[24];
     uint32_t boot_flags;        /* TMC_BOOT_VERBOSE etc. */
+    uint32_t recovery;            /* set by the dedicated Recovery kernel */
     uint32_t csr;                 /* SIP config from NVRAM: bit0 = enabled */
 };
 struct Elf {

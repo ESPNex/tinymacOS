@@ -132,7 +132,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
                     != EFI_SUCCESS)
                 csr = 1;
         }
-        bi.csr = csr & 1u;
+        bi.csr = (bi.boot_flags&TMC_BOOT_CSR_OVERRIDE)?!(bi.boot_flags&TMC_BOOT_CSR_DISABLED):(csr & 1u);
     }
     if(preferred>=0 && !EFI_ERROR(go->SetMode(go,preferred)))best=preferred;
     else if (best < 0 || EFI_ERROR(go->SetMode(go, best)))
@@ -160,6 +160,9 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
         !EFI_ERROR(rng->GetRNG(rng, 0, 16, bi.entropy)))bi.rng_ok = 1;
 
     int rec = recflag(bs, li->DeviceHandle) || recovery_key(st);
+#ifdef TMC_RECOVERY_ENTRY
+    rec=1;
+#endif
     if (rec) {
 recover:
         ;
@@ -168,8 +171,8 @@ recover:
             EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *part=0;
             if (EFI_ERROR(bs->HandleProtocol(rd,&sg,(void **)&part)) || EFI_ERROR(part->OpenVolume(part,&rr)))return bad_base(st);
         }
-        EFI_STATUS r=image_recovery(image,st,rd?rd:li->DeviceHandle,rr);
-        return EFI_ERROR(r)?bad_base(st):r;
+        if(!native_recovery(bs,rr,&bi))return bad_base(st);
+        goto recovery_loaded;
     }
     UINT64 filelen;
     void *file;
@@ -188,9 +191,6 @@ recover:
     sha_bytes((void *)bi.volume, bi.volume_len, sum);
     if (memcmp(sum, (u8 *)bi.volume + bi.volume_len, 32))goto recover;
     vmsg("[loader] kernel and system SHA-256 verified\n");
-    file = kc + 64;
-    filelen = got = bi.image_len - 64;
-    if (filelen < sizeof(struct Elf))FAIL("Short kernel image");
     EFI_STATUS self=root->Open(root,&f,L"\\EFI\\TMC\\BOOTX64.EFI",EFI_FILE_MODE_READ,0);
     if(EFI_ERROR(self))self=root->Open(root,&f,L"\\EFI\\BOOT\\BOOTX64.EFI",EFI_FILE_MODE_READ,0);
     if (EFI_ERROR(self) ||
@@ -235,6 +235,12 @@ recover:
         }
     }
     root->Close(root);
+    file=(u8 *)bi.image+64;filelen=got=bi.image_len-64;
+    goto kernel_loaded;
+recovery_loaded:
+    file=(void *)bi.image;filelen=got=bi.image_len;
+kernel_loaded:
+    if(filelen<sizeof(struct Elf))FAIL("Short kernel image");
     struct Elf *e = file;
     if (*(UINT32 *)e->id != 0x464c457f || e->id[4] != 2 || e->machine != 62 || e->type != 2
         || e->phentsize != sizeof(struct Ph) || !e->phnum || e->phoff > got

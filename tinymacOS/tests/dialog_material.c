@@ -25,7 +25,7 @@ int main(void){
     Rect q={45,35,220,170};
     for(night=0;night<2;night++)for(lite=0;lite<2;lite++){
         scene();glass(q,14,MAT_DOCK);memcpy(expected,canvas,W*H*sizeof(u32));
-        scene();glass(q,14,MAT_DIALOG);assert(!memcmp(expected,canvas,W*H*sizeof(u32)));
+        for(int kind=MAT_WINDOW;kind<=MAT_SHEET;kind++){scene();glass(q,14,kind);assert(!memcmp(expected,canvas,W*H*sizeof(u32)));}
     }
-    puts("PASS actual glass shader: file panel and Control Center material are pixel-identical in light/dark and opaque fallback; no independent alpha");
+    puts("PASS actual glass shader: all six Liquid Glass surfaces and Control Center are pixel-identical in light/dark and opaque fallback; no independent alpha");
 }

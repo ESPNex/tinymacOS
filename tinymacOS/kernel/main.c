@@ -4,8 +4,13 @@ struct Boot boot;
 void kmain(struct Boot *b)
 {
     boot = *b;
+#ifdef TMC_RECOVERY_KERNEL
+    boot.recovery=1;
+#else
+    boot.recovery=0;
+#endif
     boot_loginit();
-    boot_logstr("[boot] tinymacOS native kernel\n");
+    boot_logstr(boot.recovery?"[boot] tinymacOS separate Recovery kernel; firmware services exited\n":"[boot] tinymacOS native kernel\n");
     splash_bar(&boot, 63);
     cpu_init();
     boot_logstr("[boot] CPU protections and interrupt tables ready\n");

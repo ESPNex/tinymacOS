@@ -79,6 +79,7 @@ static void info(SysInfo *s)
     s->opaque = opaque;
     s->dark = dark;
     s->csr = boot.csr;
+    s->recovery=boot.recovery;
     s->busy_ticks = busy_ticks;
     strset(s->cpu, cpuname, sizeof s->cpu);
     u32 ifl;
@@ -258,6 +259,10 @@ static Frame *syscall_inner(Frame *f)
         if(!session_open())break;
         if(a==0)r=bootconfig_disk(0,0);
         else if(a==1 && b<=1)r=bootconfig_disk(1,(u32)b);
+        else if(a==3 && boot.recovery && p->app==COMMAND && eq(p->program,"csrutil") && b<=1){
+            u32 flags=TMC_BOOT_CSR_OVERRIDE|(b?0:TMC_BOOT_CSR_DISABLED);r=bootconfig_disk(3,flags);
+            if(r>=0)boot.csr=b;
+        }
         else if(a==2 && c<=4096 && d<=16384 && OUT(b,c))r=boot_logcopy((char *)b,c,d);
         break;
     case S_VM:
@@ -352,7 +357,8 @@ static Frame *syscall_inner(Frame *f)
         if (a == 0 && OUT(b, sizeof(DiskInfo))) {
             disk_info((void *)b);
             r = 0;
-        } else if (a == 4)r = disk_operation(4, (int)b);
+        } else if(boot.recovery && desktop && a>=5 && a<=9)r=disk_operation((int)a,(int)b);
+        else if (a == 4)r = disk_operation(4, (int)b);
         else if ((p->app == DISKUTIL || (a == 1 && p->app == COMMAND &&
                   (eq(p->program, "diskutil") || eq(p->program, "fsck_apfs"))) || (desktop &&
                   a == 3)) && a >= 1 && a <= 3)r = disk_operation((int)a, (int)b);

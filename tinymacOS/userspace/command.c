@@ -190,10 +190,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.2");
-            ln("BuildVersion:      30B11");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B11");
+            ln("ProductVersion:    10.2.1");
+            ln("BuildVersion:      30B12");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.1");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B12");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -201,8 +201,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.2");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2 30B11 x86_64");
+        else if (eq(V(1), "-r"))ln("10.2.1");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.1 30B12 x86_64");
         else return 2;
         return 0;
     }
@@ -212,8 +212,11 @@ static int run(void)
                            : "System Integrity Protection: disattiva.");
             return 0;
         }
-        if (n == 2 && (eq(V(1), "enable") || eq(V(1), "disable")))
-            return fail("csrutil: solo la Shell di Recupero puo modificare SIP (riavviare premendo R).");
+        if (n == 2 && (eq(V(1), "enable") || eq(V(1), "disable"))){
+            if(!t.recovery)return fail("csrutil: solo la Shell di Recupero puo modificare SIP (riavviare premendo R).");
+            if(sc(S_BOOTCONFIG,3,eq(V(1),"enable"),0,0)<0)return fail("csrutil: nessun disco tinymacOS con configurazione scrivibile.");
+            ln("Preferenza SIP verificata sul primo disco tinymacOS. Riavvia per applicarla.");return 0;
+        }
         return fail("Uso: csrutil status | csrutil enable | csrutil disable");
     }
     if (IS("kextstat")) {

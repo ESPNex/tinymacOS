@@ -9,7 +9,7 @@ static AuthRequest form;
 static char confirm[65], notice[112], setup_code[33];
 static int field, confirmPower, blink = -1, minute = -1, lastPhase = -1, shake, reset_arm;
 static u64 spinStart, caretTick;
-static int carets[3];
+static int carets[3], typed[3];
 static u32 glow[1920 * 1080];
 int gate;
 static void wipe(void *p, int n)
@@ -26,7 +26,7 @@ void login_enter(void)
 {
     gate = 1;
     field = 0;
-    memset(carets,0,sizeof carets);caretTick=sys.ticks;
+    memset(carets,0,sizeof carets);memset(typed,0,sizeof typed);caretTick=sys.ticks;
     confirmPower = 0;
     shake = 0;
     reset_arm = 0;
@@ -192,7 +192,7 @@ static void field_draw(int i)
             if(textw(visible,F_BODY)<=r.w-32||end<=carets[i])break;end=text_prev(s,end);}
         text(r.x+16,r.y+7,visible,F_BODY,0xffffff);cx=r.x+16+textw(prefix,F_BODY);
     }
-    if(i==field&&blink&&!account.working)rect(MIN(r.x+r.w-12,cx),r.y+8,1,17,0xffffff);
+    if(i==field&&typed[i]&&blink&&!account.working)rect(MIN(r.x+r.w-12,cx),r.y+8,1,17,0xffffff);
 }
 void login_draw(void)
 {
@@ -433,7 +433,7 @@ void login_input(Event *e)
     else if(k==K_END)*at=strlen(p);
     else if(k==8)text_backspace(p,at);
     else if(k==K_DEL)text_delete(p,*at);
-    else if(text_printable(k))text_insert(p,max+1,at,k);
+    else if(text_printable(k)){if(text_insert(p,max+1,at,k))typed[field]=1;}
     notice[0] = 0;
 }
 int login_step(void)

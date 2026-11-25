@@ -67,6 +67,7 @@ typedef struct {
     u32 boot_flags;
     u64 core_busy[8], core_ticks[8];
     u32 nmodes, modes[24];       /* switchable resolutions (w<<16|h) */
+    u32 recovery;                /* isolated native Recovery session */
     u32 csr;                     /* SIP: bit0 = enabled (live NVRAM config) */
 } SysInfo;
 typedef struct {

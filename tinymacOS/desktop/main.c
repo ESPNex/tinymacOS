@@ -132,6 +132,7 @@ int focuswin(int i)
 }
 void openarg(int a, const char *arg)
 {
+    if(sys.recovery&&a!=TERMINAL&&a!=DISKUTIL)return;
     if (sc(S_SPAWN, a, arg, 0, 0) > 0) {
         pend = a;
         shell_pop(a);
@@ -360,7 +361,7 @@ static void render(int dt)
     }
     nlayer = 0;
     sceneSeed = hash(hash(hash(12631+sys.fsrev, wallEpoch * 97 + wallpaper_age), sys.day + 32 * sys.month), mcdim);
-    shell_base();
+    if(sys.recovery)recovery_draw();else shell_base();
     if (mcdim > 0)roundr(0, BAR, W, H - BAR, 0, 0x07090f, mcdim);
     int mcn = mc ? mcvis() : 0, mcidx = 0;
     int focus = topwin();
@@ -384,7 +385,10 @@ static void render(int dt)
             mcidx++;
         }
         if (mk)dirty = 1;
-        if (cache(v, key, focus == i)) {
+        if(standalone_dialog(v)){
+            if(v->previous)dropbuf(&v->previous);
+            wincontent(v,focus==i);
+        } else if (cache(v, key, focus == i)) {
             int radius = MAX(2, MIN(18, q.w * 18 / MAX(1, v->box.w)));
             if(!standalone_dialog(v))shadow(q, radius, focus == i ? 52 : 29);
             if (v->previous && !mk && !sys.reduce_motion && !standalone_dialog(v)) {
@@ -437,7 +441,7 @@ static void render(int dt)
         }
         j++;
     }
-    shell_draw();
+    if(!sys.recovery)shell_draw();
     drawcursor();
     sc(S_PRESENT, canvas, 0, 0, ((u64)(u32)W << 32) | (u32)H);
     cursorDirty = 0;
@@ -575,7 +579,10 @@ void action(int a)
 }
 static void down(void)
 {
-    if (shell_click(mx, my))return;
+    if(sys.recovery){
+        int hit=0;for(int j=nz;j--;){View *v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
+        if(!hit&&recovery_click(mx,my))return;
+    }else if (shell_click(mx, my))return;
     for (int j = nz; j--;) {
         int i = order[j];
         View *v = views + i;
@@ -640,7 +647,7 @@ static void input(Event *e)
             action(152);
             return;
         }
-        if (shell_key(e))return;
+        if (!sys.recovery&&shell_key(e))return;
         if(e->a==K_F11){if(sys.live_cd)launch(INSTALLER);return;}
         if (e->a >= K_F1 && e->a <= K_F9) {
             launch(1 + e->a - K_F1);
@@ -672,9 +679,8 @@ static void input(Event *e)
             lights = hl;
             dirty = 1;
         }
-        shell_mouse();
-        shell_control_pointer(e->c & 1);
-        if ((e->c & 2) && !(buttons & 2)){drag=-1;shell_context();}
+        if(!sys.recovery){shell_mouse();shell_control_pointer(e->c & 1);}
+        if ((e->c & 2) && !(buttons & 2)){drag=-1;if(!sys.recovery)shell_context();}
         else if ((e->c & 1) && !(buttons & 1))down();
         else if ((e->c & 1) && drag >= 0) {
             View *v = views + drag;
@@ -702,14 +708,14 @@ void app_main(void)
     sc(S_INFO, &sys, 0, 0, 0);
     initgfx(sys.w, sys.h);
     lite = sys.opaque;
-    background(sys.wall, sys.theme, sys.dark);
+    if(sys.recovery)recovery_background();else background(sys.wall, sys.theme, sys.dark);
     mx = W - 92;
     my = H - 131;
     lightx = mx;
     lighty = my;
     u64 last = sys.ticks;
     int first = 1;
-    login_enter();
+    if(sys.recovery){gate=0;first=0;}else login_enter();
     for (;;) {
         SysInfo s;
         sc(S_INFO, &s, 0, 0, 0);
@@ -731,7 +737,7 @@ void app_main(void)
 #endif
             initgfx((int)s.w, (int)s.h);
             pointer_scale=(PointerScale){0};
-            background(sys.wall, sys.theme, sys.dark);
+            if(sys.recovery)recovery_background();else background(sys.wall, sys.theme, sys.dark);
             for (int i = 0; i < nz; i++) {
                 View *v = &views[order[i]];
                 Rect *b = &v->box;
@@ -818,7 +824,7 @@ void app_main(void)
             slp(1);
             continue;
         }
-        if (shell_step(dt))dirty = 1;
+        if (!sys.recovery&&shell_step(dt))dirty = 1;
         if (dirty)render(dt);
         else if (cursorDirty) {
             int X = curx, Y = cury, ww = curw, hh = curh;

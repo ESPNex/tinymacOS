@@ -1,4 +1,4 @@
-tinymacOS 10.1.7 Tramontana / 30B8 — installazione e Recupero
+tinymacOS 10.2.1 Tramontana / 30B12 — installazione e Recupero
 
 Configurazione consigliata: VM x86-64 Q35/AHCI, 1 GiB RAM, Secure Boot
 spento, tastiera USB e tablet su xHCI. Il launcher del progetto prepara
@@ -8,11 +8,11 @@ MODALITÀ USB CANONICA SPERIMENTALE
 La variante TMC_USB_CANONICAL=1 usa xHCI/EHCI + core/HCD/hub Linux e i file
 originali HID-core/usbhid/hid-input/generic; supporta mouse, tastiera e
 tablet nei profili verificati. Non significa HID universale o hardware
-fisico certificato. È una candidata sperimentale, non la stabile 10.1.6.
+fisico certificato. È una candidata sperimentale.
 Per tentare una prova live fisica leggere docs/HARDWARE-TEST.md: PC non
 critico, dischi con dati scollegati, nessuna installazione. La compatibilità
-ASRock fisica non è ancora dimostrata. Recovery usa un percorso firmware
-separato: il funzionamento nel desktop non garantisce quello in Recupero.
+ASRock fisica non è ancora dimostrata. Recovery ora usa un kernel separato con gli stessi driver USB nativi.
+Il superamento dei test virtuali non certifica il mouse su hardware fisico.
 
 INSTALLAZIONE (PROVE SU DISCHI VIRTUALI)
 1. Collegare la ISO al lettore virtuale e un nuovo disco virtuale SATA
@@ -52,7 +52,11 @@ caricato il BaseSystem incluso; dopo l'installazione è disponibile anche
 la copia nella partizione Recovery dello stesso disco, senza rete o CD.
 Dal sistema installato: Utility Disco → Recupero… .
 
-Nel Terminale Recovery, diskutil info / mostra l'origine effettiva.
+Il kernel e il volume Recovery sono estratti dal BaseSystem verificato.
+ExitBootServices viene eseguito prima del kernel: nessun input firmware.
+Il Terminale Recovery lavora su una home RAM isolata, non sui documenti
+del sistema installato. Le azioni del pannello operano sul disco selezionato.
+csrutil enable/disable salva SIP sul primo disco tinymacOS trovato, da Recovery.
 SOS, copia/ripristino dei dati e reinstallazione usano i volumi locali.
 «Inizializza» richiede conferma e cancella dati e copia locale. La copia
 sullo stesso disco non protegge da un guasto fisico: conservarne una

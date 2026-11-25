@@ -25,6 +25,7 @@ static int bwrite(u32 l, const void *p)
 }
 int volume_mount(Block *b)
 {
+    if(boot.recovery)return 0; /* never mount/write the installed home in Recovery */
     for (int d = 0; d < sata_count(); d++) {
         u32 z = sata_size(d);
         if (z < NPART || sata_io(d, 0, 1, io, 0))
@@ -279,6 +280,16 @@ int disk_operation_i(int op, int d)
 {
     if (isbusy() || d < 0 || d >= sata_count())return -1;
     Medium m = {sata_io, sata_flush, d, sata_size(d)};
+    if(boot.recovery && op>=5 && op<=9){
+        if(layout_read(&m,&layout_info)!=2)return -1;
+        if(op==5)return restore_copy(&m);
+        if(op==6)return restore_os(&m);
+        if(op==7)return reset_data(&m);
+        if(op==9)return firstaid(&m,0);
+        int ok=1;
+        for(u32 i=0;i<NDATA;i+=CHUNK)if(sata_io(d,LDATA+i,MIN(CHUNK,NDATA-i),snapshot+512*i,0)){ok=0;break;}
+        int r=ok?save_copy(&m,snapshot):-1;erase(snapshot,sizeof snapshot);return r;
+    }
     if (op == 4 || op == 1)return firstaid(&m, op == 1);
     if (d != mounted || boot.install_len || !persistent || layout_read(&m, &layout_info) != 2)return -1;
     if (op == 2) {
@@ -378,11 +389,11 @@ static unsigned cfg16(const u8 *p){return p[0]|(unsigned)p[1]<<8;}
 static u32 cfg32(const u8 *p){return cfg16(p)|(u32)cfg16(p+2)<<16;}
 int bootconfig_disk(int write,u32 flags)
 {
-    if(boot.install_len || (write==1?flags>1:!bootconfig_flags_valid(flags)))return -2;
+    if(boot.install_len || (write==1?flags>1:!bootconfig_flags_valid(flags)) || (write==3&&(!boot.recovery||(flags!=TMC_BOOT_CSR_OVERRIDE&&flags!=TMC_BOOT_CSR_MASK))))return -2;
     u32 irq;spin_lock(&cfg_lock,&irq);int result=-1;
     for(int d=0;d<sata_count();d++) {
         Medium medium={sata_io,sata_flush,d,sata_size(d)};
-        if(!layout_read(&medium,&cfg_layout) || memcmp(cfg_layout.parts[0].id,boot.esp_id,16))continue;
+        if(layout_read(&medium,&cfg_layout)!=2 || (!boot.recovery&&memcmp(cfg_layout.parts[0].id,boot.esp_id,16)))continue;
         u64 base64=cfg_layout.parts[2].start;
         if(base64>0xffffffffu || cfg_layout.parts[2].end-base64+1!=NREC)break;
         u32 base=(u32)base64;
@@ -406,7 +417,7 @@ int bootconfig_disk(int write,u32 flags)
         result=((BootConfig *)cfg_sector)->flags;
         if(write) {
             u32 old=((BootConfig *)cfg_sector)->flags;
-            u32 next=write==2?((old&TMC_BOOT_VERBOSE)|(flags&TMC_BOOT_DISPLAY_MASK)):((old&TMC_BOOT_DISPLAY_MASK)|flags);
+            u32 next=write==3?((old&~TMC_BOOT_CSR_MASK)|(flags&TMC_BOOT_CSR_MASK)):write==2?((old&~TMC_BOOT_DISPLAY_MASK)|(flags&TMC_BOOT_DISPLAY_MASK)):((old&~TMC_BOOT_VERBOSE)|flags);
             BootConfig want;bootconfig_make(&want,next);
             if(sata_io(d,at,1,&want,1)||sata_flush(d)||sata_io(d,at,1,cfg_sector,0)||memcmp(&want,cfg_sector,512))result=-1;
             else result=next;

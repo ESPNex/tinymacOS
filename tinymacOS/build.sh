@@ -17,19 +17,11 @@ python3 tools/control-svg.py "$D"
 python3 tools/settings-svg.py "$D"
 U+=(-DTMC_ICON_ATLAS=\""$D/icons.atlas"\" -DTMC_CONTROL_SVG=\""$D/control-svg.alpha"\")
 U+=(-DTMC_SETTINGS_SVG=\""$D/settings-svg.alpha"\")
-python3 tools/recoveryart.py "$D"; (cd "$D" && gcc -c recovery-art.S -o recovery-art.o)
-for f in recovery/{main,screen,keyboard,usbhid}.c;do gcc "${E[@]}" -c "$f" -o "$D/rec-${f##*/}.o";done
-gcc "${E[@]}" -c drivers/hidtablet.c -o "$D/rec-hidtablet.o"
-efilink RECOVERY "$D/rec-usbhid.c.o" "$D/rec-hidtablet.o" "$D/rec-main.c.o" "$D/rec-screen.c.o" "$D/rec-keyboard.c.o" "$D/efi-maintenance.c.o" "$D/recovery-art.o"
-P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
-python3 tools/baseimage.py "$P" "$D/RECOVERY.EFI"
-gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"
-gcc "${E[@]}" -I"$P" -c boot/recovery_volume.c -o "$D/rec-volume.o";efilink RECBOOT "$D/rec-volume.o"
 for f in userspace/start.S kernel/string.c userspace/ui.c crypto/sha256.c; do gcc "${U[@]}" -c "$f" -o "$D/u-${f##*/}.o"; done
 APPS=(desktop finder terminal textedit settings about calculator calendar monitor gallery diskutility notes stickies timemachine installer command)
 for a in "${APPS[@]}"; do
  src=userspace/$a.c; units=(); objects=(); case "$a" in
- desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/assets.S);;
+ desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/recovery.c desktop/assets.S);;
  finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c userspace/filebrowser.c);;
  terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
@@ -74,6 +66,16 @@ for k in e1000 wifi;do gcc "${C[@]}" -fno-pie -Iinclude -c "net/kext/$k.c" -o "$
 # Upstream CPU Jitter RNG must not be optimized: preserve timing work and enable all health tests.
 for f in crypto/jitterentropy/*.c; do o="jent-${f##*/}.o"; gcc "${C[@]}" -O0 -fwrapv -fno-pie -Icrypto/jitterentropy -c "$f" -o "$D/$o"; KOBJ+=("$o"); done
 (cd "$D" && ld "${L[@]}" -Map=kernel.map -T "$ROOT/kernel/layout.ld" "${KOBJ[@]}" -o kernel.debug && objcopy --strip-all kernel.debug kernel.elf)
+# Separate native Recovery kernel: same proven native HCD/HID/storage code,
+# distinct ELF and compile-time entry; never an EFI application.
+gcc "${C[@]}" -DTMC_RECOVERY_KERNEL -fno-pie -Inet/include -Inet/lwip/include -c kernel/main.c -o "$D/recovery-entry.o"
+REC_KOBJ=();for o in "${KOBJ[@]}";do if [[ "$o" == k-kernel-main.c.o ]];then REC_KOBJ+=(recovery-entry.o);else REC_KOBJ+=("$o");fi;done
+(cd "$D" && ld "${L[@]}" -T "$ROOT/kernel/layout.ld" "${REC_KOBJ[@]}" -o recovery-kernel.debug && objcopy --strip-all recovery-kernel.debug RecoveryKernel.elf)
+python3 tools/system_volume.py "$D" recovery
+P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
+python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol"
+gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"
+gcc "${E[@]}" -DTMC_RECOVERY_ENTRY -I"$P" -c boot/loader.c -o "$D/rec-volume.o";efilink RECBOOT "$D/rec-volume.o"
 # Browser intentionally omitted: legacy NetSurf retired; WebKit port not yet buildable.
 python3 tools/system_volume.py "$D" cache;python3 tools/system_volume.py "$D" disk;python3 tools/system_volume.py "$D" live
 bash tools/iso.sh "$P"

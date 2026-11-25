@@ -100,7 +100,9 @@ void glass(Rect q, int r, int kind)
     if (q.w < 2 || q.h < 2)return;
     initroot();
     r = clampi(r, 0, MIN(60, MIN(q.w, q.h) / 2));
-    int dark = night || kind == MAT_WIDGET || kind == MAT_BAR;
+    int sheet=kind==MAT_SHEET;
+    kind=MAT_DOCK; /* one Control Center material for every Liquid Glass surface */
+    int dark = night;
     u32 tint = dark ? (kind == MAT_WIDGET ? 0x34363d : 0x28282c) : (kind == MAT_DOCK ? 0xe1e1e8 : 0xf5f5f7);
     if(kind!=MAT_BAR&&kind!=MAT_WIDGET)tint=color(INK(kind==MAT_DOCK?I_PANEL:I_BG));
     int strength = kind == MAT_WINDOW ? (dark ? 204 : 211) : kind == MAT_MENU ? (dark ? 203 : 213) :
@@ -115,7 +117,7 @@ void glass(Rect q, int r, int kind)
     if (L >= R || T >= B)return;
     int left = L - 20, top = T - 20, nx = (R - L + 40 + 3) / 4 + 2, ny = (B - T + 40 + 3) / 4 + 2;
     if (nx > SW || ny > SH)return;
-    const u32 *source=kind==MAT_SHEET&&sheet_valid?sheet_underlay:canvas;
+    const u32 *source=sheet&&sheet_valid?sheet_underlay:canvas;
     for (int y = 0; y < ny; y++) {
         int sy = clampi(top + y * 4, 0, H - 1), sy2 = MIN(H - 1, sy + 2);
         for (int x = 0; x < nx; x++) {

@@ -59,46 +59,29 @@ static const u8 *dirent16(FatImage *f, u32 c, const char *s)
     }
     return 0;
 }
-static EFI_STATUS image_recovery(EFI_HANDLE image, EFI_SYSTEM_TABLE *st, EFI_HANDLE dev,
-                                 EFI_FILE_PROTOCOL *root)
+static int base_file(EFI_BOOT_SERVICES *bs,FatImage *fs,const char *name,u64 *addr,u64 *len)
 {
-    EFI_BOOT_SERVICES *bs = st->BootServices;
-    EFI_FILE_PROTOCOL *f = 0;
-    UINTN count=BASE_LEN;UINT64 file_size=0;
-    u8 *data=0;void *payload=0;
-    EFI_STATUS status=root->Open(root,&f,BASE_NAME,EFI_FILE_MODE_READ,0);
-    if (EFI_ERROR(status))return status;
-    status=EFI_VOLUME_CORRUPTED;
-    if (EFI_ERROR(f->SetPosition(f,~(UINT64)0)) || EFI_ERROR(f->GetPosition(f,&file_size)) ||
-        file_size!=BASE_LEN || EFI_ERROR(f->SetPosition(f,0)))goto done;
-    if (EFI_ERROR(bs->AllocatePool(EfiLoaderData,count,(void **)&data))) {status=EFI_OUT_OF_RESOURCES;goto done;}
-    if (EFI_ERROR(f->Read(f,&count,data)) || !check_base(data,count))goto done;
-    FatImage fs;
-    if (!geometry(&fs,data,BASE_FORK))goto done;
-    const char *parts[] = {"EFI        ", "BOOT       ", "BOOTX64 EFI"};
-    u32 c = 0, z = 0;
-    for (int i = 0; i < 3; i++) {
-        const u8 *e = dirent16(&fs, c, parts[i]);
-        if (!e || (i < 2) != !!(e[11] & 16))goto done;
-        c = field16(e + 26);
-        memcpy(&z, e + 28, 4);
-    }
-    if (!z || z > BASE_FORK)goto done;
-    if (EFI_ERROR(bs->AllocatePool(EfiLoaderData,z,&payload))) {status=EFI_OUT_OF_RESOURCES;goto done;}
-    for (u32 at = 0; at < z;) {
-        if (!clok(&fs, c))goto done;
-        u32 n = MIN(fs.spc, z - at);
-        memcpy((u8 *)payload + at, fs.b + fs.data + (c - 2)*fs.spc, n);
-        c = nextcl(&fs, c);
-        at += n;
-    }
-    if (c < 0xfff8)goto done;
-    status=start_file(image,st,dev,BASE_NAME,payload,z,BASE_LEN);
+    const u8 *e=dirent16(fs,0,name);if(!e || (e[11]&16))return 0;
+    u32 c=field16(e+26),z;memcpy(&z,e+28,4);if(!z||z>BASE_FORK)return 0;
+    EFI_PHYSICAL_ADDRESS p=0xffffffff;
+    if(EFI_ERROR(bs->AllocatePages(AllocateMaxAddress,EfiLoaderData,(z+4095)/4096,&p)))return 0;
+    for(u32 at=0;at<z;){if(!clok(fs,c))return 0;u32 n=MIN(fs->spc,z-at);
+        memcpy((void *)(p+at),fs->b+fs->data+(c-2)*fs->spc,n);c=nextcl(fs,c);at+=n;}
+    if(c<0xfff8)return 0;*addr=p;*len=z;return 1;
+}
+static int native_recovery(EFI_BOOT_SERVICES *bs,EFI_FILE_PROTOCOL *root,struct Boot *b)
+{
+    EFI_FILE_PROTOCOL *f=0;u8 *data=0;UINTN n=BASE_LEN;UINT64 size=0;int ok=0;
+    if(EFI_ERROR(root->Open(root,&f,BASE_NAME,EFI_FILE_MODE_READ,0)))return 0;
+    if(EFI_ERROR(f->SetPosition(f,~(UINT64)0))||EFI_ERROR(f->GetPosition(f,&size))||size!=n||EFI_ERROR(f->SetPosition(f,0)))goto done;
+    if(EFI_ERROR(bs->AllocatePool(EfiLoaderData,n,(void **)&data)))goto done;
+    if(EFI_ERROR(f->Read(f,&n,data))||!check_base(data,n))goto done;
+    FatImage fs;if(!geometry(&fs,data,BASE_FORK))goto done;
+    if(!base_file(bs,&fs,"RECOVERYELF",&b->image,&b->image_len)||!base_file(bs,&fs,"RECOVERYVOL",&b->volume,&b->volume_len))goto done;
+    if(b->volume_len<48)goto done;u8 sum[32];b->volume_len-=32;sha_bytes((void *)b->volume,b->volume_len,sum);
+    if(memcmp(sum,(void *)(b->volume+b->volume_len),32))goto done;ok=1;
 done:
-    f->Close(f);
-    if (data)bs->FreePool(data);
-    if (payload)bs->FreePool(payload);
-    return status;
+    f->Close(f);if(data)bs->FreePool(data);return ok;
 }
 
 static EFI_STATUS bad_base(EFI_SYSTEM_TABLE *st)
