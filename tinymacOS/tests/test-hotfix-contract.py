@@ -6,6 +6,7 @@ from pathlib import Path
 import json,hashlib,re
 r=Path(__file__).resolve().parents[1];lock=json.loads((r/'assets/interface-font-lock.json').read_text());b=(r/lock['path']).read_bytes()
 assert len(b)==lock['bytes'] and hashlib.sha256(b).hexdigest()==lock['sha256']
+assert 'export TMC_FS2_BACKEND=1' in (r/'build.sh').read_text()
 main=(r/'desktop/main.c').read_text();header=(r/'desktop/input_budget.h').read_text()
 limits={k:int(v) for k,v in re.findall(r'#define (TMC_\w+_FRAME_BUDGET) (\d+)u',header)}
 assert 'batch<TMC_INPUT_FRAME_BUDGET && sc(S_INPUT' in main
