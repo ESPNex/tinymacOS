@@ -1,0 +1,277 @@
+{
+  "passed": true,
+  "milestone_commit": "cc8155abb9c9b5ca265b6c7465a423c6200ad19e",
+  "independent_immutable_github_readback_all_changed_non_deleted_files": [
+    {
+      "path": "workspace/cleanup/protected-active-inputs.json",
+      "sha256": "9c1f792f01a973c173095c8433bd07f9738a0b8c6f2d2aa47c15eb1abc5d3fbe",
+      "bytes": 105803
+    },
+    {
+      "path": "workspace/webkit-tmc/GIGABLOCK-CPP-DTOA.md",
+      "sha256": "3c138db109006d3652838db4645fd6e1188fb85058b0944a6fbc0c6fe1559b53",
+      "bytes": 5447
+    },
+    {
+      "path": "workspace/webkit-tmc/LIMITATIONS.md",
+      "sha256": "211adaa2108b8606c846dc91b1832f312074d537be294b551c42904561d3926d",
+      "bytes": 5373
+    },
+    {
+      "path": "workspace/webkit-tmc/PROGRESS.md",
+      "sha256": "a535a8a594e3dc5a7138d677f78c9fed7815bd27bc73c0dd15f8157e5cba3391",
+      "bytes": 20815
+    },
+    {
+      "path": "workspace/webkit-tmc/README.md",
+      "sha256": "69cd99cbd1227199f5b35a4f733f00da2e69b40336118f65baf948cf35212097",
+      "bytes": 4415
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/GCC-DEBIAN-COPYRIGHT.txt",
+      "sha256": "20390f8a6f3b1e4d7cb45dd8652dabb259bbef688cbad839bcdb0b9ba7252f79",
+      "bytes": 69004
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/README.md",
+      "sha256": "1648d9503fd187f24e92aa5c06d0555e8671dff487e0945abb0d0733e354c1b4",
+      "bytes": 4981
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/include/tmc_dtoa_support.h",
+      "sha256": "adcea6bbde67a2b671e3a5914b94c3a2997ff5f59817d09b1d4551a9aee91b2a",
+      "bytes": 1759
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/src/bytes.c",
+      "sha256": "f5fbbcfa502101aae7182e0df9446d7c94fd0c6bb0040eec35752dc41d3b25c2",
+      "bytes": 485
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/src/failure.cpp",
+      "sha256": "00830cf26db6d2b9af4b6650ea31ffde9349bf5731cf85ef06f6b32add31dd52",
+      "bytes": 912
+    },
+    {
+      "path": "workspace/webkit-tmc/stdlib/src/math.cpp",
+      "sha256": "8fe5ddf5311b164bee761be8e7bac8d97e6d58691c451b29d0abf989bcb5b531",
+      "bytes": 778
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/gigablock/gigablock-evidence.tar.xz",
+      "sha256": "0f33a2f27df32ea24459d85f5e8fd90bf9eb4fe94d9f4aff28ca269588aeba7f",
+      "bytes": 416120
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/gigablock/verification.json",
+      "sha256": "0fa5006839e58178c219c943926fc5997d6edfc338ba13ea734173a204701de1",
+      "bytes": 23963
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/dtoa_regression.cpp",
+      "sha256": "02c9d96635997e6eaaad7cc9f2df582c5501748a67c5911e36723f215e30005f",
+      "bytes": 881
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/dtoa_vectors.h",
+      "sha256": "41bc287243607737929ced290a2b36b573572842b9548c264d29c48bcd58cfc4",
+      "bytes": 60892
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_stdlib_probe.c",
+      "sha256": "9f748fb9322817c935620024463137fb7cd0a7783faa054471d1bb158b66d01c",
+      "bytes": 1930
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/stdlib_cases.cpp",
+      "sha256": "c73ef1d5111b65a518539b8e08f646ca24180d289e77511e30e2a7ceff030e94",
+      "bytes": 7267
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/stdlib_cases.h",
+      "sha256": "e77c44dff130162dae200c2e6caa4292f538613bd5571d8d37825b88951113d4",
+      "bytes": 475
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/stdlib_contract.c",
+      "sha256": "0c47ef7fee27bc4844f411c5f3050d801677b82f17abf2fe31fe263e07201624",
+      "bytes": 1722
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-network-probe.sh",
+      "sha256": "06224119a89b07e923c40499b741253a5124506d89e74a9e8f13f9c69932f602",
+      "bytes": 9374
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/generate-dtoa-vectors.py",
+      "sha256": "8afa6389c94b987fa178818a97abac8fbebe1da430f38eae803e3eea999e2601",
+      "bytes": 1328
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/prepare-dtoa.py",
+      "sha256": "e9def11bd0b7132eed0b570fb86bdd7ace28ba88f87185daa52c8e95bf1fd99d",
+      "bytes": 2524
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/record-stdlib-headers.py",
+      "sha256": "bcd92ec6d1e13a546d438d1e4c36fa0a518eccc3d5a8287b26a1235655a45094",
+      "bytes": 1072
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/run-tests.py",
+      "sha256": "4419debaf6d3bfe3e7252154153df68898757b086d44d998985f86cb16bd90d2",
+      "bytes": 11248
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-cleanup-contract.py",
+      "sha256": "1a09a7d0d5120a92e66de7a82e1a8e162081cf6c132732da744c278725e15adb",
+      "bytes": 1810
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-cleanup-recovery.py",
+      "sha256": "0cce0f1b99b5da38010d8cca908c2dbae412d22459c59d7a8b727ae6d9e3e981",
+      "bytes": 2177
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-stdlib.py",
+      "sha256": "5c30bf4e3a71dc7f56657b145194f1f3089e50f3dca36febb9b16510d015204a",
+      "bytes": 3854
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-stdlib.sh",
+      "sha256": "bc5421db8f6fdca557928e8342854d4f8b7445086a4df3919cffdd3fde9ddb03",
+      "bytes": 3673
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/AUTHORS",
+      "sha256": "359c61e992353f03dc979f66d1057cfa219e54359a3f36cb3af9b215bb30dfb4",
+      "bytes": 400
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/COPYING",
+      "sha256": "4af93c12062c58058378de2397dc1c92bbff9ddfb1d583a01c84127557ce97ca",
+      "bytes": 1527
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/LICENSE",
+      "sha256": "4af93c12062c58058378de2397dc1c92bbff9ddfb1d583a01c84127557ce97ca",
+      "bytes": 1527
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/README.md",
+      "sha256": "976c0d17a532a615fd6e7f753ec3913b9a65c1b5ff0df84fdaaa93469ae18c7b",
+      "bytes": 1510
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/UPSTREAM-LOCK.json",
+      "sha256": "58a5a87f808ed9087c194dd18a87ecad0be157ce8adea21536ff18399a926aa2",
+      "bytes": 2078
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/bignum-dtoa.cc",
+      "sha256": "06570a6cfe001d964ce1d03afa9928f257f2758d77b0b4a22418ac81afde5f86",
+      "bytes": 27227
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/bignum-dtoa.h",
+      "sha256": "d265e7157b647c3b067d620513b633a8be1665dc20dca5e75d0b9b412cff2678",
+      "bytes": 4331
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/bignum.cc",
+      "sha256": "6848a5935b7559e12292e1e3e0a08388817c8b01fe0a2ee4755a68b9699aaccb",
+      "bytes": 23261
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/bignum.h",
+      "sha256": "9def9d5e0231bc7486ac324e8d521e9a431007b88e6d10727a1a724bfbcdd90f",
+      "bytes": 5664
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/cached-powers.cc",
+      "sha256": "5218f491309a3c1ff65d40e0b8e7e90ce0bb34a47a7b5db5c23b83936ef9c960",
+      "bytes": 9761
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/cached-powers.h",
+      "sha256": "0285b324a740ad85152ac298f5716368fc3906963748feff675149cc174273d0",
+      "bytes": 3081
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/diy-fp.cc",
+      "sha256": "c9250912be8886e7d81765013ae74b2057d5297c34c1d0b2afb249ebc7f98a06",
+      "bytes": 2520
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/diy-fp.h",
+      "sha256": "4eec0f27b39cbef2defc0ac6b3703b260a70eff077bc7d8bc416b435093d4f42",
+      "bytes": 4140
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/double-conversion.cc",
+      "sha256": "07dbf3b3320bf963ef5bc6aa73d9acef1aea6589a0080c911498b6a4da092d58",
+      "bytes": 24535
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/double-conversion.h",
+      "sha256": "614cfed75ea3bc101b72e8395366c4f9bc9cf32e2ebbb9fb2ff630c231a6579d",
+      "bytes": 21575
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/fast-dtoa.cc",
+      "sha256": "1e3bc1d5c433967bf635cb713e325ad16aee42316307dc303dd7ebb5e57e6c07",
+      "bytes": 31168
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/fast-dtoa.h",
+      "sha256": "a9661ef3fa52f4e80da45b9efc1389479f2ed7ffe085c3b338156742ca80222e",
+      "bytes": 4118
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/fixed-dtoa.cc",
+      "sha256": "7407435dbac3892dc9eb4b199e9b070d21ea655b4b74930367656d8067cc2879",
+      "bytes": 15224
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/fixed-dtoa.h",
+      "sha256": "63521110e35d0cf99588fcb86f33283f918fbc79687ff32a7f12629a40549dfa",
+      "bytes": 2805
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/ieee.h",
+      "sha256": "f946451c086091722afff08144ccb29a733fc76ba093efc65976576e6e5c9109",
+      "bytes": 13569
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/strtod.cc",
+      "sha256": "5901efa3f5001ee0ebdbfbfdb5b3f8e1f669111c82566e4805fc89293085e6de",
+      "bytes": 22522
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/strtod.h",
+      "sha256": "8416d1b9e006039ff45c5f1edc233504c15b53a3357d315b8762805edc63df2f",
+      "bytes": 2272
+    },
+    {
+      "path": "workspace/webkit-tmc/vendor/webkit-dtoa/utils.h",
+      "sha256": "73ac796341d83fb978c6beeec907f7057098c4a24c30d1bd286d8730f4c502ac",
+      "bytes": 13964
+    }
+  ],
+  "evidence_archive_independently_verified": true,
+  "main_points_to_milestone": true,
+  "branches": [
+    "main",
+    "vendor/syslinux-6.04"
+  ],
+  "tags_remain_25_distinct_commits": true,
+  "release_cards_remain_19_unique_titles": true,
+  "release_bodies_left_unchanged": true,
+  "single_published_1025_iso_unchanged": {
+    "asset_id": 795849480,
+    "bytes": 329791488,
+    "digest": "sha256:1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a"
+  },
+  "new_103_release_published": false,
+  "historical_reconstruction_cancelled": true
+}
