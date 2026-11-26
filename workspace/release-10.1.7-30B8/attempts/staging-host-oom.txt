@@ -1,3 +1,0 @@
-[20343.039710] [1238817]  1000 1238817   515472   109294  1683456        0           100 qemu-system-x86
-[20343.039731] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=user,mems_allowed=0,global_oom,task_memcg=/user,task=qemu-system-x86,pid=1238817,uid=1000
-[20343.039751] Out of memory: Killed process 1238817 (qemu-system-x86) total-vm:2061888kB, anon-rss:437096kB, file-rss:0kB, shmem-rss:80kB, UID:1000 pgtables:1644kB oom_score_adj:100

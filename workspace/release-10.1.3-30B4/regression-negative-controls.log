@@ -1,5 +1,0 @@
-PASS negative control: actual 10.1.2 fails boot-first-xhci
-PASS negative control: actual 10.1.2 fails boot-first-usb2
-PASS negative control: actual 10.1.2 fails relative-deltas
-PASS negative control: actual 10.1.2 fails async-error-restart
-PASS negative control: actual 10.1.2 fails mouse-child-ownership

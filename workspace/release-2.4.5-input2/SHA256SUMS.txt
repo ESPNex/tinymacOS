@@ -1,1 +1,0 @@
-2d164de30042f026f107d573d485398e1930a96b692de11a9934976abd62e17a  tinymacOS-2.4.5-OpenCore-Installer-x86_64.iso

@@ -1,5 +1,0 @@
-PASS Linux-reviewed HCD invariant: publish-complete-td actual current passes, actual 10.1.3 fails assertion
-PASS Linux-reviewed HCD invariant: short-data-before-status actual current passes, actual 10.1.3 fails assertion
-PASS Linux-reviewed HCD invariant: ehci-hardware-toggle actual current passes, actual 10.1.3 fails assertion
-PASS Linux-reviewed HCD invariant: ehci-overlay-quiescence actual current passes, actual 10.1.3 fails assertion
-PASS Linux-reviewed HCD invariant: ehci-idle-does-not-stop actual current passes, actual 10.1.3 fails assertion

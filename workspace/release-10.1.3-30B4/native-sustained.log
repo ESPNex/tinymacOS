@@ -1,4 +1,0 @@
-PASS native sustained mouse uefi ehci 12 XY reversal cycles + idle/resume, 50 exact sprite checks, PS/2 fallback excluded
-PASS native sustained mouse uefi xhci 12 XY reversal cycles + idle/resume, 50 exact sprite checks, PS/2 fallback excluded
-PASS native sustained mouse bios ehci 12 XY reversal cycles + idle/resume, 50 exact sprite checks, PS/2 fallback excluded
-PASS native sustained mouse bios xhci 12 XY reversal cycles + idle/resume, 50 exact sprite checks, PS/2 fallback excluded

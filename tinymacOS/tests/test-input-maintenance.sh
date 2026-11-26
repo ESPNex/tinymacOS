@@ -31,20 +31,10 @@ gcc $C tests/usbroute.c -o "$out/route"
 
 gcc $C tests/keyboard_it.c -o "$out/keyboard-it";"$out/keyboard-it"
 
-gcc $C tests/recovery_usb.c drivers/hidtablet.c -o "$out/recovery-usb"
-"$out/recovery-usb"
-
 python3 tests/openduet_input.py
 
-# Actual firmware-only Recovery consumer; no obsolete native-PS/2 fixture.
-EFI_HEADERS=${EFIINC:-${TOOLROOT:-}/usr/include/efi}
-gcc $C -ffunction-sections -fdata-sections -Wl,--gc-sections -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/recovery_background.c -o "$out/recovery-background"
-"$out/recovery-background"
-gcc $C -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/recovery_firmware_pointer.c -o "$out/recovery-firmware-pointer"
-"$out/recovery-firmware-pointer"
-gcc $C -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFI_HEADERS" -I"$EFI_HEADERS/x86_64" tests/firmware_keyboard_transport.c -o "$out/recovery-keyboard"
-"$out/recovery-keyboard"
-gcc $C tests/firmware_keyboard.c -o "$out/firmware-keyboard";"$out/firmware-keyboard"
+# Obsolete EFI-Recovery consumers archived; native Recovery coverage is
+# tests/native_recovery.py and tests/boot_recovery.py, not firmware mocks.
 python3 tools/linux-source-contract.py
 gcc $C tests/linux_ehci_qtd.c drivers/linux_ehci_qtd.c -o "$out/linux-ehci-qtd";"$out/linux-ehci-qtd"
 

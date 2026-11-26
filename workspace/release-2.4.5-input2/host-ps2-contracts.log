@@ -1,2 +1,0 @@
-PASS PS/2 keyboard: make/break, both Ctrl, Shift release 0xAA, Caps XOR Shift, autorepeat-safe Caps, E0 arrows, F2, PrintScreen and Pause fragments
-PASS PS/2 mouse: packet synchronization, signed 9-bit X/Y, Y inversion, three buttons, overflow discard, negotiated wheel; absent-controller guard

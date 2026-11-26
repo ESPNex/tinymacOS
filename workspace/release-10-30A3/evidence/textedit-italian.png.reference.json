@@ -1,8 +1,0 @@
-{
-  "lossless_duplicate_reference": true,
-  "canonical_file": "workspace/release-10-30A2/evidence/textedit-italian.png",
-  "sha256": "676d548be08ffae1b34c07e610f21d494dff5b84c8671ba680c6a0915a003bc7",
-  "bytes": 277221,
-  "original_file": "workspace/release-10-30A3/evidence/textedit-italian.png",
-  "restore": "Copy canonical_file to original_file; bytes are identical."
-}

@@ -1,8 +1,0 @@
-SHA-256 — tinymacOS 2.3.0 Sirocco (21A1)
-
-7c0e6ee8dbc4cf37134aaf216edc702e3d0c42fa157c9f1fa7ccc52011d35ac3  tinymacOS-2.3.0-x86_64.iso  (54218752 byte, unico supporto su Drive)
-
-Contenuto nella stessa ISO, non distribuito separatamente:
-20c891a282e7d02d7082b738ae8ad16d062ceb64038ea1e8b9bfcf65b9c1a7d7  /Recovery/BaseSystem.dmg (3147889 byte)
-
-MD5 ISO: a92a1d1919741b9db62e81f8cbd46033

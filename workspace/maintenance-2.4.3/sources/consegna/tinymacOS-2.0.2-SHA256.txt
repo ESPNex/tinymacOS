@@ -1,8 +1,0 @@
-SHA-256 — tinymacOS 2.0.2 Riviera (20A3)
-
-26d159bb37587c11eb6fec9a173730a6519e7af2b546b7ca7fc733b1987d3c74  tinymacOS-2.0.2-x86_64.iso  (54149120 byte, unico supporto su Drive)
-
-Contenuto nella stessa ISO, non distribuito separatamente:
-a3abd61b2b7d76216b9386eac207be24cd2790ffe0d4a69da230c9814cd22c6f  /Recovery/BaseSystem.dmg (3147889 byte)
-
-MD5 ISO: bfc030c46738c175d0c3882bd9abccb7

@@ -1,5 +1,5 @@
 #include "desk.h"
-#include "../recovery/background.h"
+#include "recovery_background.h"
 /* Native maintenance UI. Interface.tfn and its text renderer are exactly the
  * same as the desktop. The home window contains only real recovery choices. */
 static DiskInfo disks;

@@ -1,6 +1,0 @@
-{
-  "passed": true,
-  "scope": "direct UEFI V-key and retail command/log; not installed persistence",
-  "key_v_sent": true,
-  "verbose_frame_captured": true
-}

@@ -1,1 +1,0 @@
-PASS: DNS/TCP syscall contracts, partial writes, EAGAIN/EOF, clock units, entropy fail-closed.
