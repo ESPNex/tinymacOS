@@ -1,4 +1,4 @@
-# Font attivo senza fallback — modifica sorgenti successiva alla 30B17
+# Font attivo senza fallback — build 30B18
 
 Richiesta: eliminare il vecchio font errato e il fallback DejaVu.
 
@@ -34,10 +34,11 @@ Richiesta: eliminare il vecchio font errato e il fallback DejaVu.
 - Contratto hotfix e cleanup: PASS, con tre rimozioni di sorgenti obsolete
   autorizzate esplicitamente e hash della baseline originale mantenuti.
 
-Questi sono test host di asset e metriche. **Non** sono una nuova validazione
-visuale guest, dell'installer o della ISO. La ISO 30B17 già pubblicata contiene
-ancora il precedente font; non è stata ricostruita né ripubblicata in questo
-passaggio. I suoi 46 controlli restano riferiti a quell'artefatto storico.
+Questi erano inizialmente test host di asset e metriche. La successiva build
+30B18 è stata ricostruita interamente e sottoposta a nuovo audit dei tre
+ambienti e 14 suite guest. Gli esiti e i tentativi originali sono documentati
+in `VALIDAZIONE-10.2.5-30B18.md`. I 46 controlli della 30B17 restano riferiti
+all'artefatto storico; non sono riattribuiti alla nuova ISO.
 
 Il pacchetto fornito non contiene una licenza: i metadati `tinymacOS` non
 provano autore, derivazione da Inter o diritti di redistribuzione. Nessuna

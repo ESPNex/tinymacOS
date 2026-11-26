@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "all_required_gates_closed": true,
+  "version": "10.2.5",
+  "build": "30B18",
+  "fresh_OS_host_cases": 13,
+  "fresh_runtime_host_cases": 18,
+  "fresh_guest_suites": 14,
+  "font_host_reproduction": true,
+  "fontmetrics_normal_and_sanitized": true,
+  "previous_font_override_rejected": true,
+  "current_final_media_audit": true,
+  "panic_bitmap_verified_in_all_three_kernels": true,
+  "all_final_guest_media_final_dual_ISO": true,
+  "native_and_dual_catalogs_byte_equal": true,
+  "single_fresh_invocation": false,
+  "QA_environment_first_attempt_and_rerun_retained": true,
+  "legacy_FS_candidate_rejected_and_fully_rebuilt": true,
+  "no_physical_hardware_certification_claim": true,
+  "Safari_full_WebKit_included": false,
+  "source_inputs_rechecked": 756,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.5-x86_64.iso",
+    "bytes": 329510912,
+    "sha256": "65e34370c7dca1bd43db3ed659c2a5e717778874fdbfbaa87f16670b9f3bda9a"
+  },
+  "production_font_sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+  "evidence_archive": {
+    "file": "evidence-30B18.tar.xz",
+    "bytes": 4001344,
+    "sha256": "758c50548e2510977c0cdf164dc8cf5bb09b0745de15ac066b5fa9121f95d2c5",
+    "files_including_manifest": 102,
+    "all_member_hashes_verified": true
+  },
+  "release_replacement_not_yet_performed": true
+}
