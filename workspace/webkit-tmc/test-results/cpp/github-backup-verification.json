@@ -1,0 +1,190 @@
+{
+  "passed": true,
+  "verified_commit": "3add5d57b84195538eed4e3896ce879c616f9b7b",
+  "independent_immutable_downloads": 41,
+  "remaining_branches": {
+    "main": "3add5d57b84195538eed4e3896ce879c616f9b7b",
+    "vendor/syslinux-6.04": "53791ac78b90525b81bd5b7ae692a681c4c3e12a"
+  },
+  "release_phase_counts": {
+    "developer-preview": 11,
+    "beta": 8,
+    "pre-release": 2
+  },
+  "release_titles_clean_and_no_new_103_release": true,
+  "single_iso_1025": true,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "c74a359fb1df4b1a57530518148142bb22b7f0137feea72f2480d2856068ced0"
+    },
+    {
+      "path": "tinymacOS/docs/RELEASE-CHANNELS.md",
+      "sha256": "5f413adae48b65fcebd7aa66da37ef18144af575a7c44590c7f63224e06858c5"
+    },
+    {
+      "path": "workspace/local-10.2.5/STATUS.json",
+      "sha256": "04a5d019f97e70ce94a69b98f83d064c5b4d73434b2342e45ddb1b837a027eac"
+    },
+    {
+      "path": "workspace/local-10.2.5/release-phase-verification.json",
+      "sha256": "230ee096c429545edf88c755655fa3d816ec7ddff4fa0ff15b73ee1ec8563d65"
+    },
+    {
+      "path": "workspace/webkit-tmc/LIMITATIONS.md",
+      "sha256": "96881702a13d4f2632537c0bf42c812d19fe89139de4af5875a8d2f03ff1678e"
+    },
+    {
+      "path": "workspace/webkit-tmc/PROGRESS.md",
+      "sha256": "05ba01735b6de545e5c18f701302c9718a48dfeb3a75ebaed9ea597ca822ff2a"
+    },
+    {
+      "path": "workspace/webkit-tmc/README.md",
+      "sha256": "e6373357763932659e0e292ad2b5453a6e73ffa43a596f33f12c69d88846accd"
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-CPP.md",
+      "sha256": "3e81b04c80de5d97d52c4185a3ebc8c5087ad57d8df1b9336b4d44e06b8024fc"
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/include/new",
+      "sha256": "35ff1bb1add042581746b59a58e8bc240860e49b2eda95c30b41107718105e7a"
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/src/guard.cpp",
+      "sha256": "08e24394586d8ba9e557541b722890267eb9a58daa40816da3b483d50bf688ea"
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/src/new.cpp",
+      "sha256": "e8444b8ba2f6086ad0e5ebc556d52111092e5aabfb36f0f1023c4e828dffd549"
+    },
+    {
+      "path": "workspace/webkit-tmc/release-gates.json",
+      "sha256": "954912ccdcbd52c0f7b9bedadb8aa0d2bacfd956437d299124dfd15a40bf3bc9"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-build.json",
+      "sha256": "5e7301339015b8ad2e492782d2a9d3b82a4cd49c33c69fe658965fc1e27564b5"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-media.json",
+      "sha256": "ce1d51675e197effc4325c90b76b8665da476a01f0875b5508afb3d70da4e411"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp1-serial.txt",
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp1.json",
+      "sha256": "287138db0acf16383b00a47e85e09350ce646ddbb783eca279047d423b84cd90"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp1.png",
+      "sha256": "638d9075eb534ea473eeaff3ce54d511beba44ff3d920e2a92a86c17a5e8f567"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp4-serial.txt",
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp4.json",
+      "sha256": "6f7936911c6d16c54da011e93566e6fda151c3f7818a39122b86e602eb736b18"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp4.png",
+      "sha256": "2b4616167298f0d9ba038cc484368cc6988f601a7506dfc854761f3b943d86e1"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp8-serial.txt",
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp8.json",
+      "sha256": "400fdc68f8a0945c4af0239f9cd1e48069cb34e4f6f9935ac2e7deae035d6f59"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-smp8.png",
+      "sha256": "249d938c995086728d7055e20013ee3c5943e0c30017665bd2cad7420e508d47"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/guest-cpp-source-hashes.json",
+      "sha256": "932f5709cae657a168289ea1ac28a024617b2e5847e8666f7187bf73213f0289"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/host-milestone.json",
+      "sha256": "30678f761f6dc227a30878610e51092b3805b2cb5c2ebd0c51ff7ac285be992d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/terminal-crops.json",
+      "sha256": "68c935861526fd9bd40b09ebf46f25c34ce9d64bb892966b65984dd92311cc9b"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/unanchored-stress-timeout-evidence.tar.xz",
+      "sha256": "b0772c3db78b8650821928a59d89df4b073c5ee757073d037dd605e0f891ab32"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/verification.json",
+      "sha256": "05ae636996780b92fbe6d91a2502a2256669595c190f470a92db65969043bc0f"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/vm-system-source-hashes.json",
+      "sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/REMOTE-EVIDENCE.json",
+      "sha256": "34f806593fdbe7d447a6cda29fc6615928f8e4a0798aa4c9c920404e40886acd"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp1.png",
+      "scope": "historical image offloaded after immutable GitHub byte verification"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp4.png",
+      "scope": "historical image offloaded after immutable GitHub byte verification"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_cases.cpp",
+      "sha256": "500d8ed498d00ced26e8ed787dff0c5f36d7e53b4492f5be4d21dc43cfe34b72"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_cases.h",
+      "sha256": "fc201541ebb39f74b2a3bbb139ce475fc93bac85bea6acd05c0b95614c16e27c"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_contract.c",
+      "sha256": "f40b2ab57aca9d333ccfdc2159176b6e7bbd9d4e180dd61e7b5f9956bfe5d9eb"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_vm_transport.c",
+      "sha256": "930c7449d59b5fa23744fca216e78ae5dad5c53d1aa066c0a3ec9bb0cda4bd06"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_cpp_probe.c",
+      "sha256": "831375a96adb3ae0a14922cd121d70384b5796ee51c0a612209fd95bd1ad7698"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-cpp-probe.sh",
+      "sha256": "11000c3c9dc642a1977d3d27544e2dc5503ddaded644ba875fe87938cda9dd68"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-network-probe.sh",
+      "sha256": "566efd2c5f6cc5b87cb25ee7b85f92137ac8bb246f1092658e2f94a43e991c23"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/compile-backend.sh",
+      "sha256": "55a9b4a2998eaa7314ae57a8a019acb5921f6fab32a069cce8cf3ab6c59c5c4f"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/run-tests.py",
+      "sha256": "e97625cb8cc65e375842a8e8d1f3dbd6156e97334e850ba449a241058863a6b7"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-cpp-runtime.sh",
+      "sha256": "94e839599e5ba572a3d6d79d77a928b04f3ba310e1bf4f8fe54c6e041765213b"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-cpp.py",
+      "sha256": "d95c263d107893e40b8fe00935c3fdb2ae41f6659ac5a5172ee580e70134909b"
+    }
+  ]
+}
