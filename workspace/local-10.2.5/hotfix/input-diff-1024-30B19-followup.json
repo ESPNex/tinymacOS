@@ -1,0 +1,77 @@
+{
+  "baseline": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+  "published_source": "52d944afec236637f4be75c78601062e2fbf3e10",
+  "user_reports_mouse_still_frozen_after_republication": true,
+  "rollback_did_not_resolve_reported_physical_regression": true,
+  "source_comparison": [
+    {
+      "path": "drivers/input.c",
+      "equal": true,
+      "sha256_1024": "ad051f4e63211b6e04f9c71827cfca8f79df5fb7eb97bc642c0ce1c5695f949f",
+      "sha256_30B19": "ad051f4e63211b6e04f9c71827cfca8f79df5fb7eb97bc642c0ce1c5695f949f"
+    },
+    {
+      "path": "drivers/xhci.c",
+      "equal": true,
+      "sha256_1024": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71",
+      "sha256_30B19": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71"
+    },
+    {
+      "path": "drivers/ehci.c",
+      "equal": true,
+      "sha256_1024": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5",
+      "sha256_30B19": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5"
+    },
+    {
+      "path": "drivers/uhci.c",
+      "equal": true,
+      "sha256_1024": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555",
+      "sha256_30B19": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555"
+    },
+    {
+      "path": "drivers/platform.c",
+      "equal": true,
+      "sha256_1024": "5e921f8f3da595fbe5dcb2d88e268107606025bf17f0c2765af2db8914fba9fe",
+      "sha256_30B19": "5e921f8f3da595fbe5dcb2d88e268107606025bf17f0c2765af2db8914fba9fe"
+    },
+    {
+      "path": "drivers/ps2.c",
+      "equal": true,
+      "sha256_1024": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
+      "sha256_30B19": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c"
+    },
+    {
+      "path": "desktop/main.c",
+      "equal": true,
+      "sha256_1024": "0775c8c159fdc078f6495aa74d4227d71d7291edb6e9b4945c4fd2a382cc8c3a",
+      "sha256_30B19": "0775c8c159fdc078f6495aa74d4227d71d7291edb6e9b4945c4fd2a382cc8c3a"
+    },
+    {
+      "path": "desktop/login.c",
+      "equal": true,
+      "sha256_1024": "3237356d68fd3af197d7dc6a36f7ce65628e90c388e1e44c586ba5f3b436825b",
+      "sha256_30B19": "3237356d68fd3af197d7dc6a36f7ce65628e90c388e1e44c586ba5f3b436825b"
+    }
+  ],
+  "also_no_source_changes_in": [
+    "arch/",
+    "compat/",
+    "vendor/linux-v6.12/"
+  ],
+  "remaining_differences_not_proven_causal": [
+    "Kernel now calls storage_init (AHCI+NVMe) before input_init instead of AHCI alone",
+    "UEFI OpenCore now loads additional NvmExpressDxe driver",
+    "Live loader allocates and verifies an additional 24MiB+10MiB of 4Kn payload",
+    "FS2 production backend and resulting kernel/memory/timing layout differ",
+    "Clipboard/drag ABI append-only additions and dormant S_DRAG handler remain; desktop drag initiation removed"
+  ],
+  "installer_message": {
+    "exact_string": "Serve un’installazione nativa con tabelle integre.",
+    "path": "tinymacOS/userspace/installer.c:31",
+    "only_branch": "reinstall = !!si.recovery",
+    "condition": "layout == 2 && healthy; generic refusal if either false",
+    "does_not_prove_corrupt_Windows_GPT": true,
+    "55AA_fresh_install_fix_does_not_change_this_branch": true
+  },
+  "no_new_fix_or_publication_claimed": true
+}

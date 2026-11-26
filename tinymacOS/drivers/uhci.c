@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
 #include "../kernel/k.h"
 #include "usbhost.h"
+#include "usb_retry.h"
 #include "linux_usb.h"
 #include "linux_uhci.h"
 /* Platform services + class/enumeration boundary only. All frame/QH/TD,
@@ -47,18 +48,18 @@ static void complete(void *context,int status,unsigned n)
  if(status){
   input_diag.transfer_errors++;
   if(p->proto==1){const u8 zero[8]={0};if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,zero,8);else hid_keys(zero);}
-  if(p->linux_mouse)(void)tmc_linux_mouse_error(p,p->failures<3?status:-108);
-  if(p->linux_generic)tmc_linux_generic_error(p,p->failures>=3);
-  if(status!=-108&&status!=-2&&p->failures++<3){p->armed=-1;p->retry_at=ticks+100;}
+  int retry=usb_input_retry(p,status,ticks);
+  if(p->linux_mouse)(void)tmc_linux_mouse_error(p,retry?status:-108);
+  if(p->linux_generic)tmc_linux_generic_error(p,!retry);
   return;
  }
- p->failures=0;usb_input_report(&d->usb,c->index,n);arm(d,c->index);
+ p->failures=0;p->halted=0;usb_input_report(&d->usb,c->index,n);arm(d,c->index);
 }
 static void arm(struct UhciInput *d,unsigned index)
 {
  UsbInputPipe *p=d->usb.pipe+index;d->context[index]=(struct UhciPipe){d,index};
  int rc=tmc_linux_uhci_interrupt(d->device,p->ep,p->packet,p->interval?p->interval:1,p->report,complete,d->context+index);
- p->armed=rc?0:1;if(rc)input_diag.transfer_errors++;
+ if(rc){input_diag.transfer_errors++;usb_input_retry(p,rc,ticks);}else p->armed=1;
 }
 void uhci_init(void)
 {
@@ -84,7 +85,11 @@ void uhci_poll(void)
  for(unsigned c=0;c<tmc_linux_uhci_controllers()&&c<8;c++)for(unsigned i=0;i<used[c];i++){
   struct UhciInput *d=&inputs[c][i];for(unsigned j=0;j<d->usb.npipe;j++){
    UsbInputPipe *p=d->usb.pipe+j;if(p->armed!=-1||ticks<p->retry_at)continue;p->armed=0;
-   if(usb_input_control(&d->usb,2,1,0,0x80|p->ep,0,0)>=0){tmc_linux_uhci_reset_toggle(d->device,p->ep);arm(d,j);}
+   if(p->halted){
+    if(usb_input_control(&d->usb,2,1,0,0x80|p->ep,0,0)<0){usb_input_retry(p,-32,ticks);continue;}
+    tmc_linux_uhci_reset_toggle(d->device,p->ep);p->halted=0;
+   }
+   arm(d,j);
   }
  }
 }

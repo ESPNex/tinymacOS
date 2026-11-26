@@ -28,7 +28,7 @@ static void refresh(void)
             q->scheme=recovery_disks.disk[i].map.scheme;
             strset(q->model,recovery_disks.disk[i].model,sizeof q->model);
             q->usable=recovery_disks.disk[i].layout==2&&recovery_disks.disk[i].healthy;
-            strset(q->reason,q->usable?"Sistema nativo rilevato; documenti conservati.":"Serve un’installazione nativa con tabelle integre.",sizeof q->reason);
+            strset(q->reason,q->usable?"Sistema nativo rilevato; documenti conservati.":recovery_disks.disk[i].layout!=2?"Nessun tinymacOS installato: usa il desktop live.":"Sistema rilevato ma non reinstallabile: apri Utility Disco.",sizeof q->reason);
         }
         return;
     }
@@ -139,7 +139,8 @@ static void paint(void)
         Icon(aw/2-64, 30, 128, 38);
         Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
         Center(aw/2, 229, reinstall?"Per reinstallare il sistema, fai clic su Continua.":"Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
-        Center(aw/2, 266, reinstall?"Documenti, account e snapshot non verranno inizializzati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
+        Center(aw/2, 266, reinstall?"Richiede tinymacOS gia installato; documenti e account conservati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
+        if(reinstall)Center(aw/2, 300, "Per una nuova installazione avvia il desktop live della ISO.", F_SMALL, SUB);
     } else if (page == 1) {
         Center(aw/2, 19, "Seleziona la destinazione", F_TITLE, TX);
         Center(aw/2, 61, reinstall?"Scegli il sistema nativo da reinstallare senza inizializzare i dati.":"tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);

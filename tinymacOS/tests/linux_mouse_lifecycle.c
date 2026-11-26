@@ -25,6 +25,7 @@ int main(void)
   * no replay of deltas/wheel; the original IRQ resubmits for native reset. */
  count=events;assert(tmc_linux_mouse_error(&left,-EPIPE));assert(events==count+1&&!last_buttons&&!last_x&&!last_y&&!last_wheel&&a->urb->submitted);
  count=events;assert(tmc_linux_mouse_error(&left,-EIO));assert(events==count&&a->urb->submitted);
+ for(unsigned i=0;i<12;i++){assert(tmc_linux_mouse_error(&left,-EIO));assert(events==count&&a->urb->submitted);}
  check(&left,(u8[]){31,255,1,128},4,-1,1,31,-128);
  check(&right,(u8[]){1,0,0,0},4,0,0,31,0);
  assert(tmc_linux_mouse_error(&left,-EPIPE));assert(last_buttons==1&&!last_x&&!last_y&&!last_wheel&&a->urb->submitted);
@@ -51,7 +52,7 @@ int main(void)
  tmc_linux_mouse_detach(&right);assert(!last_buttons&&!last_x&&!last_y&&!last_wheel&&!alive);
  assert(!tmc_linux_mouse_error(&right,-EPIPE));
  TmcLinuxUrbStats core;tmc_linux_urb_stats(&core);assert(!core.active&&core.submits==core.givebacks);
- TmcLinuxUsbStats stats;tmc_linux_mouse_stats(&stats);assert(stats.attached==stats.disconnected&&stats.allocations==stats.frees&&stats.errors==7);
+ TmcLinuxUsbStats stats;tmc_linux_mouse_stats(&stats);assert(stats.attached==stats.disconnected&&stats.allocations==stats.frees&&stats.errors==19);
  puts("PASS mouse lifecycle: 1024 paired five-button states, independent signed X/Y/wheel, idle/unplug button union, transient STALL/EIO release/requeue, fatal/unlink/cancel stop/reopen, invalid status rejection, no stale motion or leaks; actual Linux mouse IRQ/core");
  return 0;
 }

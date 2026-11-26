@@ -10,7 +10,7 @@ static long hostcall(long,u64,u64,u64,u64);
 #include "../userspace/installer.c"
 SysInfo si;
 static InstallInfo source;
-static int healthy,install_begins,cancels,closed,prepared,acknowledged;
+static int layout=2,healthy,install_begins,cancels,closed,prepared,acknowledged;
 void ui_motion(int kind){(void)kind;}
 void quit(void){closed++;}
 static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
@@ -23,7 +23,7 @@ static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
   if(a==5){VaultRequest*q=(void*)b;if(q->disk==-1){prepared=acknowledged=0;return 0;}if(!eq(q->password,q->replacement)||strlen(q->password)<8)return -1;prepared++;memset(q->recovery,'a',64);q->recovery[64]=0;return 0;}
   if(a==6){VaultRequest*q=(void*)b;if(!prepared||!eq(q->password,"aaaaaaaa"))return -1;acknowledged++;return 0;}
  }
- if(n==S_DISK&&a==0){DiskInfo*q=(void*)b;memset(q,0,sizeof *q);q->count=1;q->disk[0].layout=2;q->disk[0].healthy=healthy;q->disk[0].sectors=TMC_DISK_MAX_SECTORS;q->disk[0].map.scheme=MAP_GPT;strset(q->disk[0].model,"Native fixture",44);return 0;}
+ if(n==S_DISK&&a==0){DiskInfo*q=(void*)b;memset(q,0,sizeof *q);q->count=1;q->disk[0].layout=layout;q->disk[0].healthy=healthy;q->disk[0].sectors=TMC_DISK_MAX_SECTORS;q->disk[0].map.scheme=MAP_GPT;strset(q->disk[0].model,"Native fixture",44);return 0;}
  assert(!"unexpected syscall: no restore/reset/writes during selection");return -1;
 }
 int main(void){
@@ -32,7 +32,9 @@ int main(void){
  assert(!strcmp(installer_title(1),"Reinstalla tinymacOS Tramontana"));
  reinstall=1;healthy=1;page=0;source.live=0;refresh();assert(page==0&&info.count==1&&info.disk[0].usable&&info.disk[0].sectors==TMC_DISK_MAX_SECTORS);
  next();assert(page==1);choice=0;next();assert(page==2&&!confirm);next();assert(page==2&&!reinstall_pending&&!install_begins);
- back();assert(page==1);healthy=0;refresh();assert(!can());next();assert(page==1);
+ back();assert(page==1);layout=0;refresh();assert(!can()&&strstr(info.disk[0].reason,"desktop live"));next();assert(page==1&&!install_begins&&!reinstall_pending);
+ layout=2;healthy=0;refresh();assert(!can()&&strstr(info.disk[0].reason,"non reinstallabile"));next();assert(page==1);
+ puts("PASS Recovery without native install: explicit live-desktop guidance, no invented corrupt-table verdict and zero install/reset calls");
  healthy=1;refresh();next();confirm=1;next();assert(page==3&&reinstall_pending&&!install_begins&&!cancels);
  page=4;next();assert(closed==1);page=5;next();assert(page==1&&choice==-1&&!cancels);
  puts("PASS shared Recovery installer wizard: no live payload needed, healthy native target only, confirmation required, deferred reinstall, no data-reset syscall, success closes back to Recovery");

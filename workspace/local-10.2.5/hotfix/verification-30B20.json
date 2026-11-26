@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "version": "10.2.5",
+  "build": "30B20",
+  "fresh_host_suites": 8,
+  "fresh_guest_suites": 8,
+  "guest_suites": [
+    "recovery-no-install-guest-result.json",
+    "pmbr-signature-guest-result.json",
+    "clipboard-rollback-guest-result.json",
+    "release-optical-guest-result.json",
+    "native4k-install-guest-result.json",
+    "native4k-convert-guest-result.json",
+    "relative-pointer-uefi",
+    "relative-pointer-bios"
+  ],
+  "native_USB_callbacks_prior_30B19_fail_at_fourth_transient_error_all_three_adapters": true,
+  "native_USB_callbacks_after_fix_normal_ASan_UBSan_all_three_adapters": true,
+  "transient_submit_failure_and_failed_clear_halt_recovery_verified": true,
+  "keyboard_endpoint_preserved_during_pointer_retry": true,
+  "genuine_cancel_removal_shutdown_not_retried": true,
+  "rendered_relative_mouse_in_native_optical_Recovery_and_live_BIOS_UEFI": true,
+  "Recovery_without_native_install_explicit_live_guidance_zero_disk_modifications": true,
+  "native_4Kn_install_Recovery_reinstall_conversion_deactivation": true,
+  "exact_1024_desktop_input_rollback_retained": true,
+  "desktop_file_DnD_enabled": false,
+  "font_UI_Mono_and_Terminal_grid_retained": true,
+  "source_inputs_frozen_before_rebuild_and_rechecked": 756,
+  "physical_mouse_fix_confirmed": false,
+  "physical_trigger_of_regression_established": false,
+  "USB_recovery_defect_also_present_in_1024_sources": true,
+  "user_confirmed_reported_installer_message_was_Recovery_without_native_install": true,
+  "real_Windows_certification": false,
+  "Safari_full_WebKit_included": false,
+  "helper_retained_unchanged_since_30B18_not_fresh_boot_tested": true,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.5-x86_64.iso",
+    "bytes": 329510912,
+    "sha256": "f73d31321df316bd5d5c7502f1819ef0fe448718665d5b3f14538d8006b65907"
+  },
+  "publication_status": "separate publication-readback-30B20.json"
+}

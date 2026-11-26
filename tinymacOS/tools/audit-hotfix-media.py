@@ -33,7 +33,7 @@ with tempfile.TemporaryDirectory(prefix='tmc-hotfix-audit-',dir='/var/tmp') as w
  for mode,name in [('live','live.vol'),('installed','disk.vol'),('recovery','recovery.vol')]:record['catalog_sha256'][mode]=digest((w/name).read_bytes())
  for mode,files in [('live',live),('installed',installed),('recovery',recovery)]:
   font=files['/System/Library/Fonts/Interface.tfn'];assert len(font)==lock['bytes'] and digest(font)==lock['sha256'];record['fonts'][mode]={'bytes':len(font),'sha256':digest(font),'exact_locked_production_font':True}
-  version=plistlib.loads(files['/System/Library/CoreServices/SystemVersion.plist']);assert version['ProductVersion']=='10.2.5' and version['ProductBuildVersion']=='30B19'
+  version=plistlib.loads(files['/System/Library/CoreServices/SystemVersion.plist']);assert version['ProductVersion']=='10.2.5' and version['ProductBuildVersion']=='30B20'
  for image,path,name in [(None,'/System/Library/KernelCollections/KernelCache','live.cache'),(w/'install.fat','/System/Library/KernelCollections/KernelCache','disk.cache')]:
   p=fat_file(image,path,name) if image else iso_file(path,name);record['kernels'][name]=digest(p.read_bytes())
  assert len(set(record['kernels'].values()))==1
@@ -48,5 +48,5 @@ with tempfile.TemporaryDirectory(prefix='tmc-hotfix-audit-',dir='/var/tmp') as w
  assert manifest['faces'][5]['file']=='tinymacOSMonoRegular.otf'
  record['mono_source_file']=manifest['faces'][5]['file']
  record['no_external_font_fallback']=True
-record.update(passed=True,build='30B19',no_Safari_or_full_WebKit_claim=True,locked_production_font_in_all_three_namespaces=True)
-out.write_text(json.dumps(record,indent=2)+'\n');print('PASS FINAL ISO: live/installed/Recovery all contain exact currently locked production font; 30B19 version and common live/install KernelCache verified')
+record.update(passed=True,build='30B20',no_Safari_or_full_WebKit_claim=True,locked_production_font_in_all_three_namespaces=True)
+out.write_text(json.dumps(record,indent=2)+'\n');print('PASS FINAL ISO: live/installed/Recovery all contain exact currently locked production font; 30B20 version and common live/install KernelCache verified')

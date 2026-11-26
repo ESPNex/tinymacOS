@@ -41,8 +41,8 @@ try:
  assert occupied_boundaries()==occupied
  r['checks'].append('Confirmed real installer repairs signature only at activation, preserves PMBR entries/signature region, four existing GPT entries and occupied boundaries; exact original bad MBR saved inside new extent')
  with Installed('/not-attached',w,ev,'pmbr-cold-installed',disk='target',boot_disk=True) as g:
-  g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -buildVersion','30B19');g.cmd('cat Documents/proof.txt','SIGNATURE_REPAIR_IMPORT');g.shot('pmbr-cold-boot-import');g.cmd('off');g.p.wait(timeout=20)
- r['checks'].append('Cold native NVMe boot with ISO detached imports original live account/document and reports 30B19')
+  g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -buildVersion','30B20');g.cmd('cat Documents/proof.txt','SIGNATURE_REPAIR_IMPORT');g.shot('pmbr-cold-boot-import');g.cmd('off');g.p.wait(timeout=20)
+ r['checks'].append('Cold native NVMe boot with ISO detached imports original live account/document and reports 30B20')
  r['passed']=True
 except Exception as e:r['failure']=str(e);raise
 finally:(base/'pmbr-signature-guest-result.json').write_text(json.dumps(r,indent=2)+'\n')

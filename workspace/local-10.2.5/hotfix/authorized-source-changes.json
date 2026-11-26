@@ -1,5 +1,5 @@
 {
-  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules; user requested rebuild, new commit and deployment as 30B18; prevent rejected legacy-FS rebuild by pinning production FS2 in build.sh; user insists on rollback of drag/input against working 10.2.4; safe GPT decisions retained and error/readout clarified; user explicitly requested 10.2.5 republication with mouse rollback and fix for Tabella non riconosciuta: GPT validated before MBR signature; signature-only repair requires installer confirmation; offline editors still blocked",
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules; user requested rebuild, new commit and deployment as 30B18; prevent rejected legacy-FS rebuild by pinning production FS2 in build.sh; user insists on rollback of drag/input against working 10.2.4; safe GPT decisions retained and error/readout clarified; user explicitly requested 10.2.5 republication with mouse rollback and fix for Tabella non riconosciuta: GPT validated before MBR signature; signature-only repair requires installer confirmation; offline editors still blocked; user requests another 10.2.5 mouse fix after failed physical rollback and confirms Reinstalla used without installation; native USB adapters retry transient errors instead of synthetic permanent shutdown, truthful Recovery guidance; build 30B20",
   "inputs": {
     "assets/type.tfn": {
       "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
@@ -15,15 +15,15 @@
     },
     "userspace/about.c": {
       "baseline_sha256": "01232c34e885f571141338a122637286d99df7c329075dace0eb86e1c10a0b0e",
-      "hotfix_sha256": "c0590343daeac47b4518ca5858e4ebef4172a0479f7abfbc6f26ffa73b97db24"
+      "hotfix_sha256": "c28507567df3b31a30229b8b92580f36d698e0b5a5dec3e1addcebdb71bc5d26"
     },
     "userspace/command.c": {
       "baseline_sha256": "dc824c1520b540c553a648dcef5c3be2c74d2524c7c8a17ca2513b1ae8b3fa0e",
-      "hotfix_sha256": "5a5ecfa65366f47035dd91ca1a7cb9f34eabffeee3091e69689a14166380c921"
+      "hotfix_sha256": "7a4520760d7f7af6177496eb3ef972691e05f0c5bc6d4b0d98827da0ddd421d1"
     },
     "userspace/settings.c": {
       "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
-      "hotfix_sha256": "7e22a7a04b5c03d529d8712da875bdc5c1d308b0ae1eae1d21d6265d5a6c842b"
+      "hotfix_sha256": "238a928b97fdac2919328fcfdd8b3d1d265460f9adc60682c452fda764abc298"
     },
     "assets/panicfont.inc": {
       "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
@@ -43,7 +43,7 @@
     },
     "userspace/installer.c": {
       "baseline_sha256": "9cbe6e30aa630f60546bec005657fa45ffa642059577f634b9c77de2a9b78121",
-      "hotfix_sha256": "e3e0d75a81c9705565a475ade632d428b183d02c10760fd02924f7fed8977d20"
+      "hotfix_sha256": "1b7966757f22b6f6e7928a16e72078185bb18056b4a68c4d65c386f8362d526e"
     },
     "fs/install.c": {
       "baseline_sha256": "abb6593615d136c9ea56c99928eb34bb1b9274aa94618ae0cf5fd6a9b2881b28",
@@ -56,6 +56,22 @@
     "include/partition.h": {
       "baseline_sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6",
       "hotfix_sha256": "f45d05de444c3fe13ca41eef64a112b634545239f5a3e51e9f2163fd5361dcc0"
+    },
+    "drivers/ehci.c": {
+      "baseline_sha256": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5",
+      "hotfix_sha256": "f94317eea1b84cb8c4737987eef200812ef810ca36a19cd6ee608b12fd8757cf"
+    },
+    "drivers/uhci.c": {
+      "baseline_sha256": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555",
+      "hotfix_sha256": "fe43356fa69cc00c0b490c34f2ba49264f8d07a2d8caa353ba2a2b18eff339a4"
+    },
+    "drivers/xhci.c": {
+      "baseline_sha256": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71",
+      "hotfix_sha256": "fe4241ad83e7ba1f431eec55a44c66b8dd6e85bdfbda89d618efb8fb7739174b"
+    },
+    "include/usbhost.h": {
+      "baseline_sha256": "b3c18420180b84121a1b1239b56074abffdf39553946ff1dc4ac3004d5c1f1f8",
+      "hotfix_sha256": "4d3344f362cbde7bd151177ae39bacc3c00876a99cfbc842c71a438a9d0198ba"
     }
   },
   "removed_inputs": {

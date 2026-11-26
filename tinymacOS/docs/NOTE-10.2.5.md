@@ -1,6 +1,6 @@
 # 10.2.5 Tramontana · 30B16
 
-> **Stato attuale 30B19:** [rollback mouse, DnD disabilitato e riconoscimento GPT](NOTE-10.2.5-30B19.md).
+> **Stato attuale 30B20:** [recupero USB e guida Recovery/live](NOTE-10.2.5-30B20.md).
 > I risultati e le funzionalità sotto descrivono build precedenti, non la nuova accettazione.
 
 > **Revisione 30B17:** questo documento descrive anche la precedente 30B16.

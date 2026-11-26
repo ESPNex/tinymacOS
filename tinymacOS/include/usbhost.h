@@ -13,7 +13,7 @@ typedef struct {
     TabletLayout layout;
     unsigned proto,ep,packet,interval,iface,report_length,toggle,failures;
     unsigned burst,mult,bytes_per_interval;
-    int armed,linux_mouse,linux_keyboard,linux_generic;
+    int armed,linux_mouse,linux_keyboard,linux_generic,halted;
     u64 retry_at;
 } UsbInputPipe;
 struct UsbInput {

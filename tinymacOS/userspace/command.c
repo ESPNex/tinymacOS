@@ -213,9 +213,9 @@ static int run(void)
         if (n == 1) {
             ln("ProductName:       tinymacOS");
             ln("ProductVersion:    10.2.5");
-            ln("BuildVersion:      30B19");
+            ln("BuildVersion:      30B20");
         } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.5");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B19");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B20");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -224,7 +224,7 @@ static int run(void)
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
         else if (eq(V(1), "-r"))ln("10.2.5");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.5 30B19 x86_64");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.5 30B20 x86_64");
         else return 2;
         return 0;
     }
