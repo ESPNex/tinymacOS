@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "milestone_commit": "ffa2b499f66ed9a1db77138f67926fd4c13b999e",
+  "independent_immutable_github_readback_all_changed_non_deleted_files": [
+    {
+      "path": "workspace/webkit-tmc/PROGRESS.md",
+      "sha256": "23dc56b624dd3ccb3d2b5ddd3a3a01be89ca26f90f289768c0872a7b262ec516",
+      "bytes": 18879
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-CPP.md",
+      "sha256": "dfe57f27d4e79617e1f9ede1ecfebeaee5c941812fbeb3210b67be8b8e6902c7",
+      "bytes": 6895
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-LIFECYCLE.md",
+      "sha256": "d50e8145a5d1a01c18f170baf2fcff96c602bd2b3c0dba78ce53063796e93d84",
+      "bytes": 6137
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/include/tmc_cpp_runtime.h",
+      "sha256": "612aee735c89832ee90e88b4d5851d084c492d2e09f11737c4ed3d039d69cde9",
+      "bytes": 1633
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/lifecycle.ld",
+      "sha256": "d78608f7984ad98e8496efefc5a85354c41e0fa2e7a08c44856d3652d902f17d",
+      "bytes": 756
+    },
+    {
+      "path": "workspace/webkit-tmc/cpp/src/lifecycle.cpp",
+      "sha256": "72dd1310e543639dfc600250e079d88ce54721d2f94fd5b16b3a028495c77a8d",
+      "bytes": 3189
+    },
+    {
+      "path": "workspace/webkit-tmc/release-gates.json",
+      "sha256": "7c36e9b11581ac97c5c95f496db83cda87c5ed8a867907b39a62b1d025e54dd7",
+      "bytes": 9776
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/cpp/REMOTE-SCREENSHOTS.json",
+      "sha256": "69334b254e9bee8ecdcfa371d0d55bb26e50c51000f08c347169bf1a96c483d2",
+      "bytes": 1008
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/lifecycle/lifecycle-evidence.tar.xz",
+      "sha256": "b47f95cbc1291f79ed998cb5dae0d8cdd69135d7cf95ad02907c28d2c192d0fd",
+      "bytes": 112892
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/lifecycle/verification.json",
+      "sha256": "865bdfdd0d175b875c008536c66aaeead5e32310008d8fe89f0c170f4305c594",
+      "bytes": 4871
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_vm_transport.c",
+      "sha256": "468cc8f37768a299b88ad9de72d19876d32f8827499436e3d3048b359aeb6ecc",
+      "bytes": 1155
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_lifecycle_probe.c",
+      "sha256": "046e58ed3824003c2352798699969f0ce613a1997006bd22fe7b9e5924bbc18b",
+      "bytes": 2058
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/lifecycle_cases.cpp",
+      "sha256": "c36eb1403a67f23212ba0a3a348016e74abdafb0ae9240cac6cbf0236a13e723",
+      "bytes": 4843
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/lifecycle_cases.h",
+      "sha256": "eb24edd9c0c0b3c5a144613cfc103572e76b5a1a7db4c545238568518a7b7611",
+      "bytes": 374
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/lifecycle_contract.c",
+      "sha256": "61fd73012e07b4436602b5f45ae13710044ecffd938e34902d128b81b270a992",
+      "bytes": 1561
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-lifecycle-probe.sh",
+      "sha256": "cb9fa8356941063e802c1011b9611fea7213220a0151ba59e215458a3b429889",
+      "bytes": 1174
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-network-probe.sh",
+      "sha256": "34462a20ab52c5654771ca4dc3fd8303abad39220f6d1ec6d4aced3bf62a89f7",
+      "bytes": 6177
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/compile-backend.sh",
+      "sha256": "1fbc187b6901d2b1d58fe60c8a3764eec93d44b4baf194f32aa7367b4bcc0b04",
+      "bytes": 1677
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/run-tests.py",
+      "sha256": "d851140e785322370bfc2abd100cd6e936163f388e60a2384f894ca7c6aad4eb",
+      "bytes": 6839
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-cpp-lifecycle.sh",
+      "sha256": "d1e19f22ac5d0f303c8fdfec721a26e385ff07b64d96a5b2fd553eff4c1823ae",
+      "bytes": 1981
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-lifecycle.py",
+      "sha256": "5d3733fca5ec0d9f8619b6c1bcf62912a779d8313010d28036bf5f64dc51c181",
+      "bytes": 3557
+    }
+  ],
+  "evidence_archive_independently_verified": true,
+  "main_points_to_milestone": true,
+  "branches": [
+    "main",
+    "vendor/syslinux-6.04"
+  ],
+  "tags_remain_25_without_legacy_alias_recreation": true,
+  "releases_remain_19_uniquely_named": true,
+  "single_published_1025_iso_unchanged": true,
+  "historical_reconstruction_cancelled_no_releases_created": true,
+  "new_103_release_published": false
+}
