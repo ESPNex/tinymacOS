@@ -8,6 +8,7 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 ap=argparse.ArgumentParser(description=__doc__)
 ap.add_argument('--guest',action='store_true')
+ap.add_argument('--gigablock',action='store_true',help='Cleanup/protected-source + FS/input + real C++/WTF dtoa + all prior runtime probes and native Recovery; external --output required')
 ap.add_argument('--events-megablock',action='store_true',help='Fresh clock/events + full prior native runtime matrix, 1/4/8 CPUs; external --output required')
 ap.add_argument('--runtime-megablock',action='store_true',help='Fresh base plus heap/unanchored-C++/lifecycle/pthread native 1/4/8 CPU matrix; external --output required')
 ap.add_argument('--lifecycle-guest',action='store_true',help='Fresh lifecycle base/build plus native 1/4/8 CPU tests; requires external --output')
@@ -33,6 +34,15 @@ cases=[
  ('backend-target-compile',['sh',str(root/'tools/compile-backend.sh')]),
  ('system-target-compile',['sh',str(root/'tools/compile-system-integration.sh')]),
 ]
+if args.gigablock:
+ system=root.parent.parent/'tinymacOS';fixture='/var/tmp/tmc-gigablock-final/bios-fixture'
+ cases += [
+  ('cleanup-contract',['python3',str(root/'tools/test-cleanup-contract.py')]),
+  ('stdlib-WTF-dtoa-contract',['bash',str(root/'tools/test-stdlib.sh')]),
+  ('bios-fixture-build',['python3',str(system/'tools/bios-image.py'),fixture]),
+ ]
+ for name,script in [('fs2-core','test-tmcbfs2.sh'),('fs2-runtime','test-fs2-runtime.sh'),('fs2-install','test-fs2-install.sh'),('fs2-conversion','test-fs2-convert.sh'),('fs2-import','test-fs2-import-adapter.sh'),('native4k-install','test-native4k-install.sh'),('vault2','test-vault2.sh'),('native-input-maintenance','test-input-maintenance.sh')]:
+  cases += [(name+'-contract',['env','TMC_BUILD='+fixture,'bash',str(system/('tests/'+script))])]
 if args.guest:
  cases += [
   ('guest-vm-probe-build',['bash',str(root/'tools/build-guest-vm-probe.sh')]),
@@ -68,26 +78,30 @@ if args.lifecycle_guest:
  env=['env','TMC_QA_RESULTS='+str(args.output.resolve().parent),'TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-lifecycle-system','TMC_PROBE_BUILD=/var/tmp/tmc-webkit-lifecycle-guest']
  cases += [('guest-lifecycle-probe-build',env+['bash',str(root/'tools/build-guest-lifecycle-probe.sh')])]
  cases += [('guest-lifecycle-smp'+str(n),env+['TMC_SMP='+str(n),'python3',str(root/'tools/test-guest-lifecycle.py')]) for n in (1,4,8)]
-if args.runtime_megablock or args.events_megablock:
- if args.guest or args.lifecycle_guest or (args.runtime_megablock and args.events_megablock):ap.error('--runtime-megablock is a standalone full matrix')
+if args.runtime_megablock or args.events_megablock or args.gigablock:
+ if args.guest or args.lifecycle_guest or (sum((args.runtime_megablock,args.events_megablock,args.gigablock))>1):ap.error('--runtime-megablock is a standalone full matrix')
  if Path('/var/tmp') not in args.output.resolve().parents:ap.error('--runtime-megablock requires --output under /var/tmp')
  args.output.parent.mkdir(parents=True,exist_ok=True)
- buildroot='/var/tmp/tmc-events-final' if args.events_megablock else '/var/tmp/tmc-megablock-final'
+ buildroot='/var/tmp/tmc-gigablock-final' if args.gigablock else '/var/tmp/tmc-events-final' if args.events_megablock else '/var/tmp/tmc-megablock-final'
  base=buildroot+'/system'
  common=['env','TMC_QA_RESULTS='+str(args.output.resolve().parent),'TMC_PRODUCTION_BUILD='+base]
  # Lifecycle builder always rebuilds the base from its pre-build hash manifest.
  cases += [('guest-lifecycle-probe-build',common+['TMC_LIFECYCLE_SYSTEM_BUILD='+base,'TMC_PROBE_BUILD='+buildroot+'/lifecycle','bash',str(root/'tools/build-guest-lifecycle-probe.sh')])]
- for kind in (('events','heap','cpp','pthread') if args.events_megablock else ('heap','cpp','pthread')):
+ for kind in (('stdlib','events','heap','cpp','pthread') if args.gigablock else ('events','heap','cpp','pthread') if args.events_megablock else ('heap','cpp','pthread')):
   cases += [('guest-'+kind+'-probe-build',common+['TMC_PROBE_BASE='+base,'TMC_PROBE_KIND='+kind,'TMC_PROBE_BUILD='+buildroot+'/'+kind,'bash',str(root/'tools/build-guest-network-probe.sh')])]
- for kind in (('events','heap','cpp','lifecycle','pthread') if args.events_megablock else ('heap','cpp','lifecycle','pthread')):
+ for kind in (('stdlib','events','heap','cpp','lifecycle','pthread') if args.gigablock else ('events','heap','cpp','lifecycle','pthread') if args.events_megablock else ('heap','cpp','lifecycle','pthread')):
   cases += [('guest-'+kind+'-smp'+str(n),common+['TMC_SMP='+str(n),'TMC_PROBE_BUILD='+buildroot+'/'+kind,'python3',str(root/('tools/test-guest-'+kind+'.py'))]) for n in (1,4,8)]
+if args.gigablock:
+ cases += [('guest-cleanup-recovery-smp'+str(n),common+['TMC_SMP='+str(n),'python3',str(root/'tools/test-cleanup-recovery.py')]) for n in (1,4)]
 results=[]
 for name,cmd in cases:
  try:
-  r=subprocess.run(cmd,text=True,capture_output=True,timeout=150 if name.startswith('guest-') else 90)
+  r=subprocess.run(cmd,text=True,capture_output=True,timeout=150 if name.startswith('guest-') else 600 if args.gigablock and name in ('fs2-install-contract','native4k-install-contract') else 180 if args.gigablock else 90)
   results.append({'name':name,'exit_code':r.returncode,'stdout':r.stdout,'stderr':r.stderr})
- except subprocess.TimeoutExpired:
-  results.append({'name':name,'exit_code':124,'stdout':'','stderr':'Test exceeded its deadline; this is NOT a pass.'})
+ except subprocess.TimeoutExpired as exc:
+  partial=lambda value: value.decode(errors="replace") if isinstance(value,bytes) else value or ""
+  results.append({'name':name,'exit_code':124,'stdout':partial(exc.stdout),'stderr':partial(exc.stderr)+'\nTest exceeded its deadline; this is NOT a pass.'})
+ args.output.with_suffix('.in-progress.json').write_text(json.dumps({'complete':False,'cases':results},indent=2))
  print(('PASS' if results[-1]['exit_code']==0 else 'FAIL')+': '+name,flush=True)
  # Never boot stale probe artifacts if the build failed.
  if name.endswith('probe-build') and results[-1]['exit_code']!=0:break
@@ -95,6 +109,6 @@ for name,cmd in cases:
 # in the small shared workspace. Does not affect a guest assertion or its result.
 if args.guest:subprocess.run(['python3',str(root/'tools/compact-qa-evidence.py')],check=True)
 args.output.write_text(json.dumps({
- 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+(' and real native C++ lifecycle .init_array/DSO finalization on 1/4/8 CPUs' if args.lifecycle_guest else '')+(' and fresh native heap/cache/unanchored-C++/lifecycle/pthread matrix on 1/4/8 CPUs' if args.runtime_megablock else '')+(' and native MONOTONIC clock/condition/task-timer queue plus prior runtime 1/4/8 CPU matrix' if args.events_megablock else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
- 'events_megablock_requested':args.events_megablock,'runtime_megablock_requested':args.runtime_megablock,'guest_requested':args.guest,'lifecycle_guest_requested':args.lifecycle_guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
+ 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+(' and real native C++ lifecycle .init_array/DSO finalization on 1/4/8 CPUs' if args.lifecycle_guest else '')+(' and fresh native heap/cache/unanchored-C++/lifecycle/pthread matrix on 1/4/8 CPUs' if args.runtime_megablock else '')+(' and native MONOTONIC clock/condition/task-timer queue plus prior runtime 1/4/8 CPU matrix' if args.events_megablock else '')+(' and authorized cleanup/native Recovery/FS/input, real standard header-template consumers and explicitly patched WTF dtoa native component' if args.gigablock else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
+ 'gigablock_requested':args.gigablock,'events_megablock_requested':args.events_megablock,'runtime_megablock_requested':args.runtime_megablock,'guest_requested':args.guest,'lifecycle_guest_requested':args.lifecycle_guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
 sys.exit(0 if all(r['exit_code']==0 for r in results) else 1)

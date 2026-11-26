@@ -191,3 +191,12 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 ## 10.3 — macroblocco lifecycle C++
 
 Startup `.init_array` esplicito e thread-safe, ABI `__cxa_atexit/__cxa_finalize`, registro dinamico e distruzione DSO LIFO con rientranza. **14 gate host + build fresca + profili lifecycle nativi 1/4/8 CPU PASS** (18 casi nella stessa matrice). Due globali e uno static locale compiler-generated, 400 registrazioni concorrenti e 401 callback worker, zero registro/heap residuo. Dettagli, limiti e riproduzione: `RUNTIME-LIFECYCLE.md`. Non è CRT automatico OS-wide, libc++, WTF/JSC/WebCore o Safari. Stress heap non ancorato ancora aperto; nessuna nuova ISO distribuita. Recupero release storiche annullato su richiesta, senza pubblicazioni.
+
+
+## 10.3 — gigablocco pulizia, C++ standard selezionato e componente WTF dtoa
+
+Archiviati su GitHub e verificati 1.945 file prima della rimozione; vecchia Recovery EFI ritirata, Recovery nativa e fallback FS attivi preservati. 972/986 input congelati ancora identici; 13 file ritirati e un include modificato esplicitamente. 22 file upstream byte-originali del componente dtoa, port esterno con include isolati e due cast signed documentati: il corpus indipendente ha scoperto e mantiene riproducibile il difetto originale `0.1`→Infinity.
+
+55 gate distinti chiusi: matrice iniziale 54 PASS + timeout host FS2 a 180s, poi stesso script FS2 normale+ASan/UBSan exit0; non 55/55 in un unico run. Sei build fresche e tutti i 18 guest stdlib/events/heap/C++/lifecycle/pthread su 1/4/8 CPU PASS, più Recovery nativa UEFI su 1/4 CPU PASS. Nuovo consumer reale vector/string/unique_ptr/function/algorithm/span/array/atomic e WTF dtoa: 1.040 parse oracle, 8.000 roundtrip, 400 task/cleanup, 128 context check FP, heap/DSO zero. Header GNU hosted dichiarati (304 input hashati), nessuna libreria binaria hosted target.
+
+Prove e limiti in `GIGABLOCK-CPP-DTOA.md`, `stdlib/README.md`, `test-results/gigablock/verification.json`. Nessun full WTF/JSC/WebCore/Safari o upload ISO; prossime dipendenze ancora esplicite.

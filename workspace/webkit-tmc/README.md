@@ -12,7 +12,9 @@ Il primo blocco nuovo è l’allocatore VM e il sottoinsieme C di allocazione, d
 
 Heap VM con cache/trim opt-in, new/delete/guard e lifecycle C++ esplicito, adattatore pthread sorgente, clock MONOTONIC e coda task/timer nativa. Il precedente megablocco ha chiuso lo stress C++ originale non ancorato con cache abilitata e scadenza invariata; la nuova matrice integra clock/deadline/events e riesegue i probe heap/C++/lifecycle/pthread su 1/4/8 CPU. Risultati e limiti correnti in [RUNTIME-EVENTS.md](RUNTIME-EVENTS.md); la coda nativa **non è WTF::RunLoop già compilato**.
 
-L'audit degli upstream fissati evidenzia una differenza ancora bloccante: il percorso POSIX di WTF usa anche WallTime; il nostro realtime resta ENOTSUP. Nessun build di WTF/JSC/WebCore o UI Safari ancora consegnato, nessuna ISO 10.3 pubblicata.
+L'audit degli upstream fissati evidenzia una differenza ancora bloccante: il percorso POSIX di WTF usa anche WallTime; il nostro realtime resta ENOTSUP. Nessun build completo di WTF/JSC/WebCore o UI Safari ancora consegnato, nessuna ISO 10.3 pubblicata.
+
+**Nuovo gigablocco:** workspace storici e Recovery EFI ritirata archiviati/rimossi con verifica GitHub; fallback FS attivo preservato. Veri template C++ GNU e primo componente WTF dtoa fissato/isolato, con due cast signed documentati e test indipendenti. 55 gate distinti chiusi fra matrice iniziale (54 PASS + un timeout host FS2) e replay riuscito; 18 guest runtime su 1/4/8 CPU + 2 Recovery. Non una suite 55/55 nella stessa invocazione. Dettagli e prove: [GIGABLOCK-CPP-DTOA.md](GIGABLOCK-CPP-DTOA.md).
 
 ## Componenti presenti
 
