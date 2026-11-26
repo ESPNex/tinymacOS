@@ -1,0 +1,194 @@
+{
+  "passed": true,
+  "normalized_release_titles": [
+    {
+      "id": 459399662,
+      "tag": "v10.2.5",
+      "old_title": "tinymacOS 10.2.5 Tramontana \u00b7 30B16",
+      "new_title": "tinymacOS 10.2.5",
+      "non_1025_body_unchanged": false
+    },
+    {
+      "id": 458576920,
+      "tag": "v10.2.4",
+      "old_title": "tinymacOS 10.2.4 / 30B15 \u2014 Recovery e dischi fino a 1 TiB",
+      "new_title": "tinymacOS 10.2.4",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 458314839,
+      "tag": "v10.2.3",
+      "old_title": "tinymacOS 10.2.3 / 30B14 \u2014 CoW reale e Utility Disco",
+      "new_title": "tinymacOS 10.2.3",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 458163997,
+      "tag": "v10.2.2",
+      "old_title": "tinymacOS 10.2.2 / 30B13 \u2014 FileVault essenziale e barra dei menu trasparente",
+      "new_title": "tinymacOS 10.2.2",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 457483536,
+      "tag": "v10.2.1",
+      "old_title": "tinymacOS 10.2.1 / 30B12 \u2014 Rimpiazzo: Recovery scura e opaca con barra dei menu",
+      "new_title": "tinymacOS 10.2.1",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 457431910,
+      "tag": "v10.2",
+      "old_title": "tinymacOS 10.2 / 30B11 \u2014 Rimpiazzo: sfondo Recovery nero con luce soffusa",
+      "new_title": "tinymacOS 10.2",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 457410969,
+      "tag": "v10.1.9",
+      "old_title": "tinymacOS 10.1.9 / 30B10 \u2014 Login e pannelli Apri/Salva",
+      "new_title": "tinymacOS 10.1.9",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 457375095,
+      "tag": "v10.1.8",
+      "old_title": "tinymacOS 10.1.8 / 30B9 \u2014 Impostazioni SVG e Recovery",
+      "new_title": "tinymacOS 10.1.8",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 457246195,
+      "tag": "v10.1.7-usbhid-candidate",
+      "old_title": "tinymacOS 10.1.7 / 30B8 \u2014 candidata USB/HID canonica",
+      "new_title": "tinymacOS 10.1.7",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 454670448,
+      "tag": "v10.1.6",
+      "old_title": "tinymacOS 10.1.6 Tramontana",
+      "new_title": "tinymacOS 10.1.6",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453917635,
+      "tag": "v10.1.5",
+      "old_title": "tinymacOS 10.1.5 Tramontana",
+      "new_title": "tinymacOS 10.1.5",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453892646,
+      "tag": "v10.1.4",
+      "old_title": "tinymacOS 10.1.4 Tramontana",
+      "new_title": "tinymacOS 10.1.4",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453865486,
+      "tag": "v10.1.3",
+      "old_title": "tinymacOS 10.1.3 Tramontana",
+      "new_title": "tinymacOS 10.1.3",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453816118,
+      "tag": "v10.1.2",
+      "old_title": "tinymacOS 10.1.2 Tramontana",
+      "new_title": "tinymacOS 10.1.2",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453635016,
+      "tag": "v10.1.1",
+      "old_title": "tinymacOS 10.1.1 Tramontana",
+      "new_title": "tinymacOS 10.1.1",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453634514,
+      "tag": "v10.1",
+      "old_title": "tinymacOS 10.1 Tramontana",
+      "new_title": "tinymacOS 10.1",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453337659,
+      "tag": "v10",
+      "old_title": "tinymacOS 10 Tramontana",
+      "new_title": "tinymacOS 10",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453129451,
+      "tag": "v2.4.5",
+      "old_title": "tinymacOS 2.4.5 Levante \u2014 Tastiera ITA + assi mouse (21B9)",
+      "new_title": "tinymacOS 2.4.5",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453058481,
+      "tag": "v2.4.4-oc2",
+      "old_title": "tinymacOS 2.4.4 Levante \u2014 OpenCore BIOS/UEFI installer (OC2)",
+      "new_title": "tinymacOS 2.4.4",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 453006571,
+      "tag": "v2.4.4-oc1",
+      "old_title": "tinymacOS 2.4.4 Levante \u00b7 OpenDuet/OpenCore BIOS + UEFI ISO",
+      "new_title": "tinymacOS 2.4.4",
+      "non_1025_body_unchanged": true
+    },
+    {
+      "id": 452996851,
+      "tag": "v2.4.4",
+      "old_title": "tinymacOS 2.4.4 Levante \u00b7 build 21B5",
+      "new_title": "tinymacOS 2.4.4",
+      "non_1025_body_unchanged": true
+    }
+  ],
+  "tags_and_prerelease_draft_flags_preserved": true,
+  "historical_release_bodies_unchanged_except_1025": true,
+  "single_iso_release": "v10.2.5",
+  "kept_iso": "tinymacOS-10.2.5-x86_64.iso",
+  "kept_iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+  "removed_redundant_iso": "tinymacOS-10.2.5-x86_64-UEFI.iso",
+  "remaining_assets": [
+    {
+      "id": 796010429,
+      "name": "SHA256SUMS",
+      "sha256": "02687cafdb35f431bbbc4dd5cb03a485421e91fe8732f512b368d1614530524e",
+      "size": 382
+    },
+    {
+      "id": 795849478,
+      "name": "tinymacOS-10.2.5-NVMe-boot-helper.img",
+      "sha256": "d956dd8bc5f60fe07cc71d40e660fdb80305eb6709a5752eb63b11479bf415f5",
+      "size": 17825792
+    },
+    {
+      "id": 795849477,
+      "name": "tinymacOS-10.2.5-sorgenti.zip",
+      "sha256": "eaf5020830f4b72cecd71ba7f3a80f5918b111f34126233eb4e98c7f62bd93f4",
+      "size": 18226119
+    },
+    {
+      "id": 795849480,
+      "name": "tinymacOS-10.2.5-x86_64.iso",
+      "sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "size": 329791488
+    },
+    {
+      "id": 795849482,
+      "name": "VALIDAZIONE-10.2.5.md",
+      "sha256": "2939b11cced55ff40c22f81b2c0b77211a009f556c6d49e1f15020164aa98e2b",
+      "size": 31865
+    }
+  ],
+  "remaining_four_payload_asset_ids_and_hashes_unchanged": true,
+  "checksum_independent_download_verified": true,
+  "binaries_rebuilt": false,
+  "original_validation_receipts_preserved": true
+}

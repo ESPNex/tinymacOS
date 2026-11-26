@@ -1,0 +1,45 @@
+{
+  "source_branch": "work/safari-webkit-runtime",
+  "source_commit": "4218c0a2ae9826ba92e26beebc31ac032279ebf2",
+  "preserve": [
+    "main",
+    "vendor/syslinux-6.04"
+  ],
+  "remote_heads_before": [
+    {
+      "name": "main",
+      "sha": "c124fde1de76655f70d50aca571a4b09e41a408b"
+    },
+    {
+      "name": "vendor/syslinux-6.04",
+      "sha": "53791ac78b90525b81bd5b7ae692a681c4c3e12a"
+    },
+    {
+      "name": "work/safari-webkit-runtime",
+      "sha": "4218c0a2ae9826ba92e26beebc31ac032279ebf2"
+    },
+    {
+      "name": "work/10.2.2",
+      "sha": "7e9d2a11e3d260e9b892dd9337cf141825620b60"
+    },
+    {
+      "name": "work/10.2.3-disk-utility",
+      "sha": "09edd1ea626cc70ce82e8e47c42a1681a8905d56"
+    },
+    {
+      "name": "work/10.2.3",
+      "sha": "82ec7bc198991c9d03a4dcb628d995caee35c5b7"
+    },
+    {
+      "name": "work/10.2.4-recovery-large-disks",
+      "sha": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69"
+    },
+    {
+      "name": "work/10.2.5-scalable-fs-nvme",
+      "sha": "c124fde1de76655f70d50aca571a4b09e41a408b"
+    }
+  ],
+  "older_work_branches_confirmed_ancestors_of_latest": true,
+  "method": "fast-forward main to latest Safari plus requested documentation/normalization receipt; atomic remote main update and work-branch deletions with exact expected ref leases",
+  "historical_release_tags_preserved": true
+}

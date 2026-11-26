@@ -2,7 +2,7 @@
 
 ## Risultato verificato
 
-Ripresa del port esistente sul ramo `work/safari-webkit-runtime`, dalla base Git `c124fde1de76655f70d50aca571a4b09e41a408b` (tinymacOS **10.2.5 / 30B16**, già pubblicata). **Non è Safari pronto e non è ancora un build di WTF, JavaScriptCore o WebCore.** Requisito invariato: interfaccia Safari desktop classica identica al riferimento del progetto, tutti i temi e motore WebKit completo; niente renderer sostitutivo o shell vuota.
+Ripresa del port esistente sul ramo temporaneo `work/safari-webkit-runtime`, poi consolidato in `main`, dalla base Git `c124fde1de76655f70d50aca571a4b09e41a408b` (tinymacOS **10.2.5 / 30B16**, già pubblicata). **Non è Safari pronto e non è ancora un build di WTF, JavaScriptCore o WebCore.** Requisito invariato: interfaccia Safari desktop classica identica al riferimento del progetto, tutti i temi e motore WebKit completo; niente renderer sostitutivo o shell vuota.
 
 Questo blocco aggiunge un vero heap di processo sopra S_VM e il mutex nativo già esistente. Non modifica sorgenti del sistema operativo di produzione e non modifica né ripubblica la release 10.2.5.
 

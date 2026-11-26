@@ -4,7 +4,7 @@ Lavoro preparatorio sul runtime di tinymacOS. **Non è un browser e non è ancor
 
 ## Ripresa dopo 10.2.5
 
-La base OS corrente è **10.2.5 / 30B16**, già pubblicata senza Safari. Lo sviluppo riprende dal runtime esistente sul ramo `work/safari-webkit-runtime`; i riferimenti a 2.4.x nei documenti storici non sono la prossima versione promessa. Nessun renderer sostitutivo e nessuna shell vuota: obiettivo invariato, UI Safari desktop classica identica e motore WebKit completo.
+La base OS corrente è **10.2.5 / 30B16**, già pubblicata senza Safari. Lo sviluppo è ripreso dal runtime esistente ed è ora consolidato in `main` (il ramo temporaneo `work/safari-webkit-runtime` è stato unito e rimosso); i riferimenti a 2.4.x nei documenti storici non sono la prossima versione promessa. Nessun renderer sostitutivo e nessuna shell vuota: obiettivo invariato, UI Safari desktop classica identica e motore WebKit completo.
 
 Il primo blocco nuovo è l’allocatore VM e il sottoinsieme C di allocazione, descritto in `RUNTIME-HEAP.md`. Checkout completo di WebKit, toolchain e build rimangono fuori da `/home/user`; sorgenti del port e ricevute sono salvati su GitHub, con workspace sotto 128 MB decimali.
 

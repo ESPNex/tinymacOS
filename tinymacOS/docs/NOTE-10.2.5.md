@@ -43,12 +43,18 @@ precedenti. [Dettagli](FS2-CONVERSION-4KN-10.2.5.md).
 
 ## Supporti distribuiti e avvio
 
-- `tinymacOS-10.2.5-x86_64.iso`: supporto ottico BIOS/OpenDuet/OpenCore e UEFI.
-- `tinymacOS-10.2.5-x86_64-UEFI.iso`: esatto supporto UEFI utilizzato nella
-  matrice completa installazione/Recovery/FS2/4Kn/cifratura. I file di sistema,
-  EFI.IMG e payload di installazione/Recovery comuni alle due ISO sono stati
-  estratti e confrontati byte per byte. Il supporto ottico duale ha inoltre
-  proprie prove di avvio BIOS e UEFI: i due hash ISO non sono intercambiabili.
+- **Unica ISO distribuita:** `tinymacOS-10.2.5-x86_64.iso`, supporto ottico
+  BIOS/OpenDuet/OpenCore **e UEFI**, senza dover scegliere tra due download.
+  SHA-256: `1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a`.
+  Il file è invariato: non è una nuova build e conserva le proprie prove di
+  avvio BIOS e UEFI.
+- La variante solo UEFI è stata rimossa dai download per evitare duplicazioni.
+  Rimane documentata come artefatto storico della matrice completa
+  installazione/Recovery/FS2/4Kn/cifratura. I 35 file comuni, inclusi EFI.IMG
+  e payload di installazione/Recovery, sono stati estratti e confrontati byte
+  per byte; le due immagini complete avevano hash distinti. Le ricevute
+  originali restano storiche e non vengono riscritte come se i test fossero
+  stati eseguiti su un unico hash ISO.
 - Helper NVMe USB/SATA: necessario sui BIOS privi di accesso firmware NVMe;
   non contiene il sistema operativo e non modifica il firmware della macchina.
 

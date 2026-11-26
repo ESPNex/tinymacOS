@@ -18,12 +18,20 @@ Non sono stati sostituiti da esclusioni di rilascio.
   confrontati byte per byte. Il codice del piccolo fix C degli store PMBR non
   allineati produce un oggetto compilato identico a quello già distribuito.
 
+## Distribuzione normalizzata
+
+La release offre ora una sola ISO: `tinymacOS-10.2.5-x86_64.iso`, BIOS+UEFI.
+La variante solo UEFI non è più un asset scaricabile. Nessuna immagine è stata
+ricompilata; la tabella e le ricevute sottostanti conservano entrambi gli hash
+come storico della validazione originale. `SHA256SUMS` della release elenca
+soltanto i quattro payload ancora distribuiti (ISO, helper, sorgenti, report).
+
 ## Hash dei supporti
 
 | Artefatto | SHA-256 |
 |---|---|
-| ISO UEFI, esatto supporto della matrice completa | `ea98bb53bb3abbf82b3592d44bdd9bc1e9b9cc84c78a9af6b0ad4d5df76a7293` |
-| ISO ottica BIOS+UEFI, con proprie prove di avvio | `1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a` |
+| ISO UEFI storica, rimossa dai download; supporto della matrice completa | `ea98bb53bb3abbf82b3592d44bdd9bc1e9b9cc84c78a9af6b0ad4d5df76a7293` |
+| **Unica ISO distribuita**, BIOS+UEFI, con proprie prove di avvio | `1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a` |
 
 Le due ISO non sono byte-identiche e non si attribuiscono all'una le prove
 dell'altra senza la verifica esplicita dei payload comuni.
