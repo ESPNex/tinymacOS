@@ -1,6 +1,6 @@
 {
   "application_name": "Safari",
-  "target_os_release": "Development after tinymacOS 10.2.5 / 30B16; browser release version not assigned",
+  "target_os_release": "10.3 (development; not yet published)",
   "visual_reference": "Safari desktop classico, tutti i temi di TinymacOS",
   "release_policy": "10.2.5 is already published without Safari. Browser delivery requires real target WebKit/JSC/WebCore, representative HTTPS/HTML/CSS/JavaScript, identical classic desktop Safari UI, all tinymacOS themes and security acceptance. No backend-only diagnostic or empty browser shell may be called Safari.",
   "compatibility_goal": "Ampia compatibilit\u00e0 con siti moderni; universal compatibility is not a guarantee or a finite testable criterion.",
@@ -177,9 +177,16 @@
   "current_baseline": {
     "release": "10.2.5",
     "build": "30B16",
-    "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5",
+    "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release",
     "source_commit": "c124fde1de76655f70d50aca571a4b09e41a408b",
     "production_os_sources_modified_by_heap_milestone": false
   },
-  "heap_scope": "Correctness-first in-band VM heap and opt-in five C allocation symbols: 12 current host gates PASS plus actual native 1/4/8 CPU probes, 9000 randomized operations each, four concurrent workers and zero final reservations. Not hardened/bmalloc/GC/JIT, full libc or WTF integration; see RUNTIME-HEAP.md."
+  "heap_scope": "Correctness-first in-band VM heap and opt-in five C allocation symbols: 12 current host gates PASS plus actual native 1/4/8 CPU probes, 9000 randomized operations each, four concurrent workers and zero final reservations. Not hardened/bmalloc/GC/JIT, full libc or WTF integration; see RUNTIME-HEAP.md.",
+  "development_target": {
+    "version": "10.3",
+    "working_branch": "main",
+    "browser_engine_required": "real WTF/JavaScriptCore/WebCore",
+    "ui_required": "identical classic desktop Safari reference; all tinymacOS themes",
+    "release_published": false
+  }
 }

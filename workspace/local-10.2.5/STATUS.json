@@ -14,7 +14,7 @@
   "receipt": "release-final-verification.json",
   "published_release": "10.2.5",
   "publication_receipt": "release-publication-verification.json",
-  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5",
+  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release",
   "release_commit": "a38be5dabaab6b55de2a4495b353061a045780d0",
   "distribution": {
     "single_iso": true,

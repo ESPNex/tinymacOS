@@ -1,0 +1,643 @@
+{
+  "passed": true,
+  "classification_kind": "Editorial maturity categories inferred conservatively from existing descriptions, not new testing/certification",
+  "tag_convention": "<existing-tag>-developer-preview / -beta / -pre-release",
+  "phase_counts": {
+    "developer-preview": 11,
+    "beta": 8,
+    "pre-release": 2
+  },
+  "release_count": 21,
+  "titles_bodies_assets_and_prerelease_flags_preserved": true,
+  "all_original_tag_refs_preserved_as_source_aliases": true,
+  "all_new_release_tags_point_to_original_release_commits": true,
+  "release_1025_still_exactly_one_iso": true,
+  "new_1025_checksum_download_verified": true,
+  "release_1025_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release",
+  "releases": [
+    {
+      "release_id": 459399662,
+      "title": "tinymacOS 10.2.5",
+      "old_tag": "v10.2.5",
+      "new_tag": "v10.2.5-pre-release",
+      "phase": "pre-release",
+      "target_commit": "a38be5dabaab6b55de2a4495b353061a045780d0",
+      "reason": "10.2.4 explicitly describes a pre-release; 10.2.5 has final mandatory software acceptance gates and matching published evidence, still experimental and not hardware-certified.",
+      "body_sha256": "fbd2e1d3e4a94867f7f6ce0299cb4f81c97ca0315050b979503776f7076e4007",
+      "assets": [
+        {
+          "id": 796010429,
+          "name": "SHA256SUMS",
+          "size": 382,
+          "digest": "sha256:02687cafdb35f431bbbc4dd5cb03a485421e91fe8732f512b368d1614530524e"
+        },
+        {
+          "id": 795849478,
+          "name": "tinymacOS-10.2.5-NVMe-boot-helper.img",
+          "size": 17825792,
+          "digest": "sha256:d956dd8bc5f60fe07cc71d40e660fdb80305eb6709a5752eb63b11479bf415f5"
+        },
+        {
+          "id": 795849477,
+          "name": "tinymacOS-10.2.5-sorgenti.zip",
+          "size": 18226119,
+          "digest": "sha256:eaf5020830f4b72cecd71ba7f3a80f5918b111f34126233eb4e98c7f62bd93f4"
+        },
+        {
+          "id": 795849480,
+          "name": "tinymacOS-10.2.5-x86_64.iso",
+          "size": 329791488,
+          "digest": "sha256:1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a"
+        },
+        {
+          "id": 795849482,
+          "name": "VALIDAZIONE-10.2.5.md",
+          "size": 31865,
+          "digest": "sha256:2939b11cced55ff40c22f81b2c0b77211a009f556c6d49e1f15020164aa98e2b"
+        }
+      ]
+    },
+    {
+      "release_id": 458576920,
+      "title": "tinymacOS 10.2.4",
+      "old_tag": "v10.2.4",
+      "new_tag": "v10.2.4-pre-release",
+      "phase": "pre-release",
+      "target_commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+      "reason": "10.2.4 explicitly describes a pre-release; 10.2.5 has final mandatory software acceptance gates and matching published evidence, still experimental and not hardware-certified.",
+      "body_sha256": "06a65fae464a4348187781634a66feebb70eff15c60c328bcef326fb1a70f776",
+      "assets": [
+        {
+          "id": 792913287,
+          "name": "SHA256SUMS.txt",
+          "size": 272,
+          "digest": "sha256:79144f2239edc9f3ea737ed514687026938307e0e55c1c8b68adc28ab4963684"
+        },
+        {
+          "id": 792913128,
+          "name": "tinymacOS-10.2.4-sources.zip",
+          "size": 22579533,
+          "digest": "sha256:b7e1e5d632f48ef5e1772963003a5dd3e25332aaa960719bf4fd72b306505235"
+        },
+        {
+          "id": 792911963,
+          "name": "tinymacOS-10.2.4-x86_64.iso",
+          "size": 226498560,
+          "digest": "sha256:7b6059a4c82fee9add7a642690ac679d554a287a9c7ed277cff2279017750b21"
+        },
+        {
+          "id": 792913322,
+          "name": "VALIDAZIONE.json",
+          "size": 53732,
+          "digest": "sha256:6e6d6b53592b1d9f9ad13e6c0964b8715bb97aa8449c6de1bcd013e25b7140a7"
+        }
+      ]
+    },
+    {
+      "release_id": 458314839,
+      "title": "tinymacOS 10.2.3",
+      "old_tag": "v10.2.3",
+      "new_tag": "v10.2.3-beta",
+      "phase": "beta",
+      "target_commit": "09edd1ea626cc70ce82e8e47c42a1681a8905d56",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "46982319e19cf604bcf57f7ed513ea1f1b64f7db55f1ae5033bc24f1fe06aca4",
+      "assets": [
+        {
+          "id": 792679841,
+          "name": "SHA256SUMS.txt",
+          "size": 272,
+          "digest": "sha256:c13d3020ea86a1535e441a98422b3897714d3370cf5c696b7ffc7fdb32167a18"
+        },
+        {
+          "id": 792679565,
+          "name": "tinymacOS-10.2.3-sources.zip",
+          "size": 22560908,
+          "digest": "sha256:a198c20c91e1b64e7a2ab786149580e5dc43c2c26b14c16cfc16efb36460d176"
+        },
+        {
+          "id": 792677927,
+          "name": "tinymacOS-10.2.3-x86_64.iso",
+          "size": 226498560,
+          "digest": "sha256:71d94c029deb8fa820d5f71dca8633d0ddcc85b784e55485a60343a7928d4dc0"
+        },
+        {
+          "id": 792679916,
+          "name": "VALIDAZIONE.json",
+          "size": 45495,
+          "digest": "sha256:4c7a789b69c655f81f92d42c39e928715fdce80e9f862e8f93c3e3517ce8a27e"
+        }
+      ]
+    },
+    {
+      "release_id": 458163997,
+      "title": "tinymacOS 10.2.2",
+      "old_tag": "v10.2.2",
+      "new_tag": "v10.2.2-beta",
+      "phase": "beta",
+      "target_commit": "7e9d2a11e3d260e9b892dd9337cf141825620b60",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "728ca5cfdaef05a81b2c5f31d5387d7e75b810c7ffecb3343c4ea10d61875129",
+      "assets": [
+        {
+          "id": 791911289,
+          "name": "SHA256SUMS.txt",
+          "size": 272,
+          "digest": "sha256:57309975b53d908a8d70e4f260a97eb13ceb1209e03515672a6ec7de39863b4a"
+        },
+        {
+          "id": 791911184,
+          "name": "tinymacOS-10.2.2-sources.zip",
+          "size": 21845237,
+          "digest": "sha256:b031da43a39a1856933835a2ede75da7b54bac3034b5c46732f5c832f9a8176a"
+        },
+        {
+          "id": 791910692,
+          "name": "tinymacOS-10.2.2-x86_64.iso",
+          "size": 226209792,
+          "digest": "sha256:f310518502a79979dd2dda9286ec5680059032a9e4750e429a9d84d0d51990ad"
+        },
+        {
+          "id": 791911329,
+          "name": "VALIDAZIONE.json",
+          "size": 32305,
+          "digest": "sha256:6c62333622518fa4789807d94be5766e557d511c2b299687b5e397245b570990"
+        }
+      ]
+    },
+    {
+      "release_id": 457483536,
+      "title": "tinymacOS 10.2.1",
+      "old_tag": "v10.2.1",
+      "new_tag": "v10.2.1-beta",
+      "phase": "beta",
+      "target_commit": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "e0ec0de12f0769efe976fec0b0777b91bf7df8f330bfbacb12ec10920bbcc14a",
+      "assets": [
+        {
+          "id": 791351567,
+          "name": "SHA256SUMS.txt",
+          "size": 272,
+          "digest": "sha256:b6f15b0b45a1eea5ff8a8f6bec4807442f7f1c412dcef4ec8449c78ddb37861c"
+        },
+        {
+          "id": 791351391,
+          "name": "tinymacOS-10.2.1-sources.zip",
+          "size": 21767749,
+          "digest": "sha256:07c59d659aa2f41814ca58ee8eb305a50bb8536813ed258f792ee9a1c170ae2b"
+        },
+        {
+          "id": 791350026,
+          "name": "tinymacOS-10.2.1-x86_64.iso",
+          "size": 226138112,
+          "digest": "sha256:aab46bb9b6ec1d6010731af6d34537f102b28ff0386170324064545907bb76ef"
+        },
+        {
+          "id": 791351602,
+          "name": "VALIDAZIONE.json",
+          "size": 28167,
+          "digest": "sha256:8f968b9022c72594b3dbc49e54a6b768ab16da435b54e193bb1d4eafb87f9e6b"
+        }
+      ]
+    },
+    {
+      "release_id": 457431910,
+      "title": "tinymacOS 10.2",
+      "old_tag": "v10.2",
+      "new_tag": "v10.2-beta",
+      "phase": "beta",
+      "target_commit": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "125a07a287518cb49ef1470f30445a7706e859daa0c1d77841fb88ecf723f830",
+      "assets": [
+        {
+          "id": 789294129,
+          "name": "SHA256SUMS.txt",
+          "size": 268,
+          "digest": "sha256:35ddd8c420d1c65ad39272a05a51b32678fbfd6c99ecd07c2407a7be42c47431"
+        },
+        {
+          "id": 789293953,
+          "name": "tinymacOS-10.2-sources.zip",
+          "size": 21746831,
+          "digest": "sha256:157f16bb7e5bb34860d2d9c7a97df7bfb29f5c0c61b703dbb861b5c5c8a9e514"
+        },
+        {
+          "id": 789293459,
+          "name": "tinymacOS-10.2-x86_64.iso",
+          "size": 225984512,
+          "digest": "sha256:b52caff0f5e3a5cc5a82eb09c7b878bc73d83ed6ccfb7101a8228c813f67d1e6"
+        },
+        {
+          "id": 789294156,
+          "name": "VALIDAZIONE.json",
+          "size": 14135,
+          "digest": "sha256:f7f37cf9e76f4495b6a9402633763d77cfd637540bc6d2ae18dbee67b1a29306"
+        }
+      ]
+    },
+    {
+      "release_id": 457410969,
+      "title": "tinymacOS 10.1.9",
+      "old_tag": "v10.1.9",
+      "new_tag": "v10.1.9-beta",
+      "phase": "beta",
+      "target_commit": "207ebc74689c0081b9507aa295cc575488401647",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "a22f75b10c66bbcb6d043aa459125bf0968e4e9f36664a3c7ea46dc4f91444a6",
+      "assets": [
+        {
+          "id": 789107017,
+          "name": "SHA256SUMS.txt",
+          "size": 189,
+          "digest": "sha256:6d77fd428970fb68cfaa12be66b12b9d12c719a56e59e8d01243d0b6e90f5d96"
+        },
+        {
+          "id": 789107026,
+          "name": "tinymacOS-10.1.9-sources.zip",
+          "size": 19344605,
+          "digest": "sha256:9cdd3ba3fe8df9172a977b01b928930bfd8bb6fc479b69f11faeebae6a12bf7f"
+        },
+        {
+          "id": 789107027,
+          "name": "tinymacOS-10.1.9-x86_64.iso",
+          "size": 225984512,
+          "digest": "sha256:56174ebeef5996cb5d349e2798b2dce8353055c5215c169e16f0ac23976a08d2"
+        },
+        {
+          "id": 789107028,
+          "name": "VALIDAZIONE.json",
+          "size": 8817,
+          "digest": "sha256:59fd1ed7d946d74fb5db75ac2a3d625a1b62ee2901f230538b7c5a5b03afa5bd"
+        }
+      ]
+    },
+    {
+      "release_id": 457375095,
+      "title": "tinymacOS 10.1.8",
+      "old_tag": "v10.1.8",
+      "new_tag": "v10.1.8-beta",
+      "phase": "beta",
+      "target_commit": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "41e9b68379a449bde440aece9f1734a81049843e45af488b866d6b23422e9466",
+      "assets": [
+        {
+          "id": 789041400,
+          "name": "SHA256SUMS.txt",
+          "size": 202,
+          "digest": "sha256:5fa388fcb2e64fc5e0d5f9a82e7f80e8304a5cbea2902bac179fd82beacd4b5a"
+        },
+        {
+          "id": 789025382,
+          "name": "tinymacOS-10.1.8-settings-svg-sources.zip",
+          "size": 19333943,
+          "digest": "sha256:4b80140444c9054b7cbf2ca806406411571bbb0279e6bdf281f5a5983a30ddfe"
+        },
+        {
+          "id": 789025377,
+          "name": "tinymacOS-10.1.8-x86_64.iso",
+          "size": 225972224,
+          "digest": "sha256:4288e1854ac2d21534f574dd37e9d18c210326d21e887ba0045a218c12d50980"
+        },
+        {
+          "id": 789026851,
+          "name": "VALIDAZIONE.json",
+          "size": 7888,
+          "digest": "sha256:dc9478bdb4330df4aa7752a3688caded60dbac0a405a91c204538d008ad99554"
+        }
+      ]
+    },
+    {
+      "release_id": 457246195,
+      "title": "tinymacOS 10.1.7",
+      "old_tag": "v10.1.7-usbhid-candidate",
+      "new_tag": "v10.1.7-usbhid-candidate-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "1e7359144a3d404b0b5f07ec63c5effe1b465809e77fbc65d4c2dea11c683c16",
+      "assets": [
+        {
+          "id": 789041877,
+          "name": "SHA256SUMS.txt",
+          "size": 375,
+          "digest": "sha256:458059d1453cb6b2caddc63abbd278b7a18755f04ce9706a9501b6f6b7495c5f"
+        },
+        {
+          "id": 788578546,
+          "name": "tinymacOS-10.1.7-usbhid-sources.zip",
+          "size": 17160782,
+          "digest": "sha256:47ed35004cd05f366bc00478f71674292427255f280337e1e4dad8e64f3d3848"
+        },
+        {
+          "id": 788578548,
+          "name": "tinymacOS-10.1.7-x86_64.iso",
+          "size": 226215936,
+          "digest": "sha256:427463c2e0a9ab923aa5fce82799d53edaaa8795420cd007d0c34a1a16b24584"
+        },
+        {
+          "id": 788578542,
+          "name": "usbhid-evidence.json.gz",
+          "size": 9130,
+          "digest": "sha256:bbffeadd82a3f2fe8b22ed14da29487fda7bdfd68cd5350d17c12c9df2115ba7"
+        },
+        {
+          "id": 788578545,
+          "name": "usbhid-validation.json",
+          "size": 2479,
+          "digest": "sha256:418978ed083fc714af89feeb3a5da97c0fba6a8e4e1a8bb4d778c91414513647"
+        }
+      ]
+    },
+    {
+      "release_id": 454670448,
+      "title": "tinymacOS 10.1.6",
+      "old_tag": "v10.1.6",
+      "new_tag": "v10.1.6-beta",
+      "phase": "beta",
+      "target_commit": "16803a799059ddd3bab63df6cb9a8b9291249471",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "eb0bf6c175f8c640f076bd93c121964b903d24710ad66f09fbd66f5f5504626c",
+      "assets": [
+        {
+          "id": 780092790,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:65127c1330bc9253fec3d180e1b7b679e7cad30ad3d0504a498e0e94ff37a662"
+        },
+        {
+          "id": 780092833,
+          "name": "tinymacOS-10.1.6-x86_64.iso",
+          "size": 225818624,
+          "digest": "sha256:88901c4359ba1418ade83a0c6712eab06b4cd7c6e21b4915cf43375a36375763"
+        }
+      ]
+    },
+    {
+      "release_id": 453917635,
+      "title": "tinymacOS 10.1.5",
+      "old_tag": "v10.1.5",
+      "new_tag": "v10.1.5-beta",
+      "phase": "beta",
+      "target_commit": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274",
+      "reason": "Integrated desktop/installer features with regression and guest validation; notes retain hardware, data-safety and feature limitations, so not stable or release-candidate certification.",
+      "body_sha256": "692a82b3532747441b0a4c13cf168b65de9e85497c4250873de03ae87651646e",
+      "assets": [
+        {
+          "id": 776579696,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:5eb761a86e066b6009d7bcddca93c7fc975f9ecd90adcca43de22fb8c7dcaf02"
+        },
+        {
+          "id": 776579751,
+          "name": "tinymacOS-10.1.5-x86_64.iso",
+          "size": 225710080,
+          "digest": "sha256:0021de17c27fc0b23417ef015542adde7b773ed89a1f9028a769ee2724b64653"
+        }
+      ]
+    },
+    {
+      "release_id": 453892646,
+      "title": "tinymacOS 10.1.4",
+      "old_tag": "v10.1.4",
+      "new_tag": "v10.1.4-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "f4360c9c366efb74ea48e9d02bf06f31e64da832",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "a03e4f58b3c8978792be1c50a2ac56d0665065d1e50846d382e157a268ea06d3",
+      "assets": [
+        {
+          "id": 776479422,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:5884643850f03e88a8e426c45c52b3044b96db7fca43b0a8e59a62b477a1f578"
+        },
+        {
+          "id": 776479481,
+          "name": "tinymacOS-10.1.4-x86_64.iso",
+          "size": 225710080,
+          "digest": "sha256:0a3a4b19afec5f36b6404b7422ac8a426bae4b7507290c245fd3fcb3c3c84be8"
+        }
+      ]
+    },
+    {
+      "release_id": 453865486,
+      "title": "tinymacOS 10.1.3",
+      "old_tag": "v10.1.3",
+      "new_tag": "v10.1.3-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "738703adb780eb0e9ef35aef58f1e9fabd98191c0b7c0975118d2fdbe60300b4",
+      "assets": [
+        {
+          "id": 776353299,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:776aee5f8a395a64da414b7a40a284fc353f9867852aa94472d830589a223771"
+        },
+        {
+          "id": 776353354,
+          "name": "tinymacOS-10.1.3-x86_64.iso",
+          "size": 225650688,
+          "digest": "sha256:07bbd324c607f3520349b940d0a7b262e276c5a078e8c39d2bce8a1c6b296ade"
+        }
+      ]
+    },
+    {
+      "release_id": 453816118,
+      "title": "tinymacOS 10.1.2",
+      "old_tag": "v10.1.2",
+      "new_tag": "v10.1.2-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "797240fc9a6ecf8e6c1a82f18d7bceb612d294766aef96cf74bbc63c18a06c13",
+      "assets": [
+        {
+          "id": 776132488,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:bc1227ecbd7100f1e8d85e4639dc87e546a310dd71bf521cbf5778fbf00665a7"
+        },
+        {
+          "id": 776132566,
+          "name": "tinymacOS-10.1.2-x86_64.iso",
+          "size": 225650688,
+          "digest": "sha256:caec5d2e5680e082baeec78b39ea48f5c7f64b83b80e8c7da74a1efa8d46e5f5"
+        }
+      ]
+    },
+    {
+      "release_id": 453635016,
+      "title": "tinymacOS 10.1.1",
+      "old_tag": "v10.1.1",
+      "new_tag": "v10.1.1-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "50e310af4dd360818b5a6e15816116db90676d1f",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "0bab0aa901af2d0c75ff87cb099094879df4c96009e00ca9dfea9fb4434c0dd1",
+      "assets": [
+        {
+          "id": 775322700,
+          "name": "SHA256SUMS.txt",
+          "size": 94,
+          "digest": "sha256:f4dd07f2f33002bd2726b1592c0caa0cbad5fed23946ae23cacf86e808818ccb"
+        },
+        {
+          "id": 775322782,
+          "name": "tinymacOS-10.1.1-x86_64.iso",
+          "size": 225617920,
+          "digest": "sha256:fbffff11eb1c0aa6856c8e6f74dbedc2fb10df5698e4fb49de9b860eac5ca508"
+        }
+      ]
+    },
+    {
+      "release_id": 453634514,
+      "title": "tinymacOS 10.1",
+      "old_tag": "v10.1",
+      "new_tag": "v10.1-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "0965f921147062721fed7e7adea9a750cd0beceb",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "68213d8436cbb5dca73cb4d970f5dffb07c9cd9d64f1c19444cb5958203df138",
+      "assets": [
+        {
+          "id": 775321607,
+          "name": "SHA256SUMS.txt",
+          "size": 92,
+          "digest": "sha256:79aaf9f48bf30158edd1c0469180db347c5e7d8bbec65419bafb3903017bcef6"
+        },
+        {
+          "id": 775321656,
+          "name": "tinymacOS-10.1-x86_64.iso",
+          "size": 225611776,
+          "digest": "sha256:32e8ba640c4ba45e8df01db56ad69dfe27bed30497c0ea512a2cb51140b00275"
+        }
+      ]
+    },
+    {
+      "release_id": 453337659,
+      "title": "tinymacOS 10",
+      "old_tag": "v10",
+      "new_tag": "v10-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "7dd49e3a052f1b9794287128e9390eb474c02966",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "4b2102a23a663f59d903865b0245672193bf08558240cbc41c77a23438e60564",
+      "assets": [
+        {
+          "id": 774282995,
+          "name": "SHA256SUMS.txt",
+          "size": 90,
+          "digest": "sha256:21155a50532684182a4e0fd3ff1990f2a91c9393592d0452a81fd599da85fb83"
+        },
+        {
+          "id": 774282996,
+          "name": "tinymacOS-10-x86_64.iso",
+          "size": 225599488,
+          "digest": "sha256:660bd4f2656ccbce70fe53d878015f0dae993d9ff16d55f5488d9fd2b2a2b65e"
+        }
+      ]
+    },
+    {
+      "release_id": 453129451,
+      "title": "tinymacOS 2.4.5",
+      "old_tag": "v2.4.5",
+      "new_tag": "v2.4.5-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "178063e56f6397c494de25e55f2f9485ca32cca3c13767340ae0038784891d28",
+      "assets": [
+        {
+          "id": 773940437,
+          "name": "SHA256SUMS.txt",
+          "size": 93,
+          "digest": "sha256:38355a61ff367b5c2e646b8af48557383cef2709c442c24408d33ef471eee9f8"
+        },
+        {
+          "id": 773651602,
+          "name": "tinymacOS-2.4.5-x86_64.iso",
+          "size": 221532160,
+          "digest": "sha256:00b15326b3772de4a86a428a4035699fd2b141d1c47e24dd45651cec0c9fd8a0"
+        }
+      ]
+    },
+    {
+      "release_id": 453058481,
+      "title": "tinymacOS 2.4.4",
+      "old_tag": "v2.4.4-oc2",
+      "new_tag": "v2.4.4-oc2-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "9c21b15b93b6c36464a0c25f9c394cef1c9f3ca2",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "29cc0505adabd39b4fb57ff713001c12d3c450b1ab44fd074b6a66e559dc87f1",
+      "assets": [
+        {
+          "id": 773940643,
+          "name": "SHA256SUMS.txt",
+          "size": 93,
+          "digest": "sha256:ae79d855b3be2c461fa54f3a0021b964d94cf1fc66c480632a8b3137eb6b58ac"
+        },
+        {
+          "id": 772938720,
+          "name": "tinymacOS-2.4.4-x86_64.iso",
+          "size": 221485056,
+          "digest": "sha256:714799fb0af8f6c88a051c7fba89f02a5cf68557d9a7e458cea112907726ec22"
+        }
+      ]
+    },
+    {
+      "release_id": 453006571,
+      "title": "tinymacOS 2.4.4",
+      "old_tag": "v2.4.4-oc1",
+      "new_tag": "v2.4.4-oc1-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "897bda98316091eba706b8a0269ebc18065e3160",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "42d762c193b2463ad32cd66d833e35e41b65da071d7335241a39f09317a41ccb",
+      "assets": [
+        {
+          "id": 773940913,
+          "name": "SHA256SUMS.txt",
+          "size": 93,
+          "digest": "sha256:a9390fddea3dbd8e9886577d3d59d51e23bd7d62970511d041f05f15dbd107be"
+        },
+        {
+          "id": 772762576,
+          "name": "tinymacOS-2.4.4-x86_64.iso",
+          "size": 221100032,
+          "digest": "sha256:a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34"
+        }
+      ]
+    },
+    {
+      "release_id": 452996851,
+      "title": "tinymacOS 2.4.4",
+      "old_tag": "v2.4.4",
+      "new_tag": "v2.4.4-developer-preview",
+      "phase": "developer-preview",
+      "target_commit": "9e7c83c58f0452e6d2d5f00768862cab339de2ca",
+      "reason": "Early boot/runtime preview, confirmed unresolved physical input regression, or (10.1.7) explicitly experimental canonical USB subsystem candidate with unsupported contention/error paths.",
+      "body_sha256": "d887b99fe4bc21c9e8af8830ae8b6a2d9bf180044efe93045f3400d267175110",
+      "assets": [
+        {
+          "id": 772729715,
+          "name": "SHA256SUMS.txt",
+          "size": 93,
+          "digest": "sha256:ab92af924b30fd74f9f40443373c0808107bae6d87f7ec66bfde13a029c6139d"
+        },
+        {
+          "id": 772729711,
+          "name": "tinymacOS-2.4.4-x86_64.iso",
+          "size": 118255616,
+          "digest": "sha256:a01d95c4f33a68e11b002f37e3ec52472b9d927b3f8c4326ea01ac8d8bdf5a51"
+        }
+      ]
+    }
+  ]
+}
