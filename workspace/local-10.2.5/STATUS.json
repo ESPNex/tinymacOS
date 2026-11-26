@@ -39,5 +39,16 @@
     "release_titles_unique": true,
     "active_releases": 19,
     "binaries_rebuilt": false
+  },
+  "tag_policy": {
+    "deduplicated": true,
+    "total_tags": 25,
+    "classified_tags": 21,
+    "distinct_historical_tags": 4,
+    "legacy_aliases_intentionally_deleted": 21,
+    "do_not_automatically_restore_legacy_aliases": true,
+    "receipt": "tag-deduplication-verification.json",
+    "rollback_map": "tag-alias-restore-map.json",
+    "supersedes_old_alias_preservation_notes": true
   }
 }
