@@ -1,16 +1,18 @@
 #include "ui.h"
 // Time Machine: backup front-end over the snapshot subsystem (S_SNAP).
-// Backups are full-volume point-in-time images on the same disk; the
-// volume's FileVault-style encryption is inherited by every image.
+// Snapshots share immutable blocks; writes preserve prior versions by CoW.
+// A local checkpoint is not protection against failure of the physical disk.
 static SnapInfo sn[8];
 static FsInfo fi;
 static EncInfo ei;
-static int nsn, sel = -1, dialog, op;
+static int nsn, sel = -1, dialog, op, pagebase, more;
 static char msg[64], snapname[36];
 
 static void refresh(void)
 {
-    nsn = sc(S_SNAP, 0, 0, sn, 8);
+    nsn = sc(S_SNAP, 7, pagebase, sn, 8);
+    while(nsn==0&&pagebase){pagebase=MAX(0,pagebase-8);nsn=sc(S_SNAP,7,pagebase,sn,8);}
+    SnapInfo next;more=nsn==8&&sc(S_SNAP,7,pagebase+nsn,&next,1)>0;
     if (nsn < 0)
         nsn = 0;
     if (sc(S_SNAP, 5, 0, &fi, 0))
@@ -18,6 +20,12 @@ static void refresh(void)
     sc(S_SNAP, 6, 0, 0, &ei);
     if (sel >= nsn)
         sel = -1;
+}
+static void timeline_page(int direction)
+{
+ if((direction>0&&!more)||(direction<0&&!pagebase))return;
+ if(direction>0&&pagebase>0x7fffffff-16)return;
+ pagebase=MAX(0,pagebase+direction*8);sel=-1;refresh();
 }
 static void dt(char *s, int cap, unsigned v)
 {
@@ -63,6 +71,7 @@ static void mkname(void)
     z[0] = "0123456789"[si.minute / 10];
     z[1] = "0123456789"[si.minute % 10];
     append(snapname, z, sizeof snapname);
+    append(snapname,"-",sizeof snapname);z[0]='0'+si.second/10;z[1]='0'+si.second%10;append(snapname,z,sizeof snapname);
 }
 static void yes(void)
 {
@@ -97,7 +106,7 @@ static void paint(void)
     Text(30, 152, z, F_SMALL, SUB);
     Text(30, 178, "Backup", F_SMALL, SUB);
     z[0] = 0;
-    addnum(z, nsn, 56);
+    addnum(z, fi.snaps, 56);
     Text(162, 177, z, F_BODY, TX);
     Text(30, 202, "Crittografia", F_SMALL, SUB);
     Text(118, 201, ei.state ? (ei.locked ? "Attiva (bloccata)" : "Attiva (sbloccata)") : "Disattiva",
@@ -105,6 +114,7 @@ static void paint(void)
     Text(30, 224, "I backup ereditano la crittografia", F_MICRO, SUB);
     // Right: backup timeline.
     Text(226, 70, "Linea temporale dei backup", F_SMALL, SUB);
+    if(pagebase||more){button(aw-78,64,28,"<",0);button(aw-44,64,28,">",0);}
     if (!nsn) {
         Text(236, 116, "Nessun backup presente.", F_BODY, SUB);
         Text(236, 146, "«Esegui backup ora» crea il primo backup.", F_SMALL, SUB);
@@ -114,7 +124,7 @@ static void paint(void)
         Box(226, Y, aw - 240, 30, 7, sel == i ? SEL : (i & 1 ? SOFT : CARD));
         char t[24] = "";
         dt(t, 24, sn[i].date);
-        Text(238, Y + 4, t, F_SMALL, TX);
+        Text(238, Y + 4, sn[i].date?t:"Snapshot CoW", F_SMALL, TX);
         Text(238, Y + 17, sn[i].name, F_MICRO, SUB);
         char idz[12] = "id ";
         addnum(idz, sn[i].id, 12);
@@ -169,6 +179,9 @@ void app_main(void)
                 }
                 continue;
             }
+            if(e.type==EV_SCROLL){timeline_page(e.a<0?1:-1);continue;}
+            if(e.type==EV_KEY&&(e.a==K_LEFT||e.a==K_RIGHT)){timeline_page(e.a==K_RIGHT?1:-1);continue;}
+            if(e.type==EV_CLICK&&(pagebase||more)&&e.b>=64&&e.b<90&&e.a>=aw-78){timeline_page(e.a<aw-48?-1:1);continue;}
             if (e.type != EV_CLICK)
                 continue;
             if (e.b >= 16 && e.b < 56 && e.a >= aw - 178 && e.a < aw - 12) {

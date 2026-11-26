@@ -2,6 +2,10 @@
 #include "nativefs.h"
 #include "nativecow.h"
 #include "../kernel/k.h"
+#include "fs2_runtime.h"
+#ifndef TMC_FS2_BACKEND
+#define fs2_active 0
+#endif
 #include "../include/disklayout.h"
 #include "../include/sha256.h"
 // tinymacOS BTRFS subset (APFS-style wrapper). Layout inside the data volume:
@@ -542,7 +546,7 @@ int fs_read_i(Process *p, int d, void *b, int n)
             ovl_close();
             return -1;
         }
-        n = MIN(n, MAX(0, (int)nodes[i].size - f->at));
+        n = f->at>=nodes[i].size?0:MIN((u64)n,nodes[i].size-f->at);
         int r = bytes(i, f->at, b, n, 0);
         if (r >= 0)
             f->at += r;
@@ -552,7 +556,7 @@ int fs_read_i(Process *p, int d, void *b, int n)
     if (f->id >= 1024)return bootfs_read(f, b, n);
     if (!valid(f))
         return -1;
-    n = MIN(n, MAX(0, (int)nodes[f->id].size - f->at));
+    n = f->at>=nodes[f->id].size?0:MIN((u64)n,nodes[f->id].size-f->at);
     int r = bytes(f->id, f->at, b, n, 0);
     if (r >= 0)
         f->at += r;
@@ -845,6 +849,9 @@ static void libraries(void)
 }
 void fs_init(void)
 {
+#ifdef TMC_FS2_BACKEND
+    if(fs2_mount())return;
+#endif
     persistent=usednodes=0;configid=-1;ovl_slot=-1;
     active_slots=NSLOTS;frame_sectors=NF_MAX_IMAGE;memset(&native_geo,0,sizeof native_geo);
     memset(&mounted_cow,0,sizeof mounted_cow);
@@ -1593,7 +1600,7 @@ int fs_stat(const char *p, Dirent *d)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_stat_i(p, d);
+    int r = (fs2_active?fs2_stat(p,d):fs_stat_i(p, d));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1602,7 +1609,7 @@ int fs_list(const char *p, Dirent *d, int cap, int skip)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_list_i(p, d, cap, skip);
+    int r = (fs2_active?fs2_list(p,d,cap,skip):fs_list_i(p, d, cap, skip));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1611,7 +1618,7 @@ int fs_create(const char *p, int dir)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_create_i(p, dir);
+    int r = (fs2_active?fs2_create(p,dir):fs_create_i(p, dir));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1620,14 +1627,14 @@ int fs_remove(const char *p)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_remove_i(p);
+    int r = (fs2_active?fs2_remove(p,0):fs_remove_i(p));
     rec_unlock(&fs_gate, fl);
     return r;
 }
 int fs_remove_flags(const char *p,unsigned flags)
 {
     u32 fl;rec_lock(&fs_gate,&fl);
-    int r=fs_remove_flags_i(p,flags);
+    int r=(fs2_active?fs2_remove(p,flags):fs_remove_flags_i(p,flags));
     rec_unlock(&fs_gate,fl);return r;
 }
 
@@ -1635,7 +1642,7 @@ int fs_move(const char *p, const char *q)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_move_i(p, q);
+    int r = (fs2_active?fs2_move(p,q):fs_move_i(p, q));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1644,7 +1651,7 @@ int fs_open(Process *p, const char *path, int w)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_open_i(p, path, w);
+    int r = (fs2_active?fs2_open(p,path,w):fs_open_i(p, path, w));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1653,7 +1660,7 @@ int fs_close(Process *p, int fd)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_close_i(p, fd);
+    int r = (fs2_active?fs2_close(p,fd):fs_close_i(p, fd));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1662,7 +1669,7 @@ int fs_read(Process *p, int d, void *b, int n)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_read_i(p, d, b, n);
+    int r = (fs2_active?fs2_read(p,d,b,n):fs_read_i(p, d, b, n));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1671,7 +1678,7 @@ int fs_write(Process *p, int d, const void *b, int n)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_write_i(p, d, b, n);
+    int r = (fs2_active?fs2_write(p,d,b,n):fs_write_i(p, d, b, n));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1680,7 +1687,7 @@ int fs_saveprefs(void)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_saveprefs_i();
+    int r = (fs2_active?fs2_prefs():fs_saveprefs_i());
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1689,7 +1696,7 @@ int fs_seek(Process *p, int d, u64 off)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_seek_i(p, d, off);
+    int r = (fs2_active?fs2_seek(p,d,off):fs_seek_i(p, d, off));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1698,7 +1705,7 @@ int account_sector(int slot, void *buf, int wr)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = account_sector_i(slot, buf, wr);
+    int r = (fs2_active?fs2_account(slot,buf,wr):account_sector_i(slot, buf, wr));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1707,7 +1714,7 @@ int fs_snapshot(void *buf, u32 n)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snapshot_i(buf, n);
+    int r = (fs2_active?-1:fs_snapshot_i(buf, n));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1716,7 +1723,7 @@ int fs_snap_create(const char *name)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_create_i(name);
+    int r = (fs2_active?fs2_snap_create(name):fs_snap_create_i(name));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1725,16 +1732,24 @@ int fs_snap_list(void *out, int cap)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_list_i(out, cap);
+    int r = (fs2_active?fs2_snap_list(out,cap):fs_snap_list_i(out, cap));
     rec_unlock(&fs_gate, fl);
     return r;
+}
+
+int fs_snap_page(void*out,int cap,int skip)
+{
+ if(cap<0||skip<0||(!out&&cap))return -1;u32 fl;rec_lock(&fs_gate,&fl);int r;
+ if(fs2_active)r=fs2_snap_page(out,cap,skip);
+ else {SnapInfo page[8];int n=fs_snap_list_i(page,8);r=n<0?-1:MAX(0,MIN(cap,n-MIN(n,skip)));if(r>0)memcpy(out,page+skip,r*sizeof(SnapInfo));}
+ rec_unlock(&fs_gate,fl);return r;
 }
 
 int fs_snap_restore(const char *name)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_restore_i(name);
+    int r = (fs2_active?fs2_snap_restore(name):fs_snap_restore_i(name));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1743,7 +1758,7 @@ int fs_snap_verify(const char *name)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_verify_i(name);
+    int r = (fs2_active?fs2_snap_verify(name):fs_snap_verify_i(name));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1752,7 +1767,7 @@ int fs_snap_delete(const char *name)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_delete_i(name);
+    int r = (fs2_active?fs2_snap_delete(name):fs_snap_delete_i(name));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1761,7 +1776,7 @@ int fs_snap_info(FsInfo *f)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_snap_info_i(f);
+    int r = (fs2_active?fs2_info(f):fs_snap_info_i(f));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1770,7 +1785,7 @@ int fs_enc(int sub, const char *pass, EncInfo *out)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_enc_i(sub, pass, out);
+    int r = (fs2_active?fs2_enc(sub,pass,out):fs_enc_i(sub, pass, out));
     rec_unlock(&fs_gate, fl);
     return r;
 }
@@ -1779,7 +1794,7 @@ int fs_touch(const char *p)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
-    int r = fs_touch_i(p);
+    int r = (fs2_active?fs2_touch(p):fs_touch_i(p));
     rec_unlock(&fs_gate, fl);
     return r;
 }

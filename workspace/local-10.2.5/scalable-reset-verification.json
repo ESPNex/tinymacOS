@@ -1,0 +1,284 @@
+{
+  "version": "10.2.5",
+  "build": "30B16",
+  "release_ready": false,
+  "published": false,
+  "base_development_commit": "d33ea952a4da175c972640b5df33deabcbb9a6e1",
+  "uncommitted_production_changes": true,
+  "feature_flags": {
+    "TMC_FS2_BACKEND": 1,
+    "default_enabled": false
+  },
+  "iso_sha256": "dced20a3b59f2fb0f32cf817fb6a66b2c69b177e88bcc372c2247dda3a27a4e0",
+  "kernel_sha256": "15aad3e27d97ccbf08b1bbbfab0b8971a6ea3557a0bdf84a4e5e87d74fdbcb3f",
+  "guest_checks": {
+    "installer": {
+      "passed": true,
+      "release_acceptance": false,
+      "work": "/var/tmp/tmc-fs2-install-m7a2b_on",
+      "iso_sha256": "dced20a3b59f2fb0f32cf817fb6a66b2c69b177e88bcc372c2247dda3a27a4e0",
+      "kernel_sha256": "15aad3e27d97ccbf08b1bbbfab0b8971a6ea3557a0bdf84a4e5e87d74fdbcb3f",
+      "host_formatted_target": false,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "reinstall_entire_data_partition_sha256_unchanged": "0211ea732eec069b51f651f0310c573e7d31db4f4e54a285ee674df605474b1f"
+    },
+    "backup_ui": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-fs2-install-m7a2b_on",
+      "kernel_sha256": "15aad3e27d97ccbf08b1bbbfab0b8971a6ea3557a0bdf84a4e5e87d74fdbcb3f",
+      "iso_sha256": "dced20a3b59f2fb0f32cf817fb6a66b2c69b177e88bcc372c2247dda3a27a4e0",
+      "host_appended_ui_stress_fixture": true,
+      "large_file_sha256": "039dfd62d780300088bc96fe7abdb61a6a03e57618fd9edcf94a190c660f8c90",
+      "checks": [
+        "TextEdit opens and saves a 128KiB file through the modern chooser, with byte-exact streamed readback beyond the old 8KiB limit",
+        "Actual Finder navigates beyond 384 entries and reaches file 1099 using bounded pages through real syscalls",
+        "Actual Time Machine reaches and verifies snapshot 20 on the third timeline page",
+        "Actual modern TextEdit picker reaches and opens file 1099, beyond the old directory-slot ceiling",
+        "Native internal Recovery creates the scalable local backup using shared-root CoW, not a volume-sized copy",
+        "Local backup restores account, changed document and 128KiB file after reboot while pre-existing snapshots remain valid"
+      ]
+    },
+    "logical_reset": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-fs2-install-m7a2b_on",
+      "iso_sha256": "dced20a3b59f2fb0f32cf817fb6a66b2c69b177e88bcc372c2247dda3a27a4e0",
+      "kernel_sha256": "15aad3e27d97ccbf08b1bbbfab0b8971a6ea3557a0bdf84a4e5e87d74fdbcb3f",
+      "host_formatted_target": false,
+      "secure_erase": false,
+      "checks": [
+        "Canceling Recovery initialization leaves the entire FS2 data partition byte-identical, including account, snapshots and large document",
+        "Native Recovery logically resets the full scalable home/account/snapshot roots, verifies the result and leaves partition tables, sealed system, Recovery and installation source byte-identical",
+        "After reset, actual installed boot requires fresh enrollment; previous documents/snapshot namespace are absent and the new account and document survive another reboot"
+      ],
+      "public_partition_sha256_unchanged": [
+        "3c052cc48db87745537e797dc1404ec24064f7b56408922e614092f71ed391a0",
+        "950ef62bbd6a6fd0fb71523937b903f09a4e1299539e494394eea56ad001e5bc"
+      ]
+    },
+    "bios_no_nvme_after_reset": {
+      "passed": true,
+      "scope": "helper BIOS bootstrap, not complete 10.2.5 release acceptance",
+      "firmware_source": {
+        "repo": "https://github.com/coreboot/seabios",
+        "tag": "rel-1.16.3",
+        "commit": "a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8",
+        "archive_sha256": "bcd1870471d10c3fdd8ce7875545a1bad9c87f1ce69f283a15a7e803a414d9c2",
+        "source": "/var/tmp/tmc-10.2.5/seabios-no-nvme/seabios-a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8",
+        "config_requirement": "# CONFIG_NVME is not set"
+      },
+      "firmware_sha256": "2d3ef5bccbb371c3a72baa7f9d52694d171024a985625dcccf81a7c491977de8",
+      "helper_sha256": "bd6327ce0ec5233375d0b0e8ff13a8f72ef8ee501399e8ec6a7ed70f08114cd5",
+      "physical_hardware_tested": false,
+      "negative_without_helper": true,
+      "system_with_helper": true,
+      "recovery_with_helper": true,
+      "work": "/var/tmp/tmc-fs2-install-m7a2b_on",
+      "actual_fs2_installer_fixture": true,
+      "installed_kernel_sha256": "15aad3e27d97ccbf08b1bbbfab0b8971a6ea3557a0bdf84a4e5e87d74fdbcb3f",
+      "after_logical_factory_reset": true,
+      "helper_source_unchanged": true
+    }
+  },
+  "integrated_host_groups": [
+    "browser-pages",
+    "filepanel",
+    "ui-stream",
+    "textedit-open",
+    "fs2-seed",
+    "fs2-install",
+    "fs2-runtime",
+    "tmcbfs2",
+    "installer-flow",
+    "partitions",
+    "native-cow",
+    "native-resize",
+    "large-disks",
+    "nvme",
+    "vault"
+  ],
+  "integrated_host_passed": true,
+  "limitations": [
+    "Scalable authenticated encryption is not implemented; vault regression covers LEGACY geometry only",
+    "External scalable backup import is not implemented",
+    "Native 4Kn install/boot is not implemented; transport RMW is not acceptance",
+    "Logical reset is not secure physical erasure",
+    "Not complete final release acceptance; no physical hardware test"
+  ],
+  "logs": [
+    {
+      "path": "/var/tmp/tmc-10.2.5/build-scalable-reset.log",
+      "sha256": "fe7940d15aa214f0fcf98ced79f40989b9cb46ac0c018216aa2c621e7770a803"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/reset-build-integrated-host.log",
+      "sha256": "586ee4c9f0d4dc423c741966724f75be3ca7127ceb834961e971d18f3bc53e99"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/reset-build-install-guest.log",
+      "sha256": "4934c34adeeadbd4332eea2f870af466fbf2c26b096cd55d108b0b7d9e7fdd8b"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/reset-build-backup-ui-guest.log",
+      "sha256": "652e1b8f2f413e2ded947354216f4dfaa893cf75ca8305409484199d1a40e3fe"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/reset-build-reset-guest.log",
+      "sha256": "eb63f0d7026a1e997b66c2168e0cf7af8ded0be7037d28ebdc198e7e5ef1ace2"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/reset-build-bios-helper.log",
+      "sha256": "e04755c497dc5eb5ab07b741376ecae8866e87b4fcac49a3eff89b091d5ccf0f"
+    },
+    {
+      "path": "/var/tmp/tmc-10.2.5/scalable-reset-regression.log",
+      "sha256": "96b6349b72287fa5ba623ca89b2882ef2be48f42faaeb650638f89a4cf61aedc"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/bios-NVME-disabled-without-helper-no-boot.png",
+      "bytes": 10528,
+      "sha256": "2afcd62da5c030c14db3809e935eec2a275b0c9d57df805de865965320bbc5aa"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/bios-helper-NVME-disabled-recovery.png",
+      "bytes": 86538,
+      "sha256": "30897492e8a548db4e4ef734aebb4daf4aa9795b66a44e42833f58aac6eec265"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/bios-helper-NVME-disabled-system.png",
+      "bytes": 861778,
+      "sha256": "5b61447bcbdc7fc074777d04fda1f0fb66855a6d30d0116b2effe2eaf8d72afd"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/filepanel-file-1099-paged.png",
+      "bytes": 880805,
+      "sha256": "88a07fc40cf4a2fea24ea9029db3ca751e1add260b801afd081b93e7fbab7254"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/finder-file-1099-paged.png",
+      "bytes": 800597,
+      "sha256": "6b4c3dfe748d88697219c396d317bfc9ba946dc68b074e16d920de2016c695c0"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-after-reinstall-account-files-snapshot.png",
+      "bytes": 866094,
+      "sha256": "dce5207faa3da4965e52042dddf752e6aa0c1934d7fde727d834bd84031ecb8b"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-installed-import-and-cow.png",
+      "bytes": 892905,
+      "sha256": "8ca2cae068d8656f77626b3fd0d7107727cdf8967f8ede9a832f4e50bccba69c"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-real-installer-completed.png",
+      "bytes": 989719,
+      "sha256": "61fa552924de315f41555fd5cf9fffe9e9f9ae2c13f5d47ccabbd270cd0cabc7"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-recovery-shared-installer.png",
+      "bytes": 108953,
+      "sha256": "46b222b6eda310201ffa85d38b22058402ab8fde5cfc8dc7b3885a6bc79379c7"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-reinstall-preserves-data.png",
+      "bytes": 87112,
+      "sha256": "a804c29edbbadd41a17f75eacf00d56d24575d47412a115194c2f62715d9f4f9"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-reset-completed.png",
+      "bytes": 106613,
+      "sha256": "3905779cce57fe9555e637c5e5be1b2ccb5e3bf3fbe631e426c4c7a44b2bd5c1"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/fs2-reset-new-account-document.png",
+      "bytes": 898628,
+      "sha256": "cc3fb13122d3be5f30b48bf6ec0e013ceb7d39d72fa4b87754aa770fc1d21016"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/recovery-scalable-local-backup.png",
+      "bytes": 106613,
+      "sha256": "3905779cce57fe9555e637c5e5be1b2ccb5e3bf3fbe631e426c4c7a44b2bd5c1"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/recovery-scalable-local-restore.png",
+      "bytes": 106613,
+      "sha256": "3905779cce57fe9555e637c5e5be1b2ccb5e3bf3fbe631e426c4c7a44b2bd5c1"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/restored-scalable-backup-account-file-snapshots.png",
+      "bytes": 872972,
+      "sha256": "486b606337da6b617ae6080d79625ff24f12f50736eb3b36a940980691b9a049"
+    },
+    {
+      "path": "/var/tmp/tmc-fs2-install-m7a2b_on/evidence/timemachine-third-page-verified.png",
+      "bytes": 847167,
+      "sha256": "e63eea4be308027d7ecb59da76a0411a2c2cac0c250fd4f40c1ed40986462c74"
+    }
+  ],
+  "production_sources": [
+    {
+      "path": "tinymacOS/storage/tmcbfs2.c",
+      "sha256": "07b2f2c7bbf285ff315c2ed9491230725cd260b8aba55f88bf8b0718545487b9"
+    },
+    {
+      "path": "tinymacOS/include/tmcbfs2.h",
+      "sha256": "8d86a97e243bcd5bc2876f2a878607d495d1098c79d74ad49205f93f5e52ba3f"
+    },
+    {
+      "path": "tinymacOS/fs/tmcbfs2_install.c",
+      "sha256": "16a9adcd48355b5aa2cb9eedf032614506f8cbede6393eb70740f53eebd6d54a"
+    },
+    {
+      "path": "tinymacOS/fs/tmcbfs2_runtime.c",
+      "sha256": "960fb44c75ad969d325b4002bf6692b8c85b6556aeaa98cb88e57a5af8961e80"
+    },
+    {
+      "path": "tinymacOS/fs/install.c",
+      "sha256": "38c7a232acc8cbdaaab6331f64c07c243f1f19f9370a0f3a6ad4bb47d7173b6e"
+    },
+    {
+      "path": "tinymacOS/fs/btrfs.c",
+      "sha256": "ca744799f678de91ee0031513a4086905327eb1932454d30a949cfe6bad79e19"
+    },
+    {
+      "path": "tinymacOS/kernel/syscall.c",
+      "sha256": "2a722bd849619356cfc37045a7fe745d678068b5b7a4d92bf98eb4ec7eb0229a"
+    },
+    {
+      "path": "tinymacOS/kernel/k.h",
+      "sha256": "d3c6882965c5a834cd4077f57e8d267820a9326834275d15bc386d2ad83889df"
+    },
+    {
+      "path": "tinymacOS/userspace/finder.c",
+      "sha256": "21e4c0bc6c2054cb690d969c0ccc1100af582ee5290c123af54e4ac4b0473a1a"
+    },
+    {
+      "path": "tinymacOS/userspace/filepanel.c",
+      "sha256": "421e6f7761469f403d4ace07c76d16c59860877e81da097116e1e3e61ff5abdb"
+    },
+    {
+      "path": "tinymacOS/userspace/filebrowser.c",
+      "sha256": "94af5b2f8879855e2af2d4b5132f07373cd207bc41479e83c0b3217192ca7261"
+    },
+    {
+      "path": "tinymacOS/userspace/textedit.c",
+      "sha256": "6ff871ea43ea768836542fedc29382a76b53af32fd8822095dd93dc90e4acc47"
+    },
+    {
+      "path": "tinymacOS/userspace/timemachine.c",
+      "sha256": "4510a7bebec1316fd7917126560cefe04135fd01c73a87071d1f097c84b65430"
+    },
+    {
+      "path": "tinymacOS/userspace/ui.c",
+      "sha256": "888da6986f1be0d7374bbd22958c9117e40a141d3903aff4fc0a28c42ff439cc"
+    }
+  ]
+}

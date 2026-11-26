@@ -151,6 +151,8 @@ static int verify_system(Medium *m)
     u32 l = map.source;
     return getseal(m, l, "TMCSYS20", NESP) && !hashdisk(m, map.esp, NESP, sum) && !memcmp(sum, seal.digest, 32);
 }
+/* System seal validation is independent of the user-volume format. */
+int verify_system_volume(Medium*m){return layout_read(m,&map)==2&&map.pv&&map.bv&&verify_system(m)?0:-1;}
 int firstaid(Medium *m, int fix)
 {
     if (!layout_read(m, &map) || bulk(m, map.data, NDATA, data, 0) || !tiny_check(data))return -1;

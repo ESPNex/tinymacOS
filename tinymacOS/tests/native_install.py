@@ -10,7 +10,7 @@ from retail_guest import Retail
 import pixels
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 from riviera_media import gpt
-iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.2.4/linux-hid-v12/tinymacOS-10.2.4-x86_64.iso'))
+iso=Path(os.environ.get('TMC_INSTALL_ISO','/var/tmp/tmc-10.2.5/linux-hid-v12/tinymacOS-10.2.5-x86_64.iso'))
 w=Path(tempfile.mkdtemp(prefix='tmc-bios-install-qa-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',TMC_BUILD=os.environ.get("TMC_STAGE_BUILD",str(iso.parent/"build")),TMC_MEM="512",TMC_BIOS_ISO=str(iso),TMC_POINTER='mouse',TMC_SMP='2')
 launcher=root/'tinymacOS/tools/run-bios-installed.sh';report={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'external_work':str(w),'physical_hardware_tested':False,'scope':'actual BIOS GUI installation, HDD-only BIOS boot/reboot and UEFI cross-boot in QEMU'}
@@ -44,7 +44,7 @@ try:
   assert mbr[:440]==(Path(os.environ['TMC_BUILD'])/'bios-mbr.bin').read_bytes();assert mbr[450]==0xee and mbr[510:]==b'\x55\xaa'
   assert duet==(root/'tinymacOS/vendor/opencore-1.0.8/bootX64').read_bytes()
   with Installed('/not-attached',w,ev,'bios-hdd-only',disk='target',boot_disk=True,launcher=launcher) as g:
-   no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    10.2.4');g.cmd('bootverbose log','[boot] CPUs online: 2');g.cmd('echo BIOS_DISK_PERSISTENT > Documents/bios-proof.txt');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('bios-hdd-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
+   no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers','ProductVersion:    10.2.5');g.cmd('bootverbose log','[boot] CPUs online: 2');g.cmd('echo BIOS_DISK_PERSISTENT > Documents/bios-proof.txt');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('bios-hdd-desktop');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
   with Installed('/not-attached',w,ev,'bios-reboot',disk='target',boot_disk=True,launcher=launcher) as g:
    no_iso(g);g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/bios-proof.txt','BIOS_DISK_PERSISTENT');g.cmd('bootverbose status','Verbose avvio corrente: attivo');g.shot('bios-reboot-persistence-verbose');g.cmd('bootverbose off','Preferenza verificata su disco');g.cmd('off');g.p.wait(timeout=15);assert g.p.returncode==0
   # No previous OVMF state exists: this firmware must discover the native GPT ESP.

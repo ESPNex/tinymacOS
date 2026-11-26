@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+  "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+  "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+  "host_appended_ui_stress_fixture": true,
+  "large_file_sha256": "039dfd62d780300088bc96fe7abdb61a6a03e57618fd9edcf94a190c660f8c90",
+  "checks": [
+    "TextEdit opens and saves a 128KiB file through the modern chooser, with byte-exact streamed readback beyond the old 8KiB limit",
+    "Actual Finder navigates beyond 384 entries and reaches file 1099 using bounded pages through real syscalls",
+    "Actual Time Machine reaches and verifies snapshot 20 on the third timeline page",
+    "Actual modern TextEdit picker reaches and opens file 1099, beyond the old directory-slot ceiling",
+    "Native internal Recovery creates the scalable local backup using shared-root CoW, not a volume-sized copy",
+    "Local backup restores account, changed document and 128KiB file after reboot while pre-existing snapshots remain valid"
+  ]
+}

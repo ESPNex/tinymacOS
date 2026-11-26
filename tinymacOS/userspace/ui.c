@@ -161,38 +161,29 @@ int absolutepath(char *out, const char *cwd, const char *name)
     }
     return 0;
 }
-int readfile(const char *p, char *b, int cap)
+int readfile(const char *p,char *b,int cap)
 {
-    int d = sc(S_OPEN, p, 0, 0, 0);
-    if (d < 0)
-        return -1;
-    int n = sc(S_READ, d, b, cap, 0);
-    sc(S_CLOSE, d, 0, 0, 0);
-    return n;
+    if(cap<0||(!b&&cap))return -1;int d=sc(S_OPEN,p,0,0,0);if(d<0)return -1;int n=0;
+    while(n<cap){int take=MIN(MAXFILE,cap-n),r=sc(S_READ,d,b+n,take,0);if(r<0||r>take){n=-1;break;}if(!r)break;n+=r;}
+    sc(S_CLOSE,d,0,0,0);return n;
 }
-int writefile(const char *p, const char *b, int n)
+int writefile(const char *p,const char *b,int n)
 {
-    int d = sc(S_OPEN, p, 1, 0, 0);
-    if (d < 0) {
-        if (sc(S_CREATE, p, 0, 0, 0) < 0)
-            return -1;
-        d = sc(S_OPEN, p, 1, 0, 0);
-    }
-    if (d < 0)
-        return -1;
-    int r = sc(S_WRITE, d, b, n, 0);
-    sc(S_CLOSE, d, 0, 0, 0);
-    return r;
+    if(n<0||(!b&&n))return -1;int d=sc(S_OPEN,p,1,0,0);
+    if(d<0){if(sc(S_CREATE,p,0,0,0)<0)return -1;d=sc(S_OPEN,p,1,0,0);}if(d<0)return -1;
+    int at=0;do{int take=MIN(MAXFILE,n-at),r=sc(S_WRITE,d,b?b+at:0,take,0);if(r!=take){at=-1;break;}at+=r;}while(at<n);
+    sc(S_CLOSE,d,0,0,0);return at;
 }
-int copyfile(const char *p, const char *q)
+int copyfile(const char *p,const char *q)
 {
-    char buf[MAXFILE];
-    Dirent to, from;
-    if (sc(S_STAT, p, &from, 0, 0) < 0 || from.dir || from.size > MAXFILE)return -1;
-    if (sc(S_STAT, q, &to, 0, 0) == 0)
-        return -1;
-    int n = readfile(p, buf, MAXFILE);
-    return n < 0 ? -1 : writefile(q, buf, n);
+    char buf[MAXFILE];Dirent from;
+    if(sc(S_STAT,p,&from,0,0)<0||from.dir)return -1;int src=sc(S_OPEN,p,0,0,0);if(src<0)return -1;
+    /* Exclusive create: an existing destination is NEVER truncated, including
+     * a destination created by another app after our initial source lookup. */
+    if(sc(S_CREATE,q,0,0,0)<0){sc(S_CLOSE,src,0,0,0);return -1;}
+    int dst=sc(S_OPEN,q,1,0,0),failed=dst<0;u64 at=0;
+    if(!failed)do{int take=MIN((u64)MAXFILE,from.size-at),r=sc(S_READ,src,buf,take,0);if(r!=take||sc(S_WRITE,dst,buf,take,0)!=take){failed=1;break;}at+=take;}while(at<from.size);
+    sc(S_CLOSE,src,0,0,0);if(dst>=0)sc(S_CLOSE,dst,0,0,0);return failed?-1:0;
 }
 void title(const char *s, const char *t)
 {

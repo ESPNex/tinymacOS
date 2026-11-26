@@ -8,10 +8,10 @@ static int mag[NS], hover = -1, oldHover = -2, tipA, bounceA, bounceTime, dockAg
 static int ov, want, age = 24, menuId, pick, popFrames, bootAge;
 static Rect panel, barhit[7], srch, ctrl, widget;
 static char query[48];
-static int cmx,cmy,owner,pending,nonce,cmn,codes[10],deskSel=-2,lastHit=-2,keyboardPick=-1;
+static int cmx,cmy,owner,pending,nonce,cmn,codes[16],deskSel=-2,lastHit=-2,keyboardPick=-1;
 static unsigned deskRev=~0u;static u64 deskTick;static int ndesk;static Dirent ondesk[NSLOTS];
-static const char *cmtext[10];
-static void cmadd(const char*s,int a){if(cmn<10){cmtext[cmn]=s;codes[cmn++]=a;}}
+static const char *cmtext[16];
+static void cmadd(const char*s,int a){if(cmn<16){cmtext[cmn]=s;codes[cmn++]=a;}}
 static int dmax(void){return MAX(1,(H-314)/91);}
 static Rect deskcell(int i){return (Rect){W-135-(i/dmax())*128,220+(i%dmax())*91,122,83};}
 static int dcount(void){return MIN(ndesk+!!sys.live_cd,dmax()*MAX(1,(W-150)/128));}
@@ -498,7 +498,8 @@ static int menus(int k, const char **s, int *a)
             ADD("Apri TextEdit", 103);
         }
     } else if (k == 3) {
-        if (app == FINDER || app == TEXTEDIT) {
+        if (app == FINDER || app == TEXTEDIT || app == TERMINAL) {
+            if(app!=TEXTEDIT)ADD("Taglia",ACT_CUT);
             ADD("Copia", ACT_COPY);
             ADD("Incolla", ACT_PASTE);
             if (app == FINDER) {
@@ -528,8 +529,8 @@ static int menus(int k, const char **s, int *a)
 static Rect targetpanel(void)
 {
     if (ov == OV_MENU) {
-        const char *l[10];
-        int a[10];
+        const char *l[16];
+        int a[16];
         if(menuId==7){int h=cmn*31+12;return (Rect){clampi(cmx,3,W-228),clampi(cmy,BAR+2,H-h-4),225,h};}
         return (Rect) {
             barhit[menuId].x, BAR + 5, 209, menus(menuId, l, a) * 31 + 12
@@ -586,8 +587,8 @@ static void paintoverlay(void)
     glass(q, ov == OV_MENU ? 13 : 22, ov == OV_MENU ? MAT_MENU : MAT_SHEET);
     int x = q.x, y = q.y;
     if (ov == OV_MENU) {
-        const char *l[10];
-        int a[10], n = menus(menuId, l, a);
+        const char *l[16];
+        int a[16], n = menus(menuId, l, a);
         for (int k = 0; k < n; k++) {
             Rect r = {x + 5, y + 6 + 31 * k, q.w - 10, 29};
             if (inside(mx, my, r)||(menuId==7 && keyboardPick==k))roundr(r.x, r.y, r.w, r.h, 7, INK(I_SEL), 244);
@@ -685,8 +686,8 @@ int shell_click(int x, int y)
             return 1;
         }
         if (ov == OV_MENU) {
-            const char *l[10];
-            int a[10], n = menus(menuId, l, a), dy = y - q.y - 6;
+            const char *l[16];
+            int a[16], n = menus(menuId, l, a), dy = y - q.y - 6;
             if (dy >= 0 && dy / 31 < n)itemchoice(a[dy / 31]);
         } else if (ov == OV_SEARCH) {
             int dy = y - q.y - 81;
@@ -729,16 +730,16 @@ int shell_click(int x, int y)
 }
 static void showctx(void){if(cmn){menuId=7;keyboardPick=-1;overlay_show(OV_MENU);trace("menu contestuale");}}
 void context_ready(Event*e){if(!pending||e->a!=pending||e->d!=nonce||topwin()<0||views[topwin()].s.pid!=pending)return;
-    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW};
-    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Copia","Incolla","Rinomina…","Elimina…","Griglia / elenco"};
-    for(int j=0;j<11;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
+    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW};
+    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina…","Elimina…","Griglia / elenco"};
+    for(int j=0;j<12;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
 void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;dirty=1;
     if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Centro di Controllo",163);showctx();return;}
     int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Apri Libreria",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Libreria app",161);showctx();return;}
     for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(mx,my,v->box))continue;focuswin(i);owner=v->s.pid;
         int x=mx-v->box.x-1,y=my-v->box.y-TITLE;
         if(y>=0&&v->s.app==FINDER){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
-        if(y>=0&&v->s.app==TEXTEDIT){cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);cmadd("Salva documento",ACT_SAVE);}
+        if(y>=0&&(v->s.app==TEXTEDIT||v->s.app==TERMINAL)){if(v->s.app==TERMINAL)cmadd("Taglia",ACT_CUT);cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);if(v->s.app==TEXTEDIT)cmadd("Salva documento",ACT_SAVE);}
         cmadd("Contrai finestra",141);cmadd("Zoom / ripristina",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina…",205);cmadd("Elimina…",206);}}
     else if(inside(mx,my,widget)){cmadd("Apri Calendario",100+CALENDAR);}
@@ -797,3 +798,8 @@ int shell_key(Event *e)
 }
 
 int shell_overlay_open(void) { return ov && want; }
+
+/* Desktop files participate in cross-window drag without changing clipboard. */
+int shell_drag_source(int x,int y,char out[PATHLEN]){int i=deskhit(x,y);if(i<0)return 0;deskpath(out,i);return 1;}
+
+int shell_drop_folder(int x,int y){int i=deskhit(x,y);return i>=0&&i<ndesk&&ondesk[i].dir?i:-1;}

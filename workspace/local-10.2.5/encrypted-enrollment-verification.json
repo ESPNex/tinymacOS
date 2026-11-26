@@ -1,0 +1,238 @@
+{
+  "version": "10.2.5",
+  "build": "30B16",
+  "date": "2026-11-18",
+  "macroblock": "encrypted fresh install + credential enrollment + explicitly irreversible Recovery rekey/reset",
+  "macroblock_passed": true,
+  "release_acceptance_passed": false,
+  "published": false,
+  "new_fs_default_enabled": false,
+  "physical_hardware_tested": false,
+  "in_place_conversion_acceptance": false,
+  "secure_erase": false,
+  "encrypted_reset_atomic_or_rollback_safe": false,
+  "iso": {
+    "path": "/var/tmp/tmc-enrollment-build/tinymacOS-10.2.5-x86_64.iso",
+    "sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178"
+  },
+  "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+  "recovery_kernel_sha256": "459b41667f63480468ff4eb8bf79e94fc540cbf5fbe71fe679ddf3a28ded43ca",
+  "loader_ceiling_unchanged": true,
+  "loaded_end": "0x9dff5e4",
+  "loader_headroom_bytes": 2099740,
+  "host_groups": {
+    "fs2-install": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/accepted-fs2-install-host.log",
+      "sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d"
+    },
+    "installer-ui": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/accepted-installer-flow-host.log",
+      "sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac"
+    },
+    "vault2": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-vault2-final.log",
+      "sha256": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64"
+    },
+    "legacy-vault": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-legacy-vault-final.log",
+      "sha256": "1edcc55727695d5cbb893917c777a607e762520272beef2334077f9ffa3f4aa2"
+    },
+    "fs2-runtime": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-fs2-runtime-final.log",
+      "sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d"
+    },
+    "partitions": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-partitions-final.log",
+      "sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932"
+    },
+    "native-resize": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/enrollment-shared-workspace-final.log",
+      "sha256": "f9e4891bd23431502902ba8ab882f98d9ada1ae0397d9908efacbf78c7323ea7"
+    },
+    "large-disks": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/enrollment-large-disks-final.log",
+      "sha256": "82ab11b4e47f6148a8a4d173a96e4a1f946557de9e4bd110efa221e4de0c8304"
+    }
+  },
+  "guest_receipts": {
+    "encrypted-install-reset-guest-result.json": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-encrypted-install-ratefeil",
+      "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+      "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+      "host_formatted_target": false,
+      "host_prepared_encrypted_fixture": false,
+      "encrypted_installer_acceptance": true,
+      "encrypted_reset_acceptance": true,
+      "in_place_conversion_acceptance": false,
+      "physical_hardware_tested": false,
+      "secure_erase": false,
+      "reset_is_atomic_or_rollback_safe": false,
+      "recovery_credential_logged": false,
+      "checks": [
+        "Actual GUI creates FV003 and imports live account/document directly; cancel and recovery-key acknowledgement occur before any target write; no host formatting",
+        "Cold native NVMe boot rejects wrong volume password, accepts configured volume password, separately authenticates imported account and reads its private document",
+        "Installer-created encrypted volume accepts independent recovery credential; native Recovery creates and restores real encrypted local backup; restored documents survive cold boot",
+        "Same native Recovery installer reinstalls the sealed system on its GUI-created encrypted volume while the complete DATA hash stays identical",
+        "Explicit irreversible Recovery reset pre-confirms fresh credentials, cancel leaves DATA unchanged, replaces volume key and both credential slots, rejects old password/recovery, runs new account setup and persists new documents across reboot; public extents unchanged",
+        "Offline entire-DATA scan finds none of the tested plaintext account, filename, filesystem or private-document markers; not a physical secure-erasure proof"
+      ],
+      "public_partition_sha256_unchanged": [
+        "f7b807aeec34e156e9d2d3be897529c19e0dcd286f8658c4a9bfbd685e7a2335",
+        "cc0757653abc9dbdf9c9c54d4502c0b7ab7638c5f402e7fc63a3b189607a1150"
+      ]
+    },
+    "fs2-install-guest-result.json": {
+      "passed": true,
+      "release_acceptance": false,
+      "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+      "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+      "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+      "host_formatted_target": false,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "reinstall_entire_data_partition_sha256_unchanged": "514602d3f90707e5d97b8d2be90a5cc12935a9303fa4721ca5834b4fa34ce3e7"
+    },
+    "fs2-backup-ui-result.json": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+      "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+      "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+      "host_appended_ui_stress_fixture": true,
+      "large_file_sha256": "039dfd62d780300088bc96fe7abdb61a6a03e57618fd9edcf94a190c660f8c90",
+      "checks": [
+        "TextEdit opens and saves a 128KiB file through the modern chooser, with byte-exact streamed readback beyond the old 8KiB limit",
+        "Actual Finder navigates beyond 384 entries and reaches file 1099 using bounded pages through real syscalls",
+        "Actual Time Machine reaches and verifies snapshot 20 on the third timeline page",
+        "Actual modern TextEdit picker reaches and opens file 1099, beyond the old directory-slot ceiling",
+        "Native internal Recovery creates the scalable local backup using shared-root CoW, not a volume-sized copy",
+        "Local backup restores account, changed document and 128KiB file after reboot while pre-existing snapshots remain valid"
+      ]
+    },
+    "fs2-reset-guest-result.json": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+      "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+      "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+      "host_formatted_target": false,
+      "secure_erase": false,
+      "checks": [
+        "Canceling Recovery initialization leaves the entire FS2 data partition byte-identical, including account, snapshots and large document",
+        "Native Recovery logically resets the full scalable home/account/snapshot roots, verifies the result and leaves partition tables, sealed system, Recovery and installation source byte-identical",
+        "After reset, actual installed boot requires fresh enrollment; previous documents/snapshot namespace are absent and the new account and document survive another reboot"
+      ],
+      "public_partition_sha256_unchanged": [
+        "09610fd3e13c85b3110332461e3f16a978dc7221eb2606f1dc71320548bf4d04",
+        "10d9b814ab180b047f5cfec5939a68b2c9cc314e116747a13dc3defcca8fcf69"
+      ]
+    }
+  },
+  "logs": {
+    "build-enrollment-accepted.log": {
+      "path": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/build-enrollment-accepted.log",
+      "sha256": "8ac2d60fd0e9ab4f5939f57ecac1ad729b7c82eb21719148d64f3ad89c6cf9e5"
+    },
+    "encrypted-install-reset.log": {
+      "path": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/encrypted-install-reset.log",
+      "sha256": "8395eaa45cf46dd657b422be5123b6c44f921969af912d1bbbb1d567c91f3331"
+    },
+    "plain-install.log": {
+      "path": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/plain-install.log",
+      "sha256": "e28ef4d0c4fc963f456d38b122c9a07a463f41a244738af56713ba24faad5ecd"
+    },
+    "plain-backup-ui.log": {
+      "path": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/plain-backup-ui.log",
+      "sha256": "c7cef7066c81a4376e7ddbb2b466be876bcf53efd161dbbcf45c056ecc646231"
+    },
+    "plain-reset.log": {
+      "path": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/plain-reset.log",
+      "sha256": "344f14befacc54a694874ffed77e13043d6e7785452c76d4c4302db14c2bec0b"
+    }
+  },
+  "screenshots": [
+    {
+      "source": "/var/tmp/tmc-encrypted-install-ratefeil/evidence/actual-encrypted-installer-completed.png",
+      "source_sha256": "35c1ffc35a0727b5b0f797fc8e6df1f88dc2f3a836d877fc7087885c7921fa24",
+      "preview": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/encrypted-install-completed.jpg",
+      "preview_sha256": "54a0814daf7af3982d79f50f801d19816ff66405557bda6aa35ab214042223b1",
+      "preview_resized": true,
+      "contains_recovery_credential": false
+    },
+    {
+      "source": "/var/tmp/tmc-encrypted-install-ratefeil/evidence/encrypted-reset-new-keys-completed.png",
+      "source_sha256": "5c6016a470687bcc4c0199dcc3b2a7d2e009e9b066f2cce2dccbf6be2ad9968b",
+      "preview": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/encrypted-reset-completed.png",
+      "preview_sha256": "eae866eedcc377ab0142d9483bd9efcfdd97d9062c6a4d1cdc944c9731f7d452",
+      "preview_resized": true,
+      "contains_recovery_credential": false
+    },
+    {
+      "source": "/var/tmp/tmc-encrypted-install-ratefeil/evidence/encrypted-reset-new-account-persistent.png",
+      "source_sha256": "44c63a105b333c446d8ad23300080396f52e6902bf2c058014e3e09f1fd7f93c",
+      "preview": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/encrypted-new-account-persistent.jpg",
+      "preview_sha256": "cbf3fdddb2af88495ddd55fadde20ab35e4567fe0908245a5a33fbb6c7b71dcb",
+      "preview_resized": true,
+      "contains_recovery_credential": false
+    }
+  ],
+  "source_files_sha256": {
+    "fs/install.c": "d4082e9871f156e8ede6af59decd2da42628d9dc96e6a5fa49a7ce50254b6a33",
+    "fs/tmcbfs2_install.c": "822d0a8cfb092070fbc01ec36aeac29ce0b2fb34baec49f064f7830fec714d6a",
+    "fs/tmcbfs2_volume.c": "858895d94de65ae80213db57de744db9349b5851d96c2fcd938bb6546ce8e0d9",
+    "storage/native_resize.c": "14cdf4525345359d12a8f828a94db80b44c3178a0dd6f7c8aac3b0ea65e04705",
+    "storage/vault_runtime.c": "99e046f9f0b88e182cc9481432335c93699e1d7fc7cdd85a88a1935050da7b04",
+    "userspace/installer.c": "9cbe6e30aa630f60546bec005657fa45ffa642059577f634b9c77de2a9b78121",
+    "userspace/vaultpanel.c": "9362726654ee8339a83eaf61427f615666717b7d07a91e9f625e6dfa7a397b71",
+    "desktop/recovery.c": "2e9acc531d23d8653fc4f518b8fe0690c481966ffd2a331a6a37d0cab2709abe",
+    "kernel/syscall.c": "39d56e5b548163bf8e0add5624e298849f2dc8f8362f66de20c63efadba2c754",
+    "kernel/k.h": "3c89740b0cc9793ebecfde20a7e63ed02f66b1585b9c7a06d3e26c885ce3b951",
+    "include/abi.h": "0751c082f789fae2bb7523545e6e9a945494edf6a15b25fff907ca97225b7874",
+    "include/nativefs.h": "9722c395988615dd64f9e4acaf0a7b00063d05779a18f76c413d680211182040",
+    "include/fs2_runtime.h": "4a3cbd9f59ed0e6c127b1197ef6fbeb268d508359b168ddf7919ec7f764e9e6d",
+    "include/fs2_volume.h": "84ac7b931060b7458d59054d769fc594d36c727fbfa368cfc8086db9d6484746",
+    "crypto/vault2.c": "e1584c88c07a0ae0881d0db7b7a54a226bbf6aa2f3e8715d46cb02bb7832917f",
+    "include/vault2.h": "493e72ca896c6f23b61417216351a29bca766a7244f78f318b66ae0a19468d4b",
+    "tests/fs2_install_host.c": "2870a0176a13a6789f39ac8ebd3ea1308d6a7e94216a5d38014c5e7be4c8126c",
+    "tests/installer_flow_host.c": "5b5e9425ca4bcb1123a7df1ccce6b4f656c11cef1929ebe1e436e0062ce55398",
+    "tests/encrypted_install_reset_guest.py": "53a2444e741349184efa455ad74e4d89c50e8a8f61e0b8bfd643da7d4ae77e25",
+    "tests/encrypted-enrollment-matrix.sh": "9b17f1664f6c17ef1e5206f4388779c081bdccb3d8794155502fab103c734129",
+    "tools/system_volume.py": "75f478a3d98fdb59767257d73f379dc0b69fc54439f93718606f9287d295dafb"
+  },
+  "source_tree": {
+    "sha256": "d359d213fe554105f20202fb4cf4f129778163a909ae0a7267f2746ed521354d",
+    "files": 1291,
+    "method": "sorted relative path + NUL + raw SHA256 per file; __pycache__ excluded"
+  },
+  "superseded_guest_pipeline": "Earlier ISO encrypted/reinstall/reset passed; its subsequent plaintext regression deliberately stopped and all four gates rerun on the accepted ISO above. Not a release acceptance shortcut.",
+  "remaining_release_blockers": [
+    "in-place conversion/deactivation implementation or explicitly accepted scope policy",
+    "external scalable backup import",
+    "native 4Kn installation/boot",
+    "complete exact-artifact release matrix, including BIOS no-NVMe helper on the final candidate",
+    "release-policy acceptance of explicitly destructive, non-atomic encrypted reset; no physical secure-erasure guarantee"
+  ],
+  "git_metadata_note": "Historical branch/commit retained in STATUS; external /var/tmp git metadata is not present in this workspace instance. No new commit/push/merge/tag/deployment executed."
+}

@@ -1,0 +1,50 @@
+{
+  "fs2-install": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/accepted-fs2-install-host.log",
+    "sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d"
+  },
+  "installer-ui": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/accepted-installer-flow-host.log",
+    "sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac"
+  },
+  "vault2": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-vault2-final.log",
+    "sha256": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64"
+  },
+  "legacy-vault": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-legacy-vault-final.log",
+    "sha256": "1edcc55727695d5cbb893917c777a607e762520272beef2334077f9ffa3f4aa2"
+  },
+  "fs2-runtime": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-fs2-runtime-final.log",
+    "sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d"
+  },
+  "partitions": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/macro-partitions-final.log",
+    "sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932"
+  },
+  "native-resize": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/enrollment-shared-workspace-final.log",
+    "sha256": "f9e4891bd23431502902ba8ab882f98d9ada1ae0397d9908efacbf78c7323ea7"
+  },
+  "large-disks": {
+    "passed": true,
+    "normal_and_sanitized": true,
+    "log": "/home/user/workspace/local-10.2.5/encrypted-enrollment-evidence/enrollment-large-disks-final.log",
+    "sha256": "82ab11b4e47f6148a8a4d173a96e4a1f946557de9e4bd110efa221e4de0c8304"
+  }
+}

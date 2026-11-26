@@ -25,10 +25,10 @@ void vault_view_draw(int x,int y,int w,int h)
   vt(28,135,"STATO",F_SMALL,SUB);vt(150,131,vi.error?"Volume non disponibile":!vi.enabled?"Disattivo":vi.locked?"Bloccato":vi.state==FV_ENCRYPTING?"Cifratura in corso":vi.state==FV_DECRYPTING?"Decifratura in corso":"Attivo",F_BODY,TX);
   vt(28,174,"FileVault protegge i dati su questo disco.",F_SMALL,SUB);
   if(vi.state==FV_ENCRYPTING||vi.state==FV_DECRYPTING){vb(28,237,vw-56,12,6,SOFT);vb(28,237,(vw-56)*vi.progress/100,12,6,ACC);char z[32]="";addnum(z,vi.progress,32);append(z,"%",32);vt(28,265,z,F_BODY,TX);vt(28,306,"Non rimuovere il disco durante la conversione.",F_SMALL,SUB);}
-  else if(vi.error){vbutton(28,247,210,"Riprova sblocco…",0);vbutton(255,247,vw-283,"Annulla attivazione…",0);}
-  else if(!vi.enabled)vbutton(28,247,210,"Attiva FileVault…",1);
+  else if(vi.error){vbutton(28,247,210,"Riprova sblocco…",0);if(vi.format!=3)vbutton(255,247,vw-283,"Annulla attivazione…",0);}
+  else if(!vi.enabled){if(vi.format==2)vt(28,247,"Cifratura disponibile nella nuova installazione.",F_SMALL,SUB);else if(vi.available)vbutton(28,247,210,"Attiva FileVault…",1);}
   else if(vi.locked)vbutton(28,247,250,"Sblocca volume…",1);
-  else{vbutton(28,247,210,"Disattiva FileVault…",0);vbutton(255,247,230,"Cambia password…",0);vbutton(28,295,285,"Nuova chiave di recupero…",0);if(si.recovery)vbutton(330,295,180,"Blocca volume",0);}
+  else{if(vi.format!=3)vbutton(28,247,210,"Disattiva FileVault…",0);else vt(28,250,"Conversione non disponibile",F_SMALL,SUB);vbutton(255,247,230,"Cambia password…",0);vbutton(28,295,285,"Nuova chiave di recupero…",0);if(si.recovery)vbutton(330,295,180,"Blocca volume",0);}
   if(notice[0])vt(28,353,notice,F_SMALL,SUB);
  }else if(page==1){
   vt(28,90,op==1?"Attivazione FileVault":op==2?"Disattiva la cifratura":op==4?"Sblocca il volume":op==5?"Cambia password del volume":op==8?"Annulla attivazione non iniziata":"Rigenera la chiave di recupero",F_CAPTION,TX);
@@ -67,7 +67,7 @@ void vault_view_event(const Event *e)
   if(page==2){if(y>vh-65&&x>vw-230)submit();}
   else if(page==1){for(int i=0;i<fields;i++)if(y>=179+i*57&&y<211+i*57)focus=i;if(y>vh-65){if(x<180){page=0;wipe_inputs();}else if(x>vw-190)submit();}}
   else if(y>=82&&y<116&&si.recovery&&disks.count){q.disk=(q.disk+1)%disks.count;fvcall(0);}
-  else if(vi.state!=FV_ENCRYPTING&&vi.state!=FV_DECRYPTING){if(y>=247&&y<280){if(vi.error)begin_op(x<245?4:8);else if(!vi.enabled)begin_op(1);else if(vi.locked)begin_op(4);else begin_op(x<245?2:5);}else if(y>=295&&y<329&&vi.enabled&&!vi.locked){if(x<320)begin_op(6);else if(si.recovery)fvcall(7);}}
+  else if(vi.state!=FV_ENCRYPTING&&vi.state!=FV_DECRYPTING){if(y>=247&&y<280){if(vi.error){if(x<245||vi.format!=3)begin_op(x<245?4:8);}else if(!vi.enabled){if(vi.available&&vi.format!=2)begin_op(1);}else if(vi.locked)begin_op(4);else if(x>=245||vi.format!=3)begin_op(x<245?2:5);}else if(y>=295&&y<329&&vi.enabled&&!vi.locked){if(x<320)begin_op(6);else if(si.recovery)fvcall(7);}}
  }
 }
 int vault_view_tick(void)

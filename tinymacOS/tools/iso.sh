@@ -50,7 +50,7 @@ mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES ::/NV
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
-for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe;do
+for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe NvmExpressDxe;do
  mcopy -i "$D/install.esp" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi"
 done
 python3 - "$D/installed-opencore.plist" <<'PYOC'
@@ -76,7 +76,7 @@ mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -i "$R/EFI.IMG" boot/opencore.plist ::/EFI/OC/config.plist
 mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibility
 mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility
-for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe;do mcopy -i "$R/EFI.IMG" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi";done
+for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe NvmExpressDxe;do mcopy -i "$R/EFI.IMG" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi";done
 mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,
 # not the FAT El Torito image: carry the same payload files there too, or the
@@ -89,4 +89,4 @@ cp "$P/Volume.hdr" "$R/Recovery/Volume.hdr"
 cp "$D/Payload.sha" "$R/Recovery/Payload.sha"
 if [ "$P" = "$R/work" ];then rm -rf "$P";fi
 find "$R" -exec touch -h -d @1735689600 {} +
-xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_2_4 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"
+xorriso -as mkisofs -quiet -r -J -V TINYMACOS_10_2_5 --modification-date=2025010100000000 --set_all_file_dates 2025010100000000 -e EFI.IMG -no-emul-boot -o "$D/$TMC_ISO" "$R"

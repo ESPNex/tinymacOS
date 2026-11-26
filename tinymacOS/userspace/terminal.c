@@ -10,6 +10,9 @@ static int nh, hpos, nt, scroll, cur, job, stage, count, mode, last, mark;
 static ExecArgs cmd[STAGES];
 static ExecResult result;
 static Dirent matches[NSLOTS];
+static Clipboard clipboard;
+static int selection,selecting,anchor_row,anchor_byte,end_row,end_byte;
+
 static int cols(void)
 {
     return MIN(96, MAX(25, (aw - 31) / 8));
@@ -310,6 +313,41 @@ static void complete(void)
         cur = strlen(input);
     }
 }
+static int selection_bounds(int row,int*lo,int*hi){
+ if(!selection)return 0;int a=anchor_row,b=end_row,x=anchor_byte,y=end_byte;if(a>b||(a==b&&x>y)){int t=a;a=b;b=t;t=x;x=y;y=t;}
+ if(row<a||row>b||row<MAX(0,nt-NR)||row>=nt)return 0;*lo=row==a?x:0;*hi=row==b?y:strlen(screen[row%NR]);return *hi>*lo;
+}
+static void select_event(Event*e){
+ if(e->d){selection=selecting=0;}
+ if(!e->d&&!selecting)return;
+ int rows=MAX(3,(ah-43)/19),c=cols();char q[INPUT+96];prompt(q,sizeof q);append(q,input,sizeof q);
+ int nr=job?0:text_columns(q,strlen(q))/c+1,end=MAX(0,nt-scroll),start=MAX(MAX(0,nt-NR),end-rows+(scroll?0:nr));
+ if(start>=end||e->b<12||e->b>=12+(end-start)*19){if(!e->c)selecting=0;return;}
+ int row=start+(e->b-12)/19,col=MAX(0,(e->a-14+4)/8),at=text_offset(screen[row%NR],0,strlen(screen[row%NR]),col);
+ if(e->d){anchor_row=row;anchor_byte=at;selecting=1;}
+ end_row=row;end_byte=at;selection=anchor_row!=end_row||anchor_byte!=end_byte;if(!e->c)selecting=0;
+}
+static void insert_input(const char*s){
+ if(job)return;int n=strlen(s),old=strlen(input);if(n>=INPUT-old){note("Testo troppo lungo: nessun carattere incollato.");return;}
+ memmove(input+cur+n,input+cur,old-cur+1);memcpy(input+cur,s,n);cur+=n;selection=0;scroll=0;
+}
+static void clipboard_action(int action){
+ if(action==ACT_COPY||action==ACT_CUT){
+  if(action==ACT_CUT&&selection){note("L’output è in sola lettura: usa Copia.");return;}
+  memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_TEXT;int at=0;
+  if(selection){int first=MIN(anchor_row,end_row),last=MAX(anchor_row,end_row);for(int row=first;row<=last;row++){int lo=0,hi=0;selection_bounds(row,&lo,&hi);int z=MAX(0,hi-lo);if(at+z+(row<last)>=CLIP_BYTES){note("Selezione troppo lunga per gli appunti (256 KiB).");return;}memcpy(clipboard.data+at,screen[row%NR]+lo,z);at+=z;if(row<last)clipboard.data[at++]='\n';}}
+  else strset(clipboard.data,input,sizeof clipboard.data);
+  if(!sc(S_CLIPBOARD,1,&clipboard,0,0)&&action==ACT_CUT&&!job)input[cur=0]=0;
+ }else if(action==ACT_PASTE){
+  if(sc(S_CLIPBOARD,0,&clipboard,0,0)<0||clipboard.kind!=CLIP_TEXT)return;
+  /* Pasting NEVER synthesizes Enter or executes pasted commands. */
+  for(int j=0;clipboard.data[j];j++)if((u8)clipboard.data[j]<32||(u8)clipboard.data[j]==127)clipboard.data[j]=' ';
+  if(text_field_length(clipboard.data,sizeof clipboard.data)<0){note("Testo degli appunti non valido.");return;}insert_input(clipboard.data);
+ }
+}
+static void drop_path(const char*path){
+ char quoted[PATHLEN*2+5];int n=0;quoted[n++]='"';for(int j=0;path[j]&&j<PATHLEN-1;j++){if(path[j]=='"'||path[j]=='\\'||path[j]=='$'||path[j]=='`')quoted[n++]='\\';quoted[n++]=path[j];}quoted[n++]='"';quoted[n++]=' ';quoted[n]=0;insert_input(quoted);
+}
 static void paint(void)
 {
     begin();
@@ -330,6 +368,7 @@ static void paint(void)
     int end = MAX(0, nt - scroll), start = MAX(MAX(0, nt - NR), end - rows + (scroll ? 0 : nr)), y = 12;
     for (int i = start; i < end; i++, y += 19) {
         int k = i % NR;
+        int lo,hi;if(selection_bounds(i,&lo,&hi))Box(14+text_columns(screen[k],lo)*8,y,MAX(1,text_columns(screen[k]+lo,hi-lo))*8,18,0,dark?0x315780:0xb9d7ff);
         Text(14, y, screen[k], F_MONO, kinds[k] == 1 ? pr : kinds[k] == 2 ? (dark ? 0xf1a89c : 0x953b30) : fg);
     }
     if (!scroll && !job) {
@@ -352,6 +391,7 @@ static void paint(void)
 static void key(Event *e)
 {
     int k = e->a, n = strlen(input);
+    if(e->b&&e->c&&(k=='c'||k=='C'||k=='v'||k=='V'||k=='x'||k=='X')){clipboard_action(k=='v'||k=='V'?ACT_PASTE:k=='x'||k=='X'?ACT_CUT:ACT_COPY);return;}
     if (e->b && (k == 'c' || k == 'C')) {
         if (job)sc(S_KILL, job, 0, 0, 0);
         else {
@@ -434,6 +474,9 @@ void app_main(void)
             if (baseevent(&e))continue;
             if (e.type == EV_CLOSE)quit();
             if (e.type == EV_KEY)key(&e);
+            if(e.type==EV_SELECT)select_event(&e);
+            if(e.type==EV_DROP)drop_path(e.text);
+            if(e.type==EV_ACTION&&(e.a==ACT_COPY||e.a==ACT_CUT||e.a==ACT_PASTE))clipboard_action(e.a);
             if (e.type == EV_SCROLL) scroll=MAX(0,MIN(MIN(nt,NR),scroll+3*e.a));
             if (e.type == EV_ACTION && e.a == ACT_NEW) {
                 sc(S_SPAWN, TERMINAL, 0, 0, 0);

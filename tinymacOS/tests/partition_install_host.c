@@ -35,7 +35,12 @@ int sata_io(int d,u32 l,u32 n,void*p,int wr){
 }
 int volume_cipher_io(int d,u32 l,u32 n,void*p,int w){return sata_io(d,l,n,p,w);}
 Vault*volume_vault(int d){(void)d;return 0;}
+#ifdef TMC_FS2_BACKEND
+extern int fs2_seed_snapshot(void*,u32);
+int fs_snapshot(void*p,u32 n){return fs2_seed_snapshot(p,n);}
+#else
 int fs_snapshot(void*p,u32 n){assert(n==NDATA*512);memset(p,0,n);memcpy(p,"TMCBFS1\0",8);u32*h=p;h[2]=2;h[3]=NSLOTS;h[4]=144;h[5]=1;((u8*)p)[64*512]=1;memcpy((u8*)p+128*512+64,"_BHRfS_M",8);return 0;}
+#endif
 static void put32(u8*p,u32 v){memcpy(p,&v,4);}
 static void put16(u8*p,u16 v){memcpy(p,&v,2);}
 static void mbrpart(int i,u8 t,u32 a,u32 n){u8*p=disk+446+16*i;p[4]=t;put32(p+8,a);put32(p+12,n);}

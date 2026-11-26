@@ -9,6 +9,26 @@ static int pend = -1, drag = -1, mode, ax, ay, wallEpoch;
 static Rect drag0;
 static ClickPair client_click;
 static u64 pointer_when;
+static struct {int pid,token,started,ready,released,x,y,copy;u64 until;char path[PATHLEN];} filedrag;
+static u32 drag_serial;
+static int select_pid;
+static void drag_reset(void){memset(&filedrag,0,sizeof filedrag);cursorDirty=1;}
+static void drag_deliver(void){
+ if(!filedrag.started||!filedrag.ready||!filedrag.released)return;
+ if(shell_overlay_open()){drag_reset();return;}
+ int dropx=filedrag.x,dropy=filedrag.y;
+ Event e={.type=EV_DROP,.c=filedrag.copy};strset(e.text,filedrag.path,sizeof e.text);
+ for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(dropx,dropy,v->box))continue;
+  if(dropy>=v->box.y+TITLE&&(v->s.app==FINDER||v->s.app==TERMINAL)){e.a=dropx-v->box.x-1;e.b=dropy-v->box.y-TITLE;focuswin(i);eventto(i,e);}drag_reset();return;}
+ /* A bare desktop is a destination folder. Transfer is performed by the
+  * originating Finder, not by privileged arbitrary filesystem writes. */
+ if(dropy>=BAR&&!shell_overlay_open()&&filedrag.pid>0){for(int j=0;j<nz;j++){int i=order[j];if(views[i].s.pid==filedrag.pid&&!views[i].dead){int folder=shell_drop_folder(dropx,dropy);e.d=folder<0?1:2;e.a=folder;eventto(i,e);break;}}}
+ drag_reset();
+}
+static void drag_ready(Event*e){
+ if(!filedrag.started||filedrag.pid!=e->a||filedrag.token!=e->d)return;
+ if(e->text[0]!='/')return;strset(filedrag.path,e->text,sizeof filedrag.path);filedrag.ready=1;drag_deliver();
+}
 static u32 undo[1920 * 1080];
 int cursorDirty = 1;
 static int curx, cury, curw, curh;
@@ -333,6 +353,7 @@ static void drawcursor(void)
         curx, cury, curw, curh
     }, undercursor);
     icon(left, top, 26, 15);
+    if(filedrag.started){rect(mx+9,my+11,12,12,filedrag.copy?0x2eaa65:0x367bd6);if(filedrag.copy){rect(mx+14,my+13,2,8,0xffffff);rect(mx+11,my+16,8,2,0xffffff);}}
     cursorValid = 1;
 }
 static void scanrect(int x, int y, int w, int h)
@@ -547,7 +568,7 @@ void action(int a)
     }
     if (a == 152) {
         if (sc(S_LOCK, 0, 0, 0, 0) == 0) {
-            drag = -1;
+            drag = -1;drag_reset();select_pid=0;
             shell_reset();
             login_enter();
         }
@@ -581,6 +602,11 @@ void action(int a)
 }
 static void down(void)
 {
+    drag_reset();select_pid=0;
+    if(!sys.recovery&&!shell_overlay_open()){
+        int hit=0;for(int j=nz;j--;){View*v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
+        if(!hit&&shell_drag_source(mx,my,filedrag.path)){filedrag.pid=-1;filedrag.ready=1;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
+    }
     if(sys.recovery){
         if(recovery_bar_click(mx,my))return;
         int hit=0;for(int j=nz;j--;){View *v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
@@ -616,6 +642,8 @@ static void down(void)
             drag = i;
             mode = 2;
         } else {
+            if(v->s.app==FINDER){filedrag.pid=v->s.pid;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
+            if(v->s.app==TERMINAL){select_pid=v->s.pid;eventto(i,(Event){.type=EV_SELECT,.a=x-1,.b=y-TITLE,.c=1,.d=1});}
             int dbl=click_pair(&client_click,pointer_when,(u64)v->s.pid,mx,my);
             eventto(i, (Event) {
                 .type = EV_CLICK, .a = x - 1, .b = y - TITLE, .c = dbl, .when=pointer_when
@@ -663,6 +691,7 @@ static void input(Event *e)
                 }
             return;
         }
+        if(e->a==27&&filedrag.started){drag_reset();return;}
         eventto(topwin(), *e);
     } else if (e->type == EV_MOUSE || e->type == EV_POINTER_ABS) {
         pointer_when=e->when?e->when:sys.ticks;
@@ -680,7 +709,7 @@ static void input(Event *e)
             dirty = 1;
         }
         if(sys.recovery)dirty=1;else{shell_mouse();shell_control_pointer(e->c & 1);}
-        if ((e->c & 2) && !(buttons & 2)){drag=-1;if(!sys.recovery)shell_context();}
+        if ((e->c & 2) && !(buttons & 2)){drag_reset();select_pid=0;drag=-1;if(!sys.recovery)shell_context();}
         else if ((e->c & 1) && !(buttons & 1))down();
         else if ((e->c & 1) && drag >= 0) {
             View *v = views + drag;
@@ -699,6 +728,14 @@ static void input(Event *e)
             viewtrace(views[drag].s.app, views[drag].box);
             drag = -1;
         }
+        if((e->c&1)&&filedrag.pid&&!filedrag.started&&
+           (mx-filedrag.x>6||filedrag.x-mx>6||my-filedrag.y>6||filedrag.y-my>6)){
+            filedrag.started=1;filedrag.until=sys.ticks+200;
+            if(filedrag.pid>0)for(int j=0;j<nz;j++){int i=order[j];View*v=views+i;if(v->s.pid==filedrag.pid&&!v->dead){eventto(i,(Event){.type=EV_DRAG_BEGIN,.a=filedrag.x-v->box.x-1,.b=filedrag.y-v->box.y-TITLE,.d=filedrag.token});break;}}
+        }
+        if(filedrag.started){filedrag.copy=!!((unsigned char)e->text[0]&0xdd);cursorDirty=1;}
+        if(select_pid)for(int j=0;j<nz;j++){int i=order[j];View*v=views+i;if(v->s.pid==select_pid&&!v->dead){eventto(i,(Event){.type=EV_SELECT,.a=mx-v->box.x-1,.b=my-v->box.y-TITLE,.c=!!(e->c&1)});break;}}
+        if(!(e->c&1)&&(buttons&1)){select_pid=0;if(filedrag.started){filedrag.released=1;filedrag.x=mx;filedrag.y=my;filedrag.until=sys.ticks+200;drag_deliver();}else drag_reset();}
         buttons = e->c;
         input_wheel(e->d);
     } else if(e->type==EV_SCROLL)input_wheel(e->a);
@@ -798,7 +835,8 @@ void app_main(void)
             else input(&e);
         }
         memset(&e, 0, sizeof e);
-        while(sc(S_EVENT,&e,0,0,0)>0)if(!gate&&e.type==EV_CONTEXT_READY)context_ready(&e);
+        while(sc(S_EVENT,&e,0,0,0)>0)if(!gate){if(e.type==EV_CONTEXT_READY)context_ready(&e);else if(e.type==EV_DRAG_READY)drag_ready(&e);}
+        if(filedrag.released&&sys.ticks>filedrag.until)drag_reset();
         if (gate) {
             if (login_step()) {
                 cursorValid = 0;

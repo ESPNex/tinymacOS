@@ -6,7 +6,7 @@ D=$(realpath -m "$TMC_BUILD"); case "$D/" in "$ROOT/"*) echo 'Use a build direct
 python3 tools/media_path.py "$D" "$D/$TMC_ISO"
 mkdir -p "$D"; export TMC_BUILD="$D"; export LC_ALL=C
 python3 tools/linux-source-contract.py
-C=(-O2 ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
+C=(-O2 ${TMC_FS2_BACKEND:+-DTMC_FS2_BACKEND} ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
 if [[ "${TMC_USB_CANONICAL:-0}" == 1 ]];then C+=(-DTMC_USB_CANONICAL);fi
 U=("${C[@]}" -fpie -fno-plt -Iuserspace -Idesktop);L=(-nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000)
 E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFIINC" -I"$EFIINC/x86_64")
@@ -22,8 +22,9 @@ APPS=(desktop finder terminal textedit settings about calculator calendar monito
 for a in "${APPS[@]}"; do
  src=userspace/$a.c; units=(); objects=(); case "$a" in
  desktop) src=desktop/main.c;units=(desktop/gfx.c desktop/login.c desktop/glass.c desktop/control.c desktop/shell.c desktop/motion.c desktop/recovery.c desktop/assets.S);;
- finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c userspace/filebrowser.c);;
- terminal|command) objects=(u-ui.c.o u-sha256.c.o);;
+ finder) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/preview.c userspace/inspector.c userspace/filebrowser.c userspace/fileops.c);;
+ terminal) objects=(u-ui.c.o u-sha256.c.o);;
+ command) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/fileops.c);;
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
  settings) objects=(u-ui.c.o);units=(userspace/fontmetrics.c userspace/vaultpanel.c);;
  about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
@@ -75,6 +76,7 @@ for f in crypto/jitterentropy/*.c; do o="jent-${f##*/}.o"; gcc "${C[@]}" -O0 -fw
 gcc "${C[@]}" -DTMC_RECOVERY_KERNEL -fno-pie -Inet/include -Inet/lwip/include -c kernel/main.c -o "$D/recovery-entry.o"
 REC_KOBJ=();for o in "${KOBJ[@]}";do if [[ "$o" == k-kernel-main.c.o ]];then REC_KOBJ+=(recovery-entry.o);else REC_KOBJ+=("$o");fi;done
 (cd "$D" && ld "${L[@]}" -T "$ROOT/kernel/layout.ld" "${REC_KOBJ[@]}" -o recovery-kernel.debug && objcopy --strip-all recovery-kernel.debug RecoveryKernel.elf)
+python3 tools/check-kernel-layout.py "$D/kernel.elf" "$D/RecoveryKernel.elf"
 python3 tools/system_volume.py "$D" recovery
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol"

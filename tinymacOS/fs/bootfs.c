@@ -159,7 +159,7 @@ int bootfs_open(Process *p, int id, int write)
 int bootfs_read(FD *f, void *b, int n)
 {
     int i = indexof(f->id);
-    if (i < 0 || tree[i].dir || f->at < 0 || (u32)f->at > tree[i].len)return -1;
+    if (i < 0 || tree[i].dir || f->at > tree[i].len)return -1;
     n = MIN((u32)n, tree[i].len - f->at);
     if (n)memcpy(b, tree[i].data + f->at, n);
     f->at += n;

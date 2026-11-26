@@ -1,0 +1,10 @@
+PASS external import: source 1TiB sparse medium, 1100+ files, split inode/map trees, 3MiB materialized + 16GiB sparse offset, exact snapshot not changed live bytes, private account, dotfiles, retained destination snapshots, remount/rollback; source zero writes/flushes, bounded one-page allocations
+PASS external import: 16 complete write/flush and torn-write interruption points, cold remount yields whole old OR new namespace/account; previous destination checkpoint always restorable; source byte-identical
+PASS source checksum corruption refuses import with zero destination writes
+PASS insufficient staging space refuses before destination writes
+PASS external checkpoint import normal
+PASS external import: source 1TiB sparse medium, 1100+ files, split inode/map trees, 3MiB materialized + 16GiB sparse offset, exact snapshot not changed live bytes, private account, dotfiles, retained destination snapshots, remount/rollback; source zero writes/flushes, bounded one-page allocations
+PASS external import: 16 complete write/flush and torn-write interruption points, cold remount yields whole old OR new namespace/account; previous destination checkpoint always restorable; source byte-identical
+PASS source checksum corruption refuses import with zero destination writes
+PASS insufficient staging space refuses before destination writes
+PASS external checkpoint import sanitized

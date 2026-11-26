@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "release_acceptance": false,
+  "work": "/var/tmp/tmc-external-import-y2618sdh",
+  "source_work": "/var/tmp/tmc-fs2-install-eca_4o6v",
+  "iso_sha256": "72c759424269bc88e482c357eaf138923f1c83f0469467fa445e2855a1cfef86",
+  "kernel_sha256": "1d1f0e6dee229a296cbdae12e9bc38ec9e8bebd6de11a94d2e7e728e74956c47",
+  "host_copied_destination_from_gui_installed_source": true,
+  "host_formatted_target": false,
+  "source_attached_readonly": true,
+  "checks": [
+    "Real Recovery Terminal preflights a named external NVMe checkpoint without modifying any destination data byte",
+    "Explicit confirmed import runs real syscall/offline backend, source disk read-only and byte-identical; destination GPT, sealed system, Recovery and source partition remain byte-identical",
+    "Cold installed boot authenticates imported account, reads checkpoint bytes rather than source live bytes, retains destination checkpoint and can restore previous destination state"
+  ],
+  "source_entire_disk_sha256_unchanged": "04b72c44ba72bf7a405b005f1f54f7d5caa8f379f42830b0dce1bf722f79bc73",
+  "destination_public_extents_sha256_unchanged": [
+    "8c3cea61f5fc412c5a2c0d260936c30f05c52ed046b66fa431a98ef04e87ed04",
+    "50d8a05852e981315d9603c62a53251e435f221484670085f6f3e8a072063b45"
+  ]
+}

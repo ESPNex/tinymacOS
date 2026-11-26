@@ -40,3 +40,5 @@
 /usr/bin/bootverbose
 
 /usr/bin/fdesetup
+/usr/bin/pbcopy
+/usr/bin/pbpaste

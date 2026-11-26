@@ -51,6 +51,7 @@ typedef struct {
 u32 crc32(const void *, size_t);
 int layout_read(Medium *, Layout *);
 int firstaid(Medium *, int);
+int verify_system_volume(Medium*);
 int save_copy(Medium *, const void *);
 int has_copy(Medium *);
 int restore_copy(Medium *);

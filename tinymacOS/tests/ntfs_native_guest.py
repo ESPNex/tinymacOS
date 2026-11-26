@@ -7,7 +7,7 @@ from retail_guest import Retail
 from dualboot_fixtures import fixture,hashes,PARTS
 import pixels,retail_guest
 base=Path(os.environ['TMC_QA_DIR']);iso=Path(os.environ['TMC_STAGE_ISO'])
-if iso.is_dir():iso=iso/'tinymacOS-10.2.4-x86_64.iso'
+if iso.is_dir():iso=iso/'tinymacOS-10.2.5-x86_64.iso'
 w=Path(tempfile.mkdtemp(prefix='tmc-ntfs-native-guest-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 old=retail_guest.locate;retail_guest.locate=lambda im,text,faces=(0,1,2,3,5,6,8),threshold=.88:old(im,text,faces,threshold)

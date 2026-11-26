@@ -1,0 +1,129 @@
+{
+  "scope": "10.2.5 Finder context Cut/Copy/Paste, Terminal clipboard/CLI and drag/drop",
+  "passed": true,
+  "release_acceptance": false,
+  "published": false,
+  "physical_hardware_tested": false,
+  "iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
+  "kernel_sha256": "3d98e1118960bfd3c7b4267e5a8b7148ab6b87c72552e5119fa5afc58cad3f72",
+  "host_tests": {
+    "tests/test-finder-transfers.sh": "PASS normal + ASan/UBSan; real FS2 recursive 1100 files, 256KiB streamed copy, 32 write fault cases, cycle/readonly/collision/move/remount checks; real Terminal clipboard and Finder pagination/filepanel",
+    "tests/test-finder-menus.sh": "PASS normal + ASan/UBSan; actual shell Finder/Terminal 12-entry contexts and bounds"
+  },
+  "regression_suites_passed": [
+    "input-maintenance",
+    "legacy-input",
+    "fs2-runtime",
+    "fs2-install",
+    "installer-flow",
+    "browser-pages"
+  ],
+  "same_artifact_guest_gates": {
+    "installation_and_recovery": {
+      "passed": true,
+      "release_acceptance": false,
+      "work": "/var/tmp/tmc-fs2-install-t8fgi27b",
+      "iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
+      "kernel_sha256": "3d98e1118960bfd3c7b4267e5a8b7148ab6b87c72552e5119fa5afc58cad3f72",
+      "host_formatted_target": false,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "reinstall_entire_data_partition_sha256_unchanged": "beb3eb88ce0dbb6c6a2e8fe24b70759730f7968c1d6ade00bec89a6c88c3a41a"
+    },
+    "finder_terminal_and_cold_reboot": {
+      "passed": true,
+      "release_acceptance": false,
+      "work": "/var/tmp/tmc-fs2-install-t8fgi27b",
+      "iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
+      "kernel_sha256": "3d98e1118960bfd3c7b4267e5a8b7148ab6b87c72552e5119fa5afc58cad3f72",
+      "host_formatted_target": false,
+      "checks": [
+        "Real Terminal cp -R/mv copy and move nested folders; pbcopy/pbpaste exchange actual shared text",
+        "Finder context Copy/Paste transfers a real file across distinct Finder windows without deleting source",
+        "Finder context Cut/Paste moves a directory with nested files across windows through the real atomic move syscall",
+        "Real held-button drag drops a file onto a directory icon, changing the actual filesystem",
+        "Real drag to Finder sidebar moves into Desktop",
+        "Ctrl-drag across two positioned Finder windows copies rather than moves and generates a non-overwriting collision name",
+        "Desktop file icons can be dragged into an open Finder destination, and Finder files can be dropped onto the bare Desktop",
+        "Real drag into Terminal inserts a quoted path into the pending command; only an explicit Enter executes it",
+        "Terminal Ctrl+Shift+C/V uses shared clipboard while paste only edits input, never auto-executes",
+        "Session lock clears the shared clipboard; old Finder/Terminal buffers cannot repaste the previous shared content",
+        "Copied/moved folders and drag results persist through a cold installed boot and full data/system verification"
+      ],
+      "qa_case_name": "DropQA3"
+    }
+  },
+  "source_manifest": "finder-transfers-evidence/build-source-manifest.json.gz",
+  "only_post_build_source_change": {
+    "path": "tests/finder_transfers_guest.py",
+    "sha256": "b37c85fed9a8497b870686734d2a8124c348bb3f3caddcf7be33581cf0e9463d",
+    "reason": "Test-only: fresh case isolation, correct lock-screen font, resize Terminal above Dock, avoid caret-overlapped suffix in path assertion, clear prior output before executing dropped path. No implementation change."
+  },
+  "harness_history": "Previous runs stopped on screen geometry/pixel matching; not counted as passes. Final full run DropQA3 exit 0. Same GUI-installed fixture reused; QA files created only using retail commands.",
+  "logs": {
+    "finder-transfers-host.log": {
+      "sha256": "ad50917c406e209d72b0dcf161fc01fe751c8b76d611002f0a91313f3a8e4da2",
+      "evidence": "finder-transfers-evidence/finder-transfers-host.log.gz"
+    },
+    "finder-menus-host.log": {
+      "sha256": "4ecb4722586a5f7197653486ad72e3d4affad151eb3da67e845f2af4122427a6",
+      "evidence": "finder-transfers-evidence/finder-menus-host.log.gz"
+    },
+    "finder-regression-input-maintenance.log": {
+      "sha256": "e72e419051432312fc7bef830b45995db04464607abc83a37e646d474b7bf243",
+      "evidence": "finder-transfers-evidence/finder-regression-input-maintenance.log.gz"
+    },
+    "finder-regression-legacy-input.log": {
+      "sha256": "4a6a3217079137361fe944a765e863a3a5a9ebd7721b9ad575b8e1df5a867b59",
+      "evidence": "finder-transfers-evidence/finder-regression-legacy-input.log.gz"
+    },
+    "finder-regression-fs2-runtime.log": {
+      "sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d",
+      "evidence": "finder-transfers-evidence/finder-regression-fs2-runtime.log.gz"
+    },
+    "finder-regression-fs2-install.log": {
+      "sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d",
+      "evidence": "finder-transfers-evidence/finder-regression-fs2-install.log.gz"
+    },
+    "finder-regression-installer-flow.log": {
+      "sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac",
+      "evidence": "finder-transfers-evidence/finder-regression-installer-flow.log.gz"
+    },
+    "finder-regression-browser-pages.log": {
+      "sha256": "0b593f83cc2e2d8ce353e700a057c0526cc0d286af9e5adb88a50371670498e5",
+      "evidence": "finder-transfers-evidence/finder-regression-browser-pages.log.gz"
+    },
+    "build-finder-accepted.log": {
+      "sha256": "dbcb8b8dbde660f4a5235da3098f3a7a25bdf92d7513a68e19f7ceba1d5fda65",
+      "evidence": "finder-transfers-evidence/build-finder-accepted.log.gz"
+    },
+    "finder-accepted-install-guest.log": {
+      "sha256": "c88d201816465d6837ae14e026554ab97aeeb534baf33c47978d137d588048c6",
+      "evidence": "finder-transfers-evidence/finder-accepted-install-guest.log.gz"
+    },
+    "finder-accepted-transfers-guest.log": {
+      "sha256": "5b2be3102eed14b4baa1da8beb683dca256267502d897de9a122955681641ad2",
+      "evidence": "finder-transfers-evidence/finder-accepted-transfers-guest.log.gz"
+    }
+  },
+  "image": {
+    "path": "finder-transfers-evidence/cold-boot-volume-verification.jpg",
+    "sha256": "02bf377df9e6b85a752925bc0a5b143911159e88f8fc61db6ba4b9662a9b8cca",
+    "note": "Lossy JPEG copy of actual successful cold-boot screenshot; original PNG sha256 270f1639a7d756c8023ac904a7afbbeb75803652891d93f02b830b7b36e1f4eb"
+  },
+  "limitations": [
+    "single file/folder source, not multi-selection",
+    "no trash drop or arbitrary application data-format negotiation",
+    "recursive copy cleanup is best effort, not crash-atomic; maximum depth 32",
+    "full release/native 4Kn/conversion/publication acceptance remains separate"
+  ],
+  "post_acceptance_documentation_change": {
+    "path": "docs/FINDER-TRANSFERS-10.2.5.md",
+    "sha256": "796bea1b2201391b7acdf73dc0e97f5beff78a85e1d7a1665647d29c81cc1d2b",
+    "reason": "Append actual acceptance results; implementation unchanged."
+  }
+}

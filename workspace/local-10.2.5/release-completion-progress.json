@@ -1,0 +1,44 @@
+{
+  "version": "10.2.5",
+  "user_requested_publication": true,
+  "scope_decision": "User explicitly chose complete_all: native 4Kn installation/boot AND in-place encryption conversion/deactivation remain mandatory. No scope exclusions authorized.",
+  "published": false,
+  "release_acceptance_passed": false,
+  "implementation_changed_since_finder_acceptance": false,
+  "candidate_iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
+  "current_processes": {
+    "all_29_host_scripts": "matrice-host-completa-per-la-rel-e4da8911: RUNNING; /var/tmp/tmc-release-10.2.5/test-*.log",
+    "github_auth_retry": "github-autorizzazione-con-recupe-916b9e71: exit 0"
+  },
+  "host_progress_last_observed": {
+    "passed": [
+      "boot-default",
+      "boot-display",
+      "browser-pages",
+      "diskedit",
+      "filepanel",
+      "finder-menus",
+      "finder-transfers",
+      "fs2-import-adapter",
+      "fs2-import"
+    ],
+    "running": "fs2-install",
+    "final_outcome": "unknown: process has not exited"
+  },
+  "github": {
+    "connector": "unsupported",
+    "cli": "/var/tmp/tmc-github-cli/gh",
+    "config_directory": "/var/tmp/tmc-github-auth",
+    "first_auth": "User confirmed authorization, but CLI exited 1: connection reset by peer while polling oauth/access_token. Subsequent gh auth status verified not logged in.",
+    "retry_state": "SUCCESS: robust HTTP/1.1 flow exit 0, authenticated account ESPNex verified using official GitHub CLI",
+    "required_from_user": null,
+    "permissions": "ESPNex/tinymacOS: push/admin true; public; main unchanged at 1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69"
+  },
+  "remaining_engineering": [
+    "Native logical 4096-byte partition geometry/GPT and kernel inventory; drivers/nvme.c deliberately still excludes 4Kn namespaces, although lower transport RMW works",
+    "4Kn-compatible installed FAT ESP, loader raw BlockIO/Recovery and system verification, actual GUI install/cold boot/Recovery guest gates; do NOT expose namespace by removing guard alone",
+    "Authenticated resumable in-place plaintext-to-FV003 and FV003-to-plaintext conversion preserving accounts/files/snapshots, with preflight capacity refusal, crash/fault tests and Recovery UI/CLI integration; current fs2_volume_control still refuses these operations",
+    "Fresh final build and full exact-artifact guest matrix after implementation; earlier feature receipts cannot stand in for final artifact acceptance",
+    "Review, source sync without force push, release assets upload and independent download SHA verification once auth and acceptance pass"
+  ]
+}

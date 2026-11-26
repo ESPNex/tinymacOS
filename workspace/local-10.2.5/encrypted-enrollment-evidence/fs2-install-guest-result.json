@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "release_acceptance": false,
+  "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+  "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+  "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+  "host_formatted_target": false,
+  "checks": [
+    "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+    "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+    "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+    "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+  ],
+  "reinstall_entire_data_partition_sha256_unchanged": "514602d3f90707e5d97b8d2be90a5cc12935a9303fa4721ca5834b4fa34ce3e7"
+}

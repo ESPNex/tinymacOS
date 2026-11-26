@@ -1,5 +1,5 @@
 #!/bin/bash
-# QA-only launcher: newly-created disposable SATA file and the actual release ISO.
+# QA-only launcher: disposable SATA/NVMe targets, optional BIOS-readable helper.
 set -euo pipefail
 cd "$(dirname "$0")/..";source tools/env.sh
 : "${STATE:?Use an external QA state directory}"
@@ -13,8 +13,17 @@ Q=(-machine q35 -accel "${ACCEL:-tcg}" -cpu max -smp "${TMC_SMP:-2}" -m "${TMC_M
  -L "$TOOLROOT/usr/share/qemu" -L "$TOOLROOT/usr/share/seabios"
  -device ich9-usb-ehci1,id=ehci -device usb-kbd,bus=ehci.0,port=1
  -device qemu-xhci,id=xhci -device usb-kbd,bus=xhci.0,port=1 -device "$pointer,bus=xhci.0,port=2,id=pointer"
- -drive "if=none,id=hd,format=raw,file=$DISK" -device ide-hd,drive=hd,bus=ide.0,bootindex=2
+ -drive "if=none,id=hd,format=raw,file=$DISK"
  -object rng-random,filename=/dev/urandom,id=rng -device virtio-rng-pci,rng=rng)
+case ${TMC_STORAGE:-sata} in sata) Q+=(-device ide-hd,drive=hd,bus=ide.0,bootindex=2);; nvme) Q+=(-device nvme,drive=hd,serial=TMCNVME25,bootindex=2);; *) exit 2;; esac
+if [[ -n ${TMC_BIOS_CODE:-} ]];then
+ [[ "$TMC_BIOS_CODE" == /var/tmp/* && -f "$TMC_BIOS_CODE" ]] || exit 2
+ Q+=(-bios "$TMC_BIOS_CODE")
+fi
+if [[ -n ${TMC_BOOT_HELPER:-} ]];then
+ [[ ${TMC_STORAGE:-sata} == nvme && "$TMC_BOOT_HELPER" == /var/tmp/* && -f "$TMC_BOOT_HELPER" ]] || exit 2
+ Q+=(-drive "if=none,id=helper,format=raw,snapshot=on,file=$TMC_BOOT_HELPER" -device ide-hd,drive=helper,bus=ide.0,bootindex=1)
+fi
 if [[ ${BOOT_DISK:-0} == 0 ]];then
  : "${TMC_BIOS_ISO:?Dual-boot ISO required for installation}"
  [[ -f "$TMC_BIOS_ISO" ]] || exit 2

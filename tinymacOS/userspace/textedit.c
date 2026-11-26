@@ -2,9 +2,11 @@
 #include "filepanel.h"
 static FilePanel picker;
 static int hasfile;
-static char doc[MAXFILE + 1], board[MAXFILE + 1], path[PATHLEN], field[PATHLEN], status[96];
-static int length, cursor, dirty, dialog, replace, firstline;
-static int starts[MAXFILE + 2], nlines;
+static char incoming[TEXTEDIT_LIMIT+1];
+static char doc[TEXTEDIT_LIMIT + 1], path[PATHLEN], status[96];
+static int length, cursor, dirty, dialog, firstline;
+static Clipboard clipboard;
+static int starts[TEXTEDIT_LIMIT + 2], nlines;
 static void layout(void)
 {
     int width = MAX(20, MIN(88, (aw - 67) / 8));
@@ -52,11 +54,12 @@ static int saved(void)
 static int load(const char *p)
 {
     Dirent d;
-    if (sc(S_STAT, p, &d, 0, 0) < 0 || d.dir || d.size > MAXFILE)
+    if (sc(S_STAT, p, &d, 0, 0) < 0 || d.dir || d.size > TEXTEDIT_LIMIT)
         return -1;
-    int r = readfile(p, doc, MAXFILE);
-    if (r < 0)
+    int r = readfile(p, incoming, TEXTEDIT_LIMIT);
+    if (r < 0 || (u64)r != d.size)
         return -1;
+    memcpy(doc,incoming,r);
     hasfile=1;
     length = r;
     doc[r] = 0;
@@ -87,13 +90,12 @@ static void prompt(int m)
     if(m==1||m==2){dialog=0;filepanel_open(&picker,m==1,path);return;}
     dialog = m;
     ui_motion(FX_SHEET);
-    replace = 1;
-    strset(field, path, sizeof field);
+
 }
 static void paste(const char *s, int n)
 {
-    if (n > MAXFILE - length) {
-        strset(status, "Limite documento: 8192 byte", 96);
+    if (n > TEXTEDIT_LIMIT - length) {
+        strset(status, "Limite documento: 256 KiB", 96);
         return;
     }
     memmove(doc + cursor + n, doc + cursor, length - cursor + 1);
@@ -115,57 +117,33 @@ static void act(int a)
         } else
             blank();
     } else if (a == ACT_COPY) {
-        memcpy(board, doc, length + 1);
-        strset(status, "Testo copiato negli appunti di TextEdit", 96);
-    } else if (a == ACT_PASTE)
-        paste(board, strlen(board));
+        if(length>=CLIP_BYTES){strset(status,"Testo troppo lungo per gli appunti condivisi (256 KiB).",96);return;}
+        memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_TEXT;memcpy(clipboard.data,doc,length+1);
+        strset(status,sc(S_CLIPBOARD,1,&clipboard,0,0)<0?"Appunti non disponibili.":"Testo copiato negli appunti condivisi.",96);
+    } else if (a == ACT_PASTE){
+        if(!sc(S_CLIPBOARD,0,&clipboard,0,0)&&clipboard.kind==CLIP_TEXT)paste(clipboard.data,strlen(clipboard.data));
+    }
+}
+/* Only discard confirmations use this state. Open/Save never fall back to
+ * the obsolete pathname-entry modal, including after an unsaved document. */
+static void confirm_accept(void)
+{
+    int m=dialog;dialog=0;ui_motion(FX_DISSOLVE);
+    if(m==3){quit();return;}
+    if(m==5){blank();return;}
+    if(m==6)prompt(2);
 }
 static void dk(int k)
 {
-    if (k == 27) {
-        dialog = 0;
-        ui_motion(FX_DISSOLVE);
-        return;
-    }
-    if (k == '\n') {
-        int m = dialog;
-        dialog = 0;
-        ui_motion(FX_DISSOLVE);
-        if (m == 3) {
-            quit();
-            return;
-        }
-        if (m == 5) {
-            blank();
-            return;
-        }
-        if (m == 6) {
-            prompt(2);
-            return;
-        }
-        char p[PATHLEN];
-        if (absolutepath(p, DOCS, field) < 0) {
-            strset(status, "Percorso non valido", 96);
-            return;
-        }
-        if (m == 1) {
-            char old[PATHLEN];
-            strset(old, path, PATHLEN);
-            strset(path, p, PATHLEN);
-            saved();
-            if (dirty)
-                strset(path, old, PATHLEN);
-        } else if (m == 2 && load(p) < 0)
-            strset(status, "Impossibile aprire il documento", 96);
-        return;
-    }
-    if (dialog >= 3)
-        return;
-    if (replace && (k == 8 || text_printable(k))) {
-        field[0] = 0;
-        replace = 0;
-    }
-    text_append_key(field,sizeof field,k);
+    if(k==27){dialog=0;ui_motion(FX_DISSOLVE);return;}
+    if(k=='\n')confirm_accept();
+}
+static void confirm_click(const Event *e)
+{
+    int w=MIN(460,aw-40),x=(aw-w)/2,y=(ah-190)/2;
+    if(e->b<y+144||e->b>=y+178)return;
+    if(e->a>=x+w-238&&e->a<x+w-134){dialog=0;ui_motion(FX_DISSOLVE);}
+    else if(e->a>=x+w-124&&e->a<x+w-20)confirm_accept();
 }
 static void key(Event *e)
 {
@@ -248,10 +226,13 @@ static void paint(void)
     Text(15, ah - 25, status[0] ? status : dirty ? "Modifiche non salvate" : "Pronto", F_SMALL, dirty ? EMP : SUB);
     Text(aw - 165, ah - 25, z, F_SMALL, SUB);
     if (dialog) {
-        const char *t = dialog == 1 ? "Salva come" : dialog == 2 ? "Apri documento" : dialog == 3 ?
-                        "Chiudere senza salvare?" : dialog == 5 ? "Creare un nuovo documento?" : "Aprire un altro documento?";
-        modal(t, dialog <= 2 ? field : leaf(path),
-              dialog <= 2 ? "Nome in Documenti, oppure un percorso assoluto." : "Le modifiche non salvate andranno perse.");
+        int w=MIN(460,aw-40),x=(aw-w)/2,y=(ah-190)/2;
+        Sheet(x,y,w,190,14);
+        Text(x+20,y+23,dialog==3?"Chiudere senza salvare?":dialog==5?"Creare un nuovo documento?":"Aprire un altro documento?",F_CAPTION,TX);
+        Text(x+20,y+66,leaf(path),F_BODY,TX);
+        Text(x+20,y+98,"Le modifiche non salvate andranno perse.",F_SMALL,SUB);
+        button(x+w-238,y+144,104,"Annulla",0);
+        button(x+w-124,y+144,104,"Non salvare",1);
     }
     finish();
 }
@@ -297,6 +278,7 @@ void app_main(void)
                     quit();
                 }
             }
+            if(dialog&&e.type==EV_CLICK){confirm_click(&e);continue;}
             if (e.type == EV_KEY)
                 key(&e);
             if (!dialog && e.type == EV_ACTION)

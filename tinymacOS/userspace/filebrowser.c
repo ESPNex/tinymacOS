@@ -13,3 +13,12 @@ int browser_finder(const char *path)
     if (sc(S_STAT, path, &d, 0, 0) < 0 || !d.dir)return -1;
     return sc(S_SPAWN, FINDER, path, 0, 0);
 }
+
+/* Bounded buffers with explicit look-ahead; skip is not an inode-slot limit. */
+int browser_page(const char*path,Dirent*entries,int cap,int skip,int*more)
+{
+ if(!more||cap<1||cap>NSLOTS||skip<0||skip>0x7fffffff-cap)return -1;*more=0;
+ int n=sc(S_LIST,path,entries,cap,skip);if(n<0)return -1;
+ if(n==cap){Dirent next;int r=sc(S_LIST,path,&next,1,skip+n);if(r<0)return -1;*more=r>0;}
+ return n;
+}

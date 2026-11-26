@@ -1,0 +1,8 @@
+PASS shared Recovery installer wizard: no live payload needed, healthy native target only, confirmation required, deferred reinstall, no data-reset syscall, success closes back to Recovery
+PASS desktop fresh-install flow preserved; context-specific install/reinstall titles; installed non-Recovery session still refuses live installation
+PASS encrypted install enrollment: mismatch refused, password masked/staged then wiped, recovery suffix required before confirmation, backing out discards pending secrets without target writes
+PASS installer flow normal
+PASS shared Recovery installer wizard: no live payload needed, healthy native target only, confirmation required, deferred reinstall, no data-reset syscall, success closes back to Recovery
+PASS desktop fresh-install flow preserved; context-specific install/reinstall titles; installed non-Recovery session still refuses live installation
+PASS encrypted install enrollment: mismatch refused, password masked/staged then wiped, recovery suffix required before confirmation, backing out discards pending secrets without target writes
+PASS installer flow sanitized

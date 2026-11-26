@@ -43,7 +43,7 @@ try:
   f.seek((start+9)*512);assert f.read(8)==b'TMCVOL23'
  ok('Installer copies real system/data/Recovery only into a new 96 MiB extent; every FAT32/NTFS/RAW payload hash and original partition entry is unchanged')
  with Installed('/not-attached',w,ev,'uefi-cold',disk='target',boot_disk=True) as g:
-  assert str(iso) not in str(g.req('query-block'));g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -productVersion','10.2.4');g.cmd('echo MIXED_DISK_PERSISTENCE > Documents/dual.txt');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('uefi-installed');g.cmd('off');g.p.wait(timeout=15)
+  assert str(iso) not in str(g.req('query-block'));g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -productVersion','10.2.5');g.cmd('echo MIXED_DISK_PERSISTENCE > Documents/dual.txt');g.cmd('bootverbose on','Preferenza verificata su disco');g.shot('uefi-installed');g.cmd('off');g.p.wait(timeout=15)
  ok('Cold UEFI boot of the mixed disk without ISO, native account login, data persistence and relocated BootConfig write')
  with Installed('/not-attached',w,ev,'bios-cold',disk='target',boot_disk=True,launcher=root/'tools/run-bios-installed.sh') as g:
   g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/dual.txt','MIXED_DISK_PERSISTENCE');g.cmd('bootverbose status','attivo');g.shot('bios-installed');g.cmd('bootverbose off','Preferenza verificata su disco');g.cmd('off');g.p.wait(timeout=15)

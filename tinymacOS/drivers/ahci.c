@@ -144,25 +144,25 @@ void ahci_init(void)
             nd++;
         }
 }
-int sata_count(void)
+int ahci_count(void)
 {
     return nd;
 }
-u32 sata_size(int d)
+u32 ahci_size(int d)
 {
     return d >= 0 && d < nd ? ds[d].sectors : 0;
 }
-const char *sata_model(int d)
+const char *ahci_model(int d)
 {
     return d >= 0 && d < nd ? ds[d].model : "";
 }
-int sata_io(int d, u32 l, u32 n, void *b, int wr)
+int ahci_io(int d, u32 l, u32 n, void *b, int wr)
 {
     if (d < 0 || d >= nd || !n || n > MAXS || l > ds[d].sectors || n > ds[d].sectors - l)
         return -1;
     return issue(d, wr ? 0x35 : 0x25, l, n, b, wr);
 }
-int sata_flush(int d)
+int ahci_flush(int d)
 {
     return d >= 0 && d < nd ? issue(d, 0xea, 0, 0, 0, 0) : -1;
 }

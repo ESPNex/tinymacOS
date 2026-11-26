@@ -30,7 +30,7 @@ static int sip_block(const char *p)
     }
     return 0;
 }
-static Spin alloc_lock;
+static Spin alloc_lock,clip_lock;
 static void info(SysInfo *s)
 {
     memset(s, 0, sizeof * s);
@@ -164,7 +164,7 @@ static Frame *syscall_inner(Frame *f)
     switch (n) {
     case S_FILEVAULT:
         if(IN(b,sizeof(VaultRequest))&&OUT(b,sizeof(VaultRequest))&&OUT(c,sizeof(VaultInfo))&&
-           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND)){
+           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND||(p->app==INSTALLER&&a==0))){
             VaultRequest q=*(VaultRequest*)b;VaultInfo out;
             if(q.password[64]||q.replacement[64]||q.recovery[64]){erase(&q,sizeof q);break;}
             if(a<=8){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
@@ -177,11 +177,26 @@ static Frame *syscall_inner(Frame *f)
             r = 0;
         }
         break;
+    case S_CLIPBOARD:
+        if(session_open()&&a<=2&&((a==0&&OUT(b,sizeof(Clipboard)))||(a==1&&IN(b,sizeof(Clipboard)))||a==2)){
+            Clipboard*q=kmalloc(sizeof *q);if(!q)break;
+            if(a==1)memcpy(q,(void*)b,sizeof *q);
+            u32 cf;spin_lock(&clip_lock,&cf);r=session_open()?clipboard_access(a,q):-1;spin_unlock(&clip_lock,cf);
+            if(!a&&!r)memcpy((void*)b,q,sizeof *q);erase(q,sizeof *q);kfree(q);
+        }
+        break;
+    case S_DRAG:
+        if(session_open()&&p->app==FINDER&&string(a,s,sizeof s)&&s[0]=='/'){
+            for(int i=1;i<NPROC;i++)if(proc[i].pid&&proc[i].app==DESKTOP&&!proc[i].dying){
+                Event e={.type=EV_DRAG_READY,.a=p->pid,.d=b};strset(e.text,s,sizeof e.text);post(proc+i,&e);r=0;break;
+            }
+        }
+        break;
     case S_CONTEXT:
         if (session_open() && p->app == FINDER) {
             for (int i = 1; i < NPROC; i++)if (proc[i].pid && proc[i].app == DESKTOP && !proc[i].dying) {
                     post(proc + i, &(Event) {
-                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & 0x7ffe, .d = (int)b
+                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & 0xfffe, .d = (int)b
                     });
                     r = 0;
                     break;
@@ -215,6 +230,8 @@ static Frame *syscall_inner(Frame *f)
         if (!session_open())break;
         if (a == 0 && d <= 16 && OUT(c, d * sizeof(SnapInfo)))
             r = fs_snap_list((void *)c, (int)d);
+        else if (a == 7 && b <= 0x7fffffffu && d <= 16 && OUT(c,d*sizeof(SnapInfo)))
+            r = fs_snap_page((void*)c,(int)d,(int)b);
         else if (a == 5 && OUT(c, sizeof(FsInfo)))
             r = fs_snap_info((void *)c);
         else if (a >= 1 && a <= 4 && string(b, s, sizeof s)) {
@@ -370,6 +387,9 @@ static Frame *syscall_inner(Frame *f)
             DiskEdit request;memcpy(&request,(void*)b,sizeof request);
             request.name[sizeof request.name-1]=0;
             r=disk_edit(&request,a==11);memcpy((void*)b,&request,sizeof request);
+        } else if((a==12||a==13)&&boot.recovery&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskImport))&&OUT(b,sizeof(DiskImport))){
+            DiskImport request;memcpy(&request,(void*)b,sizeof request);
+            r=disk_import(&request,a==13);memcpy((void*)b,&request,sizeof request);
         } else if(boot.recovery && desktop && a>=5 && a<=9)r=disk_operation((int)a,(int)b);
         else if (a == 4)r = disk_operation(4, (int)b);
         else if ((p->app == DISKUTIL || (a == 1 && p->app == COMMAND &&
@@ -424,12 +444,16 @@ static Frame *syscall_inner(Frame *f)
             if (a == 0 && OUT(b, sizeof(InstallInfo))) {
                 install_status((InstallInfo *)b);
                 r = 0;
-            } else if (a == 1)r = install_begin((int)b);
+            } else if (a == 1)r = install_begin_mode((int)b,(int)c);
             else if (a == 2)r = install_step();
             else if (a == 3)r = install_cancel();
+            else if ((a == 5 || a == 6) && IN(b,sizeof(VaultRequest)) && OUT(b,sizeof(VaultRequest))){
+                VaultRequest q;memcpy(&q,(void*)b,sizeof q);r=a==5?install_encryption(&q):install_encryption_ack(&q);memcpy((void*)b,&q,sizeof q);erase(&q,sizeof q);
+            }
             /* Same installer executable in Recovery; only the sealed system
              * restore operation is exposed, never user-data reset/restore. */
             else if (a == 4 && boot.recovery)r = disk_operation(6,(int)b);
+            else if (a == 7 && boot.recovery)r = install_encrypted_reset((int)b);
         }
         break;
     case S_SETUP_CODE:
@@ -442,7 +466,7 @@ static Frame *syscall_inner(Frame *f)
         if (desktop)r = session_work();
         break;
     case S_LOCK:
-        if (desktop)r = session_lock();
+        if (desktop){r=session_lock();if(!r){u32 cf;spin_lock(&clip_lock,&cf);clipboard_clear();spin_unlock(&clip_lock,cf);}}
         break;
     case S_SEEK:
         r = fs_seek(p, a, b);
@@ -758,7 +782,7 @@ static Frame *syscall_inner(Frame *f)
             r = fs_stat(s, (void *)b);
         break;
     case S_LIST:
-        if (string(a, s, sizeof s) && c <= NSLOTS && d <= NSLOTS && OUT(b, c * sizeof(Dirent)))
+        if (string(a, s, sizeof s) && c <= NSLOTS && d <= 0x7fffffffu && OUT(b, c * sizeof(Dirent)))
             r = fs_list(s, (void *)b, c, d);
         break;
     case S_CREATE:

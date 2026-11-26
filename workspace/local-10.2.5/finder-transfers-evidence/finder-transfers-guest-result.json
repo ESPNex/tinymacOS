@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "release_acceptance": false,
+  "work": "/var/tmp/tmc-fs2-install-t8fgi27b",
+  "iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
+  "kernel_sha256": "3d98e1118960bfd3c7b4267e5a8b7148ab6b87c72552e5119fa5afc58cad3f72",
+  "host_formatted_target": false,
+  "checks": [
+    "Real Terminal cp -R/mv copy and move nested folders; pbcopy/pbpaste exchange actual shared text",
+    "Finder context Copy/Paste transfers a real file across distinct Finder windows without deleting source",
+    "Finder context Cut/Paste moves a directory with nested files across windows through the real atomic move syscall",
+    "Real held-button drag drops a file onto a directory icon, changing the actual filesystem",
+    "Real drag to Finder sidebar moves into Desktop",
+    "Ctrl-drag across two positioned Finder windows copies rather than moves and generates a non-overwriting collision name",
+    "Desktop file icons can be dragged into an open Finder destination, and Finder files can be dropped onto the bare Desktop",
+    "Real drag into Terminal inserts a quoted path into the pending command; only an explicit Enter executes it",
+    "Terminal Ctrl+Shift+C/V uses shared clipboard while paste only edits input, never auto-executes",
+    "Session lock clears the shared clipboard; old Finder/Terminal buffers cannot repaste the previous shared content",
+    "Copied/moved folders and drag results persist through a cold installed boot and full data/system verification"
+  ],
+  "qa_case_name": "DropQA3"
+}

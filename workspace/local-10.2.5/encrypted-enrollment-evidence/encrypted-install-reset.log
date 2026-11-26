@@ -1,0 +1,6 @@
+PASS Actual GUI creates FV003 and imports live account/document directly; cancel and recovery-key acknowledgement occur before any target write; no host formatting
+PASS Cold native NVMe boot rejects wrong volume password, accepts configured volume password, separately authenticates imported account and reads its private document
+PASS Installer-created encrypted volume accepts independent recovery credential; native Recovery creates and restores real encrypted local backup; restored documents survive cold boot
+PASS Same native Recovery installer reinstalls the sealed system on its GUI-created encrypted volume while the complete DATA hash stays identical
+PASS Explicit irreversible Recovery reset pre-confirms fresh credentials, cancel leaves DATA unchanged, replaces volume key and both credential slots, rejects old password/recovery, runs new account setup and persists new documents across reboot; public extents unchanged
+PASS Offline entire-DATA scan finds none of the tested plaintext account, filename, filesystem or private-document markers; not a physical secure-erasure proof

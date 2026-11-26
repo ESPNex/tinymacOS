@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "work": "/var/tmp/tmc-encrypted-install-ratefeil",
+  "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+  "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+  "host_formatted_target": false,
+  "host_prepared_encrypted_fixture": false,
+  "encrypted_installer_acceptance": true,
+  "encrypted_reset_acceptance": true,
+  "in_place_conversion_acceptance": false,
+  "physical_hardware_tested": false,
+  "secure_erase": false,
+  "reset_is_atomic_or_rollback_safe": false,
+  "recovery_credential_logged": false,
+  "checks": [
+    "Actual GUI creates FV003 and imports live account/document directly; cancel and recovery-key acknowledgement occur before any target write; no host formatting",
+    "Cold native NVMe boot rejects wrong volume password, accepts configured volume password, separately authenticates imported account and reads its private document",
+    "Installer-created encrypted volume accepts independent recovery credential; native Recovery creates and restores real encrypted local backup; restored documents survive cold boot",
+    "Same native Recovery installer reinstalls the sealed system on its GUI-created encrypted volume while the complete DATA hash stays identical",
+    "Explicit irreversible Recovery reset pre-confirms fresh credentials, cancel leaves DATA unchanged, replaces volume key and both credential slots, rejects old password/recovery, runs new account setup and persists new documents across reboot; public extents unchanged",
+    "Offline entire-DATA scan finds none of the tested plaintext account, filename, filesystem or private-document markers; not a physical secure-erasure proof"
+  ],
+  "public_partition_sha256_unchanged": [
+    "f7b807aeec34e156e9d2d3be897529c19e0dcd286f8658c4a9bfbd685e7a2335",
+    "cc0757653abc9dbdf9c9c54d4502c0b7ab7638c5f402e7fc63a3b189607a1150"
+  ]
+}

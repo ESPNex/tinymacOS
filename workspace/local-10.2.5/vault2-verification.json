@@ -1,0 +1,89 @@
+{
+  "scope": "FV003 development validation, not release acceptance",
+  "release_ready": false,
+  "receipts": {
+    "fs2-install-guest-result.json": {
+      "passed": true,
+      "release_acceptance": false,
+      "work": "/var/tmp/tmc-fs2-install-u8azkzbz",
+      "iso_sha256": "438c2c4428486ee7611d03d2765650aeca8f310bbcccef9382e4d7c8db773cf2",
+      "kernel_sha256": "5fbbaddcaf62169b5afb417aad8dfb57257d9bcb9573fda0ccd365cb840e90b1",
+      "host_formatted_target": false,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "reinstall_entire_data_partition_sha256_unchanged": "a3a51ebbc96b66a06262e310d2194d47739f8bd2946d51c3bb731e670b06b8d7"
+    },
+    "vault2-guest-result.json": {
+      "passed": true,
+      "release_ready": false,
+      "work": "/var/tmp/tmc-fs2-install-u8azkzbz",
+      "iso_sha256": "438c2c4428486ee7611d03d2765650aeca8f310bbcccef9382e4d7c8db773cf2",
+      "kernel_sha256": "5fbbaddcaf62169b5afb417aad8dfb57257d9bcb9573fda0ccd365cb840e90b1",
+      "host_prepared_encrypted_fixture": true,
+      "encrypted_installer_acceptance": false,
+      "in_place_conversion_acceptance": false,
+      "physical_hardware_tested": false,
+      "recovery_credential_logged": false,
+      "large_file_sha256": "9ce22dad0d8e3690bad6479d8237a85f75d155dcf46405fadf043c5bd0184aa5",
+      "checks": [
+        "Actual native NVMe boot rejects wrong password, unlocks the authenticated scalable volume before imported account login, reads private content and TextEdit streams/saves 128KiB with byte-exact hash",
+        "Native internal Recovery rejects wrong password, accepts independent recovery credential and creates a real scalable encrypted local CoW backup",
+        "Encrypted Recovery restore recovers the old document and 128KiB file; cold boot accepts recovery credential then account password, and encrypted snapshot contents remain valid",
+        "Offline scan of the entire DATA partition finds no plaintext filesystem signature, account name, filename or private document; public partition extents remain byte-identical"
+      ],
+      "public_partition_sha256_unchanged": [
+        "61d6109ba963152c3243f0fa43aed31296dd7536ed3eaa6c7f7baf67b7516bea",
+        "ca5cdfc0591293f4b149efd654217635d0cd22a790cd2bcc6ebc3f4e4141d787"
+      ]
+    },
+    "vault2-nvme-helper-result.json": {
+      "passed": true,
+      "scope": "helper BIOS bootstrap, not complete 10.2.5 release acceptance",
+      "firmware_source": {
+        "repo": "https://github.com/coreboot/seabios",
+        "tag": "rel-1.16.3",
+        "commit": "a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8",
+        "archive_sha256": "bcd1870471d10c3fdd8ce7875545a1bad9c87f1ce69f283a15a7e803a414d9c2",
+        "source": "/var/tmp/tmc-10.2.5/seabios-no-nvme/seabios-a6ed6b701f0a57db0569ab98b0661c12a6ec3ff8",
+        "config_requirement": "# CONFIG_NVME is not set"
+      },
+      "firmware_sha256": "2d3ef5bccbb371c3a72baa7f9d52694d171024a985625dcccf81a7c491977de8",
+      "helper_sha256": "bd6327ce0ec5233375d0b0e8ff13a8f72ef8ee501399e8ec6a7ed70f08114cd5",
+      "physical_hardware_tested": false,
+      "negative_without_helper": true,
+      "system_with_helper": true,
+      "recovery_with_helper": true,
+      "work": "/var/tmp/tmc-fs2-install-u8azkzbz",
+      "actual_fs2_installer_fixture": true,
+      "installed_kernel_sha256": "5fbbaddcaf62169b5afb417aad8dfb57257d9bcb9573fda0ccd365cb840e90b1",
+      "after_logical_factory_reset": false,
+      "host_prepared_encrypted_fixture": true,
+      "encrypted_reinstall_entire_data_partition_sha256_unchanged": "af39931f4a95f7ef9b6d13cce3e278b6f8fcf4d935c4d340693354961d77e038",
+      "helper_source_unchanged": true
+    }
+  },
+  "evidence_sha256": {
+    "fs2-install-guest-result.json": "771da17483c700c219567eaa410dc2a9f99dfc5ecbf5720f6cd778da7663b1cd",
+    "vault2-guest-result.json": "d9867ed6e340732afcccd4b8bd533740d1e3c50660c7d89f74320d529e01686c",
+    "vault2-nvme-helper-result.json": "88c2a3596d4a3e6a89974a000ba23371c54ed9b39bc9bbabbf44d44ae3950f12",
+    "build-vault2.log": "0c2e5a251136fee71ae2c1defbc6cf5d6f28052604f6e0c2526b66c76067f623",
+    "vault2-host-final.log": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64",
+    "vault2-kernel-adapter-host.log": "39a4997ccd5e4451edad4a73824c4a8b34c36ea44d0da7afcf1387dcf5d40bab",
+    "vault2-fs2-runtime-regression.log": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d",
+    "vault2-install-guest.log": "c6ecb95bab9ad072e75fc6edd43a1f96f02e03a877804a20e6984e3330bf8886",
+    "vault2-guest.log": "6f0d1216583195cb3d99b4ab27ac631e1b7b67a8da694d1126f8a42a52957b9f",
+    "vault2-bios-helper.log": "dcc95cb17172a06c0c316000ca3fb0c4acf63c48b2f4a7bb458f09ef337421c3"
+  },
+  "remaining": [
+    "encrypted fresh-install/enrollment UI",
+    "safe conversion/deactivation policy",
+    "encrypted reset/key-erasure policy",
+    "external scalable backup import",
+    "native 4Kn installation and boot",
+    "final exact-artifact full regression"
+  ]
+}

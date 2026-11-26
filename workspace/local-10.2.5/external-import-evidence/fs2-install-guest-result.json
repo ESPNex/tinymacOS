@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "release_acceptance": false,
+  "work": "/var/tmp/tmc-fs2-install-eca_4o6v",
+  "iso_sha256": "72c759424269bc88e482c357eaf138923f1c83f0469467fa445e2855a1cfef86",
+  "kernel_sha256": "1d1f0e6dee229a296cbdae12e9bc38ec9e8bebd6de11a94d2e7e728e74956c47",
+  "host_formatted_target": false,
+  "checks": [
+    "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+    "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+    "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+    "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+  ],
+  "reinstall_entire_data_partition_sha256_unchanged": "c755f251fdcd43ccdf8031ed3839c3730300d218ecdae406fe6051b27dc82d9b"
+}

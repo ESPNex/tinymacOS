@@ -48,9 +48,14 @@ try:
   assert pixels.locate(g.snap(),'Mostra nel Finder',faces=(0,1,2,3)) is None
   g.click(X+680,Y+32);g.visible('Apri documento');g.snap().save(ev/'04-dialogo-senza-finder.png');ok('Finder button removed; former target cannot launch another window')
   g.key('down');g.key('ret');g.visible('HELLO19');ok('Open chooser browses folders and loads the selected file into TextEdit')
+  # All three user-facing Open entry points must use the same modern panel.
+  g.click(X+98,Y+22);g.move(1100,650);g.visible('Apri documento');g.visible('Preferiti');g.key('esc');g.visible('HELLO19');ok('Toolbar Apri opens the modern chooser; cancel preserves the loaded document')
+  mx,my=g.visible('File',box=(100,0,480,33));g.click(mx+8,my+6);mx,my=g.visible('Apri documento');g.click(mx+35,my+6);g.visible('Apri documento');g.visible('Nome file:');g.key('esc');g.visible('HELLO19');ok('File menu Apri documento opens the same modern chooser')
+  g.type('DIRTY19');g.click(X+98,Y+22);g.visible('Aprire un altro documento?');g.snap().save(ev/'05a-conferma-non-salvato.png');cx,cy=g.visible('Annulla');g.click(cx+20,cy+5);g.visible('DIRTY19');ok('Mouse Cancel in unsaved-changes confirmation preserves the document')
+  g.key('ctrl-o');g.visible('Aprire un altro documento?');cx,cy=g.visible('Non salvare');g.click(cx+25,cy+5);g.visible('Apri documento');g.visible('Nome file:');g.snap().save(ev/'05b-apri-moderno-dopo-conferma.png');g.key('esc');g.visible('DIRTY19');g.key('ctrl-s');g.visible('Salvato nella sessione live');ok('Dirty Ctrl+O confirmation opens modern chooser; canceling that chooser still preserves unsaved bytes')
   g.key('ctrl-shift-s');g.visible('Salva documento');g.click(X+690,Y+446);g.visible('Sostituire il documento?');g.snap().save(ev/'05-conferma-sovrascrittura.png');g.key('esc');g.key('esc');g.visible('HELLO19');ok('Overwrite confirmation can be canceled without losing the document')
   g.key('ctrl-shift-s');g.visible('Salva documento');g.click(X+300,Y+383);g.type('/System/Nope19.txt');g.click(X+690,Y+446);g.visible('La destinazione non e scrivibile.');g.key('esc');ok('Readonly destinations rejected in the actual save sheet')
-  g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','HELLO19');ok('Canceled and rejected saves leave existing file bytes unchanged')
+  g.app('f2','Terminale');g.cmd('cat /Users/User/Documents/Prova19/UI19.txt','DIRTY19');ok('Canceled and rejected saves leave existing file bytes unchanged')
   # Lock via real Apple menu, then prove login caret and password editing.
   g.click(23,16);px,py=g.visible('Blocca schermo');g.click(px+35,py+6);g.visible('Inserisci la password');time.sleep(.4);assert int(np.sum(np.all(np.asarray(g.snap())[621:638,534,:]==255,axis=1)))<3;g.type('l');g.key('left');r['locked_caret_samples']=caret(g,518,613);g.key('right');g.type('ocal-test-285');g.key('ret');g.visible('Terminale',35);ok('Locked-session password caret and unlock work')
   r['passed']=True

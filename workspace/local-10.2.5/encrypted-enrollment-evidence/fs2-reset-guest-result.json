@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "work": "/var/tmp/tmc-fs2-install-eqcp3pot",
+  "iso_sha256": "10902aa07f56b54f882cb3394d23ca22d6d9f22c8ff931ae7cf7495c7cac8178",
+  "kernel_sha256": "cdf87792c2da0c6ad57d0737d0f980a96c6ba7cff722ee867a4c72410d09d2fc",
+  "host_formatted_target": false,
+  "secure_erase": false,
+  "checks": [
+    "Canceling Recovery initialization leaves the entire FS2 data partition byte-identical, including account, snapshots and large document",
+    "Native Recovery logically resets the full scalable home/account/snapshot roots, verifies the result and leaves partition tables, sealed system, Recovery and installation source byte-identical",
+    "After reset, actual installed boot requires fresh enrollment; previous documents/snapshot namespace are absent and the new account and document survive another reboot"
+  ],
+  "public_partition_sha256_unchanged": [
+    "09610fd3e13c85b3110332461e3f16a978dc7221eb2606f1dc71320548bf4d04",
+    "10d9b814ab180b047f5cfec5939a68b2c9cc314e116747a13dc3defcca8fcf69"
+  ]
+}

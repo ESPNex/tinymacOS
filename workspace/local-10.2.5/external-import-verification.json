@@ -1,0 +1,75 @@
+{
+  "state": "external-checkpoint-import-macroblock-passed",
+  "release_acceptance": false,
+  "published": false,
+  "source_tree_has_subsequent_finder_changes": true,
+  "iso_sha256": "72c759424269bc88e482c357eaf138923f1c83f0469467fa445e2855a1cfef86",
+  "kernel_sha256": "1d1f0e6dee229a296cbdae12e9bc38ec9e8bebd6de11a94d2e7e728e74956c47",
+  "host_groups": {
+    "fs2-install": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-fs2-install.log",
+      "sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d"
+    },
+    "installer-flow": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-installer-flow.log",
+      "sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac"
+    },
+    "vault2": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-vault2.log",
+      "sha256": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64"
+    },
+    "vault": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-vault.log",
+      "sha256": "1edcc55727695d5cbb893917c777a607e762520272beef2334077f9ffa3f4aa2"
+    },
+    "fs2-runtime": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-fs2-runtime.log",
+      "sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d"
+    },
+    "partitions": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-partitions.log",
+      "sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932"
+    },
+    "native-resize": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-native-resize.log",
+      "sha256": "f9e4891bd23431502902ba8ab882f98d9ada1ae0397d9908efacbf78c7323ea7"
+    },
+    "large-disks": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/import-regression-large-disks.log",
+      "sha256": "82ab11b4e47f6148a8a4d173a96e4a1f946557de9e4bd110efa221e4de0c8304"
+    },
+    "fs2-import": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/fs2-import-host.log",
+      "sha256": "d92517e47be9414c7b34fbb31337303f51a735fa99e89edc267a221d75243f6d"
+    },
+    "fs2-import-adapter": {
+      "passed": true,
+      "normal_and_sanitized": true,
+      "log": "/home/user/workspace/local-10.2.5/external-import-evidence/fs2-import-adapter-host.log",
+      "sha256": "bb99ebeb87d0297ad547b3cb9bbc3ddd778359eeb1d6f75fed7d1884ee15bf13"
+    }
+  },
+  "guest_receipts": [
+    "external-import-evidence/fs2-install-guest-result.json",
+    "external-import-evidence/fs2-external-import-guest-result.json"
+  ],
+  "semantics": "Selected external checkpoint replaces live files and account atomically; target snapshots and target encryption identity retained; source media read-only. This is not in-place encryption conversion or 4Kn acceptance."
+}

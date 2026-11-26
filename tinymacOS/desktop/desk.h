@@ -79,3 +79,7 @@ void avatar(int, int, int);
 void shell_reset(void);
 
 void shell_context(void);void context_ready(Event*);
+
+int shell_drag_source(int,int,char[PATHLEN]);
+
+int shell_drop_folder(int,int);

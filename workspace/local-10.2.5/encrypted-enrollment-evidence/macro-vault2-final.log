@@ -1,0 +1,14 @@
+PASS actual scalable authenticated envelope: 1TiB logical payload on 1.25TiB sparse backing, last 16KiB block roundtrips at 64-bit byte offset, only 4 create writes/no volume scan; 77824 allocated bytes; password/recovery rotation and independent vector
+PASS 120 block-write/flush/torn-4KiB/volatile-cache interruptions: authenticated replay yields whole old/new 16KiB data, poisoned contexts refuse retries, new nonce is above pre-reboot range
+PASS 18 interrupted recovery-key header rotations retain at least one authenticated old/new credential and preserve ciphertext data
+PASS ciphertext/tag/index/nonce/UUID/padding tampering and cross-block substitution fail closed with zero plaintext output; one-header recovery, two-header refusal without format, recomputed public SHA cannot forge header MAC
+PASS damaged committed ciphertext journal refuses replay without writes; fresh-create boundary rechecks both persisted headers and refuses an existing volume even when caller skipped probe
+PASS REAL TMCBFS2 through production encryption: encrypted filesystem superblocks/trees/data/private account/CoW snapshots/local checkpoint, lock/reopen/mount/restore/GC and ciphertext-only backing (host adapter, NOT kernel/installer acceptance)
+PASS independent libsodium + hashlib: actual 600000-round password slot AND recovery slot unwrap the same random volume key; header MAC/SHA and 16KiB XChaCha20-Poly1305 ciphertext/AAD/nonce verified
+PASS actual scalable authenticated envelope: 1TiB logical payload on 1.25TiB sparse backing, last 16KiB block roundtrips at 64-bit byte offset, only 4 create writes/no volume scan; 77824 allocated bytes; password/recovery rotation and independent vector
+PASS 120 block-write/flush/torn-4KiB/volatile-cache interruptions: authenticated replay yields whole old/new 16KiB data, poisoned contexts refuse retries, new nonce is above pre-reboot range
+PASS 18 interrupted recovery-key header rotations retain at least one authenticated old/new credential and preserve ciphertext data
+PASS ciphertext/tag/index/nonce/UUID/padding tampering and cross-block substitution fail closed with zero plaintext output; one-header recovery, two-header refusal without format, recomputed public SHA cannot forge header MAC
+PASS damaged committed ciphertext journal refuses replay without writes; fresh-create boundary rechecks both persisted headers and refuses an existing volume even when caller skipped probe
+PASS REAL TMCBFS2 through production encryption: encrypted filesystem superblocks/trees/data/private account/CoW snapshots/local checkpoint, lock/reopen/mount/restore/GC and ciphertext-only backing (host adapter, NOT kernel/installer acceptance)
+PASS independent libsodium + hashlib: actual 600000-round password slot AND recovery slot unwrap the same random volume key; header MAC/SHA and 16KiB XChaCha20-Poly1305 ciphertext/AAD/nonce verified

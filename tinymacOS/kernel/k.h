@@ -34,12 +34,17 @@ void vm_unmap(u64 *, u64);
 int vm_access(u64 *,u64,u64);
 void *kmalloc(size_t);
 void kfree(void *);
+int kmalloc_owns(const void*);
 typedef struct {
     u64 r15, r14, r13, r12, r11, r10, r9, r8, rdi, rsi, rbp, rdx, rcx, rbx, rax, vec, err, rip, cs, flags, rsp,
         ss;
 } Frame;
 typedef struct {
-    int id, gen, at, write;
+    int id, gen;
+    u64 at;
+    int write;
+    u32 backend;
+    u64 inode, snapshot;
 } FD;
 typedef struct {
     int pid, app, dying;
@@ -194,7 +199,13 @@ u32 pci_find(u32 class24);
 u32 pci_find_after(u32 class24,u32 after);
 u32 pci_reg(u32 dev,int off);
 void *pci_mmio(u32 dev,int bar);
+void storage_init(void);
 void ahci_init(void);
+int ahci_count(void);u32 ahci_size(int);const char *ahci_model(int);
+int ahci_io(int,u32,u32,void*,int);int ahci_flush(int);
+void nvme_init(void);
+int nvme_count(void);u32 nvme_size(int);const char *nvme_model(int);
+int nvme_io(int,u32,u32,void*,int);int nvme_flush(int);
 int sata_count(void);
 u32 sata_size(int);
 const char *sata_model(int);
@@ -204,6 +215,7 @@ int volume_mount(Block*);
 int fs_snapshot(void*,u32);
 int fs_snap_create(const char *);
 int fs_snap_list(void *, int);
+int fs_snap_page(void *,int,int);
 int fs_snap_restore(const char *);
 int fs_snap_verify(const char *);
 int fs_snap_delete(const char *);
@@ -243,3 +255,12 @@ int session_record_password(const void*,const char*);
 
 int disk_edit(DiskEdit *,int);
 void volume_forget(int);
+
+int install_encryption(VaultRequest*);
+
+int install_encryption_ack(VaultRequest*);
+
+int install_encrypted_reset(int);
+
+int install_begin_mode(int,int);
+int disk_import(DiskImport*,int);

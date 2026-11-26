@@ -1,5 +1,6 @@
 #include "../kernel/k.h"
 #include "disklayout.h"
+#include "fs2_volume.h"
 #define MAXVAULT 16
 typedef struct {Vault v;int initialized,d;u32 base,extent;} Runtime;
 static Runtime volumes[MAXVAULT];
@@ -8,18 +9,34 @@ static int rawwrite(void*p,u32 l,const void*in){Runtime*r=p;return sata_io(r->d,
 static int rawflush(void*p){return sata_flush(((Runtime*)p)->d);}
 Vault *volume_vault(int d)
 {
+#ifdef TMC_FS2_BACKEND
+ extern int fs2_plain_volume(int);if(fs2_plain_volume(d))return 0;
+#endif
  if(d<0||d>=sata_count()||d>=MAXVAULT)return 0;Runtime*r=volumes+d;if(r->initialized)return &r->v;
  static Layout map;Medium m={sata_io,sata_flush,d,sata_size(d)};
  if(layout_read(&m,&map)!=2)return 0;
+#ifdef TMC_FS2_BACKEND
+ /* Recovery must not mistake arbitrary scalable data for v1 vault metadata. */
+ extern int fs2_disk_present(int,u32,u32);
+ if(fs2_disk_present(d,map.data,map.parts[1].end-map.data+1)!=0)return 0;
+#endif
  r->base=map.data;r->extent=map.parts[1].end-map.data+1;r->d=d;r->initialized=1;
  FvIo io={r,r->extent,rawread,rawwrite,rawflush};vault_probe(&r->v,io);return &r->v;
 }
-int volume_locked(void){Vault*v=volume_vault(volume_current());return v&&v->present&&(!v->unlocked||v->poison);}
+int volume_locked(void){
+#ifdef TMC_FS2_BACKEND
+ if(fs2_volume_locked(volume_current()))return 1;
+#endif
+ Vault*v=volume_vault(volume_current());return v&&v->present&&(!v->unlocked||v->poison);}
 /* This is the sole data-volume path for normal FS, metadata, snapshots and
  * Recovery backup/restore. GPT/EFI/Recovery OS remain intentionally public. */
 int volume_cipher_io(int d,u32 l,u32 n,void*p,int write)
 {
- if(!n)return 0;Vault*v=volume_vault(d);u32 base=v?volumes[d].base:0;
+ if(!n)return 0;
+#ifdef TMC_FS2_BACKEND
+ if(fs2_volume_sector_guard(d,l,n))return FV_STATE;
+#endif
+ Vault*v=volume_vault(d);u32 base=v?volumes[d].base:0;
  if(!v || l<base || l>=base+FV_PAYLOAD){
   if(v&&v->present&&l<base+FV_REQUIRED&&l+n>base+FV_PAYLOAD)return FV_STATE;
   if(v&&v->present&&l<base&&n>base-l)return FV_STATE;
@@ -32,7 +49,7 @@ int volume_cipher_io(int d,u32 l,u32 n,void*p,int write)
 static void status(Vault*v,VaultInfo*out,int error)
 {
  *out=(VaultInfo){0};if(!v){out->error=FV_STATE;return;}
- out->available=v->io.sectors>=FV_REQUIRED;out->enabled=v->present;out->locked=v->present&&!v->unlocked;out->state=v->h.state;out->progress=(u64)v->h.progress*100/FV_PAYLOAD;out->error=v->poison?FV_CORRUPT:error;out->protected_sectors=v->present?FV_PAYLOAD:0;
+ out->format=1;out->available=v->io.sectors>=FV_REQUIRED;out->enabled=v->present;out->locked=v->present&&!v->unlocked;out->state=v->h.state;out->progress=(u64)v->h.progress*100/FV_PAYLOAD;out->error=v->poison?FV_CORRUPT:error;out->protected_sectors=v->present?FV_PAYLOAD:0;
 }
 /* Explicit authenticated abort of an activation interrupted BEFORE sector 0
  * conversion. Never a generic corrupt-header reset: require an intact plaintext
@@ -49,7 +66,11 @@ static int abort_unstarted(Vault*v,const char*pass)
 }
 int filevault_control(int op,VaultRequest*q,VaultInfo*out)
 {
- u32 flags;rec_lock(&fs_gate,&flags);int d=q->disk<0?volume_current():q->disk;Vault*v=volume_vault(d);int r=FV_STATE;u8 entropy[128]={0};
+ u32 flags;rec_lock(&fs_gate,&flags);int d=q->disk<0?volume_current():q->disk;
+#ifdef TMC_FS2_BACKEND
+ int result;if(fs2_volume_control(op,d,q,out,&result)){rec_unlock(&fs_gate,flags);return result;}
+#endif
+ Vault*v=volume_vault(d);int r=FV_STATE;u8 entropy[128]={0};
  if(v){
   if(op==0)r=0;
   else if(op==1){u8 h[512];
@@ -77,5 +98,8 @@ int filevault_control(int op,VaultRequest*q,VaultInfo*out)
  * which later fail. No cached layout/key may target a deleted or moved extent. */
 void volume_forget(int d)
 {
+#ifdef TMC_FS2_BACKEND
+ fs2_volume_forget(d);
+#endif
  if(d>=0&&d<MAXVAULT){vault_lock(&volumes[d].v);erase(&volumes[d],sizeof volumes[d]);}
 }

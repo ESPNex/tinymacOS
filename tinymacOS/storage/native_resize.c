@@ -9,7 +9,8 @@
 #include "nativefs.h"
 #include "nativecow.h"
 #include "vault.h"
-static u8 image[NF_MAX_IMAGE*512] ALIGNED(512),verify[4096],header[512],catalog[512];
+u8 native_image_workspace[NF_MAX_IMAGE*512] ALIGNED(512);
+static u8 verify[4096],header[512],catalog[512];
 static NativeGeometry before,after;
 static Seal backupseal;
 typedef struct PACK {char name[28];u32 date,id,base,crc,gen;} Entry;
@@ -61,16 +62,16 @@ static int wr(Medium*m,u32 start,u32 limit,u32 at,u32 n,const void*p){
 static u32 position(NativeGeometry*g,int k){return k==9?g->backup:k*g->image;}
 static int readimage(Medium*m,DiskEdit*q,int k){
  u32 at=position(&before,k);
- for(u32 j=0;j<before.image;j+=8)if(rd(m,q->start,q->sectors,at+j,MIN(8,before.image-j),image+j*512))return DE_IO;
+ for(u32 j=0;j<before.image;j+=8)if(rd(m,q->start,q->sectors,at+j,MIN(8,before.image-j),native_image_workspace+j*512))return DE_IO;
  return 0;
 }
 static void update_image(int preserve_nodes){
  /* Preserve files, inode IDs, names, account sectors and all unknown fields.
   * Never copy bytes from a removed/free inode into the new live allocation. */
- native_geometry_store(image,&after);
- if(!preserve_nodes&&after.slots<before.slots)memset(image+NF_NODE*512+after.slots*64,0,(NF_MAX-after.slots)*64);
- else if(after.image>before.image){memset(image+before.image*512,0,(after.image-before.image)*512);if(!preserve_nodes)memset(image+NF_NODE*512+before.slots*64,0,(after.slots-before.slots)*64);}
- u8*sb=image+NF_SUPER*512;u64 total=(u64)after.sectors*512,used=(u64)after.image*512;
+ native_geometry_store(native_image_workspace,&after);
+ if(!preserve_nodes&&after.slots<before.slots)memset(native_image_workspace+NF_NODE*512+after.slots*64,0,(NF_MAX-after.slots)*64);
+ else if(after.image>before.image){memset(native_image_workspace+before.image*512,0,(after.image-before.image)*512);if(!preserve_nodes)memset(native_image_workspace+NF_NODE*512+before.slots*64,0,(after.slots-before.slots)*64);}
+ u8*sb=native_image_workspace+NF_SUPER*512;u64 total=(u64)after.sectors*512,used=(u64)after.image*512;
  memcpy(sb+0x70,&total,8);memcpy(sb+0x78,&used,8);memcpy(sb+3256,&total,8);memcpy(sb+3264,&used,8);
  u32 crc=native_crc32c(sb+32,4064);memcpy(sb,&crc,4);
 }
@@ -105,30 +106,30 @@ int native_resize(Medium*m,DiskEdit*q,int apply){
   * precedes EVERY write (even an explicitly confirmed operation). */
  for(int k=0;k<10;k++)if(present[k]){
   int r=readimage(m,q,k);if(r)return r;
-  if(!native_image_check(image,&before))return DE_PROTECTED;
-  if(k>0&&k<9){u32 c=native_crc32c(image,before.image*512);if(c!=entries[k-1].crc)return DE_PROTECTED;}
-  if(k==9){u8 sum[32];sha_bytes(image,before.image*512,sum);if(memcmp(sum,backupseal.digest,32))return DE_PROTECTED;}
-  for(u32 i=after.slots;i<before.slots;i++)if(image[NF_NODE*512+i*64])return DE_OCCUPIED;
+  if(!native_image_check(native_image_workspace,&before))return DE_PROTECTED;
+  if(k>0&&k<9){u32 c=native_crc32c(native_image_workspace,before.image*512);if(c!=entries[k-1].crc)return DE_PROTECTED;}
+  if(k==9){u8 sum[32];sha_bytes(native_image_workspace,before.image*512,sum);if(memcmp(sum,backupseal.digest,32))return DE_PROTECTED;}
+  for(u32 i=after.slots;i<before.slots;i++)if(native_image_workspace[NF_NODE*512+i*64])return DE_OCCUPIED;
  }
- if(!apply){erase(image,sizeof image);return 0;}
+ if(!apply){erase(native_image_workspace,sizeof native_image_workspace);return 0;}
  u32 limit=MAX(q->sectors,q->size);u8 incomplete[512]={0};memcpy(incomplete,"TMCRESZ3",8);
  if(wr(m,q->start,limit,0,1,incomplete))return DE_IO;
- /* Growing: last image first. Shrinking: first image first. An entire source
-  * image is buffered before overwriting it; no unread source is clobbered. */
+ /* Growing: last native_image_workspace first. Shrinking: first native_image_workspace first. An entire source
+  * native_image_workspace is buffered before overwriting it; no unread source is clobbered. */
  for(int step=0;step<10;step++){
   int k=after.image>before.image?9-step:step;if(!present[k])continue;
   int r=readimage(m,q,k);if(r)goto failed;
-  if(!k)memcpy(image,header,512); /* source header is now the refusal marker */
+  if(!k)memcpy(native_image_workspace,header,512); /* source header is now the refusal marker */
   update_image(0);
-  if(k>0&&k<9)snapcrc[k-1]=native_crc32c(image,after.image*512);
-  if(k==9){backupseal.sectors=after.image;sha_bytes(image,after.image*512,backupseal.digest);}
+  if(k>0&&k<9)snapcrc[k-1]=native_crc32c(native_image_workspace,after.image*512);
+  if(k==9){backupseal.sectors=after.image;sha_bytes(native_image_workspace,after.image*512,backupseal.digest);}
   u32 dst=position(&after,k);
   for(u32 j=0;j<after.image;j+=8){
-   /* Publish the live header/catalog only after every source image is safe. */
+   /* Publish the live header/catalog only after every source native_image_workspace is safe. */
    if(!k&&(j==0||j==NF_CAT)){
-    if(!j){if(wr(m,q->start,limit,dst+1,7,image+512))goto failed;}
-    else if(wr(m,q->start,limit,dst+j+1,7,image+(j+1)*512))goto failed;
-   }else if(wr(m,q->start,limit,dst+j,MIN(8,after.image-j),image+j*512))goto failed;
+    if(!j){if(wr(m,q->start,limit,dst+1,7,native_image_workspace+512))goto failed;}
+    else if(wr(m,q->start,limit,dst+j+1,7,native_image_workspace+(j+1)*512))goto failed;
+   }else if(wr(m,q->start,limit,dst+j,MIN(8,after.image-j),native_image_workspace+j*512))goto failed;
   }
  }
  /* No backup is invented if one did not exist. The unused seal is cleared. */
@@ -138,8 +139,8 @@ int native_resize(Medium*m,DiskEdit*q,int apply){
  if(wr(m,q->start,limit,NF_CAT,1,catalog))goto failed;
  native_geometry_store(header,&after);
  if(wr(m,q->start,limit,0,1,header))goto failed;
- erase(image,sizeof image);return 0;
-failed:erase(image,sizeof image);return DE_IO;
+ erase(native_image_workspace,sizeof native_image_workspace);return 0;
+failed:erase(native_image_workspace,sizeof native_image_workspace);return DE_IO;
 }
 /* Independent context: editing a second disk must never replace the mounted
  * volume's CoW maps/cache, even though both operations share fs_gate. */
@@ -149,9 +150,9 @@ static int cow_read_device(void*x,u32 l,void*p){(void)x;return rd(cow_view.m,cow
 static int cow_write_device(void*x,u32 l,const void*p){(void)x;return wr(cow_view.m,cow_view.start,cow_view.limit,l,1,p);}
 static int cow_backup_move(Medium*m,DiskEdit*q){
  if(!present[9])return 0;
- if(readimage(m,q,9))return DE_IO;update_image(1);backupseal.sectors=after.image;sha_bytes(image,after.image*512,backupseal.digest);
+ if(readimage(m,q,9))return DE_IO;update_image(1);backupseal.sectors=after.image;sha_bytes(native_image_workspace,after.image*512,backupseal.digest);
  u32 limit=MAX(q->sectors,q->size);
- for(u32 j=0;j<after.image;j+=8)if(wr(m,q->start,limit,after.backup+j,MIN(8,after.image-j),image+j*512))return DE_IO;
+ for(u32 j=0;j<after.image;j+=8)if(wr(m,q->start,limit,after.backup+j,MIN(8,after.image-j),native_image_workspace+j*512))return DE_IO;
  return 0;
 }
 static int resize_cow(Medium*m,DiskEdit*q,int apply){
@@ -161,33 +162,33 @@ static int resize_cow(Medium*m,DiskEdit*q,int apply){
  if(r!=1)return DE_PROTECTED;
  if(native_cow_can_resize(&offline_cow,after.image,after.backup-1))return DE_OCCUPIED;
  for(int k=-1;k<8;k++)if(k<0||(offline_cow.active&(1u<<k))){
-  for(u32 l=0;l<before.image;l++)if(native_cow_read(&offline_cow,(k+1)*before.image+l,image+l*512))return DE_PROTECTED;
-  if(!native_image_check(image,&before))return DE_PROTECTED;
-  for(u32 i=after.slots;i<before.slots;i++)if(image[NF_NODE*512+i*64])return DE_OCCUPIED;
+  for(u32 l=0;l<before.image;l++)if(native_cow_read(&offline_cow,(k+1)*before.image+l,native_image_workspace+l*512))return DE_PROTECTED;
+  if(!native_image_check(native_image_workspace,&before))return DE_PROTECTED;
+  for(u32 i=after.slots;i<before.slots;i++)if(native_image_workspace[NF_NODE*512+i*64])return DE_OCCUPIED;
  }
  if(rd(m,q->start,q->sectors,before.backup-1,1,&backupseal))return DE_IO;
  present[9]=!memcmp(backupseal.magic,"TMCSNAP2",8);
  if(present[9]){
-  if(backupseal.sectors!=before.image||backupseal.ver!=1||readimage(m,q,9)||!native_image_check(image,&before))return DE_PROTECTED;
-  u8 hash[32];sha_bytes(image,before.image*512,hash);if(memcmp(hash,backupseal.digest,32))return DE_PROTECTED;
-  for(u32 i=after.slots;i<before.slots;i++)if(image[NF_NODE*512+i*64])return DE_OCCUPIED;
+  if(backupseal.sectors!=before.image||backupseal.ver!=1||readimage(m,q,9)||!native_image_check(native_image_workspace,&before))return DE_PROTECTED;
+  u8 hash[32];sha_bytes(native_image_workspace,before.image*512,hash);if(memcmp(hash,backupseal.digest,32))return DE_PROTECTED;
+  for(u32 i=after.slots;i<before.slots;i++)if(native_image_workspace[NF_NODE*512+i*64])return DE_OCCUPIED;
  }
- if(!apply){erase(image,sizeof image);return 0;}
+ if(!apply){erase(native_image_workspace,sizeof native_image_workspace);return 0;}
  u8 incomplete[512]={0};memcpy(incomplete,"TMCRESZ3",8);
  if(wr(m,q->start,cow_view.limit,0,1,incomplete))return DE_IO;
  if(after.image>before.image&&cow_backup_move(m,q))goto cow_failed;
  if(native_cow_relayout(&offline_cow,after.image,after.backup-1))goto cow_failed;
  if(after.image<before.image&&cow_backup_move(m,q))goto cow_failed;
- if(readimage(m,q,0))goto cow_failed;memcpy(image,header,512);update_image(1);
+ if(readimage(m,q,0))goto cow_failed;memcpy(native_image_workspace,header,512);update_image(1);
  for(u32 j=0;j<after.image;j+=8){
-  if(!j){if(wr(m,q->start,cow_view.limit,1,7,image+512))goto cow_failed;}
-  else if(j==NF_CAT){if(wr(m,q->start,cow_view.limit,j+4,4,image+(j+4)*512))goto cow_failed;}
-  else if(wr(m,q->start,cow_view.limit,j,MIN(8,after.image-j),image+j*512))goto cow_failed;
+  if(!j){if(wr(m,q->start,cow_view.limit,1,7,native_image_workspace+512))goto cow_failed;}
+  else if(j==NF_CAT){if(wr(m,q->start,cow_view.limit,j+4,4,native_image_workspace+(j+4)*512))goto cow_failed;}
+  else if(wr(m,q->start,cow_view.limit,j,MIN(8,after.image-j),native_image_workspace+j*512))goto cow_failed;
  }
  if(!present[9])memset(&backupseal,0,sizeof backupseal);
  if(wr(m,q->start,cow_view.limit,after.backup-1,1,&backupseal)||native_cow_finish(&offline_cow))goto cow_failed;
  native_geometry_store(header,&after);
  if(wr(m,q->start,cow_view.limit,0,1,header))goto cow_failed;
- erase(image,sizeof image);return 0;
-cow_failed:erase(image,sizeof image);return DE_IO;
+ erase(native_image_workspace,sizeof native_image_workspace);return 0;
+cow_failed:erase(native_image_workspace,sizeof native_image_workspace);return DE_IO;
 }

@@ -1,4 +1,5 @@
 #include "path.h"
+#include "fileops.h"
 #include "sha256.h"
 #include "sha1.h"
 #include "date.h"
@@ -211,10 +212,10 @@ static int run(void)
     if (IS("sw_vers")) {
         if (n == 1) {
             ln("ProductName:       tinymacOS");
-            ln("ProductVersion:    10.2.4");
-            ln("BuildVersion:      30B15");
-        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.4");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B15");
+            ln("ProductVersion:    10.2.5");
+            ln("BuildVersion:      30B16");
+        } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.5");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B16");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -222,8 +223,8 @@ static int run(void)
     if (IS("uname")) {
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
-        else if (eq(V(1), "-r"))ln("10.2.4");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.4 30B15 x86_64");
+        else if (eq(V(1), "-r"))ln("10.2.5");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.5 30B16 x86_64");
         else return 2;
         return 0;
     }
@@ -716,6 +717,16 @@ static int run(void)
     if (IS("diskutil")) {
         static DiskInfo di;
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
+        if(n>=2&&eq(V(1),"importBackup")){
+            if((n!=5&&n!=6)||(n==6&&!eq(V(5),"--confirm")))return fail("diskutil importBackup diskS diskD <checkpoint> [--confirm] (solo Recupero)");
+            DiskImport q={.source=diskid(V(2)),.destination=diskid(V(3))};
+            if(q.source<0||q.destination<0||strlen(V(4))>=sizeof q.checkpoint)return fail("Dischi o nome checkpoint non validi.");
+            strset(q.checkpoint,V(4),sizeof q.checkpoint);
+            int r=sc(S_DISK,12,&q,0,0);ln(q.message);if(r)return 1;
+            say("Spazio di staging: ");num(q.staging_blocks*16384);ln(" byte.");
+            if(n==5)return 0;
+            q.confirm=DISK_IMPORT_CONFIRM;r=sc(S_DISK,13,&q,0,0);ln(q.message);return !!r;
+        }
         if ((n==2||n==3)&&eq(V(1),"list")) {
             int only=n==3?diskid(V(2)):-1;if(n==3&&only<0)return fail("Identificatore disco non valido.");
             for(int i=0;i<di.count;i++){
@@ -945,19 +956,21 @@ static int run(void)
         return sc(S_SPAWN, d.dir ? FINDER : TEXTEDIT, pa, 0, 0) < 0;
     }
     if (IS("rm") || IS("rmdir"))return remove_command(IS("rmdir"));
+    if(IS("pbcopy")||IS("pbpaste")){
+        static Clipboard q;
+        if(n!=1)return fail("Uso: comando | pbcopy oppure pbpaste");
+        if(IS("pbcopy")){if(A.inlen>=CLIP_BYTES)return fail("Testo troppo lungo per gli appunti (256 KiB).");memset(&q,0,sizeof q);q.kind=CLIP_TEXT;memcpy(q.data,A.in,A.inlen);if(strlen(q.data)!=A.inlen)return fail("Gli appunti accettano testo senza byte NUL.");return sc(S_CLIPBOARD,1,&q,0,0)<0;}
+        if(sc(S_CLIPBOARD,0,&q,0,0)<0||q.kind!=CLIP_TEXT)return fail("Nessun testo negli appunti.");emit(q.data,strlen(q.data));return 0;
+    }
     if (n < 2 || path(pa, 1))return 2;
     if (IS("cp") || IS("mv")) {
-        if (n != 3 || path(pb, 2) || sc(S_STAT, pa, &d, 0, 0))return 1;
-        if (!sc(S_STAT, pb, &b, 0, 0) && b.dir) {
-            char dest[PATHLEN];
-            if (absolutepath(dest, pb, leaf(pa)))return 1;
-            strset(pb, dest, PATHLEN);
-        }
-        if (eq(pa, pb))return fail("Origine e destinazione coincidono.");
-        if (IS("mv"))return !!sc(S_MOVE, pa, pb, 0, 0);
-        if (d.dir || d.size > MAXFILE)return 1;
-        int z = readfile(pa, bytes, MAXFILE);
-        return z < 0 || writefile(pb, bytes, z) != z;
+        int recursive=IS("cp")&&n==4&&(eq(V(1),"-r")||eq(V(1),"-R")),at=recursive?2:1;
+        if(n!=at+2||path(pa,at)||path(pb,at+1)||sc(S_STAT,pa,&d,0,0))return fail("Uso: cp [-R] origine destinazione | mv origine destinazione");
+        if(!sc(S_STAT,pb,&b,0,0)&&b.dir){char dest[PATHLEN];if(absolutepath(dest,pb,leaf(pa)))return 1;strset(pb,dest,PATHLEN);}
+        if(eq(pa,pb))return fail("Origine e destinazione coincidono.");
+        if(IS("mv"))return sc(S_MOVE,pa,pb,0,0)<0?fail("Spostamento non riuscito: destinazione esistente, permessi o ciclo."):0;
+        if(d.dir&&!recursive)return fail("Per copiare cartelle usa cp -R.");
+        int r=fileop_copy(pa,pb);return r<0?fail(r==FILEOP_EXISTS?"Destinazione esistente: nessun file sovrascritto.":r==FILEOP_CYCLE?"Copia rifiutata: origine uguale o cartella discendente.":"Copia non completata: verifica spazio e permessi."):0;
     }
     for (int k = 1; k < n; k++) {
         if (path(pa, k))return 1;

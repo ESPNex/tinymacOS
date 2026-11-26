@@ -2,11 +2,14 @@
 #include "volume.h"
 #include "filebrowser.h"
 #include "click_pair.h"
+#include "fileops.h"
 static ClickPair item_click;
-static char cwd[PATHLEN] = HOME, clipfile[PATHLEN], field[PATHLEN], note[96], cwdarg[PATHLEN];
-static Dirent files[NSLOTS];
-static int n, sel = -1, listview, offset, dialog;
+static char cwd[PATHLEN] = HOME, field[PATHLEN], note[96], cwdarg[PATHLEN];
+static Dirent files[BROWSER_PAGE];
+static int n, sel = -1, listview, offset, dialog, pagebase, more;
 static u32 rev;
+static Clipboard clipboard;
+static int paste_selected;
 static char prefix[48];
 static u64 prefixTick;
 static char trail[12][PATHLEN];
@@ -69,10 +72,11 @@ static const char *pretty(const char *s)
 }
 static void reload(void)
 {
-    n = browser_list(cwd, files, NSLOTS);
+    n = browser_page(cwd, files, BROWSER_PAGE, pagebase, &more);
+    while(!n&&pagebase){pagebase=MAX(0,pagebase-BROWSER_PAGE);n=browser_page(cwd,files,BROWSER_PAGE,pagebase,&more);}
     if (n < 0) {
-        strset(cwd, HOME, PATHLEN);
-        n = browser_list(cwd, files, NSLOTS);
+        pagebase=0;strset(cwd, HOME, PATHLEN);
+        n = browser_page(cwd, files, BROWSER_PAGE, pagebase, &more);
     }
     if (n < 0)
         n = 0;
@@ -80,6 +84,12 @@ static void reload(void)
         sel = n - 1;
     offset = MAX(0, MIN(offset, n - 1));
     rev = si.fsrev;
+}
+static int nextpage(int direction)
+{
+ if((direction>0&&!more)||(direction<0&&!pagebase))return 0;
+ if(direction>0&&pagebase>0x7fffffff-2*BROWSER_PAGE)return 0;
+ pagebase=MAX(0,pagebase+direction*BROWSER_PAGE);offset=0;sel=-1;item_click.armed=0;prefix[0]=0;reload();return 1;
 }
 static void go(const char *p)
 {
@@ -104,7 +114,7 @@ static void go(const char *p)
     item_click.armed=0;
     sel = -1;
     prefix[0] = 0;
-    offset = 0;
+    offset = pagebase = 0;
     note[0] = 0;
     reload();
     ui_motion(FX_SLIDE);
@@ -196,16 +206,18 @@ static void act(int k)
     } else if (k == ACT_DELETE && sel >= 0) {
         dialog = 4;
         strset(field, files[sel].name, sizeof field);
-    } else if (k == ACT_COPY && sel >= 0 && !files[sel].dir) {
-        strset(clipfile, p, PATHLEN);
-        strset(note, "File copiato", 96);
-    } else if (k == ACT_PASTE && clipfile[0]) {
-        char name[64] = "Copia di ";
-        append(name, leaf(clipfile), sizeof name);
-        if (absolutepath(p, cwd, name) < 0 || copyfile(clipfile, p) < 0)
-            strset(note, "Impossibile incollare: verifica nome e cartella", 96);
-        else
-            strset(note, "Copia creata", 96);
+    } else if ((k == ACT_COPY||k==ACT_CUT) && sel >= 0) {
+        if(k==ACT_CUT&&files[sel].ro){strset(note,"Impossibile tagliare un elemento in sola lettura.",96);return;}
+        memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_FILE;clipboard.cut=k==ACT_CUT;strset(clipboard.data,p,sizeof clipboard.data);
+        if(sc(S_CLIPBOARD,1,&clipboard,0,0)<0)strset(note,"Appunti non disponibili.",96);
+        else strset(note,k==ACT_CUT?"Elemento tagliato: scegli la destinazione e Incolla.":"Elemento copiato negli appunti.",96);
+    } else if (k == ACT_PASTE) {
+        if(sc(S_CLIPBOARD,0,&clipboard,0,0)<0||clipboard.kind!=CLIP_FILE)return;
+        char dir[PATHLEN],placed[PATHLEN],source[PATHLEN];strset(source,clipboard.data,PATHLEN);strset(dir,cwd,PATHLEN);
+        if(paste_selected&&sel>=0&&files[sel].dir)pathsel(dir);
+        int move=clipboard.cut,r=fileop_place(source,dir,move,placed);paste_selected=0;
+        strset(note,r==FILEOP_CYCLE?"Origine e destinazione coincidono o creano un ciclo.":r<0?"Operazione non riuscita: sorgente conservata, controlla spazio e permessi.":move?"Elemento spostato.":"Copia creata.",96);
+        if(!r&&move&&!sc(S_CLIPBOARD,0,&clipboard,0,0)&&clipboard.kind==CLIP_FILE&&clipboard.cut&&eq(clipboard.data,source))sc(S_CLIPBOARD,2,0,0,0);
         reload();
     } else if (k == ACT_PROPS && sel >= 0) {
         dialog = 5;
@@ -323,6 +335,7 @@ static void paint(void)
         if (n > vis)
             append(stat, " · scorri con le frecce", 96);
     }
+    if(pagebase||more){stat[0]=0;addnum(stat,pagebase+1,sizeof stat);append(stat," - ",sizeof stat);addnum(stat,pagebase+n,sizeof stat);button(aw-78,fy+1,28,"<",0);button(aw-44,fy+1,28,">",0);}
     if (aw - x > 300)
         Text(bootpath(cwd) ? aw - 102 : x + 154, fy + 7, stat, F_SMALL, SUB);
     if (dialog == 7)inspect_draw();
@@ -347,16 +360,32 @@ static int entryat(int x,int y){int left=side()+15;if(x<left||x>=aw-12||y<102||y
 static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int hit=0;for(int j=0;j<9;j++)if(y>=ny(j)-2&&y<ny(j)+25&&y<ah-26){go(paths[j]);hit=1;break;}if(!hit)return;}
     sel=sidebar?-1:entryat(x,y);Dirent wd;int writable=!sc(S_STAT,cwd,&wd,0,0)&&!wd.ro;
     unsigned m=AMASK(ACT_VIEW);if(sel>=0){m|=AMASK(ACT_OPEN)|AMASK(ACT_PROPS);if(!files[sel].dir)m|=AMASK(ACT_PREVIEW);if(bundle(files+sel))m|=AMASK(ACT_PACKAGE);
-        if(!files[sel].dir&&!bootpath(cwd))m|=AMASK(ACT_COPY);if(writable&&!files[sel].ro)m|=AMASK(ACT_RENAME)|AMASK(ACT_DELETE);
+        m|=AMASK(ACT_COPY);if(writable&&!files[sel].ro)m|=AMASK(ACT_CUT)|AMASK(ACT_RENAME)|AMASK(ACT_DELETE);
     }else if(writable)m|=AMASK(ACT_NEW)|AMASK(ACT_FILE);
-    if(writable&&clipfile[0])m|=AMASK(ACT_PASTE);sc(S_CONTEXT,m,e->d,0,0);}
+    paste_selected=sel>=0&&files[sel].dir;
+    if(!sc(S_CLIPBOARD,0,&clipboard,0,0)&&clipboard.kind==CLIP_FILE&&(paste_selected?!files[sel].ro:writable))m|=AMASK(ACT_PASTE);sc(S_CONTEXT,m,e->d,0,0);}
 static void event(Event *e)
 {
+    if(e->type==EV_DRAG_BEGIN){
+        if(dialog)return;int i=entryat(e->a,e->b);if(i<0)return;char p[PATHLEN];if(!absolutepath(p,cwd,files[i].name))sc(S_DRAG,p,e->d,0,0);item_click.armed=0;return;
+    }
+    if(e->type==EV_DROP){
+        if(dialog)return;char dir[PATHLEN],placed[PATHLEN];strset(dir,e->d?HOME "/Desktop":cwd,PATHLEN);
+        if(e->d==2){Dirent target;if(sc(S_LIST,HOME "/Desktop",&target,1,e->a)!=1||!target.dir||absolutepath(dir,HOME "/Desktop",target.name))return;}
+        if(!e->d){int nav=-1;if(e->a<side())for(int j=0;j<9;j++)if(e->b>=ny(j)-2&&e->b<ny(j)+25)nav=j;
+            if(nav>=0)strset(dir,paths[nav],PATHLEN);else{int i=entryat(e->a,e->b);if(i>=0&&files[i].dir)absolutepath(dir,cwd,files[i].name);}}
+        Dirent from;int move=!e->c&&!sc(S_STAT,e->text,&from,0,0)&&!from.ro;int r=fileop_place(e->text,dir,move,placed);
+        strset(note,r==FILEOP_CYCLE?"Spostamento annullato: stessa cartella o ciclo.":r<0?"Trascinamento non riuscito: controlla spazio e permessi.":move?"Elemento spostato.":"Copia creata.",96);reload();item_click.armed=0;return;
+    }
     if(e->type==EV_CONTEXT){item_click.armed=0;context(e);return;}
     if (e->type == EV_SCROLL) {
         item_click.armed=0;
         if (dialog == 7) inspect_nav(e->a>0 ? K_UP : K_DOWN);
-        else if (!dialog) offset = MAX(0, MIN(MAX(0,n-visible()), offset-e->a*(listview ? 3 : cols())));
+        else if (!dialog){
+            if(e->a<0&&offset>=MAX(0,n-visible())&&nextpage(1))return;
+            if(e->a>0&&!offset&&nextpage(-1)){offset=MAX(0,n-visible());return;}
+            offset=MAX(0,MIN(MAX(0,n-visible()),offset-e->a*(listview?3:cols())));
+        }
         return;
     }
     if (baseevent(e))
@@ -410,9 +439,11 @@ static void event(Event *e)
             }
             if (k == '[' || k == ']')historygo(k == '[' ? -1 : 1);
             if (k == 'n' || k == 'N')act(e->c ? 30 : ACT_NEW);
-            if (k == 'c')
+            paste_selected=0;
+            if(k=='x'||k=='X')act(ACT_CUT);
+            if (k == 'c'||k=='C')
                 act(ACT_COPY);
-            if (k == 'v')
+            if (k == 'v'||k=='V')
                 act(ACT_PASTE);
             if (k == 'r')
                 act(ACT_RENAME);
@@ -458,6 +489,8 @@ static void event(Event *e)
         else if (k == K_UP || k == K_DOWN || k == K_LEFT || k == K_RIGHT) {
             if (!n)return;
             int step = listview ? 1 : cols();
+            if((k==K_DOWN||k==K_RIGHT)&&sel==n-1&&nextpage(1))sel=-1;
+            else if((k==K_UP||k==K_LEFT)&&sel==0&&nextpage(-1))sel=n;
             sel = MAX(0, MIN(n - 1, sel + (k == K_UP ? -step : k == K_DOWN ? step : k == K_LEFT ? -1 : 1)));
             if (sel < offset)
                 offset = sel;
@@ -476,6 +509,7 @@ static void event(Event *e)
                 return;
             }
     } else if (y >= ah - 35) {
+        if((pagebase||more)&&x>=aw-78){nextpage(x<aw-48?-1:1);return;}
         if (bootpath(cwd))return;
         if (x >= S + 15 && x < S + 95)
             act(ACT_NEW);

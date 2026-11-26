@@ -1,0 +1,19 @@
+PASS every live/metadata/account/snapshot/backup sector is ciphertext and roundtrips; migration resumes after reboot with recovery key
+PASS all transaction write/flush cuts, with volatile write cache and torn sector writes; journal restores both ciphertext and complete tag table
+PASS monotonic nonce reservation survives reboot and failed writes; wrong password denied, correct recovery key works
+PASS authenticated reads fail closed on tampering; recovery-key rotation revokes the previous key
+PASS password rotation revokes old password; decryption is resumable and preserves concurrent writes to already-converted sectors
+PASS interrupted recovery-key header commits select a valid old or new keyslot without losing the volume key
+PASS one corrupt header recovers from its redundant copy; two corrupt headers refuse access without reinitialization
+PASS native authenticated volume engine
+PASS independent Python PBKDF2-HMAC-SHA256 and BLAKE2b authenticate the actual header; libsodium independently unwraps the master key and decrypts the actual XChaCha20-Poly1305 sector
+PASS every live/metadata/account/snapshot/backup sector is ciphertext and roundtrips; migration resumes after reboot with recovery key
+PASS all transaction write/flush cuts, with volatile write cache and torn sector writes; journal restores both ciphertext and complete tag table
+PASS monotonic nonce reservation survives reboot and failed writes; wrong password denied, correct recovery key works
+PASS authenticated reads fail closed on tampering; recovery-key rotation revokes the previous key
+PASS password rotation revokes old password; decryption is resumable and preserves concurrent writes to already-converted sectors
+PASS 208 interrupted-conversion write/flush/torn-sector cases: authenticated reboot, journal replay, full migration resume, every payload byte preserved
+PASS interrupted recovery-key header commits select a valid old or new keyslot without losing the volume key
+PASS one corrupt header recovers from its redundant copy; two corrupt headers refuse access without reinitialization
+PASS 208 interrupted-decryption write/flush/torn-sector cases: authenticated resume and every original plaintext byte restored
+PASS native authenticated volume engine

@@ -47,7 +47,7 @@ try:
   g.key('f11');g.visible('tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.visible('GPT');g.shot('large-eligible-destination');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.shot('large-install-complete');g.key('ret');g.p.wait(timeout=20)
  verify();ok('Real AHCI identifies 1TiB, CLI accepts LBA beyond 128GiB, actual GUI installer writes a 96MiB native extent near disk end; primary/backup GPT CRCs and foreign entry/canaries preserved')
  with Installed('/not-attached',w,ev,'large-installed',disk='target',boot_disk=True) as g:
-  g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -productVersion','10.2.4');g.cmd('echo HIGH_LBA_PERSISTENCE > Documents/large-proof.txt');time.sleep(.8);g.cmd('cat Documents/large-proof.txt','HIGH_LBA_PERSISTENCE');g.shot('large-UEFI-desktop');g.cmd('off');g.p.wait(timeout=20)
+  g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('sw_vers -productVersion','10.2.5');g.cmd('echo HIGH_LBA_PERSISTENCE > Documents/large-proof.txt');time.sleep(.8);g.cmd('cat Documents/large-proof.txt','HIGH_LBA_PERSISTENCE');g.shot('large-UEFI-desktop');g.cmd('off');g.p.wait(timeout=20)
  with Installed('/not-attached',w,ev,'large-bios-installed',disk='target',boot_disk=True,launcher=root/'tools/run-bios-installed.sh') as g:
   g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('cat Documents/large-proof.txt','HIGH_LBA_PERSISTENCE');g.shot('large-BIOS-desktop');g.cmd('off');g.p.wait(timeout=20)
  ok('BIOS coexistence menu and OpenDuet load the high-LBA installation from the 1TiB disk without ISO; document persists across UEFI/BIOS')

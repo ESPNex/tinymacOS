@@ -21,7 +21,7 @@ void kmain(struct Boot *b)
     platform_init();
     boot_logstr("[boot] platform enumeration complete\n");
     boot_progress(81);
-    ahci_init();
+    storage_init();
     bootfs_init();
     fs_init();
     session_init();

@@ -28,3 +28,7 @@ void native_geometry_store(void *header,const NativeGeometry*);
 u32 native_crc32c(const void*,u32);
 int native_image_check(const void*,const NativeGeometry*);
 int native_resize(Medium*,DiskEdit*,int);
+
+/* Shared full legacy image scratch. Kernel callers hold fs_gate; installer
+ * state rejects concurrent disk edits/maintenance until activation finishes. */
+extern u8 native_image_workspace[NF_MAX_IMAGE*512];

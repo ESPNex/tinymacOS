@@ -1,0 +1,10 @@
+PASS actual external import adapters source=plain destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=plain destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS external import kernel adapters normal
+PASS actual external import adapters source=plain destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=plain destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS external import kernel adapters sanitized
