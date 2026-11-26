@@ -18,6 +18,12 @@
       "url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/84f09b719cd9bfc1a8e5349efdafcf1a73811cd8/workspace/webkit-tmc/test-results/heap/vm-system-source-hashes.json",
       "sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420",
       "bytes": 110559
+    },
+    {
+      "path": "test-results/megablock/megablock-evidence.tar.xz",
+      "url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/5c2febbbd6aec5ebe86d358f92dfa2ee2b9cd3cb/workspace/webkit-tmc/test-results/megablock/megablock-evidence.tar.xz",
+      "sha256": "a7501b55514b797bf1d02dbcfbb66d4d7a21b3ef5de4c8cbb06a8170079c315c",
+      "bytes": 334152
     }
   ]
 }

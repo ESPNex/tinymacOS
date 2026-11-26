@@ -1,0 +1,9 @@
+{
+  "commit": "23a3d9001767ddc9a4b120b6d7db33ca21230ab8",
+  "scope": "Unmodified upstream sources for requirement audit ONLY; not compiled as WTF",
+  "sha256": {
+    "Source/WTF/wtf/RunLoop.h": "b3eab4aa3b2bc6e8a117a29454a91b3a498f1d20ce34c767b7c8445b78f86880",
+    "Source/WTF/wtf/generic/RunLoopGeneric.cpp": "2eeb0df8ec0a6dcac6eea449768b926dcadbbdd325bb7b12a4eedc7670ae05dc",
+    "Source/WTF/wtf/posix/ThreadingPOSIX.cpp": "8117b083ec893adb2b11fa790f9801315af2612d4c717d9a684ac3277d509a54"
+  }
+}

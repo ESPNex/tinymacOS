@@ -3,6 +3,10 @@
 /* tinymacOS-only source API. Never put this path before host system headers
  * for the host transport. No foreign libc/libpthread ABI compatibility. */
 #include "tmc_pthread.h"
+#include <time.h>
+#define pthread_condattr_setclock tmc_pthread_condattr_setclock
+#define pthread_condattr_getclock tmc_pthread_condattr_getclock
+#define pthread_cond_timedwait tmc_pthread_cond_timedwait
 #define pthread_attr_destroy tmc_pthread_attr_destroy
 #define pthread_attr_init tmc_pthread_attr_init
 #define pthread_attr_setdetachstate tmc_pthread_attr_setdetachstate

@@ -31,9 +31,13 @@
     "native_vm_heap_guest_and_c_allocation_exports": true,
     "noexceptions_cpp_new_delete_and_static_guards_host_contracts": true,
     "noexceptions_cpp_native_functional_1_4_8_cpu_with_live_transfer_buffers": true,
-    "unanchored_cpp_allocation_churn_smp_stress": false,
+    "unanchored_cpp_allocation_churn_smp_stress": true,
     "explicit_cpp_global_initialization_and_DSO_finalization_host_contracts": true,
-    "explicit_cpp_lifecycle_native_1_4_8_cpu_tested": true
+    "explicit_cpp_lifecycle_native_1_4_8_cpu_tested": true,
+    "native_monotonic_timespec_condition_deadlines_1_4_8_cpu": true,
+    "native_task_timer_cancel_queue_1_4_8_cpu": true,
+    "actual_WTF_RunLoop_compiled_and_integrated": false,
+    "validated_UTC_realtime_clock": false
   },
   "release_ready": false,
   "maintenance_241": {
@@ -247,5 +251,38 @@
     "diagnostic_iso_published": false,
     "document": "RUNTIME-MEGABLOCK.md",
     "verification": "test-results/megablock/verification.json"
+  },
+  "events_megablock": {
+    "passed": true,
+    "total_cases": 38,
+    "host_gates_including_source_requirement_audit": 18,
+    "fresh_base_and_probe_build_gates": 5,
+    "native_guest_cases": 15,
+    "guest_kinds": [
+      "events",
+      "heap",
+      "cpp",
+      "lifecycle",
+      "pthread"
+    ],
+    "cpus_per_kind": [
+      1,
+      4,
+      8
+    ],
+    "clock": "MONOTONIC only, 100Hz, no trusted UTC/REALTIME",
+    "pthread_timedwait": "Explicit CLOCK_MONOTONIC condition only; default REALTIME returns ENOTSUP",
+    "new_events_cases_per_cpu": {
+      "ordered_callbacks": 68,
+      "concurrent_producers": 4,
+      "cancel_dispatch_races": 400,
+      "cpp_RAII_tasks": 400
+    },
+    "upstream_audit": "Three unmodified hash-pinned source files, six checked requirements; NOT a WTF build",
+    "unanchored_cpp_stress_scope": "Original workload with explicit heap cache and trim; default eager release not claimed optimized",
+    "actual_WTF_RunLoop_integrated": false,
+    "document": "RUNTIME-EVENTS.md",
+    "verification": "test-results/events/verification.json",
+    "diagnostic_iso_published": false
   }
 }

@@ -82,7 +82,7 @@ int tmc_pthread_condattr_destroy(tmc_pthread_condattr_t*a){return a?0:EINVAL;}
 int tmc_pthread_condattr_setpshared(tmc_pthread_condattr_t*a,int p)
 {if(!a)return EINVAL;int r=private(p);if(!r)a->pshared=p;return r;}
 int tmc_pthread_cond_init(tmc_pthread_cond_t*c,const tmc_pthread_condattr_t*a)
-{if(!c)return EINVAL;if(a){int r=private(a->pshared);if(r)return r;}*c=(tmc_pthread_cond_t)TMC_PTHREAD_COND_INITIALIZER;return 0;}
+{if(!c)return EINVAL;if(a){int r=private(a->pshared);if(r)return r;if(a->clock!=TMC_CLOCK_REALTIME&&a->clock!=TMC_CLOCK_MONOTONIC)return EINVAL;}*c=(tmc_pthread_cond_t)TMC_PTHREAD_COND_INITIALIZER;if(a)c->clock=a->clock;return 0;}
 int tmc_pthread_cond_destroy(tmc_pthread_cond_t*c)
 {if(!c||c->dead)return EINVAL;if(__atomic_load_n(&c->waiters,__ATOMIC_ACQUIRE))return EBUSY;c->dead=1;return 0;}
 int tmc_pthread_cond_wait_until(tmc_pthread_cond_t*c,tmc_pthread_mutex_t*m,uint64_t deadline)
@@ -113,4 +113,23 @@ int tmc_pthread_once(tmc_pthread_once_t*o,void(*callback)(void))
  o->state=2;o->owner=0;
  if(tmc_condition_broadcast(&o->changed)||tmc_mutex_unlock(&o->gate))__builtin_trap();
  return result(0,saved);
+}
+
+int tmc_pthread_condattr_setclock(tmc_pthread_condattr_t*a,int clock)
+{
+ if(!a)return EINVAL;
+ if(clock!=TMC_CLOCK_MONOTONIC&&clock!=TMC_CLOCK_REALTIME)return EINVAL;
+ a->clock=clock;return 0;
+}
+int tmc_pthread_condattr_getclock(const tmc_pthread_condattr_t*a,int*out)
+{
+ if(!a||!out)return EINVAL;
+ *out=a->clock;return 0;
+}
+int tmc_pthread_cond_timedwait(tmc_pthread_cond_t*c,tmc_pthread_mutex_t*m,const struct tmc_timespec*absolute)
+{
+ if(!c||c->dead)return EINVAL;
+ uint64_t deadline;int r=tmc_time_deadline_ticks(absolute,&deadline);if(r)return r;
+ if(c->clock!=TMC_CLOCK_MONOTONIC)return c->clock==TMC_CLOCK_REALTIME?ENOTSUP:EINVAL;
+ return tmc_pthread_cond_wait_until(c,m,deadline);
 }

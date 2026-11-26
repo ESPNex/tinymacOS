@@ -7,7 +7,7 @@ for mode in normal sanitized;do
  flags=''
  if [ "$mode" = sanitized ];then flags='-fsanitize=address,undefined -fno-omit-frame-pointer';fi
  objects=''
- for source in posix/src/heap.c posix/src/sync.c posix/src/threads.c posix/src/pthread.c tests/threads_host_transport.c tests/cpp_vm_transport.c tests/pthread_contract.c tests/pthread_cases.c;do
+ for source in posix/src/heap.c posix/src/sync.c posix/src/threads.c posix/src/pthread.c posix/src/time.c tests/threads_host_transport.c tests/cpp_vm_transport.c tests/pthread_contract.c tests/pthread_cases.c;do
   name=$(basename "$source").o
   extra='';if [ "$source" = tests/pthread_cases.c ];then extra="-I$ROOT/posix/pthread-headers";fi
   gcc -std=c11 -O1 -g -Wall -Wextra -Werror -fno-builtin -pthread $flags $extra -I"$ROOT/cpp/include" -I"$ROOT/posix/include" -I"$ROOT/native-abi" -I"$ROOT/tests" -c "$ROOT/$source" -o "$OUT/$name"

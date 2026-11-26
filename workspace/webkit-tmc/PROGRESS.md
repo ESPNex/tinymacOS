@@ -1,10 +1,12 @@
 # Safari / WebKit — stato verificato del port
 
-## Obiettivo 10.3: megablocco runtime integrato
+## Obiettivo 10.3: clock, deadline e coda eventi
 
-Sviluppo su `main`. **31/31 casi PASS**: 15 gate host, quattro build diagnostiche da base OS fresca, dodici guest heap/C++/lifecycle/pthread su 1/4/8 CPU. Cache heap opt-in limitata a 256 KiB, trim esplicito e gestione di pressione/errori; adattatore pthread sorgente con create/join, mutex ownership/recursive, condition, once e TSD. Consumer C e C++/RAII/static locali/distruttori integrati. **Ripristinato il corpo originale dello stress C++ non ancorato: PASS 1/4/8 CPU**, 4×1000 round e 12000 distruttori invariati, stessa deadline 145 s, cache abilitata e zero riserve dopo trim. Il vecchio timeout resta evidenza storica negativa; il percorso eager-release di default non viene dichiarato ottimizzato. Dettagli: [RUNTIME-MEGABLOCK.md](RUNTIME-MEGABLOCK.md).
+Sviluppo su `main`. **38/38 casi PASS**: 18 gate host, cinque build diagnostiche da base OS fresca, quindici guest events/heap/C++/lifecycle/pthread su 1/4/8 CPU. Aggiunti clock MONOTONIC e sleep a risoluzione dichiarata 100Hz, condition pthread con clock/deadline assoluta, coda concorrente FIFO/task/timer/cancellazione/stop. Quattro producer, 400 gare cancel/dispatch e 400 task C++ con RAII; pulizia esattamente una volta e zero heap/DSO residui. Rieseguito integralmente il precedente stress C++ originale non ancorato con cache/trim, senza cambiare round o deadline. Dettagli: [RUNTIME-EVENTS.md](RUNTIME-EVENTS.md).
 
-Non sono ancora consegnati il vero WTF/JSC/WebCore o Safari funzionante, né un runtime POSIX/C++ completo. Nessuna ISO intermedia pubblicata; binari 10.2.5 invariati.
+Audit di tre sorgenti upstream verificati byte per byte al pin, con sei riscontri: il percorso POSIX di WTF usa anche WallTime, quindi la nuova condition MONOTONIC **non è un drop-in**. Realtime resta ENOTSUP; la coda nativa non è WTF::RunLoop già compilato/integrato.
+
+Non sono ancora consegnati il vero WTF/JSC/WebCore o Safari funzionante, né un runtime POSIX/C++ completo. Nessuna ISO intermedia pubblicata; binari 10.2.5 invariati. Ricevute e archivio precedente conservati su GitHub, con offload locale verificato per il budget 128MB.
 
 ## Ripresa precedente: base 10.2.5 / 30B16
 

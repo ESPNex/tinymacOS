@@ -1,5 +1,7 @@
 # 10.3 — megablocco runtime integrato
 
+> Questo documento registra il precedente megablocco al commit `5c2febb` (31 casi). Il successivo [RUNTIME-EVENTS.md](RUNTIME-EVENTS.md) estende clock/condition/events e la matrice; non sommare i conteggi. L'archivio precedente, rimosso solo dalla copia locale dopo verifica byte-equal, rimane al [commit immutabile](https://raw.githubusercontent.com/ESPNex/tinymacOS/5c2febbbd6aec5ebe86d358f92dfa2ee2b9cd3cb/workspace/webkit-tmc/test-results/megablock/megablock-evidence.tar.xz).
+
 ## Ambito e risultato
 
 Estensione congiunta di heap, compatibilità pthread e integrazione C++: non una nuova funzione isolata. La 10.2.5 distribuita non viene modificata; nessuna ISO diagnostica viene pubblicata. **Non è ancora WebKit né Safari funzionante.** Rimangono richiesti il vero WTF/JavaScriptCore/WebCore e la UI Safari classica identica al riferimento, senza renderer sostitutivo.

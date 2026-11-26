@@ -10,13 +10,15 @@ Il primo blocco nuovo è l’allocatore VM e il sottoinsieme C di allocazione, d
 
 ## 10.3 in sviluppo
 
-Dopo l’heap VM, aggiunto il sottoinsieme C++ opt-in di new/delete e guard degli static locali. **13 gate host e profili funzionali guest 1/4/8 CPU PASS**, quattro worker e 12.000 distruttori per profilo. Lo stress senza buffer vivi ha un timeout separato ancora aperto: dettagli e distinzione dei carichi in `RUNTIME-CPP.md`. Nessun build di WTF/JSC/WebCore o UI Safari ancora consegnato; nessuna ISO 10.3 pubblicata.
+Heap VM con cache/trim opt-in, new/delete/guard e lifecycle C++ esplicito, adattatore pthread sorgente, clock MONOTONIC e coda task/timer nativa. Il precedente megablocco ha chiuso lo stress C++ originale non ancorato con cache abilitata e scadenza invariata; la nuova matrice integra clock/deadline/events e riesegue i probe heap/C++/lifecycle/pthread su 1/4/8 CPU. Risultati e limiti correnti in [RUNTIME-EVENTS.md](RUNTIME-EVENTS.md); la coda nativa **non è WTF::RunLoop già compilato**.
+
+L'audit degli upstream fissati evidenzia una differenza ancora bloccante: il percorso POSIX di WTF usa anche WallTime; il nostro realtime resta ENOTSUP. Nessun build di WTF/JSC/WebCore o UI Safari ancora consegnato, nessuna ISO 10.3 pubblicata.
 
 ## Componenti presenti
 
 - `posix/`: adattatori prefissati `tmc_` per rete, descriptor, VM, clock, TLS per-thread, sincronizzazione, ciclo di vita dei thread e heap VM. `libc_alloc.c` esporta soltanto le cinque funzioni C di allocazione in modo opt-in. Non sostituiscono una libc/POSIX completa.
 - `native-abi/`, `kernel-overlay/`: header e sorgenti d'integrazione con il sistema nativo; verificare la direzione di ogni sincronizzazione.
-- `cpp/`: allocazione C++ senza eccezioni e guard x86-64 Itanium; non una standard library o un runtime C++ completo.
+- `cpp/`: allocazione C++ senza eccezioni, guard x86-64 Itanium e lifecycle esplicito; non una standard library o un runtime C++ completo.
 - `platform/`: lettura dello stato d'aspetto del sistema, non un'interfaccia browser.
 - `upstream-reference/`, `upstream.lock.json`: sottoinsieme di riferimento e commit fissato; non un checkout completo del motore.
 - `tools/`, `tests/`, `test-results/`: harness, contratti host e ricevute guest.
@@ -28,6 +30,8 @@ Da questa directory:
 ```sh
 python3 tools/run-tests.py
 python3 tools/run-tests.py --guest
+# Matrice corrente estesa, risultati esterni e dipendenze QA richieste:
+python3 tools/run-tests.py --events-megablock --output /var/tmp/events-results/acceptance.json
 ```
 
 La seconda modalità richiede toolchain e media QA esterni. Le ricevute della pipeline 10.1.5 riportano 29 regressioni kernel/runtime e verificano l'associazione al kernel di produzione. I risultati restano legati ai relativi hash e non validano automaticamente modifiche successive.
