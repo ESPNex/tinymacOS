@@ -1,9 +1,9 @@
 {
   "application_name": "Safari",
-  "target_os_release": "2.4.5 Levante after explicitly authorized intermediate 2.4.4",
+  "target_os_release": "Development after tinymacOS 10.2.5 / 30B16; browser release version not assigned",
   "visual_reference": "Safari desktop classico, tutti i temi di TinymacOS",
-  "release_policy": "User explicitly authorized current non-browser ISO as GitHub release 2.4.4 Levante after source backup. Later 2.4.5 Levante requires working real WebKit/Safari, representative HTTPS/HTML/CSS/JavaScript/theme/security acceptance. No backend-only image may be called Safari.",
-  "compatibility_goal": "Ampia compatibilità con siti moderni; universal compatibility is not a guarantee or a finite testable criterion.",
+  "release_policy": "10.2.5 is already published without Safari. Browser delivery requires real target WebKit/JSC/WebCore, representative HTTPS/HTML/CSS/JavaScript, identical classic desktop Safari UI, all tinymacOS themes and security acceptance. No backend-only diagnostic or empty browser shell may be called Safari.",
+  "compatibility_goal": "Ampia compatibilit\u00e0 con siti moderni; universal compatibility is not a guarantee or a finite testable criterion.",
   "gates": {
     "authored_sources_saved_in_workspace": true,
     "current_milestone_host_contract_tests": true,
@@ -26,7 +26,9 @@
     "native_thread_pointer_and_explicit_errno_cells_guest_tested": true,
     "native_private_word_parking_mutex_condition_guest_tested": true,
     "native_managed_thread_startup_join_tsd_destructors_guest_tested": true,
-    "freestanding_cpp_raii_native_c_abi_consumer_guest_tested": true
+    "freestanding_cpp_raii_native_c_abi_consumer_guest_tested": true,
+    "native_vm_heap_host_contract_tests": true,
+    "native_vm_heap_guest_and_c_allocation_exports": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -171,5 +173,13 @@
     "elf_cpp_tls": false,
     "wtf_jsc_compiled": false,
     "full_runtime_suite_passed": 29
-  }
+  },
+  "current_baseline": {
+    "release": "10.2.5",
+    "build": "30B16",
+    "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5",
+    "source_commit": "c124fde1de76655f70d50aca571a4b09e41a408b",
+    "production_os_sources_modified_by_heap_milestone": false
+  },
+  "heap_scope": "Correctness-first in-band VM heap and opt-in five C allocation symbols: 12 current host gates PASS plus actual native 1/4/8 CPU probes, 9000 randomized operations each, four concurrent workers and zero final reservations. Not hardened/bmalloc/GC/JIT, full libc or WTF integration; see RUNTIME-HEAP.md."
 }

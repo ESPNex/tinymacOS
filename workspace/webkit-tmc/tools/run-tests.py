@@ -8,11 +8,13 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 ap=argparse.ArgumentParser(description=__doc__)
 ap.add_argument('--guest',action='store_true')
+ap.add_argument('--output',type=Path,default=root/'test-results/milestone-tests.json')
 args=ap.parse_args()
 cases=[
  ('workspace-budget',['python3',str(root.parent/'check-snapshot-budget.py')]),
  ('source-sync',['python3',str(root/'tools/sync-system-sources.py'),'--check']),
  ('backend-contract',['sh',str(root/'tools/test-backend.sh')]),
+ ('heap-contract',['sh',str(root/'tools/test-heap.sh')]),
  ('threads-contract',['sh',str(root/'tools/test-threads.sh')]),
  ('sync-contract',['sh',str(root/'tools/test-sync.sh')]),
  ('vm-contract',['python3',str(root/'tools/test-vm.py')]),
@@ -42,6 +44,10 @@ if args.guest:
   ('guest-threads-smp1',['env','TMC_SMP=1','python3',str(root/'tools/test-guest-threads.py')]),
   ('guest-threads-smp4',['env','TMC_SMP=4','python3',str(root/'tools/test-guest-threads.py')]),
   ('guest-threads-smp8',['env','TMC_SMP=8','python3',str(root/'tools/test-guest-threads.py')]),
+  ('guest-heap-probe-build',['env','TMC_PROBE_KIND=heap','TMC_PROBE_BASE=/var/tmp/tmc-webkit-vm-system','TMC_PROBE_BUILD=/var/tmp/tmc-webkit-heap-guest','bash',str(root/'tools/build-guest-network-probe.sh')]),
+  ('guest-heap-smp1',['env','TMC_SMP=1','python3',str(root/'tools/test-guest-heap.py')]),
+  ('guest-heap-smp4',['env','TMC_SMP=4','python3',str(root/'tools/test-guest-heap.py')]),
+  ('guest-heap-smp8',['env','TMC_SMP=8','python3',str(root/'tools/test-guest-heap.py')]),
  ]
 results=[]
 for name,cmd in cases:
@@ -55,8 +61,8 @@ for name,cmd in cases:
  if name.endswith('probe-build') and results[-1]['exit_code']!=0:break
 # Save complete original frames externally, then retain lossless terminal crops
 # in the small shared workspace. Does not affect a guest assertion or its result.
-subprocess.run(['python3',str(root/'tools/compact-qa-evidence.py')],check=True)
-(root/'test-results/milestone-tests.json').write_text(json.dumps({
+if args.guest:subprocess.run(['python3',str(root/'tools/compact-qa-evidence.py')],check=True)
+args.output.write_text(json.dumps({
  'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
  'guest_requested':args.guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
 sys.exit(0 if all(r['exit_code']==0 for r in results) else 1)

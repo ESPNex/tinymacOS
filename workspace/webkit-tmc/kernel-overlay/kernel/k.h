@@ -34,12 +34,17 @@ void vm_unmap(u64 *, u64);
 int vm_access(u64 *,u64,u64);
 void *kmalloc(size_t);
 void kfree(void *);
+int kmalloc_owns(const void*);
 typedef struct {
     u64 r15, r14, r13, r12, r11, r10, r9, r8, rdi, rsi, rbp, rdx, rcx, rbx, rax, vec, err, rip, cs, flags, rsp,
         ss;
 } Frame;
 typedef struct {
-    int id, gen, at, write;
+    int id, gen;
+    u64 at;
+    int write;
+    u32 backend;
+    u64 inode, snapshot;
 } FD;
 typedef struct {
     int pid, app, dying;
@@ -140,6 +145,7 @@ int install_writing(void);
 
 void video_present(const u32 *, int, int, int, int, int, int);
 int video_setmode(int, int);
+int video_runtime_available(void);
 void fx_setup(void);
 void fx_new(void *);
 
@@ -193,7 +199,13 @@ u32 pci_find(u32 class24);
 u32 pci_find_after(u32 class24,u32 after);
 u32 pci_reg(u32 dev,int off);
 void *pci_mmio(u32 dev,int bar);
+void storage_init(void);
 void ahci_init(void);
+int ahci_count(void);u32 ahci_size(int);const char *ahci_model(int);
+int ahci_io(int,u32,u32,void*,int);int ahci_flush(int);
+void nvme_init(void);
+int nvme_count(void);u32 nvme_size(int);const char *nvme_model(int);
+int nvme_io(int,u32,u32,void*,int);int nvme_flush(int);
 int sata_count(void);
 u32 sata_size(int);
 const char *sata_model(int);
@@ -203,6 +215,7 @@ int volume_mount(Block*);
 int fs_snapshot(void*,u32);
 int fs_snap_create(const char *);
 int fs_snap_list(void *, int);
+int fs_snap_page(void *,int,int);
 int fs_snap_restore(const char *);
 int fs_snap_verify(const char *);
 int fs_snap_delete(const char *);
@@ -219,7 +232,7 @@ int bootfile(const char*,const u8**,u32*);void execpath(int,char*);int spawn_com
 void disk_info(DiskInfo*);int disk_operation(int,int);int fs_touch(const char*);
 /* Retail logs stay in a bounded boot ring; GOP only until first frame and only
  * when requested. COM1 remains a diagnostic-build-only channel. */
-void boot_loginit(void);void boot_logstr(const char *);void boot_lognum(u64);void boot_console_stop(void);int boot_logcopy(char *,unsigned,unsigned);
+void boot_progress(int);void boot_loginit(void);void boot_logstr(const char *);void boot_lognum(u64);void boot_console_stop(void);int boot_logcopy(char *,unsigned,unsigned);
 int bootconfig_disk(int,u32);
 
 /* Detailed runtime tracing is never linked into retail images. */
@@ -228,3 +241,26 @@ int bootconfig_disk(int,u32);
 #define lognum(...) ((void)0)
 #define loghex(...) ((void)0)
 #endif
+
+#include "vault.h"
+int vault_random(u8*,size_t);
+Vault *volume_vault(int);
+int volume_current(void);
+int volume_locked(void);
+int volume_cipher_io(int,u32,u32,void*,int);
+int filevault_control(int,VaultRequest*,VaultInfo*);
+int session_check_password(const char*);
+
+int session_record_password(const void*,const char*);
+
+int disk_edit(DiskEdit *,int);
+void volume_forget(int);
+
+int install_encryption(VaultRequest*);
+
+int install_encryption_ack(VaultRequest*);
+
+int install_encrypted_reset(int);
+
+int install_begin_mode(int,int);
+int disk_import(DiskImport*,int);

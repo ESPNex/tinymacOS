@@ -1,7 +1,6 @@
 #include "k.h"
 #include "wordwaitabi.h"
 extern volatile u32 *lapic_mmio(void);
-#include "../boot/splash.h"
 Process proc[NPROC];
 Task task[NTASK];
 u64 ticks, switches, busy_ticks;
@@ -160,6 +159,8 @@ bad:
 int spawn(int app, const char *arg)
 {
     if (app < 0 || app > LASTAPP)return -1;
+    if(boot.recovery&&app!=DESKTOP&&app!=TERMINAL&&app!=DISKUTIL&&app!=INSTALLER&&
+       !(app==SETTINGS&&arg&&eq(arg,"@vault")))return -1;
     char path[PATHLEN];
     execpath(app, path);
     u32 fl;
@@ -448,7 +449,7 @@ void scheduler_init(void)
     smp_start();
     logstr("[sched] smp done\n");
     boot_logstr("[boot] CPUs online: ");boot_lognum(ncpu_online);boot_logstr("\n");
-    splash_bar(&boot, 100);
+    boot_progress(100);
     boot_logstr("[boot] services ready; handoff to login\n");
 #ifdef TMC_DEBUG
     {

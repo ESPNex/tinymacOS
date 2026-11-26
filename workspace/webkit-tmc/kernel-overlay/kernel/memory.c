@@ -294,6 +294,7 @@ typedef struct H {
 } H;
 static u8 arena[8192 * 1024] ALIGNED(16);
 static H *first;
+int kmalloc_owns(const void*p){return (u64)p>=(u64)arena&&(u64)p<(u64)arena+sizeof arena;}
 static void *kmalloc_l(size_t n) {
     n = (n + 15) & ~15ull;
     if (!first) {

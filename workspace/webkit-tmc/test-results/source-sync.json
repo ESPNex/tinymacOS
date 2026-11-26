@@ -1,5 +1,21 @@
 [
   {
+    "path": "include/base.h",
+    "sha256": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30"
+  },
+  {
+    "path": "include/diskedit.h",
+    "sha256": "6eb53689649c8c0a74b28c985b5db6aee4e88bb31628d94858e35e597a090471"
+  },
+  {
+    "path": "include/partition.h",
+    "sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6"
+  },
+  {
+    "path": "include/clipboard.h",
+    "sha256": "565350cb21fb95ecc7e8ac923746837cc8230da9322c022486b0ffdeeb656556"
+  },
+  {
     "path": "include/inputdiag.h",
     "sha256": "2007d9b06cf6dd469700707149efea0b3dc1e318672d56e215a9ce655b3417ba"
   },
@@ -25,7 +41,7 @@
   },
   {
     "path": "kernel/sched.c",
-    "sha256": "5b148e1afd4c4a212b089b1098ee669d090cbf2c7ec99ec61aff6ba3121343e6"
+    "sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380"
   },
   {
     "path": "include/uaccess_gate.h",
@@ -57,19 +73,19 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "9dbed9c132d104d7251abdc084501974a1246c3b787ed6fc0d1d67a5b519a49c"
+    "sha256": "67754ab34fa9efc7249e34ce7b09593968f17945fcbc86408c4106aa92f980e1"
   },
   {
     "path": "kernel/k.h",
-    "sha256": "55c5d608647fddfb902fc981efc9a993e67bbf4adb7f38ba45bd5f843d096428"
+    "sha256": "a20134df70e19921c51195b19ee9f6f7abef6dc1cd0217b5d8fa29ec2a495e8d"
   },
   {
     "path": "desktop/gfx.c",
-    "sha256": "486a49cc732a798ef40961883b7017c8a2c0204a78c32af0fe9d7c0085f10162"
+    "sha256": "337eea6411beb1673d8804eb71349f6fcd191a48c237b2f2b2ecab6035238dfd"
   },
   {
     "path": "kernel/memory.c",
-    "sha256": "5068207b9986e5a4e30c5ecf803921df20a7dfc7ae2a32bcdd6d3679ab483dbc"
+    "sha256": "2cc9ae18a0e980a54a1e4c2215f46e12285d745d6964536df39feb364667bac9"
   },
   {
     "path": "kernel/uservm.c",
@@ -77,7 +93,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "bfd358a40ddb6f00230141db3c96b8e447d6651f1659300397e8674e44e05a03"
+    "sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22"
   },
   {
     "path": "include/vmabi.h",

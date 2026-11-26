@@ -1,0 +1,18 @@
+{
+  "reason": "Historical full-frame backend screenshots offloaded after independent GitHub byte-for-byte verification; not current Safari acceptance",
+  "commit": "c124fde1de76655f70d50aca571a4b09e41a408b",
+  "files": [
+    {
+      "path": "guest-network-result.png",
+      "bytes": 412663,
+      "sha256": "b10c9048d7c73ff89aed872e2ee00bce04a3ab5ba921fd9b88fd2f35ca3f945a",
+      "immutable_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/c124fde1de76655f70d50aca571a4b09e41a408b/workspace/webkit-tmc/test-results/guest-network/guest-network-result.png"
+    },
+    {
+      "path": "failure-network-probe.png",
+      "bytes": 396773,
+      "sha256": "45fbc79f8dc80924432c065d85f9b8038c982ee332949edce8dae176b517f378",
+      "immutable_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/c124fde1de76655f70d50aca571a4b09e41a408b/workspace/webkit-tmc/test-results/guest-network/failure-network-probe.png"
+    }
+  ]
+}

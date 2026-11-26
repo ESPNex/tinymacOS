@@ -1,0 +1,38 @@
+{
+  "guest-heap-smp1.png": {
+    "full_frame_sha256": "2bf3ff66cce591d598a0b8b8abcab5b350c0045fedb412d6cf9840b554404708",
+    "crop_sha256": "a9c8524deadd49217cb4908a082926d89b3c382158c7e8c47d415b54c6a26a8f",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-heap-qa-0gbn4q17/evidence/heap-pass.png",
+    "scope": "Lossless actual Terminal pixels; cropped without scaling/repainting. Full scratch is not durable; this crop is preserved in Git."
+  },
+  "guest-heap-smp4.png": {
+    "full_frame_sha256": "0aba33de6ccd576391b456151066f0d202656bbace4a3ed06c645e44ada05182",
+    "crop_sha256": "e0b7c445084587ee9b33d4168225cc79478e46f731dd4201e9ca3e7b72b33556",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-heap-qa-wizr9ll3/evidence/heap-pass.png",
+    "scope": "Lossless actual Terminal pixels; cropped without scaling/repainting. Full scratch is not durable; this crop is preserved in Git."
+  },
+  "guest-heap-smp8.png": {
+    "full_frame_sha256": "1d0dc27ffa803c8dd4767e73281afaf31755967d4422c85da553316f57aa2ad5",
+    "crop_sha256": "8688fcfa4a50fb2426ef244cfa653b85948b62c716f38548052b1b19d34e06b8",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-heap-qa-ya9t47by/evidence/heap-pass.png",
+    "scope": "Lossless actual Terminal pixels; cropped without scaling/repainting. Full scratch is not durable; this crop is preserved in Git."
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "baseline": "tinymacOS 10.2.5 / 30B16",
+  "baseline_source_commit": "c124fde1de76655f70d50aca571a4b09e41a408b",
+  "host_gates_passed": 12,
+  "guest_cpu_profiles": [
+    1,
+    4,
+    8
+  ],
+  "guest_random_operations_per_profile": 9000,
+  "full_historical_guest_suite_rerun": false,
+  "engine_compiled": false,
+  "browser_ui_implemented": false,
+  "production_os_sources_changed": false,
+  "diagnostic_iso_uploaded": false,
+  "budget_bytes_before_receipt": 126481391,
+  "workspace_limit_bytes": 128000000,
+  "evidence_sha256": {
+    "guest-heap-build.json": "feb395c9e4dae8edb32d383c212124a279aea0510b3e111518f8eab259f6310a",
+    "guest-heap-media.json": "d1e8fccde146075a42fb7b3abb170ec3ca72645ca0d1a328ea6850cf7bc234bc",
+    "guest-heap-smp1-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-heap-smp1.json": "d252756809c59edda4b4325ad2eb747fecd18440a62cf88a0abfc85c2b0382eb",
+    "guest-heap-smp1.png": "a9c8524deadd49217cb4908a082926d89b3c382158c7e8c47d415b54c6a26a8f",
+    "guest-heap-smp4-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-heap-smp4.json": "ad7275481003d799f8c99501d20cfe9d26c5f048ccfc4dbafab49c092b9af793",
+    "guest-heap-smp4.png": "e0b7c445084587ee9b33d4168225cc79478e46f731dd4201e9ca3e7b72b33556",
+    "guest-heap-smp8-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-heap-smp8.json": "cf6c2714977e7dc1235554759fd50d00b7cf47a8b8872d66868bf020aa9ed6ef",
+    "guest-heap-smp8.png": "8688fcfa4a50fb2426ef244cfa653b85948b62c716f38548052b1b19d34e06b8",
+    "guest-heap-source-hashes.json": "02d2ea45465377c133b007a494e06ff2f17401597bc250e43db65a7b79b033e3",
+    "host-milestone.json": "e505ed87dd605a1393f1b3e4f695abfdfe239354c2dc40b24b330ea2dfa06639",
+    "terminal-crops.json": "06f4b358611618d0a2027a77503cfbec27e524bc10b4c5f0d93e435280d8c461",
+    "vm-system-source-hashes.json": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420"
+  }
+}

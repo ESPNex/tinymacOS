@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OS=$(realpath "$ROOT/../../tinymacOS")
 KIND=${TMC_PROBE_KIND:-network}
-case "$KIND" in network|vm|smp|tls|sync|threads) ;; *) echo 'Unknown probe kind' >&2;exit 2;; esac
+case "$KIND" in network|vm|smp|tls|sync|threads|heap) ;; *) echo 'Unknown probe kind' >&2;exit 2;; esac
 BASE=${TMC_PROBE_BASE:-/var/tmp/tmc-maintenance-241}
 OUT=${TMC_PROBE_BUILD:-/var/tmp/tmc-webkit-network-guest}
 python3 "$OS/tools/media_path.py" "$OUT" "$OUT/tinymacOS-qa-probe-x86_64.iso"
@@ -16,6 +16,7 @@ from pathlib import Path
 import sys,hashlib,json,os
 r,o,d=map(Path,sys.argv[1:4]);kind=sys.argv[4];files=[r/('tests/guest_'+kind+'_probe.c'),*sorted((r/'posix/src').glob('*.c')),*sorted((r/'posix/include').glob('*.h')),*sorted((r/'posix/libc-headers').rglob('*.h')),o/'userspace/lib.h',o/'userspace/start.S',o/'userspace/layout.ld',o/'kernel/string.c',o/'crypto/sha256.c',o/'kernel/net.c',o/'kernel/syscall.c',*sorted((o/'include').glob('*.h'))]
 if kind=='threads':files += [r/'tests/thread_cases.h',r/'tests/threads_cpp_smoke.cpp']
+if kind=='heap':files += [r/'tests/heap_cases.h',r/'tests/heap_cpp_smoke.cpp']
 manifest={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
 (Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-'+kind+'-source-hashes.json')).write_text(json.dumps(manifest,indent=2))
 PY
@@ -27,14 +28,17 @@ fi
 for f in "$BASE/"*.elf "$BASE/"*.EFI "$BASE/"kext-*.o "$BASE/KernelCache"; do cp "$f" "$OUT/"; done
 C=(-std=gnu11 -O2 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fpie -fno-plt -nostdinc -isystem "$(gcc -print-file-name=include)" -I"$ROOT/posix/libc-headers" -I"$ROOT/posix/include" -Iinclude -Iuserspace -Wall -Wextra -Werror)
 OBJS=()
-for f in native_syscall network clock_entropy poll descriptors vm tls errno sync threads; do
+SOURCES=(native_syscall network clock_entropy poll descriptors vm tls errno sync threads)
+if [[ "$KIND" == heap ]];then SOURCES+=(heap libc_alloc);fi
+for f in "${SOURCES[@]}"; do
  gcc "${C[@]}" -c "$ROOT/posix/src/$f.c" -o "$OUT/probe-$f.o"
  OBJS+=("$OUT/probe-$f.o")
 done
 gcc "${C[@]}" -c "$ROOT/tests/guest_${KIND}_probe.c" -o "$OUT/probe-main.o"
 OBJS+=("$OUT/probe-main.o")
-if [[ "$KIND" == threads ]];then
- g++ "${C[@]/-std=gnu11/-std=c++20}" -nostdinc++ -fno-exceptions -fno-rtti -c "$ROOT/tests/threads_cpp_smoke.cpp" -o "$OUT/probe-cpp.o"
+if [[ "$KIND" == threads || "$KIND" == heap ]];then
+ cpp="$ROOT/tests/threads_cpp_smoke.cpp";[[ "$KIND" != heap ]] || cpp="$ROOT/tests/heap_cpp_smoke.cpp"
+ g++ "${C[@]/-std=gnu11/-std=c++20}" -nostdinc++ -fno-exceptions -fno-rtti -c "$cpp" -o "$OUT/probe-cpp.o"
  OBJS+=("$OUT/probe-cpp.o")
 fi
 for f in userspace/start.S kernel/string.c crypto/sha256.c;do
@@ -47,6 +51,8 @@ python3 tools/tramontana-assets.py "$OUT"
 python3 tools/control-svg.py "$OUT"
 python3 tools/system_volume.py "$OUT" disk
 python3 tools/system_volume.py "$OUT" live
+# Recovery is sealed into the copied EFI loaders; preserve its original bytes.
+cp "$BASE/System-recovery.vol" "$OUT/System-recovery.vol"
 TOOLROOT=${TOOLROOT:-/var/tmp/tmc/tools/root} TMC_BUILD="$OUT" bash tools/iso.sh
 # Stable QA name is created ONLY from the ISO emitted by this build.
 mv -f "$OUT/$TMC_ISO" "$OUT/tinymacOS-qa-probe-x86_64.iso"
@@ -57,7 +63,7 @@ r,d=map(Path,sys.argv[1:3]);kind=sys.argv[3];manifest={'qa_only':True,'gcc':subp
 production=Path(os.environ.get('TMC_PRODUCTION_BUILD','/var/tmp/tmc-webkit-vm-system'))
 for name in ('kernel.elf','KernelCache'):assert (d/name).read_bytes()==(production/name).read_bytes(), 'QA kernel differs from current production build'
 manifest['iso_filename']='tinymacOS-qa-probe-x86_64.iso';manifest['production_build']=str(production);manifest['kernel_equals_current_production']=True
-if kind=='threads':manifest['g++']=subprocess.check_output(['g++','--version'],text=True).splitlines()[0]
+if kind in ('threads','heap'):manifest['g++']=subprocess.check_output(['g++','--version'],text=True).splitlines()[0]
 (Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-'+kind+'-build.json')).write_text(json.dumps(manifest,indent=2))
 PY
 printf '\nQA ONLY - DO NOT DISTRIBUTE: %s\n' "$OUT/tinymacOS-qa-probe-x86_64.iso"

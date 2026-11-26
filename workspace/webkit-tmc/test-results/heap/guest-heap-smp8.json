@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "requested_cpus": 8,
+  "scope": "native VM-backed allocator and C allocation exports with a freestanding C++ RAII consumer; NOT full libc/libc++, bmalloc, WTF/JSC/WebCore or Safari",
+  "iso_sha256": "f78191520172d1f549e602345d926513b353f679511014b6318507ad98bad742",
+  "external_evidence": "/var/tmp/tmc-heap-qa-ya9t47by/evidence",
+  "randomized_operations": 9000,
+  "concurrent_workers": 4,
+  "cross_thread_free": true,
+  "zero_final_vm_reservations": true,
+  "native_libc_allocation_symbols": true,
+  "freestanding_cpp_raii": true,
+  "no_unresolved_executable_symbols": true,
+  "alignment_up_to_2MiB": true,
+  "calloc_zero_and_overflow": true,
+  "failed_realloc_preserves_object": true,
+  "split_coalesce_and_in_place_realloc": true,
+  "cross_cpu_execution_required": true
+}

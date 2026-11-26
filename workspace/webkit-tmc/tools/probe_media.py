@@ -8,6 +8,9 @@ def verify_probe_media(image,kind):
  image=Path(image);manifest=json.loads((results/('guest-'+kind+'-build.json')).read_text())
  assert image.name==manifest['iso_filename']=='tinymacOS-qa-probe-x86_64.iso'
  assert digest(image)==manifest['sha256'][image.name]
+ assert digest(image.parent/'command.elf')==manifest['sha256']['command.elf'],'Stale diagnostic executable'
+ probe_source=json.loads((results/('guest-'+kind+'-source-hashes.json')).read_text())
+ for name,expected in probe_source.items():assert digest(name)==expected,'Probe source changed after compilation: '+name
  production=Path(os.environ.get('TMC_PRODUCTION_BUILD','/var/tmp/tmc-webkit-vm-system'))
  assert str(production)==manifest['production_build'] and manifest['kernel_equals_current_production']
  for name in ['kernel.elf','KernelCache']:

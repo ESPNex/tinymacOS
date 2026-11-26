@@ -1,5 +1,11 @@
 # Safari / WebKit — stato verificato del port
 
+## Ripresa corrente: base 10.2.5 / 30B16
+
+La release 10.2.5 è pubblicata e verificata; non viene ripubblicata da questo lavoro. Ramo `work/safari-webkit-runtime`: allocatore nativo VM con mutex, cinque simboli C di allocazione opt-in e prove condivise host/guest. Dettagli e risultati correnti in `RUNTIME-HEAP.md`. Il vecchio overlay viene aggiornato **dai** sorgenti OS autorevoli tramite `--capture`, non applicato al contrario. Nessun sorgente OS di produzione modificato. WTF/JSC/WebCore e interfaccia Safari non sono ancora compilati.
+
+**Tutte le sezioni 2.4.x seguenti sono storico**, non la versione corrente o una promessa di versione futura. Il requisito attuale resta UI identica e WebKit completo, senza renderer sostitutivo.
+
 ## Criterio di consegna
 
 Applicazione **Safari**, UI desktop classica, integrazione con tutti i temi di tinymacOS. Progetto indipendente da Apple.

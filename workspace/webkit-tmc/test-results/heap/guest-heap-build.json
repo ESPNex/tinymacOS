@@ -1,0 +1,14 @@
+{
+  "qa_only": true,
+  "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
+  "sha256": {
+    "command.elf": "25d57ceae5a1d8a38b315dcc5eac382e99d8c8ef9407eb976dbaa950cf0f3000",
+    "kernel.elf": "da7bf5a0a665b9b19ad0f45ab53020a5a0a4f1a159738326e0c0b7b37accb052",
+    "KernelCache": "a69fa3932bb6c665f9b0383e256446f0053a640b7d0a58f270e4e36f4b821ac5",
+    "tinymacOS-qa-probe-x86_64.iso": "f78191520172d1f549e602345d926513b353f679511014b6318507ad98bad742"
+  },
+  "iso_filename": "tinymacOS-qa-probe-x86_64.iso",
+  "production_build": "/var/tmp/tmc-webkit-heap-system",
+  "kernel_equals_current_production": true,
+  "g++": "g++ (Debian 14.2.0-19) 14.2.0"
+}

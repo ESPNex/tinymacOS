@@ -1,5 +1,6 @@
 #pragma once
 #include "base.h"
+#include "diskedit.h"
 #define UBASE 0x8000000000ull
 #define UEND (UBASE+0x40000000ull)
 #define NAPPS 17
@@ -18,11 +19,17 @@ enum {REMOVE_BAD_PATH=1,REMOVE_NOT_EMPTY,REMOVE_READ_ONLY,REMOVE_IO,REMOVE_WRONG
 #define HOME "/Users/User"
 #define DOCS HOME "/Documents"
 enum {DESKTOP, FINDER, TERMINAL, TEXTEDIT, SETTINGS, ABOUT, CALC, CALENDAR, MONITOR, GALLERY, INSTALLER, DISKUTIL, NOTES, STICKIES, TIMEMACHINE, NETSURF, COMMAND};
-enum {S_TICKS = 3, S_SLEEP, S_EXIT, S_SPAWN, S_PS, S_KILL, S_INFO, S_ALLOC, S_FREE, S_WOPEN, S_WDRAW, S_WLIST, S_WGET, S_EVENT, S_SEND, S_INPUT, S_PRESENT, S_STAT, S_LIST, S_CREATE, S_REMOVE, S_MOVE, S_OPEN, S_CLOSE, S_READ, S_WRITE, S_POWER, S_PREF, S_STARTARG, S_THREAD, S_DEVICES, S_SESSION, S_AUTH_BEGIN, S_AUTH_STEP, S_LOCK, S_SEEK, S_SETUP_CODE, S_INSTALL, S_CONTEXT, S_DISK, S_EXEC, S_ARGV, S_STDOUT, S_RESULT, S_RETURN, S_TOUCH, S_ART, S_SNAP, S_TRACE, S_RESMODE, S_KEXT, S_NET, S_VM, S_BOOTCONFIG, S_TLS, S_WORDWAIT, S_THREADFINISH, S_INPUTDIAG};
-enum {EV_KEY = 1, EV_MOUSE, EV_CLICK, EV_RESIZE, EV_THEME, EV_ACTION, EV_CLOSE, EV_OPEN, EV_CONTEXT, EV_CONTEXT_READY, EV_POINTER_ABS, EV_SCROLL};
-enum {ACT_NEW = 1, ACT_OPEN, ACT_SAVE, ACT_COPY, ACT_PASTE, ACT_RENAME, ACT_DELETE, ACT_VIEW, ACT_PARENT, ACT_PROPS, ACT_PREVIEW, ACT_SYSTEM, ACT_FILE, ACT_PACKAGE};
+enum {S_TICKS = 3, S_SLEEP, S_EXIT, S_SPAWN, S_PS, S_KILL, S_INFO, S_ALLOC, S_FREE, S_WOPEN, S_WDRAW, S_WLIST, S_WGET, S_EVENT, S_SEND, S_INPUT, S_PRESENT, S_STAT, S_LIST, S_CREATE, S_REMOVE, S_MOVE, S_OPEN, S_CLOSE, S_READ, S_WRITE, S_POWER, S_PREF, S_STARTARG, S_THREAD, S_DEVICES, S_SESSION, S_AUTH_BEGIN, S_AUTH_STEP, S_LOCK, S_SEEK, S_SETUP_CODE, S_INSTALL, S_CONTEXT, S_DISK, S_EXEC, S_ARGV, S_STDOUT, S_RESULT, S_RETURN, S_TOUCH, S_ART, S_SNAP, S_TRACE, S_RESMODE, S_KEXT, S_NET, S_VM, S_BOOTCONFIG, S_TLS, S_WORDWAIT, S_THREADFINISH, S_INPUTDIAG, S_FILEVAULT, S_CLIPBOARD, S_DRAG};
+enum {EV_KEY = 1, EV_MOUSE, EV_CLICK, EV_RESIZE, EV_THEME, EV_ACTION, EV_CLOSE, EV_OPEN, EV_CONTEXT, EV_CONTEXT_READY, EV_POINTER_ABS, EV_SCROLL, EV_DRAG_BEGIN, EV_DRAG_READY, EV_DROP, EV_SELECT};
+enum {ACT_NEW = 1, ACT_OPEN, ACT_SAVE, ACT_COPY, ACT_PASTE, ACT_RENAME, ACT_DELETE, ACT_VIEW, ACT_PARENT, ACT_PROPS, ACT_PREVIEW, ACT_SYSTEM, ACT_FILE, ACT_PACKAGE, ACT_CUT};
 enum {K_UP = 128, K_DOWN, K_LEFT, K_RIGHT, K_DEL, K_HOME, K_END, K_F1 = 145, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7, K_F8, K_F9, K_F10, K_F11};
 enum {C_RECT = 1, C_TEXT, C_ICON, C_LINE, C_IMAGE, C_BUTTON, C_GLASS, C_RASTER};
+/* C_GLASS style: standalone dialog, without the owning window chrome. */
+enum {GLASS_DIALOG = 1};
+/* Reserved signed C_ICON styles: original Settings SVG masks, never legacy sprites. */
+enum {ICON_SETTINGS_APPEARANCE = -100, ICON_SETTINGS_DISPLAY = -101,
+      ICON_SETTINGS_PRIVACY = -102, ICON_SETTINGS_BACKUP = -103,
+      ICON_SETTINGS_CLOCK = -104, ICON_SETTINGS_GENERAL = -105};
 enum {F_SMALL, F_BODY, F_BOLD, F_TITLE, F_DISPLAY, F_MONO, F_MICRO, F_HERO, F_CAPTION, F_CLOCK, F_DISPLAY_SEMIBOLD};
 #define NFONTS 11
 // High-bit inks are semantic palette tokens; ordinary inks are 0x00RRGGBB.
@@ -30,6 +37,7 @@ enum {F_SMALL, F_BODY, F_BOLD, F_TITLE, F_DISPLAY, F_MONO, F_MICRO, F_HERO, F_CA
 enum {I_BG = 0, I_PANEL, I_TXT, I_SUB, I_LINE, I_ACC, I_SEL, I_ACC_TXT, I_CARD, I_SOFT};
 typedef struct {
     int type, a, b, c, d;
+    u64 when; /* Input occurrence ticks; retained across compositor delivery. */
     char text[PATHLEN];
 } Event;
 typedef struct {
@@ -61,15 +69,21 @@ typedef struct {
     u32 boot_flags;
     u64 core_busy[8], core_ticks[8];
     u32 nmodes, modes[24];       /* switchable resolutions (w<<16|h) */
+    u32 recovery;                /* isolated native Recovery session */
     u32 csr;                     /* SIP: bit0 = enabled (live NVRAM config) */
 } SysInfo;
 typedef struct {
-    int id, parent, dir, ro, size;
+    u64 id, parent;
+    int dir, ro;
+    u64 size;
     char name[48];
 } Dirent;
+#define INSTALLER_TITLE "Installa tinymacOS Tramontana"
+#define REINSTALLER_TITLE "Reinstalla tinymacOS Tramontana"
+static inline const char *installer_title(int recovery){return recovery?REINSTALLER_TITLE:INSTALLER_TITLE;}
 static inline const char *appname(int a)
 {
-    const char *const n[] = {"Scrivania", "Finder", "Terminale", "TextEdit", "Impostazioni", "Info su tinymacOS", "Calcolatrice", "Calendario", "Monitor Attività", "Galleria", "Installa tinymacOS", "Utility Disco", "Note", "Memo", "Time Machine", "NetSurf", "Comando"};
+    const char *const n[] = {"Scrivania", "Finder", "Terminale", "TextEdit", "Impostazioni", "Info su tinymacOS", "Calcolatrice", "Calendario", "Monitor Attività", "Galleria", INSTALLER_TITLE, "Utility Disco", "Note", "Memo", "Time Machine", "NetSurf", "Comando"};
     return a >= 0 && a < NAPPS ? n[a] : "Idle";
 }
 
@@ -91,7 +105,7 @@ typedef struct {
 // Session state is authoritative in the kernel; passwords never appear in window lists or log messages.
 enum {SESSION_SETUP, SESSION_LOCKED, SESSION_OPEN, SESSION_BROKEN};
 typedef struct {
-    u32 state, working, wait_seconds, fraction, needs_seed;
+    u32 state, working, wait_seconds, fraction, needs_seed, volume_locked;
     char name[32];
 } SessionInfo;
 typedef struct {
@@ -140,15 +154,19 @@ static inline const char *wallname(unsigned v)
     return a[v % NWALL];
 }
 
+#include "partition.h"
 #define SETUP_MAX_DISKS 8
 enum { INSTALL_IDLE, INSTALL_SCAN, INSTALL_ESP, INSTALL_DATA, INSTALL_VERIFY, INSTALL_DONE, INSTALL_ERROR };
 typedef struct {
     u32 sectors;
-    int usable;
+    int usable,scheme;
+    u32 start,available;
+    char formats[72],reason[96];
     char model[41];
 } InstallDisk;
 typedef struct {
     int count, live, state, target;
+    int encryption_available; /* fresh FV003 installation only */
     u32 done, total;
     char message[112];
     InstallDisk disk[SETUP_MAX_DISKS];
@@ -205,6 +223,7 @@ typedef struct {
         u32 sectors;
         int layout, healthy, backup;
         char model[44];
+        DiskMap map;
     } disk[8];
 } DiskInfo;
 
@@ -232,3 +251,17 @@ static inline unsigned theme_wallpaper(unsigned t)
     static const unsigned ids[NTHEME]={0,11,4,5,6,7,8,12};
     return ids[t%NTHEME];
 }
+
+/* Native volume encryption, NOT Apple's on-disk FileVault format. */
+typedef struct {int disk;char password[65],replacement[65],recovery[65];} VaultRequest;
+typedef struct {int available,enabled,locked,state,progress,error;u32 protected_sectors;int format; /* 1=FV002/legacy, 2=plain FS2, 3=FV003 */} VaultInfo;
+
+/* S_DISK 12=read-only external checkpoint preflight, 13=confirmed import.
+ * Recovery-only; replaces destination files AND private account together. */
+#define DISK_IMPORT_CONFIRM 0x544d4933u
+typedef struct {
+ int source,destination;u32 confirm,reserved;u64 staging_blocks;
+ char checkpoint[48],message[160];
+} DiskImport;
+
+#include "clipboard.h"

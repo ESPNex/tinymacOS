@@ -1,4 +1,5 @@
 #include "k.h"
+#include "bootconfig.h"
 #include "tlsabi.h"
 #include "wordwaitabi.h"
 #include "threadfinishabi.h"
@@ -29,7 +30,7 @@ static int sip_block(const char *p)
     }
     return 0;
 }
-static Spin alloc_lock;
+static Spin alloc_lock,clip_lock;
 static void info(SysInfo *s)
 {
     memset(s, 0, sizeof * s);
@@ -75,9 +76,10 @@ static void info(SysInfo *s)
     s->wall = wall;
     s->dock = dock;
     s->reduce_motion = reduce_motion;
-    s->opaque = opaque;
-    s->dark = dark;
+    s->opaque = boot.recovery?1:opaque;
+    s->dark = boot.recovery?1:dark;
     s->csr = boot.csr;
+    s->recovery=boot.recovery;
     s->busy_ticks = busy_ticks;
     strset(s->cpu, cpuname, sizeof s->cpu);
     u32 ifl;
@@ -160,17 +162,41 @@ static Frame *syscall_inner(Frame *f)
         return f;
     }
     switch (n) {
+    case S_FILEVAULT:
+        if(IN(b,sizeof(VaultRequest))&&OUT(b,sizeof(VaultRequest))&&OUT(c,sizeof(VaultInfo))&&
+           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND||(p->app==INSTALLER&&a==0))){
+            VaultRequest q=*(VaultRequest*)b;VaultInfo out;
+            if(q.password[64]||q.replacement[64]||q.recovery[64]){erase(&q,sizeof q);break;}
+            if(a<=9){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
+            erase(&q,sizeof q);
+        }
+        break;
     case S_SESSION:
         if (desktop && OUT(a, sizeof(SessionInfo))) {
             session_status((SessionInfo *)a);
             r = 0;
         }
         break;
+    case S_CLIPBOARD:
+        if(session_open()&&a<=2&&((a==0&&OUT(b,sizeof(Clipboard)))||(a==1&&IN(b,sizeof(Clipboard)))||a==2)){
+            Clipboard*q=kmalloc(sizeof *q);if(!q)break;
+            if(a==1)memcpy(q,(void*)b,sizeof *q);
+            u32 cf;spin_lock(&clip_lock,&cf);r=session_open()?clipboard_access(a,q):-1;spin_unlock(&clip_lock,cf);
+            if(!a&&!r)memcpy((void*)b,q,sizeof *q);erase(q,sizeof *q);kfree(q);
+        }
+        break;
+    case S_DRAG:
+        if(session_open()&&p->app==FINDER&&string(a,s,sizeof s)&&s[0]=='/'){
+            for(int i=1;i<NPROC;i++)if(proc[i].pid&&proc[i].app==DESKTOP&&!proc[i].dying){
+                Event e={.type=EV_DRAG_READY,.a=p->pid,.d=b};strset(e.text,s,sizeof e.text);post(proc+i,&e);r=0;break;
+            }
+        }
+        break;
     case S_CONTEXT:
         if (session_open() && p->app == FINDER) {
             for (int i = 1; i < NPROC; i++)if (proc[i].pid && proc[i].app == DESKTOP && !proc[i].dying) {
                     post(proc + i, &(Event) {
-                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & 0x7ffe, .d = (int)b
+                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & 0xfffe, .d = (int)b
                     });
                     r = 0;
                     break;
@@ -204,6 +230,8 @@ static Frame *syscall_inner(Frame *f)
         if (!session_open())break;
         if (a == 0 && d <= 16 && OUT(c, d * sizeof(SnapInfo)))
             r = fs_snap_list((void *)c, (int)d);
+        else if (a == 7 && b <= 0x7fffffffu && d <= 16 && OUT(c,d*sizeof(SnapInfo)))
+            r = fs_snap_page((void*)c,(int)d,(int)b);
         else if (a == 5 && OUT(c, sizeof(FsInfo)))
             r = fs_snap_info((void *)c);
         else if (a >= 1 && a <= 4 && string(b, s, sizeof s)) {
@@ -223,9 +251,14 @@ static Frame *syscall_inner(Frame *f)
         }
         break;
     case S_RESMODE:
-        // Cycle the GOP at runtime (Settings → Schermo). Fonts stay fixed.
-        r = a < boot.nmodes ? video_setmode((int)(boot.modes[a] >> 16),
-                                            (int)(boot.modes[a] & 0xffff)) : -1;
+        /* b=1: capabilities, bit0 runtime, bit1 persistent GOP-at-next-boot.
+         * Runtime GOP calls after ExitBootServices are never attempted. */
+        if(b==1){r=(video_runtime_available()?1:0)|(!boot.install_len?2:0);break;}
+        if(!session_open()||a>=boot.nmodes)break;
+        {int w=boot.modes[a]>>16,h=boot.modes[a]&65535;
+         if(video_runtime_available())r=video_setmode(w,h);
+         else {int z=bootconfig_disk(2,bootconfig_display(w,h));r=z>=0?1:z;}}
+
         break;
     case S_KEXT: {
         /* a=op: 0 stat (b=KextInfo[], c=cap) 1 load (b=path, c=err buf128)
@@ -252,6 +285,10 @@ static Frame *syscall_inner(Frame *f)
         if(!session_open())break;
         if(a==0)r=bootconfig_disk(0,0);
         else if(a==1 && b<=1)r=bootconfig_disk(1,(u32)b);
+        else if(a==3 && boot.recovery && p->app==COMMAND && eq(p->program,"csrutil") && b<=1){
+            u32 flags=TMC_BOOT_CSR_OVERRIDE|(b?0:TMC_BOOT_CSR_DISABLED);r=bootconfig_disk(3,flags);
+            if(r>=0)boot.csr=b;
+        }
         else if(a==2 && c<=4096 && d<=16384 && OUT(b,c))r=boot_logcopy((char *)b,c,d);
         break;
     case S_VM:
@@ -346,7 +383,15 @@ static Frame *syscall_inner(Frame *f)
         if (a == 0 && OUT(b, sizeof(DiskInfo))) {
             disk_info((void *)b);
             r = 0;
-        } else if (a == 4)r = disk_operation(4, (int)b);
+        } else if((a==10||a==11)&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskEdit))&&OUT(b,sizeof(DiskEdit))){
+            DiskEdit request;memcpy(&request,(void*)b,sizeof request);
+            request.name[sizeof request.name-1]=0;
+            r=disk_edit(&request,a==11);memcpy((void*)b,&request,sizeof request);
+        } else if((a==12||a==13)&&boot.recovery&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskImport))&&OUT(b,sizeof(DiskImport))){
+            DiskImport request;memcpy(&request,(void*)b,sizeof request);
+            r=disk_import(&request,a==13);memcpy((void*)b,&request,sizeof request);
+        } else if(boot.recovery && desktop && a>=5 && a<=9)r=disk_operation((int)a,(int)b);
+        else if (a == 4)r = disk_operation(4, (int)b);
         else if ((p->app == DISKUTIL || (a == 1 && p->app == COMMAND &&
                   (eq(p->program, "diskutil") || eq(p->program, "fsck_apfs"))) || (desktop &&
                   a == 3)) && a >= 1 && a <= 3)r = disk_operation((int)a, (int)b);
@@ -399,9 +444,16 @@ static Frame *syscall_inner(Frame *f)
             if (a == 0 && OUT(b, sizeof(InstallInfo))) {
                 install_status((InstallInfo *)b);
                 r = 0;
-            } else if (a == 1)r = install_begin((int)b);
+            } else if (a == 1)r = install_begin_mode((int)b,(int)c);
             else if (a == 2)r = install_step();
             else if (a == 3)r = install_cancel();
+            else if ((a == 5 || a == 6) && IN(b,sizeof(VaultRequest)) && OUT(b,sizeof(VaultRequest))){
+                VaultRequest q;memcpy(&q,(void*)b,sizeof q);r=a==5?install_encryption(&q):install_encryption_ack(&q);memcpy((void*)b,&q,sizeof q);erase(&q,sizeof q);
+            }
+            /* Same installer executable in Recovery; only the sealed system
+             * restore operation is exposed, never user-data reset/restore. */
+            else if (a == 4 && boot.recovery)r = disk_operation(6,(int)b);
+            else if (a == 7 && boot.recovery)r = install_encrypted_reset((int)b);
         }
         break;
     case S_SETUP_CODE:
@@ -414,7 +466,7 @@ static Frame *syscall_inner(Frame *f)
         if (desktop)r = session_work();
         break;
     case S_LOCK:
-        if (desktop)r = session_lock();
+        if (desktop){r=session_lock();if(!r){u32 cf;spin_lock(&clip_lock,&cf);clipboard_clear();spin_unlock(&clip_lock,cf);}}
         break;
     case S_SEEK:
         r = fs_seek(p, a, b);
@@ -730,7 +782,7 @@ static Frame *syscall_inner(Frame *f)
             r = fs_stat(s, (void *)b);
         break;
     case S_LIST:
-        if (string(a, s, sizeof s) && c <= NSLOTS && d <= NSLOTS && OUT(b, c * sizeof(Dirent)))
+        if (string(a, s, sizeof s) && c <= NSLOTS && d <= 0x7fffffffu && OUT(b, c * sizeof(Dirent)))
             r = fs_list(s, (void *)b, c, d);
         break;
     case S_CREATE:

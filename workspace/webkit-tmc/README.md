@@ -2,9 +2,15 @@
 
 Lavoro preparatorio sul runtime di tinymacOS. **Non è un browser e non è ancora un port compilabile di WebKit, JavaScriptCore o WebCore.** Non è incluso come Safari nella ISO.
 
+## Ripresa dopo 10.2.5
+
+La base OS corrente è **10.2.5 / 30B16**, già pubblicata senza Safari. Lo sviluppo riprende dal runtime esistente sul ramo `work/safari-webkit-runtime`; i riferimenti a 2.4.x nei documenti storici non sono la prossima versione promessa. Nessun renderer sostitutivo e nessuna shell vuota: obiettivo invariato, UI Safari desktop classica identica e motore WebKit completo.
+
+Il primo blocco nuovo è l’allocatore VM e il sottoinsieme C di allocazione, descritto in `RUNTIME-HEAP.md`. Checkout completo di WebKit, toolchain e build rimangono fuori da `/home/user`; sorgenti del port e ricevute sono salvati su GitHub, con workspace sotto 128 MB decimali.
+
 ## Componenti presenti
 
-- `posix/`: adattatori prefissati `tmc_` per rete, descriptor, VM, clock, TLS per-thread, sincronizzazione e ciclo di vita dei thread. Non sostituiscono una libc/POSIX completa.
+- `posix/`: adattatori prefissati `tmc_` per rete, descriptor, VM, clock, TLS per-thread, sincronizzazione, ciclo di vita dei thread e heap VM. `libc_alloc.c` esporta soltanto le cinque funzioni C di allocazione in modo opt-in. Non sostituiscono una libc/POSIX completa.
 - `native-abi/`, `kernel-overlay/`: header e sorgenti d'integrazione con il sistema nativo; verificare la direzione di ogni sincronizzazione.
 - `platform/`: lettura dello stato d'aspetto del sistema, non un'interfaccia browser.
 - `upstream-reference/`, `upstream.lock.json`: sottoinsieme di riferimento e commit fissato; non un checkout completo del motore.
