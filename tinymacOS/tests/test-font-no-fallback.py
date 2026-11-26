@@ -8,6 +8,8 @@ from PIL import ImageFont
 root=Path(__file__).resolve().parents[1]
 family=root/'assets/font-source/tinymacOS'
 allowed={str(p.resolve()) for p in family.iterdir() if p.is_file()}
+mono=root/'assets/font-source/tinymacOSMono'
+allowed|={str(p.resolve()) for p in mono.iterdir() if p.is_file()}
 original=ImageFont.truetype
 opened=[]
 def strict(font,*args,**kwargs):
@@ -18,7 +20,7 @@ def strict(font,*args,**kwargs):
 ImageFont.truetype=strict
 with tempfile.TemporaryDirectory(prefix='tmc-font-only-',dir='/var/tmp') as tmp:
     output=Path(tmp)/'interface.tfn'
-    sys.argv=[str(root/'tools/interface-font.py'),str(family),str(output),'--panic-output',str(Path(tmp)/'panicfont.inc')]
+    sys.argv=[str(root/'tools/interface-font.py'),str(family),str(output),'--mono-family',str(mono),'--panic-output',str(Path(tmp)/'panicfont.inc')]
     runpy.run_path(sys.argv[0],run_name='__main__')
     assert (Path(tmp)/'panicfont.inc').read_bytes()==(root/'assets/panicfont.inc').read_bytes()
     data=output.read_bytes();manifest=json.loads(output.with_suffix('.json').read_text())
@@ -26,6 +28,7 @@ assert data==(root/'assets/type.tfn').read_bytes(),'Production atlas not reprodu
 lock=json.loads((root/'assets/interface-font-lock.json').read_text())
 assert hashlib.sha256(data).hexdigest()==lock['sha256'] and len(data)==lock['bytes']
 assert set(opened)==allowed and len(opened)==12
+assert manifest['faces'][5]['file']=='tinymacOSMonoRegular.otf'
 assert not manifest['external_font_fallback'] and not manifest['inherited_monospace']
 assert all(not f['fallback_glyphs'] for f in manifest['faces'])
 assert data[:4]==b'TFN2'
@@ -45,4 +48,4 @@ for name in ('art.py','interface-font.py'):
     if name=='art.py':assert "(d/'type.tfn').write_bytes" not in text
 assert not (root/'tools/add-italian-glyphs.py').exists()
 assert not (root/'tools/tramontana-font.py').exists()
-print('PASS deterministic TFN2: only 4 supplied OTFs opened, all 11 faces rebuilt, 207 glyphs each; no inherited mono, fallback or host font; 8px terminal grid and original UI symbols; lock matches. NOT guest/media validation.')
+print('PASS deterministic TFN2: only 5 supplied OTFs opened, all 11 faces rebuilt, 207 glyphs each; no inherited mono, fallback or host font; 8px terminal grid and original UI symbols; lock matches. NOT guest/media validation.')

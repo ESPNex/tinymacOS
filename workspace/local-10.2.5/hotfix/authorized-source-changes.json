@@ -1,9 +1,9 @@
 {
-  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face",
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules",
   "inputs": {
     "assets/type.tfn": {
       "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
-      "hotfix_sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49"
+      "hotfix_sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6"
     },
     "desktop/main.c": {
       "baseline_sha256": "74ecd050897b5166e7f2ef269e80af03721f664e6ded520d1fcf8b5f9e1e10e5",
@@ -27,7 +27,7 @@
     },
     "assets/panicfont.inc": {
       "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
-      "hotfix_sha256": "919030270e36e7a083f9af787e84c7c922b1c8ffdb59223b7750414e2653d349"
+      "hotfix_sha256": "6eae97438ece6b9d79f7d3b55527530f003ce356ad712f861f757f528dddc318"
     }
   },
   "removed_inputs": {

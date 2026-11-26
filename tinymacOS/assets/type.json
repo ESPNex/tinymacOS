@@ -118,8 +118,8 @@
     },
     {
       "face": 5,
-      "family": "tinymacOS (user supplied)",
-      "file": "REGULAR.OTF",
+      "family": "tinymacOS Mono (user supplied)",
+      "file": "tinymacOSMonoRegular.otf",
       "weight": 400,
       "pixels": 13,
       "height": 21,
@@ -132,12 +132,28 @@
       ],
       "same_family_aliases": [
         {
+          "code": "0xa0",
+          "source": "0x20"
+        },
+        {
           "code": "0xad",
           "source": "0x2d"
+        },
+        {
+          "code": "0xb2",
+          "source": "0x32"
+        },
+        {
+          "code": "0xb3",
+          "source": "0x33"
+        },
+        {
+          "code": "0xb9",
+          "source": "0x31"
         }
       ],
       "fallback_glyphs": [],
-      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+      "source_sha256": "21e0a71b25bee20039f7d1b2eee6178129c4e5ea30e64d1297d5ce8e0d341a38"
     },
     {
       "face": 6,
@@ -257,11 +273,11 @@
   ],
   "glyph_count": 207,
   "bytes": 2178265,
-  "sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49",
+  "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
   "provenance": "User-supplied OTFs; redistribution license not included in source ZIP",
   "synthetic_weights": false,
   "inherited_monospace": false,
   "external_font_fallback": false,
-  "monospace_policy": "Supplied Regular fitted into 8px cells; not a separately designed monospace font",
-  "symbols_policy": "Original geometric command/search/backspace; soft hyphen uses supplied hyphen"
+  "monospace_policy": "Supplied Mono Regular 13px fitted into 8px cells; no synthetic weights or inherited bitmaps",
+  "symbols_policy": "Original geometric command/search/backspace; soft hyphen uses same-family hyphen; mono NBSP uses space, superscripts use scaled same-family digits"
 }

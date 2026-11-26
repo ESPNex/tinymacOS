@@ -1,8 +1,8 @@
 {
-  "source": "User-supplied tinymacOS upright OTFs, original UI symbols; no external font fallback or inherited face",
+  "source": "User-supplied UI upright OTFs and Mono Regular; original UI symbols, no external font fallback or inherited face",
   "path": "assets/type.tfn",
   "bytes": 2178265,
-  "sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49",
+  "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
   "manifest": "assets/type.json",
   "old_30B17_media_receipts_do_not_validate_this_revision": true
 }

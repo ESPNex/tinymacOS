@@ -1,0 +1,50 @@
+{
+  "source_url": "https://onlyfiles.com/wHwawX3fCgk3/tinymacosmonofonts.zip",
+  "zip_sha256": "3cc82d1b779515d474e07f8d301d4ff24941aa85191511c2c242afffb0c1cc2f",
+  "mono_source_sha256": "21e0a71b25bee20039f7d1b2eee6178129c4e5ea30e64d1297d5ce8e0d341a38",
+  "weight": 400,
+  "italic": false,
+  "source_fixed_pitch_metadata_and_ASCII_advances_validated": true,
+  "terminal": {
+    "face": 5,
+    "size_px": 13,
+    "height_px": 21,
+    "advance_px": 8,
+    "width_px": 8
+  },
+  "panic": {
+    "source_size_px": 12,
+    "glyph_width_px": 8,
+    "glyph_height_px": 15,
+    "characters": 95,
+    "kernel_draw_scaling_unchanged": true
+  },
+  "other_UI_faces_byte_identical": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "no_external_font_fallback": true,
+  "missing_mono_glyph_policy": {
+    "NBSP": "same-family space",
+    "soft_hyphen": "same-family hyphen",
+    "superscript_1_2_3": "scaled same-family digits",
+    "command_search_backspace": "existing original project geometry"
+  },
+  "TFN2_sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+  "published_ISO_unchanged": true,
+  "host_tests_passed": [
+    "font-no-fallback deterministic font-open allowlist and panic reproduction",
+    "hotfix contract",
+    "cleanup protection",
+    "real C userspace fontmetrics"
+  ],
+  "guest_or_new_media_validation": false
+}

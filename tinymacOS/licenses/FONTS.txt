@@ -8,16 +8,19 @@ original designer, derivation from Inter or redistribution rights. No font
 license was included in the supplied ZIP; these rights are not independently
 verified. This notice does not grant or invent a license for those OTFs.
 
-Source OTFs: assets/font-source/tinymacOS/
+Dedicated Mono Regular supplied separately by the user:
+https://onlyfiles.com/wHwawX3fCgk3/tinymacosmonofonts.zip
+Source OTFs: assets/font-source/tinymacOS/ and assets/font-source/tinymacOSMono/
 Deterministic conversion policy: tools/interface-font.py
 Per-source hashes and per-face provenance: assets/type.json
 
 No DejaVu glyphs, DejaVu monospace face or other font fallback are used in
-this TFN2. Terminal face 5 uses the supplied Regular, fitted into 8-pixel cells;
-it is not a separately designed monospace typeface. Command, search and
+this TFN2. Terminal face 5 uses the supplied real Mono Regular, fitted into 8-pixel cells.
+The emergency ASCII 8x15 bitmap also uses this Mono Regular. Command, search and
 backspace symbols are original geometric drawings in the converter, not
 traced from another font. Soft hyphen uses the supplied family's hyphen.
-Unsupported characters abort conversion rather than selecting a host font.
+Mono NBSP uses the same-family space; superscript 1/2/3 use scaled same-family
+digits. Other unsupported characters abort rather than selecting a host font.
 
 Historical license notices and previous release validation describe their
 historical artifacts, not the active TFN2. A new release requires new media
