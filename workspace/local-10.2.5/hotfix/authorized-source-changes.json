@@ -1,5 +1,5 @@
 {
-  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules; user requested rebuild, new commit and deployment as 30B18; prevent rejected legacy-FS rebuild by pinning production FS2 in build.sh; user insists on rollback of drag/input against working 10.2.4; safe GPT decisions retained and error/readout clarified; user explicitly requested 10.2.5 republication with mouse rollback and fix for Tabella non riconosciuta: GPT validated before MBR signature; signature-only repair requires installer confirmation; offline editors still blocked; user requests another 10.2.5 mouse fix after failed physical rollback and confirms Reinstalla used without installation; native USB adapters retry transient errors instead of synthetic permanent shutdown, truthful Recovery guidance; build 30B20",
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules; user requested rebuild, new commit and deployment as 30B18; prevent rejected legacy-FS rebuild by pinning production FS2 in build.sh; user insists on rollback of drag/input against working 10.2.4; safe GPT decisions retained and error/readout clarified; user explicitly requested 10.2.5 republication with mouse rollback and fix for Tabella non riconosciuta: GPT validated before MBR signature; signature-only repair requires installer confirmation; offline editors still blocked; user requests another 10.2.5 mouse fix after failed physical rollback and confirms Reinstalla used without installation; native USB adapters retry transient errors instead of synthetic permanent shutdown, truthful Recovery guidance; build 30B20; user reports physical mouse still broken on 30B20; binary comparison proves published 10.2.4 canonical USB/HID profile absent in 30B20, restore and pin production canonical profile as 30B21 candidate, not a physical fix claim",
   "inputs": {
     "assets/type.tfn": {
       "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
@@ -15,15 +15,15 @@
     },
     "userspace/about.c": {
       "baseline_sha256": "01232c34e885f571141338a122637286d99df7c329075dace0eb86e1c10a0b0e",
-      "hotfix_sha256": "c28507567df3b31a30229b8b92580f36d698e0b5a5dec3e1addcebdb71bc5d26"
+      "hotfix_sha256": "36253af51a6ad1f2b5b6f1d78f716cdf41ff81f8c4da44b1ab57d11f04599905"
     },
     "userspace/command.c": {
       "baseline_sha256": "dc824c1520b540c553a648dcef5c3be2c74d2524c7c8a17ca2513b1ae8b3fa0e",
-      "hotfix_sha256": "7a4520760d7f7af6177496eb3ef972691e05f0c5bc6d4b0d98827da0ddd421d1"
+      "hotfix_sha256": "d45196fffa0259971cc33d273536b2190f7ce5dbba150159e889a874ae753bff"
     },
     "userspace/settings.c": {
       "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
-      "hotfix_sha256": "238a928b97fdac2919328fcfdd8b3d1d265460f9adc60682c452fda764abc298"
+      "hotfix_sha256": "421838939b29dc84f915ceb13752f1e91182a10101b3d44fad7f3f6d955bf927"
     },
     "assets/panicfont.inc": {
       "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
@@ -31,7 +31,7 @@
     },
     "build.sh": {
       "baseline_sha256": "7ac8b19340decfba2c5e5cd1591cf72b63aad0642579187ec3eb257a279c03b7",
-      "hotfix_sha256": "09a4b573341eea15067b4b02b588255e06a7810338cacab2223e2a675e7cf9e7"
+      "hotfix_sha256": "754b653c7bb9585b9b0c084ad34b6c0bca9a6a4faa46c1bad86af467a56a9774"
     },
     "drivers/input.c": {
       "baseline_sha256": "6c2fb04aafcd5ce1dee6dbc6552184f5f09f6b61e478612f9c2aa52d783c3242",

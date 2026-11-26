@@ -2,7 +2,7 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery con kernel dedicato. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.2.5 Tramontana · build 30B20 · pre-release.**
+**Versione attuale: 10.2.5 Tramontana · build 30B21 · pre-release.**
 
 [Scarica l’unica ISO BIOS+UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.2.5-pre-release/tinymacOS-10.2.5-x86_64.iso) · [Sorgenti e verifiche](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release) · [Novità della 10.2.5](tinymacOS/docs/NOTE-10.2.5.md)
 
@@ -14,7 +14,9 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 
 **Revisione 30B19:** rollback desktop/input esatto alla 10.2.4, drag-and-drop file disabilitato; GPT riconosciuta anche senza firma MBR e ripristino disponibile solo nell'installer con doppia GPT valida, spazio realmente non allocato e consenso esplicito. Nessuna conferma del mouse sul PC fisico. [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B19.md).
 
-**Revisione 30B20:** recupero degli errori temporanei USB xHCI/EHCI/UHCI, senza arrestare definitivamente il mouse dopo quattro errori; retry anche per invio e CLEAR_HALT falliti. Recovery senza sistema nativo indica il desktop live per una nuova installazione, non presume una tabella Windows corrotta. Il funzionamento sul PC fisico resta da confermare. [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B20.md).
+**Storico 30B20:** recupero degli errori temporanei negli adattatori USB nativi e guida Recovery/live; non ha risolto il blocco fisico segnalato. [Note](tinymacOS/docs/NOTE-10.2.5-30B20.md).
+
+**Revisione 30B21:** il confronto con la ISO ufficiale 10.2.4 ha individuato una diversa selezione di compilazione USB. Ripristinato e imposto lo stack canonical USB/HID della versione funzionante, incluso il worker, in live/installato e Recovery. Controllo sul codice macchina e audit della ISO; prove del percorso canonical e riconnessione. **Conferma sul PC fisico ancora necessaria.** [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B21.md) · [Verifica](tinymacOS/docs/VALIDAZIONE-10.2.5-30B21.md).
 
 ## Funzioni principali
 

@@ -4,6 +4,9 @@ cd "$(dirname "$0")"; ROOT=$PWD; source tools/env.sh
 case "$TMC_BUILD" in /*) ;; *) echo 'TMC_BUILD must be an absolute external directory.' >&2; exit 2;; esac
 # The production 10.2.5 installer MUST use FS2; never silently build legacy FS.
 export TMC_FS2_BACKEND=1
+# Match the verified published 10.2.4 USB/HID profile, not the shell default.
+# Both live and Recovery kernels must select the complete canonical stack.
+export TMC_USB_CANONICAL=1
 D=$(realpath -m "$TMC_BUILD"); case "$D/" in "$ROOT/"*) echo 'Use a build directory outside the source tree.' >&2; exit 2;; esac
 python3 tools/media_path.py "$D" "$D/$TMC_ISO"
 mkdir -p "$D"; export TMC_BUILD="$D"; export LC_ALL=C
@@ -79,6 +82,7 @@ gcc "${C[@]}" -DTMC_RECOVERY_KERNEL -fno-pie -Inet/include -Inet/lwip/include -c
 REC_KOBJ=();for o in "${KOBJ[@]}";do if [[ "$o" == k-kernel-main.c.o ]];then REC_KOBJ+=(recovery-entry.o);else REC_KOBJ+=("$o");fi;done
 (cd "$D" && ld "${L[@]}" -T "$ROOT/kernel/layout.ld" "${REC_KOBJ[@]}" -o recovery-kernel.debug && objcopy --strip-all recovery-kernel.debug RecoveryKernel.elf)
 python3 tools/check-kernel-layout.py "$D/kernel.elf" "$D/RecoveryKernel.elf"
+python3 tools/check-usb-profile.py "$D"
 python3 tools/system_volume.py "$D" recovery
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol"

@@ -1,0 +1,24 @@
+{
+  "baseline_ISO_sha256": "7b6059a4c82fee9add7a642690ac679d554a287a9c7ed277cff2279017750b21",
+  "baseline_validation_commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+  "baseline_live_kernel_sha256": "251fb73a7c89d26c3c43498c86f8eb074a2d73e8c0191a6654251e0645df3102",
+  "current_30B20_live_kernel_sha256": "8ced5d994c54c693c35311d55a3516dbfc2768b7bf7636d6d43af78b2a663bf1",
+  "baseline_live": {
+    "kmain_calls_input_init_at": "0x402524c -> 0x4036550",
+    "input_init_tail_jump": "0x4036550 -> 0x4032de0 canonical_start",
+    "canonical_worker": "0x4032ef0",
+    "scheduler_creates_canonical_worker": "0x4029b46/0x4029b4b",
+    "stack": "TMC_USB_CANONICAL=1"
+  },
+  "current_30B20": {
+    "input_init": "0x4037830; native PCI/HID enumeration",
+    "canonical_start_symbol_in_build": false,
+    "canonical_worker_symbol_in_build": false,
+    "stack": "TMC_USB_CANONICAL not enabled"
+  },
+  "physical_failure_mechanism_still_not_observed": true,
+  "confirmed_difference": "Published 10.2.4 canonical USB/HID + worker versus shipped 30B20 native facade; source rollback did not restore build selection",
+  "no_new_publication": true,
+  "baseline_recovery_kernel_sha256": "fe88b8613f4acf31fcb5a211310f34822d57854208dab1441480f35a6e3ba87f",
+  "baseline_recovery_contains_canonical_stack": true
+}

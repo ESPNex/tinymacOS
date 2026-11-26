@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "build": "30B21",
+  "fresh_host_suites": 9,
+  "fresh_guest_suites": 14,
+  "canonical_guest_profiles": 8,
+  "physical_mouse_fix_confirmed": false,
+  "physical_trigger_of_regression_established": false,
+  "proven_shipped_USB_profile_difference_vs_1024": true,
+  "production_USB_profile_pinned_to_canonical": true,
+  "binary_guard_live_Recovery_full_HID_and_scheduler_worker": true,
+  "binary_guard_rejects_previous_30B20": true,
+  "actual_ISO_live_installed_Recovery_match_guarded_binaries": true,
+  "canonical_runtime_facade_inactive_worker_running_and_hotplug": true,
+  "native4Kn_install_boot_reinstall_conversion_deactivation": true,
+  "Windows_fixture_only_not_real_certification": true,
+  "Safari_full_WebKit_included": false,
+  "helper_retained_from_30B18_not_freshly_boot_tested": true,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.5-x86_64.iso",
+    "bytes": 329707520,
+    "sha256": "b1f19e5222f293ceec14fac26a386acc41eb1670d8d9c46504cdf1ea6b12d682"
+  },
+  "publication_status": "separate publication-readback-30B21.json"
+}

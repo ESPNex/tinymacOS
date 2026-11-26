@@ -16,7 +16,8 @@ stage=Path(os.environ.get('TMC_CANONICAL_STAGE','/var/tmp/tmc-10.1.7/linux-usbco
 build=stage/'build'
 iso=Path(os.environ.get('TMC_CANONICAL_ISO',str(build/'tinymacOS-10.1.7-x86_64.iso')))
 work=Path(tempfile.mkdtemp(prefix='tmc-canonical-'+fw+'-',dir='/var/tmp'));ev=work/'evidence';ev.mkdir()
-os.environ.update(TOOLROOT='/var/tmp/tmc/tools/root',OCR_ROOT='/var/tmp/tmc/tools/root',TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='tablet' if profile=='xhci-tablet-kbd' else 'mouse')
+toolroot=os.environ.get('TOOLROOT','/var/tmp/tmc/tools/root')
+os.environ.update(TOOLROOT=toolroot,OCR_ROOT=os.environ.get('OCR_ROOT',toolroot),TMC_MEM='512',TMC_BUILD=str(build),TMC_TEST_INPUT=profile,TMC_TEST_FIRMWARE=fw,TMC_POINTER='tablet' if profile=='xhci-tablet-kbd' else 'mouse')
 symbols=subprocess.check_output(['nm',str(build/'kernel.debug')],text=True).splitlines()
 def address(name):return int(next(s.split()[0] for s in symbols if s.endswith(' '+name)),16)
 def sha(p):return hashlib.file_digest(Path(p).open('rb'),'sha256').hexdigest()

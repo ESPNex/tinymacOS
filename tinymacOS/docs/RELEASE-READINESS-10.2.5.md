@@ -1,6 +1,6 @@
 # 10.2.5 / 30B16 — accettazione finale superata
 
-> **Stato attuale 30B20:** [recupero USB e guida Recovery/live](NOTE-10.2.5-30B20.md).
+> **Stato attuale 30B21:** [ripristino del profilo USB/HID della ISO 10.2.4](NOTE-10.2.5-30B21.md). Conferma del mouse fisico ancora necessaria.
 > I risultati e le funzionalità sotto descrivono build precedenti, non la nuova accettazione.
 
 > **Storico 30B16:** i gate e digest originali sotto non certificano la revisione

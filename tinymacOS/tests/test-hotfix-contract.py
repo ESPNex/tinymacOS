@@ -7,7 +7,10 @@ import hashlib,json
 r=Path(__file__).resolve().parents[1]
 lock=json.loads((r/'assets/interface-font-lock.json').read_text());b=(r/lock['path']).read_bytes()
 assert len(b)==lock['bytes'] and hashlib.sha256(b).hexdigest()==lock['sha256']
-assert 'export TMC_FS2_BACKEND=1' in (r/'build.sh').read_text()
+build=(r/'build.sh').read_text()
+assert 'export TMC_FS2_BACKEND=1' in build
+assert 'export TMC_USB_CANONICAL=1' in build
+assert 'python3 tools/check-usb-profile.py "$D"' in build
 receipt=json.loads((r.parent/'workspace/local-10.2.5/hotfix/mouse-1024-rollback-candidate.json').read_text())
 assert receipt['baseline_commit']=='1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69'
 for name,entry in receipt['files'].items():
