@@ -121,8 +121,19 @@ static void fresh_encrypted_install(int scheme){
  printf("PASS actual %s ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged\n",scheme==MAP_GPT?"GPT":"MBR");
 }
 #ifndef TMC_FS2_HOST_HELPERS
+static void run_missing_signature(void){
+ fixture(MAP_GPT);disk[510]=disk[511]=0;refresh();assert(st.disk[0].usable&&st.disk[0].repair_mbr_signature&&!writes);
+ assert(!install_begin_i(0)&&!writes);assert(!install_cancel_i()&&!writes&&disk[510]==0&&disk[511]==0);
+ fixture(MAP_GPT);disk[510]=disk[511]=0;u8 before[3][32],after[3][32];digest(before);assert(!install_begin_i(0));
+ guard_start=install_start;guard_end=install_end;write_guard=1;while(isbusy())assert(!install_step_i());
+ assert(st.state==INSTALL_DONE&&disk[510]==85&&disk[511]==170);digest(after);assert(!memcmp(before,after,sizeof before));
+ assert(!memcmp(disk+1024,oldparts,3*128));assert(!memcmp(disk+(u64)(guard_start+TC_OLD_MBR)*512,oldmbr,512));
+ Medium m={sata_io,sata_flush,0,sectors};static DiskMap map;assert(partition_scan(&m,&map)&&map.safe&&!map.pmbr_signature_repairable);
+ fixture(MAP_GPT);disk[510]=disk[511]=0;disk[(u64)(sectors-1)*512+16]^=1;assert(install_begin_i(0)<0&&!writes);
+ puts("PASS actual FS2 missing-55AA installer: preflight/cancel zero writes, confirmed install restores only signature with planned boot/table activation, existing extents/entries unchanged, old MBR saved, degraded peer refused");
+}
 int main(void){
- disk=calloc(sectors,512);assert(disk);run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);
+ disk=calloc(sectors,512);assert(disk);run_missing_signature();run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);
  fixture(MAP_GPT);invalid_source=1;assert(!install_begin_i(0));while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!writes);invalid_source=0;
  fixture(MAP_GPT);assert(!install_begin_i(0));while(st.state==INSTALL_SCAN)assert(!install_step_i());fail_at=writes+3;while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!memcmp(disk+1024,oldparts,3*128));
  free(disk);puts("PASS invalid source refuses before any target write; injected target failure never activates the new volume");return 0;

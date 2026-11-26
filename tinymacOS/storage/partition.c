@@ -89,16 +89,25 @@ int partition_scan(Medium*m,DiskMap*x)
         if(m->io(m->d,m->z-scale,1,other,0)||nz(other,512))return bad(x,"Metadati residui: disco protetto");
         x->scheme=MAP_EMPTY;x->safe=1;x->slot=0;gap(x,2048,m->z-(1+(32+scale-1)/scale)*scale);return 1;
     }
-    if(sector[510]!=85||sector[511]!=170)return bad(x,"Tabella non riconosciuta: disco protetto");
+    int mbr_signature_ok=sector[510]==85&&sector[511]==170;
     u8 mbr[512];memcpy(mbr,sector,512);int protective=0;
     for(int i=0;i<4;i++)if(mbr[446+16*i+4]==0xee)protective++;
-    u32 lo=1,hi=m->z;
+    if(!mbr_signature_ok&&!protective&&memcmp(other,"EFI PART",8))return bad(x,"Tabella non riconosciuta: disco protetto");
+    u32 lo=1,hi=m->z;const char *unsafe_reason=0;
     if(protective||!memcmp(other,"EFI PART",8)){
         x->scheme=MAP_GPT;Gpt a,b;int av=header(m,scale,&a,entries),bv=header(m,m->z-scale,&b,mirror);
         if(!av&&!bv)return bad(x,"GPT non valida: nessuna modifica consentita");
         Gpt*h=av?&a:&b;Part*p=av?entries:mirror;lo=h->first*scale;hi=(h->last+1)*scale;
-        x->safe=av&&bv&&a.first==b.first&&a.last==b.last&&a.num==b.num&&a.entrysize==b.entrysize&&!memcmp(a.guid,b.guid,16)&&!memcmp(entries,mirror,a.num*128);
-        for(int i=0;i<4;i++){u8*t=mbr+446+16*i;if(t[4]&&t[4]!=0xee)x->safe=0;if(t[4]==0xee&&(t[0]||rd32(t+8)!=1||rd32(t+12)!=m->z/scale-1))x->safe=0;}
+        x->safe=protective==1&&av&&bv&&a.first==b.first&&a.last==b.last&&a.num==b.num&&a.entrysize==b.entrysize&&!memcmp(a.guid,b.guid,16)&&!memcmp(entries,mirror,a.num*128);
+        if(!av)unsafe_reason="GPT primaria non verificabile: disco protetto";
+        else if(!bv)unsafe_reason="GPT di backup non verificabile: disco protetto";
+        else if(protective!=1)unsafe_reason="Voce MBR protettiva assente o duplicata: disco protetto";
+        else if(!x->safe)unsafe_reason="Copie GPT discordanti: disco protetto";
+        for(int i=0;i<4;i++){u8*t=mbr+446+16*i;
+            if(!mbr_signature_ok&&!t[4]&&nz(t,16)){x->safe=0;unsafe_reason="Voce MBR residua: disco protetto";}
+            if(t[4]&&t[4]!=0xee){x->safe=0;unsafe_reason="MBR ibrido non supportato: disco protetto";}
+            if(t[4]==0xee&&(t[0]||rd32(t+8)!=1||rd32(t+12)!=m->z/scale-1)){x->safe=0;unsafe_reason="MBR protettivo incoerente: disco protetto";}
+        }
         for(u32 i=0;i<h->num;i++){
             if(!nz(p[i].type,16)){if(x->slot<0)x->slot=i;continue;}
             if(!nz(p[i].id,16))return bad(x,"Identificatore GPT vuoto");
@@ -129,7 +138,11 @@ int partition_scan(Medium*m,DiskMap*x)
     if(x->scheme==MAP_MBR){int logical=5,primary=x->count;
         for(int i=0;i<primary;i++){DiskPartition*p=x->part+i;int t=p->type[0];if(t==5||t==15||t==0x85){p->fs=FS_OTHER;strset(p->name,"Partizione estesa",sizeof p->name);if(!extended(m,x,p->start,p->sectors,&logical))return 0;}}
     }
-    if(!x->safe)return bad(x,"GPT degradata, ibrida o copie discordanti: disco protetto");
+    if(!x->safe)return bad(x,unsafe_reason?unsafe_reason:"Tabella non verificata: disco protetto");
+    if(x->scheme==MAP_GPT&&!mbr_signature_ok){
+        x->pmbr_signature_repairable=x->slot>=0;
+        return bad(x,"GPT verificata; firma MBR assente: serve conferma ripristino");
+    }
     if(x->slot<0){strset(x->reason,"Tabella piena: nessuna voce libera",sizeof x->reason);return 1;}
     strset(x->reason,x->sectors?"Spazio non allocato disponibile":"Nessuno spazio non allocato",sizeof x->reason);return 1;
 }

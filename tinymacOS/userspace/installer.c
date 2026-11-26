@@ -156,11 +156,11 @@ static void paint(void)
             diskname(s, i);
             Text(x + 53, y + 3, s, F_SMALL, TX);
             s[0] = 0;
-            addnum(s, (reinstall?info.disk[i].sectors:info.disk[i].available) / 2048, 80);
+            if(!reinstall&&info.disk[i].available&&info.disk[i].available<2048)append(s,"<1",80);else addnum(s, (reinstall?info.disk[i].sectors:info.disk[i].available) / 2048, 80);
             append(s, reinstall?" MiB · ":" MiB non allocati · ",80);append(s,partition_scheme(info.disk[i].scheme),80);
             append(s,info.disk[i].usable?"":" · Non disponibile",80);
             Text(x + 53, y + 23, s, F_MICRO, SUB);
-            Text(x + 53, y + 41, !reinstall&&info.disk[i].usable?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
+            Text(x + 53, y + 41, !reinstall&&info.disk[i].usable&&!info.disk[i].repair_mbr_signature?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
         }
     } else if (page == 2) {
         Text(x, 20, reinstall?(encrypted?"Conferma inizializzazione cifrata":"Conferma la reinstallazione"):"Conferma l’installazione", F_TITLE, TX);
@@ -175,7 +175,7 @@ static void paint(void)
         Box(x, 146, w, 1, 0, EDGE);
         Text(x, 164, reinstall?(encrypted?"Tutti i dati utente e le vecchie chiavi verranno eliminati.":"Verrà riscritto soltanto il volume di sistema selezionato."):"Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
         Text(x, 189, reinstall?(encrypted?"Sistema e Recovery restano invariati. Serve il nuovo enrollment.":"Documenti, account, FileVault e snapshot restano invariati."):"Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
-        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Nessun rollback.":"Si usa la copia locale verificata, non un aggiornamento online."):"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
+        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Nessun rollback.":"Si usa la copia locale verificata, non un aggiornamento online."):info.disk[choice].repair_mbr_signature?"Firma MBR 55 AA assente: verra ripristinata dopo conferma.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
         if(info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))){
             button(x,240,310,reinstall?"Inizializza dati cifrati…":encrypted?"FileVault attivo · Modifica…":"Proteggi con FileVault…",0);
             Text(x+326,247,encrypted?"Chiave confermata":reinstall?"Volume già sbloccato":"Facoltativo · tasto E",F_SMALL,SUB);
@@ -184,7 +184,7 @@ static void paint(void)
         Box(x + 12, foot - 52, 20, 20, 5, confirm ? ACC : EDGE);
         if (confirm)
             Center(x + 22, foot - 53, "✓", F_SMALL, si.dark ? 0x142525 : 0xffffff);
-        Text(x + 42, foot - 51, "Confermo la destinazione selezionata", F_SMALL, TX);
+        Text(x + 42, foot - 51, !reinstall&&info.disk[choice].repair_mbr_signature?"Confermo destinazione e ripristino firma MBR":"Confermo la destinazione selezionata", F_SMALL, TX);
     } else if (page == 3) {
         Icon(x, 23, 52, 38);
         Text(x, 95, reinstall?(encrypted?"Inizializzazione cifrata":"Reinstallazione in corso"):"Installazione in corso", F_TITLE, TX);

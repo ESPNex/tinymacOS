@@ -213,9 +213,9 @@ static int run(void)
         if (n == 1) {
             ln("ProductName:       tinymacOS");
             ln("ProductVersion:    10.2.5");
-            ln("BuildVersion:      30B18");
+            ln("BuildVersion:      30B19");
         } else if (n == 2 && eq(V(1), "-productVersion"))ln("10.2.5");
-        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B18");
+        else if (n == 2 && eq(V(1), "-buildVersion"))ln("30B19");
         else if (n == 2 && eq(V(1), "-productName"))ln("tinymacOS");
         else return 2;
         return 0;
@@ -224,7 +224,7 @@ static int run(void)
         if (n == 1 || eq(V(1), "-s"))ln("tinymacOS");
         else if (eq(V(1), "-m"))ln("x86_64");
         else if (eq(V(1), "-r"))ln("10.2.5");
-        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.5 30B18 x86_64");
+        else if (eq(V(1), "-a"))ln("tinymacOS tramontana 10.2.5 30B19 x86_64");
         else return 2;
         return 0;
     }
@@ -736,7 +736,7 @@ static int run(void)
                 for(int j=0;j<m->count;j++){DiskPartition*p=m->part+j;
                     say("  disk");num(i);say("s");num(p->number);say("  ");say(filesystem_name(p->fs));say("  ");num(p->sectors/2048);say(" MiB  LBA ");num(p->start);say("  ");ln(p->name);
                 }
-                for(int j=0;j<m->gaps;j++){say("  Spazio non allocato  ");num(m->gap[j].sectors/2048);say(" MiB  LBA ");num(m->gap[j].start);ln("");}
+                for(int j=0;j<m->gaps;j++){say("  Spazio non allocato  ");if(m->gap[j].sectors<2048)say("<1");else num(m->gap[j].sectors/2048);say(" MiB  LBA ");num(m->gap[j].start);ln("");}
                 if(!m->safe){say("  Protetto: ");ln(m->reason);}
             }
             if(!di.count)ln("Nessun disco collegato.");return 0;

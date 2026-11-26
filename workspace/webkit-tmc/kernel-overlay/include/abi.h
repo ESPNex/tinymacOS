@@ -160,6 +160,7 @@ enum { INSTALL_IDLE, INSTALL_SCAN, INSTALL_ESP, INSTALL_DATA, INSTALL_VERIFY, IN
 typedef struct {
     u32 sectors;
     int usable,scheme;
+    int repair_mbr_signature; /* explicit confirmation in fresh installer only */
     u32 start,available;
     char formats[72],reason[96];
     char model[41];

@@ -1,5 +1,8 @@
 # 10.2.5 / 30B16 — accettazione finale superata
 
+> **Stato attuale 30B19:** [rollback mouse, DnD disabilitato e riconoscimento GPT](NOTE-10.2.5-30B19.md).
+> I risultati e le funzionalità sotto descrivono build precedenti, non la nuova accettazione.
+
 > **Storico 30B16:** i gate e digest originali sotto non certificano la revisione
 > 30B17. Prove distinte e limiti in [HOTFIX-10.2.5-30B17.md](HOTFIX-10.2.5-30B17.md)
 > e `workspace/local-10.2.5/hotfix/`.

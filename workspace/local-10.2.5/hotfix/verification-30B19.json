@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "version": "10.2.5",
+  "build": "30B19",
+  "fresh_host_suites": 12,
+  "fresh_guest_suites": 8,
+  "fresh_guest_suites_detail": [
+    "pmbr-signature-guest-result.json",
+    "clipboard-rollback-guest-result.json",
+    "hotfix-windows-guest.json",
+    "release-optical-guest-result.json",
+    "native4k-install-guest-result.json",
+    "native4k-convert-guest-result.json",
+    "pointer-uefi",
+    "pointer-bios"
+  ],
+  "source_inputs_frozen_before_final_rebuild_and_rechecked": 755,
+  "font_live_installed_Recovery_exact_lock": true,
+  "exact_1024_desktop_input_rollback": true,
+  "desktop_file_DnD_enabled": false,
+  "Finder_context_clipboard_and_Terminal_preserved": true,
+  "signature_repair_GUI_explicit_confirmation_cancel_zero_writes_cold_boot": true,
+  "physical_mouse_fix_confirmed": false,
+  "physical_Windows_tested": false,
+  "actual_physical_disk_cause_established": false,
+  "Safari_full_WebKit_included": false,
+  "helper_retained_from_30B18_not_fresh_boot_tested": true,
+  "initial_host_PATH_failure_preserved": true,
+  "preliminary_GPT_candidate_GUI_PASS_but_not_counted_as_final": true,
+  "preliminary_4Kn_stopped_after_source_hardening_not_counted_as_final": true,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.5-x86_64.iso",
+    "bytes": 329506816,
+    "sha256": "987a18ba4a8a1586791a855740b361475dbdc63fa12352a9631238c03e46056a"
+  },
+  "publication_status": "See separate publication-readback-30B19.json; these are prepublication acceptance gates"
+}

@@ -28,7 +28,6 @@ static void put(Event e)
     e.when=ticks;
     int mergeable=0;
     if(e.type==EV_MOUSE||e.type==EV_POINTER_ABS) {
-        e.text[0]=(char)mods; /* pointer modifier snapshot: Ctrl/Option drag-copy */
         mergeable=e.c==pointer_buttons && !e.d;
         pointer_buttons=e.c;
         input_diag.delivered++;
@@ -43,7 +42,6 @@ static void put(Event e)
                 q[last].a=e.type==EV_MOUSE?(int)x:e.a;
                 q[last].b=e.type==EV_MOUSE?(int)y:e.b;
                 q[last].when=e.when;
-                q[last].text[0]=e.text[0];
                 input_diag.merged++;
                 spin_unlock(&input_lock,fl);return;
             }

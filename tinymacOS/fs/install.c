@@ -119,10 +119,10 @@ static void refresh(void)
         q->sectors = sata_size(i);
         strset(q->model, sata_model(i), 41);
         Medium medium={sata_io,sata_flush,i,q->sectors,0,sata_logical_bytes(i)};
-        partition_scan(&medium,&inventory);q->scheme=inventory.scheme;q->start=inventory.start;q->available=inventory.sectors;
+        partition_scan(&medium,&inventory);q->repair_mbr_signature=inventory.pmbr_signature_repairable;q->scheme=inventory.scheme;q->start=inventory.start;q->available=inventory.sectors;
         strset(q->reason,inventory.reason,sizeof q->reason);q->formats[0]=0;
         int seen[FS_COUNT]={0};for(int j=0;j<inventory.count;j++){int f=inventory.part[j].fs;if(f>=0&&f<FS_COUNT&&!seen[f]){if(q->formats[0])append(q->formats,", ",sizeof q->formats);append(q->formats,filesystem_name(f),sizeof q->formats);seen[f]=1;}}
-        q->usable=st.live&&i!=mounted&&inventory.safe&&inventory.slot>=0&&
+        q->usable=st.live&&i!=mounted&&(inventory.safe||(inventory.pmbr_signature_repairable&&medium_scale(&medium)==1))&&inventory.slot>=0&&
             (medium_scale(&medium)==1||(boot.install_4k&&boot.recovery_4k&&inventory.scheme==MAP_EMPTY))&&
             (inventory.scheme==MAP_EMPTY?q->sectors>=196608u:inventory.sectors>=TC_SECTORS);
         if(q->usable&&inventory.scheme!=MAP_EMPTY){
@@ -154,7 +154,8 @@ int install_begin_i(int d)
     st.target = d;
     st.done = pos = 0;
     Medium medium={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
-    if(!partition_scan(&medium,&inventory)||!inventory.safe)return err("Tabella cambiata: nessuna modifica.");
+    int table_ok=partition_scan(&medium,&inventory);
+    if((!table_ok||!inventory.safe)&&!(inventory.pmbr_signature_repairable&&inventory.scheme==MAP_GPT&&medium_scale(&medium)==1))return err("Tabella cambiata: nessuna modifica.");
     coexist=inventory.scheme!=MAP_EMPTY;install_scale=medium_scale(&medium);if(install_scale!=1&&install_scale!=8)return err("Geometria logica non supportata.");
     install_start=coexist?inventory.start:0;install_end=coexist?install_start+TC_SECTORS:medium.z;
     install_esp=coexist?install_start:LESP;install_data=coexist?install_start+TC_DATA:LDATA;
@@ -223,6 +224,7 @@ static int coexist_plan(void)
     u8*esp=(u8*)boot.install_esp;
     memcpy(esp+TC_HEADER*512,&descriptor,512);memcpy(esp+TC_OLD_MBR*512,oldmbr,512);
     memcpy(mbr,oldmbr,512);memcpy(mbr,bios_coexist_mbr,440);
+    if(inventory.pmbr_signature_repairable){mbr[510]=85;mbr[511]=170;}
     for(int i=0;i<=432;i++){
         u64 v;memcpy(&v,mbr+i,8);
         if(v==0x1badb002aabbccddull){v=install_duet;memcpy(mbr+i,&v,8);}

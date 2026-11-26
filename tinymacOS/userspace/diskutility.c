@@ -216,7 +216,7 @@ static int side_row(int wanted,int *disk,int *v,char *label)
         if(native==4)for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
         DiskMap*m=&d.disk[i].map;
         for(int j=0;j<m->count;j++)if(row++==wanted){*disk=i;*v=200+j;strset(label,"s",64);addnum(label,m->part[j].number,64);append(label,"  ",64);append(label,filesystem_name(m->part[j].fs),64);return 1;}
-        for(int j=0;j<m->gaps;j++)if(row++==wanted){*disk=i;*v=400+j;strset(label,"Non allocato · ",64);addnum(label,m->gap[j].sectors/2048,64);append(label," MiB",64);return 1;}
+        for(int j=0;j<m->gaps;j++)if(row++==wanted){*disk=i;*v=400+j;strset(label,"Non allocato · ",64);if(m->gap[j].sectors<2048)append(label,"<1",64);else addnum(label,m->gap[j].sectors/2048,64);append(label," MiB",64);return 1;}
     }
     return 0;
 }
@@ -304,7 +304,7 @@ static void paint(void)
         if(free){if(j>=m->gaps){view=-1;finish();return;}start=m->gap[j].start;sectors=m->gap[j].sectors;title="Spazio non allocato";}
         else{if(j>=m->count){view=-1;finish();return;}DiskPartition*p=m->part+j;start=p->start;sectors=p->sectors;format=filesystem_name(p->fs);title=p->name[0]?p->name:format;}
         Icon(x,75,57,33);Text(x+69,77,title,F_CAPTION,TX);Text(x+70,109,free?"Nessuna partizione in questa estensione":"Partizione del disco",F_SMALL,SUB);
-        char b[64]="";addnum(b,sectors/2048,64);append(b," MiB",64);pair(x,155,"Capacità",b);pair(x,188,"Formato",format);
+        char b[64]="";if(sectors&&sectors<2048)append(b,"<1",64);else addnum(b,sectors/2048,64);append(b," MiB",64);pair(x,155,"Capacità",b);pair(x,188,"Formato",format);
         b[0]=0;addnum(b,start,64);pair(x,221,"Inizio LBA",b);b[0]=0;addnum(b,sectors,64);pair(x,254,"Settori",b);
         if(free)button(x,288,150,"Crea partizione…",1);
         else{button(x,288,110,"Elimina…",0);button(x+120,288,160,"Ridimensiona…",0);}

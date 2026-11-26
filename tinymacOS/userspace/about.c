@@ -30,7 +30,7 @@ static void paint(void)
     pair(x, 243, "Volume dati", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
     s[0] = 0;
     addnum(s, si.procs, 90);
-    append(s, " processi attivi  ·  Build 30B18", 90);
+    append(s, " processi attivi  ·  Build 30B19", 90);
     Text(x, ah - 30, s, F_SMALL, EMP);
     finish();
 }

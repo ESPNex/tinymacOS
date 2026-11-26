@@ -1,0 +1,25 @@
+{
+  "status": "BUILT 30B19 AND SOFTWARE-VERIFIED; NO PHYSICAL FIX CLAIM",
+  "baseline_commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+  "file_drag_and_drop_enabled": false,
+  "files": {
+    "desktop/main.c": {
+      "before_sha256": "339e4c1e66c2ae01548ded08abd9e0c5a73160c8aa4a49544493c782efee61ad",
+      "restored_1024_sha256": "0775c8c159fdc078f6495aa74d4227d71d7291edb6e9b4945c4fd2a382cc8c3a"
+    },
+    "drivers/input.c": {
+      "before_sha256": "6c2fb04aafcd5ce1dee6dbc6552184f5f09f6b61e478612f9c2aa52d783c3242",
+      "restored_1024_sha256": "ad051f4e63211b6e04f9c71827cfca8f79df5fb7eb97bc642c0ce1c5695f949f"
+    }
+  },
+  "host_tests": {
+    "source_compatibility_contract": "passed",
+    "input_maintenance": "passed",
+    "windows_gaps_normal_and_sanitized": "passed",
+    "font_no_fallback": "passed",
+    "cleanup_contract": "passed"
+  },
+  "installer_real_disk_problem": "Narrow missing-55AA GPT case fixed and guest-verified; physical cause not established; unsafe GPT still refused",
+  "zero_MiB": "Positive sub-MiB intervals display <1 MiB; specific reported 0 MB not yet diagnosed",
+  "software_verification": "verification-30B19.json"
+}

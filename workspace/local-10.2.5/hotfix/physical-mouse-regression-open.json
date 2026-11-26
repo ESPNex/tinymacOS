@@ -1,0 +1,177 @@
+{
+  "status": "OPEN: physical pointer regression remains unresolved",
+  "user_confirmed": {
+    "mouse": "wired USB",
+    "connection": "direct PC port",
+    "onset": "already frozen at initial account creation/login",
+    "same_machine_1024_mouse_worked": true
+  },
+  "version_reported": "10.2.5; exact displayed build not independently collected",
+  "previous_QEMU_pass_is_not_physical_fix": true,
+  "no_new_ISO_or_fix_claimed": false,
+  "baseline_commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+  "source_comparison": [
+    {
+      "name": "build.sh",
+      "equal": false,
+      "baseline_sha256": "39fc32367572add0a3e356a78c4ac3279f8e6772925c04e0ee4b1a21f3d42ee0",
+      "current_sha256": "09a4b573341eea15067b4b02b588255e06a7810338cacab2223e2a675e7cf9e7"
+    },
+    {
+      "name": "drivers/xhci.c",
+      "equal": true,
+      "baseline_sha256": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71",
+      "current_sha256": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71"
+    },
+    {
+      "name": "drivers/usbhost.c",
+      "current_missing": true
+    },
+    {
+      "name": "drivers/ehci.c",
+      "equal": true,
+      "baseline_sha256": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5",
+      "current_sha256": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5"
+    },
+    {
+      "name": "drivers/uhci.c",
+      "equal": true,
+      "baseline_sha256": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555",
+      "current_sha256": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555"
+    },
+    {
+      "name": "drivers/input.c",
+      "equal": false,
+      "baseline_sha256": "ad051f4e63211b6e04f9c71827cfca8f79df5fb7eb97bc642c0ce1c5695f949f",
+      "current_sha256": "6c2fb04aafcd5ce1dee6dbc6552184f5f09f6b61e478612f9c2aa52d783c3242"
+    },
+    {
+      "name": "drivers/ps2.c",
+      "equal": true,
+      "baseline_sha256": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c",
+      "current_sha256": "5d6b550c966111e80fcbdf7a35416d735a70c09078f83771c19ef46068f9027c"
+    },
+    {
+      "name": "drivers/hid.c",
+      "current_missing": true
+    },
+    {
+      "name": "compat/linux/usb_input.c",
+      "equal": true,
+      "baseline_sha256": "013e92adf31711168ae83d65036f49f8473a73a3a4af5c17934a6fa52f3ae35b",
+      "current_sha256": "013e92adf31711168ae83d65036f49f8473a73a3a4af5c17934a6fa52f3ae35b"
+    },
+    {
+      "name": "compat/linux/usb_generic.c",
+      "equal": true,
+      "baseline_sha256": "a409a993ed4cc747285465bd85a3e2b487fbc7dfac54ddaa3ff6f2ccb56e5559",
+      "current_sha256": "a409a993ed4cc747285465bd85a3e2b487fbc7dfac54ddaa3ff6f2ccb56e5559"
+    },
+    {
+      "name": "compat/linux/usb_keyboard.c",
+      "equal": true,
+      "baseline_sha256": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
+      "current_sha256": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c"
+    },
+    {
+      "name": "compat/linux/usb_config.c",
+      "equal": true,
+      "baseline_sha256": "73a598eccafe5c5d2d682ab91b4845d9d53ea1a948056392c8a1a7c4ad45a244",
+      "current_sha256": "73a598eccafe5c5d2d682ab91b4845d9d53ea1a948056392c8a1a7c4ad45a244"
+    },
+    {
+      "name": "compat/linux/usb_hub.c",
+      "equal": true,
+      "baseline_sha256": "852f4ecaafb3f408815aeda78c82e0ab9889be8a2f056f5cf43a9b80f0d169d2",
+      "current_sha256": "852f4ecaafb3f408815aeda78c82e0ab9889be8a2f056f5cf43a9b80f0d169d2"
+    },
+    {
+      "name": "compat/linux/usbmouse_input.c",
+      "current_missing": true
+    },
+    {
+      "name": "compat/linux/psmouse_input.c",
+      "equal": true,
+      "baseline_sha256": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf",
+      "current_sha256": "0ebe386f3584d42fee95065eff158d8e195dd80f8279f987e8cdf7e03b0cfabf"
+    },
+    {
+      "name": "compat/linux/xhci_runtime.c",
+      "equal": true,
+      "baseline_sha256": "9d863799c93ce7689814de0c2b2f114118b40295f15eacbbefc2468478fd5b07",
+      "current_sha256": "9d863799c93ce7689814de0c2b2f114118b40295f15eacbbefc2468478fd5b07"
+    },
+    {
+      "name": "compat/linux/xhci_ring.c",
+      "equal": true,
+      "baseline_sha256": "4d025441e154dac4b3a759c658e8880424a57e7217fccc5d6bd4e86730b2ec45",
+      "current_sha256": "4d025441e154dac4b3a759c658e8880424a57e7217fccc5d6bd4e86730b2ec45"
+    },
+    {
+      "name": "compat/linux/xhci_pci.c",
+      "equal": true,
+      "baseline_sha256": "0b27c69e0513b5b1092fa6ea7870b3a04166615cad45589da3af0b7295208a1e",
+      "current_sha256": "0b27c69e0513b5b1092fa6ea7870b3a04166615cad45589da3af0b7295208a1e"
+    },
+    {
+      "name": "kernel/main.c",
+      "equal": false,
+      "baseline_sha256": "684b6f91b6fbb84414cc33cc9a3fdf59a5b81b2bf00cff998e24b93733cfcfa2",
+      "current_sha256": "6fd1ce5f571b741ba97f32dfb939dc35c22176ee802025bc0888cd8ea97aed5e"
+    },
+    {
+      "name": "kernel/sched.c",
+      "equal": true,
+      "baseline_sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380",
+      "current_sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380"
+    },
+    {
+      "name": "arch/isr.c",
+      "current_missing": true
+    },
+    {
+      "name": "desktop/main.c",
+      "equal": false,
+      "baseline_sha256": "0775c8c159fdc078f6495aa74d4227d71d7291edb6e9b4945c4fd2a382cc8c3a",
+      "current_sha256": "339e4c1e66c2ae01548ded08abd9e0c5a73160c8aa4a49544493c782efee61ad"
+    },
+    {
+      "name": "include/abi.h",
+      "equal": false,
+      "baseline_sha256": "7e55f330a7d7e85a1ba28a798bdcf0f8b8044742112509f6fbb6029a2aaba643",
+      "current_sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22"
+    },
+    {
+      "name": "include/inputdiag.h",
+      "equal": true,
+      "baseline_sha256": "2007d9b06cf6dd469700707149efea0b3dc1e318672d56e215a9ce655b3417ba",
+      "current_sha256": "2007d9b06cf6dd469700707149efea0b3dc1e318672d56e215a9ce655b3417ba"
+    },
+    {
+      "name": "desktop/login.c",
+      "equal": true,
+      "baseline_sha256": "3237356d68fd3af197d7dc6a36f7ce65628e90c388e1e44c586ba5f3b436825b",
+      "current_sha256": "3237356d68fd3af197d7dc6a36f7ce65628e90c388e1e44c586ba5f3b436825b"
+    },
+    {
+      "name": "arch/cpu.c",
+      "equal": true,
+      "baseline_sha256": "22ecf08a993a43abb48ac564265e6fcbdab0558c6fe82cfd717cffc889bf9c54",
+      "current_sha256": "22ecf08a993a43abb48ac564265e6fcbdab0558c6fe82cfd717cffc889bf9c54"
+    }
+  ],
+  "findings": [
+    "Native xHCI/EHCI/UHCI and inspected USB class adapters byte-equal to 10.2.4; this does not establish shipped binary/configuration equivalence.",
+    "Account/login input consumer and arch/cpu.c byte-equal to 10.2.4.",
+    "drivers/input.c differs only by two modifier-snapshot assignments for pointer events; not proven causal.",
+    "Kernel startup adds NVMe enumeration via storage_init; build and filesystem differ; no causal conclusion.",
+    "Freeze precedes interactive desktop drag-and-drop; earlier frame fairness change did not resolve physical report."
+  ],
+  "missing_evidence": [
+    "Physical device VID/PID and report descriptor",
+    "Runtime controller/device/report/delivery counters from affected PC",
+    "Exact build ID and actual 10.2.4 versus current shipped input configuration comparison"
+  ],
+  "current_action": "30B19 rebuilt with exact 10.2.4 desktop/input; physical fix NOT confirmed",
+  "source_comparison_is_historical_pre_rollback": true
+}

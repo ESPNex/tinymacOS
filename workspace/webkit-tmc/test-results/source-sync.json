@@ -9,7 +9,7 @@
   },
   {
     "path": "include/partition.h",
-    "sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6"
+    "sha256": "f45d05de444c3fe13ca41eef64a112b634545239f5a3e51e9f2163fd5361dcc0"
   },
   {
     "path": "include/clipboard.h",
@@ -93,7 +93,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22"
+    "sha256": "f70dc3274834e3d2b7ab52c6f3bc1b90a446651f527f5ac5b97bf6230c597036"
   },
   {
     "path": "include/vmabi.h",
