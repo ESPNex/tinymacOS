@@ -145,6 +145,7 @@ static int fattail(Medium*m,DiskEdit*q,DiskPartition*p,int apply){
     return writeat(m,a+backup,1,bootsector)||writeat(m,a,1,bootsector)?DE_IO:DE_OK;
 }
 int partition_edit(Medium*m,DiskEdit*q,int apply){
+    if(medium_scale(m)!=1)return say(q,DE_UNSUPPORTED,"Modifica/resize 4Kn non supportati: nessuna scrittura.");
     if(q->op<DISK_EDIT_CREATE||q->op>DISK_EDIT_RESIZE||!m->flush)return say(q,DE_INVALID,"Richiesta non valida.");
     if(apply&&q->confirm!=DISK_EDIT_CONFIRM)return say(q,DE_PROTECTED,"Conferma esplicita obbligatoria.");
     if(!partition_scan(m,&editmap)||!editmap.safe)return say(q,DE_PROTECTED,"Tabella degradata, sovrapposta o non supportata: nessuna modifica.");

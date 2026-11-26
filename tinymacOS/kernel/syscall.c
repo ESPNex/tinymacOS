@@ -167,7 +167,7 @@ static Frame *syscall_inner(Frame *f)
            (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND||(p->app==INSTALLER&&a==0))){
             VaultRequest q=*(VaultRequest*)b;VaultInfo out;
             if(q.password[64]||q.replacement[64]||q.recovery[64]){erase(&q,sizeof q);break;}
-            if(a<=8){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
+            if(a<=9){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
             erase(&q,sizeof q);
         }
         break;

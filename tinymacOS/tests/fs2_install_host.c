@@ -120,9 +120,12 @@ static void fresh_encrypted_install(int scheme){
  fs2_volume_forget(0);boot.recovery=0;erase(newrecovery,65);erase(recovery,65);erase(&q,sizeof q);
  printf("PASS actual %s ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged\n",scheme==MAP_GPT?"GPT":"MBR");
 }
+#ifndef TMC_FS2_HOST_HELPERS
 int main(void){
  disk=calloc(sectors,512);assert(disk);run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);
  fixture(MAP_GPT);invalid_source=1;assert(!install_begin_i(0));while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!writes);invalid_source=0;
  fixture(MAP_GPT);assert(!install_begin_i(0));while(st.state==INSTALL_SCAN)assert(!install_step_i());fail_at=writes+3;while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!memcmp(disk+1024,oldparts,3*128));
  free(disk);puts("PASS invalid source refuses before any target write; injected target failure never activates the new volume");return 0;
 }
+
+#endif

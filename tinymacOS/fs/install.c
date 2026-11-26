@@ -57,7 +57,7 @@ int volume_mount(Block *b)
         if (boot.install_len && !memcmp(io, "TINYFS1\0", 8))offset = 0;
         else {
             static Layout map;
-            Medium m = {sata_io, sata_flush, d, z};
+            Medium m={sata_io, sata_flush, d, z,0,sata_logical_bytes(d)};
             if (!layout_read(&m, &map) || (!boot.install_len && memcmp(map.parts[0].id, boot.esp_id, 16)))continue;
             offset = map.data;mounted_extent=map.parts[1].end-map.data+1;
         }
@@ -80,6 +80,9 @@ static void enrollment_clear(void){}
 #endif
 static DiskMap inventory;
 static int coexist;
+static u32 install_scale=1;
+static u32 target_source(u32 z){Medium m={.z=z,.logical_bytes=install_scale*512};return medium_source(&m);}
+static u32 target_rec(u32 z){return target_source(z)-NREC;}
 static u32 install_start,install_end,install_esp,install_data,install_rec,install_source,install_duet;
 static NativeContainer descriptor;
 static Part oldparts[128];
@@ -115,11 +118,12 @@ static void refresh(void)
         InstallDisk *q = st.disk + i;
         q->sectors = sata_size(i);
         strset(q->model, sata_model(i), 41);
-        Medium medium={sata_io,sata_flush,i,q->sectors};
+        Medium medium={sata_io,sata_flush,i,q->sectors,0,sata_logical_bytes(i)};
         partition_scan(&medium,&inventory);q->scheme=inventory.scheme;q->start=inventory.start;q->available=inventory.sectors;
         strset(q->reason,inventory.reason,sizeof q->reason);q->formats[0]=0;
         int seen[FS_COUNT]={0};for(int j=0;j<inventory.count;j++){int f=inventory.part[j].fs;if(f>=0&&f<FS_COUNT&&!seen[f]){if(q->formats[0])append(q->formats,", ",sizeof q->formats);append(q->formats,filesystem_name(f),sizeof q->formats);seen[f]=1;}}
         q->usable=st.live&&i!=mounted&&inventory.safe&&inventory.slot>=0&&
+            (medium_scale(&medium)==1||(boot.install_4k&&boot.recovery_4k&&inventory.scheme==MAP_EMPTY))&&
             (inventory.scheme==MAP_EMPTY?q->sectors>=196608u:inventory.sectors>=TC_SECTORS);
         if(q->usable&&inventory.scheme!=MAP_EMPTY){
             static Layout existing;
@@ -149,12 +153,12 @@ int install_begin_i(int d)
 #endif
     st.target = d;
     st.done = pos = 0;
-    Medium medium={sata_io,sata_flush,d,sata_size(d)};
+    Medium medium={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
     if(!partition_scan(&medium,&inventory)||!inventory.safe)return err("Tabella cambiata: nessuna modifica.");
-    coexist=inventory.scheme!=MAP_EMPTY;
+    coexist=inventory.scheme!=MAP_EMPTY;install_scale=medium_scale(&medium);if(install_scale!=1&&install_scale!=8)return err("Geometria logica non supportata.");
     install_start=coexist?inventory.start:0;install_end=coexist?install_start+TC_SECTORS:medium.z;
     install_esp=coexist?install_start:LESP;install_data=coexist?install_start+TC_DATA:LDATA;
-    install_rec=coexist?install_start+TC_REC:REC_AT(medium.z);install_source=coexist?install_start+TC_SOURCE:RESTORE_AT(medium.z);
+    install_rec=coexist?install_start+TC_REC:target_rec(medium.z);install_source=coexist?install_start+TC_SOURCE:target_source(medium.z);
     install_duet=coexist?install_start+TC_DUET:TMC_DUET_LBA;
     if(sata_io(d,0,1,oldmbr,0))return err("Lettura MBR non riuscita.");
     if(coexist&&inventory.scheme==MAP_GPT){
@@ -240,28 +244,30 @@ static void layout(u32 n)
 {
     memset(parts, 0, sizeof parts);
     part(0, esp_type, LESP, LDATA - 1, "tinymacOS EFI");
-    part(1, dat_type, LDATA, REC_AT(n) - 1, "Macintosh HD - Dati");
-    part(2, esp_type, REC_AT(n), RESTORE_AT(n) - 1, "Recovery");
-    part(3, src_type, RESTORE_AT(n), n - 34, "Installazione locale");
+    part(1, dat_type, LDATA, target_rec(n) - 1, "Macintosh HD - Dati");
+    part(2, esp_type, target_rec(n), target_source(n) - 1, "Recovery");
+    part(3, src_type, target_source(n), n-(install_scale==8?41:34), "Installazione locale");
+    if(install_scale==8)for(unsigned i=0;i<4;i++){parts[i].start/=8;parts[i].end/=8;}
+    u32 native=n/install_scale,table=(32+install_scale-1)/install_scale;
     primary = (Gpt) {
-        .rev = 0x10000, .size = 92, .at = 1, .other = n - 1, .first = 34, .last = n - 34, .entries = 2, .num = 128,
+        .rev = 0x10000, .size = 92, .at = 1, .other = native - 1, .first = 2+table, .last = native-2-table, .entries = 2, .num = 128,
         .entrysize = 128, .ecrc = crc32(parts, sizeof parts)
     };
     memcpy(primary.sig, "EFI PART", 8);
     guid(primary.guid, 0);
     backup = primary;
-    backup.at = n - 1;
+    backup.at = native - 1;
     backup.other = 1;
-    backup.entries = n - 33;
+    backup.entries = native-1-table;
     backup.crc = crc32(&backup, 92);
     primary.crc = crc32(&primary, 92);
     memset(mbr, 0, 512);
-    memcpy(mbr,bios_boot_mbr,440);
+    if(install_scale==1)memcpy(mbr,bios_boot_mbr,440);
     mbr[450] = 0xee;
     mbr[448] = 2;
     mbr[451] = mbr[452] = mbr[453] = 255;
-    *(u32 *)(mbr + 454) = 1;
-    *(u32 *)(mbr + 458) = n - 1;
+    struct PACK {u32 value;} *start=(void*)(mbr+454),*length=(void*)(mbr+458);
+    start->value=1;length->value=native-1;
     mbr[510] = 85;
     mbr[511] = 170;
 }
@@ -271,6 +277,7 @@ static int commit(int d, u32 l, u32 n, void *p)
 }
 static int install_bios(int d)
 {
+    if(install_scale==8)return 0; /* 4Kn BIOS requires the separate USB/SATA helper */
     u64 bytes=bios_duet_end-bios_duet;
     if(!bytes || bytes%512 || (coexist?bytes/512>install_end-install_duet:bytes/512>LESP-TMC_DUET_LBA))return -1;
     for(u32 j=0;j<bytes/512;){
@@ -288,7 +295,7 @@ int install_step_i()
     u32 z = sata_size(d);
 #ifdef TMC_FS2_BACKEND
     if(st.state==INSTALL_DATA){
-        u32 sectors=coexist?TC_DATA_N:REC_AT(z)-install_data;
+        u32 sectors=coexist?TC_DATA_N:target_rec(z)-install_data;
         int result;
         if(enrollment.enabled){char recovery[65]={0};result=fs2_install_encrypted(d,install_data,sectors,snapshot,sizeof snapshot,enrollment.password,enrollment.random,recovery);erase(recovery,sizeof recovery);enrollment_clear();}
         else result=fs2_install_data(d,install_data,sectors,snapshot,sizeof snapshot,0);
@@ -313,9 +320,9 @@ int install_step_i()
             if (!coexist && !iszero(io, n * 512))
                 return err("Il disco contiene dati: installazione annullata senza scrivere.");
         } else {
-            u8 *src = (idx < NESP ? (u8 *)boot.install_esp : idx < NESP + NREC ? (u8 *)boot.recovery_img : idx < span ?
-                       (u8 *)boot.install_esp : snapshot) + (u64)off * 512;
-            u32 l = (idx < NESP ? install_esp : idx < NESP + NREC ? install_rec : idx < span ? install_source + 1 : install_data) + off;
+            u8 *src = (idx < NESP ? (u8 *)(install_scale==8?boot.install_4k:boot.install_esp) : idx < NESP + NREC ? (u8 *)(install_scale==8?boot.recovery_4k:boot.recovery_img) : idx < span ?
+                       (u8 *)(install_scale==8?boot.install_4k:boot.install_esp) : snapshot) + (u64)off * 512;
+            u32 l = (idx < NESP ? install_esp : idx < NESP + NREC ? install_rec : idx < span ? install_source + install_scale : install_data) + off;
             if (st.state == INSTALL_VERIFY) {
                 if (sata_io(d, l, n, io, 0) || memcmp(io, src, n * 512))
                     return err("Rilettura non riuscita: disco non attivato.");
@@ -350,20 +357,20 @@ int install_step_i()
             note(INSTALL_VERIFY, "Verifica dell’installazione");
         } else {
 #ifdef TMC_FS2_BACKEND
-            u32 sectors=coexist?TC_DATA_N:REC_AT(z)-install_data;
+            u32 sectors=coexist?TC_DATA_N:target_rec(z)-install_data;
             if(fs2_install_data(d,install_data,sectors,snapshot,sizeof snapshot,1))return err("Rilettura TMCBFS2 non riuscita: disco non attivato.");
             st.done+=NDATA;
 #endif
             Seal seal = {.sectors = NESP, .ver = 1};
             memcpy(seal.magic, "TMCSYS20", 8);
             memcpy(seal.disk, coexist?descriptor.id:primary.guid, 16);
-            sha_bytes((void *)boot.install_esp, boot.install_len, seal.digest);
+            sha_bytes((void *)(install_scale==8?boot.install_4k:boot.install_esp), boot.install_len, seal.digest);
             if(coexist&&!unchanged(d))return err("Tabella cambiata: attivazione annullata.");
             if(install_bios(d)||commit(d,install_source,1,&seal))return err("Payload di avvio non verificato.");
             if(coexist){
                 if(inventory.scheme==MAP_GPT && (commit(d,backup.entries,(backup.num*128+511)/512,parts)||commit(d,backup.at,1,&backup)||commit(d,primary.entries,(primary.num*128+511)/512,parts)||commit(d,primary.at,1,&primary)))return err("Aggiornamento GPT interrotto: usa la copia GPT valida.");
                 if(commit(d,0,1,mbr))return err("Aggiornamento avvio fallito: MBR originale conservato nel volume.");
-            }else if(commit(d,z-33,32,parts)||commit(d,z-1,1,&backup)||commit(d,2,32,parts)||commit(d,1,1,&primary)||commit(d,0,1,mbr))return err("Finalizzazione GPT non riuscita. Non usare questo disco.");
+            }else if(commit(d,backup.entries*install_scale,32,parts)||commit(d,backup.at*install_scale,1,&backup)||commit(d,primary.entries*install_scale,32,parts)||commit(d,primary.at*install_scale,1,&primary)||commit(d,0,1,mbr))return err("Finalizzazione GPT non riuscita. Non usare questo disco.");
             erase(snapshot, sizeof snapshot);
             enrollment_clear();
             note(INSTALL_DONE, "Installazione completata e verificata");
@@ -389,10 +396,10 @@ void disk_info_i(DiskInfo *r)
     r->count = sata_count();
     r->current = mounted;
     for (int d = 0; d < r->count; d++) {
-        Medium m = {volume_cipher_io, sata_flush, d, sata_size(d),sata_io};
+        Medium m={volume_cipher_io, sata_flush, d, sata_size(d),sata_io,sata_logical_bytes(d)};
         r->disk[d].sectors = m.z;
         strset(r->disk[d].model, sata_model(d), 44);
-        Medium raw={sata_io,sata_flush,d,m.z};partition_scan(&raw,&r->disk[d].map);
+        Medium raw={sata_io,sata_flush,d,m.z,0,sata_logical_bytes(d)};partition_scan(&raw,&r->disk[d].map);
         int t = layout_read(&m, &layout_info);
         r->disk[d].layout = t;
         r->disk[d].healthy = t && layout_info.pv && layout_info.bv;
@@ -407,7 +414,7 @@ void disk_info_i(DiskInfo *r)
 int disk_operation_i(int op, int d)
 {
     if (isbusy() || d < 0 || d >= sata_count())return -1;
-    Medium m = {volume_cipher_io, sata_flush, d, sata_size(d),sata_io};
+    Medium m={volume_cipher_io, sata_flush, d, sata_size(d),sata_io,sata_logical_bytes(d)};
 #ifdef TMC_FS2_BACKEND
     if(layout_read(&m,&layout_info)==2){
         u32 base=layout_info.data,sectors=layout_info.parts[1].end-base+1;
@@ -545,25 +552,26 @@ int bootconfig_disk(int write,u32 flags)
     if(boot.install_len || (write==1?flags>1:!bootconfig_flags_valid(flags)) || (write==3&&(!boot.recovery||(flags!=TMC_BOOT_CSR_OVERRIDE&&flags!=TMC_BOOT_CSR_MASK))))return -2;
     u32 irq;spin_lock(&cfg_lock,&irq);int result=-1;
     for(int d=0;d<sata_count();d++) {
-        Medium medium={sata_io,sata_flush,d,sata_size(d)};
+        Medium medium={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
         if(layout_read(&medium,&cfg_layout)!=2 || (!boot.recovery&&memcmp(cfg_layout.parts[0].id,boot.esp_id,16)))continue;
         u64 base64=cfg_layout.parts[2].start;
         if(base64>0xffffffffu || cfg_layout.parts[2].end-base64+1!=NREC)break;
         u32 base=(u32)base64;
         if(sata_io(d,base,1,cfg_sector,0))break;
-        if(cfg16(cfg_sector+510)!=0xaa55||cfg16(cfg_sector+11)!=512||cfg_sector[13]!=1||cfg_sector[16]!=2)break;
+        unsigned factor=cfg16(cfg_sector+11)/512;
+        if(cfg16(cfg_sector+510)!=0xaa55||(factor!=1&&factor!=8)||cfg_sector[13]!=1||cfg_sector[16]!=2)break;
         unsigned reserved=cfg16(cfg_sector+14),fat=cfg16(cfg_sector+22),entries=cfg16(cfg_sector+17);
         unsigned total=cfg16(cfg_sector+19);if(!total)total=cfg32(cfg_sector+32);
-        unsigned root=reserved+2*fat,rootsectors=(entries*32+511)/512,data=root+rootsectors;
-        if(!reserved||!fat||!entries||entries>512||total!=NREC||data>=total)break;
+        unsigned root=reserved+2*fat,rootsectors=(entries*32+factor*512-1)/(factor*512),data=root+rootsectors;
+        if(!reserved||!fat||!entries||entries>512||total*factor!=NREC||data>=total)break;
         u32 at=0;
-        for(unsigned sector=0;sector<rootsectors&&!at;sector++) {
-            if(sata_io(d,base+root+sector,1,cfg_sector,0))break;
+        for(unsigned sector=0;sector<rootsectors*factor&&!at;sector++) {
+            if(sata_io(d,base+root*factor+sector,1,cfg_sector,0))break;
             for(unsigned j=0;j<512;j+=32) {
                 const u8 *p=cfg_sector+j;
                 if(memcmp(p,"BOOTCFG BIN",11)||(p[11]&0x18)||cfg32(p+28)!=512)continue;
                 unsigned cluster=cfg16(p+26);
-                if(cluster>=2 && cluster-2<total-data)at=base+data+cluster-2;
+                if(cluster>=2 && cluster-2<total-data)at=base+(data+cluster-2)*factor;
             }
         }
         if(!at||sata_io(d,at,1,cfg_sector,0)||!bootconfig_valid((BootConfig *)cfg_sector))break;
@@ -591,7 +599,7 @@ int disk_edit(DiskEdit *q,int apply)
         r=q->result=DE_PROTECTED;
         strset(q->message,"Disco in uso: avvia da Recupero o dal supporto live.",sizeof q->message);
     }else{
-        Medium m={sata_io,sata_flush,q->disk,sata_size(q->disk)};
+        Medium m={sata_io,sata_flush,q->disk,sata_size(q->disk),0,sata_logical_bytes(q->disk)};
         if(apply)volume_forget(q->disk);
         r=partition_edit(&m,q,apply);
     }
@@ -601,7 +609,7 @@ int disk_edit(DiskEdit *q,int apply)
 #ifdef TMC_FS2_BACKEND
 static int encrypted_reset_target(int d,Layout*map){
  if(!boot.recovery||d<0||d>=sata_count()||d==volume_current())return 0;
- Medium m={sata_io,sata_flush,d,sata_size(d),sata_io};
+ Medium m={sata_io,sata_flush,d,sata_size(d),sata_io,sata_logical_bytes(d)};
  if(layout_read(&m,map)!=2)return 0;u32 sectors=map->parts[1].end-map->data+1;
  return fs2_disk_present(d,map->data,sectors)==2&&!fs2_volume_locked(d)&&!fs2_disk_verify(d,map->data,sectors);
 }
@@ -669,8 +677,8 @@ int disk_import(DiskImport*q,int commit){
  if(!boot.recovery||(commit!=0&&commit!=1)||q->reserved||(commit&&q->confirm!=DISK_IMPORT_CONFIRM)||!q->checkpoint[0]||q->checkpoint[47]||q->source<0||q->destination<0||q->source==q->destination||q->source==mounted||q->destination==mounted||q->source>=sata_count()||q->destination>=sata_count())return -1;
  u32 fl;rec_lock(&fs_gate,&fl);int r=-1;
  if(!isbusy()){
-  Medium sm={sata_io,sata_flush,q->source,sata_size(q->source),sata_io};
-  Medium dm={sata_io,sata_flush,q->destination,sata_size(q->destination),sata_io};
+  Medium sm={sata_io,sata_flush,q->source,sata_size(q->source),sata_io,sata_logical_bytes(q->source)};
+  Medium dm={sata_io,sata_flush,q->destination,sata_size(q->destination),sata_io,sata_logical_bytes(q->destination)};
   /* Large partition inventories live on the heap, not the kernel stack. */
   Layout*s=kmalloc(sizeof *s),*d=kmalloc(sizeof *d);
   if(s&&d&&layout_read(&sm,s)==2&&layout_read(&dm,d)==2){

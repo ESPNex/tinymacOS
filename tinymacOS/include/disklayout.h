@@ -41,7 +41,13 @@ typedef struct {
     int d;
     u32 z;
     int(*raw)(int,u32,u32,void*,int); /* optional metadata-only raw path */
+    u32 logical_bytes; /* 0 defaults to 512; IO coordinates stay 512-byte units */
 } Medium;
+static inline u32 medium_scale(const Medium*m){return m->logical_bytes==4096?8u:m->logical_bytes==0||m->logical_bytes==512?1u:0u;}
+static inline u32 medium_source(const Medium*m){return medium_scale(m)==8?m->z-40u-NESP-8u:RESTORE_AT(m->z);}
+static inline u32 medium_rec(const Medium*m){return medium_source(m)-NREC;}
+static inline u32 medium_last(const Medium*m){return medium_scale(m)==8?m->z-41u:m->z-34u;}
+u32 sata_logical_bytes(int);
 typedef struct {
     int pv, bv, type, container;
     u32 esp,data,rec,source;

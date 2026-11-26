@@ -228,6 +228,17 @@ recover:
         if (memcmp(sum, (void *)sig, 32))goto recover;
         sha_bytes((void *)bi.recovery_img, bi.recovery_len, sum);
         if (memcmp(sum, (u8 *)sig + 32, 32))goto recover;
+        u64 n4=0,r4=0,s4=0,sn=0;
+        if(EFI_ERROR(root->Open(root,&f,L"\\install-4k.esp",EFI_FILE_MODE_READ,0))||
+           !read_asset(bs,f,24u<<20,59,59,&displayed,&bi.install_4k,&n4)||n4!=(24u<<20)||
+           EFI_ERROR(root->Open(root,&f,L"\\recovery-4k.img",EFI_FILE_MODE_READ,0))||
+           !read_asset(bs,f,10u<<20,59,59,&displayed,&bi.recovery_4k,&r4)||r4!=(10u<<20)||
+           EFI_ERROR(root->Open(root,&f,L"\\Payload4K.sha",EFI_FILE_MODE_READ,0))||
+           !read_asset(bs,f,64,59,59,&displayed,&s4,&sn)||sn!=64)FAIL("4Kn payload");
+        sha_bytes((void*)bi.install_4k,n4,sum);if(memcmp(sum,(void*)s4,32))goto recover;
+        sha_bytes((void*)bi.recovery_4k,r4,sum);if(memcmp(sum,(u8*)s4+32,32))goto recover;
+        bs->FreePages(s4,1);
+
     } else if (inst != EFI_NOT_FOUND)FAIL("Cannot inspect boot volume");
 #ifndef TMC_RECOVERY_ENTRY
     if(inst==EFI_NOT_FOUND&&(bi.boot_flags&TMC_BOOT_DEFAULT)){

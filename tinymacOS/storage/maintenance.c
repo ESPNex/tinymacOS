@@ -6,6 +6,7 @@
 #define FSDATA 144u /* TMCBFS1 subset header h[4] (fs/btrfs.c DATA) */
 #define FNODE 64u   /* disk inode table location, in sectors (fs/btrfs.c NODE0) */
 #define FSUPER 128u /* superblock location, in sectors (fs/btrfs.c SUPER) */
+__attribute__((weak)) u32 sata_logical_bytes(int d){(void)d;return 512;}
 static Part pt[128];
 static Layout map;
 static u8 buf[CHUNK * 512] ALIGNED(4096), data[NDATA * 512] ALIGNED(512);
@@ -36,16 +37,13 @@ u32 crc32(const void *v, size_t n)
     while (n--)c = table[(c^*p++) & 255] ^ (c >> 8);
     return ~c;
 }
-static int readh(Medium *m, u32 l, Gpt *h)
-{
-    if (m->io(m->d, l, 1, h, 0) || memcmp(h->sig, "EFI PART", 8) || h->size != 92 || h->rev != 0x10000 ||
-        h->at != l || h->other != (l == 1 ? m->z - 1 : 1) || h->first != 34 || h->last != m->z - 34 ||
-        h->entries != (l == 1 ? 2 : m->z - 33) || h->num != 128 || h->entrysize != 128)return 0;
-    u32 c = h->crc;
-    h->crc = 0;
-    int ok = c == crc32(h, 92);
-    h->crc = c;
-    return ok && !m->io(m->d, h->entries, 32, pt, 0) && crc32(pt, sizeof pt) == h->ecrc;
+static int readh(Medium*m,u32 l,Gpt*h){
+ u32 scale=medium_scale(m);if(!scale||m->z%scale)return 0;u32 z=m->z/scale,table=(32+scale-1)/scale;
+ if(m->io(m->d,l,1,h,0)||memcmp(h->sig,"EFI PART",8)||h->size!=92||h->rev!=0x10000||h->res||h->at!=l/scale||h->other!=(l==scale?z-1:1)||h->first!=2+table||h->last!=z-2-table||h->entries!=(l==scale?2:z-1-table)||h->num!=128||h->entrysize!=128)return 0;
+ u32 c=h->crc;h->crc=0;int ok=c==crc32(h,92);h->crc=c;
+ if(!ok||m->io(m->d,h->entries*scale,32,pt,0)||crc32(pt,sizeof pt)!=h->ecrc)return 0;
+ if(scale!=1)for(unsigned i=0;i<128;i++)if(memcmp(pt[i].type,(u8[16]){0},16)){if(pt[i].start>=z||pt[i].end>=z||pt[i].end<pt[i].start)return 0;pt[i].start*=scale;pt[i].end=(pt[i].end+1)*scale-1;}
+ return 1;
 }
 int layout_read(Medium *m, Layout *x)
 {
@@ -68,12 +66,12 @@ int layout_read(Medium *m, Layout *x)
     }
     if (m->z < MINSECT || m->z > TMC_DISK_MAX_SECTORS)return 0;
     Gpt h;
-    x->pv = readh(m, 1, &h);
+    x->pv = readh(m, medium_scale(m), &h);
     if (x->pv) {
         x->g = h;
         memcpy(x->parts, pt, sizeof pt);
     }
-    x->bv = readh(m, m->z - 1, &h);
+    x->bv = readh(m, m->z - medium_scale(m), &h);
     if (x->bv) {
         if (x->pv && (memcmp(x->parts, pt, sizeof pt) || memcmp(x->g.guid, h.guid, 16)))return 0;
         x->g = h;
@@ -85,13 +83,13 @@ int layout_read(Medium *m, Layout *x)
     if (memcmp(p[0].type, esp_type, 16) || p[0].start != LESP || p[0].end != LDATA - 1 ||
         memcmp(p[1].type, dat_type, 16) || p[1].start != LDATA)return 0;
     int type = !memcmp(p[2].type,esp_type,16)?2:1;
-    if(p[1].end>z-34||p[1].end<LDATA+NF_MIN_VOLUME-1)return 0;
-    if (type == 2 && (p[1].end >= REC_AT(z) ||
-                      memcmp(p[2].type, esp_type, 16) || p[2].start != REC_AT(z) || p[2].end != RESTORE_AT(z) - 1 ||
-                      memcmp(p[3].type, src_type, 16) || p[3].start != RESTORE_AT(z) || p[3].end != z - 34))return 0;
+    if(p[1].end>medium_last(m)||p[1].end<LDATA+NF_MIN_VOLUME-1)return 0;
+    if (type == 2 && (p[1].end >= medium_rec(m) ||
+                      memcmp(p[2].type, esp_type, 16) || p[2].start != medium_rec(m) || p[2].end != medium_source(m) - 1 ||
+                      memcmp(p[3].type, src_type, 16) || p[3].start != medium_source(m) || p[3].end != medium_last(m)))return 0;
     u8 zero[16] = {0};
     for (int i = type == 1 ? 2 : 4; i < 128; i++)if (memcmp(p[i].type, zero, 16))return 0;
-    x->esp=LESP;x->data=LDATA;x->rec=REC_AT(m->z);x->source=RESTORE_AT(m->z);
+    x->esp=LESP;x->data=LDATA;x->rec=medium_rec(m);x->source=medium_source(m);
     x->type = type;
     return type;
 }
@@ -162,6 +160,7 @@ int firstaid(Medium *m, int fix)
     if (map.type == 2 && !verify_system(m))return -1;
     if (map.pv && map.bv)return 0;
     if (!fix)return 1;
+    if(medium_scale(m)!=1)return -1; /* native GPT repair is deliberately not a legacy-sector rewrite */
     u32 l = map.pv ? m->z - 1 : 1;
     Gpt h = map.g;
     h.at = l;
@@ -235,10 +234,10 @@ int restore_os(Medium *m)
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv)return -1;
     u32 l = map.source;
     u8 sum[32];
-    if (!getseal(m, l, "TMCSYS20", NESP) || hashdisk(m, l + 1, NESP, sum) || memcmp(sum, seal.digest, 32))return -1;
+    if (!getseal(m, l, "TMCSYS20", NESP) || hashdisk(m, l + medium_scale(m), NESP, sum) || memcmp(sum, seal.digest, 32))return -1;
     for (u32 j = 0; j < NESP; j += CHUNK) {
         u32 k = MIN(CHUNK, NESP - j);
-        if (m->io(m->d, l + 1 + j, k, buf, 0) || m->io(m->d, map.esp + j, k, buf, 1))return -1;
+        if (m->io(m->d, l + medium_scale(m) + j, k, buf, 0) || m->io(m->d, map.esp + j, k, buf, 1))return -1;
     }
     return m->flush(m->d) || hashdisk(m, map.esp, NESP, sum) || memcmp(sum, seal.digest, 32) ? -1 : 0;
 }

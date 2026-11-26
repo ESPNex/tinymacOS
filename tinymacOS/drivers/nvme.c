@@ -29,7 +29,7 @@ void nvme_init(void){
   NvController*c=controllers[id];device_add("NVMe / PCIe", "storage",0);
   for(unsigned j=0;j<c->count;j++){
    NvNamespace*n=c->ns+j;
-   if(n->block_bytes!=512){boot_logstr("[nvme] 4Kn namespace not exposed: partition/boot ABI is 512 B\n");continue;}
+
    if(n->sectors512>TMC_DISK_MAX_SECTORS){boot_logstr("[nvme] namespace exceeds current 1TiB block ABI; no truncation\n");continue;}
    if(count==SETUP_MAX_DISKS){boot_logstr("[nvme] device table full\n");break;}
    disks[count].controller=id;disks[count].ns=j;
@@ -50,3 +50,5 @@ int nvme_flush(int d){
  if(d<0||d>=count)return -1;unsigned k=disks[d].controller;u32 flags;spin_lock(locks+k,&flags);
  int r=nvme_namespace_flush(controllers[k],disks[d].ns);spin_unlock(locks+k,flags);return r;
 }
+
+u32 nvme_logical_bytes(int d){return d<0||d>=count?0:controllers[disks[d].controller]->ns[disks[d].ns].block_bytes;}

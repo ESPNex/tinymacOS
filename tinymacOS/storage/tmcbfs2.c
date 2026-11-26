@@ -446,3 +446,11 @@ int tmc2_import_snapshot(Tmc2*dest,Tmc2*source,const char*name){
  next.next_inode=MAX(next.next_inode,snap.size);
  return publish(dest,next);
 }
+
+int tmc2_allocated_next(const Tmc2*c,u64*cursor,u64*out){
+ if(!c||c->faulted||!cursor||!out)return -1;
+ u64 n=*cursor;while(n<c->io.blocks){
+  if(!c->used[n/BIT_BITS]){n=(n/BIT_BITS+1)*BIT_BITS;continue;}
+  if(bit(c->used,n)){*out=n;*cursor=n+1;return 1;}n++;
+ }*cursor=c->io.blocks;return 0;
+}

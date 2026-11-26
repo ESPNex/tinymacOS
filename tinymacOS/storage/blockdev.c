@@ -18,3 +18,6 @@ int sata_flush(int d){
  if(d<0||d>=sata_count())return -1;u32 flags;spin_lock(&disk_lock,&flags);int a=ahci_count();
  int r=d<a?ahci_flush(d):nvme_flush(d-a);spin_unlock(&disk_lock,flags);return r;
 }
+
+extern u32 nvme_logical_bytes(int);
+u32 sata_logical_bytes(int d){if(d<0||d>=sata_count())return 0;int a=ahci_count();return d<a?512:nvme_logical_bytes(d-a);}

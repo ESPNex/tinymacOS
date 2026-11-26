@@ -10,6 +10,7 @@ struct Boot {
     uint32_t modes[24];
     uint32_t boot_flags;        /* TMC_BOOT_VERBOSE etc. */
     uint32_t recovery;            /* set by the dedicated Recovery kernel */
+    uint64_t install_4k, recovery_4k; /* verified 4096-byte FAT media, live only */
     uint32_t csr;                 /* SIP config from NVRAM: bit0 = enabled */
 };
 struct Elf {

@@ -66,7 +66,16 @@ mcopy -i "$D/install.esp" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore
 # Installed media must retain Linux GPL and all bundled component notices,
 # not only the firmware notices visible on the optical root.
 for notice in licenses/*;do mcopy -i "$D/install.esp" "$notice" "::/LICENSES/$(basename "$notice")";done
-mkesp "$R/EFI.IMG" 64M TRAMONTANA System-live.vol
+# Genuine native-4Kn FAT media: 4KiB BPB sectors, identical file contents.
+rm -f "$D/install-4k.esp" "$D/recovery-4k.img"
+python3 tools/fat-native-4k.py "$D/install.esp" "$D/install-4k.esp"
+python3 tools/fat-native-4k.py "$V" "$D/recovery-4k.img"
+python3 - "$D" <<'PY4KHASH'
+from pathlib import Path
+import hashlib,sys
+p=Path(sys.argv[1]);(p/'Payload4K.sha').write_bytes(b''.join(hashlib.sha256((p/n).read_bytes()).digest() for n in ['install-4k.esp','recovery-4k.img']))
+PY4KHASH
+mkesp "$R/EFI.IMG" 128M TRAMONTANA System-live.vol
 mmd -i "$R/EFI.IMG" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/NVRAM ::/LICENSES
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
 for notice in licenses/*;do mcopy -i "$R/EFI.IMG" "$notice" "::/LICENSES/$(basename "$notice")";done
@@ -78,6 +87,10 @@ mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibi
 mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility
 for driver in BiosVideo XhciDxe OpenUsbKbDxe TmcPs2KeyboardDxe UsbMouseDxe NvmExpressDxe;do mcopy -i "$R/EFI.IMG" "$R/EFI/OC/Drivers/$driver.efi" "::/EFI/OC/Drivers/$driver.efi";done
 mcopy -i "$R/EFI.IMG" "$D/install.esp" ::/Install.esp;mmd -i "$R/EFI.IMG" ::/Recovery;mcopy -i "$R/EFI.IMG" "$F" ::/Recovery/BaseSystem.dmg;mcopy -i "$R/EFI.IMG" "$P/Volume.hdr" ::/Recovery/Volume.hdr;python3 -c 'import hashlib,pathlib,sys;e,r,out=map(pathlib.Path,sys.argv[1:]);out.write_bytes(hashlib.sha256(e.read_bytes()).digest()+hashlib.sha256(r.read_bytes()).digest())' "$D/install.esp" "$V" "$D/Payload.sha";mcopy -i "$R/EFI.IMG" "$D/Payload.sha" ::/Recovery/Payload.sha
+for asset in install-4k.esp recovery-4k.img Payload4K.sha;do
+ mcopy -i "$R/EFI.IMG" "$D/$asset" "::/$asset"
+ cp "$D/$asset" "$R/$asset"
+done
 # USB sticks written in ISO mode (the Rufus default) boot the ISO9660 root,
 # not the FAT El Torito image: carry the same payload files there too, or the
 # loader finds no System.vol / Install.esp and can only fall back to Recupero.

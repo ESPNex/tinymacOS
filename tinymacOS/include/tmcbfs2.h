@@ -82,3 +82,6 @@ i64 tmc2_inode_count(Tmc2*);
 int tmc2_import_snapshot(Tmc2*,Tmc2*,const char*);
 /* Read-only full verification and exact staging-space preflight. */
 int tmc2_import_check(Tmc2*,Tmc2*,const char*,u64*);
+
+/* Read-only enumeration of blocks retained by BOTH fallback roots and snapshots. */
+int tmc2_allocated_next(const Tmc2*,u64*,u64*);

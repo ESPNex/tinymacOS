@@ -13,7 +13,7 @@ Vault *volume_vault(int d)
  extern int fs2_plain_volume(int);if(fs2_plain_volume(d))return 0;
 #endif
  if(d<0||d>=sata_count()||d>=MAXVAULT)return 0;Runtime*r=volumes+d;if(r->initialized)return &r->v;
- static Layout map;Medium m={sata_io,sata_flush,d,sata_size(d)};
+ static Layout map;Medium m={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
  if(layout_read(&m,&map)!=2)return 0;
 #ifdef TMC_FS2_BACKEND
  /* Recovery must not mistake arbitrary scalable data for v1 vault metadata. */

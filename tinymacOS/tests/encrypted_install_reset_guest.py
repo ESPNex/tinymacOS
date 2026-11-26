@@ -56,9 +56,9 @@ def read_rendered_key(g):
  x,y=g.visible('Conferma gli ultimi 8 caratteri della chiave:')
  im=g.snap();crop=im.crop((max(0,x-5),y-90,min(im.width,x+440),y-12));gray=cv2.cvtColor(np.asarray(crop),cv2.COLOR_RGB2GRAY)
  hits=[]
- for c in '0123456789abcdef':
+ for c in '0123456789ABCDEF':
   glyph=pixels.word(c,5);scores=cv2.matchTemplate(gray,glyph,cv2.TM_CCOEFF_NORMED)
-  yy,xx=np.where(np.abs(scores)>=.985)
+  yy,xx=np.where(np.abs(scores)>=.98)
   hits.extend((float(abs(scores[ay,ax])),int(ax),int(ay),c) for ay,ax in zip(yy,xx))
  chosen=[]
  for score,xx,yy,c in sorted(hits,reverse=True):

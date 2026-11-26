@@ -42,3 +42,5 @@ static void run(int encrypted_source,int encrypted_dest){
  for(int d=0;d<2;d++)fs2_volume_forget(d);
 }
 int main(void){for(unsigned d=0;d<2;d++){media[d]=malloc(SECTORS*512);assert(media[d]);}for(int s=0;s<2;s++)for(int d=0;d<2;d++)run(s,d);for(unsigned d=0;d<2;d++)free(media[d]);return 0;}
+
+u32 sata_logical_bytes(int d){(void)d;return 512;}

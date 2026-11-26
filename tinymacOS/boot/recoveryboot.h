@@ -45,13 +45,13 @@ static inline int recflag(EFI_BOOT_SERVICES *bs, EFI_HANDLE d)
 {
     EFI_GUID gd = EFI_BLOCK_IO_PROTOCOL_GUID;
     EFI_BLOCK_IO *io = 0;
-    unsigned char buf[512] __attribute__((aligned(64)));
-    if (EFI_ERROR(bs->HandleProtocol(d, &gd, (void **)&io)) || io->Media->BlockSize != 512 ||
-        !io->Media->LogicalPartition || EFI_ERROR(io->ReadBlocks(io, io->Media->MediaId, 8, 512, buf)) ||
-        memcmp(buf, "TMRECOV2", 8))return 0;
-    bs->SetMem(buf, 512, 0);
-    io->WriteBlocks(io, io->Media->MediaId, 8, 512, buf);
-    io->FlushBlocks(io);
+    unsigned char buf[4096] __attribute__((aligned(4096)));
+    if(EFI_ERROR(bs->HandleProtocol(d,&gd,(void**)&io))||!io->Media->LogicalPartition)return 0;
+    UINTN block=io->Media->BlockSize;if(block!=512&&block!=4096)return 0;
+    UINT64 lba=4096/block;
+    if(EFI_ERROR(io->ReadBlocks(io,io->Media->MediaId,lba,block,buf))||memcmp(buf,"TMRECOV2",8))return 0;
+    bs->SetMem(buf,512,0); /* preserve all adjacent bytes of a native 4KiB block */
+    if(EFI_ERROR(io->WriteBlocks(io,io->Media->MediaId,lba,block,buf))||EFI_ERROR(io->FlushBlocks(io)))return 0;
     return 1;
 }
 static inline int recovery_key(EFI_SYSTEM_TABLE *st)

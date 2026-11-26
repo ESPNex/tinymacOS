@@ -24,16 +24,18 @@ void vault_view_draw(int x,int y,int w,int h)
   vbutton(28,82,vw-56,disks.count?q.disk>=0&&q.disk<disks.count?disks.disk[q.disk].model:"Disco di sistema":"Nessun disco idoneo",0);
   vt(28,135,"STATO",F_SMALL,SUB);vt(150,131,vi.error?"Volume non disponibile":!vi.enabled?"Disattivo":vi.locked?"Bloccato":vi.state==FV_ENCRYPTING?"Cifratura in corso":vi.state==FV_DECRYPTING?"Decifratura in corso":"Attivo",F_BODY,TX);
   vt(28,174,"FileVault protegge i dati su questo disco.",F_SMALL,SUB);
-  if(vi.state==FV_ENCRYPTING||vi.state==FV_DECRYPTING){vb(28,237,vw-56,12,6,SOFT);vb(28,237,(vw-56)*vi.progress/100,12,6,ACC);char z[32]="";addnum(z,vi.progress,32);append(z,"%",32);vt(28,265,z,F_BODY,TX);vt(28,306,"Non rimuovere il disco durante la conversione.",F_SMALL,SUB);}
+  if(vi.format==4&&vi.locked)vbutton(28,247,280,"Riprendi conversione…",1);
+  else if(vi.state==FV_ENCRYPTING||vi.state==FV_DECRYPTING){vb(28,237,vw-56,12,6,SOFT);vb(28,237,(vw-56)*vi.progress/100,12,6,ACC);char z[32]="";addnum(z,vi.progress,32);append(z,"%",32);vt(28,265,z,F_BODY,TX);vt(28,306,"Non rimuovere il disco durante la conversione.",F_SMALL,SUB);}
   else if(vi.error){vbutton(28,247,210,"Riprova sblocco…",0);if(vi.format!=3)vbutton(255,247,vw-283,"Annulla attivazione…",0);}
-  else if(!vi.enabled){if(vi.format==2)vt(28,247,"Cifratura disponibile nella nuova installazione.",F_SMALL,SUB);else if(vi.available)vbutton(28,247,210,"Attiva FileVault…",1);}
+  else if(!vi.enabled){if(vi.format==2&&!si.recovery)vt(28,247,"Conversione disponibile da Recovery.",F_SMALL,SUB);else if(vi.available)vbutton(28,247,210,"Attiva FileVault…",1);}
   else if(vi.locked)vbutton(28,247,250,"Sblocca volume…",1);
-  else{if(vi.format!=3)vbutton(28,247,210,"Disattiva FileVault…",0);else vt(28,250,"Conversione non disponibile",F_SMALL,SUB);vbutton(255,247,230,"Cambia password…",0);vbutton(28,295,285,"Nuova chiave di recupero…",0);if(si.recovery)vbutton(330,295,180,"Blocca volume",0);}
+  else{if(vi.format!=3||si.recovery)vbutton(28,247,210,"Disattiva FileVault…",0);else vt(28,250,"Conversione da Recovery",F_SMALL,SUB);vbutton(255,247,230,"Cambia password…",0);vbutton(28,295,285,"Nuova chiave di recupero…",0);if(si.recovery)vbutton(330,295,180,"Blocca volume",0);}
   if(notice[0])vt(28,353,notice,F_SMALL,SUB);
  }else if(page==1){
   vt(28,90,op==1?"Attivazione FileVault":op==2?"Disattiva la cifratura":op==4?"Sblocca il volume":op==5?"Cambia password del volume":op==8?"Annulla attivazione non iniziata":"Rigenera la chiave di recupero",F_CAPTION,TX);
+  if(vi.format>=2&&(op==1||op==2))vt(28,337,"Recovery: prepara una copia esterna. Ripresa, non rollback.",F_MICRO,SUB);
   vt(28,123,op==1&&!si.recovery?"Inserisci la password del tuo account.":op==8?"Inserisci la password del tuo account.":"Puoi usare anche la chiave di recupero.",F_SMALL,SUB);
-  for(int i=0;i<fields;i++){const char *label=i==0?(op==4?"Password o chiave di recupero":"Password attuale"):i==1&&op==5?"Nuova password":"Conferma password";vt(28,159+i*57,label,F_SMALL,SUB);vb(28,179+i*57,vw-56,32,6,i==focus?SEL:PANEL);char dots[65];int n=strlen(input[i]);memset(dots,'*',n);dots[n]=0;vt(39,187+i*57,dots,F_MONO,TX);}
+  for(int i=0;i<fields;i++){const char *label=i==0?(op==4?"Password o chiave di recupero":op==1?"Nuova password del volume":"Password attuale"):i==1&&op==5?"Nuova password":"Conferma password";vt(28,159+i*57,label,F_SMALL,SUB);vb(28,179+i*57,vw-56,32,6,i==focus?SEL:PANEL);char dots[65];int n=strlen(input[i]);memset(dots,'*',n);dots[n]=0;vt(39,187+i*57,dots,F_MONO,TX);}
   if(notice[0])vt(28,354,notice,F_SMALL,SUB);vbutton(28,vh-58,120,"Annulla",0);vbutton(vw-180,vh-58,150,"Continua",1);
  }else{
   vt(28,90,"Salva la chiave di recupero",F_CAPTION,TX);vt(28,125,"Conservala in un luogo sicuro, fuori da questo disco.",F_BODY,TX);
@@ -44,7 +46,7 @@ void vault_view_draw(int x,int y,int w,int h)
 static void begin_op(int a){op=a;page=1;focus=0;fields=a==1?2:a==5?3:1;wipe_inputs();notice[0]=0;}
 static void submit(void)
 {
- if(page==2){if(!eq(input[0],q.recovery+56)){strset(notice,"Gli 8 caratteri non coincidono.",sizeof notice);return;}memset(q.recovery,0,65);wipe_inputs();confirmed=1;page=0;notice[0]=0;return;}
+ if(page==2){if(!eq(input[0],q.recovery+56)){strset(notice,"Gli 8 caratteri non coincidono.",sizeof notice);return;}if(op==1&&vi.format==4){strset(q.password,input[0],65);if(fvcall(9)<0){strset(notice,"Conferma non accettata.",sizeof notice);return;}}memset(q.recovery,0,65);wipe_inputs();confirmed=1;page=0;notice[0]=0;return;}
  if(page!=1)return;
  if(op==5&&!eq(input[1],input[2])){strset(notice,"Le due nuove password non coincidono.",sizeof notice);return;}
  strset(q.password,input[0],65);if(fields>1)strset(q.replacement,input[1],65);
@@ -67,7 +69,8 @@ void vault_view_event(const Event *e)
   if(page==2){if(y>vh-65&&x>vw-230)submit();}
   else if(page==1){for(int i=0;i<fields;i++)if(y>=179+i*57&&y<211+i*57)focus=i;if(y>vh-65){if(x<180){page=0;wipe_inputs();}else if(x>vw-190)submit();}}
   else if(y>=82&&y<116&&si.recovery&&disks.count){q.disk=(q.disk+1)%disks.count;fvcall(0);}
-  else if(vi.state!=FV_ENCRYPTING&&vi.state!=FV_DECRYPTING){if(y>=247&&y<280){if(vi.error){if(x<245||vi.format!=3)begin_op(x<245?4:8);}else if(!vi.enabled){if(vi.available&&vi.format!=2)begin_op(1);}else if(vi.locked)begin_op(4);else if(x>=245||vi.format!=3)begin_op(x<245?2:5);}else if(y>=295&&y<329&&vi.enabled&&!vi.locked){if(x<320)begin_op(6);else if(si.recovery)fvcall(7);}}
+  else if(vi.format==4&&vi.locked&&y>=247&&y<280)begin_op(4);
+  else if(vi.state!=FV_ENCRYPTING&&vi.state!=FV_DECRYPTING){if(y>=247&&y<280){if(vi.error){if(x<245||vi.format!=3)begin_op(x<245?4:8);}else if(!vi.enabled){if(vi.available)begin_op(1);}else if(vi.locked)begin_op(4);else if(x>=245||vi.format!=3||si.recovery)begin_op(x<245?2:5);}else if(y>=295&&y<329&&vi.enabled&&!vi.locked){if(x<320)begin_op(6);else if(si.recovery)fvcall(7);}}
  }
 }
 int vault_view_tick(void)
