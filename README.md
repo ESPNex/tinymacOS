@@ -10,6 +10,8 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 
 **Revisione 30B17:** font della ISO 10.2.4 ripristinato e bloccato nel packaging; gestione per-frame degli eventi mouse/drag; inventario dello spazio non allocato conservato su GPT protette, senza convertire RAW/MSR in spazio libero. [Correzioni, test e limiti](tinymacOS/docs/HOTFIX-10.2.5-30B17.md). Safari completo non è incluso.
 
+**Sorgenti successivi alla release:** rimosso ogni fallback di famiglia dal nuovo TFN2, rigenerati anche monospace e font di emergenza dal pacchetto fornito. Questa modifica non è ancora nella ISO pubblicata. [Stato e verifiche](tinymacOS/docs/FONT-NO-FALLBACK.md).
+
 ## Funzioni principali
 
 - Un solo assistente «Installa tinymacOS Tramontana» nel desktop e «Reinstalla tinymacOS Tramontana» in Recovery.

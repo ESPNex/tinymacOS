@@ -44,7 +44,7 @@ for src,name,loc in apps:
     add(resources+'AppIcon.png',source.read_bytes())
     for size in atlas['sizes']:add(resources+f'Icon{size}.png',(D/'icon-png'/icon.removesuffix('.png')/f'Icon{size}.png').read_bytes())
 add('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/IconsManifest.json',Path('assets/icons/manifest.json').read_bytes())
-add('/System/Library/Fonts/Display-Semibold-OFL.txt',Path('assets/font-source/OFL.txt').read_bytes())
+add('/System/Library/Fonts/Font-Provenance.txt',Path('licenses/FONTS.txt').read_bytes())
 
 # No browser resources in this baseline image. WebKit is developed separately.
 for name,src in ([] if mode=='recovery' else zip(('Prisma','Alba','Laguna','Aurora','Prisma glaciale','Aurora boreale','Rame vespertino','Riviera','Levante','Meriggio','Notturno','Brezza','Tramontana'),('prisma','alba','laguna','aurora','glaciale','boreale','rame','riviera','levante','meriggio','notturno','brezza','tramontana'))):add('/System/Library/Desktop Pictures/'+name+'.qoi',Path('assets/'+src+'.qoi').read_bytes())

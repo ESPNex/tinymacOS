@@ -22,4 +22,4 @@ for _ in range(10000):
  frames+=1
 assert frames==10000 and processed==640000 and messages==320000
 pack=(r/'tools/system_volume.py').read_text();assert "font_lock['sha256']" in pack and 'release packaging refuses silent font substitution' in pack
-print('PASS exact accepted 10.2.4 font, fail-closed release font lock, bounded input and drag/selection IPC queues; sustained-readability fairness model 10000 scanout opportunities. NOT hardware USB acceptance.')
+print('PASS currently locked production font, fail-closed release font lock, bounded input and drag/selection IPC queues; sustained-readability fairness model 10000 scanout opportunities. NOT hardware USB acceptance.')

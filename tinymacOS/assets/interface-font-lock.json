@@ -1,7 +1,8 @@
 {
-  "source": "Exact accepted Interface.tfn recovered from published 10.2.4 ISO",
-  "release_iso_sha256": "7b6059a4c82fee9add7a642690ac679d554a287a9c7ed277cff2279017750b21",
+  "source": "User-supplied tinymacOS upright OTFs, original UI symbols; no external font fallback or inherited face",
   "path": "assets/type.tfn",
-  "bytes": 2180353,
-  "sha256": "b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2"
+  "bytes": 2178265,
+  "sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49",
+  "manifest": "assets/type.json",
+  "old_30B17_media_receipts_do_not_validate_this_revision": true
 }

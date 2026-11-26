@@ -1,0 +1,267 @@
+{
+  "format": "TFN2",
+  "faces": [
+    {
+      "face": 0,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 12,
+      "height": 20,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 1,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 14,
+      "height": 22,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 2,
+      "family": "tinymacOS (user supplied)",
+      "file": "BOLD.OTF",
+      "weight": 700,
+      "pixels": 14,
+      "height": 22,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "fcd81dfa4b55d19f4c55b3f1fd4ea1204f2a4f43d7f0e72877f3a1b354488ec5"
+    },
+    {
+      "face": 3,
+      "family": "tinymacOS (user supplied)",
+      "file": "SEMIBOLD.otf",
+      "weight": 600,
+      "pixels": 25,
+      "height": 33,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "42f7b597f04d17b15e0ca31a2d543b4e5a3b93a1dc65231568d8e2c45531d7cf"
+    },
+    {
+      "face": 4,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 38,
+      "height": 46,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 5,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 13,
+      "height": 21,
+      "monospace": true,
+      "fixed_advance": 8,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 6,
+      "family": "tinymacOS (user supplied)",
+      "file": "MEDIUM.OTF",
+      "weight": 500,
+      "pixels": 10,
+      "height": 18,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5078435567cba9543ae2af8322930c3a2702a7e7c700e5f4d4e521edeb902b51"
+    },
+    {
+      "face": 7,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 54,
+      "height": 62,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 8,
+      "family": "tinymacOS (user supplied)",
+      "file": "REGULAR.OTF",
+      "weight": 400,
+      "pixels": 17,
+      "height": 25,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "5fbf156326fc5a171a428b79c89741c13b98afd7ca9c1dec49be09922f76aa6d"
+    },
+    {
+      "face": 9,
+      "family": "tinymacOS (user supplied)",
+      "file": "BOLD.OTF",
+      "weight": 700,
+      "pixels": 86,
+      "height": 94,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "fcd81dfa4b55d19f4c55b3f1fd4ea1204f2a4f43d7f0e72877f3a1b354488ec5"
+    },
+    {
+      "face": 10,
+      "family": "tinymacOS (user supplied)",
+      "file": "SEMIBOLD.otf",
+      "weight": 600,
+      "pixels": 38,
+      "height": 48,
+      "monospace": false,
+      "fixed_advance": null,
+      "original_project_symbols": [
+        "0x2318",
+        "0x2315",
+        "0x232b"
+      ],
+      "same_family_aliases": [
+        {
+          "code": "0xad",
+          "source": "0x2d"
+        }
+      ],
+      "fallback_glyphs": [],
+      "source_sha256": "42f7b597f04d17b15e0ca31a2d543b4e5a3b93a1dc65231568d8e2c45531d7cf"
+    }
+  ],
+  "glyph_count": 207,
+  "bytes": 2178265,
+  "sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49",
+  "provenance": "User-supplied OTFs; redistribution license not included in source ZIP",
+  "synthetic_weights": false,
+  "inherited_monospace": false,
+  "external_font_fallback": false,
+  "monospace_policy": "Supplied Regular fitted into 8px cells; not a separately designed monospace font",
+  "symbols_policy": "Original geometric command/search/backspace; soft hyphen uses supplied hyphen"
+}

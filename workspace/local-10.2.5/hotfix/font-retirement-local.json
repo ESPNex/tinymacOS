@@ -1,0 +1,27 @@
+{
+  "deleted_incorrect_loose_fonts": [
+    {
+      "path": "/var/tmp/tmc-1025-hotfix/Interface-10.2.5.tfn",
+      "sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6"
+    },
+    {
+      "path": "/var/tmp/tmc-1025-final-check/media-build/Interface.tfn",
+      "sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6"
+    }
+  ],
+  "historical_release_ISOs_and_Git_commits_not_rewritten": true,
+  "published_media_still_contains_previous_font": true,
+  "production_sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49",
+  "production_bytes": 2178265,
+  "no_external_font_fallback": true,
+  "inherited_bitmap_faces": 0,
+  "emergency_font_regenerated": true,
+  "host_asset_reproducibility_test_passed": true,
+  "real_C_fontmetrics_test_passed": true,
+  "fontmetrics_harness_compile_setup_attempts": [
+    "missing include path",
+    "strict c11 rejects kernel GNU asm",
+    "gnu11 plus include path succeeded"
+  ],
+  "new_ISO_built_or_published": false
+}

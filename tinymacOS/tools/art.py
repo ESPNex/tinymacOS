@@ -9,14 +9,8 @@ from PIL import Image,ImageDraw,ImageFont,ImageOps
 D=Path(__file__).resolve().parents[1]/'assets'
 for s in ('prisma','alba','laguna','aurora'):
  im=ImageOps.fit(Image.open(D/(s+'-master.jpg')).convert('RGB'),(1280,800),method=Image.Resampling.LANCZOS);im.save(D/(s+'.qoi'))
-glyphs=list(range(32,127))+list(range(160,256))+list(map(ord,'…←→↑↓⌘•−▸⌕✓’–—⌫€'))
-faces=[('DejaVuSans.ttf',12),('DejaVuSans.ttf',14),('DejaVuSans-Bold.ttf',14),('DejaVuSans-Bold.ttf',25),('DejaVuSans.ttf',38),('DejaVuSansMono.ttf',13),('DejaVuSans-Bold.ttf',10),('DejaVuSans.ttf',54),('DejaVuSans.ttf',17),('DejaVuSans-Bold.ttf',86)]
-head=bytearray(b'TFN2'+struct.pack('<II',len(faces),len(glyphs))+struct.pack('<%dI'%len(glyphs),*glyphs));pix=bytearray()
-for name,size in faces:
- f=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/'+name,size);hh=size+8;head.extend(struct.pack('<I',hh))
- for u in glyphs:
-  ch=chr(u);adv=round(f.getlength(ch))+(1 if size==10 else 0);w=max(adv,f.getbbox(ch)[2])+1;im=Image.new('L',(w,hh));ImageDraw.Draw(im).text((0,0),ch,font=f,fill=255);head.extend(struct.pack('<HHI',adv,w,len(pix)));pix.extend(im.tobytes())
-(D/'type.tfn').write_bytes(head+pix)
+# Fonts are built ONLY by interface-font.py from the checked-in supplied family.
+# Artwork regeneration must never overwrite assets/type.tfn.
 S=4;N=64*S;Y,X=np.mgrid[0:N,0:N]/S
 rgb=lambda s:np.array(list(bytes.fromhex(s)),float)
 allpix=[]

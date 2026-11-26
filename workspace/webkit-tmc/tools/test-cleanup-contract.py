@@ -5,8 +5,14 @@ import json,hashlib
 root=Path(__file__).resolve().parents[3];osroot=root/'tinymacOS';cleanup=root/'workspace/cleanup'
 manifest=json.loads((cleanup/'protected-active-inputs.json').read_text())
 override_path=root/'workspace/local-10.2.5/hotfix/authorized-source-changes.json'
-overrides=json.loads(override_path.read_text())['inputs'] if override_path.exists() else {}
+authorization=json.loads(override_path.read_text()) if override_path.exists() else {}
+overrides=authorization.get('inputs',{})
+removed=authorization.get('removed_inputs',{})
+assert set(removed)<=set(manifest['unchanged_inputs'])
 for name,expected in manifest['unchanged_inputs'].items():
+ if name in removed:
+  assert removed[name]['baseline_sha256']==expected and not (osroot/name).exists(),name
+  continue
  if name in overrides:
   assert overrides[name]['baseline_sha256']==expected,name
   expected=overrides[name]['hotfix_sha256']
@@ -20,4 +26,4 @@ for name in ('build.sh','tests/test-input-maintenance.sh'):
 for name in ('fs/btrfs.c','fs/bootfs.c','fs/tmcbfs2_runtime.c','storage/fs2_convert.c','desktop/recovery.c','tests/native_recovery.py','tests/boot_recovery.py'):assert (osroot/name).is_file(),name
 receipt=json.loads((cleanup/'github-archive-verification.json').read_text());assert receipt['passed'] and receipt['all_members_independently_verified_from_GitHub'] and receipt['files']==1945
 assert all(p.name in ('webkit-tmc','local-10.2.5','cleanup') for p in (root/'workspace').iterdir() if p.is_dir()),'Historical workspace expanded again'
-print('PASS cleanup: '+str(len(manifest['unchanged_inputs']))+' protected active inputs checked ('+str(len(overrides))+' explicitly authorized hotfix changes), background byte-equal, active FS/Recovery preserved, obsolete EFI implementation absent; archive prior verified member-by-member')
+print('PASS cleanup: '+str(len(manifest['unchanged_inputs']))+' protected active inputs checked ('+str(len(overrides))+' explicitly authorized hotfix changes, '+str(len(removed))+' explicit obsolete-source removals), background byte-equal, active FS/Recovery preserved, obsolete EFI implementation absent; archive prior verified member-by-member')

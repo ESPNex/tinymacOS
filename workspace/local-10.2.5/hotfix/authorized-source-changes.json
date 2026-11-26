@@ -1,9 +1,9 @@
 {
-  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update",
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face",
   "inputs": {
     "assets/type.tfn": {
       "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
-      "hotfix_sha256": "b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2"
+      "hotfix_sha256": "26a87dcb81da307e3087aa7230b891689ddbc30cf249003e0608848baa258e49"
     },
     "desktop/main.c": {
       "baseline_sha256": "74ecd050897b5166e7f2ef269e80af03721f664e6ded520d1fcf8b5f9e1e10e5",
@@ -24,6 +24,24 @@
     "userspace/settings.c": {
       "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
       "hotfix_sha256": "fb3ca3a0aa0586d2cd593d62d588126f8d3462eb16c1da415baf3df61c1c0006"
+    },
+    "assets/panicfont.inc": {
+      "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
+      "hotfix_sha256": "919030270e36e7a083f9af787e84c7c922b1c8ffdb59223b7750414e2653d349"
+    }
+  },
+  "removed_inputs": {
+    "assets/font-source/Display-Semibold.ttf": {
+      "baseline_sha256": "65a5691c4ad56246f217e09fe22342a7ab267ed196b71ffaf805cdfbb8d73cb2",
+      "reason": "Obsolete unused font source; active atlas uses only supplied OTFs and original symbols"
+    },
+    "assets/font-source/OFL.txt": {
+      "baseline_sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "reason": "Obsolete unused font source; active atlas uses only supplied OTFs and original symbols"
+    },
+    "assets/font-source/wordmark.json": {
+      "baseline_sha256": "398939942e1e6ea50b82a4e35d451570b027a41f110f7e0bb75389229d5a27a8",
+      "reason": "Obsolete unused font source; active atlas uses only supplied OTFs and original symbols"
     }
   }
 }
