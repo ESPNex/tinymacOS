@@ -1,0 +1,410 @@
+{
+  "scope": "User-approved removal of 21 unclassified duplicate aliases; exact original objects saved before deletion. Do not automatically recreate aliases during future integrity checks.",
+  "tags_before": 46,
+  "tags_after_expected": 25,
+  "aliases_to_remove": [
+    {
+      "remove": "v10",
+      "retain": "v10-developer-preview",
+      "original_object_sha": "7dd49e3a052f1b9794287128e9390eb474c02966",
+      "original_object_type": "commit",
+      "commit": "7dd49e3a052f1b9794287128e9390eb474c02966"
+    },
+    {
+      "remove": "v10.1",
+      "retain": "v10.1-developer-preview",
+      "original_object_sha": "0965f921147062721fed7e7adea9a750cd0beceb",
+      "original_object_type": "commit",
+      "commit": "0965f921147062721fed7e7adea9a750cd0beceb"
+    },
+    {
+      "remove": "v10.1.1",
+      "retain": "v10.1.1-developer-preview",
+      "original_object_sha": "50e310af4dd360818b5a6e15816116db90676d1f",
+      "original_object_type": "commit",
+      "commit": "50e310af4dd360818b5a6e15816116db90676d1f"
+    },
+    {
+      "remove": "v10.1.2",
+      "retain": "v10.1.2-developer-preview",
+      "original_object_sha": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "original_object_type": "commit",
+      "commit": "fd74c7cc08a06f009806058682490a6fd89225bc"
+    },
+    {
+      "remove": "v10.1.3",
+      "retain": "v10.1.3-developer-preview",
+      "original_object_sha": "77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df",
+      "original_object_type": "commit",
+      "commit": "77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df"
+    },
+    {
+      "remove": "v10.1.4",
+      "retain": "v10.1.4-developer-preview",
+      "original_object_sha": "f4360c9c366efb74ea48e9d02bf06f31e64da832",
+      "original_object_type": "commit",
+      "commit": "f4360c9c366efb74ea48e9d02bf06f31e64da832"
+    },
+    {
+      "remove": "v10.1.5",
+      "retain": "v10.1.5-beta",
+      "original_object_sha": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274",
+      "original_object_type": "commit",
+      "commit": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274"
+    },
+    {
+      "remove": "v10.1.6",
+      "retain": "v10.1.6-beta",
+      "original_object_sha": "16803a799059ddd3bab63df6cb9a8b9291249471",
+      "original_object_type": "commit",
+      "commit": "16803a799059ddd3bab63df6cb9a8b9291249471"
+    },
+    {
+      "remove": "v10.1.7-usbhid-candidate",
+      "retain": "v10.1.7-usbhid-candidate-developer-preview",
+      "original_object_sha": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+      "original_object_type": "commit",
+      "commit": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75"
+    },
+    {
+      "remove": "v10.1.8",
+      "retain": "v10.1.8-beta",
+      "original_object_sha": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d",
+      "original_object_type": "commit",
+      "commit": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d"
+    },
+    {
+      "remove": "v10.1.9",
+      "retain": "v10.1.9-beta",
+      "original_object_sha": "207ebc74689c0081b9507aa295cc575488401647",
+      "original_object_type": "commit",
+      "commit": "207ebc74689c0081b9507aa295cc575488401647"
+    },
+    {
+      "remove": "v10.2",
+      "retain": "v10.2-beta",
+      "original_object_sha": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9",
+      "original_object_type": "commit",
+      "commit": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9"
+    },
+    {
+      "remove": "v10.2.1",
+      "retain": "v10.2.1-beta",
+      "original_object_sha": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4",
+      "original_object_type": "commit",
+      "commit": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4"
+    },
+    {
+      "remove": "v10.2.2",
+      "retain": "v10.2.2-beta",
+      "original_object_sha": "7e9d2a11e3d260e9b892dd9337cf141825620b60",
+      "original_object_type": "commit",
+      "commit": "7e9d2a11e3d260e9b892dd9337cf141825620b60"
+    },
+    {
+      "remove": "v10.2.3",
+      "retain": "v10.2.3-beta",
+      "original_object_sha": "09edd1ea626cc70ce82e8e47c42a1681a8905d56",
+      "original_object_type": "commit",
+      "commit": "09edd1ea626cc70ce82e8e47c42a1681a8905d56"
+    },
+    {
+      "remove": "v10.2.4",
+      "retain": "v10.2.4-pre-release",
+      "original_object_sha": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+      "original_object_type": "commit",
+      "commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69"
+    },
+    {
+      "remove": "v10.2.5",
+      "retain": "v10.2.5-pre-release",
+      "original_object_sha": "bed1e1214c6c24720815197242a03af2b0e25c9a",
+      "original_object_type": "tag",
+      "commit": "a38be5dabaab6b55de2a4495b353061a045780d0"
+    },
+    {
+      "remove": "v2.4.4",
+      "retain": "v2.4.4-developer-preview",
+      "original_object_sha": "9e7c83c58f0452e6d2d5f00768862cab339de2ca",
+      "original_object_type": "commit",
+      "commit": "9e7c83c58f0452e6d2d5f00768862cab339de2ca"
+    },
+    {
+      "remove": "v2.4.4-oc1",
+      "retain": "v2.4.4-oc1-developer-preview",
+      "original_object_sha": "897bda98316091eba706b8a0269ebc18065e3160",
+      "original_object_type": "commit",
+      "commit": "897bda98316091eba706b8a0269ebc18065e3160"
+    },
+    {
+      "remove": "v2.4.4-oc2",
+      "retain": "v2.4.4-oc2-developer-preview",
+      "original_object_sha": "9c21b15b93b6c36464a0c25f9c394cef1c9f3ca2",
+      "original_object_type": "commit",
+      "commit": "9c21b15b93b6c36464a0c25f9c394cef1c9f3ca2"
+    },
+    {
+      "remove": "v2.4.5",
+      "retain": "v2.4.5-developer-preview",
+      "original_object_sha": "bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7",
+      "original_object_type": "commit",
+      "commit": "bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7"
+    }
+  ],
+  "tags_to_retain_unchanged": [
+    {
+      "tag": "archive/v10.2.3-before-cow-82ec7bc",
+      "object_sha": "82ec7bc198991c9d03a4dcb628d995caee35c5b7",
+      "object_type": "commit",
+      "commit": "82ec7bc198991c9d03a4dcb628d995caee35c5b7"
+    },
+    {
+      "tag": "v10-developer-preview",
+      "object_sha": "7dd49e3a052f1b9794287128e9390eb474c02966",
+      "object_type": "commit",
+      "commit": "7dd49e3a052f1b9794287128e9390eb474c02966"
+    },
+    {
+      "tag": "v10.1-developer-preview",
+      "object_sha": "0965f921147062721fed7e7adea9a750cd0beceb",
+      "object_type": "commit",
+      "commit": "0965f921147062721fed7e7adea9a750cd0beceb"
+    },
+    {
+      "tag": "v10.1.1-developer-preview",
+      "object_sha": "50e310af4dd360818b5a6e15816116db90676d1f",
+      "object_type": "commit",
+      "commit": "50e310af4dd360818b5a6e15816116db90676d1f"
+    },
+    {
+      "tag": "v10.1.2-developer-preview",
+      "object_sha": "fd74c7cc08a06f009806058682490a6fd89225bc",
+      "object_type": "commit",
+      "commit": "fd74c7cc08a06f009806058682490a6fd89225bc"
+    },
+    {
+      "tag": "v10.1.3-developer-preview",
+      "object_sha": "77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df",
+      "object_type": "commit",
+      "commit": "77b73dc3e86eb9dff7ef4b8fa1f8571ce34703df"
+    },
+    {
+      "tag": "v10.1.4-developer-preview",
+      "object_sha": "f4360c9c366efb74ea48e9d02bf06f31e64da832",
+      "object_type": "commit",
+      "commit": "f4360c9c366efb74ea48e9d02bf06f31e64da832"
+    },
+    {
+      "tag": "v10.1.5-beta",
+      "object_sha": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274",
+      "object_type": "commit",
+      "commit": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274"
+    },
+    {
+      "tag": "v10.1.6-beta",
+      "object_sha": "16803a799059ddd3bab63df6cb9a8b9291249471",
+      "object_type": "commit",
+      "commit": "16803a799059ddd3bab63df6cb9a8b9291249471"
+    },
+    {
+      "tag": "v10.1.7-usbhid-candidate-developer-preview",
+      "object_sha": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+      "object_type": "commit",
+      "commit": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75"
+    },
+    {
+      "tag": "v10.1.8-beta",
+      "object_sha": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d",
+      "object_type": "commit",
+      "commit": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d"
+    },
+    {
+      "tag": "v10.1.9-beta",
+      "object_sha": "207ebc74689c0081b9507aa295cc575488401647",
+      "object_type": "commit",
+      "commit": "207ebc74689c0081b9507aa295cc575488401647"
+    },
+    {
+      "tag": "v10.2-beta",
+      "object_sha": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9",
+      "object_type": "commit",
+      "commit": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9"
+    },
+    {
+      "tag": "v10.2.1-beta",
+      "object_sha": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4",
+      "object_type": "commit",
+      "commit": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4"
+    },
+    {
+      "tag": "v10.2.2-beta",
+      "object_sha": "7e9d2a11e3d260e9b892dd9337cf141825620b60",
+      "object_type": "commit",
+      "commit": "7e9d2a11e3d260e9b892dd9337cf141825620b60"
+    },
+    {
+      "tag": "v10.2.3-beta",
+      "object_sha": "09edd1ea626cc70ce82e8e47c42a1681a8905d56",
+      "object_type": "commit",
+      "commit": "09edd1ea626cc70ce82e8e47c42a1681a8905d56"
+    },
+    {
+      "tag": "v10.2.4-pre-release",
+      "object_sha": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+      "object_type": "commit",
+      "commit": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69"
+    },
+    {
+      "tag": "v10.2.5-pre-release",
+      "object_sha": "a38be5dabaab6b55de2a4495b353061a045780d0",
+      "object_type": "commit",
+      "commit": "a38be5dabaab6b55de2a4495b353061a045780d0"
+    },
+    {
+      "tag": "v2.4.4-developer-preview",
+      "object_sha": "9e7c83c58f0452e6d2d5f00768862cab339de2ca",
+      "object_type": "commit",
+      "commit": "9e7c83c58f0452e6d2d5f00768862cab339de2ca"
+    },
+    {
+      "tag": "v2.4.4-oc1-developer-preview",
+      "object_sha": "897bda98316091eba706b8a0269ebc18065e3160",
+      "object_type": "commit",
+      "commit": "897bda98316091eba706b8a0269ebc18065e3160"
+    },
+    {
+      "tag": "v2.4.4-oc2-developer-preview",
+      "object_sha": "9c21b15b93b6c36464a0c25f9c394cef1c9f3ca2",
+      "object_type": "commit",
+      "commit": "9c21b15b93b6c36464a0c25f9c394cef1c9f3ca2"
+    },
+    {
+      "tag": "v2.4.5-21B6",
+      "object_sha": "b18c4737301f5ba360d14f9e075c0a0b004246ca",
+      "object_type": "commit",
+      "commit": "b18c4737301f5ba360d14f9e075c0a0b004246ca"
+    },
+    {
+      "tag": "v2.4.5-21B7",
+      "object_sha": "1cc3e8423a3ba8b3021d0d87675415e3cce06709",
+      "object_type": "commit",
+      "commit": "1cc3e8423a3ba8b3021d0d87675415e3cce06709"
+    },
+    {
+      "tag": "v2.4.5-21B8",
+      "object_sha": "f4e499bd2dcea87bbf2eae86e81e714b1b7c0e8b",
+      "object_type": "commit",
+      "commit": "f4e499bd2dcea87bbf2eae86e81e714b1b7c0e8b"
+    },
+    {
+      "tag": "v2.4.5-developer-preview",
+      "object_sha": "bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7",
+      "object_type": "commit",
+      "commit": "bdf6837e3cc6a1ebfa56c4f7647795aceb1fadd7"
+    }
+  ],
+  "annotated_original_objects": {
+    "bed1e1214c6c24720815197242a03af2b0e25c9a": {
+      "node_id": "TA_kwDOV1x1K9oAKGJlZDFlMTIxNGM2YzI0NzIwODE1MTk3MjQyYTAzYWYyYjBlMjVjOWE",
+      "sha": "bed1e1214c6c24720815197242a03af2b0e25c9a",
+      "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/tags/bed1e1214c6c24720815197242a03af2b0e25c9a",
+      "tagger": {
+        "name": "Arena workspace backup",
+        "email": "arena-workspace@users.noreply.github.com",
+        "date": "2026-11-26T12:42:43Z"
+      },
+      "object": {
+        "sha": "a38be5dabaab6b55de2a4495b353061a045780d0",
+        "type": "commit",
+        "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/a38be5dabaab6b55de2a4495b353061a045780d0"
+      },
+      "tag": "v10.2.5",
+      "message": "tinymacOS 10.2.5 Tramontana / 30B16: native 4Kn and resumable same-extent FS2 conversion accepted\n",
+      "verification": {
+        "verified": false,
+        "reason": "unsigned",
+        "signature": null,
+        "payload": null,
+        "verified_at": null
+      }
+    }
+  },
+  "release_ids_and_tags": [
+    {
+      "id": 459399662,
+      "tag": "v10.2.5-pre-release"
+    },
+    {
+      "id": 458576920,
+      "tag": "v10.2.4-pre-release"
+    },
+    {
+      "id": 458314839,
+      "tag": "v10.2.3-beta"
+    },
+    {
+      "id": 458163997,
+      "tag": "v10.2.2-beta"
+    },
+    {
+      "id": 457483536,
+      "tag": "v10.2.1-beta"
+    },
+    {
+      "id": 457410969,
+      "tag": "v10.1.9-beta"
+    },
+    {
+      "id": 457375095,
+      "tag": "v10.1.8-beta"
+    },
+    {
+      "id": 457246195,
+      "tag": "v10.1.7-usbhid-candidate-developer-preview"
+    },
+    {
+      "id": 457431910,
+      "tag": "v10.2-beta"
+    },
+    {
+      "id": 454670448,
+      "tag": "v10.1.6-beta"
+    },
+    {
+      "id": 453917635,
+      "tag": "v10.1.5-beta"
+    },
+    {
+      "id": 453892646,
+      "tag": "v10.1.4-developer-preview"
+    },
+    {
+      "id": 453865486,
+      "tag": "v10.1.3-developer-preview"
+    },
+    {
+      "id": 453816118,
+      "tag": "v10.1.2-developer-preview"
+    },
+    {
+      "id": 453635016,
+      "tag": "v10.1.1-developer-preview"
+    },
+    {
+      "id": 453634514,
+      "tag": "v10.1-developer-preview"
+    },
+    {
+      "id": 453337659,
+      "tag": "v10-developer-preview"
+    },
+    {
+      "id": 453129451,
+      "tag": "v2.4.5-developer-preview"
+    },
+    {
+      "id": 453058481,
+      "tag": "v2.4.4-oc2-developer-preview"
+    }
+  ]
+}
