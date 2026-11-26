@@ -27,5 +27,17 @@
     "removed_asset": "tinymacOS-10.2.5-x86_64-UEFI.iso",
     "binaries_rebuilt": false,
     "original_validation_receipts_preserved": true
+  },
+  "downloaded_dual_iso_final_reacceptance": {
+    "passed": true,
+    "fresh_host_suites": 31,
+    "fresh_guest_gates": 11,
+    "actual_downloaded_published_dual_iso_tested": true,
+    "receipt": "release-final-downloaded-iso-verification.json",
+    "report": "VERIFICA-FINALE-ISO.md",
+    "evidence_archive_url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.2.5-pre-release/VERIFICA-FINALE-10.2.5.tar.gz",
+    "release_titles_unique": true,
+    "active_releases": 19,
+    "binaries_rebuilt": false
   }
 }

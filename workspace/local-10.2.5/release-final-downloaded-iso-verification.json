@@ -1,0 +1,470 @@
+{
+  "passed": true,
+  "evidence_archive": {
+    "url": "https://github.com/ESPNex/tinymacOS/releases/download/v10.2.5-pre-release/VERIFICA-FINALE-10.2.5.tar.gz",
+    "asset_id": 796548523,
+    "bytes": 18876716,
+    "sha256": "254ff8b92ecf2d244d7cee9aa6c0609d40f85562831263cecc005de1219d35e9",
+    "files": 254,
+    "archive_members_locally_verified": true,
+    "github_independent_download_verified": true
+  },
+  "remote": {
+    "passed": true,
+    "all_25_original_source_tag_refs_unchanged": true,
+    "all_21_phase_tag_targets_unchanged": true,
+    "active_releases": 19,
+    "unique_titles": true,
+    "phase_counts": {
+      "developer-preview": 9,
+      "beta": 8,
+      "pre-release": 2
+    },
+    "branches": [
+      "main",
+      "vendor/syslinux-6.04"
+    ],
+    "vendor_branch_unchanged": true,
+    "release_1025_original_five_assets_unchanged": true,
+    "release_1025_exactly_one_iso": true,
+    "release_1025_description_unchanged": true,
+    "historical_aliases_restored_from_exact_snapshot": {
+      "passed": true,
+      "missing_historical_aliases_restored_to_exact_snapshot_objects": [
+        {
+          "ref": "refs/tags/archive/v10.2.3-before-cow-82ec7bc",
+          "object": {
+            "sha": "82ec7bc198991c9d03a4dcb628d995caee35c5b7",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/82ec7bc198991c9d03a4dcb628d995caee35c5b7"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.1.5",
+          "object": {
+            "sha": "52a75e132fc8d655ca26d5ee2329cf6bee0a0274",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/52a75e132fc8d655ca26d5ee2329cf6bee0a0274"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.1.6",
+          "object": {
+            "sha": "16803a799059ddd3bab63df6cb9a8b9291249471",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/16803a799059ddd3bab63df6cb9a8b9291249471"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.1.7-usbhid-candidate",
+          "object": {
+            "sha": "fbababd887d8a63b31b4ab0eddf2a4417cc48c75",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/fbababd887d8a63b31b4ab0eddf2a4417cc48c75"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.1.8",
+          "object": {
+            "sha": "5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/5b99a1533d63b81e6a6cdb2a0ca79e4a1810e72d"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.1.9",
+          "object": {
+            "sha": "207ebc74689c0081b9507aa295cc575488401647",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/207ebc74689c0081b9507aa295cc575488401647"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2",
+          "object": {
+            "sha": "1686f4f019dc15bad5a25c2fa9677f88f28f22f9",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/1686f4f019dc15bad5a25c2fa9677f88f28f22f9"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2.1",
+          "object": {
+            "sha": "ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/ea507d68eeb1a5bf3104b230f65a81f20bf2f3f4"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2.2",
+          "object": {
+            "sha": "7e9d2a11e3d260e9b892dd9337cf141825620b60",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/7e9d2a11e3d260e9b892dd9337cf141825620b60"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2.3",
+          "object": {
+            "sha": "09edd1ea626cc70ce82e8e47c42a1681a8905d56",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/09edd1ea626cc70ce82e8e47c42a1681a8905d56"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2.4",
+          "object": {
+            "sha": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+            "type": "commit",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69"
+          }
+        },
+        {
+          "ref": "refs/tags/v10.2.5",
+          "object": {
+            "sha": "bed1e1214c6c24720815197242a03af2b0e25c9a",
+            "type": "tag",
+            "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/tags/bed1e1214c6c24720815197242a03af2b0e25c9a"
+          }
+        }
+      ],
+      "all_25_original_refs_now_resolve_to_exact_original_objects": true,
+      "no_existing_tag_moved_or_deleted": true,
+      "cause_of_missing_aliases_not_established": true
+    }
+  },
+  "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+  "kernel_sha256": "8cbc7c1bf850d9e224ef15d55cfa1cf5621ca24ffa6137c9c6daeabe69d959db",
+  "host_suites": 31,
+  "guest_gates": 11,
+  "fresh_not_historical": true,
+  "initial_runner_configuration_attempts": [
+    {
+      "name": "release-optical",
+      "exit_code": 1,
+      "seconds": 42.27,
+      "log_sha256": "3379768db9e7be0bc925f48ad77b5467114def69acb173948c1d0bb3736c2fb0",
+      "log": "/var/tmp/tmc-1025-final-check/qa/release-optical.log",
+      "cause": "Runner incorrectly exported the BIOS NVMe boot-helper globally: SATA optical launcher intentionally refused before starting BIOS QEMU. UEFI completed. Corrected runner scopes helper to NVMe-helper gate only. ISO unchanged."
+    }
+  ],
+  "binary_rebuild": false,
+  "physical_hardware_tested": false,
+  "safari_webkit_available": false,
+  "guest_gates_passed": [
+    {
+      "name": "encrypted-install-reset-guest-result.json",
+      "checks": [
+        "Actual GUI creates FV003 and imports live account/document directly; cancel and recovery-key acknowledgement occur before any target write; no host formatting",
+        "Cold native NVMe boot rejects wrong volume password, accepts configured volume password, separately authenticates imported account and reads its private document",
+        "Installer-created encrypted volume accepts independent recovery credential; native Recovery creates and restores real encrypted local backup; restored documents survive cold boot",
+        "Same native Recovery installer reinstalls the sealed system on its GUI-created encrypted volume while the complete DATA hash stays identical",
+        "Explicit irreversible Recovery reset pre-confirms fresh credentials, cancel leaves DATA unchanged, replaces volume key and both credential slots, rejects old password/recovery, runs new account setup and persists new documents across reboot; public extents unchanged",
+        "Offline entire-DATA scan finds none of the tested plaintext account, filename, filesystem or private-document markers; not a physical secure-erasure proof"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "4264abb4cc7cccc18306252c85196a133406dd906b6be60ce1e7448c4b23525f"
+    },
+    {
+      "name": "finder-transfers-guest-result.json",
+      "checks": [
+        "Real Terminal cp -R/mv copy and move nested folders; pbcopy/pbpaste exchange actual shared text",
+        "Finder context Copy/Paste transfers a real file across distinct Finder windows without deleting source",
+        "Finder context Cut/Paste moves a directory with nested files across windows through the real atomic move syscall",
+        "Real held-button drag drops a file onto a directory icon, changing the actual filesystem",
+        "Real drag to Finder sidebar moves into Desktop",
+        "Ctrl-drag across two positioned Finder windows copies rather than moves and generates a non-overwriting collision name",
+        "Desktop file icons can be dragged into an open Finder destination, and Finder files can be dropped onto the bare Desktop",
+        "Real drag into Terminal inserts a quoted path into the pending command; only an explicit Enter executes it",
+        "Terminal Ctrl+Shift+C/V uses shared clipboard while paste only edits input, never auto-executes",
+        "Session lock clears the shared clipboard; old Finder/Terminal buffers cannot repaste the previous shared content",
+        "Copied/moved folders and drag results persist through a cold installed boot and full data/system verification"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "b6f0cfb92fcb687bca8e3c4ff336a8eea21a6caf9dde573f84d0219dc597c3a4"
+    },
+    {
+      "name": "fs2-backup-ui-result.json",
+      "checks": [
+        "TextEdit opens and saves a 128KiB file through the modern chooser, with byte-exact streamed readback beyond the old 8KiB limit",
+        "Actual Finder navigates beyond 384 entries and reaches file 1099 using bounded pages through real syscalls",
+        "Actual Time Machine reaches and verifies snapshot 20 on the third timeline page",
+        "Actual modern TextEdit picker reaches and opens file 1099, beyond the old directory-slot ceiling",
+        "Native internal Recovery creates the scalable local backup using shared-root CoW, not a volume-sized copy",
+        "Local backup restores account, changed document and 128KiB file after reboot while pre-existing snapshots remain valid"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "f9f71b50a107f73d24f14eba2234f3a138e09eb79fcb95706a52656e3af5382b"
+    },
+    {
+      "name": "fs2-convert-guest-result.json",
+      "checks": [
+        "Actual Recovery enables same-extent FV003 after recovery-key acknowledgement; complete DATA scan has no original private account/document plaintext; all public bytes unchanged",
+        "Cold UEFI boot rejects wrong password, accepts recovery key plus existing account; imported documents and retained CoW snapshot verify after conversion",
+        "Actual Recovery deactivates with independent recovery credential; plaintext capacity/account/files/CoW snapshot survive cold boot and full verification, all public partition bytes unchanged"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "e919be6f7bac991df43c548dddfa748c888e076f2fb3230b2a5f7dfde635d81e"
+    },
+    {
+      "name": "fs2-external-import-guest-result.json",
+      "checks": [
+        "Real Recovery Terminal preflights a named external NVMe checkpoint without modifying any destination data byte",
+        "Explicit confirmed import runs real syscall/offline backend, source disk read-only and byte-identical; destination GPT, sealed system, Recovery and source partition remain byte-identical",
+        "Cold installed boot authenticates imported account, reads checkpoint bytes rather than source live bytes, retains destination checkpoint and can restore previous destination state"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "146f16023bfd0e040d76daf45cb5d03de6d14a5d0a8f3f1b46492fa59d22271e"
+    },
+    {
+      "name": "fs2-install-guest-result.json",
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "b1b3318e2b9e88b5569e96b0fbda7d011b088e3e23c7856b3f0cd9a6a8af2354"
+    },
+    {
+      "name": "fs2-nvme-helper-result.json",
+      "checks": [],
+      "iso_sha256": null,
+      "receipt_sha256": "b48d0741e3ecdc9235f85d4ad9c202ec1a9de3aa24561062e5af316bc04e655e"
+    },
+    {
+      "name": "fs2-reset-guest-result.json",
+      "checks": [
+        "Canceling Recovery initialization leaves the entire FS2 data partition byte-identical, including account, snapshots and large document",
+        "Native Recovery logically resets the full scalable home/account/snapshot roots, verifies the result and leaves partition tables, sealed system, Recovery and installation source byte-identical",
+        "After reset, actual installed boot requires fresh enrollment; previous documents/snapshot namespace are absent and the new account and document survive another reboot"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "d8355adde7888bdbd0c4a0491e9978a86f544c36c0e5f5df8fcbc594a95ac556"
+    },
+    {
+      "name": "native4k-convert-guest-result.json",
+      "checks": [
+        "Actual Recovery enables same-extent FV003 after recovery-key acknowledgement; complete DATA scan has no original private account/document plaintext; all public bytes unchanged",
+        "Cold UEFI boot rejects wrong password, accepts recovery key plus existing account; imported documents and retained CoW snapshot verify after conversion",
+        "Actual Recovery deactivates with independent recovery credential; plaintext capacity/account/files/CoW snapshot survive cold boot and full verification, all public partition bytes unchanged"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "43b0fd259a683f4b5dcef7516d48de85e5d466c901ac7d6978dcf4a81ebe2781"
+    },
+    {
+      "name": "native4k-install-guest-result.json",
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "abcb3d4afec4e5dc57357457479cb0ad8d595f2fa3fe7e5a82eb65d8b79d97d2"
+    },
+    {
+      "name": "release-optical-guest-result.json",
+      "checks": [
+        "uefi: exact dual-mode ISO reaches native desktop, account, Terminal and real AHCI inventory; live document write/read and shutdown",
+        "bios: exact dual-mode ISO reaches native desktop, account, Terminal and real AHCI inventory; live document write/read and shutdown"
+      ],
+      "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+      "receipt_sha256": "2c73c0ed18457c5e9cf75c2873e879a517d2b60706bb7aa1bc29d5a81344258b"
+    }
+  ],
+  "host_suites_passed": [
+    {
+      "name": "test-boot-default.sh",
+      "log_sha256": "293c54b7f15ce235c8bc294f00ff420e3ed07e973b968b2ecf0e839a5d3405e6"
+    },
+    {
+      "name": "test-boot-display.sh",
+      "log_sha256": "6737be57e545dabd0c3191cea32098502f9d67fcaf23bd516cdca07c1a04b3bb"
+    },
+    {
+      "name": "test-browser-pages.sh",
+      "log_sha256": "0b593f83cc2e2d8ce353e700a057c0526cc0d286af9e5adb88a50371670498e5"
+    },
+    {
+      "name": "test-diskedit.sh",
+      "log_sha256": "94299100b72d406598d783159f7e817984c8dc2b99d408f0ce7fd324703e75a7"
+    },
+    {
+      "name": "test-filepanel.sh",
+      "log_sha256": "0fd70a355a986af50b06dddd2417b1ac1e465c1f3181086a86b60c16e1dc8abd"
+    },
+    {
+      "name": "test-finder-menus.sh",
+      "log_sha256": "4ecb4722586a5f7197653486ad72e3d4affad151eb3da67e845f2af4122427a6"
+    },
+    {
+      "name": "test-finder-transfers.sh",
+      "log_sha256": "ad50917c406e209d72b0dcf161fc01fe751c8b76d611002f0a91313f3a8e4da2"
+    },
+    {
+      "name": "test-fs2-convert.sh",
+      "log_sha256": "98c9dfb556d35369bfb47f3b1a87c5787a162db9e0c1f80b34b3a0f4ded6572f"
+    },
+    {
+      "name": "test-fs2-import-adapter.sh",
+      "log_sha256": "bb99ebeb87d0297ad547b3cb9bbc3ddd778359eeb1d6f75fed7d1884ee15bf13"
+    },
+    {
+      "name": "test-fs2-import.sh",
+      "log_sha256": "d92517e47be9414c7b34fbb31337303f51a735fa99e89edc267a221d75243f6d"
+    },
+    {
+      "name": "test-fs2-install.sh",
+      "log_sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d"
+    },
+    {
+      "name": "test-fs2-runtime.sh",
+      "log_sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d"
+    },
+    {
+      "name": "test-fs2-seed.sh",
+      "log_sha256": "363b2bc8daaff0b236949d7b819b04212ca00794f9cdf126641fae21bed873d0"
+    },
+    {
+      "name": "test-input-maintenance.sh",
+      "log_sha256": "e72e419051432312fc7bef830b45995db04464607abc83a37e646d474b7bf243"
+    },
+    {
+      "name": "test-installer-flow.sh",
+      "log_sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac"
+    },
+    {
+      "name": "test-large-disks.sh",
+      "log_sha256": "82ab11b4e47f6148a8a4d173a96e4a1f946557de9e4bd110efa221e4de0c8304"
+    },
+    {
+      "name": "test-legacy-input.sh",
+      "log_sha256": "4a6a3217079137361fe944a765e863a3a5a9ebd7721b9ad575b8e1df5a867b59"
+    },
+    {
+      "name": "test-linux-usbcore-enumeration.sh",
+      "log_sha256": "72a34e5c3d10a2095a4393cf36152df9c042aab34067f4f16f3a292bc9df03a0"
+    },
+    {
+      "name": "test-linux-usbcore.sh",
+      "log_sha256": "2a50a216c8ca2a2c6f27f3ad15920e4d3064b2e937be2e394547c9913f3e1ecd"
+    },
+    {
+      "name": "test-linux-usbhid.sh",
+      "log_sha256": "2fce6d35ae0b57f0210fb19b3a8d620484f6c840b29aa28e8bea567693a78795"
+    },
+    {
+      "name": "test-linux-xhci.sh",
+      "log_sha256": "99e942fadf6e42ba36e9c0e18c7266ed7fe43968250e0f2e6ce80e482aff64fd"
+    },
+    {
+      "name": "test-native-cow.sh",
+      "log_sha256": "1d7fe508b28f5a89a3ff538487cc122c275e6cecea2a2b5828f188abb6ca3291"
+    },
+    {
+      "name": "test-native-resize.sh",
+      "log_sha256": "f9e4891bd23431502902ba8ab882f98d9ada1ae0397d9908efacbf78c7323ea7"
+    },
+    {
+      "name": "test-native4k-install.sh",
+      "log_sha256": "23db599fb284c909a866b871cdc00269cffb1780eeba09595040d177add12f3f"
+    },
+    {
+      "name": "test-nvme.sh",
+      "log_sha256": "867da272b775637b302e8c80a6833c9ab256f6b4cc14424c1d963ebf2c21fd2a"
+    },
+    {
+      "name": "test-partitions.sh",
+      "log_sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932"
+    },
+    {
+      "name": "test-textedit-open.sh",
+      "log_sha256": "9af690af6321fd11b07ee2c5f14457bb26ee44779e07d2ac447796e4b0ff415d"
+    },
+    {
+      "name": "test-tmcbfs2.sh",
+      "log_sha256": "72dee945f8d8287f98860cc43c4b6938ed9177afd54d48ed4f669f72621f6f4b"
+    },
+    {
+      "name": "test-ui-stream.sh",
+      "log_sha256": "33f560a3b1050f8e8fe1013bf21cad41a7203a73d4fd2e7ca73fc69ed0863ef0"
+    },
+    {
+      "name": "test-vault.sh",
+      "log_sha256": "1edcc55727695d5cbb893917c777a607e762520272beef2334077f9ffa3f4aa2"
+    },
+    {
+      "name": "test-vault2.sh",
+      "log_sha256": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64"
+    }
+  ],
+  "duplicate_release_fix": {
+    "passed": true,
+    "release_count_before": 21,
+    "release_count_after": 19,
+    "all_active_release_titles_unique": true,
+    "sole_active_244_tag": "v2.4.4-oc2-developer-preview",
+    "kept_244_original_iso_and_checksum_unchanged": true,
+    "removed_release_cards": [
+      {
+        "id": 453006571,
+        "tag": "v2.4.4-oc1-developer-preview"
+      },
+      {
+        "id": 452996851,
+        "tag": "v2.4.4-developer-preview"
+      }
+    ],
+    "all_old_assets_saved_and_archive_parsed_before_deletion": true,
+    "archive_independent_github_download_verified_before_deletion": true,
+    "archive": {
+      "name": "tinymacOS-2.4.4-varianti-storiche.tar.xz",
+      "asset_id": 796274699,
+      "url": "https://github.com/ESPNex/tinymacOS/releases/download/v2.4.4-oc2-developer-preview/tinymacOS-2.4.4-varianti-storiche.tar.xz",
+      "bytes": 110630640,
+      "sha256": "f12a991c02cb8fcaf53b917f730766684e589bc1ed6229d80f8c69a3b24db13a"
+    },
+    "archived_original_assets": [
+      {
+        "release_id": 453006571,
+        "old_tag": "v2.4.4-oc1-developer-preview",
+        "asset_id": 773940913,
+        "archive_path": "v2.4.4-oc1-developer-preview/SHA256SUMS.txt",
+        "bytes": 93,
+        "sha256": "a9390fddea3dbd8e9886577d3d59d51e23bd7d62970511d041f05f15dbd107be"
+      },
+      {
+        "release_id": 453006571,
+        "old_tag": "v2.4.4-oc1-developer-preview",
+        "asset_id": 772762576,
+        "archive_path": "v2.4.4-oc1-developer-preview/tinymacOS-2.4.4-x86_64.iso",
+        "bytes": 221100032,
+        "sha256": "a4f6b48aebf492e243e9919818888ff4344f41a87b0a5ecd91c3cfda143fce34"
+      },
+      {
+        "release_id": 452996851,
+        "old_tag": "v2.4.4-developer-preview",
+        "asset_id": 772729715,
+        "archive_path": "v2.4.4-developer-preview/SHA256SUMS.txt",
+        "bytes": 93,
+        "sha256": "ab92af924b30fd74f9f40443373c0808107bae6d87f7ec66bfde13a029c6139d"
+      },
+      {
+        "release_id": 452996851,
+        "old_tag": "v2.4.4-developer-preview",
+        "asset_id": 772729711,
+        "archive_path": "v2.4.4-developer-preview/tinymacOS-2.4.4-x86_64.iso",
+        "bytes": 118255616,
+        "sha256": "a01d95c4f33a68e11b002f37e3ec52472b9d927b3f8c4326ea01ac8d8bdf5a51"
+      }
+    ],
+    "all_source_tags_preserved": true,
+    "remaining_phase_counts": {
+      "developer-preview": 9,
+      "beta": 8,
+      "pre-release": 2
+    }
+  }
+}
