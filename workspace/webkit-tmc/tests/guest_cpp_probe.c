@@ -24,6 +24,7 @@ void app_main(void)
  struct tmc_thread initial={0};
  if(tmc_runtime_enter(&initial)){say("CPP NATIVE FAIL startup\n");sc(S_RETURN,42,0,0,0);return;}
  unsigned failure=cpp_test_basics(),created=0;
+ if(tmc_heap_set_cache_limit(256u<<10))failure=__LINE__;
  cpp_test_progress("CPP phase=worker-create");
  struct tmc_thread threads[4]={0};struct cpp_job jobs[4];
  for(unsigned i=0;i<4;i++){

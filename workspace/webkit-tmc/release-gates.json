@@ -194,7 +194,7 @@
     "ui_required": "identical classic desktop Safari reference; all tinymacOS themes",
     "release_published": false
   },
-  "cpp_scope": "10.3 development: opt-in no-exceptions new/delete/new_handler and x86-64 local-static guards; 13 host gates and functional native 1/4/8 CPU profiles PASS, 12000 destructors each, transferred buffers kept live through workload. Initial unanchored 4-CPU churn stress timed out and remains open; no allocator performance fix claimed. Not libc++, exception ABI, global startup/atexit, compiler TLS, WTF/JSC/WebCore or Safari UI. See RUNTIME-CPP.md.",
+  "cpp_scope": "10.3 development: no-exceptions new/delete/new_handler, x86-64 guards and opt-in lifecycle; original unanchored worker restored and native 1/4/8 PASS with explicit 256KiB heap cache and final trim, unchanged 4x1000 rounds/12000 destructors/145s deadline. Prior timeout retained as negative historical evidence; eager-release default not claimed optimized. See RUNTIME-MEGABLOCK.md. Not libc++, full POSIX, WTF/JSC/WebCore or Safari.",
   "cpp_lifecycle_scope": {
     "host_gates": 14,
     "guest_cpus": [
@@ -213,6 +213,39 @@
     "allocation_failure_injection": "host only",
     "full_browser_or_libcpp": false,
     "unanchored_heap_churn_fixed": false,
-    "document": "RUNTIME-LIFECYCLE.md"
+    "document": "RUNTIME-LIFECYCLE.md",
+    "historical_milestone_note": "This object records the earlier lifecycle milestone; subsequent opt-in cache/unanchored rerun is recorded in runtime_megablock."
+  },
+  "runtime_megablock": {
+    "passed": true,
+    "total_cases": 31,
+    "host_gates": 15,
+    "fresh_base_and_probe_build_gates": 4,
+    "native_guest_cases": 12,
+    "guest_kinds": [
+      "heap",
+      "cpp",
+      "lifecycle",
+      "pthread"
+    ],
+    "cpus_per_kind": [
+      1,
+      4,
+      8
+    ],
+    "heap_cache_opt_in_max_bytes": 262144,
+    "heap_native_cache_reuses": 2000,
+    "heap_native_reuse_reserve_delta": 0,
+    "unanchored_original_cpp_worker_restored": true,
+    "cpp_rounds_per_worker": 1000,
+    "cpp_workers": 4,
+    "cpp_destructors_per_profile": 12000,
+    "guest_internal_deadline_seconds": 145,
+    "pthread_source_compatibility_only": true,
+    "full_posix_pthread_abi": false,
+    "full_webkit_or_safari": false,
+    "diagnostic_iso_published": false,
+    "document": "RUNTIME-MEGABLOCK.md",
+    "verification": "test-results/megablock/verification.json"
   }
 }

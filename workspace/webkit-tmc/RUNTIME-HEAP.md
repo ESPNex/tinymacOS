@@ -1,5 +1,7 @@
 # Safari/WebKit — milestone heap nativo dopo 10.2.5
 
+> Aggiornamento 10.3: cache opt-in 0…256 KiB, trim esplicito, contatori trasparenti e pressione/errori; nuovo test nativo con 2000 riusi senza reserve aggiuntive. Default eager-release invariato. Matrice integrata 31/31 PASS: [RUNTIME-MEGABLOCK.md](RUNTIME-MEGABLOCK.md). Le prove seguenti sono la precedente milestone heap.
+
 ## Risultato verificato
 
 Ripresa del port esistente sul ramo temporaneo `work/safari-webkit-runtime`, poi consolidato in `main`, dalla base Git `c124fde1de76655f70d50aca571a4b09e41a408b` (tinymacOS **10.2.5 / 30B16**, già pubblicata). **Non è Safari pronto e non è ancora un build di WTF, JavaScriptCore o WebCore.** Requisito invariato: interfaccia Safari desktop classica identica al riferimento del progetto, tutti i temi e motore WebKit completo; niente renderer sostitutivo o shell vuota.

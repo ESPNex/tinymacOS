@@ -56,11 +56,7 @@ extern "C" void*cpp_test_worker(void*arg)
 {
  auto*j=static_cast<cpp_job*>(arg);__atomic_fetch_add(&started,1,__ATOMIC_RELEASE);
  while(!__atomic_load_n(&go,__ATOMIC_ACQUIRE))cpp_test_pause();
- // Retain the transferred live buffer through the workload. Besides checking
- // cross-thread ownership, this prevents every tiny new/delete pair from
- // forcing a full native VM reserve/commit/shootdown/release cycle. The heap's
- // unanchored eager-release throughput remains a separate, documented limit.
- unsigned *p=static_cast<unsigned*>(j->handoff);for(unsigned i=0;i<128;i++)CC(p[i]==(j->seed^i));
+ unsigned *p=static_cast<unsigned*>(j->handoff);for(unsigned i=0;i<128;i++)CC(p[i]==(j->seed^i));delete[]p;j->handoff=nullptr;
  __atomic_store_n(&stages[j->seed-78],1,__ATOMIC_RELEASE);
  // Every contender must observe a fully published object, including nesting.
  CC(once().value==0xc011u);
@@ -76,8 +72,6 @@ extern "C" void*cpp_test_worker(void*arg)
   Item*a=new Item[3];for(unsigned i=0;i<3;i++)CC(a[i].value==0xabc);delete[]a;
   if(!(round%32)){Aligned*a=new(std::nothrow) Aligned{};CC(a);if(a){CC(!(reinterpret_cast<uintptr_t>(a)&4095));for(unsigned i=0;i<4096;i++)CC(!a->bytes[i]);delete a;}cpp_test_pause();}
  }
- for(unsigned i=0;i<128;i++)CC(p[i]==(j->seed^i));
- delete[]p;j->handoff=nullptr;
  __atomic_store_n(&stages[j->seed-78],4,__ATOMIC_RELEASE);
  return arg;
 }
@@ -85,6 +79,7 @@ extern "C" unsigned cpp_test_snapshot(void){unsigned v=0;for(unsigned i=0;i<4;i+
 extern "C" unsigned cpp_test_finish(void)
 {
  CC(started==4&&constructed==1&&nested_constructed==1&&retry_attempts==2&&destructed==12000&&handler_calls==1);
+ CC(!tmc_heap_set_cache_limit(0)&&!tmc_heap_trim());
  auto st=tmc_heap_statistics();CC(!st.spans&&!st.reserved&&!st.live&&!st.requested);return failure;
 }
 extern "C" void cpp_test_oom_trap(void){volatile size_t huge=SIZE_MAX;void*p=::operator new(huge);::operator delete(p);}

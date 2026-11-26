@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 OS=$(realpath "$ROOT/../../tinymacOS")
 KIND=${TMC_PROBE_KIND:-network}
-case "$KIND" in network|vm|smp|tls|sync|threads|heap|cpp|lifecycle) ;; *) echo 'Unknown probe kind' >&2;exit 2;; esac
+case "$KIND" in network|vm|smp|tls|sync|threads|heap|cpp|lifecycle|pthread) ;; *) echo 'Unknown probe kind' >&2;exit 2;; esac
 BASE=${TMC_PROBE_BASE:-/var/tmp/tmc-maintenance-241}
 OUT=${TMC_PROBE_BUILD:-/var/tmp/tmc-webkit-network-guest}
 python3 "$OS/tools/media_path.py" "$OUT" "$OUT/tinymacOS-qa-probe-x86_64.iso"
@@ -18,6 +18,7 @@ r,o,d=map(Path,sys.argv[1:4]);kind=sys.argv[4];files=[r/('tests/guest_'+kind+'_p
 if kind=='threads':files += [r/'tests/thread_cases.h',r/'tests/threads_cpp_smoke.cpp']
 if kind=='heap':files += [r/'tests/heap_cases.h',r/'tests/heap_cpp_smoke.cpp']
 if kind=='lifecycle':files += [r/'tests/lifecycle_cases.h',r/'tests/lifecycle_cases.cpp',r/'cpp/lifecycle.ld',*sorted((r/'cpp/src').glob('*.cpp')),*sorted((r/'cpp/include').glob('*'))]
+if kind=='pthread':files += [r/'tests/pthread_cases.h',r/'tests/pthread_cases.c',r/'tests/pthread_cpp_cases.cpp',*sorted((r/'posix/pthread-headers').glob('*.h')),*sorted((r/'cpp/src').glob('*.cpp')),*sorted((r/'cpp/include').glob('*'))]
 if kind=='cpp':files += [r/'tests/cpp_cases.h',r/'tests/cpp_cases.cpp',*sorted((r/'cpp/src').glob('*.cpp')),*sorted((r/'cpp/include').glob('*'))]
 files += [r/'tools/build-guest-network-probe.sh']
 manifest={str(p):hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
@@ -33,24 +34,30 @@ C=(-std=gnu11 -O2 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchro
 if [[ "$KIND" == lifecycle ]];then C+=(-I"$ROOT/cpp/include");fi
 OBJS=()
 SOURCES=(native_syscall network clock_entropy poll descriptors vm tls errno sync threads)
-if [[ "$KIND" == heap || "$KIND" == cpp || "$KIND" == lifecycle ]];then SOURCES+=(heap libc_alloc);fi
+if [[ "$KIND" == heap || "$KIND" == cpp || "$KIND" == lifecycle || "$KIND" == pthread ]];then SOURCES+=(heap libc_alloc);fi
+if [[ "$KIND" == pthread ]];then SOURCES+=(pthread);fi
 for f in "${SOURCES[@]}"; do
  gcc "${C[@]}" -c "$ROOT/posix/src/$f.c" -o "$OUT/probe-$f.o"
  OBJS+=("$OUT/probe-$f.o")
 done
 gcc "${C[@]}" -c "$ROOT/tests/guest_${KIND}_probe.c" -o "$OUT/probe-main.o"
 OBJS+=("$OUT/probe-main.o")
+if [[ "$KIND" == pthread ]];then
+ gcc "${C[@]}" -I"$ROOT/posix/pthread-headers" -c "$ROOT/tests/pthread_cases.c" -o "$OUT/probe-pthread-cases.o"
+ OBJS+=("$OUT/probe-pthread-cases.o")
+fi
 if [[ "$KIND" == threads || "$KIND" == heap ]];then
  cpp="$ROOT/tests/threads_cpp_smoke.cpp";[[ "$KIND" != heap ]] || cpp="$ROOT/tests/heap_cpp_smoke.cpp"
  g++ "${C[@]/-std=gnu11/-std=c++20}" -nostdinc++ -fno-exceptions -fno-rtti -c "$cpp" -o "$OUT/probe-cpp.o"
  OBJS+=("$OUT/probe-cpp.o")
 fi
-if [[ "$KIND" == cpp || "$KIND" == lifecycle ]];then
+if [[ "$KIND" == cpp || "$KIND" == lifecycle || "$KIND" == pthread ]];then
  CPP_SOURCES=(cpp/src/new.cpp cpp/src/guard.cpp tests/cpp_cases.cpp)
  if [[ "$KIND" == lifecycle ]];then CPP_SOURCES=(cpp/src/new.cpp cpp/src/guard.cpp cpp/src/lifecycle.cpp tests/lifecycle_cases.cpp);fi
+ if [[ "$KIND" == pthread ]];then CPP_SOURCES=(cpp/src/new.cpp cpp/src/guard.cpp cpp/src/lifecycle.cpp tests/pthread_cpp_cases.cpp);fi
  for source in "${CPP_SOURCES[@]}";do
   name=$(basename "$source")
-  g++ "${C[@]/-std=gnu11/-std=c++20}" -I"$ROOT/cpp/include" -I"$ROOT/tests" -nostdinc++ -fno-exceptions -fno-rtti -c "$ROOT/$source" -o "$OUT/probe-$name.o"
+  g++ "${C[@]/-std=gnu11/-std=c++20}" -I"$ROOT/posix/pthread-headers" -I"$ROOT/cpp/include" -I"$ROOT/tests" -nostdinc++ -fno-exceptions -fno-rtti -c "$ROOT/$source" -o "$OUT/probe-$name.o"
   OBJS+=("$OUT/probe-$name.o")
  done
 fi
@@ -61,7 +68,7 @@ done
 # Cross-language callback pointers live above 32-bit absolute address range.
 # Keep their valid GOT loads instead of ld relaxation to a sign-extended imm32.
 RELAX=();LAYOUT=userspace/layout.ld
-if [[ "$KIND" == cpp || "$KIND" == lifecycle ]];then RELAX=(--no-relax);fi
+if [[ "$KIND" == cpp || "$KIND" == lifecycle || "$KIND" == pthread ]];then RELAX=(--no-relax);fi
 if [[ "$KIND" == lifecycle ]];then LAYOUT="$ROOT/cpp/lifecycle.ld";fi
 ld "${RELAX[@]}" -nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000 -T "$LAYOUT" "${OBJS[@]}" -o "$OUT/command.debug"
 objcopy --strip-all "$OUT/command.debug" "$OUT/command.elf"

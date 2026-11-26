@@ -1,5 +1,9 @@
 # 10.3 / Safari — macroblocco ciclo di vita C++
 
+## Aggiornamento successivo
+
+Il megablocco [RUNTIME-MEGABLOCK.md](RUNTIME-MEGABLOCK.md) riesegue anche questi tre profili nativi nel nuovo gruppo di 31 casi e aggiunge heap/cache, stress C++ originale non ancorato e pthread. Le ricevute di questa pagina restano storiche. L'archivio lifecycle originale è ora conservato al [commit immutabile ffa2b49](https://raw.githubusercontent.com/ESPNex/tinymacOS/ffa2b499f66ed9a1db77138f67926fd4c13b999e/workspace/webkit-tmc/test-results/lifecycle/lifecycle-evidence.tar.xz), verificato byte per byte prima di rimuoverne la copia locale per il limite 128 MB; mappa in `test-results/REMOTE-OLDER-RUNTIME-EVIDENCE.json`.
+
 ## Risultato
 
 **PASS: 14 gate host + build diagnostica fresca + guest nativi 1/4/8 CPU**, nella stessa esecuzione `--lifecycle-guest` (18 casi). Nessuna release o ISO pubblicata; nessun cambiamento ai binari della 10.2.5. Il recupero delle release storiche è stato interrotto su richiesta: nessuna release storica creata.

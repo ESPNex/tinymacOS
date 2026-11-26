@@ -47,5 +47,22 @@ int main(void)
  for(unsigned i=0;i<4;i++){jobs[i]=(struct HeapJob){i+78,5000,tmc_heap_alloc(1024)};assert(jobs[i].transfer);fill(jobs[i].transfer,1024,jobs[i].seed);assert(!pthread_create(threads+i,0,heap_worker,jobs+i));}
  for(unsigned i=0;i<4;i++){void*r=0;assert(!pthread_join(threads[i],&r)&&r==jobs+i&&!jobs[i].transfer);}
  assert(!heap_failure&&!tmc_heap_statistics().spans&&!tmc_heap_statistics().live);
+ /* Opt-in cache correctness, actual transport call accounting and pressure. */
+ assert(!tmc_heap_set_cache_limit(256u<<10));
+ p=tmc_heap_alloc(16);assert(p);errno=77;tmc_heap_free(p);assert(errno==77);
+ struct tmc_heap_stats before=tmc_heap_statistics();assert(before.cached==(256u<<10)&&!before.live);
+ for(unsigned i=0;i<2000;i++){p=tmc_heap_alloc(32);assert(p);tmc_heap_free(p);}
+ struct tmc_heap_stats after=tmc_heap_statistics();assert(after.reserve_calls==before.reserve_calls&&after.cache_hits>=before.cache_hits+2000);
+ p=tmc_heap_alloc(200);fill(p,200,19);assert(!tmc_heap_trim()&&intact(p,200,19));tmc_heap_free(p);
+ fail_release=1;assert(tmc_heap_trim()==-1&&errno==EIO&&tmc_heap_statistics().cached==(256u<<10));
+ assert(!tmc_heap_trim()&&!tmc_heap_statistics().spans);
+ p=tmc_heap_alloc(16);tmc_heap_free(p);fail_release=1;
+ assert(tmc_heap_set_cache_limit(0)==-1&&errno==EIO&&tmc_heap_statistics().spans==1);
+ assert(!tmc_heap_trim());assert(tmc_heap_set_cache_limit((256u<<10)+1)==-1&&errno==EINVAL);
+ assert(!tmc_heap_set_cache_limit(256u<<10));p=tmc_heap_alloc(16);tmc_heap_free(p);
+ limit=2;a=tmc_heap_alloc(1u<<20);b=tmc_heap_alloc(2u<<20);assert(a&&b); /* pressure evicts cache */
+ tmc_heap_free(a);tmc_heap_free(b);limit=TMC_VM_SLOTS;
+ assert(!tmc_heap_set_cache_limit(0)&&!tmc_heap_trim()&&!tmc_heap_statistics().spans);
+ puts("PASS bounded cache: 2000 empty-span reuses without reserve, live-object trim safety, release/shrink failure ownership, cache pressure eviction and final trim");
  puts("PASS heap: 25000 randomized operations, 4 concurrent workers, cross-thread frees, alignment 8..2MiB, calloc reuse/overflow, failed realloc preservation, split/coalesce, VM reserve/commit/release faults and region exhaustion (host transport)");
 }

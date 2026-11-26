@@ -1,0 +1,23 @@
+{
+  "verified_before_local_offload": true,
+  "files": [
+    {
+      "path": "test-results/lifecycle/lifecycle-evidence.tar.xz",
+      "url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/ffa2b499f66ed9a1db77138f67926fd4c13b999e/workspace/webkit-tmc/test-results/lifecycle/lifecycle-evidence.tar.xz",
+      "sha256": "b47f95cbc1291f79ed998cb5dae0d8cdd69135d7cf95ad02907c28d2c192d0fd",
+      "bytes": 112892
+    },
+    {
+      "path": "test-results/cpp/vm-system-source-hashes.json",
+      "url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/3add5d5/workspace/webkit-tmc/test-results/cpp/vm-system-source-hashes.json",
+      "sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420",
+      "bytes": 110559
+    },
+    {
+      "path": "test-results/heap/vm-system-source-hashes.json",
+      "url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/84f09b719cd9bfc1a8e5349efdafcf1a73811cd8/workspace/webkit-tmc/test-results/heap/vm-system-source-hashes.json",
+      "sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420",
+      "bytes": 110559
+    }
+  ]
+}

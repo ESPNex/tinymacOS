@@ -27,11 +27,19 @@ void app_main(void)
  }
  for(unsigned i=0;i<created;i++){void*result=0;HC(!tmc_thread_join(workers+i,&result));HC(result==jobs+i&&!jobs[i].transfer);}
  HC(created==4);struct tmc_heap_stats st=tmc_heap_statistics();HC(!st.spans&&!st.reserved&&!st.live&&!st.requested);
+ HC(!tmc_heap_set_cache_limit(256u<<10));
+ p=tmc_heap_alloc(32);HC(p);tmc_heap_free(p);struct tmc_heap_stats before=tmc_heap_statistics();
+ HC(before.cached==(256u<<10));
+ for(unsigned i=0;i<2000;i++){p=tmc_heap_alloc(32);HC(p);tmc_heap_free(p);}
+ st=tmc_heap_statistics();HC(st.reserve_calls==before.reserve_calls&&st.cache_hits==before.cache_hits+2000);
+ p=tmc_heap_alloc(128);HC(p);if(p){fill(p,128,71);HC(!tmc_heap_trim()&&intact(p,128,71));tmc_heap_free(p);}
+ HC(!tmc_heap_set_cache_limit(0)&&!tmc_heap_trim());st=tmc_heap_statistics();HC(!st.spans&&!st.live&&!st.reserved);
  SysInfo s;sc(S_INFO,&s,0,0,0);
  if(s.ncpu>1)HC(cpu_mask&(cpu_mask-1));
  HC(!tmc_runtime_leave());
  say(heap_failure?"HEAP NATIVE FAIL\n":"HEAP NATIVE SMP PASS\n");
  say("cpus=");num(s.ncpu);say(" workers=4 random-ops=9000\n");
+ say("cache-reuse=2000 reserve-delta=0 trim=live-safe\n");
  say("libc=malloc/calloc/realloc/free/aligned_alloc\nCXX=RAII/C-allocation ABI\nVM-spans=");num(st.spans);
  say(" live=");num(st.live);say(" reserved=");num(st.reserved);say(" cpu-mask=");num(cpu_mask);say("\nfirst-failure-line=");num(heap_failure);say("\n");
  sc(S_RETURN,heap_failure?42:0,0,0,0);

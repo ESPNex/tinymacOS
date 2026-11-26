@@ -1,0 +1,58 @@
+#ifndef TMC_SOURCE_PTHREAD_H
+#define TMC_SOURCE_PTHREAD_H
+/* tinymacOS-only source API. Never put this path before host system headers
+ * for the host transport. No foreign libc/libpthread ABI compatibility. */
+#include "tmc_pthread.h"
+#define pthread_attr_destroy tmc_pthread_attr_destroy
+#define pthread_attr_init tmc_pthread_attr_init
+#define pthread_attr_setdetachstate tmc_pthread_attr_setdetachstate
+#define pthread_attr_t tmc_pthread_attr_t
+#define pthread_cond_broadcast tmc_pthread_cond_broadcast
+#define pthread_cond_destroy tmc_pthread_cond_destroy
+#define pthread_cond_init tmc_pthread_cond_init
+#define pthread_cond_signal tmc_pthread_cond_signal
+#define pthread_cond_t tmc_pthread_cond_t
+#define pthread_cond_wait tmc_pthread_cond_wait
+#define pthread_cond_wait_until tmc_pthread_cond_wait_until
+#define pthread_condattr_destroy tmc_pthread_condattr_destroy
+#define pthread_condattr_init tmc_pthread_condattr_init
+#define pthread_condattr_setpshared tmc_pthread_condattr_setpshared
+#define pthread_condattr_t tmc_pthread_condattr_t
+#define pthread_create tmc_pthread_create
+#define pthread_detach tmc_pthread_detach
+#define pthread_equal tmc_pthread_equal
+#define pthread_exit tmc_pthread_exit
+#define pthread_getspecific tmc_pthread_getspecific
+#define pthread_join tmc_pthread_join
+#define pthread_key_create tmc_pthread_key_create
+#define pthread_key_delete tmc_pthread_key_delete
+#define pthread_key_t tmc_pthread_key_t
+#define pthread_mutex_destroy tmc_pthread_mutex_destroy
+#define pthread_mutex_init tmc_pthread_mutex_init
+#define pthread_mutex_lock tmc_pthread_mutex_lock
+#define pthread_mutex_t tmc_pthread_mutex_t
+#define pthread_mutex_trylock tmc_pthread_mutex_trylock
+#define pthread_mutex_unlock tmc_pthread_mutex_unlock
+#define pthread_mutexattr_destroy tmc_pthread_mutexattr_destroy
+#define pthread_mutexattr_init tmc_pthread_mutexattr_init
+#define pthread_mutexattr_setpshared tmc_pthread_mutexattr_setpshared
+#define pthread_mutexattr_settype tmc_pthread_mutexattr_settype
+#define pthread_mutexattr_t tmc_pthread_mutexattr_t
+#define pthread_once tmc_pthread_once
+#define pthread_once_t tmc_pthread_once_t
+#define pthread_self tmc_pthread_self
+#define pthread_setspecific tmc_pthread_setspecific
+#define pthread_t tmc_pthread_t
+#define PTHREAD_COND_INITIALIZER TMC_PTHREAD_COND_INITIALIZER
+#define PTHREAD_CREATE_DETACHED TMC_PTHREAD_CREATE_DETACHED
+#define PTHREAD_CREATE_JOINABLE TMC_PTHREAD_CREATE_JOINABLE
+#define PTHREAD_MUTEX_ERRORCHECK TMC_PTHREAD_MUTEX_ERRORCHECK
+#define PTHREAD_MUTEX_INITIALIZER TMC_PTHREAD_MUTEX_INITIALIZER
+#define PTHREAD_MUTEX_NORMAL TMC_PTHREAD_MUTEX_NORMAL
+#define PTHREAD_MUTEX_RECURSIVE TMC_PTHREAD_MUTEX_RECURSIVE
+#define PTHREAD_ONCE_INIT TMC_PTHREAD_ONCE_INIT
+#define PTHREAD_PROCESS_PRIVATE TMC_PTHREAD_PROCESS_PRIVATE
+#define PTHREAD_PROCESS_SHARED TMC_PTHREAD_PROCESS_SHARED
+#define PTHREAD_MUTEX_DEFAULT TMC_PTHREAD_MUTEX_ERRORCHECK
+#define PTHREAD_DESTRUCTOR_ITERATIONS TMC_TSD_DESTRUCTOR_ITERATIONS
+#endif

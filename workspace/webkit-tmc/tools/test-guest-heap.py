@@ -23,7 +23,7 @@ try:
    if locate(im,'HEAP NATIVE SMP PASS'):break
    time.sleep(.2)
   else:raise AssertionError('Native heap timeout/deadlock; not a pass')
-  g.visible('cpus='+str(cpus)+' workers=4 random-ops=9000');g.visible('libc=malloc/calloc/realloc/free/aligned_alloc');g.visible('CXX=RAII/C-allocation ABI');g.visible('VM-spans=0 live=0 reserved=0');g.visible('first-failure-line=0');g.shot('heap-pass')
-  record.update(passed=True,randomized_operations=9000,concurrent_workers=4,cross_thread_free=True,zero_final_vm_reservations=True,native_libc_allocation_symbols=True,freestanding_cpp_raii=True,no_unresolved_executable_symbols=True,alignment_up_to_2MiB=True,calloc_zero_and_overflow=True,failed_realloc_preserves_object=True,split_coalesce_and_in_place_realloc=True,cross_cpu_execution_required=cpus>1)
+  g.visible('cache-reuse=2000 reserve-delta=0 trim=live-safe');g.visible('cpus='+str(cpus)+' workers=4 random-ops=9000');g.visible('libc=malloc/calloc/realloc/free/aligned_alloc');g.visible('CXX=RAII/C-allocation ABI');g.visible('VM-spans=0 live=0 reserved=0');g.visible('first-failure-line=0');g.shot('heap-pass')
+  record.update(passed=True,empty_span_cache_reuses=2000,cache_reuse_reserve_delta=0,live_object_trim_safe=True,randomized_operations=9000,concurrent_workers=4,cross_thread_free=True,zero_final_vm_reservations=True,native_libc_allocation_symbols=True,freestanding_cpp_raii=True,no_unresolved_executable_symbols=True,alignment_up_to_2MiB=True,calloc_zero_and_overflow=True,failed_realloc_preserves_object=True,split_coalesce_and_in_place_realloc=True,cross_cpu_execution_required=cpus>1)
 finally:(Path(os.environ.get('TMC_QA_RESULTS',str(r/'test-results')))/('guest-heap-smp'+str(cpus)+'.json')).write_text(json.dumps(record,indent=2)+'\n')
 print('PASS native heap on',cpus,'CPUs: 9000 operations, four workers, C allocation ABI, C++ RAII, zero final reservations')

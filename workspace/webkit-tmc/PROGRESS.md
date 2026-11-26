@@ -1,8 +1,10 @@
 # Safari / WebKit — stato verificato del port
 
-## Obiettivo 10.3: allocazione C++ e static locali
+## Obiettivo 10.3: megablocco runtime integrato
 
-Sviluppo su `main`. Implementati new/delete scalar/array/sized/aligned/nothrow, placement, new_handler e guard x86-64 Itanium con nesting/abort/retry. 13 gate host PASS; tre profili funzionali nativi 1/4/8 CPU PASS, 12.000 distruttori ciascuno e nessuna riserva finale. **Lo stress non ancorato a 4 CPU ha un timeout non risolto** e non è conteggiato come successo: `RUNTIME-CPP.md` descrive esplicitamente il cambio di lifetime nel carico finale e conserva l’evidenza negativa. Motore, UI e runtime C++ completo restano non consegnati.
+Sviluppo su `main`. **31/31 casi PASS**: 15 gate host, quattro build diagnostiche da base OS fresca, dodici guest heap/C++/lifecycle/pthread su 1/4/8 CPU. Cache heap opt-in limitata a 256 KiB, trim esplicito e gestione di pressione/errori; adattatore pthread sorgente con create/join, mutex ownership/recursive, condition, once e TSD. Consumer C e C++/RAII/static locali/distruttori integrati. **Ripristinato il corpo originale dello stress C++ non ancorato: PASS 1/4/8 CPU**, 4×1000 round e 12000 distruttori invariati, stessa deadline 145 s, cache abilitata e zero riserve dopo trim. Il vecchio timeout resta evidenza storica negativa; il percorso eager-release di default non viene dichiarato ottimizzato. Dettagli: [RUNTIME-MEGABLOCK.md](RUNTIME-MEGABLOCK.md).
+
+Non sono ancora consegnati il vero WTF/JSC/WebCore o Safari funzionante, né un runtime POSIX/C++ completo. Nessuna ISO intermedia pubblicata; binari 10.2.5 invariati.
 
 ## Ripresa precedente: base 10.2.5 / 30B16
 

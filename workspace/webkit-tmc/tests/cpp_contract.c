@@ -20,7 +20,7 @@ static void traps(void (*entry)(void))
 int main(void)
 {
  struct tmc_thread initial={0},threads[4]={0};struct cpp_job jobs[4];assert(!tmc_runtime_enter(&initial));
- assert(!cpp_test_basics());
+ assert(!cpp_test_basics());assert(!tmc_heap_set_cache_limit(256u<<10));
  for(unsigned i=0;i<4;i++){jobs[i]=(struct cpp_job){78+i,1000,cpp_test_handoff(78+i)};assert(!tmc_thread_create(threads+i,cpp_test_worker,jobs+i));}
  cpp_test_start();
  for(unsigned i=0;i<4;i++){void*result=0;assert(!tmc_thread_join(threads+i,&result));assert(result==jobs+i&&!jobs[i].handoff);}
