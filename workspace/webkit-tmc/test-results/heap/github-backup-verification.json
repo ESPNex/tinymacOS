@@ -1,0 +1,282 @@
+{
+  "passed": true,
+  "commit": "3bfb9ff06c3ab11b068045f89b10350373bc7e64",
+  "branch": "work/safari-webkit-runtime",
+  "independent_immutable_raw_downloads": 53,
+  "production_main_unchanged": true,
+  "files": [
+    {
+      "path": "workspace/webkit-tmc/LIMITATIONS.md",
+      "bytes": 4859,
+      "sha256": "31c3b67269c263fa8416138d93b9ae11e0d3ad280126bb2a209612aaf33f7e6c"
+    },
+    {
+      "path": "workspace/webkit-tmc/PROGRESS.md",
+      "bytes": 17564,
+      "sha256": "9aca828815c005dae6f75bbf3669f261b75465ea6dca30d8f0b35976262898b0"
+    },
+    {
+      "path": "workspace/webkit-tmc/README.md",
+      "bytes": 2760,
+      "sha256": "f241df2f6cd2554e67980a42c8c7543b6911a64d8d6cb5bf04216e5ca2c8b996"
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-HEAP.md",
+      "bytes": 8379,
+      "sha256": "459614385aff3f530e8e63bff78180259736853ed766a67a7388be5f7a5f3c09"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/desktop/gfx.c",
+      "bytes": 14680,
+      "sha256": "337eea6411beb1673d8804eb71349f6fcd191a48c237b2f2b2ecab6035238dfd"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/include/abi.h",
+      "bytes": 10181,
+      "sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/include/base.h",
+      "bytes": 743,
+      "sha256": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/include/clipboard.h",
+      "bytes": 291,
+      "sha256": "565350cb21fb95ecc7e8ac923746837cc8230da9322c022486b0ffdeeb656556"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/include/diskedit.h",
+      "bytes": 800,
+      "sha256": "6eb53689649c8c0a74b28c985b5db6aee4e88bb31628d94858e35e597a090471"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/include/partition.h",
+      "bytes": 1271,
+      "sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/kernel/k.h",
+      "bytes": 8535,
+      "sha256": "a20134df70e19921c51195b19ee9f6f7abef6dc1cd0217b5d8fa29ec2a495e8d"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/kernel/memory.c",
+      "bytes": 10008,
+      "sha256": "2cc9ae18a0e980a54a1e4c2215f46e12285d745d6964536df39feb364667bac9"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/kernel/sched.c",
+      "bytes": 17593,
+      "sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380"
+    },
+    {
+      "path": "workspace/webkit-tmc/kernel-overlay/kernel/syscall.c",
+      "bytes": 32769,
+      "sha256": "67754ab34fa9efc7249e34ce7b09593968f17945fcbc86408c4106aa92f980e1"
+    },
+    {
+      "path": "workspace/webkit-tmc/native-abi/abi.h",
+      "bytes": 10181,
+      "sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22"
+    },
+    {
+      "path": "workspace/webkit-tmc/native-abi/clipboard.h",
+      "bytes": 291,
+      "sha256": "565350cb21fb95ecc7e8ac923746837cc8230da9322c022486b0ffdeeb656556"
+    },
+    {
+      "path": "workspace/webkit-tmc/native-abi/diskedit.h",
+      "bytes": 800,
+      "sha256": "6eb53689649c8c0a74b28c985b5db6aee4e88bb31628d94858e35e597a090471"
+    },
+    {
+      "path": "workspace/webkit-tmc/native-abi/partition.h",
+      "bytes": 1271,
+      "sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6"
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/include/tmc_heap.h",
+      "bytes": 1204,
+      "sha256": "a521b0d4c8ae6717d3b6cde164072cf0b68f7ac4cf700d2bc15baa0979f93d73"
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/libc-headers/stdlib.h",
+      "bytes": 352,
+      "sha256": "15d7acc09b8bd3284a22aa5cb950f6acbcd3fa37b15a38931678f0cfda905d1d"
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/src/heap.c",
+      "bytes": 5896,
+      "sha256": "d4cb4b92eb24669ecf18900f23f321032bb643068ee717edb2fc36beca39e975"
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/src/libc_alloc.c",
+      "bytes": 487,
+      "sha256": "24400e7216abe073f4b7a2fb8f5da47b15138443b2c9e75da95844423e63289f"
+    },
+    {
+      "path": "workspace/webkit-tmc/release-gates.json",
+      "bytes": 7854,
+      "sha256": "4d2fbea61668fa9a07680f0100e39b6c0d6938586dfc2a36f77a4a0d7e3b461f"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/guest-network/REMOTE-EVIDENCE.json",
+      "bytes": 932,
+      "sha256": "f33daec4e59b7dfba5fea955997857a0d045e29631bb07f4224114ca4c8269ad"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/guest-network/failure-network-probe.png",
+      "status": "deleted locally; immutable historical GitHub reference retained"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/guest-network/guest-network-result.png",
+      "status": "deleted locally; immutable historical GitHub reference retained"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-build.json",
+      "bytes": 640,
+      "sha256": "feb395c9e4dae8edb32d383c212124a279aea0510b3e111518f8eab259f6310a"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-media.json",
+      "bytes": 600,
+      "sha256": "d1e8fccde146075a42fb7b3abb170ec3ca72645ca0d1a328ea6850cf7bc234bc"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp1-serial.txt",
+      "bytes": 215,
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp1.json",
+      "bytes": 800,
+      "sha256": "d252756809c59edda4b4325ad2eb747fecd18440a62cf88a0abfc85c2b0382eb"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp1.png",
+      "bytes": 68622,
+      "sha256": "a9c8524deadd49217cb4908a082926d89b3c382158c7e8c47d415b54c6a26a8f"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp4-serial.txt",
+      "bytes": 215,
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp4.json",
+      "bytes": 799,
+      "sha256": "ad7275481003d799f8c99501d20cfe9d26c5f048ccfc4dbafab49c092b9af793"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp4.png",
+      "bytes": 68573,
+      "sha256": "e0b7c445084587ee9b33d4168225cc79478e46f731dd4201e9ca3e7b72b33556"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp8-serial.txt",
+      "bytes": 215,
+      "sha256": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp8.json",
+      "bytes": 799,
+      "sha256": "cf6c2714977e7dc1235554759fd50d00b7cf47a8b8872d66868bf020aa9ed6ef"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-smp8.png",
+      "bytes": 68936,
+      "sha256": "8688fcfa4a50fb2426ef244cfa653b85948b62c716f38548052b1b19d34e06b8"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/guest-heap-source-hashes.json",
+      "bytes": 11352,
+      "sha256": "02d2ea45465377c133b007a494e06ff2f17401597bc250e43db65a7b79b033e3"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/host-milestone.json",
+      "bytes": 4583,
+      "sha256": "e505ed87dd605a1393f1b3e4f695abfdfe239354c2dc40b24b330ea2dfa06639"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/terminal-crops.json",
+      "bytes": 1566,
+      "sha256": "06f4b358611618d0a2027a77503cfbec27e524bc10b4c5f0d93e435280d8c461"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/verification.json",
+      "bytes": 2028,
+      "sha256": "f216ac3141a1bae7b95b852c67cf3ab3e9f534da93eb5f7a162b7756d5b9482c"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/heap/vm-system-source-hashes.json",
+      "bytes": 110559,
+      "sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420"
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/source-sync.json",
+      "bytes": 3063,
+      "sha256": "972bc158a19a9c21565c30f84c39608412ef967a0fbd43f6067d3c2380a82b67"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_heap_probe.c",
+      "bytes": 2229,
+      "sha256": "0619b7870dc690a38b5b5383590399e06e4f7bf8e353e37c36f3043418e86993"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/heap_cases.h",
+      "bytes": 3119,
+      "sha256": "1fab8215d83d274dfdf4cd9a9ba3ce804206ed74d066f9ae267b08c0740337ab"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/heap_contract.c",
+      "bytes": 3084,
+      "sha256": "b834c54fbc307c8fea818073b35e8dac046495affc442504f317f47809292c20"
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/heap_cpp_smoke.cpp",
+      "bytes": 804,
+      "sha256": "404b8a48ad176f736ec4419f8301eeea13d5df303475dace94591a09f59bef58"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-heap-probe.sh",
+      "bytes": 1168,
+      "sha256": "4139f27f9ad315b1c50b1f073086878fa4faa08f1a80b738191a218b276cb0b5"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-network-probe.sh",
+      "bytes": 4778,
+      "sha256": "4ad19969a93974010d07bff410c2da575423477f89dcc8825ac4024ce832e449"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/compile-backend.sh",
+      "bytes": 1255,
+      "sha256": "d22517b98a5cacb3aa3849ca95bfd6010da717214410a0c68125e7313f70b3da"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/probe_media.py",
+      "bytes": 2686,
+      "sha256": "60d9ae55f91963944456e88173fec792609d0c9bf9d84ddf0f3bfa70eca82b5f"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/run-tests.py",
+      "bytes": 5254,
+      "sha256": "bf145137833e2cdb78b24a666c02e47a4ccfe3a1bcd8164f9d28a9add6f6e1ed"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/sync-system-sources.py",
+      "bytes": 2460,
+      "sha256": "799533c385ceb8f1ca3be619b43e0b7784b7336c4a3a0b0e16534cfb0e7d262e"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-heap.py",
+      "bytes": 2724,
+      "sha256": "567c61115edbca3fcc6d09efadf1ce7f9e2fdfb1368f527c1f5fc1ebee609733"
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-heap.sh",
+      "bytes": 558,
+      "sha256": "a607959452bcba77d1ae55ee2668610d3aff0fc9e6965e1a7d6da25944799f29"
+    }
+  ]
+}
