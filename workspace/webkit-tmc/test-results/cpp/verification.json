@@ -1,0 +1,42 @@
+{
+  "scope": "10.3 development: no-exceptions C++ allocation and local-static ABI only",
+  "host_gates_passed": 13,
+  "native_functional_profiles_passed": [
+    1,
+    4,
+    8
+  ],
+  "workers_per_profile": 4,
+  "array_destructors_per_profile": 12000,
+  "live_transferred_buffer_retained_through_each_worker": true,
+  "initial_unanchored_4_cpu_stress_passed": false,
+  "initial_unanchored_stress_status": "145 second timeout; preserved negative result, not fixed or counted as a pass",
+  "initial_stress_evidence": "unanchored-stress-timeout-evidence.tar.xz",
+  "all_986_shipped_os_compiled_inputs_unchanged": true,
+  "build_flags_for_fresh_qa_base": {
+    "TMC_FS2_BACKEND": 1,
+    "TMC_USB_CANONICAL": 0
+  },
+  "javascriptcore_webcore_or_safari_ui_delivered": false,
+  "complete_cpp_standard_library_or_exception_abi": false,
+  "new_release_or_iso_uploaded": false,
+  "source_working_branch": "main",
+  "evidence_sha256": {
+    "guest-cpp-build.json": "5e7301339015b8ad2e492782d2a9d3b82a4cd49c33c69fe658965fc1e27564b5",
+    "guest-cpp-media.json": "ce1d51675e197effc4325c90b76b8665da476a01f0875b5508afb3d70da4e411",
+    "guest-cpp-smp1-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-cpp-smp1.json": "287138db0acf16383b00a47e85e09350ce646ddbb783eca279047d423b84cd90",
+    "guest-cpp-smp1.png": "638d9075eb534ea473eeaff3ce54d511beba44ff3d920e2a92a86c17a5e8f567",
+    "guest-cpp-smp4-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-cpp-smp4.json": "6f7936911c6d16c54da011e93566e6fda151c3f7818a39122b86e602eb736b18",
+    "guest-cpp-smp4.png": "2b4616167298f0d9ba038cc484368cc6988f601a7506dfc854761f3b943d86e1",
+    "guest-cpp-smp8-serial.txt": "da6c57deb97ac019f0a758596595e00e934c50b0bcd510767cf62b5a6aaae11d",
+    "guest-cpp-smp8.json": "400fdc68f8a0945c4af0239f9cd1e48069cb34e4f6f9935ac2e7deae035d6f59",
+    "guest-cpp-smp8.png": "249d938c995086728d7055e20013ee3c5943e0c30017665bd2cad7420e508d47",
+    "guest-cpp-source-hashes.json": "932f5709cae657a168289ea1ac28a024617b2e5847e8666f7187bf73213f0289",
+    "host-milestone.json": "30678f761f6dc227a30878610e51092b3805b2cb5c2ebd0c51ff7ac285be992d",
+    "terminal-crops.json": "68c935861526fd9bd40b09ebf46f25c34ce9d64bb892966b65984dd92311cc9b",
+    "unanchored-stress-timeout-evidence.tar.xz": "b0772c3db78b8650821928a59d89df4b073c5ee757073d037dd605e0f891ab32",
+    "vm-system-source-hashes.json": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420"
+  }
+}

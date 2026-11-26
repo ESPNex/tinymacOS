@@ -11,8 +11,14 @@ for f in native_syscall network clock_entropy poll descriptors vm tls errno sync
  -ffreestanding -fno-stack-protector -fno-builtin -mno-red-zone \
  -Wall -Wextra -Werror -c "$ROOT/posix/src/$f.c" -o "$OUT/$f.o"
 done
+for f in new guard;do
+ g++ -std=c++20 -nostdinc -nostdinc++ -isystem "$(gcc -print-file-name=include)" \
+ -I"$HEADERS" -I"$ROOT/native-abi" -I"$ROOT/posix/include" -I"$ROOT/cpp/include" \
+ -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector -fno-builtin -mno-red-zone \
+ -Wall -Wextra -Werror -c "$ROOT/cpp/src/$f.cpp" -o "$OUT/cpp-$f.o"
+done
 # Inspect only the known freshly compiled objects, never stale directory contents.
-ld -r "$OUT/native_syscall.o" "$OUT/network.o" "$OUT/clock_entropy.o" "$OUT/poll.o" "$OUT/descriptors.o" "$OUT/vm.o" "$OUT/tls.o" "$OUT/errno.o" "$OUT/sync.o" "$OUT/threads.o" "$OUT/heap.o" "$OUT/libc_alloc.o" -o "$OUT/backend-combined.o"
+ld -r "$OUT/native_syscall.o" "$OUT/network.o" "$OUT/clock_entropy.o" "$OUT/poll.o" "$OUT/descriptors.o" "$OUT/vm.o" "$OUT/tls.o" "$OUT/errno.o" "$OUT/sync.o" "$OUT/threads.o" "$OUT/heap.o" "$OUT/libc_alloc.o" "$OUT/cpp-new.o" "$OUT/cpp-guard.o" -o "$OUT/backend-combined.o"
 if nm -u "$OUT/backend-combined.o" | grep -E ' (errno|__errno_location)$';then
  echo 'Unresolved target errno ABI' >&2;exit 1
 fi

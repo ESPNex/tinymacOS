@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "image": "/var/tmp/tmc-webkit-cpp-guest/tinymacOS-qa-probe-x86_64.iso",
+  "iso_sha256": "77df68dd13a0229fd5d0c3b24455453ec890544d2427226bf9c9b37a60c34c70",
+  "production_build": "/var/tmp/tmc-webkit-10.3-system",
+  "kernel_sha256": "1dd74bf472d2a977520707e9abf924bb004dfef078affbb61dec0726310d7b5a",
+  "kernelcache_sha256": "c4956dd5b42bbcdb63eda3476f3c47a7eba014d6e195ba9779c8fa3118a6be3a",
+  "actual_iso_kernel_equals_current_production": true,
+  "source_files_verified": 1061,
+  "source_manifest_sha256": "a3bdbaabc2a69596939292e29ecd5131fffc5cce615f76857515a5b8d12b6420"
+}

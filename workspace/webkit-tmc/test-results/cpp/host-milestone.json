@@ -1,0 +1,85 @@
+{
+  "scope": "backend/runtime contracts, target objects; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance",
+  "guest_requested": false,
+  "passed": true,
+  "cases": [
+    {
+      "name": "workspace-budget",
+      "exit_code": 0,
+      "stdout": "{\n  \"files\": 3628,\n  \"bytes\": 126438805,\n  \"MB\": 126.44,\n  \"MiB\": 120.58,\n  \"user_limit_bytes\": 128000000,\n  \"bytes_below_user_limit\": 1561195,\n  \"guard_files\": 9000,\n  \"guard_bytes\": 126877696,\n  \"ok\": true\n}\n",
+      "stderr": ""
+    },
+    {
+      "name": "source-sync",
+      "exit_code": 0,
+      "stdout": "PASS: all 25 OS integration sources and 11 native ABI copies match the workspace overlay.\n",
+      "stderr": ""
+    },
+    {
+      "name": "backend-contract",
+      "exit_code": 0,
+      "stdout": "PASS: DNS/TCP contracts, RESET vs EOF, polling, deadlines, clock, entropy fail-closed.\n",
+      "stderr": ""
+    },
+    {
+      "name": "cpp-runtime-contract",
+      "exit_code": 0,
+      "stdout": "PASS C++ runtime: new/delete scalar/array/sized/aligned/nothrow/placement, real OOM new_handler recovery, cross-thread deletion, 12000 destructors, contended once-only nested guards, abort/retry publication; host-only expected SIGILL on unhandled OOM and recursive initialization. No STL/exceptions/JSC claim.\nPASS C++ runtime: new/delete scalar/array/sized/aligned/nothrow/placement, real OOM new_handler recovery, cross-thread deletion, 12000 destructors, contended once-only nested guards, abort/retry publication; host-only expected SIGILL on unhandled OOM and recursive initialization. No STL/exceptions/JSC claim.\n",
+      "stderr": ""
+    },
+    {
+      "name": "heap-contract",
+      "exit_code": 0,
+      "stdout": "PASS heap: 25000 randomized operations, 4 concurrent workers, cross-thread frees, alignment 8..2MiB, calloc reuse/overflow, failed realloc preservation, split/coalesce, VM reserve/commit/release faults and region exhaustion (host transport)\nPASS heap: 25000 randomized operations, 4 concurrent workers, cross-thread frees, alignment 8..2MiB, calloc reuse/overflow, failed realloc preservation, split/coalesce, VM reserve/commit/release faults and region exhaustion (host transport)\n",
+      "stderr": ""
+    },
+    {
+      "name": "threads-contract",
+      "exit_code": 0,
+      "stdout": "PASS managed-thread contract: created=82 updates=320 first-failure-line=0; host transport only, not native FS/scheduler\n",
+      "stderr": ""
+    },
+    {
+      "name": "sync-contract",
+      "exit_code": 0,
+      "stdout": "PASS real sync.c via host futex: 8000 serialized updates, broadcast, condition/mutex timeout and mutex reacquisition; parks=4616 wakes=4618\n",
+      "stderr": ""
+    },
+    {
+      "name": "vm-contract",
+      "exit_code": 0,
+      "stdout": "PASS: kernel VM model, guards/ranges, permission prevalidation, OOM rollback, 50000 reservation operations, multi-CPU reservation path (host model, not MMU proof).\nPASS: VM native ABI forwarding, feature query, pointer sanity and errno mapping.\n",
+      "stderr": ""
+    },
+    {
+      "name": "descriptor-contract",
+      "exit_code": 0,
+      "stdout": "PASS: unified read-only-file/TCP descriptors, dup/shared offsets, last-close ownership, poll, caps, invalid/error paths and 100000 lifetime operations.\n",
+      "stderr": ""
+    },
+    {
+      "name": "kernel-stream",
+      "exit_code": 0,
+      "stdout": "PASS: stream stress 35539167 bytes; no loss/duplication across ring/counter wrap.\nPASS: kernel callback backpressure, pbuf ownership, receive-window credit, FIN/RESET/status and legacy op6 contracts.\n",
+      "stderr": ""
+    },
+    {
+      "name": "system-appearance",
+      "exit_code": 0,
+      "stdout": "PASS: 64 system appearance combinations, real S_INFO contract, shared compositor RGB palette, change detection and failure preservation.\n",
+      "stderr": ""
+    },
+    {
+      "name": "backend-target-compile",
+      "exit_code": 0,
+      "stdout": "Compile-only PASS. Target errno resolves to caller-attached TCB; no complete target libc has been linked.\n",
+      "stderr": ""
+    },
+    {
+      "name": "system-target-compile",
+      "exit_code": 0,
+      "stdout": "PASS: target object compilation: kernel network, syscall dispatch, compositor and appearance adapter. No executable linked, no ISO produced.\n",
+      "stderr": "kernel/net.c: In function \u2018lwip_tx\u2019:\nkernel/net.c:59:22: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n   59 |                 char b[110];\n      |                      ^\nkernel/net.c: In function \u2018net_ping\u2019:\nkernel/net.c:239:18: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  239 |             char b[28];\n      |                  ^\nkernel/net.c:255:25: warning: unused variable \u2018hx\u2019 [-Wunused-variable]\n  255 |             const char *hx = \"0123456789abcdef\";\n      |                         ^~\nkernel/net.c:254:18: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  254 |             char b[24];\n      |                  ^\nkernel/net.c: In function \u2018dns_recv\u2019:\nkernel/net.c:456:14: warning: variable \u2018b\u2019 set but not used [-Wunused-but-set-variable]\n  456 |         char b[72];\n      |              ^\n"
+    }
+  ]
+}

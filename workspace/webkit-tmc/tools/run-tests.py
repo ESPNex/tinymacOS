@@ -14,6 +14,7 @@ cases=[
  ('workspace-budget',['python3',str(root.parent/'check-snapshot-budget.py')]),
  ('source-sync',['python3',str(root/'tools/sync-system-sources.py'),'--check']),
  ('backend-contract',['sh',str(root/'tools/test-backend.sh')]),
+ ('cpp-runtime-contract',['sh',str(root/'tools/test-cpp-runtime.sh')]),
  ('heap-contract',['sh',str(root/'tools/test-heap.sh')]),
  ('threads-contract',['sh',str(root/'tools/test-threads.sh')]),
  ('sync-contract',['sh',str(root/'tools/test-sync.sh')]),
@@ -48,6 +49,10 @@ if args.guest:
   ('guest-heap-smp1',['env','TMC_SMP=1','python3',str(root/'tools/test-guest-heap.py')]),
   ('guest-heap-smp4',['env','TMC_SMP=4','python3',str(root/'tools/test-guest-heap.py')]),
   ('guest-heap-smp8',['env','TMC_SMP=8','python3',str(root/'tools/test-guest-heap.py')]),
+  ('guest-cpp-probe-build',['bash',str(root/'tools/build-guest-cpp-probe.sh')]),
+  ('guest-cpp-smp1',['env','TMC_SMP=1','TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-10.3-system','python3',str(root/'tools/test-guest-cpp.py')]),
+  ('guest-cpp-smp4',['env','TMC_SMP=4','TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-10.3-system','python3',str(root/'tools/test-guest-cpp.py')]),
+  ('guest-cpp-smp8',['env','TMC_SMP=8','TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-10.3-system','python3',str(root/'tools/test-guest-cpp.py')]),
  ]
 results=[]
 for name,cmd in cases:

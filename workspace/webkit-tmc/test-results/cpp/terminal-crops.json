@@ -1,0 +1,38 @@
+{
+  "guest-cpp-smp1.png": {
+    "full_frame_sha256": "586b4b4c69e5cad2e6abd3b40d2153e5689e4bb4e9c97b1319cb146381486f52",
+    "crop_sha256": "638d9075eb534ea473eeaff3ce54d511beba44ff3d920e2a92a86c17a5e8f567",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-cpp-qa-o7qjni7f/evidence/cpp-pass.png",
+    "scope": "Lossless unmodified Terminal pixels, no synthetic/repainted content; original full frame is nondurable scratch, this crop is preserved in Git."
+  },
+  "guest-cpp-smp4.png": {
+    "full_frame_sha256": "0d10e5472f6b3029e4d1b626815b34c4e63b05882ac0f17b1f6457163be023b8",
+    "crop_sha256": "2b4616167298f0d9ba038cc484368cc6988f601a7506dfc854761f3b943d86e1",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-cpp-qa-cjrword7/evidence/cpp-pass.png",
+    "scope": "Lossless unmodified Terminal pixels, no synthetic/repainted content; original full frame is nondurable scratch, this crop is preserved in Git."
+  },
+  "guest-cpp-smp8.png": {
+    "full_frame_sha256": "785637fcb26872670c08ab10b81b7aba76bd08ecec907cd4ff3ffcbde842e326",
+    "crop_sha256": "249d938c995086728d7055e20013ee3c5943e0c30017665bd2cad7420e508d47",
+    "crop_box": [
+      297,
+      160,
+      1030,
+      630
+    ],
+    "full_frame_external_scratch_only": "/var/tmp/tmc-cpp-qa-2lreni4y/evidence/cpp-pass.png",
+    "scope": "Lossless unmodified Terminal pixels, no synthetic/repainted content; original full frame is nondurable scratch, this crop is preserved in Git."
+  }
+}

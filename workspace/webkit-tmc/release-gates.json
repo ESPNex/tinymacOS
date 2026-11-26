@@ -28,7 +28,10 @@
     "native_managed_thread_startup_join_tsd_destructors_guest_tested": true,
     "freestanding_cpp_raii_native_c_abi_consumer_guest_tested": true,
     "native_vm_heap_host_contract_tests": true,
-    "native_vm_heap_guest_and_c_allocation_exports": true
+    "native_vm_heap_guest_and_c_allocation_exports": true,
+    "noexceptions_cpp_new_delete_and_static_guards_host_contracts": true,
+    "noexceptions_cpp_native_functional_1_4_8_cpu_with_live_transfer_buffers": true,
+    "unanchored_cpp_allocation_churn_smp_stress": false
   },
   "release_ready": false,
   "maintenance_241": {
@@ -188,5 +191,6 @@
     "browser_engine_required": "real WTF/JavaScriptCore/WebCore",
     "ui_required": "identical classic desktop Safari reference; all tinymacOS themes",
     "release_published": false
-  }
+  },
+  "cpp_scope": "10.3 development: opt-in no-exceptions new/delete/new_handler and x86-64 local-static guards; 13 host gates and functional native 1/4/8 CPU profiles PASS, 12000 destructors each, transferred buffers kept live through workload. Initial unanchored 4-CPU churn stress timed out and remains open; no allocator performance fix claimed. Not libc++, exception ABI, global startup/atexit, compiler TLS, WTF/JSC/WebCore or Safari UI. See RUNTIME-CPP.md."
 }

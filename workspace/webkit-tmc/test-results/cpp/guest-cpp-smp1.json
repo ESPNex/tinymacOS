@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "requested_cpus": 1,
+  "scope": "native no-exceptions new/delete and x86-64 Itanium local-static guards; NOT a complete C++ runtime, STL, compiler TLS, exceptions, WTF/JSC/WebCore or Safari UI",
+  "iso_sha256": "77df68dd13a0229fd5d0c3b24455453ec890544d2427226bf9c9b37a60c34c70",
+  "external_evidence": "/var/tmp/tmc-cpp-qa-o7qjni7f/evidence",
+  "global_new_overloads": 8,
+  "global_delete_overloads": 12,
+  "concurrent_workers": 4,
+  "nontrivial_array_destructors": 12000,
+  "cross_thread_cpp_deletion": true,
+  "new_handler_real_vm_slot_exhaustion_and_recovery": true,
+  "once_only_nested_static_initialization": true,
+  "guard_abort_retry_under_contention": true,
+  "release_acquire_object_publication": true,
+  "zero_final_vm_reservations": true,
+  "no_unresolved_executable_symbols": true,
+  "no_target_cpp_standard_library_linked": true,
+  "cross_cpu_execution_required": false,
+  "negative_sigill_cases_host_only": true
+}

@@ -1,0 +1,19 @@
+{
+  "reason": "128 MB workspace limit; unchanged historical heap screenshots retained at immutable GitHub commit",
+  "files": [
+    {
+      "file": "guest-heap-smp1.png",
+      "immutable_github_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/3bfb9ff06c3ab11b068045f89b10350373bc7e64/workspace/webkit-tmc/test-results/heap/guest-heap-smp1.png",
+      "sha256": "a9c8524deadd49217cb4908a082926d89b3c382158c7e8c47d415b54c6a26a8f",
+      "bytes": 68622,
+      "independent_byte_for_byte_readback_before_local_offload": true
+    },
+    {
+      "file": "guest-heap-smp4.png",
+      "immutable_github_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/3bfb9ff06c3ab11b068045f89b10350373bc7e64/workspace/webkit-tmc/test-results/heap/guest-heap-smp4.png",
+      "sha256": "e0b7c445084587ee9b33d4168225cc79478e46f731dd4201e9ca3e7b72b33556",
+      "bytes": 68573,
+      "independent_byte_for_byte_readback_before_local_offload": true
+    }
+  ]
+}

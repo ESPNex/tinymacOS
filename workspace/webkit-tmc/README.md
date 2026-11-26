@@ -8,10 +8,15 @@ La base OS corrente è **10.2.5 / 30B16**, già pubblicata senza Safari. Lo svil
 
 Il primo blocco nuovo è l’allocatore VM e il sottoinsieme C di allocazione, descritto in `RUNTIME-HEAP.md`. Checkout completo di WebKit, toolchain e build rimangono fuori da `/home/user`; sorgenti del port e ricevute sono salvati su GitHub, con workspace sotto 128 MB decimali.
 
+## 10.3 in sviluppo
+
+Dopo l’heap VM, aggiunto il sottoinsieme C++ opt-in di new/delete e guard degli static locali. **13 gate host e profili funzionali guest 1/4/8 CPU PASS**, quattro worker e 12.000 distruttori per profilo. Lo stress senza buffer vivi ha un timeout separato ancora aperto: dettagli e distinzione dei carichi in `RUNTIME-CPP.md`. Nessun build di WTF/JSC/WebCore o UI Safari ancora consegnato; nessuna ISO 10.3 pubblicata.
+
 ## Componenti presenti
 
 - `posix/`: adattatori prefissati `tmc_` per rete, descriptor, VM, clock, TLS per-thread, sincronizzazione, ciclo di vita dei thread e heap VM. `libc_alloc.c` esporta soltanto le cinque funzioni C di allocazione in modo opt-in. Non sostituiscono una libc/POSIX completa.
 - `native-abi/`, `kernel-overlay/`: header e sorgenti d'integrazione con il sistema nativo; verificare la direzione di ogni sincronizzazione.
+- `cpp/`: allocazione C++ senza eccezioni e guard x86-64 Itanium; non una standard library o un runtime C++ completo.
 - `platform/`: lettura dello stato d'aspetto del sistema, non un'interfaccia browser.
 - `upstream-reference/`, `upstream.lock.json`: sottoinsieme di riferimento e commit fissato; non un checkout completo del motore.
 - `tools/`, `tests/`, `test-results/`: harness, contratti host e ricevute guest.

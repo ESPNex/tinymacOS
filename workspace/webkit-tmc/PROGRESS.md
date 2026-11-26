@@ -1,6 +1,10 @@
 # Safari / WebKit — stato verificato del port
 
-## Ripresa corrente: base 10.2.5 / 30B16
+## Obiettivo 10.3: allocazione C++ e static locali
+
+Sviluppo su `main`. Implementati new/delete scalar/array/sized/aligned/nothrow, placement, new_handler e guard x86-64 Itanium con nesting/abort/retry. 13 gate host PASS; tre profili funzionali nativi 1/4/8 CPU PASS, 12.000 distruttori ciascuno e nessuna riserva finale. **Lo stress non ancorato a 4 CPU ha un timeout non risolto** e non è conteggiato come successo: `RUNTIME-CPP.md` descrive esplicitamente il cambio di lifetime nel carico finale e conserva l’evidenza negativa. Motore, UI e runtime C++ completo restano non consegnati.
+
+## Ripresa precedente: base 10.2.5 / 30B16
 
 La release 10.2.5 è pubblicata e verificata; non viene ripubblicata da questo lavoro. Lavoro nato su `work/safari-webkit-runtime`, ora consolidato in `main`: allocatore nativo VM con mutex, cinque simboli C di allocazione opt-in e prove condivise host/guest. Dettagli e risultati correnti in `RUNTIME-HEAP.md`. Il vecchio overlay viene aggiornato **dai** sorgenti OS autorevoli tramite `--capture`, non applicato al contrario. Nessun sorgente OS di produzione modificato. WTF/JSC/WebCore e interfaccia Safari non sono ancora compilati.
 

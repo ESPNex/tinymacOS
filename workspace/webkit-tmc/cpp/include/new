@@ -1,0 +1,43 @@
+/* SPDX-License-Identifier: MIT
+ * Freestanding allocation subset for -fno-exceptions target consumers.
+ * NOT a full <new>, libc++, exception ABI or standard-library implementation.
+ * Unsupported: std::bad_alloc, destroying_delete, hardware-interference sizes.
+ * Ordinary new calls the handler until success, then traps on unhandled OOM;
+ * nothrow returns nullptr if no handler remains. Handlers MUST NOT throw. */
+#ifndef TMC_CPP_NEW
+#define TMC_CPP_NEW
+#include <stddef.h>
+namespace std {
+using size_t=::size_t;
+struct nothrow_t { explicit constexpr nothrow_t() noexcept=default; };
+extern const nothrow_t nothrow;
+enum class align_val_t:size_t {};
+using new_handler=void (*)();
+new_handler set_new_handler(new_handler) noexcept;
+new_handler get_new_handler() noexcept;
+}
+void *operator new(size_t);
+void *operator new[](size_t);
+void *operator new(size_t,const std::nothrow_t&) noexcept;
+void *operator new[](size_t,const std::nothrow_t&) noexcept;
+void *operator new(size_t,std::align_val_t);
+void *operator new[](size_t,std::align_val_t);
+void *operator new(size_t,std::align_val_t,const std::nothrow_t&) noexcept;
+void *operator new[](size_t,std::align_val_t,const std::nothrow_t&) noexcept;
+void operator delete(void*) noexcept;
+void operator delete[](void*) noexcept;
+void operator delete(void*,size_t) noexcept;
+void operator delete[](void*,size_t) noexcept;
+void operator delete(void*,const std::nothrow_t&) noexcept;
+void operator delete[](void*,const std::nothrow_t&) noexcept;
+void operator delete(void*,std::align_val_t) noexcept;
+void operator delete[](void*,std::align_val_t) noexcept;
+void operator delete(void*,size_t,std::align_val_t) noexcept;
+void operator delete[](void*,size_t,std::align_val_t) noexcept;
+void operator delete(void*,std::align_val_t,const std::nothrow_t&) noexcept;
+void operator delete[](void*,std::align_val_t,const std::nothrow_t&) noexcept;
+inline void *operator new(size_t,void*p) noexcept{return p;}
+inline void *operator new[](size_t,void*p) noexcept{return p;}
+inline void operator delete(void*,void*) noexcept{}
+inline void operator delete[](void*,void*) noexcept{}
+#endif
