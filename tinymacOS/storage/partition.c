@@ -106,8 +106,11 @@ int partition_scan(Medium*m,DiskMap*x)
             if(p[i].start<lo||p[i].end>=hi||p[i].end<p[i].start||!add(m,x,p[i].start,p[i].end-p[i].start+1,i+1,p[i].type,16))return bad(x,"GPT con estensioni non valide");
             memset(x->part[x->count-1].name,0,sizeof x->part[x->count-1].name);
             for(int j=0;j<35&&p[i].name[j];j++)x->part[x->count-1].name[j]=p[i].name[j]<128?p[i].name[j]:'?';
+            static const u8 msr[16]={0x16,0xe3,0xc9,0xe3,0x5c,0x0b,0xb8,0x4d,0x81,0x7d,0xf9,0x2d,0xf0,0x02,0x15,0xae};
+            if(!memcmp(p[i].type,msr,16)){DiskPartition*q=x->part+x->count-1;q->fs=FS_OTHER;strset(q->name,"Microsoft Reserved (MSR)",sizeof q->name);}
         }
-        if(!x->safe)return bad(x,"GPT degradata, ibrida o copie discordanti: disco protetto");
+        /* Keep the validated copy's read-only inventory, including gaps, even
+         * when its peer/PMBR is unsafe. Allocation stays fail-closed below. */
     }else{
         if(scale!=1)return bad(x,"MBR su 4Kn non supportato: nessuna scrittura");
         x->scheme=MAP_MBR;x->safe=1;
@@ -126,6 +129,7 @@ int partition_scan(Medium*m,DiskMap*x)
     if(x->scheme==MAP_MBR){int logical=5,primary=x->count;
         for(int i=0;i<primary;i++){DiskPartition*p=x->part+i;int t=p->type[0];if(t==5||t==15||t==0x85){p->fs=FS_OTHER;strset(p->name,"Partizione estesa",sizeof p->name);if(!extended(m,x,p->start,p->sectors,&logical))return 0;}}
     }
+    if(!x->safe)return bad(x,"GPT degradata, ibrida o copie discordanti: disco protetto");
     if(x->slot<0){strset(x->reason,"Tabella piena: nessuna voce libera",sizeof x->reason);return 1;}
     strset(x->reason,x->sectors?"Spazio non allocato disponibile":"Nessuno spazio non allocato",sizeof x->reason);return 1;
 }

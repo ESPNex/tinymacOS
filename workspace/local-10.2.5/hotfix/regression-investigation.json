@@ -1,0 +1,38 @@
+{
+  "issue": "User reports USB mouse stopped, installer misses free space, font changed between 10.2.4 and 10.2.5",
+  "font_regression_confirmed_in_actual_published_ISOs": true,
+  "fonts": {
+    "10.2.4": {
+      "bytes": 2180353,
+      "sha256": "b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2",
+      "font_faces": 11
+    },
+    "10.2.5": {
+      "bytes": 2453335,
+      "sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
+      "font_faces": 11
+    }
+  },
+  "1024_iso_github_digest_verified": true,
+  "1025_iso_digest_verified": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+  "font_sources_identical_at_release_tags": true,
+  "packager_allows_TMC_FONT_override": true,
+  "specific_historical_build_environment_root_cause": "Not yet fully reconstructed; do not infer from identical source asset",
+  "accepted_1024_font_recovered_byte_exact": "tinymacOS/assets/type.tfn (locked by assets/interface-font-lock.json)",
+  "source_restored_yet": true,
+  "mouse_hardware_root_cause_known": false,
+  "installer_hardware_root_cause_known": false,
+  "user_environment": {
+    "physical_machine": true,
+    "USB_mouse": true,
+    "unallocated_space_same_disk_as_other_OS": true,
+    "mouse_model_and_disk_photo": "requested, not received"
+  },
+  "new_host_checks": {
+    "test-legacy-input": "PASS",
+    "test-linux-usbhid": "PASS",
+    "test-installer-flow": "PASS",
+    "test-partitions": "initial run missing TMC_BUILD; replay user-aborted, descendants were still running when inspected; no complete replay result claimed"
+  },
+  "release_republished": false
+}

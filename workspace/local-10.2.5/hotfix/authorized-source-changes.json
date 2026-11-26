@@ -1,0 +1,29 @@
+{
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update",
+  "inputs": {
+    "assets/type.tfn": {
+      "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
+      "hotfix_sha256": "b2dc1065c12eb43378e02d824af58697369760c268f2dbc64542dcac04a514d2"
+    },
+    "desktop/main.c": {
+      "baseline_sha256": "74ecd050897b5166e7f2ef269e80af03721f664e6ded520d1fcf8b5f9e1e10e5",
+      "hotfix_sha256": "339e4c1e66c2ae01548ded08abd9e0c5a73160c8aa4a49544493c782efee61ad"
+    },
+    "storage/partition.c": {
+      "baseline_sha256": "6881732fe3563d32fb902c37353149ec628c6241e99946b261b1be08c3affe7e",
+      "hotfix_sha256": "87dc68462291558498ca88a2e2f66f0bcc9b3db4b0e4c966d33af8481c635195"
+    },
+    "userspace/about.c": {
+      "baseline_sha256": "01232c34e885f571141338a122637286d99df7c329075dace0eb86e1c10a0b0e",
+      "hotfix_sha256": "2acae4db73dba857e8c4488981454d08b497f4c44b258783b646595e64e9a73f"
+    },
+    "userspace/command.c": {
+      "baseline_sha256": "dc824c1520b540c553a648dcef5c3be2c74d2524c7c8a17ca2513b1ae8b3fa0e",
+      "hotfix_sha256": "0cab6076c3aafdd98a7ca72e968e5400be5ef27b5808b549958eff69f4c416f5"
+    },
+    "userspace/settings.c": {
+      "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
+      "hotfix_sha256": "fb3ca3a0aa0586d2cd593d62d588126f8d3462eb16c1da415baf3df61c1c0006"
+    }
+  }
+}

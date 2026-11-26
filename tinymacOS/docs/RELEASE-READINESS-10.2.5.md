@@ -1,5 +1,9 @@
 # 10.2.5 / 30B16 — accettazione finale superata
 
+> **Storico 30B16:** i gate e digest originali sotto non certificano la revisione
+> 30B17. Prove distinte e limiti in [HOTFIX-10.2.5-30B17.md](HOTFIX-10.2.5-30B17.md)
+> e `workspace/local-10.2.5/hotfix/`.
+
 I due requisiti obbligatori sono implementati e verificati: installazione/avvio
 UEFI nativi 4Kn e conversione/deattivazione FS2 sullo stesso extent da Recovery.
 Non sono stati sostituiti da esclusioni di rilascio.

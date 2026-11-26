@@ -1,5 +1,9 @@
 # 10.2.5 Tramontana · 30B16
 
+> **Revisione 30B17:** questo documento descrive anche la precedente 30B16.
+> Per font ripristinato, puntatore/drag, inventario Windows e validazione della
+> nuova candidata vedere [HOTFIX-10.2.5-30B17.md](HOTFIX-10.2.5-30B17.md).
+
 ## Novità
 
 - **Finder:** menu contestuali Taglia/Copia/Incolla e trascinamento tra finestre,

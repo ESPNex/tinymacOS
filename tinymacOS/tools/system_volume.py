@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Pack the boot-read namespace and convert freestanding linked segments to real static Mach-O 64 executables."""
-import hashlib,os,plistlib,struct,sys
+import hashlib,os,plistlib,struct,sys,json
 from pathlib import Path
 D=Path(sys.argv[1]);mode=sys.argv[2]
 if mode=='cache':
@@ -23,11 +23,14 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleDisplayName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.5','CFBundleVersion':'30B16','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleDisplayName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.5','CFBundleVersion':'30B17','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
 for svg in sorted(Path('assets/control-center').glob('*.svg')):add('/System/Library/CoreServices/ControlCenter/Symbols/'+svg.name,svg.read_bytes())
 add('/System/Library/CoreServices/ControlCenter/Symbols/manifest.json',(D/'control-svg.json').read_bytes())
-add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.5','ProductBuildVersion':'30B16'}));add('/System/Library/KernelCollections',None)
-add('/System/Library/Fonts/Interface.tfn',Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes())
+add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.5','ProductBuildVersion':'30B17'}));add('/System/Library/KernelCollections',None)
+font=Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes()
+font_lock=json.loads(Path('assets/interface-font-lock.json').read_text())
+assert len(font)==font_lock['bytes'] and hashlib.sha256(font).hexdigest()==font_lock['sha256'],'Unaccepted interface font: release packaging refuses silent font substitution'
+add('/System/Library/Fonts/Interface.tfn',font)
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json
 atlas=json.loads((D/'icon-atlas.json').read_text());slots={int(k):v for k,v in atlas['slots'].items()}

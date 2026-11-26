@@ -2,11 +2,13 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery con kernel dedicato. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.2.5 Tramontana · build 30B16 · pre-release.**
+**Versione attuale: 10.2.5 Tramontana · build 30B17 · pre-release.**
 
 [Scarica l’unica ISO BIOS+UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.2.5-pre-release/tinymacOS-10.2.5-x86_64.iso) · [Sorgenti e verifiche](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release) · [Novità della 10.2.5](tinymacOS/docs/NOTE-10.2.5.md)
 
 **10.2.5:** FS2 su tutto l’extent dati, NVMe nativo e installazione/avvio UEFI 4Kn, conversione/deattivazione cifratura sullo stesso extent da Recovery; Finder Taglia/Copia/Incolla, appunti Terminale e drag-and-drop. [Accettazione e hash](tinymacOS/docs/RELEASE-READINESS-10.2.5.md).
+
+**Revisione 30B17:** font della ISO 10.2.4 ripristinato e bloccato nel packaging; gestione per-frame degli eventi mouse/drag; inventario dello spazio non allocato conservato su GPT protette, senza convertire RAW/MSR in spazio libero. [Correzioni, test e limiti](tinymacOS/docs/HOTFIX-10.2.5-30B17.md). Safari completo non è incluso.
 
 ## Funzioni principali
 

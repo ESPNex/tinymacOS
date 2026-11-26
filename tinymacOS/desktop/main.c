@@ -1,4 +1,5 @@
 #include "desk.h"
+#include "input_budget.h"
 #include "pointer_scale.h"
 #include "click_pair.h"
 View views[NPROC];
@@ -822,7 +823,7 @@ void app_main(void)
         lite = sys.opaque;
         if (!gate)wins();
         Event e;
-        while (sc(S_INPUT, &e, 0, 0, 0) > 0) {
+        for (unsigned batch=0; batch<TMC_INPUT_FRAME_BUDGET && sc(S_INPUT, &e, 0, 0, 0)>0; ++batch) {
             if (e.type == EV_MOUSE) {
                 e.a=pointer_scale_axis(e.a,W,PW,&pointer_scale.x);
                 e.b=pointer_scale_axis(e.b,H,PH,&pointer_scale.y);
@@ -835,7 +836,7 @@ void app_main(void)
             else input(&e);
         }
         memset(&e, 0, sizeof e);
-        while(sc(S_EVENT,&e,0,0,0)>0)if(!gate){if(e.type==EV_CONTEXT_READY)context_ready(&e);else if(e.type==EV_DRAG_READY)drag_ready(&e);}
+        for(unsigned batch=0;batch<TMC_MESSAGE_FRAME_BUDGET && sc(S_EVENT,&e,0,0,0)>0;++batch)if(!gate){if(e.type==EV_CONTEXT_READY)context_ready(&e);else if(e.type==EV_DRAG_READY)drag_ready(&e);}
         if(filedrag.released&&sys.ticks>filedrag.until)drag_reset();
         if (gate) {
             if (login_step()) {

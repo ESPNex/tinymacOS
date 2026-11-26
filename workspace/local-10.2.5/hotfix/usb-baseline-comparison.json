@@ -1,0 +1,36 @@
+{
+  "commit_1024": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+  "files": [
+    {
+      "path": "drivers/xhci.c",
+      "byte_equal_to_1024": true,
+      "sha256": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71"
+    },
+    {
+      "path": "drivers/ehci.c",
+      "byte_equal_to_1024": true,
+      "sha256": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5"
+    },
+    {
+      "path": "drivers/uhci.c",
+      "byte_equal_to_1024": true,
+      "sha256": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555"
+    },
+    {
+      "path": "drivers/usbinput.c",
+      "byte_equal_to_1024": true,
+      "sha256": "7d957d1e57cd105927076d44a09944e61afd004010b9900b3df86a069fd95aa3"
+    },
+    {
+      "path": "drivers/hidconfig.c",
+      "byte_equal_to_1024": true,
+      "sha256": "896f4928d736745f86c15d5f2469d2f9cdc9ce401af56407828abd0fb181c21b"
+    },
+    {
+      "path": "drivers/hidtablet.c",
+      "byte_equal_to_1024": true,
+      "sha256": "1db15b1cbdf45b45dab00adeed1501db1185f8e197412737be1214fb613feaf1"
+    }
+  ],
+  "scope": "native HCD/adapters and pointer scaling unchanged; desktop now bounds input/IPC work per frame; not proof of physical hardware root cause"
+}
