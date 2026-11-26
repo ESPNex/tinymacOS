@@ -1,0 +1,215 @@
+{
+  "passed": true,
+  "scope": "29 host scripts on unchanged production implementation; NOT full release acceptance",
+  "release_acceptance": false,
+  "published": false,
+  "source_checkpoint_commit": "3a4c947c5bdb6b3fc48d6380a4a079c381c2f94d",
+  "scripts_passed": 29,
+  "initial_matrix": {
+    "process": "matrice-host-completa-per-la-rel-e4da8911",
+    "exit_code": 1,
+    "passed": 27,
+    "failed_due_to_missing_python_path": [
+      "test-vault",
+      "test-vault2"
+    ]
+  },
+  "corrected_crypto_rerun": {
+    "process": "verifica-crittografia-con-confro-e79bedd9",
+    "exit_code": 0,
+    "scripts": [
+      "test-vault",
+      "test-vault2"
+    ],
+    "prerequisite_versions": {
+      "PyNaCl": "1.6.2",
+      "cffi": "2.1.1",
+      "pycparser": "3.12"
+    },
+    "independent_libsodium_verification": true
+  },
+  "scripts": {
+    "test-boot-default": {
+      "passed": true,
+      "script_sha256": "a1933a5d2d3e171db618c98be740cdebf946dcfdbae9c2330cae3eacdfde1c44",
+      "log_sha256": "293c54b7f15ce235c8bc294f00ff420e3ed07e973b968b2ecf0e839a5d3405e6",
+      "log": "release-host-evidence/test-boot-default.log.gz"
+    },
+    "test-boot-display": {
+      "passed": true,
+      "script_sha256": "7ee5cce3bce97cb5ba88932240e1f5e604a2d90832c29f1e08404d6c77a7ed6c",
+      "log_sha256": "6737be57e545dabd0c3191cea32098502f9d67fcaf23bd516cdca07c1a04b3bb",
+      "log": "release-host-evidence/test-boot-display.log.gz"
+    },
+    "test-browser-pages": {
+      "passed": true,
+      "script_sha256": "c1b5d43ff719b7d244e11398ab143317c14f9fa39ee035a9b0905d2c7774fa6d",
+      "log_sha256": "0b593f83cc2e2d8ce353e700a057c0526cc0d286af9e5adb88a50371670498e5",
+      "log": "release-host-evidence/test-browser-pages.log.gz"
+    },
+    "test-diskedit": {
+      "passed": true,
+      "script_sha256": "2ef8004ae9ed6db0fdfe6a215f0418676744158aa0ade75510a667fa297bb5a8",
+      "log_sha256": "5882b2e3a6bd2780c4ea4a979aa50280ad69bdd9e0c1482449156b35f84bd085",
+      "log": "release-host-evidence/test-diskedit.log.gz"
+    },
+    "test-filepanel": {
+      "passed": true,
+      "script_sha256": "f346c438627e952f37bda6944fd7b79b5a96b90e9c7597e0adc7c28cecb2eec7",
+      "log_sha256": "0fd70a355a986af50b06dddd2417b1ac1e465c1f3181086a86b60c16e1dc8abd",
+      "log": "release-host-evidence/test-filepanel.log.gz"
+    },
+    "test-finder-menus": {
+      "passed": true,
+      "script_sha256": "8433889487fe2162f81708d9aeaf612e3dd3d439b404bef8222c9392ec6c0242",
+      "log_sha256": "4ecb4722586a5f7197653486ad72e3d4affad151eb3da67e845f2af4122427a6",
+      "log": "release-host-evidence/test-finder-menus.log.gz"
+    },
+    "test-finder-transfers": {
+      "passed": true,
+      "script_sha256": "f24f2197cbaef457f29fb95fa55116df9aac8b8327f4b7a1cc98c812498cf34c",
+      "log_sha256": "ad50917c406e209d72b0dcf161fc01fe751c8b76d611002f0a91313f3a8e4da2",
+      "log": "release-host-evidence/test-finder-transfers.log.gz"
+    },
+    "test-fs2-import-adapter": {
+      "passed": true,
+      "script_sha256": "c334b979524b603a2bfa18a8a5c30f4314cb3dce22d1ee6928959c9960f733d5",
+      "log_sha256": "bb99ebeb87d0297ad547b3cb9bbc3ddd778359eeb1d6f75fed7d1884ee15bf13",
+      "log": "release-host-evidence/test-fs2-import-adapter.log.gz"
+    },
+    "test-fs2-import": {
+      "passed": true,
+      "script_sha256": "7a68157ec4f6c4fc3116b04c1f5c693aec00b02faa29004874775465f6e3448e",
+      "log_sha256": "d92517e47be9414c7b34fbb31337303f51a735fa99e89edc267a221d75243f6d",
+      "log": "release-host-evidence/test-fs2-import.log.gz"
+    },
+    "test-fs2-install": {
+      "passed": true,
+      "script_sha256": "1a30172fef46fa439388327a2ba5df28eaca4518c519eb15ea39afd54fef8c49",
+      "log_sha256": "f49dee57775d9e79fb30b463043f7cb0a45a8be305325162fc452f50d347cb5d",
+      "log": "release-host-evidence/test-fs2-install.log.gz"
+    },
+    "test-fs2-runtime": {
+      "passed": true,
+      "script_sha256": "5c5ac5a5a263b8c88041c949dd8b11631f55a7386f6cc071934f52a37594a1bf",
+      "log_sha256": "8db4f7df2d7468b3b1c7a4c049508b6358194b664f8476b6aac673b7bd88a16d",
+      "log": "release-host-evidence/test-fs2-runtime.log.gz"
+    },
+    "test-fs2-seed": {
+      "passed": true,
+      "script_sha256": "7017846a67b76388605acd2aec252ebe363d2427fbdab1e9709b43816f105862",
+      "log_sha256": "363b2bc8daaff0b236949d7b819b04212ca00794f9cdf126641fae21bed873d0",
+      "log": "release-host-evidence/test-fs2-seed.log.gz"
+    },
+    "test-input-maintenance": {
+      "passed": true,
+      "script_sha256": "7b23a2fe0c113926a163bfd9f7432301ac69cb22cf53a7b436a351862072f5c4",
+      "log_sha256": "e72e419051432312fc7bef830b45995db04464607abc83a37e646d474b7bf243",
+      "log": "release-host-evidence/test-input-maintenance.log.gz"
+    },
+    "test-installer-flow": {
+      "passed": true,
+      "script_sha256": "f00834d50d5d1a12f4d1e89cfc24322a9fbb0071b3757c07f0dd925e4e170b4d",
+      "log_sha256": "7bcc1eaf9aa1276c561c722b3841ba236d97d9118e7c1c2a6ab8f61ed1346dac",
+      "log": "release-host-evidence/test-installer-flow.log.gz"
+    },
+    "test-large-disks": {
+      "passed": true,
+      "script_sha256": "6e986fa3b6a15b52db278fda0f613ac0a34413b110b2cc80ae85dc376eba1eff",
+      "log_sha256": "82ab11b4e47f6148a8a4d173a96e4a1f946557de9e4bd110efa221e4de0c8304",
+      "log": "release-host-evidence/test-large-disks.log.gz"
+    },
+    "test-legacy-input": {
+      "passed": true,
+      "script_sha256": "7910a95e3ce55e7025e5cb2356de8fa349934985854ce63f2e3846a87aa91a37",
+      "log_sha256": "4a6a3217079137361fe944a765e863a3a5a9ebd7721b9ad575b8e1df5a867b59",
+      "log": "release-host-evidence/test-legacy-input.log.gz"
+    },
+    "test-linux-usbcore-enumeration": {
+      "passed": true,
+      "script_sha256": "8707b1c11f21da39177f8f06144e2970eca63ec6e4c87aa94d18eb28caa34a8c",
+      "log_sha256": "72a34e5c3d10a2095a4393cf36152df9c042aab34067f4f16f3a292bc9df03a0",
+      "log": "release-host-evidence/test-linux-usbcore-enumeration.log.gz"
+    },
+    "test-linux-usbcore": {
+      "passed": true,
+      "script_sha256": "95311d1af562ed1e99a3b7e270b8daddac82a4b130ad6318dc712f8d0c7670c7",
+      "log_sha256": "2a50a216c8ca2a2c6f27f3ad15920e4d3064b2e937be2e394547c9913f3e1ecd",
+      "log": "release-host-evidence/test-linux-usbcore.log.gz"
+    },
+    "test-linux-usbhid": {
+      "passed": true,
+      "script_sha256": "9c08a2342225024fafb5374feeec82785aef1ea657b07d0ff941850c26c4717a",
+      "log_sha256": "2fce6d35ae0b57f0210fb19b3a8d620484f6c840b29aa28e8bea567693a78795",
+      "log": "release-host-evidence/test-linux-usbhid.log.gz"
+    },
+    "test-linux-xhci": {
+      "passed": true,
+      "script_sha256": "9362b6624ffa9610eea33614925c7b995f39bc531e331eb909f0d886970e60b6",
+      "log_sha256": "99e942fadf6e42ba36e9c0e18c7266ed7fe43968250e0f2e6ce80e482aff64fd",
+      "log": "release-host-evidence/test-linux-xhci.log.gz"
+    },
+    "test-native-cow": {
+      "passed": true,
+      "script_sha256": "bf5a678e024d22ff3c8a9f317fa72af36ad66e11fd3f5d09d996bca95f4b8f80",
+      "log_sha256": "1d7fe508b28f5a89a3ff538487cc122c275e6cecea2a2b5828f188abb6ca3291",
+      "log": "release-host-evidence/test-native-cow.log.gz"
+    },
+    "test-native-resize": {
+      "passed": true,
+      "script_sha256": "defe9b4e2edfb2808c30e322dd746a2c7428079ccfd7beb7e1bf0a1dfeffb119",
+      "log_sha256": "f9e4891bd23431502902ba8ab882f98d9ada1ae0397d9908efacbf78c7323ea7",
+      "log": "release-host-evidence/test-native-resize.log.gz"
+    },
+    "test-nvme": {
+      "passed": true,
+      "script_sha256": "3fe97dc9efc1536a1fe9a54d59366ec0f77656e994e2d0988150e280761b9a8c",
+      "log_sha256": "867da272b775637b302e8c80a6833c9ab256f6b4cc14424c1d963ebf2c21fd2a",
+      "log": "release-host-evidence/test-nvme.log.gz"
+    },
+    "test-partitions": {
+      "passed": true,
+      "script_sha256": "590cd40836ab3ae96e308962067311ca6a2f79c2028802b62d6f1c50f9eb504c",
+      "log_sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932",
+      "log": "release-host-evidence/test-partitions.log.gz"
+    },
+    "test-textedit-open": {
+      "passed": true,
+      "script_sha256": "d3603e7671be13fbee132092045529b9f1561cde17bfa0dc24331c2df5af68b0",
+      "log_sha256": "9af690af6321fd11b07ee2c5f14457bb26ee44779e07d2ac447796e4b0ff415d",
+      "log": "release-host-evidence/test-textedit-open.log.gz"
+    },
+    "test-tmcbfs2": {
+      "passed": true,
+      "script_sha256": "0024c3c4646ac4649d17ae670d9eca127e7de8326496abafc566e2bd562c08fa",
+      "log_sha256": "72dee945f8d8287f98860cc43c4b6938ed9177afd54d48ed4f669f72621f6f4b",
+      "log": "release-host-evidence/test-tmcbfs2.log.gz"
+    },
+    "test-ui-stream": {
+      "passed": true,
+      "script_sha256": "58fd9728ba1e21f0a6aeec5576f72e59c9e08c8efd7727132d042356b48ac6d7",
+      "log_sha256": "33f560a3b1050f8e8fe1013bf21cad41a7203a73d4fd2e7ca73fc69ed0863ef0",
+      "log": "release-host-evidence/test-ui-stream.log.gz"
+    },
+    "test-vault": {
+      "passed": true,
+      "script_sha256": "632b37c19908bf3f9ce28cdd2b3cb77d8330ef491a98a193eb3ca5dc156e3bbd",
+      "log_sha256": "1edcc55727695d5cbb893917c777a607e762520272beef2334077f9ffa3f4aa2",
+      "log": "release-host-evidence/recheck-test-vault.log.gz",
+      "initial_failure": "Missing PyNaCl import path, not counted as PASS; original failing log retained. Full script rerun with PYTHONPATH=/var/tmp/tmc-python-release exited 0."
+    },
+    "test-vault2": {
+      "passed": true,
+      "script_sha256": "e2c230fd8f2f77d993fe17f8a98e969aad510d89c4104865898648b05896c143",
+      "log_sha256": "7f51371c8998ab9cf9ba820690a2160ad475a5e59ee609fc31c412a6e6077f64",
+      "log": "release-host-evidence/recheck-test-vault2.log.gz",
+      "initial_failure": "Missing PyNaCl import path, not counted as PASS; original failing log retained. Full script rerun with PYTHONPATH=/var/tmp/tmc-python-release exited 0."
+    }
+  },
+  "limitations": [
+    "Normal/sanitized modes as implemented by each script; not 29 independent hardware tests",
+    "Modelled Linux USB controllers and host FS/crypto tests are not physical hardware evidence",
+    "The legacy vault conversion test does not implement or certify scalable FS2 in-place conversion",
+    "Native 4Kn install/boot, FS2 in-place conversion and complete final-artifact guest matrix remain mandatory and open"
+  ]
+}

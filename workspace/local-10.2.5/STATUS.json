@@ -81,10 +81,10 @@
     "vault2-bios-helper.log": "dcc95cb17172a06c0c316000ca3fb0c4acf63c48b2f4a7bb458f09ef337421c3"
   },
   "development_report": "/home/user/tinymacOS/docs/DEVELOPMENT-10.2.5.md",
-  "development_commit": "d33ea952a4da175c972640b5df33deabcbb9a6e1",
-  "development_commit_pushed": false,
+  "development_commit": "3a4c947c5bdb6b3fc48d6380a4a079c381c2f94d",
+  "development_commit_pushed": true,
   "main_commit_unchanged": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
-  "background_tests_remaining": true,
+  "background_tests_remaining": false,
   "new_fs_default_enabled": false,
   "new_fs_mount_scope": "Opt-in TMC_FS2_BACKEND=1; ACTUAL GUI fresh install, live document/account import, NVMe UEFI boot, internal Recovery same-app reinstall with full data partition SHA unchanged, reboot and BIOS NVMe-disabled helper checks",
   "native_fs2_guest": {
@@ -460,5 +460,7 @@
   "github_authentication_verified": true,
   "github_account_verified": "ESPNex",
   "release_readiness_report": "/home/user/tinymacOS/docs/RELEASE-READINESS-10.2.5.md",
-  "release_host_matrix_process": "matrice-host-completa-per-la-rel-e4da8911"
+  "release_host_matrix_process": "matrice-host-completa-per-la-rel-e4da8911",
+  "release_host_scripts_passed": 29,
+  "release_host_receipt": "/home/user/workspace/local-10.2.5/release-host-verification.json"
 }

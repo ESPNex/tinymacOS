@@ -64,3 +64,20 @@ L'esecuzione corrente dei 29 script host e il suo esito sono registrati in
 `workspace/local-10.2.5/release-completion-progress.json` e nei log esterni
 `/var/tmp/tmc-release-10.2.5/`. Non dedurre PASS dalla sola presenza di un log:
 serve il risultato del processo completo.
+
+## Esito dei controlli host e sincronizzazione sorgenti
+
+- Checkpoint sorgenti `3a4c947c5bdb6b3fc48d6380a4a079c381c2f94d` inviato al
+  ramo `work/10.2.5-scalable-fs-nvme`; SHA remoto verificato via API.
+- **29/29 script host PASS**, includendo il confronto crittografico indipendente
+  libsodium. La prima matrice è terminata con exit 1: 27 successi e due import
+  PyNaCl mancanti per PYTHONPATH non configurato. Dopo configurazione della
+  dipendenza esterna, i due script completi vault/vault2 sono stati rieseguiti
+  con exit 0. I log dei primi errori sono conservati, non rimarcati come PASS.
+- Ricevute: `workspace/local-10.2.5/release-host-verification.json` e
+  `workspace/local-10.2.5/release-readiness.json`; log compressi adiacenti in
+  `release-host-evidence/`. Nessun processo QA di questa esecuzione ancora attivo.
+- Nessuna modifica all'implementazione rispetto al candidato Finder verificato;
+  differenze successive limitate a documentazione e harness GUI.
+- **Gate release ancora NON superato** per i tre punti sopra. `main`, tag e
+  asset di 10.2.4 invariati. Nessun tag 10.2.5 né deploy eseguito.

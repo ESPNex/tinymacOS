@@ -7,8 +7,9 @@
   "implementation_changed_since_finder_acceptance": false,
   "candidate_iso_sha256": "c2eb0a5f1ea3ea931d12048c380ca5d2f389aa691f0ac34b3b5c34e75ac62b3a",
   "current_processes": {
-    "all_29_host_scripts": "matrice-host-completa-per-la-rel-e4da8911: RUNNING; /var/tmp/tmc-release-10.2.5/test-*.log",
-    "github_auth_retry": "github-autorizzazione-con-recupe-916b9e71: exit 0"
+    "all_29_host_scripts": "exit 1 initial run: 27 PASS, 2 prerequisite failures; complete aggregate accepted only with corrected rerun",
+    "github_auth_retry": "github-autorizzazione-con-recupe-916b9e71: exit 0",
+    "crypto_rerun": "verifica-crittografia-con-confro-e79bedd9: exit 0; vault and vault2 PASS, independent libsodium checks"
   },
   "host_progress_last_observed": {
     "passed": [
@@ -20,10 +21,32 @@
       "finder-menus",
       "finder-transfers",
       "fs2-import-adapter",
-      "fs2-import"
+      "fs2-import",
+      "fs2-install",
+      "fs2-runtime",
+      "fs2-seed",
+      "input-maintenance",
+      "installer-flow",
+      "large-disks",
+      "legacy-input",
+      "linux-usbcore-enumeration",
+      "linux-usbcore",
+      "linux-usbhid",
+      "linux-xhci",
+      "native-cow",
+      "native-resize",
+      "nvme",
+      "partitions",
+      "textedit-open",
+      "tmcbfs2",
+      "ui-stream",
+      "vault",
+      "vault2"
     ],
-    "running": "fs2-install",
-    "final_outcome": "unknown: process has not exited"
+    "initial_matrix_exit_code": 1,
+    "corrected_crypto_rerun_exit_code": 0,
+    "final_outcome": "All 29 scripts PASS across initial 27 successes and complete corrected reruns of vault/vault2. Initial prerequisite failures retained, not hidden.",
+    "receipt": "release-host-verification.json"
   },
   "github": {
     "connector": "unsupported",
@@ -40,5 +63,13 @@
     "Authenticated resumable in-place plaintext-to-FV003 and FV003-to-plaintext conversion preserving accounts/files/snapshots, with preflight capacity refusal, crash/fault tests and Recovery UI/CLI integration; current fs2_volume_control still refuses these operations",
     "Fresh final build and full exact-artifact guest matrix after implementation; earlier feature receipts cannot stand in for final artifact acceptance",
     "Review, source sync without force push, release assets upload and independent download SHA verification once auth and acceptance pass"
-  ]
+  ],
+  "source_checkpoint": {
+    "commit": "3a4c947c5bdb6b3fc48d6380a4a079c381c2f94d",
+    "branch": "work/10.2.5-scalable-fs-nvme",
+    "pushed": true,
+    "remote_sha_independently_verified": true,
+    "main_unchanged": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
+    "release_published": false
+  }
 }
