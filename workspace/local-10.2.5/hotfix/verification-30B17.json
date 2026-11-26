@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "all_required_gates_closed": true,
+  "build": "30B17",
+  "version": "10.2.5",
+  "distinct_gates": 46,
+  "single_fresh_invocation": false,
+  "host_gates": 32,
+  "host_breakdown": {
+    "runtime": 18,
+    "OS_regressions": 13,
+    "selected_Cpp_WTF_component": 1
+  },
+  "guest_suites": 13,
+  "guest_receipts": [
+    {
+      "name": "fs2-install-guest-result.json",
+      "sha256": "779adb097f5a333e4b3c5f00f1484322428ccbb38958d2cdf3f6939cb0511fce"
+    },
+    {
+      "name": "finder-transfers-guest-result.json",
+      "sha256": "630bd6bab12db29fc2d4ced8745b76c129d0b1150453568cb48049d328b8a90d"
+    },
+    {
+      "name": "native4k-install-guest-result.json",
+      "sha256": "acd3b83b1abc2612e90bfe149944763024e7b0502f057201bba144c6df6c2d87"
+    },
+    {
+      "name": "native4k-convert-guest-result.json",
+      "sha256": "cf0eabf3397159c15d5f2df040702a83ab679b9a99c24a1c994ff1938352f7ab"
+    },
+    {
+      "name": "fs2-convert-guest-result.json",
+      "sha256": "71c49605e4f0c3b9591beaca5843e90a98a19925a7736dd4fe46c34d5f7534c4"
+    },
+    {
+      "name": "fs2-nvme-helper-result.json",
+      "sha256": "d1c576b8e408f836aadbda9a3d6097c23fd311ad54b47561f0bbe4a8a59d2fb2"
+    },
+    {
+      "name": "fs2-external-import-guest-result.json",
+      "sha256": "3c4ed9098a7c6dd1d7ed77d5973ed98651f54df7bba488a66741aed51c92c135"
+    },
+    {
+      "name": "encrypted-install-reset-guest-result.json",
+      "sha256": "01f9979b4f688643a11900ed0eac061b53a9938ecaba6ed981dda787c968b939"
+    },
+    {
+      "name": "fs2-backup-ui-result.json",
+      "sha256": "c87c452483dfe3b11ba554f6f2a7e6faf9d4c8b46f44a20152ad4700e437d62d"
+    },
+    {
+      "name": "fs2-reset-guest-result.json",
+      "sha256": "6b4a0d530c04576cbe458861e001b256f5f733379fd00a743d7a974ffcc6a0f2"
+    },
+    {
+      "name": "hotfix-windows-guest.json",
+      "sha256": "b3e7d2e3bd1a47a6f23f64b4fccfe28b677becb3280afd46a4afb00cd7f1c429"
+    },
+    {
+      "name": "USB-relative-pointer-uefi",
+      "sha256": "1b1f22e907f1a77f252bc89335508e5a65bd0f89d11b08e59545aa0ab0988271",
+      "native_UEFI_media_same_catalogs_as_final_dual_ISO": true
+    },
+    {
+      "name": "USB-relative-pointer-bios",
+      "sha256": "b291d4be6a4082a6c69334f1785f9f6624f368b0fcd1d2828b1079c45c666191",
+      "native_UEFI_media_same_catalogs_as_final_dual_ISO": false
+    }
+  ],
+  "final_media_audits": 1,
+  "source_inputs_rechecked": 975,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.5-x86_64.iso",
+    "bytes": 329519104,
+    "sha256": "c88771e423fadd2080a2a27db0d406c6e99d61a96c814f1ec1c3e041edf41cf1"
+  },
+  "exact_accepted_1024_font_in_all_three_catalogs": true,
+  "protected_GPT_gaps_visible_but_not_force_allocated": true,
+  "RAW_MSR_NTFS_not_used_as_free_space": true,
+  "real_relative_USB_drag_suite_passed": true,
+  "no_physical_hardware_certification_claim": true,
+  "physical_USB_root_cause_not_proven": true,
+  "synthetic_Windows_layout_not_real_PC_reconstruction": true,
+  "Safari_full_WebKit_JSC_WebCore_included": false,
+  "evidence_archive": {
+    "file": "evidence-30B17.tar.xz",
+    "sha256": "b9618c415918335c97e261f8c55bac14d91c98b9fc3b1cea882a0327d2308518",
+    "bytes": 3271636,
+    "files_including_manifest": 80,
+    "all_member_hashes_verified": true
+  },
+  "original_failures_and_replays_retained": true,
+  "release_replacement_not_yet_performed": true
+}
