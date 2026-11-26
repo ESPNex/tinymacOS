@@ -3,5 +3,9 @@
   "published": true,
   "mandatory_native_4kn": true,
   "mandatory_same_extent_encrypt_decrypt": true,
-  "receipt": "release-final-verification.json"
+  "receipt": "hotfix/verification-30B21.json",
+  "build": "30B21",
+  "publication_receipt": "hotfix/publication-readback-30B21.json",
+  "physical_mouse_fix_confirmed": false,
+  "physical_acceptance": "open; prior 30B18/19/20 failed, 30B21 awaits affected PC"
 }

@@ -170,13 +170,15 @@
   "missing_evidence": [
     "Hardware acceptance of restored canonical profile on affected PC"
   ],
-  "current_action": "Binary comparison found published 10.2.4 selects canonical USB/HID + worker, 30B20 selects native facade; previous source-only diagnosis incomplete",
+  "current_action": "Published 30B21 restores verified 10.2.4 canonical USB/HID profile; all six public assets redownloaded and verified, final downloaded ISO kernels match guarded build. Physical acceptance remains open.",
   "source_comparison_is_historical_pre_rollback": true,
   "latest_user_report": "30B20 also fails physically; user reiterates 10.2.4 works",
   "user_confirmed_installer_was_Recovery_Reinstall_without_native_installation": true,
   "installer_message_does_not_establish_corrupt_Windows_table": true,
   "30B20_recovery_patch_did_not_fix_reported_PC": true,
-  "30B21_candidate_built_not_published_yet": true,
+  "30B21_candidate_built_not_published_yet": false,
   "physical_mouse_fix_confirmed": false,
-  "binary_build_comparison": "binary-usb-profile-1024-vs-30B20.json"
+  "binary_build_comparison": "binary-usb-profile-1024-vs-30B20.json",
+  "30B21_published_with_restored_canonical_profile": true,
+  "30B21_source_commit": "598beb795f18bc72c42e91e34756c23018462996"
 }

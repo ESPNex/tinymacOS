@@ -50,5 +50,18 @@
     "receipt": "tag-deduplication-verification.json",
     "rollback_map": "tag-alias-restore-map.json",
     "supersedes_old_alias_preservation_notes": true
+  },
+  "historical_30B16_fields_below_not_current_build_evidence": true,
+  "current": {
+    "build": "30B21",
+    "published": true,
+    "source_commit": "598beb795f18bc72c42e91e34756c23018462996",
+    "ISO_sha256": "b1f19e5222f293ceec14fac26a386acc41eb1670d8d9c46504cdf1ea6b12d682",
+    "host_suites": 9,
+    "guest_suites": 14,
+    "physical_mouse_fix_confirmed": false,
+    "physical_acceptance": "open",
+    "verification": "hotfix/verification-30B21.json",
+    "publication": "hotfix/publication-readback-30B21.json"
   }
 }
