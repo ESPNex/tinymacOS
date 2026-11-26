@@ -1,0 +1,177 @@
+{
+  "passed": true,
+  "milestone_commit": "5c2febbbd6aec5ebe86d358f92dfa2ee2b9cd3cb",
+  "independent_immutable_github_readback_all_changed_non_deleted_files": [
+    {
+      "path": "workspace/webkit-tmc/PROGRESS.md",
+      "sha256": "8ff05615361542f4a2da17aceb9fe283cf77701e86b010aad3b26f94b7c9f320",
+      "bytes": 19271
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-CPP.md",
+      "sha256": "fcd5dba9a1dc806de90cce64757ac32e46ca6c75d308eefb90b82e662cbe23a8",
+      "bytes": 7633
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-HEAP.md",
+      "sha256": "c64277f554f0c3abf0bbac770f152aada5079de42f83883478622e7ce6f3d757",
+      "bytes": 8745
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-LIFECYCLE.md",
+      "sha256": "56dd2bad6bbf4305c90e73e81b94b03de26346d229122490134cbb958df3e00f",
+      "bytes": 6797
+    },
+    {
+      "path": "workspace/webkit-tmc/RUNTIME-MEGABLOCK.md",
+      "sha256": "fbc7ba131873d5483f46a1675c97d4db70cd4076dcf5fbcffc4703637e4891ae",
+      "bytes": 8412
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/include/tmc_heap.h",
+      "sha256": "d34fb49d95343d98d41b55b395a03c1bf6e77b8757982296f074047611ed78f1",
+      "bytes": 1897
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/include/tmc_pthread.h",
+      "sha256": "8bad150da5b8a2f068e6c5a55605ecb88e9cb60ddd3d7b41c38455d50c716cf9",
+      "bytes": 4034
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/pthread-headers/pthread.h",
+      "sha256": "52d670d52a6eb001c29f0388d321d8597cfd51c3c8300f85eaf356a677ea2e21",
+      "bytes": 2980
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/src/heap.c",
+      "sha256": "31b2eb8c71f20ba5eb166d1553cbefdb96bb60fc78b4566826f02e1a0458a20f",
+      "bytes": 7598
+    },
+    {
+      "path": "workspace/webkit-tmc/posix/src/pthread.c",
+      "sha256": "b7e6b8fb9453e385db9969be453209f2c8260596f52993f4df217aa63b05071b",
+      "bytes": 7215
+    },
+    {
+      "path": "workspace/webkit-tmc/release-gates.json",
+      "sha256": "ee43f74a62c13b215c38b49b917ca021821776a30f1f66a978c55d7926887e55",
+      "bytes": 10823
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/REMOTE-OLDER-RUNTIME-EVIDENCE.json",
+      "sha256": "e7158adfd1d54b52444269cc5cccdac5d1f8f17d2b09d1d5fd8820c42190269e",
+      "bytes": 1107
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/megablock/megablock-evidence.tar.xz",
+      "sha256": "a7501b55514b797bf1d02dbcfbb66d4d7a21b3ef5de4c8cbb06a8170079c315c",
+      "bytes": 334152
+    },
+    {
+      "path": "workspace/webkit-tmc/test-results/megablock/verification.json",
+      "sha256": "0bb2f1599181d151db301b7635401a9e4a085b85d7f5636e3e7678203dbdbcda",
+      "bytes": 15301
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_cases.cpp",
+      "sha256": "6f7af6e2d5d03ec0279c4e98e4459da49204bd3ec979cb070253099ea8a7e644",
+      "bytes": 5635
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/cpp_contract.c",
+      "sha256": "9cbabbf0c0f687220ee2fef83c1baa9958d219781c01686255f1ef9eac6b97f9",
+      "bytes": 1586
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_cpp_probe.c",
+      "sha256": "784d99d8f97d5997aa5f7280faf627878dfb01e90d0dd3c1bda544d04e155a1d",
+      "bytes": 2557
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_heap_probe.c",
+      "sha256": "bdd2fbc401e382dccf048ee0aef08b94f4e8af21f29363bb6ae454adfdf314d4",
+      "bytes": 2868
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/guest_pthread_probe.c",
+      "sha256": "a3c639a5e47cad8ee216be88b2500465fa694f90552e35d977f2e812ee31639e",
+      "bytes": 1459
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/heap_contract.c",
+      "sha256": "95185263aff7043fb617ff16837a725de4a382cb3a830f85df06d0a07ce69482",
+      "bytes": 4596
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/pthread_cases.c",
+      "sha256": "822cc9bc07bb0eef1c69002da64f083adb8d5ff8ff43733c9e9c76688a1cb408",
+      "bytes": 7229
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/pthread_cases.h",
+      "sha256": "8c18f38a8de776daf809b8713524b3be3d3760c54368ac928b90ead0d55a6ee5",
+      "bytes": 315
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/pthread_contract.c",
+      "sha256": "9e93b2b13804c59f544fa99462fea96c9cddcb4d56ae1e8134c0d6ff7bf54be8",
+      "bytes": 1251
+    },
+    {
+      "path": "workspace/webkit-tmc/tests/pthread_cpp_cases.cpp",
+      "sha256": "f0a92cac6f1ad209ab1f26b39352f486fae3cc0a221ae98b12987b76342adbe4",
+      "bytes": 1016
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/build-guest-network-probe.sh",
+      "sha256": "4228555d85abc3b3e0c13403f83692d9d8726ec5f13ef64727ce5b8e43182f00",
+      "bytes": 6896
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/compile-backend.sh",
+      "sha256": "6f10a9c2218ebf4576a0d515db54c76c84da6c642b5ece24bcc2943285702cdb",
+      "bytes": 1702
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/run-tests.py",
+      "sha256": "728fff6e961f2ffcaa6277725d2a9bcbf7bdf2205d710b94ca31075b08be8568",
+      "bytes": 8463
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-cpp.py",
+      "sha256": "3e69b5fdbabd76d956c9826a7f964e39ca77dabd287563b5607d609fb5446d71",
+      "bytes": 3651
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-heap.py",
+      "sha256": "706822fb8763daa86a8da790340d82a07c9aeed380ff7596e77795bc606d1557",
+      "bytes": 2869
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-guest-pthread.py",
+      "sha256": "5868705ba764c0aead7e4352a8784efe43b3cabe8ddbcaef2a023df07704665d",
+      "bytes": 3583
+    },
+    {
+      "path": "workspace/webkit-tmc/tools/test-pthread.sh",
+      "sha256": "d257125352a97088a6ecc829d9b8bd3ac5b7f3201bff803dccbb64302f71f811",
+      "bytes": 1931
+    }
+  ],
+  "evidence_archive_independently_verified": true,
+  "main_points_to_milestone": true,
+  "branches": [
+    "main",
+    "vendor/syslinux-6.04"
+  ],
+  "tags_remain_25_distinct_commits": true,
+  "release_cards_remain_19_unique_titles": true,
+  "release_bodies_left_unchanged": true,
+  "single_published_1025_iso_unchanged": {
+    "asset_id": 795849480,
+    "bytes": 329791488,
+    "digest": "sha256:1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a"
+  },
+  "new_103_release_published": false,
+  "historical_reconstruction_cancelled": true
+}
