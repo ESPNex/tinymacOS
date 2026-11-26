@@ -8,12 +8,14 @@ from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 ap=argparse.ArgumentParser(description=__doc__)
 ap.add_argument('--guest',action='store_true')
+ap.add_argument('--lifecycle-guest',action='store_true',help='Fresh lifecycle base/build plus native 1/4/8 CPU tests; requires external --output')
 ap.add_argument('--output',type=Path,default=root/'test-results/milestone-tests.json')
 args=ap.parse_args()
 cases=[
  ('workspace-budget',['python3',str(root.parent/'check-snapshot-budget.py')]),
  ('source-sync',['python3',str(root/'tools/sync-system-sources.py'),'--check']),
  ('backend-contract',['sh',str(root/'tools/test-backend.sh')]),
+ ('cpp-lifecycle-contract',['sh',str(root/'tools/test-cpp-lifecycle.sh')]),
  ('cpp-runtime-contract',['sh',str(root/'tools/test-cpp-runtime.sh')]),
  ('heap-contract',['sh',str(root/'tools/test-heap.sh')]),
  ('threads-contract',['sh',str(root/'tools/test-threads.sh')]),
@@ -54,6 +56,12 @@ if args.guest:
   ('guest-cpp-smp4',['env','TMC_SMP=4','TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-10.3-system','python3',str(root/'tools/test-guest-cpp.py')]),
   ('guest-cpp-smp8',['env','TMC_SMP=8','TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-10.3-system','python3',str(root/'tools/test-guest-cpp.py')]),
  ]
+if args.lifecycle_guest:
+ if Path('/var/tmp') not in args.output.resolve().parents:ap.error('--lifecycle-guest requires --output under /var/tmp')
+ args.output.parent.mkdir(parents=True,exist_ok=True)
+ env=['env','TMC_QA_RESULTS='+str(args.output.resolve().parent),'TMC_PRODUCTION_BUILD=/var/tmp/tmc-webkit-lifecycle-system','TMC_PROBE_BUILD=/var/tmp/tmc-webkit-lifecycle-guest']
+ cases += [('guest-lifecycle-probe-build',env+['bash',str(root/'tools/build-guest-lifecycle-probe.sh')])]
+ cases += [('guest-lifecycle-smp'+str(n),env+['TMC_SMP='+str(n),'python3',str(root/'tools/test-guest-lifecycle.py')]) for n in (1,4,8)]
 results=[]
 for name,cmd in cases:
  try:
@@ -68,6 +76,6 @@ for name,cmd in cases:
 # in the small shared workspace. Does not affect a guest assertion or its result.
 if args.guest:subprocess.run(['python3',str(root/'tools/compact-qa-evidence.py')],check=True)
 args.output.write_text(json.dumps({
- 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
- 'guest_requested':args.guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
+ 'scope':'backend/runtime contracts, target objects'+(' and real guest TCP/read-only-file, VM/MMU, private synchronization, per-thread errno, managed thread/TSD and freestanding C++ consumer probes' if args.guest else '')+(' and real native C++ lifecycle .init_array/DSO finalization on 1/4/8 CPUs' if args.lifecycle_guest else '')+'; NOT JavaScriptCore/WebCore/HTTPS/browser acceptance',
+ 'guest_requested':args.guest,'lifecycle_guest_requested':args.lifecycle_guest,'passed':all(r['exit_code']==0 for r in results),'cases':results},indent=2))
 sys.exit(0 if all(r['exit_code']==0 for r in results) else 1)

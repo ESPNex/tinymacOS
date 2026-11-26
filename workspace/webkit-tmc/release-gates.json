@@ -31,7 +31,9 @@
     "native_vm_heap_guest_and_c_allocation_exports": true,
     "noexceptions_cpp_new_delete_and_static_guards_host_contracts": true,
     "noexceptions_cpp_native_functional_1_4_8_cpu_with_live_transfer_buffers": true,
-    "unanchored_cpp_allocation_churn_smp_stress": false
+    "unanchored_cpp_allocation_churn_smp_stress": false,
+    "explicit_cpp_global_initialization_and_DSO_finalization_host_contracts": true,
+    "explicit_cpp_lifecycle_native_1_4_8_cpu_tested": true
   },
   "release_ready": false,
   "maintenance_241": {
@@ -192,5 +194,25 @@
     "ui_required": "identical classic desktop Safari reference; all tinymacOS themes",
     "release_published": false
   },
-  "cpp_scope": "10.3 development: opt-in no-exceptions new/delete/new_handler and x86-64 local-static guards; 13 host gates and functional native 1/4/8 CPU profiles PASS, 12000 destructors each, transferred buffers kept live through workload. Initial unanchored 4-CPU churn stress timed out and remains open; no allocator performance fix claimed. Not libc++, exception ABI, global startup/atexit, compiler TLS, WTF/JSC/WebCore or Safari UI. See RUNTIME-CPP.md."
+  "cpp_scope": "10.3 development: opt-in no-exceptions new/delete/new_handler and x86-64 local-static guards; 13 host gates and functional native 1/4/8 CPU profiles PASS, 12000 destructors each, transferred buffers kept live through workload. Initial unanchored 4-CPU churn stress timed out and remains open; no allocator performance fix claimed. Not libc++, exception ABI, global startup/atexit, compiler TLS, WTF/JSC/WebCore or Safari UI. See RUNTIME-CPP.md.",
+  "cpp_lifecycle_scope": {
+    "host_gates": 14,
+    "guest_cpus": [
+      1,
+      4,
+      8
+    ],
+    "concurrent_destructor_registrations": 400,
+    "worker_callbacks_including_reentrant_registration": 401,
+    "compiler_global_constructors": 2,
+    "compiler_local_static_constructors": 1,
+    "compiler_destructors": 3,
+    "startup": "explicit opt-in after native TCB attachment, NOT automatic OS-wide entry integration",
+    "finalization": "DSO-selective LIFO, serialized concurrent finalizers, same-thread recursion and registration during callbacks; application threads must be quiesced before final process teardown",
+    "zero_final_pending_destructors_and_heap_spans": true,
+    "allocation_failure_injection": "host only",
+    "full_browser_or_libcpp": false,
+    "unanchored_heap_churn_fixed": false,
+    "document": "RUNTIME-LIFECYCLE.md"
+  }
 }

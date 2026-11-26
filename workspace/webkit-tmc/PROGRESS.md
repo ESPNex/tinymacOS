@@ -182,3 +182,8 @@ I sorgenti sono salvati prima della compilazione; manifest delle sorgenti e hash
 - Suite completa fresca **29/29 PASS**. I profili nativi 1/4/8 CPU eseguono 90 creazioni di base più figli fino all’esaurimento reale dei Task, 320 aggiornamenti concorrenti, 64 riusi e 16 TCB VM smappati subito dopo il join.
 - Un consumatore C++20 freestanding RAII/C-ABI è compilato, linkato senza librerie C++ e senza simboli indefiniti, ed eseguito nel guest. Non è libc++/libstdc++, eccezioni o motore WebKit.
 - Fonti, contratti, limiti e prossimo macroblocco allocator/libc/runtime C++ + WTF/JSC in `RUNTIME-THREADS.md`. Nessun nuovo deploy/ISO upload; OC2 invariata.
+
+
+## 10.3 — macroblocco lifecycle C++
+
+Startup `.init_array` esplicito e thread-safe, ABI `__cxa_atexit/__cxa_finalize`, registro dinamico e distruzione DSO LIFO con rientranza. **14 gate host + build fresca + profili lifecycle nativi 1/4/8 CPU PASS** (18 casi nella stessa matrice). Due globali e uno static locale compiler-generated, 400 registrazioni concorrenti e 401 callback worker, zero registro/heap residuo. Dettagli, limiti e riproduzione: `RUNTIME-LIFECYCLE.md`. Non è CRT automatico OS-wide, libc++, WTF/JSC/WebCore o Safari. Stress heap non ancorato ancora aperto; nessuna nuova ISO distribuita. Recupero release storiche annullato su richiesta, senza pubblicazioni.

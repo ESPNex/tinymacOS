@@ -15,7 +15,7 @@ Richiede TCB/errno nativo attaccato prima dell'allocazione e dell'inizializzazio
 
 ## Verifiche e stato
 
-- Suite host corrente: **13 gate PASS**, inclusa compilazione freestanding C/C++ e test normali + ASan/UBSan.
+- Suite host della milestone new/guard: **13 gate PASS**, inclusa compilazione freestanding C/C++ e test normali + ASan/UBSan.
 - Il test host esercita l'heap e gli algoritmi nativi di thread/sincronizzazione con trasporti pthread/futex/mmap, non il kernel target. Quattro worker, deallocazione cross-thread, 12.000 distruttori di array, static locali concorrenti e annidati, abort/retry e recupero via new_handler dopo esaurimento delle 32 riserve VM. Casi negativi in processi separati verificano SIGILL per OOM non gestita e inizializzazione ricorsiva.
 - Il binario host normale non collega libstdc++. La variante UBSan carica indirettamente libstdc++ per la diagnostica del sanitizer: il test verifica comunque le definizioni forti del nostro eseguibile per new e guard, non attribuisce quel runtime al target.
 - Profili guest funzionali **1, 4 e 8 CPU PASS** sullo stesso ISO SHA-256 `77df68dd13a0229fd5d0c3b24455453ec890544d2427226bf9c9b37a60c34c70`: quattro worker, 12.000 distruttori per profilo, esaurimento reale delle 32 riserve e recupero tramite new_handler, inizializzazione statica una sola volta, nesting, abort/retry concorrente, nessun simbolo irrisolto e zero riserve finali. Sui profili SMP è obbligatoria l'esecuzione su più CPU.
@@ -49,4 +49,4 @@ Richieste le dipendenze Python/Pillow e gli strumenti QEMU/OVMF/FAT/xorriso nel 
 
 ## Ancora mancante
 
-Questo non completa libc, libc++, eccezioni/unwind/RTTI, inizializzazione dei globali a startup, `__cxa_atexit` e teardown, compiler TLS o pthread generale. Non è bmalloc e non contiene un build di WTF/JavaScriptCore/WebCore. Restano il collegamento del vero motore, HTTPS con validazione, font/grafica/event loop, UI e acceptance HTML/CSS/JavaScript/temi/sicurezza. I relativi gate restano false. Nessun renderer sostitutivo e nessuna shell vuota presentata come Safari.
+Questo milestone new/guard non completa libc, libc++, eccezioni/unwind/RTTI, compiler TLS o pthread generale. Il successivo macroblocco [RUNTIME-LIFECYCLE.md](RUNTIME-LIFECYCLE.md) aggiunge startup globale esplicito opt-in e `__cxa_atexit/__cxa_finalize`, con nuove prove separate; non aggiunge uno startup automatico a tutte le app né C `exit` completo. Non è bmalloc e non contiene un build di WTF/JavaScriptCore/WebCore. Restano il collegamento del vero motore, HTTPS con validazione, font/grafica/event loop, UI e acceptance HTML/CSS/JavaScript/temi/sicurezza. I relativi gate restano false. Nessun renderer sostitutivo e nessuna shell vuota presentata come Safari.

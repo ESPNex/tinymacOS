@@ -5,8 +5,11 @@
 #include <errno.h>
 #include "tmc_vm.h"
 static struct {void *base,*mapping;size_t bytes;} spans[TMC_VM_SLOTS];
+static unsigned fail_reserve;
+void lifecycle_vm_fail_reserve(void){fail_reserve=1;}
 void *tmc_vm_reserve(size_t n,size_t a,unsigned guards)
 {
+ if(fail_reserve){fail_reserve=0;errno=ENOMEM;return 0;}
  assert(a==4096&&guards==1&&n<=TMC_VM_MAX_REGION&&!(n%4096));
  unsigned i=0;while(i<TMC_VM_SLOTS&&spans[i].base)i++;
  if(i==TMC_VM_SLOTS){errno=ENOMEM;return 0;}
