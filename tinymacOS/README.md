@@ -1,4 +1,4 @@
-> **Ramo di sviluppo 10.2.5 / 30B16, NON release**: [gate di pubblicazione](docs/RELEASE-READINESS-10.2.5.md). Finder/Terminale/drag-and-drop verificati; 4Kn nativi e conversione in-place restano obbligatori e non completati. La release pubblicata è ancora 10.2.4. Per provare il backend FS2 sperimentale aggiungere `export TMC_FS2_BACKEND=1` prima del build; non è il default.
+> **10.2.5 / 30B16**: [novità e limiti](docs/NOTE-10.2.5.md) · [accettazione finale](docs/RELEASE-READINESS-10.2.5.md). FS2, NVMe/4Kn e conversione/deattivazione in-place da Recovery; Finder/Terminale e drag-and-drop. La build distribuita usa `TMC_FS2_BACKEND=1`.
 
 > **10.2.4 / 30B15**: [Recovery senza barra residua e dischi SATA/AHCI fino a 1 TiB](docs/NOTE-10.2.4.md), inclusi i dischi commerciali da 1 TB. Stesso assistente «Installa tinymacOS Tramontana» nel desktop e «Reinstalla tinymacOS Tramontana» in Recovery. Conservati snapshot CoW, resize FAT32/NTFS e volume nativo 8–32 MiB. Backup esterno verificato obbligatorio; nessuna certificazione hardware/Windows.
 
@@ -20,7 +20,8 @@ Dalla directory `tinymacOS/`:
 python3 tools/local-tools.py /var/tmp/tmc/tools/root
 export TOOLROOT=/var/tmp/tmc/tools/root
 export TMC_BUILD=/var/tmp/tmc-current
-export TMC_USB_CANONICAL=1
+export TMC_FS2_BACKEND=1
+export TMC_USB_CANONICAL=0
 bash build.sh
 ```
 

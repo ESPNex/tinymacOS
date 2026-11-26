@@ -49,16 +49,16 @@ def volume_unlock(g,credential,account='Fs2Install',password='local-test-285',se
  g.visible(account,300);g.visible('Inserisci la password',180);g.type(password);g.key('ret');g.visible('Preferiti',300)
 def recovery_unlock(g,credential):
  utility(g,'Terminale');g.visible('Sessione locale');g.cmd('fdesetup manage');x,y=g.visible('FileVault',faces=(3,));X,Y=x-28,y-22;g.visible('Bloccato');g.click(X+140,Y+260);g.visible('Sblocca il volume');g.type(credential);g.key('ret');g.visible('Attivo',300);g.key('ctrl-w');time.sleep(.5);g.key('ctrl-w');time.sleep(.5)
-def read_rendered_key(g):
+def read_rendered_key(g,uppercase=False):
  # Recognize only the two visible 32-character mono lines. No OCR output,
  # secret screenshots in evidence, clipboard, files, serial or guest memory.
  g.secret_page=True
  x,y=g.visible('Conferma gli ultimi 8 caratteri della chiave:')
  im=g.snap();crop=im.crop((max(0,x-5),y-90,min(im.width,x+440),y-12));gray=cv2.cvtColor(np.asarray(crop),cv2.COLOR_RGB2GRAY)
  hits=[]
- for c in '0123456789ABCDEF':
+ for c in ('0123456789ABCDEF' if uppercase else '0123456789abcdef'):
   glyph=pixels.word(c,5);scores=cv2.matchTemplate(gray,glyph,cv2.TM_CCOEFF_NORMED)
-  yy,xx=np.where(np.abs(scores)>=.98)
+  yy,xx=np.where(np.abs(scores)>=(.98 if uppercase else .985))
   hits.extend((float(abs(scores[ay,ax])),int(ax),int(ay),c) for ay,ax in zip(yy,xx))
  chosen=[]
  for score,xx,yy,c in sorted(hits,reverse=True):

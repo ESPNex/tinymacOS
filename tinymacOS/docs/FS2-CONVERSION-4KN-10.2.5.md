@@ -19,6 +19,11 @@ qualsiasi scrittura. FV003 usa record autenticati da 20 KiB per blocchi FS2 da
 alla disattivazione.
 
 La preparazione scrive solo la coda verificata libera e verifica la copia.
+Se la preparazione si interrompe prima della pubblicazione dei journal, il
+prefisso originale resta intatto: ripetere l’operazione, non attendere una ripresa
+della rilocazione non ancora iniziata. Durante la preparazione della
+deattivazione può già comparire plaintext nella coda: dopo averla confermata,
+non considerare il supporto interamente cifrato, anche se la fase si interrompe.
 Due journal autenticati conservano credenziali e avanzamento. La successiva
 rilocazione è **riprendibile, non rollback**: dopo un'interruzione riaprire
 FileVault in Recovery e autenticarsi con password o chiave. Durante il processo

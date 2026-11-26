@@ -1,21 +1,7 @@
 {
-  "passed": false,
-  "release_acceptance": false,
+  "ready": true,
   "published": false,
-  "github_authentication_verified": true,
-  "development_source_push_verified": true,
-  "development_commit": "3a4c947c5bdb6b3fc48d6380a4a079c381c2f94d",
-  "host_scripts_passed": 29,
-  "finder_feature_gui_passed": true,
-  "finder_feature_gui_checks": 11,
-  "mandatory_user_scope": "complete_all; native 4Kn installation/boot AND scalable encryption in-place conversion/deactivation required before release",
-  "unsatisfied_gates": {
-    "native_4kn_install_boot": "NOT IMPLEMENTED end-to-end; native NVMe adapter still intentionally excludes 4Kn namespaces",
-    "scalable_in_place_conversion": "NOT IMPLEMENTED; current FS2 adapter explicitly refuses enable/decrypt operations",
-    "full_final_artifact_guest_matrix": "NOT COMPLETE; must be rerun after missing implementation and new build"
-  },
-  "main_unchanged": "1a4ca9af4c4e7bb42cc819e7f931da34f6a4af69",
-  "published_release_unchanged": "v10.2.4",
-  "release_tag_created": false,
-  "deploy_executed": false
+  "mandatory_native_4kn": true,
+  "mandatory_same_extent_encrypt_decrypt": true,
+  "receipt": "release-final-verification.json"
 }

@@ -51,13 +51,13 @@ try:
   class SavedScreen:
    def visible(self,*args,**kwargs):return old(self.snap(),'Conferma gli ultimi 8 caratteri della chiave:',(0,1,2,3,5,6,8),threshold=.88)[1]
    def snap(self):return Image.open(w/'convert-enable-snap.ppm').convert('RGB')
-  key=read_rendered_key(SavedScreen())
+  key=read_rendered_key(SavedScreen(),uppercase=True)
  with Recovery('/not-attached',w,ev,'convert-enable',disk='target',boot_disk=True) as g:
   X,Y=panel(g)
   if resume:
    g.visible('Riprendi conversione');g.click(X+130,Y+260);g.type(key);g.key('ret');g.visible('Sblocca volume',600);g.click(X+130,Y+260);g.type('conversion-guest-285');g.key('ret');state(g,'Attivo');g.shot('same-extent-conversion-resumed');shutdown(g)
   else:
-   g.visible('Attiva FileVault');g.click(X+130,Y+260);g.visible('Attivazione FileVault');g.type('conversion-guest-285');g.key('tab');g.type('conversion-guest-285');g.secret_page=True;g.key('ret');g.visible('Salva la chiave di recupero',300);key=read_rendered_key(g)
+   g.visible('Attiva FileVault');g.click(X+130,Y+260);g.visible('Attivazione FileVault');g.type('conversion-guest-285');g.key('tab');g.type('conversion-guest-285');g.secret_page=True;g.key('ret');g.visible('Salva la chiave di recupero',300);key=read_rendered_key(g,uppercase=True)
    g.key('ret');g.visible('Gli 8 caratteri non coincidono.');g.type(key[-8:]);g.key('ret');g.secret_page=False;g.visible('Sblocca volume',600);g.click(X+130,Y+260);g.type('conversion-guest-285');g.key('ret');state(g,'Attivo');g.shot('same-extent-conversion-active');shutdown(g)
  assert public_hash()==before
  with disk.open('rb') as stream:stream.seek(a*512);assert stream.read(8)==b'TMCFV003'

@@ -1,0 +1,159 @@
+{
+  "version": "10.2.5",
+  "build": "30B16",
+  "passed": true,
+  "published": false,
+  "host_suites": 31,
+  "guest_gates": {
+    "fs2-install-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "0779dd5444faade5010e6f8ba7c74fa821c59dec3f2d6adf8ec8b74003baad25",
+      "native_logical_bytes": null
+    },
+    "native4k-install-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+        "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+        "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+        "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+      ],
+      "work": "/var/tmp/tmc-native4k-install-s71q26az",
+      "receipt_sha256": "49425a209d3028b6ce0f6861d30f2698230aa5ee3b29aec9dc6113842da3f60b",
+      "native_logical_bytes": null
+    },
+    "native4k-convert-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Actual Recovery enables same-extent FV003 after recovery-key acknowledgement; complete DATA scan has no original private account/document plaintext; all public bytes unchanged",
+        "Cold UEFI boot rejects wrong password, accepts recovery key plus existing account; imported documents and retained CoW snapshot verify after conversion",
+        "Actual Recovery deactivates with independent recovery credential; plaintext capacity/account/files/CoW snapshot survive cold boot and full verification, all public partition bytes unchanged"
+      ],
+      "work": "/var/tmp/tmc-native4k-install-s71q26az",
+      "receipt_sha256": "f405be73f9d5ff6dc2b79fc65b702c70127acd707d5315da7f0b72140eb4eb8d",
+      "native_logical_bytes": 4096
+    },
+    "fs2-convert-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Actual Recovery enables same-extent FV003 after recovery-key acknowledgement; complete DATA scan has no original private account/document plaintext; all public bytes unchanged",
+        "Cold UEFI boot rejects wrong password, accepts recovery key plus existing account; imported documents and retained CoW snapshot verify after conversion",
+        "Actual Recovery deactivates with independent recovery credential; plaintext capacity/account/files/CoW snapshot survive cold boot and full verification, all public partition bytes unchanged"
+      ],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "7ad5eed1dddd9a691467f3a1ca1dcc46eb9c5c734786747f8ed3955d6338862f",
+      "native_logical_bytes": 512
+    },
+    "finder-transfers-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Real Terminal cp -R/mv copy and move nested folders; pbcopy/pbpaste exchange actual shared text",
+        "Finder context Copy/Paste transfers a real file across distinct Finder windows without deleting source",
+        "Finder context Cut/Paste moves a directory with nested files across windows through the real atomic move syscall",
+        "Real held-button drag drops a file onto a directory icon, changing the actual filesystem",
+        "Real drag to Finder sidebar moves into Desktop",
+        "Ctrl-drag across two positioned Finder windows copies rather than moves and generates a non-overwriting collision name",
+        "Desktop file icons can be dragged into an open Finder destination, and Finder files can be dropped onto the bare Desktop",
+        "Real drag into Terminal inserts a quoted path into the pending command; only an explicit Enter executes it",
+        "Terminal Ctrl+Shift+C/V uses shared clipboard while paste only edits input, never auto-executes",
+        "Session lock clears the shared clipboard; old Finder/Terminal buffers cannot repaste the previous shared content",
+        "Copied/moved folders and drag results persist through a cold installed boot and full data/system verification"
+      ],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "cb84b549e48383ccfb57b2806e0015a35936af98c2503e612d134618e6be999c",
+      "native_logical_bytes": null
+    },
+    "fs2-external-import-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Real Recovery Terminal preflights a named external NVMe checkpoint without modifying any destination data byte",
+        "Explicit confirmed import runs real syscall/offline backend, source disk read-only and byte-identical; destination GPT, sealed system, Recovery and source partition remain byte-identical",
+        "Cold installed boot authenticates imported account, reads checkpoint bytes rather than source live bytes, retains destination checkpoint and can restore previous destination state"
+      ],
+      "work": "/var/tmp/tmc-external-import-p3g2aqzh",
+      "receipt_sha256": "4718d1d305a6bb0031f6151859a17fc52327a0635474aedf1fecf3977ce193aa",
+      "native_logical_bytes": null
+    },
+    "fs2-nvme-helper-result.json": {
+      "passed": true,
+      "checks": [],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "b2231ea77008db829e55f530306ad9f9cab67c5332c2ffa780e0578541b79fde",
+      "native_logical_bytes": null
+    },
+    "encrypted-install-reset-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Actual GUI creates FV003 and imports live account/document directly; cancel and recovery-key acknowledgement occur before any target write; no host formatting",
+        "Cold native NVMe boot rejects wrong volume password, accepts configured volume password, separately authenticates imported account and reads its private document",
+        "Installer-created encrypted volume accepts independent recovery credential; native Recovery creates and restores real encrypted local backup; restored documents survive cold boot",
+        "Same native Recovery installer reinstalls the sealed system on its GUI-created encrypted volume while the complete DATA hash stays identical",
+        "Explicit irreversible Recovery reset pre-confirms fresh credentials, cancel leaves DATA unchanged, replaces volume key and both credential slots, rejects old password/recovery, runs new account setup and persists new documents across reboot; public extents unchanged",
+        "Offline entire-DATA scan finds none of the tested plaintext account, filename, filesystem or private-document markers; not a physical secure-erasure proof"
+      ],
+      "work": "/var/tmp/tmc-encrypted-install-n2b3i7hr",
+      "receipt_sha256": "5a9a71e8e6f23f74be7f2618b6cfdd6c396560d40b770623b365c0b11195a370",
+      "native_logical_bytes": null
+    },
+    "fs2-backup-ui-result.json": {
+      "passed": true,
+      "checks": [
+        "TextEdit opens and saves a 128KiB file through the modern chooser, with byte-exact streamed readback beyond the old 8KiB limit",
+        "Actual Finder navigates beyond 384 entries and reaches file 1099 using bounded pages through real syscalls",
+        "Actual Time Machine reaches and verifies snapshot 20 on the third timeline page",
+        "Actual modern TextEdit picker reaches and opens file 1099, beyond the old directory-slot ceiling",
+        "Native internal Recovery creates the scalable local backup using shared-root CoW, not a volume-sized copy",
+        "Local backup restores account, changed document and 128KiB file after reboot while pre-existing snapshots remain valid"
+      ],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "0fba3465b090bbe13220c7225c30661a9c2f78f39f625c34518fd95cec8f8f8e",
+      "native_logical_bytes": null
+    },
+    "fs2-reset-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "Canceling Recovery initialization leaves the entire FS2 data partition byte-identical, including account, snapshots and large document",
+        "Native Recovery logically resets the full scalable home/account/snapshot roots, verifies the result and leaves partition tables, sealed system, Recovery and installation source byte-identical",
+        "After reset, actual installed boot requires fresh enrollment; previous documents/snapshot namespace are absent and the new account and document survive another reboot"
+      ],
+      "work": "/var/tmp/tmc-fs2-install-4fh98x_j",
+      "receipt_sha256": "aa6ae682f5b39ba6558fdd2d010fe2936b24400e125d077276b539e47b447efc",
+      "native_logical_bytes": null
+    },
+    "release-optical-guest-result.json": {
+      "passed": true,
+      "checks": [
+        "uefi: exact dual-mode ISO reaches native desktop, account, Terminal and real AHCI inventory; live document write/read and shutdown",
+        "bios: exact dual-mode ISO reaches native desktop, account, Terminal and real AHCI inventory; live document write/read and shutdown"
+      ],
+      "work": "/var/tmp/tmc-release-optical-ay_7d9tc",
+      "receipt_sha256": "367cefede1af029dbeda5900668151ac4241f8a358dd248c8ffcf37671688723",
+      "native_logical_bytes": null
+    }
+  },
+  "artifacts": {
+    "native_iso_sha256": "ea98bb53bb3abbf82b3592d44bdd9bc1e9b9cc84c78a9af6b0ad4d5df76a7293",
+    "dual_iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+    "kernel_sha256": "8cbc7c1bf850d9e224ef15d55cfa1cf5621ca24ffa6137c9c6daeabe69d959db",
+    "recovery_kernel_sha256": "f15c2bb6f5fb542b04a5c4c8475b44e70f03a9be9316aa3c4af11b78cf740a04"
+  },
+  "shared_payload_files": 35,
+  "source_input_paths": 986,
+  "source_input_manifest_sha256": "3ad55f7a904fe6e3d9fc7391746ec1aed860e9370e8a7989945a023b1eecd79c",
+  "installer_defined_store_object_sha256": "626e3ce93b4d445d2ad5ebca3546556c7ad9334b596e5d9dc5f4fd77d0e8d6fd",
+  "guest_archive_sha256": "e5e5946d93e41751f4ffc15ebde62a113e18ab58ae7ed2043337db5179b496fb",
+  "physical_hardware_tested": false,
+  "notes": [
+    "Two initial host harness failures corrected and rerun; originals retained.",
+    "Initial guest harness lowercase key decoder, final relock expectation and broad short-state matching corrected. Concurrent QEMU exits were rerun sequentially, not counted as passes.",
+    "Native UEFI medium is shipped unchanged; dual optical image has distinct exact hash, independent BIOS/UEFI smoke and all 35 common payload files independently extracted byte-identical.",
+    "No secure erase, rollback conversion, Windows or physical-hardware certification."
+  ]
+}
