@@ -1,5 +1,5 @@
 {
-  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules",
+  "authorization": "User requested 10.2.5 smart merge against 10.2.4, correct font, pointer/drag and Windows unallocated inventory, preserve verified 10.3 foundations; deliberate build30B17 update; user explicitly requested eliminating obsolete font and all DejaVu fallback, including terminal face; user supplied dedicated mono family for Terminal and panic with existing grid rules; user requested rebuild, new commit and deployment as 30B18",
   "inputs": {
     "assets/type.tfn": {
       "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
@@ -15,15 +15,15 @@
     },
     "userspace/about.c": {
       "baseline_sha256": "01232c34e885f571141338a122637286d99df7c329075dace0eb86e1c10a0b0e",
-      "hotfix_sha256": "2acae4db73dba857e8c4488981454d08b497f4c44b258783b646595e64e9a73f"
+      "hotfix_sha256": "038b819d3752b88bb1969b6f47ee84cccb7ea53555a0b73d38dbd87181af0128"
     },
     "userspace/command.c": {
       "baseline_sha256": "dc824c1520b540c553a648dcef5c3be2c74d2524c7c8a17ca2513b1ae8b3fa0e",
-      "hotfix_sha256": "0cab6076c3aafdd98a7ca72e968e5400be5ef27b5808b549958eff69f4c416f5"
+      "hotfix_sha256": "c11de5c2d9049c121831b81e5117b738bedaf18a709a542e9ff0006a60ba89dc"
     },
     "userspace/settings.c": {
       "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
-      "hotfix_sha256": "fb3ca3a0aa0586d2cd593d62d588126f8d3462eb16c1da415baf3df61c1c0006"
+      "hotfix_sha256": "0380e72b57f8fe0a470cfb8ef3e8e94a353140a00be3a445a13e7b08f3946c2d"
     },
     "assets/panicfont.inc": {
       "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
