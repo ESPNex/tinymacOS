@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "all_release_titles_independently_relisted": 21,
+  "historical_tags_draft_prerelease_and_target_commitish_unchanged": true,
+  "all_20_other_release_bodies_and_assets_unchanged": true,
+  "release_1025_total_assets": 5,
+  "release_1025_iso_count": 1,
+  "iso_name": "tinymacOS-10.2.5-x86_64.iso",
+  "iso_asset_id_unchanged": 795849480,
+  "iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+  "checksum_readback_sha256": "02687cafdb35f431bbbc4dd5cb03a485421e91fe8732f512b368d1614530524e",
+  "checksum_lists_exact_four_payloads": true,
+  "branch_receipt": "branch-consolidation-verification.json",
+  "release_receipt": "release-normalization-verification.json",
+  "no_binary_rebuild_or_release_tag_move": true
+}
