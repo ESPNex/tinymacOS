@@ -50,27 +50,42 @@ def volume_unlock(g,credential,account='Fs2Install',password='local-test-285',se
 def recovery_unlock(g,credential):
  utility(g,'Terminale');g.visible('Sessione locale');g.cmd('fdesetup manage');x,y=g.visible('FileVault',faces=(3,));X,Y=x-28,y-22;g.visible('Bloccato');g.click(X+140,Y+260);g.visible('Sblocca il volume');g.type(credential);g.key('ret');g.visible('Attivo',300);g.key('ctrl-w');time.sleep(.5);g.key('ctrl-w');time.sleep(.5)
 def read_rendered_key(g,uppercase=False):
- # Recognize only the two visible 32-character mono lines. No OCR output,
- # secret screenshots in evidence, clipboard, files, serial or guest memory.
+ # Decode the 64 visible cells only. No guest memory/clipboard/secret logs.
+ # Full 8px cell templates avoid assuming blank side-bearings between glyphs.
  g.secret_page=True
- x,y=g.visible('Conferma gli ultimi 8 caratteri della chiave:')
- im=g.snap();crop=im.crop((max(0,x-5),y-90,min(im.width,x+440),y-12));gray=cv2.cvtColor(np.asarray(crop),cv2.COLOR_RGB2GRAY)
- hits=[]
- for c in ('0123456789ABCDEF' if uppercase else '0123456789abcdef'):
-  glyph=pixels.word(c,5);scores=cv2.matchTemplate(gray,glyph,cv2.TM_CCOEFF_NORMED)
-  yy,xx=np.where(np.abs(scores)>=(.98 if uppercase else .985))
-  hits.extend((float(abs(scores[ay,ax])),int(ax),int(ay),c) for ay,ax in zip(yy,xx))
- chosen=[]
- for score,xx,yy,c in sorted(hits,reverse=True):
-  if not any(abs(xx-u)<5 and abs(yy-v)<12 for _,u,v,_ in chosen):chosen.append((score,xx,yy,c))
- rows=[]
- for hit in sorted(chosen,key=lambda a:a[2]):
-  row=next((row for row in rows if abs(row[0][2]-hit[2])<8),None)
-  if row is None:rows.append([hit])
-  else:row.append(hit)
- lines=[''.join(h[3] for h in sorted(row,key=lambda a:a[1])) for row in rows if len(row)==32]
- assert len(lines)==2,'Recovery pixel readback did not resolve exactly two full lines (secret omitted)'
- return ''.join(lines)
+ label='Conferma gli ultimi 8 caratteri della chiave:'
+ x,y=g.visible(label);im=g.snap()
+ gray=cv2.cvtColor(np.asarray(im),cv2.COLOR_RGB2GRAY).astype(np.float64)
+ def glyph(c,face):
+  at=pixels.start+face*(4+pixels.ng*8);height=struct.unpack_from('<I',pixels.b,at)[0]
+  advance,width,offset=struct.unpack_from('<HHI',pixels.b,at+4+8*pixels.codes[ord(c)])
+  return np.frombuffer(pixels.b,np.uint8,count=height*width,offset=pixels.pix+offset).reshape(height,width),advance
+ # Recover the uncropped label origin from the SAME shipped TFN2 template.
+ parts=[glyph(c,0) for c in label];canvas=np.zeros((parts[0][0].shape[0],sum(a for _,a in parts)+4),np.uint8);at=0
+ for img,advance in parts:
+  canvas[:,at:at+img.shape[1]]=np.maximum(canvas[:,at:at+img.shape[1]],img);at+=advance
+ yy,xx=np.nonzero(canvas);origin_x=x-max(0,int(xx.min())-1);origin_y=y-max(0,int(yy.min())-1)
+ alphabet='0123456789ABCDEF' if uppercase else '0123456789abcdef'
+ templates=np.array([glyph(c,5)[0].reshape(-1) for c in alphabet],dtype=np.float64)
+ assert templates.shape==(16,21*8),'Unexpected secret mono-cell ABI'
+ templates-=templates.mean(axis=1,keepdims=True);templates/=np.linalg.norm(templates,axis=1,keepdims=True)
+ best=None
+ for dy in range(-2,3):
+  for dx in range(-2,3):
+   cells=[]
+   for row in (origin_y-76+dy,origin_y-49+dy):
+    for col in range(32):
+     left=origin_x+dx+col*8;cell=gray[row:row+21,left:left+8]
+     if cell.shape!=(21,8):raise AssertionError('Secret cell bounds invalid')
+     cells.append(cell.reshape(-1))
+   cells=np.array(cells);cells-=cells.mean(axis=1,keepdims=True);norm=np.linalg.norm(cells,axis=1,keepdims=True)
+   if np.any(norm==0):continue
+   scores=np.abs((cells/norm)@templates.T);order=np.argsort(scores,axis=1);ids=order[:,-1]
+   top=scores[np.arange(64),ids];margin=top-scores[np.arange(64),order[:,-2]]
+   candidate=(float(top.min()),float(margin.min()),ids)
+   if best is None or candidate[:2]>best[:2]:best=candidate
+ assert best is not None and best[0]>=.98 and best[1]>=.005,'Recovery fixed-cell pixel readback ambiguous (secret omitted)'
+ return ''.join(alphabet[i] for i in best[2])
 def prepare_encryption(g,password,cancel=False):
  g.key('e');g.visible('Nuove credenziali del volume' if isinstance(g,Recovery) else 'Proteggi la nuova installazione');g.type(password);g.key('tab');g.type(password);g.secret_page=True;g.key('ret');g.visible('Salva la chiave di recupero');key=read_rendered_key(g)
  if cancel:
