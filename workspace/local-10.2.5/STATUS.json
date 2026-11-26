@@ -1,8 +1,8 @@
 {
   "version": "10.2.5",
   "build": "30B16",
-  "state": "final-acceptance-passed-awaiting-publication",
-  "published": false,
+  "state": "published-independent-readback-verified",
+  "published": true,
   "release_acceptance_passed": true,
   "host_suites": 31,
   "guest_gates": 11,
@@ -11,5 +11,9 @@
   "dual_iso_sha256": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
   "kernel_sha256": "8cbc7c1bf850d9e224ef15d55cfa1cf5621ca24ffa6137c9c6daeabe69d959db",
   "physical_hardware_tested": false,
-  "receipt": "release-final-verification.json"
+  "receipt": "release-final-verification.json",
+  "published_release": "10.2.5",
+  "publication_receipt": "release-publication-verification.json",
+  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5",
+  "release_commit": "a38be5dabaab6b55de2a4495b353061a045780d0"
 }

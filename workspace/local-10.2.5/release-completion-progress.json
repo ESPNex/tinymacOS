@@ -1,6 +1,7 @@
 {
-  "state": "final-acceptance-passed-awaiting-publication",
+  "state": "published-independent-readback-verified",
   "host_passed": 31,
   "guest_passed": 11,
-  "receipt": "release-final-verification.json"
+  "receipt": "release-final-verification.json",
+  "published": true
 }

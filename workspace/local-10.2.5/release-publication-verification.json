@@ -1,0 +1,18 @@
+{
+  "published": true,
+  "independent_asset_download_sha256_verified": true,
+  "url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5",
+  "tag": "v10.2.5",
+  "release_commit": "a38be5dabaab6b55de2a4495b353061a045780d0",
+  "main_at_publication": "a38be5dabaab6b55de2a4495b353061a045780d0",
+  "prerelease": true,
+  "release_id": 459399662,
+  "assets_sha256": {
+    "tinymacOS-10.2.5-NVMe-boot-helper.img": "d956dd8bc5f60fe07cc71d40e660fdb80305eb6709a5752eb63b11479bf415f5",
+    "tinymacOS-10.2.5-x86_64-UEFI.iso": "ea98bb53bb3abbf82b3592d44bdd9bc1e9b9cc84c78a9af6b0ad4d5df76a7293",
+    "SHA256SUMS": "4117fc30f03b8734eb0acd37cf8de6d61111f677b4983c69a699f2f43e61bfac",
+    "tinymacOS-10.2.5-sorgenti.zip": "eaf5020830f4b72cecd71ba7f3a80f5918b111f34126233eb4e98c7f62bd93f4",
+    "tinymacOS-10.2.5-x86_64.iso": "1ce54378e933ca388f0fa1ba2471612422a826a2ec033722b29daab4bbfcb30a",
+    "VALIDAZIONE-10.2.5.md": "2939b11cced55ff40c22f81b2c0b77211a009f556c6d49e1f15020164aa98e2b"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "ready": true,
-  "published": false,
+  "published": true,
   "mandatory_native_4kn": true,
   "mandatory_same_extent_encrypt_decrypt": true,
   "receipt": "release-final-verification.json"
