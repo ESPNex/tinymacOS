@@ -190,10 +190,11 @@ static void paint(void)
                strong || lit ? 0xffffff : TX);
     }
     if (W < aw) {
-        Sheet(W, 4, aw - W - 6, ah - 12, 12);
-        Text(W + 15, 20, "Cronologia", F_BOLD, TX);
-        if (!countHist)Text(W + 15, 53, "Nessun risultato", F_SMALL, SUB);
-        for (int j = 0; j < countHist; j++)Text(W + 14, 54 + j * 41, hist[j], F_SMALL, TX);
+        int hx=W+8; /* separate the history glass from the calculator outline */
+        Sheet(hx, 4, aw - hx - 6, ah - 12, 12);
+        Text(hx + 15, 20, "Cronologia", F_BOLD, TX);
+        if (!countHist)Text(hx + 15, 53, "Nessun risultato", F_SMALL, SUB);
+        for (int j = 0; j < countHist; j++)Text(hx + 14, 54 + j * 41, hist[j], F_SMALL, TX);
     }
     finish();
 }

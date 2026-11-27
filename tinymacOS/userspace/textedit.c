@@ -5,32 +5,36 @@ static int hasfile;
 static char incoming[TEXTEDIT_LIMIT+1];
 static char doc[TEXTEDIT_LIMIT + 1], path[PATHLEN], status[96];
 static int length, cursor, dirty, dialog, firstline;
+/* A soft-wrap byte boundary has two visual positions, but only one byte index. */
+static int upstream,scroll_drag,scroll_grab,key_follows;
 static Clipboard clipboard;
 static int starts[TEXTEDIT_LIMIT + 2], nlines;
+static int wrap_columns(void){return MAX(1,(aw-56)/8);}
 static void layout(void)
 {
-    int width = MAX(1, (aw - 56) / 8);
-    int n = 0, col = 0;
-    starts[n++] = 0;
-    for (int i = 0; i < length;) {
+    int width=wrap_columns(),n=1,col=0,break_at=-1;
+    starts[0]=0;
+    for(int i=0;i<length;){
         int next=text_next(doc,i);
-        if (doc[i] == '\n') {
-            starts[n++] = next;
-            col = 0;
-        } else if (++col >= width && next < length && doc[next] != '\n') {
-            starts[n++] = next;
-            col = 0;
-        }
-        i=next;
+        if(doc[i]=='\n'){starts[n++]=next;col=0;break_at=-1;i=next;continue;}
+        if(doc[i]==' '||doc[i]=='\t')break_at=next;
+        col++;
+        if(col>=width&&next<length&&doc[next]!='\n'){
+            /* Prefer a whole-word break. Keep EVERY byte, including spaces;
+             * an overlong word falls back to a UTF-8 scalar boundary. */
+            int at=break_at>starts[n-1]?break_at:next;
+            starts[n++]=at;i=at;col=0;break_at=-1;
+        }else i=next;
     }
-    starts[n] = length;
-    nlines = n;
+    starts[n]=length;nlines=n;
 }
+static int soft_start(int j){return j>0&&starts[j]>0&&doc[starts[j]-1]!='\n';}
 static int cursorline(void)
 {
     int j = 0;
     while (j + 1 < nlines && starts[j + 1] <= cursor)
         j++;
+    if(upstream&&soft_start(j)&&cursor==starts[j])j--;
     return j;
 }
 static int endline(int j)
@@ -56,19 +60,39 @@ static void scroll_document(int delta)
     delta=MAX(-nlines,MIN(nlines,delta));
     firstline-=delta*3;viewport(0);
 }
-static int line_cursor_end(int j)
+/* Place a logical offset on a chosen visual row, including its right edge. */
+static void row_cursor(int j,int columns)
 {
-    int e=endline(j);
-    /* A soft-wrap boundary belongs to the following row. End/click must
-     * stay on the requested visual row, rather than jump to the next one. */
-    if(j+1<nlines&&e==starts[j+1]&&e>starts[j])e=text_prev(doc,e);
-    return e;
+    cursor=text_offset(doc,starts[j],endline(j),MAX(0,columns));
+    upstream=j+1<nlines&&soft_start(j+1)&&cursor==starts[j+1];
+}
+static int line_cursor_end(int j){return endline(j);}
+static int scroll_limit(void){return MAX(0,nlines-visible_rows());}
+static int scroll_y(void){return 64;}
+static int scroll_height(void){return MAX(1,ah-108);}
+static int thumb_height(void){int h=scroll_height();return MIN(h,MAX(18,(int)((i64)h*visible_rows()/MAX(1,nlines))));}
+static int thumb_y(void){int range=scroll_height()-thumb_height(),limit=scroll_limit();return scroll_y()+(limit?(int)((i64)firstline*range/limit):0);}
+static int scrollbar_hit(int x,int y){return x>=aw-24&&x<aw-5&&y>=scroll_y()&&y<scroll_y()+scroll_height();}
+static void scrollbar_event(const Event *e)
+{
+    viewport(0);
+    if(e->d){
+        scroll_drag=0;if(!scroll_limit()||!scrollbar_hit(e->a,e->b))return;
+        int top=thumb_y(),h=thumb_height();
+        if(e->b>=top&&e->b<top+h){scroll_grab=e->b-top;scroll_drag=1;}
+        else{firstline+=e->b<top?-visible_rows():visible_rows();viewport(0);}
+    }else if(scroll_drag){
+        int travel=scroll_height()-thumb_height();
+        i64 at=(i64)e->b-scroll_y()-scroll_grab;at=MAX(0,MIN(at,travel));
+        firstline=travel?(int)((at*scroll_limit()+travel/2)/travel):0;viewport(0);
+    }
+    if(!e->c)scroll_drag=0;
 }
 static void document_click(int x,int y)
 {
     viewport(0);
     int j=MIN(nlines-1,MAX(0,firstline+(y-70)/20));
-    cursor=text_offset(doc,starts[j],line_cursor_end(j),MAX(0,(x-28+4)/8));
+    row_cursor(j,MAX(0,(x-28+4)/8));
 }
 static int saved(void)
 {
@@ -89,7 +113,9 @@ static int load(const char *p)
     int r = readfile(p, incoming, TEXTEDIT_LIMIT);
     if (r < 0 || (u64)r != d.size)
         return -1;
+    for(int i=0;i<r;i++)if(!incoming[i])return -1; /* not a plain-text document */
     memcpy(doc,incoming,r);
+    upstream=scroll_drag=0;
     hasfile=1;
     length = r;
     doc[r] = 0;
@@ -104,7 +130,7 @@ static int load(const char *p)
 static void blank(void)
 {
     hasfile=0;
-    length = cursor = dirty = firstline = 0;
+    length = cursor = dirty = firstline = upstream = scroll_drag = 0;
     doc[0] = 0;
     strset(path, DOCS "/Untitled.txt", PATHLEN);
     Dirent di;
@@ -132,7 +158,7 @@ static void paste(const char *s, int n)
     memcpy(doc + cursor, s, n);
     length += n;
     cursor += n;
-    dirty = 1;
+    dirty = 1;upstream=0;
     status[0] = 0;
 }
 static void act(int a)
@@ -177,12 +203,14 @@ static void confirm_click(const Event *e)
 }
 static void key(Event *e)
 {
-    int k = e->a;
+    int k = e->a;key_follows=0;
     if (dialog) {
         dk(k);
         return;
     }
     if (e->b) {
+        if(k==K_UP||k==K_DOWN){key_follows=1;cursor=k==K_UP?0:length;upstream=0;return;}
+        if(k==K_LEFT||k==K_RIGHT){key_follows=1;layout();int j=cursorline();row_cursor(j,k==K_LEFT?0:text_columns(doc+starts[j],endline(j)-starts[j]));return;}
         if ((k == 's' || k == 'S') && e->c)
             prompt(1);
         else if (k == 's')
@@ -193,10 +221,12 @@ static void key(Event *e)
             act(ACT_NEW);
         else if (k == 'c')
             act(ACT_COPY);
-        else if (k == 'v')
-            act(ACT_PASTE);
+        else if (k == 'v'){act(ACT_PASTE);key_follows=1;}
         return;
     }
+    key_follows=k==8||k==K_DEL||k==K_LEFT||k==K_RIGHT||k==K_HOME||k==K_END||k==K_UP||k==K_DOWN||k=='\n'||k=='\t'||text_printable(k);
+    if(!key_follows)return;
+    int previous_upstream=upstream;upstream=0;
     if(k==8&&cursor){text_backspace(doc,&cursor);length=strlen(doc);dirty=1;
     } else if(k==K_DEL&&cursor<length){text_delete(doc,cursor);length=strlen(doc);dirty=1;
     } else if (k == K_LEFT)
@@ -204,16 +234,11 @@ static void key(Event *e)
     else if (k == K_RIGHT)
         cursor = text_next(doc,cursor);
     else if (k == K_HOME || k == K_END || k == K_UP || k == K_DOWN) {
-        layout();
+        layout();upstream=previous_upstream;
         int j = cursorline(), col = text_columns(doc+starts[j],cursor-starts[j]);
-        if (k == K_HOME)
-            cursor = starts[j];
-        else if (k == K_END)
-            cursor = line_cursor_end(j);
-        else {
-            j = MAX(0, MIN(nlines - 1, j + (k == K_UP ? -1 : 1)));
-            cursor = text_offset(doc,starts[j],line_cursor_end(j),col);
-        }
+        if(k==K_HOME)row_cursor(j,0);
+        else if(k==K_END)row_cursor(j,text_columns(doc+starts[j],endline(j)-starts[j]));
+        else{j=MAX(0,MIN(nlines-1,j+(k==K_UP?-1:1)));row_cursor(j,col);}
     } else if(k=='\n'||text_printable(k)){
         if(text_insert(doc,sizeof doc,&cursor,k)){length=strlen(doc);dirty=1;}
     } else if (k == '\t')
@@ -238,6 +263,10 @@ static void paint(void)
     Box(0, ah - 34, aw, 1, 0, EDGE);
     for (int i = firstline; i < nlines && i < firstline + nrows; i++) {
         MonoText(28,70+(i-firstline)*20,doc+starts[i],endline(i)-starts[i],TX);
+    }
+    if(scroll_limit()){
+        Box(aw-18,scroll_y(),7,scroll_height(),3,SOFT);
+        Box(aw-18,thumb_y(),7,thumb_height(),3,SUB);
     }
     if(!dialog&&j>=firstline&&j<firstline+nrows)
         Caret(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, ACC);
@@ -289,8 +318,7 @@ void app_main(void)
         int redraw = 0;
         while (sc(S_EVENT, &e, 0, 0, 0) > 0) {
             redraw = 1;
-            if (baseevent(&e))
-                continue;
+            if (baseevent(&e)){if(e.type==EV_RESIZE)scroll_drag=0;continue;}
             if(picker.active){picker_event(&e);continue;}
             if (e.type == EV_CLOSE) {
                 if (dirty) {
@@ -302,9 +330,10 @@ void app_main(void)
                 }
             }
             if(dialog&&e.type==EV_CLICK){confirm_click(&e);continue;}
-            if (e.type == EV_KEY){key(&e);viewport(1);}
-            if (!dialog && e.type == EV_ACTION){act(e.a);viewport(1);}
-            if (!dialog && e.type == EV_SCROLL){scroll_document(e.a);continue;}
+            if (e.type == EV_KEY){key(&e);viewport(key_follows);}
+            if (!dialog && e.type == EV_ACTION){act(e.a);viewport(e.a==ACT_PASTE);}
+            if(!dialog&&e.type==EV_SELECT){scrollbar_event(&e);continue;}
+            if (!dialog && e.type == EV_SCROLL){scroll_drag=0;scroll_document(e.a);continue;}
             if (!dialog && e.type == EV_CLICK) {
                 if (e.b < 46) {
                     if (e.a < 70)
@@ -315,7 +344,8 @@ void app_main(void)
                         act(ACT_SAVE);
                     else if (e.a < 298)
                         prompt(1);
-                } else if (e.b >= 67 && e.b < ah - 33) {
+                } else if(scrollbar_hit(e.a,e.b)){ /* EV_SELECT owns thumb/track gestures. */
+                } else if (e.a>=24&&e.a<aw-24&&e.b >= 67 && e.b < ah - 33) {
                     document_click(e.a,e.b);
                 }
             }

@@ -1,0 +1,107 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-m3-guest-blxoi_cp",
+  "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+  "checks": [
+    "Native TextEdit: all visible glyph pixels equal the shipping TFN2 reference, with word/UTF-8/overlong-word wrapping; no clipped or omitted letters",
+    "Real USB wheel scroll, Copy preserving viewport, track paging, thumb drag to final row and narrower/shorter window all retain exact visible font pixels",
+    "Native TextEdit insert/delete/save and close; Calculator real keyboard result and history 7 + 5 = 12, separated glass; normal shutdown",
+    "Read-only extraction after guest shutdown matches every original UTF-8 document byte after wrap/scroll/resize/edit/save"
+  ],
+  "physical_hardware_tested": false,
+  "document_only_offline_fixture": true,
+  "pixel_frames": [
+    {
+      "label": "apps5-textedit-top",
+      "client": [
+        284,
+        162,
+        758,
+        480
+      ],
+      "first_row": 0,
+      "visible_rows": 18,
+      "columns": 87,
+      "pixels_exact": 250560,
+      "exact_eof_caret_present": false,
+      "glyphs": 1467
+    },
+    {
+      "label": "apps5-textedit-wheel",
+      "client": [
+        284,
+        162,
+        758,
+        480
+      ],
+      "first_row": 6,
+      "visible_rows": 18,
+      "columns": 87,
+      "pixels_exact": 250560,
+      "exact_eof_caret_present": false,
+      "glyphs": 1467
+    },
+    {
+      "label": "apps5-textedit-copy-viewport",
+      "client": [
+        284,
+        162,
+        758,
+        480
+      ],
+      "first_row": 6,
+      "visible_rows": 18,
+      "columns": 87,
+      "pixels_exact": 250560,
+      "exact_eof_caret_present": false,
+      "glyphs": 1467
+    },
+    {
+      "label": "apps5-textedit-track",
+      "client": [
+        284,
+        162,
+        758,
+        480
+      ],
+      "first_row": 24,
+      "visible_rows": 18,
+      "columns": 87,
+      "pixels_exact": 250560,
+      "exact_eof_caret_present": false,
+      "glyphs": 1467
+    },
+    {
+      "label": "apps5-textedit-thumb-bottom",
+      "client": [
+        284,
+        162,
+        758,
+        480
+      ],
+      "first_row": 79,
+      "visible_rows": 18,
+      "columns": 87,
+      "pixels_exact": 250560,
+      "exact_eof_caret_present": true,
+      "glyphs": 1387
+    },
+    {
+      "label": "apps5-textedit-narrow",
+      "client": [
+        284,
+        162,
+        558,
+        380
+      ],
+      "first_row": 0,
+      "visible_rows": 13,
+      "columns": 62,
+      "pixels_exact": 128960,
+      "exact_eof_caret_present": false,
+      "glyphs": 548
+    }
+  ],
+  "document_sha256": "33ce500099ee25cc41381a7a575157ac8cc6692e1d38f0090447561d665e2bac",
+  "document_bytes": 8208
+}

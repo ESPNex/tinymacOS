@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 4 COMPLETE for local implementation + normal/sanitized host + full foundation/M0 + same-final-ISO retail live, GUI TMCFS2 installation, cold native and internal Recovery guest acceptance. Win/Command vs Ctrl, Win+R without plain R/F12, direct desktop New Folder, persistent free positions, cross-window real drops and all-system-field cursor/click handlers. No block 5, version bump or release/hardware certification.",
+  "status": "Macroblock 5 COMPLETE for implementation and local host/real-QEMU acceptance: actual CPU/RAM telemetry with explicit validity, TextEdit word/scalar wrap and soft-edge caret plus visible internal wheel/track/thumb scrolling, Calculator history glass +8px. Final full retail build, normal+ASan/UBSan foundation/M0, real 4-core workload and allocator counters, GUI install/cold boot, exact-pixel UTF8/scroll/resize and saved-byte integrity, Win+R vs R/F12 boot gate PASS. No block 6, public version bump, release or hardware certification.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 4,
-  "active_macroblock_title": "Desktop, Input e Scorciatoie",
+  "active_macroblock": 5,
+  "active_macroblock_title": "Applicazioni di Sistema",
   "active_macroblock_complete": true,
   "background_work_running": false,
   "release_ready": false,
@@ -90,10 +90,11 @@
   },
   "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
   "current_checks": {
-    "evidence": "macroblocco-3/VERIFICA.md",
-    "host": "PASS normal + ASan/UBSan animation/material/cache and foundation/M0",
-    "guest": "PASS retail before/after, Dock bottom/left pixel equality, 18 windows, dragging endpoints and fixed-work latency",
-    "block2_preserved": "No storage/native FS changes; kernels and listed apps byte-identical to baseline build",
+    "evidence": "macroblocco-5/VERIFICA.md",
+    "host": "PASS full foundation incl actual apps5 normal+ASan/UBSan, M3 timer/allocator, UTF8 long disk round-trip, block4 desktop/fields and M0 workspace",
+    "guest": "PASS real 4-core scheduler workloads and 8MiB alloc/free + 4MiB commit/release, fresh GUI install/cold boot, exact pixels on TextEdit scroll/resize and every original saved byte; Calculator history; Win+R vs R/F12",
+    "block2_preserved": "All storage/FS sources unchanged; TMCFS2-only rejection gate PASS. Kernels, Finder and Terminal byte-identical to block4.",
+    "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
     "hardware": "NOT TESTED"
   },
   "macroblock_1_closure": {
@@ -191,6 +192,24 @@
     ],
     "host_actual_field_families_normal_and_sanitized": 7,
     "native_cold_and_recovery_without_iso": true,
+    "physical_hardware_tested": false,
+    "release_ready": false
+  },
+  "macroblock_5": {
+    "complete_local": true,
+    "evidence": "macroblocco-5/VERIFICA.md",
+    "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+    "production_inputs_verified": 1079,
+    "production_paths_changed": 4,
+    "guest_receipts_passed": [
+      "telemetry-guest.json",
+      "visual-guest.json",
+      "boot-keys.json"
+    ],
+    "exact_textedit_frames": 6,
+    "exact_textedit_pixels_compared": 1381760,
+    "utf8_saved_bytes_verified": 8208,
+    "guest_cpus": 4,
     "physical_hardware_tested": false,
     "release_ready": false
   }

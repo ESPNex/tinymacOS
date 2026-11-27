@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+  "work": "/var/tmp/tmc-desktop4-boot-0zin1bnn",
+  "checks": [
+    {
+      "key": "meta_l-r",
+      "native_recovery": true,
+      "passed": true
+    },
+    {
+      "key": "f12",
+      "native_recovery": false,
+      "passed": true
+    },
+    {
+      "key": "r",
+      "native_recovery": false,
+      "passed": true
+    }
+  ],
+  "physical_hardware_tested": false
+}

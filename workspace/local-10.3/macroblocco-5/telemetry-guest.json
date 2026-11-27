@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "requested_cpus": 4,
+  "timer": "apic",
+  "work": "/var/tmp/tmc-m3-guest-blxoi_cp",
+  "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+  "checks": [
+    "Real Monitor 4-CPU bars and allocator labels; pause/sort freezes CPU card and resume works; guest sysstat completed actual threads/sleep/alloc/VM test and saved 13 native records",
+    "Raw coherent real scheduler windows: idle/sleep low, one worker normalized by 4 cores, all-core load rises; monotonic per-core and shared-process samples without underflow",
+    "Actual S_ALLOC 8MiB and VM commit 4MiB grow pool/user/per-process resident counters exactly; free/release return all user backing, only bounded empty page-table overhead remains",
+    "Cold native boot without ISO retains the guest-written report and functional Monitor telemetry"
+  ],
+  "intervals": {
+    "idle": {
+      "total_pct": 0.3184713375796178,
+      "process_pct": 0.1592356687898089,
+      "samples": 628,
+      "wall_ticks": 161,
+      "per_core_pct": [
+        0.6369426751592356,
+        0.0,
+        0.0,
+        0.6369426751592356
+      ]
+    },
+    "one": {
+      "total_pct": 25.191815856777495,
+      "process_pct": 24.808184143222505,
+      "samples": 782,
+      "wall_ticks": 200,
+      "per_core_pct": [
+        0.5102040816326531,
+        0.0,
+        0.5128205128205128,
+        100.0
+      ]
+    },
+    "multi": {
+      "total_pct": 86.70076726342711,
+      "process_pct": 85.80562659846548,
+      "samples": 782,
+      "wall_ticks": 200,
+      "per_core_pct": [
+        49.494949494949495,
+        100.0,
+        97.90575916230367,
+        100.0
+      ]
+    },
+    "sleep": {
+      "total_pct": 0.16025641025641027,
+      "process_pct": 0.0,
+      "samples": 624,
+      "wall_ticks": 160,
+      "per_core_pct": [
+        0.6451612903225806,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "memory": {
+    "mem0": [
+      331083776,
+      199696384,
+      535937024,
+      204853248,
+      130129920
+    ],
+    "alloc": [
+      331083776,
+      191291392,
+      535937024,
+      204853248,
+      138518528
+    ],
+    "free": [
+      331083776,
+      199680000,
+      535937024,
+      204853248,
+      130129920
+    ],
+    "commit": [
+      331083776,
+      195477504,
+      535937024,
+      204853248,
+      134324224
+    ],
+    "release": [
+      331083776,
+      199671808,
+      535937024,
+      204853248,
+      130129920
+    ]
+  }
+}

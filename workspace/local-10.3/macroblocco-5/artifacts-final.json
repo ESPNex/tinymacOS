@@ -1,0 +1,72 @@
+{
+  "base_commit": "6511537194e5ecf668bb205e8c673de61a8b0193",
+  "production_inputs_verified": 1079,
+  "production_paths_changed_from_block4": [
+    "tinymacOS/desktop/main.c",
+    "tinymacOS/userspace/calculator.c",
+    "tinymacOS/userspace/monitor.c",
+    "tinymacOS/userspace/textedit.c"
+  ],
+  "physical_hardware_tested": false,
+  "release_ready": false,
+  "artifacts": {
+    "tmc-block5-retail.iso": {
+      "sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+      "bytes": 227805184
+    },
+    "KernelCache": {
+      "sha256": "07407fe839f670bc4d3e4ffba37b4a40f87b50b3a973deb15cb9775a954fd435",
+      "bytes": 1298728
+    },
+    "kernel.elf": {
+      "sha256": "82a5bdec9c54aceb3acf8a2d278998751df9f87b4366dc96c5549688f609c684",
+      "bytes": 1298664
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "c920a34caadabc946a3d9186a6770993cf1503caf58f7ac2c398637fcc3a2267",
+      "bytes": 1298664
+    },
+    "BOOTX64.EFI": {
+      "sha256": "df9fb3768391f0fce0fa9bb12b9f23c3b5bc1e454e8ce9e6556e96a83d24789b",
+      "bytes": 177152
+    },
+    "RECBOOT.EFI": {
+      "sha256": "47190835e89b28ca96af89128b54ba589bc8711430d17ba30a1ef7bb7e905d9b",
+      "bytes": 173056
+    },
+    "desktop.elf": {
+      "sha256": "64961c1236027d76c9239ebbfe9cd0f2253ef0f3a2aaf851bbada31da7cfc56d",
+      "bytes": 2811392
+    },
+    "finder.elf": {
+      "sha256": "e097e479538a11109d1e7ec6ccc4216de3997f2b2d46718d2e317ffc203ea859",
+      "bytes": 50176
+    },
+    "terminal.elf": {
+      "sha256": "39e3e3f31a0464be9845a4b3e0b202e9e4c6f4b99c974cce8d2e80da38c557ac",
+      "bytes": 37752
+    },
+    "monitor.elf": {
+      "sha256": "e7111e7d454d532158ec563bc73aedcedddba0bfe66a2323251e749456caa6d5",
+      "bytes": 29184
+    },
+    "textedit.elf": {
+      "sha256": "6def03ffdc34156b5190b2dd4607fc268d9f8a94ad483c1770a634e4d9f85fa0",
+      "bytes": 37472
+    },
+    "calculator.elf": {
+      "sha256": "71758d74964f95a3b23c6b8ea43f9ffe2b60f878f0389409a1b82e437802eccf",
+      "bytes": 25352
+    }
+  },
+  "exact_textedit_pixel_frames": 6,
+  "exact_textedit_pixels_compared": 1381760,
+  "source_tests": {
+    "apps5_host.c": "87f04ce96ebed5bdd7f9a8b939791805b727bbd316150f276488d62babffb4cb",
+    "test-apps5.sh": "6cf805be4f9e61819ad5138556d40dc782afa853f0dd7f43b7d47130b841d0e1",
+    "apps5_telemetry_guest.py": "2d6f6edab18b299cd818f98393356644f1b063ec8188536a53c75410766dcc09",
+    "apps5_document_fixture.c": "4427d426a7d8a6ede62c12fce8580c7213907e31b5784c7d41351a818c5bb2be",
+    "apps5_visual_guest.py": "0add729c3fad855711aaddf9221678db66ffad998591af8d2aa73625258907a4",
+    "test-10.3-foundation.sh": "73c7dd254165d4dc9623605e52961cc9e78f5ce838a8e858f10c367e40415e9d"
+  }
+}

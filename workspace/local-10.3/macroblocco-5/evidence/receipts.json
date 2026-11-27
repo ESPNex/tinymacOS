@@ -1,0 +1,41 @@
+[
+  {
+    "original_external_path": "/var/tmp/tmc-m3-guest-blxoi_cp/evidence/m3-cold-monitor-4cores.png",
+    "original_sha256": "0c1c6be1c25c08cbc8de1cc31b4da59ace76c91e828fdfd08db557c81580b7ac",
+    "crop": [
+      290,
+      52,
+      1122,
+      735
+    ],
+    "persisted_file": "evidence/monitor-cpu-ram.png",
+    "persisted_sha256": "23e13bc0dc924a9f94a7d5fcfc1476e009ef48abf454dda2828a4089776af408",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m3-guest-blxoi_cp/evidence/apps5-textedit-narrow.png",
+    "original_sha256": "e1caad31393eef732716c947b2e757bc6d84914be24143d78ef13268490357e9",
+    "crop": [
+      278,
+      113,
+      850,
+      551
+    ],
+    "persisted_file": "evidence/textedit-wrap-scroll.png",
+    "persisted_sha256": "746dba047ee7a7eb57348dfbe69b78f8c785018e4a81c5ccdd005791bb44e51c",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m3-guest-blxoi_cp/evidence/apps5-calculator-history.png",
+    "original_sha256": "2f921f574622655e35edaf941e67d40b7cb16698c2a57a7c8b48d6ba7dbb3d8d",
+    "crop": [
+      350,
+      160,
+      972,
+      598
+    ],
+    "persisted_file": "evidence/calculator-history.png",
+    "persisted_sha256": "f282c71511d9408bbad5d686ac33f7b4cc0ac1a37083cfbe21bc56a187f60238",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  }
+]

@@ -29,7 +29,7 @@
     "desktop/glass.c": "6fb38e748ea461ae6fdf1e0f9cd573f23f09eecf9641b868700c9fc0b2dbb186",
     "desktop/input_budget.h": "eea3d53a0fc865c8787bda549ac1171c3aa9436d6790269fdc7288e1aefc5894",
     "desktop/login.c": "5e27e8d6ba562661b2edeeba565c3ce198097e5ae6e0eca40076fbe1f612484c",
-    "desktop/main.c": "e99ed642b90d894cc3a46621250e581e67f5766c60262c6f0aa61eb4683b7868",
+    "desktop/main.c": "d2c5293451dff42e6135a9b3a800ec3c85f4b257d6de9d7ec197dde5035fc274",
     "desktop/motion.c": "73ebaf5f1f005c8250fee9563770352f54c513abb6fe29490a828ad740720a66",
     "desktop/recovery.c": "79167b2b5a2f78357b577c61c0d49ebdb757da4f965a57275103aee783ad110d",
     "desktop/recovery_background.h": "c67710f34f3c3c8d9062acfdf72a0528dffa7ff7171de976d4fedb6fd1f9cfda",
@@ -123,7 +123,7 @@
     "storage/tmcbfs2_seed.c": "20a20d141431902b7ed5483fa384cd626fdf5401709fcffef6069150e0f5566d",
     "storage/vault_runtime.c": "aa27ddfb037997b6f4a125f4d68872c60086280d45e8b7e3264ffb4d52f5bc32",
     "userspace/about.c": "beaf3c65c4727f5f45b1d31b3757fe5933351dc69f6a2c94e09035e9c2ea2e28",
-    "userspace/calculator.c": "ad486efe694b1d7ba39a732eaa886cc10b3b97241e85e7d96c81830566663fe3",
+    "userspace/calculator.c": "f252a4c1e48edf01c38ef2eb4ad8b46a3f3cbcfe42996b44aa769b6e3929fc4a",
     "userspace/calendar.c": "820c663b2f90cfcd6627b360693e8cbe698417ff1080ce616d04951a8856c475",
     "userspace/command.c": "edc81c865d99feb92a79fbc648685afd3fc6b8e7b77fe12728753ac1356a086e",
     "userspace/diskutility.c": "9cc321999a8f5e0a80b030cbf2b01fbe5a129728d7ad16ea5be9c1f1a27aca2b",
@@ -139,7 +139,7 @@
     "userspace/inspector.c": "22a091ee3c67de2635a910863693832e9f0465a4b117bbca977d51578b8a5689",
     "userspace/installer.c": "faf0b1415fb7ec312fb89b731549cc03e4544dbb1710ce74da37a59e8dbd3253",
     "userspace/lib.h": "2f21719845a604d8afa93a5a76cb450bfc54da28ab053036166a6ae010c13e16",
-    "userspace/monitor.c": "c2ff6969bb8b30ecf2b49fcb957b470c53129e3ea77f9625d4837acc309bb18e",
+    "userspace/monitor.c": "43c5dccbb0408b1610e03e38a372cf31c5c47d3eb92caeefeddf304c7c3ae418",
     "userspace/notebook.h": "df680c2f56c6b37f7b92c93b654382ec2495322e97f190ecca804bb7bfdd4ced",
     "userspace/notes.c": "a013025b79027713599d889ac24823653a0a35a123ab9730460a136b0d292e97",
     "userspace/path.h": "76f39e8d76edde02c84a9e255bd0063e6d2d3fb8e980d870ec70d089552198c0",
@@ -150,7 +150,7 @@
     "userspace/stickies.c": "e6b758227e5040443423fa8acbb132ead0da62eb9898c022a739b53877134a5c",
     "userspace/sysstat.h": "3d2a18f92f40e5afadfedd58ad4de8ba1062600333c0f76133672c0d0c75f722",
     "userspace/terminal.c": "855700dc742464e95d2c2b3c37491edcd4d75ed5e444d3d75e50c345093cfcc6",
-    "userspace/textedit.c": "bdc17427f97c05398527d813cfc27a1ec6f77ef3f07eca745188cea323941074",
+    "userspace/textedit.c": "519447c0c3adac6e565eb1a9766807d232b56673c1144b3ecd0e802807e00c37",
     "userspace/timemachine.c": "dd88dde54df38a38ba7717b5866b18d36a4d5b9a9d68cb87273828eb5d736c8c",
     "userspace/ui.c": "b565d8c487b7689785caaf9b40b46d51384c047f23b1a6c2354089c89509b73b",
     "userspace/ui.h": "53da0961dc69d59b8c07b11b128379c73d63e7ca5a7a7145362583967ae3dee3",
@@ -158,20 +158,20 @@
     "userspace/vaultview.h": "afe70ff1b60b3fdc5a9c546bd6421e318e02d58823e56243166e127eb4059c43",
     "userspace/volume.h": "52265915bf6f0b3cf57e8d2d1c5574c88cd7445d8dd55b238bd0a1b019eb9760"
   },
-  "literal_count": 2474,
+  "literal_count": 2482,
   "counts_by_directory": {
     "boot": 106,
     "desktop": 307,
     "fs": 214,
     "include": 154,
     "storage": 128,
-    "userspace": 1565
+    "userspace": 1573
   },
   "counts_by_tag": {
     "diagnostic-or-assert-hint": 41,
-    "identifier-or-fragment-hint": 1163,
+    "identifier-or-fragment-hint": 1162,
     "safety-retain-meaning": 128,
     "technical-review": 17,
-    "text-review": 1141
+    "text-review": 1150
   }
 }

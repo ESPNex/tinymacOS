@@ -637,7 +637,7 @@ static void down(void)
             mode = 2;
         } else {
             if(v->s.app==FINDER){filedrag.pid=v->s.pid;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
-            if(v->s.app==TERMINAL){select_pid=v->s.pid;eventto(i,(Event){.type=EV_SELECT,.a=x-1,.b=y-TITLE,.c=1,.d=1});}
+            if(v->s.app==TERMINAL||v->s.app==TEXTEDIT){select_pid=v->s.pid;eventto(i,(Event){.type=EV_SELECT,.a=x-1,.b=y-TITLE,.c=1,.d=1});}
             int dbl=click_pair(&client_click,pointer_when,(u64)v->s.pid,mx,my);
             eventto(i, (Event) {
                 .type = EV_CLICK, .a = x - 1, .b = y - TITLE, .c = dbl, .when=pointer_when
