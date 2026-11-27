@@ -48,3 +48,7 @@ Safari/WebKit completo non incluso. ISO non USB-DD ibrida. Backup necessario.
 - Note: `tinymacOS/docs/NOTE-10.2.5-30B21.md`
 - Evidenze: `verification-30B21.json`, `evidence-30B21.tar.xz`
 - Pubblicazione: `publication-readback-30B21.json`, da verificare separatamente.
+
+## Conservazione delle evidenze storiche
+
+L’archivio locale duplicato è stato rimosso durante la pulizia M0 della 10.3, solo dopo riscaricamento e verifica SHA-256. Rimane disponibile al [commit immutabile pre-pulizia](https://raw.githubusercontent.com/ESPNex/tinymacOS/3453dc8a874be85197d7118df996d31788deb23d/workspace/local-10.2.5/hotfix/evidence-30B21.tar.xz). Hash, dimensione e comando di ripristino sono registrati in `workspace/local-10.3/m0/cleanup.json`. Nessun asset della release pubblicata è stato modificato.

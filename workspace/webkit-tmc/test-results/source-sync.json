@@ -21,7 +21,7 @@
   },
   {
     "path": "include/partition.h",
-    "sha256": "866adde03423953833f0e6474f760bb9a86f9320ae4b5f847596d8f257b24ba5"
+    "sha256": "4c234f8988d7b9c35da09bcbca97ee504e32ce8509df07dc985962762b2d9af1"
   },
   {
     "path": "include/clipboard.h",

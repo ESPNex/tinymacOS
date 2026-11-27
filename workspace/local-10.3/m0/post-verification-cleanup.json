@@ -1,0 +1,31 @@
+{
+  "kept_build": "/var/tmp/tmc-10.3/m0-a",
+  "reason": "Only latest verified M0 build kept for subsequent work; duplicate build hashes/guest results already persisted",
+  "removed": [
+    {
+      "path": "/var/tmp/tmc-10.3/m2-build",
+      "allocated_bytes": 359505920
+    },
+    {
+      "path": "/var/tmp/tmc-10.3/m0-repro-long-b",
+      "allocated_bytes": 359493632
+    },
+    {
+      "path": "/var/tmp/tmc-m0-ui-e0vj9ybj",
+      "allocated_bytes": 17895424
+    },
+    {
+      "path": "/var/tmp/tmc-m0-ui-xnev5x2r",
+      "allocated_bytes": 17895424
+    },
+    {
+      "path": "/home/user/tinymacOS/tools/__pycache__",
+      "allocated_bytes": 20480
+    },
+    {
+      "path": "/home/user/tinymacOS/tests/__pycache__",
+      "allocated_bytes": 53248
+    }
+  ],
+  "allocated_bytes_removed": 754864128
+}

@@ -1,0 +1,22 @@
+{
+  "profile": "canonical-usb-hid",
+  "passed": true,
+  "kernels": {
+    "kernel.elf": {
+      "sha256": "25730d17188e5a0cbca889a740ea7c1ff45c984a0d0b6816e1b3e00edb3db162",
+      "input_init": "0x4035210",
+      "entry_bytes": "e96bd7ffff",
+      "canonical_start": "0x4032980",
+      "scheduler_references_worker": "0x4032a90",
+      "whole_HID_symbols_present": true
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "516a868383d2a183ead113e8e8118bebc12bd6269d307543c822f663c772960c",
+      "input_init": "0x4035210",
+      "entry_bytes": "e96bd7ffff",
+      "canonical_start": "0x4032980",
+      "scheduler_references_worker": "0x4032a90",
+      "whole_HID_symbols_present": true
+    }
+  }
+}

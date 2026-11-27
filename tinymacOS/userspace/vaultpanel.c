@@ -33,7 +33,7 @@ void vault_view_draw(int x,int y,int w,int h)
   if(notice[0])vt(28,353,notice,F_SMALL,SUB);
  }else if(page==1){
   vt(28,90,op==1?"Attivazione FileVault":op==2?"Disattiva la cifratura":op==4?"Sblocca il volume":op==5?"Cambia password del volume":op==8?"Annulla attivazione non iniziata":"Rigenera la chiave di recupero",F_CAPTION,TX);
-  if(vi.format>=2&&(op==1||op==2))vt(28,337,"Recovery: prepara una copia esterna. Ripresa, non rollback.",F_MICRO,SUB);
+  if(vi.format>=2&&(op==1||op==2))vt(28,337,"Prepara una copia esterna. Ripresa possibile, annullamento no.",F_MICRO,SUB);
   vt(28,123,op==1&&!si.recovery?"Inserisci la password del tuo account.":op==8?"Inserisci la password del tuo account.":"Puoi usare anche la chiave di recupero.",F_SMALL,SUB);
   for(int i=0;i<fields;i++){const char *label=i==0?(op==4?"Password o chiave di recupero":op==1?"Nuova password del volume":"Password attuale"):i==1&&op==5?"Nuova password":"Conferma password";vt(28,159+i*57,label,F_SMALL,SUB);vb(28,179+i*57,vw-56,32,6,i==focus?SEL:PANEL);InputText(vx+39,vy+187+i*57,vw-78,input[i],strlen(input[i]),i==focus,1,TX);}
   if(notice[0])vt(28,354,notice,F_SMALL,SUB);vbutton(28,vh-58,120,"Annulla",0);vbutton(vw-180,vh-58,150,"Continua",1);

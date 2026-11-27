@@ -56,7 +56,7 @@ static void paint(void)
             int X = gx + 3 + (42 - hlen + j) * (gw - 7) / 41;
             Line(x, y + 68 - history[j - 1] * 44 / 100, X, y + 68 - history[j] * 44 / 100, si.dark ? 0x7edbb8 : 0x167855);
         }
-    Text(26, y + 67, paused ? "In pausa" : "Campioni scheduler", F_MICRO, SUB);
+    Text(26, y + 67, paused ? "In pausa" : "Campioni per intervallo", F_MICRO, SUB);
     int x = w + 37;
     Text(x, y + 10, "Memoria in uso", F_SMALL, SUB);
     z[0] = 0;

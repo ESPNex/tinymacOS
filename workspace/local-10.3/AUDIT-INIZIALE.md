@@ -1,5 +1,7 @@
 # Audit iniziale 10.3
 
+> Documento storico del primo checkpoint: i «non eseguito» qui sotto descrivono quel momento, non lo stato corrente. Per il ritorno a M0 e le verifiche aggiornate consultare `m0/VERIFICA.md`; per M1/M2 consultare le ricevute dedicate e `progress.json`.
+
 ## Riscontri dai sorgenti
 
 - `userspace/ui.c:Text` serializza ogni stringa in `Draw.text[100]`: massimo 99 byte, indipendentemente dal numero di caratteri Unicode. TextEdit passava una riga visiva intera in un solo comando: possibile troncamento con accenti. Introdotto `MonoText` per segmentare il testo su confini UTF-8 e mantenere le posizioni orizzontali del Mono fornito (advance 8 px).

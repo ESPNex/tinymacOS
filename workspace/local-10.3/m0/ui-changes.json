@@ -1,0 +1,122 @@
+[
+  {
+    "file": "userspace/installer.c",
+    "before": "tinymacOS gia installato",
+    "after": "tinymacOS già installato",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/installer.c",
+    "before": "Sistema e Recovery restano invariati. Serve il nuovo enrollment.",
+    "after": "Sistema e Recupero invariati. Configura le nuove credenziali.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/installer.c",
+    "before": "Un’interruzione può rendere i dati inaccessibili. Nessun rollback.",
+    "after": "Un’interruzione può rendere i dati inaccessibili. Non annullabile.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/settings.c",
+    "before": "Su questa GPU il cambio richiede un riavvio (GOP UEFI).",
+    "after": "Il cambio di risoluzione richiede un riavvio.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/settings.c",
+    "before": "Nessuna modalità GOP",
+    "after": "Nessuna risoluzione disponibile",
+    "occurrences": 2
+  },
+  {
+    "file": "userspace/settings.c",
+    "before": "Copia locale salvata",
+    "after": "Snapshot locale salvato",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/monitor.c",
+    "before": "Campioni scheduler",
+    "after": "Campioni per intervallo",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/diskutility.c",
+    "before": "BTRFS nativo: subset proprietario, non Btrfs Linux.",
+    "after": "Formato tinymacOS, non Btrfs Linux.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/diskutility.c",
+    "before": "Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.",
+    "after": "Nativo: 8.3–33.5 MB. FAT32: spazio libero in coda. NTFS: controllo Windows.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/diskutility.c",
+    "before": "Snapshot valido: integrità crc32c verificata.",
+    "after": "Integrità dello snapshot verificata.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/diskutility.c",
+    "before": "Immutabile · crc32c",
+    "after": "Sola lettura",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/timemachine.c",
+    "before": "Copia di sicurezza del disco",
+    "after": "Snapshot sullo stesso disco",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/timemachine.c",
+    "before": "I backup ereditano la crittografia",
+    "after": "Non protegge dai guasti del disco.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/timemachine.c",
+    "before": "Snapshot CoW",
+    "after": "Data non disponibile",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/timemachine.c",
+    "before": "L'immagine del backup verrà eliminata.",
+    "after": "Lo snapshot verrà eliminato.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/timemachine.c",
+    "before": "Backup valido (crc32c).",
+    "after": "Integrità del backup verificata.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/vaultpanel.c",
+    "before": "Recovery: prepara una copia esterna. Ripresa, non rollback.",
+    "after": "Prepara una copia esterna. Ripresa possibile, annullamento no.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/command.c",
+    "before": "fsck_apfs: nessun volume BTRFS/APFS montato su questo disco.",
+    "after": "fsck_apfs: nessun volume nativo montato su questo disco.",
+    "occurrences": 1
+  },
+  {
+    "file": "userspace/command.c",
+    "before": "Macintosh HD - Dati è gi\\u00e0 montato su / (BTRFS subset, struttura APFS).",
+    "after": "Macintosh HD - Dati è gi\\u00e0 montato su / (filesystem nativo tinymacOS).",
+    "occurrences": 1
+  },
+  {
+    "file": "include/partition.h",
+    "before": "BTRFS nativo (subset)",
+    "after": "tinymacOS (nativo)",
+    "occurrences": 1
+  }
+]

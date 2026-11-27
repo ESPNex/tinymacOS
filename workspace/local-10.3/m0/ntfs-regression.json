@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "only_disposable_fixtures": true,
+  "real_Windows_tested": false,
+  "runs": [
+    {
+      "mode": "normal",
+      "passed": true,
+      "checks": [
+        "shrink: three zero-write previews, real apply, exact backup BPB, independent allocation scan and 307200-byte file readback, bounds intact",
+        "grow: three zero-write previews, real apply, exact backup BPB, independent allocation scan and 307200-byte file readback, bounds intact",
+        "hibernated: three native refusals, zero writes, exact whole-image hash unchanged",
+        "corrupt: three native refusals, zero writes, exact whole-image hash unchanged",
+        "injected third write fails: no success/rollback claim, partition boundary canaries unchanged"
+      ]
+    },
+    {
+      "mode": "sanitized",
+      "passed": true,
+      "checks": [
+        "shrink: three zero-write previews, real apply, exact backup BPB, independent allocation scan and 307200-byte file readback, bounds intact",
+        "grow: three zero-write previews, real apply, exact backup BPB, independent allocation scan and 307200-byte file readback, bounds intact",
+        "hibernated: three native refusals, zero writes, exact whole-image hash unchanged",
+        "corrupt: three native refusals, zero writes, exact whole-image hash unchanged",
+        "injected third write fails: no success/rollback claim, partition boundary canaries unchanged"
+      ]
+    }
+  ]
+}

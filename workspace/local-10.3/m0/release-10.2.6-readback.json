@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "type": "Read-only current API metadata and digests compared with historical download receipt; no fresh ISO download",
+  "tag": {
+    "ref": "refs/tags/v10.2.6-pre-release",
+    "node_id": "REF_kwDOV1x1K71yZWZzL3RhZ3MvdjEwLjIuNi1wcmUtcmVsZWFzZQ",
+    "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/refs/tags/v10.2.6-pre-release",
+    "object": {
+      "sha": "2d31862200898711817ab9c7decb724953728d25",
+      "type": "commit",
+      "url": "https://api.github.com/repos/ESPNex/tinymacOS/git/commits/2d31862200898711817ab9c7decb724953728d25"
+    }
+  },
+  "assets": [
+    {
+      "digest": "sha256:9ad4b3b7dae9a8f01136f4413c8a98bc75546f4d1d365e0c4dcae00d702a5c17",
+      "name": "SHA256SUMS",
+      "size": 478
+    },
+    {
+      "digest": "sha256:d956dd8bc5f60fe07cc71d40e660fdb80305eb6709a5752eb63b11479bf415f5",
+      "name": "tinymacOS-10.2.6-NVMe-boot-helper.img",
+      "size": 17825792
+    },
+    {
+      "digest": "sha256:080ce2abe6d786ef0ec9f97989058d734c1e474dd2e70354a9b989b7b7f5247d",
+      "name": "tinymacOS-10.2.6-sorgenti.zip",
+      "size": 41024119
+    },
+    {
+      "digest": "sha256:2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149",
+      "name": "tinymacOS-10.2.6-x86_64.iso",
+      "size": 329580544
+    },
+    {
+      "digest": "sha256:4b0189fe5a8d4cb93292cf422a9075812187c74d32034bed5f9873725c85f21e",
+      "name": "VALIDAZIONE-10.2.6.md",
+      "size": 3918
+    },
+    {
+      "digest": "sha256:46d5b799090709bdf4ef12389655138326c4a9d818ffc4d4f4f01d6441173408",
+      "name": "VERIFICA-FINALE-10.2.6.tar.gz",
+      "size": 19942301
+    }
+  ],
+  "all_six_asset_sizes_and_digests_unchanged": true
+}

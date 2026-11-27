@@ -35,7 +35,7 @@ try:
         g.cmd('diskutil resizeVolume disk0s1 48 --confirm','Filesystem e partizione ridimensionati.')
         g.cmd('diskutil resizeVolume disk0s2 1 --confirm','NTFS non idoneo');g.shot('ntfs-honest-refusal')
         g.cmd('diskutil addPartition disk0 159744 32 Dati --confirm','Partizione nativa creata e verificata.',timeout=180)
-        g.cmd('diskutil list','BTRFS nativo (subset)');g.shot('native-created')
+        g.cmd('diskutil list','tinymacOS (nativo)');g.shot('native-created')
         g.cmd('diskutil resizeVolume disk0s4 24 --confirm','Filesystem e partizione ridimensionati',timeout=180);g.shot('native-shrunk')
         g.cmd('diskutil resizeVolume disk0s4 32 --confirm','Filesystem e partizione ridimensionati',timeout=180);g.shot('native-grown')
         g.cmd('open -a "Disk Utility"');g.visible('Utility Disco');g.key('down');g.visible('Ridimensiona…')

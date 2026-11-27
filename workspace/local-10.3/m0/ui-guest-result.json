@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "development_only": true,
+  "physical_hardware_tested": false,
+  "exhaustive_app_matrix": false,
+  "work": "/var/tmp/tmc-m0-ui-xnev5x2r",
+  "checks": [
+    "Setup with real USB input and Finder account home label still work",
+    "Time Machine renders the local-only scope and disk-failure warning, not a false external backup promise",
+    "Monitor renders concise interval sampling text; this is not CPU/RAM accounting certification",
+    "Display settings remain usable with actual emulated capabilities; no physical GOP claim",
+    "Recovery USB access, clean home and explicit About menu work; public baseline version not prematurely changed"
+  ],
+  "iso_sha256": "e313565922d75e7b6be079f9dce0cb653a40bc8e7bb41fd9626c614dbd07ebd6"
+}

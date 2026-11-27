@@ -16,6 +16,10 @@ with tarfile.open(archive) as t:
     t.extractall(src,filter='data')
 for name,h in lock['source_files'].items():assert hashlib.sha256((src/name).read_bytes()).hexdigest()==h,name
 C=['gcc','-O2','-g0','-ffreestanding','-fno-pie','-fno-builtin','-fno-stack-protector','-fno-unwind-tables','-fno-asynchronous-unwind-tables','-mno-red-zone','-mgeneral-regs-only','-ffunction-sections','-fdata-sections','-fstack-usage','-DHAVE_CONFIG_H','-I'+str(src),'-I'+str(src/'include/ntfs-3g'),'-I'+str(root/'include')]
+# Upstream diagnostics use __FILE__. Keep useful relative source names without
+# embedding the external extraction/build directory in the shipping kernel.
+C += ['-fno-ident', '-ffile-prefix-map='+str(src)+'=ntfs-native/source',
+      '-ffile-prefix-map='+str(root)+'=.']
 if '--sanitize' in sys.argv:C+=['-fsanitize=address,undefined','-fno-omit-frame-pointer','-g']
 def run(args):subprocess.run(list(map(str,args)),check=True)
 # Check layout against upstream declarations using the exact current compiler.

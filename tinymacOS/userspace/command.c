@@ -888,7 +888,7 @@ static int run(void)
         for (int i = 1; i < A.argc; i++)if (eq(V(i), "-y") || eq(V(i), "-f"))repair = 1;
         int dsk = di.current;
         if (dsk < 0 || dsk >= di.count || !di.disk[dsk].layout)
-            return fail("fsck_apfs: nessun volume BTRFS/APFS montato su questo disco.");
+            return fail("fsck_apfs: nessun volume nativo montato su questo disco.");
         ln(repair ? "Riparazione del volume in corso\u2026" : "Verifica del volume in corso\u2026");
         int r = sc(S_DISK, repair ? 1 : 4, dsk, 0, 0);
         if (r)return fail("fsck_apfs: controllo non riuscito; riprova con -y o avvia Recupero.");
@@ -900,7 +900,7 @@ static int run(void)
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
         int dsk = di.current;
         if (dsk >= 0 && dsk < di.count && di.disk[dsk].layout) {
-            ln("Macintosh HD - Dati è gi\u00e0 montato su / (BTRFS subset, struttura APFS).");
+            ln("Macintosh HD - Dati è gi\u00e0 montato su / (filesystem nativo tinymacOS).");
             return 0;
         }
         return fail("mount_apfs: nessun volume da montare. Vedi «diskutil list».");

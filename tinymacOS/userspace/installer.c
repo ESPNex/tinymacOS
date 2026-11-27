@@ -140,7 +140,7 @@ static void paint(void)
         Icon(aw/2-64, 30, 128, 38);
         Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
         Center(aw/2, 229, reinstall?"Per reinstallare il sistema, fai clic su Continua.":"Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
-        Center(aw/2, 266, reinstall?"Richiede tinymacOS gia installato; documenti e account conservati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
+        Center(aw/2, 266, reinstall?"Richiede tinymacOS già installato; documenti e account conservati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
         if(reinstall)Center(aw/2, 300, "Per una nuova installazione avvia il desktop live della ISO.", F_SMALL, SUB);
     } else if (page == 1) {
         Center(aw/2, 19, "Seleziona la destinazione", F_TITLE, TX);
@@ -176,8 +176,8 @@ static void paint(void)
         Text(x + 58, 106, s, F_SMALL, SUB);
         Box(x, 146, w, 1, 0, EDGE);
         Text(x, 164, reinstall?(encrypted?"Tutti i dati utente e le vecchie chiavi verranno eliminati.":"Verrà riscritto soltanto il volume di sistema selezionato."):"Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
-        Text(x, 189, reinstall?(encrypted?"Sistema e Recovery restano invariati. Serve il nuovo enrollment.":"Documenti, account, FileVault e snapshot restano invariati."):"Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
-        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Nessun rollback.":"Si usa la copia locale verificata, non un aggiornamento online."):info.disk[choice].repair_mbr_signature?"MBR protettivo: firma/copertura ripristinate solo con consenso.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
+        Text(x, 189, reinstall?(encrypted?"Sistema e Recupero invariati. Configura le nuove credenziali.":"Documenti, account, FileVault e snapshot restano invariati."):"Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
+        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Non annullabile.":"Si usa la copia locale verificata, non un aggiornamento online."):info.disk[choice].repair_mbr_signature?"MBR protettivo: firma/copertura ripristinate solo con consenso.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
         if(info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))){
             button(x,240,310,reinstall?"Inizializza dati cifrati…":encrypted?"FileVault attivo · Modifica…":"Proteggi con FileVault…",0);
             Text(x+326,247,encrypted?"Chiave confermata":reinstall?"Volume già sbloccato":"Facoltativo · tasto E",F_SMALL,SUB);

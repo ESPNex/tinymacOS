@@ -242,7 +242,7 @@ static void paint(void)
         sw(hsw[0], si.dock);
         Text(x, 365, "Il dock si sposta tra la sinistra e il bordo inferiore.", F_SMALL, SUB);
         int caps=sc(S_RESMODE,0,1,0,0);
-        Text(x,390,(caps&1)?"Cambio risoluzione immediato disponibile.":"Su questa GPU il cambio richiede un riavvio (GOP UEFI).",F_MICRO,SUB);
+        Text(x,390,(caps&1)?"Cambio risoluzione immediato disponibile.":"Il cambio di risoluzione richiede un riavvio.",F_MICRO,SUB);
         if(!(caps&1)&&!(caps&2))Text(x,413,"Avvio live: per salvare la scelta serve un sistema installato.",F_MICRO,SUB);
         if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
@@ -267,7 +267,7 @@ static void paint(void)
     } else if (pane == 3) {
         Text(x, 78, "TIME MACHINE", F_MICRO, SUB);
         int r0 = rowcard(x, 96, w, 3);
-        row2(x, r0, w, "STATO", nsn ? "Copia locale salvata" : "Nessuna copia");
+        row2(x, r0, w, "STATO", nsn ? "Snapshot locale salvato" : "Nessuna copia");
         char ns[24] = "";
         addnum(ns, fi.snaps, 24);
         row2(x, r0 + 40, w, "SNAPSHOT", ns);
@@ -342,12 +342,12 @@ static void paint(void)
             int measured=TextWidth(label,F_SMALL);widest=MAX(widest,measured);
         }
         int width=widest?MAX(132,widest+42):148;
-        if(!visible)width=MAX(width,TextWidth("Nessuna modalità GOP",F_SMALL)+20);
+        if(!visible)width=MAX(width,TextWidth("Nessuna risoluzione disponibile",F_SMALL)+20);
         width=MIN(width,aw-16);
         int anchor=MAX(8,MIN(hres.x+214-26,aw-width-8));
         hresmenu=(R){anchor,hres.y+34,width,MAX(1,visible)*RES_ROW+2*RES_PAD};
         Sheet(hresmenu.x,hresmenu.y,hresmenu.w,hresmenu.h,9);
-        if(!visible)Text(hresmenu.x+10,hresmenu.y+RES_PAD+2,"Nessuna modalità GOP",F_SMALL,SUB);
+        if(!visible)Text(hresmenu.x+10,hresmenu.y+RES_PAD+2,"Nessuna risoluzione disponibile",F_SMALL,SUB);
         for(int j=0;j<visible;j++){int i=res_scroll+j;if(i>=(int)si.nmodes)break;int yy=hresmenu.y+RES_PAD+j*RES_ROW;
             if(i==res_pick)Box(hresmenu.x+4,yy,hresmenu.w-8,RES_ROW-2,5,SEL);
             if(si.modes[i]==(((u32)si.w<<16)|si.h))Text(hresmenu.x+8,yy+2,"✓",F_SMALL,TX);

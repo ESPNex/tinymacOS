@@ -1,0 +1,35 @@
+{
+  "tool_versions": {
+    "gcc": [
+      "gcc (Debian 14.2.0-19) 14.2.0",
+      "Copyright (C) 2024 Free Software Foundation, Inc."
+    ],
+    "ld": [
+      "GNU ld (GNU Binutils for Debian) 2.44",
+      "Copyright (C) 2025 Free Software Foundation, Inc."
+    ],
+    "nasm": [
+      "NASM version 2.16.03"
+    ],
+    "python": [
+      "Python 3.13.18"
+    ],
+    "xorriso": [
+      "xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.",
+      ""
+    ],
+    "mtools": [
+      "mformat (GNU mtools) 4.0.48",
+      "configured with the following options: enable-xdf disable-vold disable-new-vold disable-debug enable-raw-term"
+    ]
+  },
+  "same_machine_only": true,
+  "source_date_epoch_override": null,
+  "build_recipe_sha256": {
+    "build.sh": "78cb8e4501656688f39f4abd41434277f7a02eab4102613b6602b085ab0e420f",
+    "tools/build-ntfs.py": "a8d781416be353360ab9a2f9b99c136832d12d7965b97907517b9b908d8c3468",
+    "tools/iso.sh": "6d6f03b803049fc394bc2dd60a6395e4fcd15b363d715351d75809003b1a84d1",
+    "tools/debian-amd64.lock.json": "01bfa727c57f2f365550efb6b4cd8cf1450e904e2cf0d85e392ed6bbc0326a1a"
+  },
+  "builds": "Two fresh external directories with different path lengths; same source/toolchain, sequential builds. No reuse of previous build outputs."
+}

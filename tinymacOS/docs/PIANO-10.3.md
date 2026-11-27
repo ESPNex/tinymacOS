@@ -15,6 +15,8 @@ Salvare hash dei file iniziali modificati e copia pre-intervento. Registrare att
 
 Accettazione: build ripetibile, sorgenti overlay sincronizzati, test delle protezioni USB e disco, niente regressioni sui font. 10.2.6 pubblicata intatta.
 
+**Ritorno esplicito a M0 dopo M2:** completato inventario statico con gate anti-deriva e revisione mirata dei testi; baseline estesa ricostruita dai commit originali, non retrodatata. Verifiche e limiti in `audit-10.3/README.md` e `../../workspace/local-10.3/m0/VERIFICA.md`. M3 non viene avanzato da questo intervento. La ripetibilità richiede confronto effettivo fra due build pulite, non due compilazioni dichiarate equivalenti.
+
 ## M1 — TextEdit e interazione con il testo
 
 Correggere ritorno a capo visivo e lettere troncate: larghezza effettiva della finestra, confini UTF-8, nessuna alterazione del file per il solo wrapping. Scroll rotella indipendente dal cursore, click collocato sulla posizione corretta, Home/End sulle righe visive. Ridimensionamento e ridisegno non devono riportare la vista al cursore.

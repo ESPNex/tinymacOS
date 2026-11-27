@@ -1,0 +1,394 @@
+{
+  "passed": true,
+  "first": "/var/tmp/tmc-10.3/m0-a",
+  "second": "/var/tmp/tmc-10.3/m0-repro-long-b",
+  "same_toolchain_environment_only": true,
+  "cross_machine_reproducibility": "NOT TESTED",
+  "physical_hardware_tested": false,
+  "artifacts": [
+    {
+      "name": "BOOTX64.EFI",
+      "first": {
+        "bytes": 172544,
+        "sha256": "03395f26e9922c90c2e8ef3223d3fcc273310827f56957f281dee10f65d80acb"
+      },
+      "second": {
+        "bytes": 172544,
+        "sha256": "03395f26e9922c90c2e8ef3223d3fcc273310827f56957f281dee10f65d80acb"
+      },
+      "identical": true
+    },
+    {
+      "name": "BootConfig.bin",
+      "first": {
+        "bytes": 512,
+        "sha256": "f805756bc25b2b1052ede3857ca2e192ea4f6fdb467629be8022c79812f3bead"
+      },
+      "second": {
+        "bytes": 512,
+        "sha256": "f805756bc25b2b1052ede3857ca2e192ea4f6fdb467629be8022c79812f3bead"
+      },
+      "identical": true
+    },
+    {
+      "name": "DiskBootConfig.bin",
+      "first": {
+        "bytes": 512,
+        "sha256": "e4821df20114d770f48101d68778a6301c9f1406724c99f315de5d10819d5dae"
+      },
+      "second": {
+        "bytes": 512,
+        "sha256": "e4821df20114d770f48101d68778a6301c9f1406724c99f315de5d10819d5dae"
+      },
+      "identical": true
+    },
+    {
+      "name": "KernelCache",
+      "first": {
+        "bytes": 1229000,
+        "sha256": "6076cb1ea557dde5f1de8e8017eb3a81966f4638eba59e3f269c33f60b473288"
+      },
+      "second": {
+        "bytes": 1229000,
+        "sha256": "6076cb1ea557dde5f1de8e8017eb3a81966f4638eba59e3f269c33f60b473288"
+      },
+      "identical": true
+    },
+    {
+      "name": "Payload.sha",
+      "first": {
+        "bytes": 64,
+        "sha256": "3d021aee9f4cad92a4918c539f0810eb7e60892c5d5f4f7a6d244cecff4506f7"
+      },
+      "second": {
+        "bytes": 64,
+        "sha256": "3d021aee9f4cad92a4918c539f0810eb7e60892c5d5f4f7a6d244cecff4506f7"
+      },
+      "identical": true
+    },
+    {
+      "name": "Payload4K.sha",
+      "first": {
+        "bytes": 64,
+        "sha256": "c1c518d8ab42d7b1788bafd70198e01d0e8b9ad37259566252b9f9b1b316cb2f"
+      },
+      "second": {
+        "bytes": 64,
+        "sha256": "c1c518d8ab42d7b1788bafd70198e01d0e8b9ad37259566252b9f9b1b316cb2f"
+      },
+      "identical": true
+    },
+    {
+      "name": "RECBOOT.EFI",
+      "first": {
+        "bytes": 161792,
+        "sha256": "8224913ec85a076283f80f273f870a9c83a54e9dbe3d1203756188074c5e512b"
+      },
+      "second": {
+        "bytes": 161792,
+        "sha256": "8224913ec85a076283f80f273f870a9c83a54e9dbe3d1203756188074c5e512b"
+      },
+      "identical": true
+    },
+    {
+      "name": "RecoveryKernel.elf",
+      "first": {
+        "bytes": 1228936,
+        "sha256": "516a868383d2a183ead113e8e8118bebc12bd6269d307543c822f663c772960c"
+      },
+      "second": {
+        "bytes": 1228936,
+        "sha256": "516a868383d2a183ead113e8e8118bebc12bd6269d307543c822f663c772960c"
+      },
+      "identical": true
+    },
+    {
+      "name": "System-disk.vol",
+      "first": {
+        "bytes": 21063440,
+        "sha256": "8b649c4a6b435f0bd1a03e5ffa6cd9b5af10423f763562a479632f6ce8915950"
+      },
+      "second": {
+        "bytes": 21063440,
+        "sha256": "8b649c4a6b435f0bd1a03e5ffa6cd9b5af10423f763562a479632f6ce8915950"
+      },
+      "identical": true
+    },
+    {
+      "name": "System-live.vol",
+      "first": {
+        "bytes": 21139517,
+        "sha256": "771f3f24b0c405313e543f5f08a8ed9410212cc8846acc63e0a198f352c7783c"
+      },
+      "second": {
+        "bytes": 21139517,
+        "sha256": "771f3f24b0c405313e543f5f08a8ed9410212cc8846acc63e0a198f352c7783c"
+      },
+      "identical": true
+    },
+    {
+      "name": "System-recovery.vol",
+      "first": {
+        "bytes": 5733353,
+        "sha256": "1bf185933662e753329c0c0cda19da281b2b55724b73d84f90be8a548ccdf89e"
+      },
+      "second": {
+        "bytes": 5733353,
+        "sha256": "1bf185933662e753329c0c0cda19da281b2b55724b73d84f90be8a548ccdf89e"
+      },
+      "identical": true
+    },
+    {
+      "name": "about.elf",
+      "first": {
+        "bytes": 20960,
+        "sha256": "f4decc2971fa67544fd6a0d67a63a474652e1c7802f6bee443507a0a292105c8"
+      },
+      "second": {
+        "bytes": 20960,
+        "sha256": "f4decc2971fa67544fd6a0d67a63a474652e1c7802f6bee443507a0a292105c8"
+      },
+      "identical": true
+    },
+    {
+      "name": "bios-coexist.bin",
+      "first": {
+        "bytes": 440,
+        "sha256": "485a9c2dcbf62440e8474899abc263aedbe25bc6881b89db084b4e0a19befeca"
+      },
+      "second": {
+        "bytes": 440,
+        "sha256": "485a9c2dcbf62440e8474899abc263aedbe25bc6881b89db084b4e0a19befeca"
+      },
+      "identical": true
+    },
+    {
+      "name": "bios-mbr.bin",
+      "first": {
+        "bytes": 440,
+        "sha256": "1a98c4c11e33fa8e14ed9d58eae5ec853975708c6965216443f11ddc42f4d3b8"
+      },
+      "second": {
+        "bytes": 440,
+        "sha256": "1a98c4c11e33fa8e14ed9d58eae5ec853975708c6965216443f11ddc42f4d3b8"
+      },
+      "identical": true
+    },
+    {
+      "name": "calculator.elf",
+      "first": {
+        "bytes": 21256,
+        "sha256": "80bda1deab1c8656f60a3167cf5c6bdd1a7010cb6915d49d1912404a62113cc4"
+      },
+      "second": {
+        "bytes": 21256,
+        "sha256": "80bda1deab1c8656f60a3167cf5c6bdd1a7010cb6915d49d1912404a62113cc4"
+      },
+      "identical": true
+    },
+    {
+      "name": "calendar.elf",
+      "first": {
+        "bytes": 25152,
+        "sha256": "3117c579ff6288d403ffbfe765baa3fa22e339bef2c9869eafb66fb28303251c"
+      },
+      "second": {
+        "bytes": 25152,
+        "sha256": "3117c579ff6288d403ffbfe765baa3fa22e339bef2c9869eafb66fb28303251c"
+      },
+      "identical": true
+    },
+    {
+      "name": "command.elf",
+      "first": {
+        "bytes": 58144,
+        "sha256": "7143f8c50ce409c59b3a5ed7f5b4f87140b93fdd6843665b1234766c034ac2dc"
+      },
+      "second": {
+        "bytes": 58144,
+        "sha256": "7143f8c50ce409c59b3a5ed7f5b4f87140b93fdd6843665b1234766c034ac2dc"
+      },
+      "identical": true
+    },
+    {
+      "name": "desktop.elf",
+      "first": {
+        "bytes": 2799104,
+        "sha256": "0c93e7ce10dbd2a75f1fa4eb5f9051a7f35b49328129f5f4c9a5219af115838f"
+      },
+      "second": {
+        "bytes": 2799104,
+        "sha256": "0c93e7ce10dbd2a75f1fa4eb5f9051a7f35b49328129f5f4c9a5219af115838f"
+      },
+      "identical": true
+    },
+    {
+      "name": "diskutility.elf",
+      "first": {
+        "bytes": 33288,
+        "sha256": "a2edcf678e89dc234aec92868ce4271bf3e84415891602af11973770f0365e4a"
+      },
+      "second": {
+        "bytes": 33288,
+        "sha256": "a2edcf678e89dc234aec92868ce4271bf3e84415891602af11973770f0365e4a"
+      },
+      "identical": true
+    },
+    {
+      "name": "finder.elf",
+      "first": {
+        "bytes": 46064,
+        "sha256": "f1461ee979f6e2c139226e4f9503394c3944f51fdd50899f119bc94813eb3f7e"
+      },
+      "second": {
+        "bytes": 46064,
+        "sha256": "f1461ee979f6e2c139226e4f9503394c3944f51fdd50899f119bc94813eb3f7e"
+      },
+      "identical": true
+    },
+    {
+      "name": "gallery.elf",
+      "first": {
+        "bytes": 21136,
+        "sha256": "28faf0ffc4771695b3218edc04101a780640a24631f9ba848eb6f20d0a0515cd"
+      },
+      "second": {
+        "bytes": 21136,
+        "sha256": "28faf0ffc4771695b3218edc04101a780640a24631f9ba848eb6f20d0a0515cd"
+      },
+      "identical": true
+    },
+    {
+      "name": "installer.elf",
+      "first": {
+        "bytes": 33280,
+        "sha256": "ef75606642fabfba7bb36829d7867abc938e29f02de37ebe959a2f8e5e859c28"
+      },
+      "second": {
+        "bytes": 33280,
+        "sha256": "ef75606642fabfba7bb36829d7867abc938e29f02de37ebe959a2f8e5e859c28"
+      },
+      "identical": true
+    },
+    {
+      "name": "kernel.elf",
+      "first": {
+        "bytes": 1228936,
+        "sha256": "25730d17188e5a0cbca889a740ea7c1ff45c984a0d0b6816e1b3e00edb3db162"
+      },
+      "second": {
+        "bytes": 1228936,
+        "sha256": "25730d17188e5a0cbca889a740ea7c1ff45c984a0d0b6816e1b3e00edb3db162"
+      },
+      "identical": true
+    },
+    {
+      "name": "monitor.elf",
+      "first": {
+        "bytes": 25088,
+        "sha256": "beba57424cec7150a7b476e7513f349d07079cfeab72cd8863000fc66271bd78"
+      },
+      "second": {
+        "bytes": 25088,
+        "sha256": "beba57424cec7150a7b476e7513f349d07079cfeab72cd8863000fc66271bd78"
+      },
+      "identical": true
+    },
+    {
+      "name": "notes.elf",
+      "first": {
+        "bytes": 29096,
+        "sha256": "3c074edc8ef6139d65645ec335a755d5b236c1361478895c2b8331c090b7e114"
+      },
+      "second": {
+        "bytes": 29096,
+        "sha256": "3c074edc8ef6139d65645ec335a755d5b236c1361478895c2b8331c090b7e114"
+      },
+      "identical": true
+    },
+    {
+      "name": "recovery-4k.img",
+      "first": {
+        "bytes": 10485760,
+        "sha256": "d67cb88bdf71a63461d6185874537d856d4768ec916f9c74b0d4adf9fc4cde9c"
+      },
+      "second": {
+        "bytes": 10485760,
+        "sha256": "d67cb88bdf71a63461d6185874537d856d4768ec916f9c74b0d4adf9fc4cde9c"
+      },
+      "identical": true
+    },
+    {
+      "name": "settings.elf",
+      "first": {
+        "bytes": 41720,
+        "sha256": "3d72bdc52f93b7509e7e6ffdce5748d877275f15d2d89428e5f753d439ac8b0f"
+      },
+      "second": {
+        "bytes": 41720,
+        "sha256": "3d72bdc52f93b7509e7e6ffdce5748d877275f15d2d89428e5f753d439ac8b0f"
+      },
+      "identical": true
+    },
+    {
+      "name": "stickies.elf",
+      "first": {
+        "bytes": 29096,
+        "sha256": "97d427853c0735012d4d4af3255c287d2412aacd149f241b440fe48c5eb5262f"
+      },
+      "second": {
+        "bytes": 29096,
+        "sha256": "97d427853c0735012d4d4af3255c287d2412aacd149f241b440fe48c5eb5262f"
+      },
+      "identical": true
+    },
+    {
+      "name": "terminal.elf",
+      "first": {
+        "bytes": 33496,
+        "sha256": "3cf22a3f4648448433e5b435c45ca72949ce5cb539a68f5cd6f12a229ca2ff71"
+      },
+      "second": {
+        "bytes": 33496,
+        "sha256": "3cf22a3f4648448433e5b435c45ca72949ce5cb539a68f5cd6f12a229ca2ff71"
+      },
+      "identical": true
+    },
+    {
+      "name": "textedit.elf",
+      "first": {
+        "bytes": 33360,
+        "sha256": "e2e9d703f60aeed444900332221a07be79318503535106dd1f2793d1369be351"
+      },
+      "second": {
+        "bytes": 33360,
+        "sha256": "e2e9d703f60aeed444900332221a07be79318503535106dd1f2793d1369be351"
+      },
+      "identical": true
+    },
+    {
+      "name": "timemachine.elf",
+      "first": {
+        "bytes": 25088,
+        "sha256": "d6503b016c17ad0fd04dcd68c03fa9b476a2eee2dd1c7707ffaac05a77681ad6"
+      },
+      "second": {
+        "bytes": 25088,
+        "sha256": "d6503b016c17ad0fd04dcd68c03fa9b476a2eee2dd1c7707ffaac05a77681ad6"
+      },
+      "identical": true
+    },
+    {
+      "name": "tinymacOS-10.3-M0-development.iso",
+      "first": {
+        "bytes": 227639296,
+        "sha256": "e313565922d75e7b6be079f9dce0cb653a40bc8e7bb41fd9626c614dbd07ebd6"
+      },
+      "second": {
+        "bytes": 227639296,
+        "sha256": "e313565922d75e7b6be079f9dce0cb653a40bc8e7bb41fd9626c614dbd07ebd6"
+      },
+      "identical": true
+    }
+  ]
+}

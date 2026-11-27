@@ -19,7 +19,7 @@ typedef struct {
     char reason[96];
 } DiskMap;
 static inline const char *filesystem_name(int f){
-    const char *const n[]={"RAW / non riconosciuto","FAT12","FAT16","FAT32","NTFS","exFAT","BTRFS nativo (subset)","Altro filesystem","Errore di lettura","BTRFS"};
+    const char *const n[]={"RAW / non riconosciuto","FAT12","FAT16","FAT32","NTFS","exFAT","tinymacOS (nativo)","Altro filesystem","Errore di lettura","BTRFS"};
     return f>=0&&f<(int)COUNT(n)?n[f]:n[0];
 }
 static inline const char *partition_scheme(int s){return s==MAP_GPT?"GPT":s==MAP_MBR?"MBR":s==MAP_EMPTY?"Senza tabella":"Tabella non valida";}

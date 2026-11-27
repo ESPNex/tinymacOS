@@ -84,7 +84,7 @@ static void yes(void)
 static void paint(void)
 {
     begin();
-    Text(15, 9, "Copia di sicurezza del disco", F_SMALL, SUB);
+    Text(15, 9, "Snapshot sullo stesso disco", F_SMALL, SUB);
     Text(14, 29, "Time Machine", F_TITLE, TX);
     button(aw - 178, 20, 160, "Esegui backup ora", 1);
     // Left card: volume, usage, snapshot count, encryption.
@@ -109,7 +109,7 @@ static void paint(void)
     Text(30, 202, "Crittografia", F_SMALL, SUB);
     Text(118, 201, ei.state ? (ei.locked ? "Attiva (bloccata)" : "Attiva (sbloccata)") : "Disattiva",
          F_BODY, TX);
-    Text(30, 224, "I backup ereditano la crittografia", F_MICRO, SUB);
+    Text(30, 224, "Non protegge dai guasti del disco.", F_MICRO, SUB);
     // Right: backup timeline.
     Text(226, 70, "Linea temporale dei backup", F_SMALL, SUB);
     if(pagebase||more){button(aw-78,64,28,"<",0);button(aw-44,64,28,">",0);}
@@ -122,7 +122,7 @@ static void paint(void)
         Box(226, Y, aw - 240, 30, 7, sel == i ? SEL : (i & 1 ? SOFT : CARD));
         char t[24] = "";
         dt(t, 24, sn[i].date);
-        Text(238, Y + 4, sn[i].date?t:"Snapshot CoW", F_SMALL, TX);
+        Text(238, Y + 4, sn[i].date?t:"Data non disponibile", F_SMALL, TX);
         Text(238, Y + 17, sn[i].name, F_MICRO, SUB);
         char idz[12] = "id ";
         addnum(idz, sn[i].id, 12);
@@ -139,7 +139,7 @@ static void paint(void)
         Icon(xx + 20, yy + 16, 42, 42);
         Text(xx + 76, yy + 24, op == 2 ? "Ripristina backup" : "Elimina backup", F_CAPTION, TX);
         Text(xx + 20, yy + 76, op == 2 ? "Il volume torna allo stato del backup." :
-             "L'immagine del backup verrà eliminata.", F_SMALL, TX);
+             "Lo snapshot verrà eliminato.", F_SMALL, TX);
         Text(xx + 20, yy + 100, op == 2 ? "I file creati dopo il backup verranno persi." :
              "Questa azione non è reversibile.", F_SMALL, SUB);
         button(xx + tw - 216, yy + 145, 88, "Annulla", 0);
@@ -204,7 +204,7 @@ void app_main(void)
                     if (sel < 0)strset(msg, "Seleziona un backup.", sizeof msg);
                     else {
                         int r = sc(S_SNAP, 3, sn[sel].name, 0, 0);
-                        strset(msg, r ? "Backup danneggiato." : "Backup valido (crc32c).", sizeof msg);
+                        strset(msg, r ? "Backup danneggiato." : "Integrità del backup verificata.", sizeof msg);
                     }
                 } else if (e.a >= aw - 98 && e.a < aw - 10) {
                     if (sel < 0)strset(msg, "Seleziona un backup.", sizeof msg);

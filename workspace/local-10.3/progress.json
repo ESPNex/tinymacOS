@@ -1,7 +1,7 @@
 {
   "version_target": "10.3",
   "base": "10.2.6 / 30C1",
-  "status": "development, partial source changes with passing host tests; NOT a complete release",
+  "status": "Development: returned to M0 after M2; source inventory, safety contracts, clean repeat builds and targeted UI guest PASS; not a release",
   "background_work_running": false,
   "Safari_in_scope": false,
   "published": false,
@@ -13,7 +13,7 @@
     "exFAT": "export a copy, retain original and snapshots"
   },
   "macroblocks": {
-    "M0": "plan and baseline hashes recorded; initial audit done",
+    "M0": "Revisited explicitly: local cleanup with immutable remote readback; extended source baseline reconstructed honestly; 135-file/2337-literal inventory, 20 wording fixes, font/USB/disk safety gates; two clean builds yield 32 byte-identical artifacts including ISO; targeted live/Recovery guest PASS. Full visual/hardware matrix remains M7.",
     "M1": "Implementation and targeted host/integration guest checks PASS; hardware and exhaustive app-field matrix remain final release gates",
     "M2": "Implementation and targeted normal/sanitized host + full ISO + real GUI installation/cold-boot guest PASS. Full selected gap FS2 v2, v1 reader compatibility, decimal sizes/input, actual extents, account home labels and duplicate snapshot action fixed. Physical and unsupported-capacity release gates remain.",
     "M3": "multicore CPU interval source fix and actual sample() host tests PASS; RAM accounting audit and runtime verification pending",
@@ -43,11 +43,22 @@
       "guest": "PASS real GUI install in 10GiB genuine gap, v2 descriptor/full FS2 data extent, occupied boundaries + GPT entries unchanged, PMBR consent/cancel, ISO-detached cold NVMe boot and imported account/file",
       "physical_hardware": "NOT RUN",
       "capacity_limit": "Existing 1TiB ABI/backend ceiling retained; >2TB not claimed supported"
+    },
+    "M0": {
+      "source_and_safety_contract": "PASS, including negative test for removal of destructive warning",
+      "font_rebuild": "PASS supplied OTFs only, exact production TFN/panic font",
+      "same_environment_repeatability": "PASS 32 artifacts incl full ISO, different-length clean external paths; first absolute-path leak documented and fixed",
+      "NTFS_regression": "PASS actual shrink/grow + hibernated/corrupt/write-failure cases, normal and ASan/UBSan, independent ntfscat/ntfsresize",
+      "GUI_guest": "PASS final repeatable ISO: setup/home, local-only backup warning, Monitor, display settings, Recovery menu/version",
+      "published_10.2.6": "Tag target and six asset sizes/digests re-read from GitHub, unchanged; no fresh release ISO download claimed",
+      "cross_machine_builds": "NOT TESTED",
+      "physical_hardware": "NOT RUN"
     }
   },
   "next_steps": [
-    "M3: audit installed/usable/allocator RAM distinctions and runtime CPU accounting",
-    "Continue M4-M7 in order; hardware and full release matrix pending"
+    "M0 evidence/commit review; no M3 advancement in this user-requested return",
+    "Resume ordered plan only after this checkpoint; M3 RAM/runtime audit still pending",
+    "Full app-field, hardware/capacity/4Kn and release matrix remain open"
   ],
   "references": [
     "tinymacOS/docs/PIANO-10.3.md",
@@ -57,8 +68,8 @@
   "git": {
     "target_branch": "main",
     "remote": "https://github.com/ESPNex/tinymacOS",
-    "checkpoint_pushed": "459ee0c",
+    "checkpoint_pushed": "3453dc8a874be85197d7118df996d31788deb23d",
     "remote_hash_verified": true,
-    "note": "Previous verified remote checkpoint; M2 source/evidence commit follows this record (avoid self-referential commit hash)."
+    "note": "Previous verified M2 main commit; this record is included in the subsequent M0 cleanup/audit commit (no self-referential hash)."
   }
 }

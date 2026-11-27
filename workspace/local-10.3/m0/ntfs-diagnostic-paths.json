@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "build": "m0-a",
+      "artifact": "kernel.elf",
+      "relative_NTFS_diagnostic_present": true,
+      "local_build_path_leaked": false
+    },
+    {
+      "build": "m0-a",
+      "artifact": "RecoveryKernel.elf",
+      "relative_NTFS_diagnostic_present": true,
+      "local_build_path_leaked": false
+    },
+    {
+      "build": "m0-repro-long-b",
+      "artifact": "kernel.elf",
+      "relative_NTFS_diagnostic_present": true,
+      "local_build_path_leaked": false
+    },
+    {
+      "build": "m0-repro-long-b",
+      "artifact": "RecoveryKernel.elf",
+      "relative_NTFS_diagnostic_present": true,
+      "local_build_path_leaked": false
+    }
+  ]
+}

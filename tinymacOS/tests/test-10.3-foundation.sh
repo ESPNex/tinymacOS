@@ -2,6 +2,7 @@
 # Host gate only: this script does NOT claim a complete 10.3 release or guest QA.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 tests/test-m0.py
 for suite in textedit-open ui-stream display-size cpu-sample windows-gaps caret filepanel m2-geometry;do
  bash "tests/test-$suite.sh"
 done

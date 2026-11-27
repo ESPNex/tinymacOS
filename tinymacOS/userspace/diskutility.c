@@ -66,7 +66,7 @@ static void edit_paint(void)
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"Formato tinymacOS, non Btrfs Linux.":"Nativo: 8.3–33.5 MB. FAT32: spazio libero in coda. NTFS: controllo Windows.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
         if(edit.op!=DISK_EDIT_DELETE){char size[80]="Dimensione effettiva: ",exact[32];disk_size_mb_exact(exact,sizeof exact,edit.size);append(size,exact,sizeof size);append(size," MB",sizeof size);Text(xx+20,yy+166,size,F_SMALL,TX);}
@@ -187,7 +187,7 @@ static void verify_now(void)
         return;
     }
     int r = sc(S_SNAP, 3, sn[view - 100].name, 0, 0);
-    strset(msg, r ? "Verifica fallita: immagine danneggiata." : "Snapshot valido: integrità crc32c verificata.",
+    strset(msg, r ? "Verifica fallita: immagine danneggiata." : "Integrità dello snapshot verificata.",
            sizeof msg);
 }
 static void yes(void)
@@ -272,7 +272,7 @@ static void paint(void)
         s[0] = 0;
         strset(s,"Condivisa (CoW)",sizeof s);
         pair(x, 221, "Dimensione", s);
-        pair(x, 254, "Stato", "Immutabile · crc32c");
+        pair(x, 254, "Stato", "Sola lettura");
         button(x, 282, 110, "Ripristina", 1);
         button(x + 118, 282, 96, "Verifica", 0);
         button(x + 222, 282, 96, "Elimina", 0);

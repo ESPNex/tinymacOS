@@ -1,0 +1,7 @@
+{
+  "initial_kernel_differing_bytes": 20,
+  "cause": "Absolute extraction paths embedded by upstream NTFS __FILE__ diagnostics",
+  "fix": "Compiler -ffile-prefix-map for external NTFS source and OS root; preserve useful relative diagnostic paths",
+  "not_a_runtime_driver_replacement": true,
+  "initial_failed_receipt": "build-repeatability-first-failure.json"
+}

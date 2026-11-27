@@ -1,0 +1,104 @@
+{
+  "phase": "cleanup before M0 edits",
+  "immutable_remote_commit": "3453dc8a874be85197d7118df996d31788deb23d",
+  "preserved": [
+    "current sources and tests",
+    "supplied fonts and Safari/WebKit resources",
+    "original uploaded photos",
+    "10.3 evidence and 10.2.x small receipts/screenshots",
+    "current M2 build for repeatability comparison",
+    "Git bundle and CLI auth (never committed)"
+  ],
+  "removed_remote_duplicates": [
+    {
+      "path": "workspace/local-10.2.6/evidence.tar.xz",
+      "bytes": 8061852,
+      "sha256": "0ad13b94e297b2f8302a66046716e017cf568f10e8f5eeeb62736a49f4265806",
+      "verified_download_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/3453dc8a874be85197d7118df996d31788deb23d/workspace/local-10.2.6/evidence.tar.xz",
+      "restore": "git show 3453dc8a874be85197d7118df996d31788deb23d:workspace/local-10.2.6/evidence.tar.xz > workspace/local-10.2.6/evidence.tar.xz"
+    },
+    {
+      "path": "workspace/local-10.2.5/hotfix/evidence-30B21.tar.xz",
+      "bytes": 7437524,
+      "sha256": "f638d06d5f0cb45d11baeeb9ea43bbeb4133be94fdb87ef7acedbc29d0a3e653",
+      "verified_download_url": "https://raw.githubusercontent.com/ESPNex/tinymacOS/3453dc8a874be85197d7118df996d31788deb23d/workspace/local-10.2.5/hotfix/evidence-30B21.tar.xz",
+      "restore": "git show 3453dc8a874be85197d7118df996d31788deb23d:workspace/local-10.2.5/hotfix/evidence-30B21.tar.xz > workspace/local-10.2.5/hotfix/evidence-30B21.tar.xz"
+    }
+  ],
+  "removed_regenerable": [
+    {
+      "path": "/home/user/tinymacOS/tools/__pycache__",
+      "logical_bytes": 10668
+    },
+    {
+      "path": "/home/user/tinymacOS/tests/__pycache__",
+      "logical_bytes": 48178
+    },
+    {
+      "path": "/var/tmp/tmc-10.3/m1-build",
+      "logical_bytes": 363374729
+    },
+    {
+      "path": "/var/tmp/tmc-m1-caret-h5ij4ajq",
+      "logical_bytes": 5769165
+    },
+    {
+      "path": "/var/tmp/tmc-pmbr-signature-hbh0vzlq",
+      "logical_bytes": 34377966573
+    },
+    {
+      "path": "/var/tmp/tmc-finder-transfers-FpgbI8uU",
+      "logical_bytes": 231432
+    },
+    {
+      "path": "/var/tmp/tmc-103-ui.c.o",
+      "logical_bytes": 11144
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-notes.c.o",
+      "logical_bytes": 20944
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-filepanel.c.o",
+      "logical_bytes": 18544
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-stickies.c.o",
+      "logical_bytes": 22216
+    },
+    {
+      "path": "/var/tmp/tmc-103-diskutility.c.o",
+      "logical_bytes": 39384
+    },
+    {
+      "path": "/var/tmp/tmc-103-desktop-main.c.o",
+      "logical_bytes": 51448
+    },
+    {
+      "path": "/var/tmp/tmc-103-desktop-gfx.c.o",
+      "logical_bytes": 24984
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-textedit.c.o",
+      "logical_bytes": 21088
+    },
+    {
+      "path": "/var/tmp/tmc-103-textedit.c.o",
+      "logical_bytes": 20976
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-ui.c.o",
+      "logical_bytes": 12968
+    },
+    {
+      "path": "/var/tmp/tmc-103-userspace-terminal.c.o",
+      "logical_bytes": 33344
+    },
+    {
+      "path": "/var/tmp/tmc-103-monitor.c.o",
+      "logical_bytes": 12120
+    }
+  ],
+  "remote_duplicate_bytes_removed": 15499376,
+  "note": "Sparse disposable disk logical sizes are not physical disk savings. No running QEMU/test process existed before cleanup. Remote releases/tags were not changed."
+}

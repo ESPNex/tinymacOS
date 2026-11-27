@@ -7,3 +7,7 @@ Rimosse vecchie copie di lavoro/release, screenshot/archivi locali storici e imp
 **Non cancellato `fs/btrfs.c`: contiene il dispatcher ancora attivo e il fallback RAM usato da live/Recovery quando fs2_mount non monta un volume installato.** FS2, bootfs, installer, conversione/cifratura, NTFS, driver e loader EFI attuali non sono implementazioni unused. Eliminarli per nome renderebbe il sistema non avviabile o danneggerebbe le funzioni consegnate. Le vecchie copie filesystem nei workspace storici sono invece archiviate/rimosse.
 
 Nessuna ISO o release creata/modificata dalla pulizia. I binari distribuiti restano invariati. Questo intervento autorizza soltanto i cambi di sorgente esplicitamente documentati, non un ritorno al filesystem legacy.
+
+## Secondo passaggio: ritorno a M0 della 10.3
+
+Rimossi altri 15.499.376 byte di archivi storici duplicati 10.2.5/10.2.6, dopo download dai percorsi immutabili e verifica SHA-256. Rimossi anche vecchie build M1, cache, oggetti e dischi virtuali di QA ormai conclusa. Conservati sorgenti, foto, font, risorse Safari/WebKit, ricevute e screenshot utili. Dettagli e ripristino in `../local-10.3/m0/cleanup.json`. La baseline estesa è ricostruita dai commit originali: non è una cattura retrodatata.
