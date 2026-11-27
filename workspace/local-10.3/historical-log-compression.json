@@ -1,0 +1,180 @@
+{
+  "purpose": "Lossless deduplication of superseded historical host/build logs; originals remain recoverable exactly with gzip -d and in the Git bundle. No source, image, font, USB or paused M4 material removed.",
+  "files": [
+    {
+      "original": "workspace/local-10.3/logs/foundation.log",
+      "original_sha256": "9d44804b27afe7ab04b3d1397ca2e9ca9dd0a6a298efdeda99248bc9f4727372",
+      "compressed": "workspace/local-10.3/logs/foundation.log.gz",
+      "original_bytes": 9285,
+      "compressed_bytes": 2540
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-build-a.log",
+      "original_sha256": "7345f4ff03f5d46a4c65fb64119a1b425e2a908ace8c1bd6350f1430dc49b268",
+      "compressed": "workspace/local-10.3/logs/m0-build-a.log.gz",
+      "original_bytes": 34057,
+      "compressed_bytes": 4346
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-build-b.log",
+      "original_sha256": "f66c1cad548971fd456b396b949a1be099bdf46c569caa1aed0351ef96617806",
+      "compressed": "workspace/local-10.3/logs/m0-build-b.log.gz",
+      "original_bytes": 34321,
+      "compressed_bytes": 4359
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-first-build-a.log",
+      "original_sha256": "5bc7736001787a3c8a2c5a6bf732b80c55d3cc9d5bba22caba9e35e2f4780291",
+      "compressed": "workspace/local-10.3/logs/m0-first-build-a.log.gz",
+      "original_bytes": 34201,
+      "compressed_bytes": 4349
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-first-build-b.log",
+      "original_sha256": "12d445d97b2b9a0245044d76f0a88c1f0b404b2843fd0a90bd42f52e2250702f",
+      "compressed": "workspace/local-10.3/logs/m0-first-build-b.log.gz",
+      "original_bytes": 34201,
+      "compressed_bytes": 4352
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-foundation.log",
+      "original_sha256": "80908d43cbede16dcf6efc06b764f7effe3a17f0c49a6d029ddd264e1b17c657",
+      "compressed": "workspace/local-10.3/logs/m0-foundation.log.gz",
+      "original_bytes": 9624,
+      "compressed_bytes": 2664
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-ntfs-normal.log",
+      "original_sha256": "4be0e0a5ddbd03f73443ef10b4033f2c5de550206e4500088a7fef3bfd6eeb07",
+      "compressed": "workspace/local-10.3/logs/m0-ntfs-normal.log.gz",
+      "original_bytes": 6703,
+      "compressed_bytes": 1255
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-ntfs-sanitized.log",
+      "original_sha256": "b64e161d344d741884f6e3492bf5675433a62ac9eb74557a6b38d60e622518db",
+      "compressed": "workspace/local-10.3/logs/m0-ntfs-sanitized.log.gz",
+      "original_bytes": 6703,
+      "compressed_bytes": 1254
+    },
+    {
+      "original": "workspace/local-10.3/logs/m0-ui-guest.log",
+      "original_sha256": "3feb45ac804302d0b9fc8b82bec92804c3d314437a592d180b10b52e0b11d172",
+      "compressed": "workspace/local-10.3/logs/m0-ui-guest.log.gz",
+      "original_bytes": 1513,
+      "compressed_bytes": 473
+    },
+    {
+      "original": "workspace/local-10.3/logs/m1-build.log",
+      "original_sha256": "2521a922897a10c055542fae7940d9dad116f82cad6f693f6ac3ae7cbe4ed867",
+      "compressed": "workspace/local-10.3/logs/m1-build.log.gz",
+      "original_bytes": 34153,
+      "compressed_bytes": 4349
+    },
+    {
+      "original": "workspace/local-10.3/logs/m1-guest.log",
+      "original_sha256": "d2175686b4c8d685a53a7bb4433132cde61ee026214d82f26e68b23be53acc1c",
+      "compressed": "workspace/local-10.3/logs/m1-guest.log.gz",
+      "original_bytes": 4005,
+      "compressed_bytes": 528
+    },
+    {
+      "original": "workspace/local-10.3/logs/m2-build.log",
+      "original_sha256": "9012d015a57c7173b0fc3e5f10830a5dfe4886009ea1909395e144b31b57c223",
+      "compressed": "workspace/local-10.3/logs/m2-build.log.gz",
+      "original_bytes": 34153,
+      "compressed_bytes": 4351
+    },
+    {
+      "original": "workspace/local-10.3/logs/m2-fs2-install.log",
+      "original_sha256": "66217c08b47b9bb6972720280b1f32528512f5cc3ba34587c7ee6696843b6288",
+      "compressed": "workspace/local-10.3/logs/m2-fs2-install.log.gz",
+      "original_bytes": 5224,
+      "compressed_bytes": 975
+    },
+    {
+      "original": "workspace/local-10.3/logs/m2-guest.log",
+      "original_sha256": "ce4f7710bcc60122cf09c691da807a7e96c646f9ab4e19e899ac7038c284fd48",
+      "compressed": "workspace/local-10.3/logs/m2-guest.log.gz",
+      "original_bytes": 2762,
+      "compressed_bytes": 407
+    },
+    {
+      "original": "workspace/local-10.3/logs/m2-partitions.log",
+      "original_sha256": "5be06f8bef92b89117f2b3725d7dfa070ec7f58347f89c9d45357217569da932",
+      "compressed": "workspace/local-10.3/logs/m2-partitions.log.gz",
+      "original_bytes": 1816,
+      "compressed_bytes": 429
+    },
+    {
+      "original": "workspace/local-10.3/logs/windows-gaps.log",
+      "original_sha256": "2736255b5d7c3785e9179126f5e3d7bce403f1262721b20577e6b47557dd8585",
+      "compressed": "workspace/local-10.3/logs/windows-gaps.log.gz",
+      "original_bytes": 2046,
+      "compressed_bytes": 566
+    },
+    {
+      "original": "workspace/local-10.3/m1/build.log",
+      "original_sha256": "a6258f271d2034fe1eae5f1610e3a26311f36718b37d5221de05dca8d31f9c50",
+      "compressed": "workspace/local-10.3/m1/build.log.gz",
+      "original_bytes": 34316,
+      "compressed_bytes": 4347
+    },
+    {
+      "original": "workspace/local-10.3/m1/foundation.log",
+      "original_sha256": "8c7b480e6624cedcc0d87f94dd910e947ae57307beeafd9e77c656dbe15b988f",
+      "compressed": "workspace/local-10.3/m1/foundation.log.gz",
+      "original_bytes": 11633,
+      "compressed_bytes": 3129
+    },
+    {
+      "original": "workspace/local-10.3/m2/build.log",
+      "original_sha256": "7cd443db87d18269269e02da3170a89250e55b9ba9c2574bef9d98edde927fbc",
+      "compressed": "workspace/local-10.3/m2/build.log.gz",
+      "original_bytes": 35726,
+      "compressed_bytes": 4510
+    },
+    {
+      "original": "workspace/local-10.3/m2/foundation.log",
+      "original_sha256": "e3aa18bc07586a4d8701086f4c88d710ede486ef168a163d53b478f827dd7985",
+      "compressed": "workspace/local-10.3/m2/foundation.log.gz",
+      "original_bytes": 10846,
+      "compressed_bytes": 2898
+    },
+    {
+      "original": "workspace/local-10.3/m2/host.log",
+      "original_sha256": "76f4face94a58938d789a44504ca8d6405ca751780dc35d085f0634517f74c9b",
+      "compressed": "workspace/local-10.3/m2/host.log.gz",
+      "original_bytes": 30100,
+      "compressed_bytes": 5094
+    },
+    {
+      "original": "workspace/local-10.3/m3/build.log",
+      "original_sha256": "2374da067423452b69bf096e0389e46a5c90f72441480217ddaf3a1f6aa20938",
+      "compressed": "workspace/local-10.3/m3/build.log.gz",
+      "original_bytes": 35726,
+      "compressed_bytes": 4510
+    },
+    {
+      "original": "workspace/local-10.3/m3/foundation.log",
+      "original_sha256": "1792e96bd98e9cb27ab35868d8b3ad14e261cafc0e4c61faa40f4ade1d96ac94",
+      "compressed": "workspace/local-10.3/m3/foundation.log.gz",
+      "original_bytes": 12207,
+      "compressed_bytes": 3243
+    },
+    {
+      "original": "workspace/local-10.3/m3/host.log",
+      "original_sha256": "3f541a11c41e804f1a5066389f4fb4be805d68bb7ee211fc96fefbbf897b54de",
+      "compressed": "workspace/local-10.3/m3/host.log.gz",
+      "original_bytes": 1979,
+      "compressed_bytes": 629
+    },
+    {
+      "original": "workspace/local-10.3/m3/regression-m2-host.log",
+      "original_sha256": "1b188d1b5686f54f0554b8048d936985756c27e5a7613674d0c5a6e6af064049",
+      "compressed": "workspace/local-10.3/m3/regression-m2-host.log.gz",
+      "original_bytes": 30100,
+      "compressed_bytes": 5095
+    }
+  ]
+}

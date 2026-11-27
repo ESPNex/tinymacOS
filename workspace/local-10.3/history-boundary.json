@@ -1,0 +1,13 @@
+{
+  "shallow_commits": [
+    "c4597948f6b48ea9ed9e6e95c039a8edb0e8ee0e"
+  ],
+  "note": "Published development history was obtained as a shallow repository. The bundle preserves its reachable development objects, not ancestors before this boundary. Plain git clone of this shallow bundle fails on the missing parent. Restore the boundary BEFORE unbundle; verified independently with fsck --full and all original screenshot SHA256s.",
+  "restore": [
+    "git init --bare /var/tmp/tinymacos-restored.git",
+    "printf \"%s\\n\" c4597948f6b48ea9ed9e6e95c039a8edb0e8ee0e > /var/tmp/tinymacos-restored.git/shallow",
+    "git --git-dir=/var/tmp/tinymacos-restored.git bundle unbundle tinymacos-10.3.bundle",
+    "git --git-dir=/var/tmp/tinymacos-restored.git update-ref refs/heads/main <hash from bundle list-heads>",
+    "git --git-dir=/var/tmp/tinymacos-restored.git fsck --full"
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "project": "FatFs by ChaN",
+  "version": "R0.16 with official patches through patch 3",
+  "mirror": "https://github.com/abbrev/fatfs",
+  "commit": "ab992fcf2926b8a1ee3f0a8f9cefb6584174100d",
+  "url": "https://raw.githubusercontent.com/abbrev/fatfs/ab992fcf2926b8a1ee3f0a8f9cefb6584174100d/",
+  "bundle": "sources.tar.xz",
+  "sha256": "44f01c916e348cdc0102661360d732f3aefc112ea1eac5ae690a9344d37c1f28",
+  "license": "ChaN permissive license retained verbatim in source archive",
+  "source_files": {
+    "source/ff.c": {
+      "sha256": "ebe1f68592b3f51a9ee92dba97b5a0512fa61c48989b169fbe19e6071ffd6646",
+      "bytes": 267210
+    },
+    "source/ff.h": {
+      "sha256": "42920ae4d6080bfc2a72d92a9969b5e94eeaff070e5e71d90da9ab6d7d8e158e",
+      "bytes": 17365
+    },
+    "source/diskio.h": {
+      "sha256": "1c2b29f53e061c55d43b2e412c3a61320b2621bac7561a05e275514baa44785a",
+      "bytes": 2733
+    },
+    "source/ffconf.h": {
+      "sha256": "202a7321066873fb3fa8c6ca83eba2b5964a091c366962f87ebd86332652430a",
+      "bytes": 12715
+    },
+    "source/ffunicode.c": {
+      "sha256": "86cd4710c0968f0335e631ad440f90f5d3e92aa10d9bac6981533a32fd8e87c2",
+      "bytes": 1355839
+    },
+    "LICENSE.txt": {
+      "sha256": "2576183a3e1c2d2f4b3628a7ef93c2f937879698abdd6d554dd718e79062e079",
+      "bytes": 1937
+    }
+  },
+  "security_note": "Pinned mirror includes patch 3 addressing CVE-2026-6682, CVE-2026-6683 and CVE-2026-6687; not a claim of absence of other vulnerabilities."
+}

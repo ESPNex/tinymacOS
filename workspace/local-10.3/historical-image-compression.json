@@ -1,0 +1,519 @@
+{
+  "purpose": "Deduplicate closed historical M0-M3 screenshots already preserved byte-for-byte in Git bundle plus shallow-boundary sidecar; remove regenerable bytecode. Intermediate lossless WebP proofs retained in manifest, not as redundant local images. No OS source, upload, font, USB, active macroblock or paused M4 removed.",
+  "original_exact_bytes_in_git_commit": "00c9ecfd23e8da9426538a531993ce82d57a2247",
+  "original_history_bundle": "private-backup/git-history/tinymacos-10.3.bundle",
+  "restore_original_command": "git show 00c9ecfd23e8da9426538a531993ce82d57a2247:<original> > <original>",
+  "historical_receipts": "Original screenshot byte hashes in historical JSON remain hashes of the original PNG, retrievable from the preserved Git history; replacement WebP pixels verified exactly equal.",
+  "files": [
+    {
+      "original": "workspace/local-10.3/m0/evidence/account-home-label.png",
+      "original_bytes": 968686,
+      "original_sha256": "6f74959a3cd1983012a9395e4bb291d563a9559ad5dd8a03eeb305f2975e2d8d",
+      "replacement": "workspace/local-10.3/m0/evidence/account-home-label.webp",
+      "replacement_bytes": 610830,
+      "replacement_sha256": "23f74c8cc9beb5cc103eb88cd718ed017f1700b46afb7deea6fddac5d87e1660",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "0d586895ab23b53f5d093df87a815e5db103b851cd6f52a984564729a8e0aa71",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m0/evidence/local-snapshot-safety-wording.png",
+      "original_bytes": 874366,
+      "original_sha256": "55e588177175600ef2d6d141bdf34677de15bc03a205cd695c470d0eb642146a",
+      "replacement": "workspace/local-10.3/m0/evidence/local-snapshot-safety-wording.webp",
+      "replacement_bytes": 542426,
+      "replacement_sha256": "d941db6283834e9de8d0df8be6e8d74f2b070014ebdffb89c85223482fa7da25",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "2a8c3f1df91cf3125478dbddc8674c1ac7f3528b95e9d2c9b504f5332a7e91c7",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m0/evidence/monitor-interval-wording.png",
+      "original_bytes": 872774,
+      "original_sha256": "df7162ff4de73b3317a99191b8bcaae1cebf63092f3523c7e478d08321fc6ce1",
+      "replacement": "workspace/local-10.3/m0/evidence/monitor-interval-wording.webp",
+      "replacement_bytes": 552118,
+      "replacement_sha256": "b254b693ea0f437d2257651abf3e41217cffd5cb227f29fa9c6d2d8f6cb6d9d1",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "e7ec74f352d04b24aee370cc94bf7128d1176ec49670b1731b23d435c320cce2",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m0/evidence/recovery-home.png",
+      "original_bytes": 109564,
+      "original_sha256": "36350dad2c52ef0b08f1b259cfeeda08101010529abe493d85698eb3d89e4377",
+      "replacement": "workspace/local-10.3/m0/evidence/recovery-home.webp",
+      "replacement_bytes": 52332,
+      "replacement_sha256": "43488c1f7d1d32e662e4387ca54eb824018b1d6b7df9b2fc311a9893233bcdfe",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "41470054da908105c29dda24e2b2b06a83c6431db68192baa4fa56fd4e45b1d0",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m0/evidence/recovery-version-on-request.png",
+      "original_bytes": 109580,
+      "original_sha256": "7de6664ae96d8c6d140923110fd1a57e9312e61e81437bff4741f07b4d5f3fca",
+      "replacement": "workspace/local-10.3/m0/evidence/recovery-version-on-request.webp",
+      "replacement_bytes": 52718,
+      "replacement_sha256": "12aac079999f08408ba4cbc5023fe6e0659098c77006f485856e9a152442db62",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "f5b0baa78678359398a5489b6c12a702384ac595678fde6297c01a1d85431828",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m0/evidence/settings-display.png",
+      "original_bytes": 690304,
+      "original_sha256": "5f1b686daecce56e539c70be30ac667855461c9952c66bd966378558b80b0ecd",
+      "replacement": "workspace/local-10.3/m0/evidence/settings-display.webp",
+      "replacement_bytes": 427374,
+      "replacement_sha256": "f8fd099a7649c3e4c886ce173d3251a94e5c8431c43ae8826c9e9fdf6eeb5acc",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "b5fa16ee3e9f3450f75bbe80dc05d26bf3a32ac8d3f23c6b2cd00cb6b7bb82f5",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-Memo-empty.png",
+      "original_bytes": 767771,
+      "original_sha256": "7162de55d4578a64501cf9a105aed484763b1c1e172b0140571a32c4741e84d6",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-Memo-empty.webp",
+      "replacement_bytes": 480426,
+      "replacement_sha256": "e36a13eb86e4b089c65019d19d1ad0c6e2af97f3d899b47938ed33064b46d884",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "fb4e33d6966b6c9e6806b9a9ee050ecaeb653d31fb391645d312c69e9a534f32",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-Note-empty.png",
+      "original_bytes": 760978,
+      "original_sha256": "a7ce7ebca81ec4e64d8a6de27d735cb9362b6d1ef812dc9a56161c7d1287aa20",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-Note-empty.webp",
+      "replacement_bytes": 476902,
+      "replacement_sha256": "07b9e6c5c8e0a209c5d6c359a6993776db3689fd04cdebfac73e25e61e5d91dc",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "9e778103bfb86f52ecf44584c14e14e359ba661e54c9b0c0edd7dcf4eca8d851",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-Terminal.png",
+      "original_bytes": 849401,
+      "original_sha256": "a0820dec743aad11c4f3e6d329fd902ab67965b127d38e2842bec58208be3f4a",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-Terminal.webp",
+      "replacement_bytes": 534246,
+      "replacement_sha256": "82a4591c37fb3568a63182f918d8c7f34746f7cac8749410eae9a406ddce753f",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "2051e684f8194c369a0927a0f597f52efded101df8a3f8023ec015e761ee6e00",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-TextEdit.png",
+      "original_bytes": 737903,
+      "original_sha256": "0b93ede7d94c8e9a476d273a2110ab74cab804c001de36887b5f19a09bebf8ba",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-TextEdit.webp",
+      "replacement_bytes": 463876,
+      "replacement_sha256": "f5e9e243626d756b867abaf6b4bd8d4e8ec01f04f7a8ad9becf5a4c95999b984",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "1909071476d21593acbb7eb202362c875a9be0c34c7dcb7782173b9b3c1e6a1a",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-setup-empty-field.png",
+      "original_bytes": 1372445,
+      "original_sha256": "2511d29578cdc5d06b891fa9c1548779b5e585e6b10ae237c7befba7cd2a5438",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-setup-empty-field.webp",
+      "replacement_bytes": 856248,
+      "replacement_sha256": "f88f1d599a4d233459bd8657459d35e4592f13f6cacdddba72132faac587a4a2",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "1d2c5e19df743fd580d55aff692528d4fa3d5cf90c26e1c97eb927edf50adada",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1-evidence/m1-textedit-utf8-tail-and-newline.png",
+      "original_bytes": 739476,
+      "original_sha256": "df92b016c14103f09242954a13accc2ba1165aee78cd7ffa105d00d28e4aea30",
+      "replacement": "workspace/local-10.3/m1-evidence/m1-textedit-utf8-tail-and-newline.webp",
+      "replacement_bytes": 462992,
+      "replacement_sha256": "9a33d1a13b43b2d0722021d811c405e8379429e00077812294854a3abd29ad16",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "9162375988bff64853bcaa8b6fe0570f47c6dc44b6c07d3de74d87596dd2b97c",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2-evidence/pmbr-cold-boot-import.png",
+      "original_bytes": 861142,
+      "original_sha256": "6f28696dcd70561f86511ead092d562fbf67b8034d0e179ce7b27533f1e35965",
+      "replacement": "workspace/local-10.3/m2-evidence/pmbr-cold-boot-import.webp",
+      "replacement_bytes": 528928,
+      "replacement_sha256": "b4d0de24eeb73647b27d40f9c2c34e3df865041c0386d3dd39a1a7350bc06817",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "ca38fb9b576551f1d1e83b8893587f5cc7e3d2ea647874a7d61469f6bff4889f",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2-evidence/pmbr-explicit-repair-confirmation.png",
+      "original_bytes": 781990,
+      "original_sha256": "eeaf0f284f40fe38b79ba4b6b35f28fb58242c2f1ff486d6b8a1b72d735539a8",
+      "replacement": "workspace/local-10.3/m2-evidence/pmbr-explicit-repair-confirmation.webp",
+      "replacement_bytes": 486272,
+      "replacement_sha256": "6644ff93f3ad7c2ad9e4763cb0e449d35a81572cf1298fe5bafcbb8698fec139",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "48031c9e4fc8a6b7891b213266c41c09c5621936c3d461fd030f51c03b7f07bf",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2-evidence/pmbr-install-complete.png",
+      "original_bytes": 990399,
+      "original_sha256": "ea2f79aa77c132216fa5d97f2a7fcc1bc00796cce6742bb3c7617ba4c1ecd0bd",
+      "replacement": "workspace/local-10.3/m2-evidence/pmbr-install-complete.webp",
+      "replacement_bytes": 612544,
+      "replacement_sha256": "c365da7c97b09a1d79b21d218d8e0fa5fc97d67272f77b1b35cf404732cd6cbf",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "181017fcc23c31f7a315aea2eff68f540c49585399f2fcc71c6a99d9ee61e07b",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1/noecho-actual-FV003-unlocked.png",
+      "original_bytes": 78095,
+      "original_sha256": "e23caa8c8303b3dec361f88e0fdf3b9ec30dc6f4e00aaf76d2cec5e7e9b50f28",
+      "replacement": "workspace/local-10.3/m1/noecho-actual-FV003-unlocked.webp",
+      "replacement_bytes": 27880,
+      "replacement_sha256": "39aa4b96b22717ff7c9bc578fc4c8fd12938dafb242c169fafdef0f343b995b3",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "d8090a94973e45fb403f728c94e87fb83e2845853d829c65ec76f4e73b4b594a",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1/recovery-masked-fields-cancelled.png",
+      "original_bytes": 73585,
+      "original_sha256": "c6e8851ffbf30e594e5556f1457568dc2f084c39bf31e61033788c95f83ddad3",
+      "replacement": "workspace/local-10.3/m1/recovery-masked-fields-cancelled.webp",
+      "replacement_bytes": 26984,
+      "replacement_sha256": "f38afc994d7616307eb5dc1ca2d1ffd0488249892c6a8a2e4783989f208120f4",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "208c9eaca3fe6f05bc1c0ef5d7cac52c790d287e82d1fc50fb586ff57df49c26",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m1/terminal-no-echo-returned.png",
+      "original_bytes": 868557,
+      "original_sha256": "cfb623ec6746a16f3dbe00feffbb9e54b1c42b6f9d8f4d76412aa0490c54b2b0",
+      "replacement": "workspace/local-10.3/m1/terminal-no-echo-returned.webp",
+      "replacement_bytes": 535992,
+      "replacement_sha256": "1a2ab26af74ac20ca5a684f3c3885d70347e33a5ecd29059ee8aa75464751971",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "2d9af4aff39263e31f2253603add02e4fc563c888cfc66e7f3fd93b3fd6c68a7",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-cold-utility-data-crop.png",
+      "original_bytes": 144388,
+      "original_sha256": "cb0b9ee5b0dbd52bdc448fa7bff7d2da1c7ec51bfff43fca67e73dab95c001eb",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-cold-utility-data-crop.webp",
+      "replacement_bytes": 96618,
+      "replacement_sha256": "4ca6350528b5468b82b46e7a3da6a53fd082be76031c342ad51896cfc8211912",
+      "mode": "RGB",
+      "size": [
+        992,
+        508
+      ],
+      "identical_decoded_pixels_sha256": "458178ae82d358d3bddcfd39863d402bea829078f3ebb669d2793800c34ca3c8",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-cold-utility-disk-crop.png",
+      "original_bytes": 134121,
+      "original_sha256": "29f6e50ebe57f00f57df06f78b66d9c28a5048c234d492ce8cfce863b13a045f",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-cold-utility-disk-crop.webp",
+      "replacement_bytes": 90502,
+      "replacement_sha256": "78bb3fd17c3c54f2fb4b54125a5b24c8fd35e099489c0b98b7c1ac6bb82a9736",
+      "mode": "RGB",
+      "size": [
+        992,
+        508
+      ],
+      "identical_decoded_pixels_sha256": "74f003fcaaf1537fd449a8caa9ddfcbecdd0d2370279c825ecd075d19191b035",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-installer-genuine-gap-crop.png",
+      "original_bytes": 45709,
+      "original_sha256": "b58df115f68d94af6173e527619cbb2b1733e6e602b2a5ea729f8a5a4152ea32",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-installer-genuine-gap-crop.webp",
+      "replacement_bytes": 28998,
+      "replacement_sha256": "96ffb21a746652ef6a3efd80c8a86a84f7be5ad8f7cc4b946f640f3cc6974e9e",
+      "mode": "RGB",
+      "size": [
+        761,
+        486
+      ],
+      "identical_decoded_pixels_sha256": "b4e9b0a04e2386c7ebac0cde9336ec9ef21109fd23576c9bea7faf2e138c4ced",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-live-utility-gap-crop.png",
+      "original_bytes": 115310,
+      "original_sha256": "c89686c3758c2e49da3532d0484c7df0e0a9ee8c96d8f1051a49b8ca5d2896ca",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-live-utility-gap-crop.webp",
+      "replacement_bytes": 77328,
+      "replacement_sha256": "11b0d4f2fe9987a5859792625e4bcf38148ae634e5c3baa5048083f5113e6380",
+      "mode": "RGB",
+      "size": [
+        992,
+        508
+      ],
+      "identical_decoded_pixels_sha256": "7333263f8fad29151e323cc4703a50337a038fff863349998d0556b060f290b7",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-recovery-installer.png",
+      "original_bytes": 77146,
+      "original_sha256": "7052c499c03ef0afe78d027a7350e22c2c77e3fdaffed11cbd770b2406ef24f2",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-recovery-installer.webp",
+      "replacement_bytes": 36302,
+      "replacement_sha256": "9120e256ee6105c45064f7afc4c688baeb1fc6c750cdd355260f27b395d36fc7",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "8f8a7ab788b6f7e69e9b0f54d48d70a7a0fe746f2dff765d95b32fec7b9b1840",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-recovery-terminal.png",
+      "original_bytes": 98945,
+      "original_sha256": "d8f56a88af05e1b5ed3bc00475b01a41d9708c31e61180903b2f6896c794491b",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-recovery-terminal.webp",
+      "replacement_bytes": 42596,
+      "replacement_sha256": "c7007ab7ed3e9eaa6dee0588c2d630a54667fb3392914d9a8d1872d81042865f",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "58dc7904ab3d16b692c380d86e20d6a2dd55cec77f76a0331be90eb24e796029",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-4096-m2-recovery-utility.png",
+      "original_bytes": 85920,
+      "original_sha256": "9d5b6c367a330b3921e217a0b03bed1545727f3b7e6100659d30b7e11c656834",
+      "replacement": "workspace/local-10.3/m2/nvme-4096-m2-recovery-utility.webp",
+      "replacement_bytes": 35264,
+      "replacement_sha256": "ec95e408bf0d3dca90b66abb4f9ed949bc6474a4b6264fee58296ccf97948255",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "b69fdd325da44eebf76f8dc25a620902b6137e0adabf2222cb73bbf6ce24410d",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/nvme-512-m2-recovery-terminal.png",
+      "original_bytes": 99017,
+      "original_sha256": "fee2c4b6d11caead93bd831c8c0dccb9e17d7ed5026ad7270e03b857b2b8c0fd",
+      "replacement": "workspace/local-10.3/m2/nvme-512-m2-recovery-terminal.webp",
+      "replacement_bytes": 42734,
+      "replacement_sha256": "ca72a2f6639d3a5fd80bc882c99ef6905f73acdf67d6035f1963f40611e50750",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "5dcbba6a06688b5d59beb940ab3ef7b896fd3e4217ef5c010192cf97cf1b6ebc",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m2/sata-512-m2-recovery-terminal.png",
+      "original_bytes": 99017,
+      "original_sha256": "fee2c4b6d11caead93bd831c8c0dccb9e17d7ed5026ad7270e03b857b2b8c0fd",
+      "replacement": "workspace/local-10.3/m2/sata-512-m2-recovery-terminal.webp",
+      "replacement_bytes": 42734,
+      "replacement_sha256": "ca72a2f6639d3a5fd80bc882c99ef6905f73acdf67d6035f1963f40611e50750",
+      "mode": "RGB",
+      "size": [
+        1280,
+        800
+      ],
+      "identical_decoded_pixels_sha256": "5dcbba6a06688b5d59beb940ab3ef7b896fd3e4217ef5c010192cf97cf1b6ebc",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m3/m3-1-apic-monitor-crop.png",
+      "original_bytes": 150738,
+      "original_sha256": "d5c82032b4f6690aa7245d248ee6f0de6a8c8f1b7200b80fad2333448935bac2",
+      "replacement": "workspace/local-10.3/m3/m3-1-apic-monitor-crop.webp",
+      "replacement_bytes": 105748,
+      "replacement_sha256": "83d15708fe6c690ad9bf77dfd147aa7fd02b24ba6aa56fa088249016ebb4fa3a",
+      "mode": "RGB",
+      "size": [
+        822,
+        668
+      ],
+      "identical_decoded_pixels_sha256": "698ac2408bfbe6b1c8652b5e47290bfe4f2ec77d256364ab82a5cc34ce6457c7",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m3/m3-1-pit-monitor-crop.png",
+      "original_bytes": 151619,
+      "original_sha256": "70e6262abfe0b865c3ca14f89282c64f7f66d8165746e324df511b7139990d52",
+      "replacement": "workspace/local-10.3/m3/m3-1-pit-monitor-crop.webp",
+      "replacement_bytes": 105790,
+      "replacement_sha256": "5ae97e126d755c6159c7134ebc893faa6340767d7c1a4be62ccaaf6dba83b28d",
+      "mode": "RGB",
+      "size": [
+        822,
+        668
+      ],
+      "identical_decoded_pixels_sha256": "e16373f2fdae0e50edc5d6098b908e574bb98151819ba4377c994f50d7ac1e3c",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m3/m3-4-apic-monitor-crop.png",
+      "original_bytes": 152997,
+      "original_sha256": "eec8f31107e9330a00186aa853c347560fa716780f736cf78501e09b4119a324",
+      "replacement": "workspace/local-10.3/m3/m3-4-apic-monitor-crop.webp",
+      "replacement_bytes": 106004,
+      "replacement_sha256": "84cc58732ca51446063bba166ca5ae7944a8039cfdc3b6b16ed31ce5007b6e62",
+      "mode": "RGB",
+      "size": [
+        822,
+        668
+      ],
+      "identical_decoded_pixels_sha256": "40af4ebc6f8d6faf2c65fcbba6dbea86f6f65be76543e1cdbbbe627bb56c96e6",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    },
+    {
+      "original": "workspace/local-10.3/m3/m3-8-apic-monitor-crop.png",
+      "original_bytes": 155272,
+      "original_sha256": "b178ac8a6e743ed373201e302875ca167388baffc373661e40093de5893093d3",
+      "replacement": "workspace/local-10.3/m3/m3-8-apic-monitor-crop.webp",
+      "replacement_bytes": 107386,
+      "replacement_sha256": "efe72f3bd6b93c7842d267a4f789d21a934e6a822b5240cbe6a23059e11a5218",
+      "mode": "RGB",
+      "size": [
+        822,
+        668
+      ],
+      "identical_decoded_pixels_sha256": "1dc03c4ae288947e814c1b7eecaceadf198db70564b6b2b0202dc29b3470bffe",
+      "replacement_local": false,
+      "replacement_note": "Temporary lossless pixel-equivalent conversion removed after independently unbundling preserved Git history with its documented shallow boundary and recovering original PNG with exact SHA256."
+    }
+  ],
+  "removed_regenerable": [
+    {
+      "path": "tinymacOS/tools/__pycache__",
+      "bytes": 10668
+    },
+    {
+      "path": "tinymacOS/tests/__pycache__",
+      "bytes": 119542
+    }
+  ],
+  "saved_bytes": 14147425,
+  "markdown_links_updated": [],
+  "bundle_independently_restored_and_originals_sha256_verified": true,
+  "bundle_shallow_boundary": "private-backup/git-history/history-boundary.json"
+}

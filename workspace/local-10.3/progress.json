@@ -1,6 +1,6 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 1 closed by explicit user instruction, with physical GeForce/HDMI and actual Windows acceptance still unverified. Macroblock 2 active, not complete.",
+  "status": "Macroblock 2 active, not complete. User rejected VHD export: destination must be a real native exFAT partition. Scope now includes read/write NTFS, FAT32 and exFAT integrated with existing FS2-facing file operations, except FileVault and snapshots. Final validation stopped for cleanup and implementation of the expanded scope.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 – Piano di Sviluppo",
@@ -14,7 +14,7 @@
   "Safari_in_scope": false,
   "decisions": {
     "OpenCore": "replace Windows Boot Manager as primary boot flow, preserve Microsoft EFI files and Windows chainload with rollback",
-    "exFAT": "export a copy, retain original and snapshots"
+    "exFAT": "User selected NEW real exFAT partition in verified unallocated space, populated with a preserving copy. No VHD, no implicit formatting/conversion of existing partitions; original and snapshots retained."
   },
   "previous_functional_checkpoint": "1b545caba4abb34145d37d088866eb77e3149129",
   "previous_plan_status_is_historical": true,
@@ -94,12 +94,20 @@
     "diskutility_catalogue": "PASS actual app normal + ASan/UBSan: 43 snapshots exactly once, local checkpoint unique, mounted-disk guard, paginated mouse wheel/keyboard, stable name selection and explicit errors",
     "usage_units": "PASS normal + ASan/UBSan: used/total values each formatted once with SI units",
     "guest": "PASS final same-ISO GUI install/OpenCore/native boot/Recovery reinstall and 43-snapshot UI with real mouse and keyboard; host-appended stress fixture explicitly declared",
-    "exfat_export": "NOT IMPLEMENTED; preserve original/snapshots and do not relabel a nonfunctional button",
-    "foreign_filesystem_browsing": "NOT IMPLEMENTED: filesystem detection is not a mount driver",
+    "exfat_export": "Current uncommitted VHD prototype rejected by user; NOT acceptance of real exFAT partition export. Must be replaced; no final validation/publication.",
+    "foreign_filesystem_browsing": "Uncommitted read-only FAT32/NTFS/exFAT/native adapters pass host tests and preliminary real-guest reads; NOT sufficient for requested full read/write integration.",
     "background_work_running": false,
     "snapshot_finder": "PASS actual guest: read-only local checkpoint and page-three snapshot open in Finder; frozen marker differs from live file; default-height Snapshot sidebar visible with actual /.snapshots route validated by font-specific matcher and OCR",
     "iso_sha256": "3debba9e7e65245d015bbe2b086b90977098812c3506be97023dc15dfef6a765",
-    "build": "PASS complete build and 931 build-input hash rechecks"
+    "build": "PASS complete build and 931 build-input hash rechecks",
+    "foreign_filesystem_read_write": "NOT IMPLEMENTED: NTFS/FAT32/exFAT create, read, write, truncate, rename, remove and cross-filesystem operations must route through normal filesystem management; exclude FileVault and snapshots.",
+    "workspace_cleanup": {
+      "before_bytes": 126135240,
+      "after_bytes": 112291870,
+      "description": "Removed regenerable Python bytecode and 31 redundant local historical M0-M3 screenshot PNGs. Exact originals independently recovered and SHA256 checked from durable Git bundle with documented shallow boundary; original receipts remain valid. No source/upload/font/USB/active evidence/paused M4 removed.",
+      "evidence": "historical-image-compression.json"
+    },
+    "fat32_exfat_write_backend": "PASS standalone actual freestanding FatFs R0.16 + patch3 backend, normal and ASan/UBSan: read/write/Unicode/truncate/append/create/rename/remove/dir cycle/no-overwrite/paging/canaries, independent fsck, direct raw exFAT partition format (no VHD). NOT yet integrated into the namespace, syscalls or apps."
   },
   "macroblock_1_closure": {
     "status": "closed_by_explicit_user_instruction_with_unverified_physical_acceptance",

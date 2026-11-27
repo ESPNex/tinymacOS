@@ -1,0 +1,25 @@
+PASS pinned FatFs R0.16 + patch 3: freestanding FAT32/exFAT read/write and raw-partition exFAT formatter built; not runtime or guest acceptance
+PASS FAT32 4GiB-1 per-file ceiling refuses overflow BEFORE writes; existing file unchanged
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-fat-volume-zNgU52k7/normal-fat32.img: 27 files, 6/129022 clusters
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+exfatprogs version : 1.2.9
+/var/tmp/tmc-fat-volume-zNgU52k7/normal-exfat.img: clean. directories 2, files 26
+PASS native exFAT format within raw partition view, no VHD/footer/partition-table writes
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+exfatprogs version : 1.2.9
+/var/tmp/tmc-fat-volume-zNgU52k7/normal-format.img: clean. directories 2, files 26
+PASS pinned FatFs R0.16 + patch 3: freestanding FAT32/exFAT read/write and raw-partition exFAT formatter built; not runtime or guest acceptance
+PASS FAT32 4GiB-1 per-file ceiling refuses overflow BEFORE writes; existing file unchanged
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-fat-volume-zNgU52k7/sanitized-fat32.img: 27 files, 6/129022 clusters
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+exfatprogs version : 1.2.9
+/var/tmp/tmc-fat-volume-zNgU52k7/sanitized-exfat.img: clean. directories 2, files 26
+PASS native exFAT format within raw partition view, no VHD/footer/partition-table writes
+PASS actual driver: Unicode create, read/write 65537-byte multi-cluster stream, unaligned seek/EOF, truncate/append, rename/no-overwrite, delete/nonempty refusal, bounded paged listing, readonly and I/O errors; outside canaries unchanged
+exfatprogs version : 1.2.9
+/var/tmp/tmc-fat-volume-zNgU52k7/sanitized-format.img: clean. directories 2, files 26
+PASS actual standalone FAT32/exFAT read/write and native exFAT partition formatter; independent fsck; normal + ASan/UBSan. Not integrated FS2 namespace/guest acceptance.

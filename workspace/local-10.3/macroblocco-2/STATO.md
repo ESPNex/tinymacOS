@@ -4,6 +4,22 @@ Riferimento esclusivo: punto 2 del PDF fornito dall’utente, `tinymacOS/docs/pi
 
 **Macroblocco 2 IN CORSO, non completo e non pubblicato come release.**
 
+## Aggiornamento vincolante della richiesta utente
+
+La validazione finale è stata **fermata**. Il prototipo non pubblicato esportava un VHD contenente exFAT: **non soddisfa la richiesta** di una partizione exFAT reale e non viene accettato come completamento.
+
+**Destinazione scelta dall’utente:** nuova partizione exFAT nello spazio realmente non allocato, da popolare con la copia. Non una partizione esistente.
+
+Il blocco 2 comprende ora anche lettura **e scrittura** su NTFS, FAT32 ed exFAT tramite le normali operazioni del filesystem: Finder, Terminale, taglia/copia/incolla, rinomina, eliminazione e drag & drop, anche fra filesystem diversi. FileVault e snapshot restano esclusi per i filesystem esterni. I lettori in sola lettura e il prototipo VHD sono lavoro intermedio, non prova di completamento di questi requisiti. Nessuna partizione esistente va formattata o convertita implicitamente; sorgente e snapshot devono restare preservati.
+
+Pulizia locale eseguita prima di riprendere la validazione: da **126,14 MB a circa 112,3 MB** (circa **107,1 MiB**), margine di circa **15,7 MB** sul tetto di 128.000.000 byte. Rimossi bytecode rigenerabile e 31 duplicati locali delle schermate storiche M0–M3. I PNG originali sono stati recuperati da un object store indipendente creato dal bundle e controllati byte per byte tramite SHA256; nessuna perdita delle prove. Il ripristino del bundle richiede il confine shallow documentato in `../history-boundary.json`. Manifest: `../historical-image-compression.json`. Sorgenti, foto utente, font, USB, lavoro M4 e prove del blocco corrente preservati.
+
+**Nuovo backend FAT32/exFAT, solo test isolati:** aggiunti sorgenti FatFs R0.16 con patch 3, bloccati per commit/SHA256 in archivio compresso, adapter freestanding con vista limitata alla partizione e formatter exFAT reale (nessun VHD/MBR/GPT scritto dal driver). PASS normale + ASan/UBSan: file Unicode da 65.537 byte, letture disallineate/EOF, scrittura/troncamento/append, create/rename/remove, rifiuto sovrascrittura e cicli di directory, paginazione, errori I/O e sola lettura, canarini esterni invariati. Filesystem indipendenti FAT32/exFAT e partizione exFAT formattata dal nuovo driver superano i rispettivi fsck. Log: `completamento/fat-volume-rw-host.log`.
+
+**Non ancora integrato** nel namespace `/Volumes`, syscall, Finder, Terminale e operazioni fra filesystem. La scrittura NTFS e l’esportazione in una nuova partizione da spazio non allocato restano da completare. Questi test di backend non sono accettazione finale del blocco 2.
+
+Le prove descritte sotto sono checkpoint storici: non certificano il nuovo perimetro di scrittura/esportazione. Nessuna nuova release, incremento di versione, chiusura del blocco 2 o avanzamento al blocco 3.
+
 ## Correzioni eseguite
 
 - Il catalogo `S_SNAP` appartiene al volume montato, non al disco selezionato. Utility Disco ora lo mostra una sola volta sotto quel disco: né «Copia locale» né gli snapshot vengono replicati sotto un altro disco nativo, live o Recovery. Le operazioni sullo snapshot controllano la selezione prima di agire.
