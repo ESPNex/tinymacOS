@@ -3,7 +3,6 @@
 #define main legacy_main
 #include "partition_install_host.c"
 #undef main
-#include "nativefs.h"
 #include "vault2.h"
 #include "fs2_volume.h"
 #include "../fs/tmcbfs2_install.c"
@@ -13,13 +12,8 @@ void kfree(void*p){free(p);}
 int kmalloc_owns(const void*p){(void)p;return 1;}
 u64 page_get(void){return (u64)malloc(4096);}
 void page_put(u64 p){free((void*)p);}
-int fs2_seed_snapshot(void*p,u32 bytes){
- assert(bytes==NDATA*512);memset(p,0,bytes);u8*b=p;memcpy(b,"TMCBFS1\0",8);put32(b+8,2);put32(b+12,384);put32(b+16,144);put32(b+20,1);
- typedef struct PACK{u8 kind,ro;u16 parent;u32 size,gen;char name[48];u32 reserved;} Node;
- Node*n=(void*)(b+64*512);n[0].kind=1;n[27]=(Node){.kind=1};strcpy(n[27].name,"Documents");n[2]=(Node){.kind=2,.parent=27,.size=8192};strcpy(n[2].name,"proof.txt");
- for(unsigned i=0;i<8192;i++)b[(144+2*16)*512+i]=(i*17+13)%251;memset(b+13*512,19,512);memset(b+14*512,29,512);
- u8*sb=b+128*512;memcpy(sb+64,"_BHRfS_M",8);put32(sb,native_crc32c(sb+32,4064));if(invalid_source)n[2].parent=2;return 0;
-}
+#include "fs2_seed_fixture.h"
+int fs2_seed_snapshot(void*p,u32 bytes){return seed_fixture(p,bytes,invalid_source);}
 static void run_fs2(int scheme){
  fixture(scheme);u8 before[3][32],after[3][32];digest(before);assert(!install_begin_i(0));guard_start=install_start;guard_end=install_end;write_guard=1;
  while(isbusy())assert(!install_step_i());assert(st.state==INSTALL_DONE&&st.done==st.total);digest(after);assert(!memcmp(before,after,sizeof before));
@@ -127,6 +121,24 @@ static void fresh_encrypted_install(int scheme){
  fs2_volume_forget(0);boot.recovery=0;erase(newrecovery,65);erase(recovery,65);erase(&q,sizeof q);
  printf("PASS actual %s ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged\n",scheme==MAP_GPT?"GPT":"MBR");
 }
+/* Link only the real offline dispatch here; the mounted runtime is exercised
+ * separately. Any attempt to take a mounted backup in this fixture is a bug. */
+int fs2_active;int fs2_local_backup(int op){(void)op;assert(!"offline test used mounted backup");return -1;}
+int power(int op){(void)op;assert(!"offline test attempted reboot");return -1;}
+static void retired_offline_refusal(void){
+ fixture(MAP_GPT);assert(!install_begin_i(0));guard_start=install_start;guard_end=install_end;write_guard=1;while(isbusy())assert(!install_step_i());
+ Medium m={sata_io,sata_flush,0,sectors};Layout map;assert(layout_read(&m,&map)==2);u64 extent=map.parts[1].end-map.data+1;st.state=INSTALL_IDLE;boot.recovery=1;boot.install_len=0;mounted=-1;
+ const char*magic[]={"TMCBFS1","TINYFS1"};
+ for(unsigned k=0;k<2;k++){
+  memset(disk+map.data*512,0,64*512);memcpy(disk+map.data*512,magic[k],8);fs2_volume_forget(0);u8 before[32],after[32];sha_bytes(disk,sectors*512,before);int w=writes;
+  assert(!fs2_disk_present(0,map.data,extent));
+  for(int op=1;op<=9;op++)assert(disk_operation_i(op,0)<0);
+  assert(fs2_disk_verify(0,map.data,extent)<0&&fs2_disk_reset(0,map.data,extent)<0&&fs2_disk_backup(0,map.data,extent,1)<0&&fs2_disk_backup(0,map.data,extent,2)<0);
+  VaultRequest q={.disk=0};strset(q.password,"legacy-will-not-be-converted",65);strset(q.replacement,q.password,65);assert(install_encryption_i(&q)<0&&!enrollment.enabled);
+  sha_bytes(disk,sectors*512,after);assert(!memcmp(before,after,32)&&writes==w);
+ }
+ boot.recovery=0;puts("PASS actual Recovery/offline dispatcher rejects verify/repair/reset/backup/restore/encryption of both retired native formats; whole-disk SHA identical and zero writes");
+}
 #ifndef TMC_FS2_HOST_HELPERS
 static void run_stale_pmbr(void){
  for(int missing=0;missing<2;missing++)for(int saturated=0;saturated<2;saturated++){
@@ -169,7 +181,7 @@ static void high_fs2_adapter(void){
 }
 int main(void){
  high_fs2_adapter();
- disk=calloc(sectors,512);assert(disk);run_stale_pmbr();run_missing_signature();run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);
+ disk=calloc(sectors,512);assert(disk);run_stale_pmbr();run_missing_signature();run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);failure_tests(MAP_GPT);failure_tests(MAP_MBR);scanner_tests();retired_offline_refusal();
  fixture(MAP_GPT);invalid_source=1;assert(!install_begin_i(0));while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!writes);invalid_source=0;
  fixture(MAP_GPT);assert(!install_begin_i(0));while(st.state==INSTALL_SCAN)assert(!install_step_i());fail_at=writes+3;while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!memcmp(disk+1024,oldparts,3*128));
  free(disk);puts("PASS invalid source refuses before any target write; injected target failure never activates the new volume");return 0;

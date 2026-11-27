@@ -252,7 +252,6 @@ int bootconfig_disk(int,u32);
 
 #include "vault.h"
 int vault_random(u8*,size_t);
-Vault *volume_vault(int);
 int volume_current(void);
 int volume_locked(void);
 int volume_cipher_io(int,u64,u32,void*,int);

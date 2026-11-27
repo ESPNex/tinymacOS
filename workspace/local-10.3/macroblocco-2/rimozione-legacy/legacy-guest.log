@@ -1,0 +1,81 @@
+Traceback (most recent call last):
+  File "/home/user/tinymacOS/tests/legacy_rejection_guest.py", line 24, in <module>
+    with Retail(iso,w,ev,'legacy-refused',live=True,launcher=launcher) as g:
+         ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/tinymacOS/tests/guest.py", line 40, in __init__
+    self.wait('[gop] first userspace frame presented',timeout=55,mark=0)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/tinymacOS/tests/retail_guest.py", line 62, in wait
+    self.visible(self.initial,1)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/user/tinymacOS/tests/retail_guest.py", line 44, in visible
+    raise AssertionError(f'{self.tag} expected {qs!r}; visible text: '+self.ocr(box))
+AssertionError: legacy-refused expected ['account']; visible text: i
+
+he
+
+ae
+
+fi
+
+¥en
+
+aN
+
+Dice
+
+sy
+
+os
+
+a
+
+-
+
+Ss
+
+7s
+
+e
+
+eae
+
+Mntecin
+
+ist
+
+SS
+
+me
+
+ve
+
+Nomeutente
+
+3
+
+yes
+
+Password -almeno 8 caratteri
+
+ad
+
+Conferma password
+
+ae
+
+ik
+
+&
+
+-
+
+(oi)
+
+o
+
+Riawia
+
+Spegni
+
+=

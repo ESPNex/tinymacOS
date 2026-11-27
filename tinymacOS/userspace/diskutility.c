@@ -73,7 +73,7 @@ static void edit_paint(void)
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"TMCFS2, filesystem proprietario del sistema.":"Resize: FAT32, NTFS e nativo legacy. TMCFS2: non disponibile.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"TMCFS2, filesystem proprietario del sistema.":"Resize: FAT32 e NTFS. TMCFS2: non disponibile.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
         if(edit.op!=DISK_EDIT_DELETE){char size[80]="Dimensione effettiva: ",exact[32];disk_size_mb_exact(exact,sizeof exact,edit.size);append(size,exact,sizeof size);append(size," MB",sizeof size);Text(xx+20,yy+166,size,F_SMALL,TX);}

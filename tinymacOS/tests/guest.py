@@ -95,6 +95,8 @@ class Guest:
             if 'return' in r:return r['return']
     def hmp(self,c):return self.req('human-monitor-command',**{'command-line':c})
     def key(self,k,dt=.12,hold=.04):
+        dt=max(dt,float(os.environ.get("TMC_QA_KEY_GAP","0")))
+        hold=max(hold,float(os.environ.get("TMC_QA_KEY_HOLD","0")))
         # input-send-event, never send-key/HMP sendkey: those park events on
         # QEMU's kbd_queue behind a VIRTUAL-clock delay item; once that queue
         # wedges, later keys are silently dropped and a held key autorepeats
@@ -153,18 +155,4 @@ class Guest:
         if self.p.stdout:self.p.stdout.close()
 
 def audit_bytes(raw):
-    """Independent TMCBFS1/TinyFS v1 reader; never writes the disk."""
-    magic = raw[:8]
-    if magic == b'TMCBFS1\0':
-        rev,n,base,ready=struct.unpack_from('<IIII',raw,8)
-        assert (rev,n,base,ready)==(2,384,144,1)
-        node_sec = 64                      # btrfs node table (NODE0)
-    elif magic == b'TINYFS1\0':
-        version,n,base,ready=struct.unpack_from('<IIII',raw,8)
-        assert (version,n,base,ready)==(1,96,16,1)
-        node_sec = 1                       # legacy v1 layout
-    else:
-        raise AssertionError('unknown volume magic %r' % magic)
-    nodes=[struct.unpack_from('<BBHII48sI',raw,node_sec*512+i*64) for i in range(n)]  # 8 nodes/sector
-    def full(i):return (full(nodes[i][2]).rstrip('/')+'/'+nodes[i][5].split(b'\0')[0].decode()) if i else '/'
-    return {full(i):(None if k==1 else raw[(base+i*16)*512:(base+i*16)*512+z]) for i,(k,ro,p,z,g,name,r) in enumerate(nodes) if k}
+    raise RuntimeError('Generation-1 decoder removed. Use TMCFS2 guest/inspection gates; old QA is historical only.')

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-retired-native-pbb2dkre",
+  "iso_sha256": "d66323d0b9955cf6743d63fbc5142bfed5ce5d98d5a5d9d390ea2aad6845b1d1",
+  "before_disk_sha256": "16ac13efb7947ede45cd364222cf71e604f73a54555e4b075c1a820ac76d860d",
+  "checks": [
+    "Actual Terminal inventory identifies both retired formats as unsupported; namespace lookup, writes and confirmed resize refuse",
+    "Actual Utility Disco identifies the retired partition and offers no Mostra nel Finder mount action",
+    "After actual poweroff, entire attached disk SHA is identical; no conversion, repair, resize or implicit format"
+  ],
+  "physical_hardware_tested": false,
+  "windows_tested": false,
+  "after_disk_sha256": "16ac13efb7947ede45cd364222cf71e604f73a54555e4b075c1a820ac76d860d"
+}

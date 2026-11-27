@@ -7,6 +7,7 @@ for suite in textedit-open ui-stream display-size m3-acceptance windows-gaps car
  bash "tests/test-$suite.sh"
 done
 python3 tools/check-usb-retirement.py
+python3 tools/check-legacy-retirement.py
 out=$(mktemp -d /var/tmp/tmc-103-objects-XXXXXXXX)
 trap 'rm -rf "$out"' EXIT
 for src in userspace/ui.c userspace/textedit.c userspace/diskutility.c userspace/monitor.c userspace/notes.c userspace/stickies.c userspace/terminal.c userspace/filepanel.c userspace/installer.c userspace/settings.c userspace/vaultpanel.c userspace/finder.c userspace/calendar.c desktop/main.c desktop/gfx.c desktop/login.c desktop/recovery.c;do

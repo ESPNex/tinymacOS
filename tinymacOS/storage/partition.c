@@ -13,7 +13,7 @@ int filesystem_probe(Medium*m,u64 at,u64 n)
     u8 b[512] ALIGNED(512);
     if(!n||at>=m->z||n>m->z-at||m->io(m->d,at,1,b,0))return FS_UNREADABLE;
     if(!memcmp(b,"TMCBFS2\0",8))return FS_TMC2;
-    if(!memcmp(b,"TMCBFS1\0",8)||!memcmp(b,"TINYFS1\0",8))return FS_TMC;
+    if(!memcmp(b,"TMCBFS1\0",8)||!memcmp(b,"TINYFS1\0",8))return FS_UNSUPPORTED_NATIVE;
     if(b[510]==85&&b[511]==170){
         if(!memcmp(b+3,"NTFS    ",8)&&(rd16(b+11)==512||rd16(b+11)==4096)&&b[13]&&!(b[13]&(b[13]-1))&&b[13]<=128){
             u64 total;memcpy(&total,b+40,8);if(total&&total<=n/(rd16(b+11)/512)&&rd32(b+48)<total)return FS_NTFS;

@@ -5,12 +5,12 @@
  */
 #include "../kernel/k.h"
 #include "disklayout.h"
-#include "foreignfs.h"
 #include "foreign_volume.h"
 #include "tmcbfs2.h"
+typedef struct {u64 id,size,valid,start;int dir,flags;char name[48];} FvNode;
 #include "volumes.h"
 #define VOLUMES (SETUP_MAX_DISKS*DISK_PARTS)
-typedef struct {int disk,number,type;u64 base,sectors;ForeignFs*reader;Tmc2*native;char name[20];} Volume;
+typedef struct {int disk,number,type;u64 base,sectors;Tmc2*native;char name[20];} Volume;
 static Volume volumes[VOLUMES];static int nvolumes,discovered,inventory_error;static u32 generation=1;
 extern int volume_current(void),volume_extent(u64*,u64*);
 static DiskMap inventory;
@@ -47,7 +47,7 @@ static i64 data_foreign(Volume*v,const char*p,u64 off,void*b,size_t n,int w){For
 static int foreign_entry(const ForeignEntry*e,Dirent*d){if(strlen(e->name)>=sizeof d->name)return -1;*d=(Dirent){.dir=e->dir,.ro=e->ro,.size=e->size};strset(d->name,e->name,sizeof d->name);return 0;}
 void vol_refresh(void){
  fsrev++;
- for(int i=0;i<nvolumes;i++){Volume*v=volumes+i;if(v->native){tmc2_close(v->native);kfree(v->native);}kfree(v->reader);}
+ for(int i=0;i<nvolumes;i++){Volume*v=volumes+i;if(v->native){tmc2_close(v->native);kfree(v->native);}}
  memset(volumes,0,sizeof volumes);nvolumes=0;inventory_error=0;discovered=0;if(++generation==0)generation=1;
 }
 static void discover(void){
@@ -66,13 +66,12 @@ static void discover(void){
  }
 }
 static int mount(Volume*v){
- if(v->reader||v->native)return 0;u8 magic[8];if(bytes(v,0,magic,8))return -1;
+ if(v->native)return 0;u8 magic[8];if(bytes(v,0,magic,8))return -1;
  if(!memcmp(magic,"TMCBFS2\0",8)){
   Tmc2*t=kmalloc(sizeof *t);if(!t)return -1;
   if(tmc2_mount(t,(T2Io){v,v->sectors/32,page_read,page_write,flush_volume,allocate,deallocate})){kfree(t);return -1;}v->native=t;return 0;
  }
- ForeignFs*f=kmalloc(sizeof *f);if(!f)return -1;
- if(fv_mount(f,v,v->sectors*512,bytes)){kfree(f);return -1;}v->reader=f;return 0;
+ return -1;
 }
 /* -2 outside namespace/startup alias; -1 invalid; 0 root; index+1 volume. */
 static int path(const char*input,char q[PATHLEN],const char**inner){
@@ -83,11 +82,11 @@ static int path(const char*input,char q[PATHLEN],const char**inner){
 }
 static int resolve(Volume*v,const char*inner,FvNode*out){
  if(mount(v))return -1;FvNode n;
- if(v->native)n=(FvNode){.id=1,.dir=1};else if(fv_root(v->reader,&n))return -1;
+ n=(FvNode){.id=1,.dir=1};
  while(*inner){while(*inner=='/')inner++;if(!*inner)break;char name[48];unsigned len=0;while(*inner&&*inner!='/'){if(len>=47)return -1;name[len++]=*inner++;}name[len]=0;
   if(!n.dir)return -1;
   if(v->native){T2Entry e;if(tmc2_lookup(v->native,n.id,name,&e))return -1;n=(FvNode){.id=e.key,.size=e.size,.valid=e.size,.dir=e.kind==T2_DIR,.flags=(n.flags|e.reserved)&1};strset(n.name,e.name,48);}
-  else{FvNode child;if(fv_lookup(v->reader,&n,name,&child))return -1;n=child;}
+
  }*out=n;return 0;
 }
 static void entry(const FvNode*n,Dirent*d){*d=(Dirent){.id=n->id,.dir=n->dir,.ro=1,.size=n->size};strset(d->name,n->name,48);}
@@ -101,12 +100,12 @@ int vol_list(const char*p,Dirent*d,int cap,int skip){
   if(total++>=skip&&n<cap){d[n]=(Dirent){.dir=1,.ro=1};strset(d[n++].name,startup(),48);}
   for(int i=0;i<nvolumes&&n<cap;i++){
    /* Failed mounts are not silently presented as empty readable folders. */
-   if(total++<skip)continue;d[n]=(Dirent){.id=i+1,.dir=1,.ro=volumes[i].type==FS_TMC};strset(d[n++].name,volumes[i].name,48);
+   if(total++<skip)continue;d[n]=(Dirent){.id=i+1,.dir=1,.ro=0};strset(d[n++].name,volumes[i].name,48);
   }return n;
  }
  Volume*v=volumes+at-1;if(!filesystem_native(v->type)){if(!cap)return 0;ForeignIo io=foreign_io(v);ForeignEntry*page=kmalloc(sizeof *page*MIN(cap,8));if(!page)return -1;int n=0;while(n<cap){int want=MIN(cap-n,8),r=v->type==FS_NTFS?nt_volume_list(&io,inner,page,want,skip+n):fat_volume_list(&io,inner,page,want,skip+n);if(r<0){n=-1;break;}for(int j=0;j<r;j++)if(foreign_entry(page+j,d+n+j)){n=-1;goto listed;}n+=r;if(r<want)break;}listed:kfree(page);return n;}FvNode parent;if(resolve(v,inner,&parent)||!parent.dir)return -1;u64 cookie=0;int n=0,r=0;
  if(v->native){T2Entry e;while(n<cap&&(r=tmc2_readdir(v->native,parent.id,&cookie,&e))==1){if(skip){skip--;continue;}d[n]=(Dirent){.id=e.key,.dir=e.kind==T2_DIR,.ro=(parent.flags|e.reserved)&1,.size=e.size};strset(d[n++].name,e.name,48);}}
- else{FvNode e;while(n<cap&&(r=fv_next(v->reader,&parent,&cookie,&e))==1){if(skip){skip--;continue;}entry(&e,d+n++);}}
+
  return r<0?-1:n;
 }
 int vol_open(Process*p,const char*name,int write){
@@ -115,7 +114,7 @@ int vol_open(Process*p,const char*name,int write){
  FvNode n;if(resolve(v,inner,&n)||n.dir||(write&&(!v->native||n.flags&1)))return -1;
  for(int fd=0;fd<12;fd++)if(!p->fd[fd].id){p->fd[fd]=(FD){.id=-1,.backend=v->native?5:4,.gen=n.start,.write=v->native?write:n.flags,.inode=v->native?n.id:n.size,.snapshot=((u64)generation<<32)|(at-1),.foreign_valid=n.valid};
   /* NTFS uses an MFT ID; all other foreign files use a cluster/slot index. */
-  if(v->reader&&v->reader->type==FS_NTFS)p->fd[fd].gen=n.id;
+
   return fd;
  }return -1;
 }
@@ -123,7 +122,7 @@ int vol_read(Process*p,int fd,void*out,int count){
  if(fd<0||fd>=12||count<0||(!out&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
  if((f->backend!=4&&f->backend!=5)||!f->id||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;Volume*v=volumes+at;i64 r;
  if(f->backend==5)r=tmc2_read(v->native,f->inode,f->at,out,count);
- else if(v->reader){FvNode n={.start=(u32)f->gen,.size=f->inode,.valid=f->foreign_valid,.flags=f->write};r=fv_read(v->reader,&n,f->at,out,count);}
+
  else r=data_foreign(v,f->foreign_path,f->at,out,count,0);
  if(r>=0)f->at+=r;return r;
 }

@@ -1,0 +1,2 @@
+PASS TMCFS2-only installer transport: real core export/import, 65537-byte UTF8 tree, ancestry order, readonly/accounts/remount/snapshot, checksum/truncation/old-format refusal and injected target write failures
+PASS TMCFS2-only installer transport: real core export/import, 65537-byte UTF8 tree, ancestry order, readonly/accounts/remount/snapshot, checksum/truncation/old-format refusal and injected target write failures

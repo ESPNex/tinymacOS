@@ -1,6 +1,6 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 2 complete; Rename/TMCFS2 follow-up complete in implementation and local host/real-QEMU/postshutdown acceptance; main publication receipt maintained separately. No release/version bump or macroblock 3 work.",
+  "status": "Macroblock 2 complete, including TMCFS2-only retirement of generation-1 native filesystem. Host/real-QEMU/independent postshutdown acceptance complete locally; authenticated main publication recorded separately. No release/version bump or block 3 work.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
@@ -154,5 +154,24 @@
     "windows_tested": false,
     "no_existing_media_conversion": true,
     "tmcfs2_resize_supported": false
+  },
+  "legacy_filesystem_retirement": {
+    "complete_local": true,
+    "user_choice": "unsupported old volumes, no migration",
+    "legacy_driver_removed": true,
+    "legacy_formatter_removed": true,
+    "legacy_mount_import_fallback_removed": true,
+    "live_recovery_backend": "genuine sparse-RAM TMCFS2",
+    "installer_transport": "checksummed TMCSEED2, not a filesystem",
+    "old_media_modified": false,
+    "evidence": "macroblocco-2/rimozione-legacy/VERIFICA.md",
+    "iso_sha256": "d66323d0b9955cf6743d63fbc5142bfed5ce5d98d5a5d9d390ea2aad6845b1d1",
+    "guest_receipts": [
+      "fs2-install-guest-result.json",
+      "legacy-rejection-guest-result.json",
+      "rename-tmcfs2-guest-result.json"
+    ],
+    "physical_hardware_tested": false,
+    "windows_tested": false
   }
 }

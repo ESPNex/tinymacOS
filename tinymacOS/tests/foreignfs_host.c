@@ -36,14 +36,9 @@ static int memory_read(void*x,u64 at,void*p,size_t n){assert(at<=1048576&&n<=104
 static void w32(u8*p,u32 v){memcpy(p,&v,4);}
 static u32 crc32test(const u8*p,unsigned n){u32 v=~0u;while(n--){v^=*p++;for(int i=0;i<8;i++)v=(v>>1)^(0xedb88320u&-(v&1));}return ~v;}
 static void legacy_mount_cases(void){
- u8*m=calloc(1,1048576);assert(m);memcpy(m,"TMCBFS1\0",8);w32(m+8,2);w32(m+12,64);w32(m+16,144);w32(m+20,1);
- m[64*512]=1;u8*e=m+64*512+64;e[0]=2;w32(e+4,4);strcpy((char*)e+12,"legacy.txt");memcpy(m+(144+16)*512,"CIAO",4);
- ForeignFs f;FvNode root,n;char text[4];assert(!fv_mount(&f,m,1048576,memory_read)&&!fv_root(&f,&root)&&!fv_lookup(&f,&root,"legacy.txt",&n));assert(fv_read(&f,&n,0,text,4)==4&&!memcmp(text,"CIAO",4));
- u8*c=m+137*512;memcpy(c,"TMCOW03",8);w32(c+8,1);unsigned frame=144+64*16,stride=(frame*8+511)/512,start=frame+8*stride;
- w32(c+12,frame);w32(c+16,frame);w32(c+20,stride);w32(c+24,start);w32(c+28,2048-start);w32(c+32,2048);w32(c+36,crc32test(c,512));
- assert(!fv_mount(&f,m,1048576,memory_read)&&!fv_root(&f,&root)&&!fv_lookup(&f,&root,"legacy.txt",&n));assert(fv_read(&f,&n,0,text,4)==4&&!memcmp(text,"CIAO",4));
- m[138*512]=1;assert(fv_mount(&f,m,1048576,memory_read)<0);m[138*512]=0;c[36]^=1;assert(fv_mount(&f,m,1048576,memory_read)<0);memset(c,0,512);m[24]=1;assert(fv_mount(&f,m,1048576,memory_read)<0);
- free(m);puts("PASS read-only legacy native and clean CoW live-file mount; pending replay, bad CoW checksum and encryption refuse without writes");
+ u8*m=calloc(1,1048576);assert(m);ForeignFs f;
+ const char*magic[]={"TMCBFS1","TINYFS1"};for(unsigned i=0;i<2;i++){memcpy(m,magic[i],8);assert(fv_mount(&f,m,1048576,memory_read)<0);}free(m);
+ puts("PASS retired native formats are rejected; no legacy reader or writes");
 }
 int main(int argc,char**argv){assert(argc>=3);
  if(!strcmp(argv[1],"export")){

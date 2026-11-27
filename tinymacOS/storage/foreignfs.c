@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: MIT
- * Defensive FAT32/exFAT/NTFS/TMCBFS1 reader, deliberately without writes.
+ * Defensive FAT32/exFAT/NTFS reader, deliberately without writes.
  * Rejects encrypted/compressed/attribute-list NTFS streams rather than leaking
  * raw ciphertext or returning fabricated plaintext. Traversals are bounded.
  */
@@ -97,18 +97,6 @@ static int data_attr(ForeignFs*f,const u8*b,u64*size,const u8**data,FvRun*r,unsi
 }
 int fv_mount(ForeignFs*f,void*context,u64 bytes,int(*read)(void*,u64,void*,size_t)){
  if(!f||!read||bytes<512)return -1;memset(f,0,sizeof *f);f->context=context;f->read=read;f->bytes=bytes;u8 b[512];if(rd(f,0,b,512))return -1;
- if(!memcmp(b,"TMCBFS1\0",8)){
-  f->type=FS_TMC;f->slots=le32(b+12);if(le32(b+8)!=2||f->slots<64||f->slots>384||le32(b+16)!=144||le32(b+20)!=1||bytes<((u64)144+f->slots*16)*512||le32(b+24))return -1;
-  /* Live sectors are direct in clean legacy CoW volumes. A pending journal
-   * needs replay (writes), so a read-only mount MUST fail instead of exposing
-   * an inconsistent old/new tree or trying to repair foreign media. */
-  if(rd(f,137ull*512,b,512))return -1;int nonzero=0;for(unsigned i=0;i<512;i++)nonzero|=b[i];
-  if(nonzero){
-   u32 checksum=le32(b+36);memset(b+36,0,4);u32 frame=144+f->slots*16,stride=(frame*8+511)/512;
-   if(memcmp(b,"TMCOW03",8)||le32(b+8)!=1||le32(b+12)!=frame||le32(b+16)!=frame||le32(b+20)!=stride||le32(b+24)!=frame+8*stride||le32(b+32)>bytes/512||checksum!=crc(b,512))return -1;
-   if(rd(f,138ull*512,b,512))return -1;for(unsigned i=0;i<512;i++)if(b[i])return -1;
-  }return 0;
- }
  if(b[510]!=85||b[511]!=170)return -1;
  if(!memcmp(b+3,"NTFS    ",8)){
   f->type=FS_NTFS;f->bps=le16(b+11);if((f->bps!=512&&f->bps!=4096)||!power(b[13])||b[13]>128||!le64(b+40)||le64(b+40)>bytes/f->bps)return -1;
@@ -129,14 +117,9 @@ int fv_mount(ForeignFs*f,void*context,u64 bytes,int(*read)(void*,u64,void*,size_
  u16 flags=le16(b+40);if(flags&128){unsigned active=flags&15;if(active>=nf)return -1;f->fat+=(u64)active*fat*f->bps;}
  if(f->clusters<65525||f->clusters>=0xffffff5||!cluster_ok(f,f->root)||(u64)(f->clusters+2ull)*4>(u64)fat*f->bps)return -1;return 0;
 }
-int fv_root(ForeignFs*f,FvNode*n){if(!f||!n)return -1;memset(n,0,sizeof *n);n->dir=1;n->id=f->type==FS_NTFS?5:f->type==FS_TMC?0:f->root;n->start=n->id;strset(n->name,"/",48);return 0;}
-static int legacy(ForeignFs*f,u64 id,FvNode*n,u16*parent){
- if(id>=f->slots)return -1;u8 b[64];if(rd(f,64*512+id*64,b,64))return -1;if(!b[0])return 0;unsigned z=0;while(z<48&&b[12+z])z++;if(b[0]>2||z==48)return -1;
- *n=(FvNode){.id=id,.start=id,.size=le32(b+4),.valid=le32(b+4),.dir=b[0]==1};*parent=le16(b+2);strset(n->name,(char*)b+12,48);if(n->size>8192||le32(b+60)&1)return -1;for(unsigned i=0;n->name[i];i++)if(n->name[i]=='/'||(u8)n->name[i]<32)return -1;if(eq(n->name,".")||eq(n->name,".."))return -1;return 1;
-}
+int fv_root(ForeignFs*f,FvNode*n){if(!f||!n)return -1;memset(n,0,sizeof *n);n->dir=1;n->id=f->type==FS_NTFS?5:f->root;n->start=n->id;strset(n->name,"/",48);return 0;}
 int fv_next(ForeignFs*f,const FvNode*d,u64*cookie,FvNode*n){
  if(!f||!d||!d->dir||!cookie||!n)return -1;
- if(f->type==FS_TMC){while(*cookie<f->slots){u16 parent;u64 id=(*cookie)++;int r=legacy(f,id,n,&parent);if(r<0)return -1;if(r&&id&&parent==d->id)return 1;}return 0;}
  if(f->type==FS_NTFS){
   while(*cookie<f->mft_size/f->record){u64 id=(*cookie)++;if(id<16)continue;u8 b[4096];if(record(f,id,b,0))return -1;if(!(le16(b+22)&1))continue;
    u32 at=le16(b+20),limit=le32(b+24);const u8*a;int have=0;u64 size=0;char name[48];
@@ -174,7 +157,6 @@ int fv_next(ForeignFs*f,const FvNode*d,u64*cookie,FvNode*n){
 int fv_lookup(ForeignFs*f,const FvNode*d,const char*name,FvNode*n){u64 cookie=0;int r;while((r=fv_next(f,d,&cookie,n))==1)if(eq(n->name,name))return 0;return -1;}
 i64 fv_read(ForeignFs*f,const FvNode*n,u64 off,void*p,size_t bytes){
  if(!f||!n||n->dir||(!p&&bytes))return -1;if(off>=n->size)return 0;bytes=MIN(bytes,n->size-off);
- if(f->type==FS_TMC)return rd(f,((u64)144+n->start*16)*512+off,p,bytes)?-1:(i64)bytes;
  if(f->type!=FS_NTFS)return cluster_read(f,n,off,p,bytes,0);
  u8 b[4096];if(record(f,n->id,b,0))return -1;u64 size,valid;const u8*data;FvRun r[64];unsigned nr;
  if(data_attr(f,b,&size,&data,r,&nr,&valid)||size!=n->size)return -1;

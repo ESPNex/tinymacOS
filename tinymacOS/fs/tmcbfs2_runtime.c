@@ -9,6 +9,7 @@
 #include "fs2_runtime.h"
 #include "fs2_volume.h"
 #include "home_name.h"
+#include "tmcbfs2_seed.h"
 int fs2_active;
 static Tmc2 fs;
 static char home_name[48]="User";
@@ -33,7 +34,7 @@ int fs2_home_bind(const char*name){
  if(tmc2_move(&fs,old.key,users.key,name))return -1;
  strset(home_name,name,48);fsrev++;return 0;
 }
-static struct{int disk;u64 base,sectors;} medium;
+static struct{int disk;u64 base,sectors;} medium={.disk=-1};
 extern int volume_extent(u64*,u64*);
 static int disk_read(void*x,u64 block,void*p){(void)x;return fs2_volume_read(medium.disk,medium.base,medium.sectors,block,p);}
 static int disk_write(void*x,u64 block,const void*p){(void)x;return fs2_volume_write(medium.disk,medium.base,medium.sectors,block,p);}
@@ -195,22 +196,49 @@ int fs2_snap_delete(const char*name){if(tmc2_snapshot_delete(&fs,name)||tmc2_col
 int fs2_snap_verify(const char*name){return tmc2_snapshot_verify(&fs,name);}
 int fs2_info(FsInfo*out){if(!out)return -1;u64 cookie=0;T2Entry e;u32 snaps=0;int r;while((r=tmc2_snapshots(&fs,&cookie,&e))==1)snaps++;if(r<0)return -1;*out=(FsInfo){fs.io.blocks*T2_BLOCK,tmc2_used_blocks(&fs)*T2_BLOCK,snaps,(u32)fs.super.generation};return 0;}
 int fs2_touch(const char*path){T2Entry e;return resolve(path,&e)?fs2_create(path,0):protected(path)?-1:0;}
-int fs2_enc(int op,const char*password,EncInfo*out){(void)password;if(op||!out)return -1;int encrypted=fs2_volume_encrypted(medium.disk,medium.base,medium.sectors);if(encrypted<0)return -1;*out=(EncInfo){.state=encrypted,.locked=encrypted&&fs2_volume_locked(medium.disk)};return 0;}
-int fs2_mount(void){
- fs2_active=0;if(boot.recovery||boot.install_len)return 0;Block b;if(!volume_mount(&b)||volume_extent(&medium.base,&medium.sectors))return 0;
- medium.disk=volume_current();u8 h[512];int encrypted=fs2_volume_encrypted(medium.disk,medium.base,medium.sectors);
- if(encrypted<0)panic("TMCBFS2 volume IO needs recovery",0,0);if(encrypted&&fs2_volume_locked(medium.disk))return 0;int recognized=encrypted;
- for(unsigned i=0;i<2;i++)if(!sata_io(medium.disk,medium.base+i*32,1,h,0)&&!memcmp(h,"TMCBFS2",8))recognized=1;
- if(!recognized)return 0;T2Io io={0,fs2_volume_blocks(medium.disk,medium.base,medium.sectors),disk_read,disk_write,disk_flush,memory_alloc,memory_free};
- if(tmc2_mount(&fs,io))panic("TMCBFS2 metadata needs recovery; disk untouched",0,0);
- fs2_active=persistent=1;wall=12;theme=7;dark=darktheme(theme);usednodes=0;fsrev=fs.super.generation;
- i64 count=tmc2_inode_count(&fs);if(count<0)panic("TMCBFS2 inode catalog invalid",0,0);usednodes=MIN((u64)count,0xffffffffu);
- home_refresh();load_prefs();device_add("TMCBFS2 scalable CoW", "block", &fs);boot_logstr("[fs2] mounted full data extent: blocks=");boot_lognum(fs.io.blocks);boot_logstr("\n");return 1;
+int fs2_enc(int op,const char*password,EncInfo*out){(void)password;if(op||!out)return -1;int encrypted=medium.disk<0?0:fs2_volume_encrypted(medium.disk,medium.base,medium.sectors);if(encrypted<0)return -1;*out=(EncInfo){.state=encrypted,.locked=encrypted&&fs2_volume_locked(medium.disk)};return 0;}
+/* Sparse RAM TMCFS2 for live, Recovery and the locked-volume login shell.
+ * Explicit volatile creation, NEVER a fallback that initializes a disk. */
+#define LIVE_BLOCKS 2048u
+static u64 live_pages[LIVE_BLOCKS][4];
+static int live_read(void*x,u64 b,void*p){(void)x;if(b>=LIVE_BLOCKS)return -1;for(unsigned i=0;i<4;i++){if(live_pages[b][i])memcpy((u8*)p+i*4096,(void*)live_pages[b][i],4096);else memset((u8*)p+i*4096,0,4096);}return 0;}
+static int live_write(void*x,u64 b,const void*p){(void)x;if(b>=LIVE_BLOCKS)return -1;for(unsigned i=0;i<4;i++)if(!live_pages[b][i]){live_pages[b][i]=page_get();if(!live_pages[b][i])return -1;memset((void*)live_pages[b][i],0,4096);}for(unsigned i=0;i<4;i++)memcpy((void*)live_pages[b][i],(const u8*)p+i*4096,4096);return 0;}
+static int live_flush(void*x){(void)x;return 0;}
+static int live_init(void){
+ T2Io io={0,LIVE_BLOCKS,live_read,live_write,live_flush,memory_alloc,memory_free};if(tmc2_format(&fs,io))return 0;
+ static const T2Seed seed[]={
+ {0,T2_DIR,"Users"},{1,T2_DIR,"User"},{2,T2_DIR,"Desktop"},{2,T2_DIR,"Documents"},
+ {2,T2_DIR,"Downloads"},{2,T2_DIR,"Pictures"},{0,T2_DIR,"Volumes"},
+ {0,T2_DIR,"Library"},{8,T2_DIR,"Application Support"},{8,T2_DIR,"Preferences"},
+ {2,T2_DIR,"Library"},{11,T2_DIR,"Preferences"},{11,T2_DIR,"Application Support"},
+ {12,T2_FILE,"com.tinymacos.appearance.plist"},{10,T2_FILE,"com.tinymacos.system.plist"},
+ {2,T2_FILE,"Welcome.txt"}};
+ if(tmc2_reset(&fs,seed,COUNT(seed)))return 0;
+ strset(home_name,"User",48);fs2_active=1;persistent=0;theme=7;wall=12;dark=darktheme(theme);fsrev=fs.super.generation;
+ const char*welcome="Benvenuti in tinymacOS.\n\nQuesta sessione usa TMCFS2 in RAM. Il formato legacy non è supportato.\n";
+ const char*system="<?xml version=\"1.0\"?><plist version=\"1.0\"><dict><key>ComputerName</key><string>Tramontana</string></dict></plist>\n";
+ if(write_path(HOME "/Welcome.txt",welcome,strlen(welcome))||write_path("/Library/Preferences/com.tinymacos.system.plist",system,strlen(system))||fs2_prefs())return 0;
+ i64 count=tmc2_inode_count(&fs);if(count<0)return 0;usednodes=count;
+ device_add("TMCFS2 RAM", "block", &fs);logstr("[fs2] volatile TMCFS2; legacy support removed\n");return 1;
 }
-
-/* Legacy vault dispatch must not inspect fixed v1 offsets in a mounted v2
- * volume; encrypted v3 envelopes are dispatched separately before legacy. */
-int fs2_plain_volume(int disk){return fs2_active&&disk==medium.disk;}
+int fs2_snapshot(void*p,u32 bytes){return fs2_active?tmc2_seed_export(&fs,p,bytes):-1;}
+int fs2_mount(void){
+ if(fs2_active)tmc2_close(&fs);fs2_active=0;persistent=0;
+ for(unsigned b=0;b<LIVE_BLOCKS;b++)for(unsigned i=0;i<4;i++)if(live_pages[b][i]){page_put(live_pages[b][i]);live_pages[b][i]=0;}
+ if(boot.recovery||boot.install_len){medium.disk=-1;return live_init();}
+ Block block;if(!volume_mount(&block)||volume_extent(&medium.base,&medium.sectors))panic("TMCFS2 data volume missing; disks untouched",0,0);
+ medium.disk=volume_current();u8 h[512];int encrypted=fs2_volume_encrypted(medium.disk,medium.base,medium.sectors);
+ if(encrypted<0)panic("TMCFS2 volume IO needs recovery",0,0);
+ if(encrypted&&fs2_volume_locked(medium.disk))return live_init();
+ int recognized=encrypted;
+ for(unsigned i=0;i<2;i++)if(!sata_io(medium.disk,medium.base+i*32,1,h,0)&&!memcmp(h,"TMCBFS2",8))recognized=1;
+ if(!recognized)panic("Native filesystem unsupported; TMCFS2 required; disk untouched",0,0);
+ T2Io io={0,fs2_volume_blocks(medium.disk,medium.base,medium.sectors),disk_read,disk_write,disk_flush,memory_alloc,memory_free};
+ if(tmc2_mount(&fs,io))panic("TMCFS2 metadata needs recovery; disk untouched",0,0);
+ fs2_active=persistent=1;wall=12;theme=7;dark=darktheme(theme);fsrev=fs.super.generation;
+ i64 count=tmc2_inode_count(&fs);if(count<0)panic("TMCFS2 inode catalog invalid",0,0);usednodes=MIN((u64)count,0xffffffffu);
+ home_refresh();load_prefs();device_add("TMCFS2 CoW", "block", &fs);boot_logstr("[fs2] mounted full data extent: blocks=");boot_lognum(fs.io.blocks);boot_logstr("\n");return 1;
+}
 
 i64 fs2_write_at(Process*p,int fd,u64 off,const void*data,size_t bytes){
  if(!fs2_active||fd<0||fd>=12||!p->fd[fd].id||p->fd[fd].backend!=2||!p->fd[fd].write)return -1;

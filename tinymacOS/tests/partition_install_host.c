@@ -37,13 +37,8 @@ int sata_io(int d,u64 l,u32 n,void*p,int wr){
  }else memcpy(p,where,n*512);return 0;
 }
 int volume_cipher_io(int d,u64 l,u32 n,void*p,int w){return sata_io(d,l,n,p,w);}
-Vault*volume_vault(int d){(void)d;return 0;}
-#ifdef TMC_FS2_BACKEND
 extern int fs2_seed_snapshot(void*,u32);
 int fs_snapshot(void*p,u32 n){return fs2_seed_snapshot(p,n);}
-#else
-int fs_snapshot(void*p,u32 n){assert(n==NDATA*512);memset(p,0,n);memcpy(p,"TMCBFS1\0",8);u32*h=p;h[2]=2;h[3]=NSLOTS;h[4]=144;h[5]=1;((u8*)p)[64*512]=1;memcpy((u8*)p+128*512+64,"_BHRfS_M",8);return 0;}
-#endif
 static void put32(u8*p,u32 v){memcpy(p,&v,4);}
 static void put16(u8*p,u16 v){memcpy(p,&v,2);}
 static void mbrpart(int i,u8 t,u32 a,u32 n){u8*p=disk+446+16*i;p[4]=t;put32(p+8,a);put32(p+12,n);}
@@ -64,18 +59,6 @@ static void fixture(int scheme){
  memset(payload,0,sizeof payload);memset(recovery,0x4b,sizeof recovery);boot=(struct Boot){.install_esp=(u64)payload,.install_len=sizeof payload,.recovery_img=(u64)recovery,.recovery_len=sizeof recovery};
 }
 static void digest(u8 out[3][32]){u32 a[]={2048,135168,153600},n[]={131072,16384,4096};for(int j=0;j<3;j++)sha_bytes(disk+(u64)a[j]*512,n[j]*512,out[j]);}
-static void run(int scheme){
- fixture(scheme);Medium m={sata_io,sata_flush,0,sectors};static DiskMap x;assert(partition_scan(&m,&x)&&x.safe&&x.scheme==scheme&&x.count==3&&x.sectors>=TC_SECTORS);
- assert(x.part[0].fs==FS_FAT32&&x.part[1].fs==FS_NTFS&&x.part[2].fs==FS_RAW);u8 before[3][32],after[3][32],table[64];digest(before);memcpy(table,disk+446,64);
- guard_start=x.start;guard_end=x.start+TC_SECTORS;write_guard=1;assert(!install_begin_i(0));int steps=0;
- while(isbusy()){assert(!install_step_i());assert(++steps<100000);}assert(st.state==INSTALL_DONE);digest(after);assert(!memcmp(before,after,sizeof before));
- if(scheme==MAP_MBR)assert(!memcmp(table,disk+446,48));else{Part*p=(Part*)(disk+1024);assert(!memcmp(p,oldparts,3*128));}
- assert(!memcmp(disk+(u64)(guard_start+TC_OLD_MBR)*512,oldmbr,512));assert(!memcmp(disk+440,oldmbr+440,6));
- static Layout layout;assert(layout_read(&m,&layout)==2&&layout.container&&layout.data==guard_start+TC_DATA&&layout.rec==guard_start+TC_REC);
- assert(!firstaid(&m,0));assert(!fs_snapshot(snapshot,sizeof snapshot));assert(!save_copy(&m,snapshot));assert(has_copy(&m));assert(!restore_copy(&m));assert(!restore_os(&m));
- assert(partition_scan(&m,&x)&&x.safe&&x.count==4);digest(after);assert(!memcmp(before,after,sizeof before));
- printf("PASS %s actual installer, bounded writes, FAT32/NTFS/RAW hashes unchanged, original MBR saved, relocated mount/firstaid/backup/restore\n",scheme==MAP_GPT?"GPT":"MBR");
-}
 static void failure_tests(int scheme)
 {
     static const int failures[]={0,1,190,191,192,300,400,485,488,489,490,491,492,493,494,495,496,497,498,499,500,501,502,503,504};
@@ -89,8 +72,7 @@ static void failure_tests(int scheme)
     fixture(scheme);assert(!install_begin_i(0));disk[444]^=1;while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!writes);puts("PASS metadata changed after selection: refusal before first write");
     printf("PASS %s %zu injected write failures preserve every existing FAT32/NTFS/RAW byte\n",scheme==MAP_GPT?"GPT":"MBR",COUNT(failures));
 }
-int main(void){
- disk=calloc(sectors,512);assert(disk);run(MAP_GPT);run(MAP_MBR);failure_tests(MAP_GPT);failure_tests(MAP_MBR);
+static void scanner_tests(void){
  Medium m={sata_io,sata_flush,0,sectors};static DiskMap x;
  fixture(MAP_GPT);disk[512+16]^=1;assert(!partition_scan(&m,&x)&&!x.safe);assert(install_begin_i(0)<0&&!writes);puts("PASS degraded GPT refuses allocation without writes");
  fixture(MAP_MBR);mbrpart(2,0xda,140000,4096);assert(!partition_scan(&m,&x)&&!x.safe);assert(install_begin_i(0)<0&&!writes);puts("PASS overlapping MBR refuses allocation without writes");
@@ -99,5 +81,5 @@ int main(void){
  assert(partition_scan(&m,&x)&&x.safe&&x.count==4&&x.part[3].logical&&x.part[3].fs==FS_NTFS);
  for(int i=0;i<x.gaps;i++)assert(x.gap[i].start+x.gap[i].sectors<=153600||x.gap[i].start>=253600);puts("PASS logical NTFS via EBR is inventoried; entire extended partition remains reserved");
  e[466]=15;put32(e+470,10);put32(e+474,99990);u8*f=e+10*512;memcpy(f,e,512);put32(f+470,10);
- assert(!partition_scan(&m,&x)&&!x.safe);puts("PASS cyclic/malformed EBR refuses allocation");free(disk);return 0;
+ assert(!partition_scan(&m,&x)&&!x.safe);puts("PASS cyclic/malformed EBR refuses allocation");
 }

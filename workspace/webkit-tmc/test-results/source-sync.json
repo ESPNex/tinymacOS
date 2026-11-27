@@ -25,7 +25,7 @@
   },
   {
     "path": "include/partition.h",
-    "sha256": "2bcbb6cc82a7b8948251992edbf6c658575b963206d21f768acd92808ea5a5e4"
+    "sha256": "3d0860ff61beccd2d7ba3972c71d9b122cd9698e71650d20cc3b5f1f2f3bcd23"
   },
   {
     "path": "include/clipboard.h",
@@ -93,7 +93,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "3ab2011cfc735fdf4abca915992cfccd8b00c70495f90dcba773f8332fd84dbe"
+    "sha256": "01d8f4aab84ee867a29d65dddd3e6fb7c44a6ba39d1e82304b5d6e004fc3668a"
   },
   {
     "path": "desktop/gfx.c",

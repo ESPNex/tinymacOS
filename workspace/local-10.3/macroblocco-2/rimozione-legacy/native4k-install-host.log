@@ -1,0 +1,6 @@
+PASS actual 4Kn fresh installer: GPT headers at physical 4096-byte LBAs, native entry/PMBR units, mirrored arrays, aligned full data extent, decoded inventory and sealed-system verification
+PASS production Recovery adapter: real same-extent conversion/deactivation on 4Kn layout, kernel recovery-key acknowledgement before steps, restart/resume authentication, imported account/file/snapshot preserved and every public extent byte-identical
+PASS native 4Kn install and conversion adapter normal
+PASS actual 4Kn fresh installer: GPT headers at physical 4096-byte LBAs, native entry/PMBR units, mirrored arrays, aligned full data extent, decoded inventory and sealed-system verification
+PASS production Recovery adapter: real same-extent conversion/deactivation on 4Kn layout, kernel recovery-key acknowledgement before steps, restart/resume authentication, imported account/file/snapshot preserved and every public extent byte-identical
+PASS native 4Kn install and conversion adapter sanitized

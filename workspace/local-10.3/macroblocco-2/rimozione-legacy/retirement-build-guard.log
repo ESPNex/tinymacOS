@@ -1,0 +1,1 @@
+PASS TMCFS2-only retirement: old driver/formatter/CoW/resize/FV002 removed; old magic confined to unsupported-format detection; no backend fallback; both native kernels checked

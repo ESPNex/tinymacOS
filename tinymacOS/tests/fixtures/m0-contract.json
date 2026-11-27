@@ -832,7 +832,7 @@
     {
       "file": "userspace/diskutility.c",
       "before": "Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.",
-      "after": "Resize: FAT32, NTFS e nativo legacy. TMCFS2: non disponibile.",
+      "after": "Resize: FAT32 e NTFS. TMCFS2: non disponibile.",
       "occurrences": 1
     },
     {

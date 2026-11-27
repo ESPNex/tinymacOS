@@ -2,8 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"; ROOT=$PWD; source tools/env.sh
 case "$TMC_BUILD" in /*) ;; *) echo 'TMC_BUILD must be an absolute external directory.' >&2; exit 2;; esac
-# The production 10.2.5 installer MUST use FS2; never silently build legacy FS.
-export TMC_FS2_BACKEND=1
+# TMCFS2 is the sole native filesystem; no compatibility build switch.
 # Match the verified published 10.2.4 USB/HID profile, not the shell default.
 # Both live and Recovery kernels must select the complete canonical stack.
 export TMC_USB_CANONICAL=1
@@ -12,7 +11,8 @@ python3 tools/media_path.py "$D" "$D/$TMC_ISO"
 mkdir -p "$D"; export TMC_BUILD="$D"; export LC_ALL=C
 python3 tools/linux-source-contract.py
 python3 tools/check-usb-retirement.py
-C=(-O2 ${TMC_FS2_BACKEND:+-DTMC_FS2_BACKEND} ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
+python3 tools/check-legacy-retirement.py
+C=(-O2 ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
 C+=(-DTMC_USB_CANONICAL) # compatibility constant, no alternate USB build exists
 U=("${C[@]}" -fpie -fno-plt -Iuserspace -Idesktop);L=(-nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000)
 E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFIINC" -I"$EFIINC/x86_64")
@@ -78,6 +78,7 @@ gcc "${C[@]}" -DTMC_RECOVERY_KERNEL -fno-pie -Inet/include -Inet/lwip/include -c
 REC_KOBJ=();for o in "${KOBJ[@]}";do if [[ "$o" == k-kernel-main.c.o ]];then REC_KOBJ+=(recovery-entry.o);else REC_KOBJ+=("$o");fi;done
 (cd "$D" && ld "${L[@]}" -T "$ROOT/kernel/layout.ld" "${REC_KOBJ[@]}" -o recovery-kernel.debug && objcopy --strip-all recovery-kernel.debug RecoveryKernel.elf)
 python3 tools/check-kernel-layout.py "$D/kernel.elf" "$D/RecoveryKernel.elf"
+python3 tools/check-legacy-retirement.py "$D"
 python3 tools/check-usb-profile.py "$D"
 python3 tools/system_volume.py "$D" recovery
 P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT

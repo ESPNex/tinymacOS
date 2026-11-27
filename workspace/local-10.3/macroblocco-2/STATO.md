@@ -37,3 +37,7 @@ I vecchi log/checkpoint VHD/sola lettura non certificano il completamento: sono 
 ## Follow-up Rinomina e TMCFS2
 
 Completato e verificato localmente: dialogo modificabile/cliccabile e azione contestuale Rinomina su tutti i backend scrivibili; nuovi volumi Utility Disco realmente TMCFS2 CoW. Nessuna conversione dei volumi legacy. Build/host/GUI e controllo a guest spento PASS; dettagli e limiti in [rinomina-tmcfs2/VERIFICA.md](rinomina-tmcfs2/VERIFICA.md). Le evidenze precedenti in questo documento restano riferite alla ISO storica, non alla nuova build.
+
+## Rimozione del filesystem legacy
+
+Su richiesta esplicita, il backend nativo di prima generazione è stato rimosso, non nascosto. I volumi precedenti sono non supportati, senza conversione o modifica dei dati. Anche live/Recovery e trasporto Installer sono ora indipendenti dal vecchio formato. Build/host/guest e rifiuto zero-write verificati: [rimozione-legacy/VERIFICA.md](rimozione-legacy/VERIFICA.md). Le evidenze antecedenti rimangono storiche.

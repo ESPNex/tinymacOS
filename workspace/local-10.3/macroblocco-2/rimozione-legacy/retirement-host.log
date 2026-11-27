@@ -1,0 +1,3 @@
+PASS TMCFS2-only retirement: old driver/formatter/CoW/resize/FV002 removed; old magic confined to unsupported-format detection; no backend fallback
+PASS TMCFS2-only actual runtime: TMCBFS1/TINYFS1/unknown/corrupt native boot refuse with identical disk SHA and zero writes; live/Recovery use real volatile TMCFS2 + new transport; installed v2 and locked/unlock remount work without legacy fallback
+PASS TMCFS2-only actual runtime: TMCBFS1/TINYFS1/unknown/corrupt native boot refuse with identical disk SHA and zero writes; live/Recovery use real volatile TMCFS2 + new transport; installed v2 and locked/unlock remount work without legacy fallback

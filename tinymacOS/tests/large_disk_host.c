@@ -1,8 +1,7 @@
 /* Actual installer, GPT/MBR reader and maintenance at high LBAs, without
  * allocating/scanning a terabyte or ever opening a physical device. */
-#define main previous_partition_main
-#include "partition_install_host.c"
-#undef main
+#define TMC_FS2_HOST_HELPERS 1
+#include "fs2_install_host.c"
 static void large_fixture(u64 total,int scheme){
  sectors=total;sparse_high=(total-524288u)&~2047ull;sparse_window=total-sparse_high;
  disk=calloc((size_t)sparse_window+64,512);assert(disk);
@@ -19,12 +18,12 @@ static void large_fixture(u64 total,int scheme){
 static void large_run(u64 total,int scheme){
  large_fixture(total,scheme);Medium m={sata_io,sata_flush,0,total};static DiskMap x;assert(partition_scan(&m,&x)&&x.safe&&x.count==1&&x.start==sparse_high);
  u8 foreign_entry[128];memcpy(foreign_entry,scheme==MAP_GPT?disk+1024:disk+446,scheme==MAP_GPT?128:16);
- guard_start=sparse_high;guard_end=guard_start+TC_SECTORS;write_guard=1;
+ guard_start=sparse_high;guard_end=sectors-34u;write_guard=1;
  refresh();assert(st.disk[0].usable&&st.disk[0].sectors==total);assert(!install_begin_i(0));
  for(int step=0;isbusy();step++){assert(step<100000);assert(!install_step_i());}assert(st.state==INSTALL_DONE&&writes>0);
  assert(!memcmp(foreign_entry,scheme==MAP_GPT?disk+1024:disk+446,scheme==MAP_GPT?128:16));
- static Layout out;assert(layout_read(&m,&out)==2&&out.container&&out.data==sparse_high+TC_DATA&&out.rec==sparse_high+TC_REC);
- assert(!firstaid(&m,0));assert(!fs_snapshot(snapshot,sizeof snapshot));assert(!save_copy(&m,snapshot));assert(has_copy(&m));assert(!restore_copy(&m));assert(!restore_os(&m));
+ static Layout out;assert(layout_read(&m,&out)==2&&out.container&&out.data==sparse_high+TC_DATA&&out.rec==install_rec);
+ assert(!fs2_disk_verify(0,out.data,out.parts[1].end-out.data+1));assert(!fs2_disk_backup(0,out.data,out.parts[1].end-out.data+1,1));assert(fs2_disk_backup(0,out.data,out.parts[1].end-out.data+1,0)==1);assert(!fs2_disk_backup(0,out.data,out.parts[1].end-out.data+1,2));assert(!restore_os(&m));
  assert(partition_scan(&m,&x)&&x.safe&&x.count==2);
  printf("PASS actual %s installer + maintenance at %llu sectors (%llu bytes), native extent near high LBA %llu, foreign entry preserved, strict write canaries, primary/backup readback\n",scheme==MAP_GPT?"GPT":"MBR",(unsigned long long)total,(unsigned long long)total*512,(unsigned long long)sparse_high);
  if(scheme==MAP_GPT){u8 b[512];assert(!sata_io(0,total-1,1,b,0));b[16]^=1;assert(!sata_io(0,total-1,1,b,1));int before=writes;assert(!partition_scan(&m,&x)&&!x.safe);assert(install_begin_i(0)<0&&writes==before);puts("PASS high-LBA corrupt backup GPT still refuses before writes");}

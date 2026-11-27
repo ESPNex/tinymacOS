@@ -1,6 +1,5 @@
 #pragma once
-/* Included after kernel/k.h. The legacy backend remains available; no format
- * conversion or implicit format is performed when mounting existing media. */
+/* TMCFS2 is the sole native backend. Existing unsupported media is never converted. */
 extern int fs2_active;
 int fs2_mount(void);
 int fs2_home_bind(const char*);
@@ -40,3 +39,5 @@ int fs2_external_import(int,u64,u64,int,u64,u64,const char*,int,u64*);
 
 /* Kernel export sink only: positional writes without the editor truncation policy. */
 i64 fs2_write_at(Process*,int,u64,const void*,size_t);
+
+int fs2_snapshot(void*,u32);

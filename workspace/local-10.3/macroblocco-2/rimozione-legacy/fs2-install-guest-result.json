@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "release_acceptance": false,
+  "work": "/var/tmp/tmc-fs2-install-l0zoffy_",
+  "iso_sha256": "d66323d0b9955cf6743d63fbc5142bfed5ce5d98d5a5d9d390ea2aad6845b1d1",
+  "kernel_sha256": "9e7cbdbb266546dd5b437288201a9ab15fde778bec40a584e47d16e231d647d3",
+  "host_formatted_target": false,
+  "checks": [
+    "Installer itself already promotes OpenCore FIRST in real OVMF NVRAM before any native boot; UI reports verified preference, original order backed up",
+    "Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted",
+    "Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore",
+    "Internal native Recovery runs the SAME installer as Reinstalla, verifies FS2 data/snapshots and sealed system; complete data-partition SHA unchanged by reinstall",
+    "After reinstall and reboot, imported account, documents and existing snapshot remain usable"
+  ],
+  "opencore_verified_before_first_native_boot": true,
+  "reinstall_entire_data_partition_sha256_unchanged": "6a2b5a400481d70ba16f9ad5e0fde4d98f45b4f36e4b6d631a55faabd38f84a7"
+}

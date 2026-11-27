@@ -1,0 +1,2 @@
+PASS actual Recovery/offline dispatcher rejects verify/repair/reset/backup/restore/encryption of both retired native formats; whole-disk SHA identical and zero writes
+PASS actual Recovery/offline dispatcher rejects verify/repair/reset/backup/restore/encryption of both retired native formats; whole-disk SHA identical and zero writes

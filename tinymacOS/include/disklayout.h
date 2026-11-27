@@ -4,10 +4,10 @@
 #define LESP 2048u
 #define NESP 49152u /* 24 MiB: Install.esp payload (System-disk.vol + anchors) */
 #define LDATA (LESP+NESP)
-#define NDATA 6288u  /* full user-volume image (btrfs SECTORS: 144+384*16) */
-#define NPART 57344u /* FS block bound: live + snapshot area (backup starts at BACKUP_OFF) */
+#define NDATA 6288u  /* bounded TMCSEED2 installer transport capacity, sectors */
+#define NPART 57344u /* historical minimum layout/discovery span, not an FS2 capacity limit */
 #define NREC 20480u /* 10 MiB Recovery HD: RECOVERY.EFI image + BaseSystem.dmg */
-#define BACKUP_OFF 57344u
+#define INSTALL_DATA_MIN 63632u /* compatible minimum installation data extent, sectors */
 #define MINSECT 131072u /* scan eligible from 64 MiB; install refuses post-scan if layout cannot fit */
 #define CHUNK 256u
 #define RESTORE_AT(z) ((z)-33u-NESP-1u)
@@ -56,14 +56,8 @@ typedef struct {
 } Layout;
 u32 crc32(const void *, size_t);
 int layout_read(Medium *, Layout *);
-int firstaid(Medium *, int);
 int verify_system_volume(Medium*);
-int save_copy(Medium *, const void *);
-int has_copy(Medium *);
-int restore_copy(Medium *);
 int restore_os(Medium *);
-int reset_data(Medium *);
-int tiny_check(const void *);
 
 int partition_scan(Medium *, DiskMap *);
 int filesystem_probe(Medium *,u64,u64);
