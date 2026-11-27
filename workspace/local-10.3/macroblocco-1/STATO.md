@@ -1,6 +1,6 @@
 # Macroblocco 1 — registro dei risultati
 
-**INCOMPLETO. Nessun passaggio al macroblocco 2, nessuna release e nessun cambio di versione.**
+**CHIUSO SU INDICAZIONE ESPLICITA DELL’UTENTE: «chiudi il macroblocco 1 ora 2». Accettazione fisica incompleta, non trasformata in PASS. Nessuna release e nessun cambio di versione.**
 
 Unico riferimento: il PDF fornito dall’utente, `tinymacOS/docs/piano.pdf`, SHA-256 `fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f`. Il vecchio piano è eliminato; questo è il registro dei test, non un nuovo piano. Le ricevute dei precedenti M0–M3 sono storiche e non chiudono i macroblocchi del PDF. Lavoro M4 congelato e non riapplicato.
 
@@ -66,8 +66,10 @@ Hash e dimensioni degli artefatti: `home-artifacts.json`; impronte dei sorgenti 
 
 PASS foundation corrente, contratto M0/USB canonico, asset/font bloccati, audit stringhe e overlay. Nessun nuovo stack USB, font sostituito, Safari reintrodotto o patch M4 riapplicata. Il primo lancio foundation ha incontrato l’inventario stringhe cambiato durante le modifiche; rieseguito dopo l’aggiornamento, PASS. Il primo lancio partizioni senza TMC_BUILD è stato rifiutato prima dei test; rieseguito con il build esterno, PASS. I primi tentativi del driver di test EFI premevano Esc troppo presto oppure Invio dopo una scelta numerica già immediata; corretto soltanto il driver di input, poi strumenti verificati con successo.
 
-**Verdetto: macroblocco 1 NON COMPLETO.** Restano l’accettazione del chainload su un Windows reale e il risultato sul vero hardware GeForce/HDMI. L’attivazione OpenCore direttamente al termine dell’installazione è ora implementata e verificata nei guest finali. Non vengono trasformati in PASS mediante test sintetici o una semplice modifica di stato.
+**Chiusura su richiesta dell’utente; collaudo fisico non completato.** Restano l’accettazione del chainload su un Windows reale e il risultato sul vero hardware GeForce/HDMI. L’attivazione OpenCore direttamente al termine dell’installazione è ora implementata e verificata nei guest finali. Non vengono trasformati in PASS mediante test sintetici o una semplice modifica di stato.
 
 Tutti i processi di build/test di questa lavorazione sono conclusi; nessuna prova resta in esecuzione al momento della pubblicazione dei sorgenti.
 
 Ultima verifica sui sorgenti finali: foundation, BootOrder/guasti/ripristino e grandi dischi normali/ASan/UBSan **PASS** (`runtime-final-*-host.log`); gate EFI aggiuntivo con offset handoff invariati **PASS** (`runtime-firmware-boot-host.log`). Tutte le sequenze finali sono concluse. Le prove interrotte/intermedie non sostituiscono le quattro ricevute PASS della ISO finale.
+
+L’utente ha autorizzato esplicitamente la chiusura e il passaggio al macroblocco 2. Questa decisione supera il precedente divieto di procedere finché ogni collaudo del primo blocco fosse verificato; non modifica retroattivamente gli esiti dei test e non certifica GPU/Windows. Checkpoint tecnico del blocco 1: `f33c1a231d1fe832fa1c17e1c4226384261a3684`.

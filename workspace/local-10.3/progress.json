@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 1: install-time OpenCore activation now implemented and verified BEFORE first native boot; same final ISO passes fresh install/Recovery, ~10GB gap/512B, 3TiB/4Kn coexistence and real EFI restore. Still not physically accepted on GeForce/HDMI or actual Windows.",
+  "status": "Macroblock 1 closed by explicit user instruction, with physical GeForce/HDMI and actual Windows acceptance still unverified. Macroblock 2 active, not complete.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 – Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 1,
-  "active_macroblock_title": "Boot, Installazione e Hardware",
+  "active_macroblock": 2,
+  "active_macroblock_title": "Utility Disco e Gestione Volumi",
   "active_macroblock_complete": false,
   "background_work_running": false,
   "release_ready": false,
@@ -90,22 +90,39 @@
   },
   "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
   "current_checks": {
-    "source_manifest": "macroblocco-1/runtime-source-manifest.json",
-    "evidence": "macroblocco-1/STATO.md",
-    "build": "PASS final complete BIOS/UEFI/Recovery/apps/tools and unchanged build inputs; development only",
-    "iso_sha256": "6f0f824d1ebe57036e1a82e4cd81523207f0057122e12589d2f9ab292e85da65",
-    "home_host": "PASS actual legacy/FS2/FV003, UTF8 names, collision refusal, frozen snapshots, UI canonical paths; normal + ASan/UBSan",
-    "home_guest": "PASS GUI install/import, real pwd/HOME, cold ISO-detached NVMe, CoW and Recovery reinstall; independent read-only inode inspection finds no physical User duplicate",
-    "boot_default_host": "PASS normal + ASan/UBSan: install-time registration, physical-path equivalence, failure rollback, opt-out, removed-media restore filtering and retained EFI paging structures",
-    "firmware_guest": "PASS before any native boot: actual OVMF default entry targets newly committed ESP; no duplicate on cold boot; real GOP tool and post-ISO-removal original-order restore verified",
-    "partition_guest": "PASS SAME FINAL ISO: ~10GB gap/512B and 3TiB disk/2.5TiB gap/4Kn, correct native HD device-path coordinates, native+Recovery, every foreign byte verified",
-    "partition_host": "PASS current Windows gaps, GPT/MBR installer and large-disks normal+sanitized",
-    "preservation": "PASS foundation/M0, canonical USB and locked supplied font/assets, source overlay/string inventory",
-    "open_requirements": [
-      "Actual installed Windows chainload acceptance; synthetic foreign partitions and mock Windows EFI variables are not Windows certification",
-      "Physical GeForce 310 HDMI monitor: collect actual GOP/EDID output and prove higher-resolution result; no native NVIDIA modesetting driver added"
-    ],
-    "background_work_running": false,
-    "diagnostic": "macroblocco-1/Diagnostica-video-UEFI.zip"
+    "evidence": "macroblocco-2/STATO.md",
+    "diskutility_catalogue": "PASS actual app model normal + ASan/UBSan: mounted snapshots not duplicated under foreign disks/live/Recovery; verification guarded",
+    "usage_units": "PASS normal + ASan/UBSan: used/total values each formatted once with SI units",
+    "guest": "NOT RUN for new block 2 edits",
+    "exfat_export": "NOT IMPLEMENTED; preserve original/snapshots and do not relabel a nonfunctional button",
+    "foreign_filesystem_browsing": "NOT IMPLEMENTED: filesystem detection is not a mount driver",
+    "background_work_running": false
+  },
+  "macroblock_1_closure": {
+    "status": "closed_by_explicit_user_instruction_with_unverified_physical_acceptance",
+    "user_instruction": "chiudi il macroblocco 1 ora 2",
+    "all_pdf_acceptance_verified": false,
+    "physical_geforce_hdmi_tested": false,
+    "actual_windows_chainload_tested": false,
+    "source_checkpoint": "f33c1a231d1fe832fa1c17e1c4226384261a3684",
+    "checks": {
+      "source_manifest": "macroblocco-1/runtime-source-manifest.json",
+      "evidence": "macroblocco-1/STATO.md",
+      "build": "PASS final complete BIOS/UEFI/Recovery/apps/tools and unchanged build inputs; development only",
+      "iso_sha256": "6f0f824d1ebe57036e1a82e4cd81523207f0057122e12589d2f9ab292e85da65",
+      "home_host": "PASS actual legacy/FS2/FV003, UTF8 names, collision refusal, frozen snapshots, UI canonical paths; normal + ASan/UBSan",
+      "home_guest": "PASS GUI install/import, real pwd/HOME, cold ISO-detached NVMe, CoW and Recovery reinstall; independent read-only inode inspection finds no physical User duplicate",
+      "boot_default_host": "PASS normal + ASan/UBSan: install-time registration, physical-path equivalence, failure rollback, opt-out, removed-media restore filtering and retained EFI paging structures",
+      "firmware_guest": "PASS before any native boot: actual OVMF default entry targets newly committed ESP; no duplicate on cold boot; real GOP tool and post-ISO-removal original-order restore verified",
+      "partition_guest": "PASS SAME FINAL ISO: ~10GB gap/512B and 3TiB disk/2.5TiB gap/4Kn, correct native HD device-path coordinates, native+Recovery, every foreign byte verified",
+      "partition_host": "PASS current Windows gaps, GPT/MBR installer and large-disks normal+sanitized",
+      "preservation": "PASS foundation/M0, canonical USB and locked supplied font/assets, source overlay/string inventory",
+      "open_requirements": [
+        "Actual installed Windows chainload acceptance; synthetic foreign partitions and mock Windows EFI variables are not Windows certification",
+        "Physical GeForce 310 HDMI monitor: collect actual GOP/EDID output and prove higher-resolution result; no native NVIDIA modesetting driver added"
+      ],
+      "background_work_running": false,
+      "diagnostic": "macroblocco-1/Diagnostica-video-UEFI.zip"
+    }
   }
 }
