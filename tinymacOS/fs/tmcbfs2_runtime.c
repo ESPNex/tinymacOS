@@ -211,3 +211,8 @@ int fs2_mount(void){
 /* Legacy vault dispatch must not inspect fixed v1 offsets in a mounted v2
  * volume; encrypted v3 envelopes are dispatched separately before legacy. */
 int fs2_plain_volume(int disk){return fs2_active&&disk==medium.disk;}
+
+i64 fs2_write_at(Process*p,int fd,u64 off,const void*data,size_t bytes){
+ if(!fs2_active||fd<0||fd>=12||!p->fd[fd].id||p->fd[fd].backend!=2||!p->fd[fd].write)return -1;
+ i64 n=tmc2_write(&fs,p->fd[fd].inode,off,data,bytes);if(n>=0)fsrev++;return n;
+}

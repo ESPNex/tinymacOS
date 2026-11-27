@@ -1,6 +1,6 @@
 #pragma once
 #include "ui.h"
-#define BROWSER_PLACES 10
+#define BROWSER_PLACES 11
 #define BROWSER_PAGE 64
 extern const char *const browser_labels[BROWSER_PLACES];
 extern const char *const browser_paths[BROWSER_PLACES];

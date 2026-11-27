@@ -29,3 +29,11 @@ i64 fat_volume_write(ForeignIo*,const char*,u64,const void*,size_t);
  * Privileged caller must separately enforce consent, truly unallocated space,
  * source/extent disjointness and delayed partition-table publication. */
 int fat_volume_format_exfat(ForeignIo*);
+
+int nt_volume_stat(ForeignIo*,const char*,ForeignEntry*);
+int nt_volume_list(ForeignIo*,const char*,ForeignEntry*,int,int);
+int nt_volume_create(ForeignIo*,const char*,int);
+int nt_volume_remove(ForeignIo*,const char*);
+int nt_volume_move(ForeignIo*,const char*,const char*);
+i64 nt_volume_read(ForeignIo*,const char*,u64,void*,size_t);
+i64 nt_volume_write(ForeignIo*,const char*,u64,const void*,size_t);

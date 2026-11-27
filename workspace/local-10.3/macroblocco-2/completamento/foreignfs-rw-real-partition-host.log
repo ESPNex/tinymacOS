@@ -1,0 +1,156 @@
+In file included from /home/user/tinymacOS/compat/ntfs/native_abi.h:8,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/abi.c:6:
+/home/user/tinymacOS/include/base.h:12:9: warning: "MIN" redefined
+   12 | #define MIN(a,b) ((a)<(b)?(a):(b))
+      |         ^~~
+In file included from /var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/include/ntfs-3g/volume.h:37,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/include/ntfs-3g/device.h:33,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/abi.c:3:
+/usr/include/x86_64-linux-gnu/sys/param.h:102:9: note: this is the location of the previous definition
+  102 | #define MIN(a,b) (((a)<(b))?(a):(b))
+      |         ^~~
+/home/user/tinymacOS/include/base.h:13:9: warning: "MAX" redefined
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |         ^~~
+/usr/include/x86_64-linux-gnu/sys/param.h:103:9: note: this is the location of the previous definition
+  103 | #define MAX(a,b) (((a)>(b))?(a):(b))
+      |         ^~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/collate.c: In function ‘ntfs_collate_file_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/collate.c:230:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  230 |                         (ntfschar*)&file_name_attr1->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/collate.c:232:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  232 |                         (ntfschar*)&file_name_attr2->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_inode_lookup_by_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c:334:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  334 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c:455:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  455 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_filldir’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c:1001:49: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1001 |                         res = filldir(dirent, fn->file_name,
+      |                                               ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_delete’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/dir.c:1990:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1990 |                 if (ntfs_names_are_equal(fn->file_name, fn->file_name_length,
+      |                                          ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/index.c: In function ‘ntfs_ie_filename_get’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/index.c:277:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  277 |         return ntfs_attr_name_get(fn->file_name, fn->file_name_length);
+      |                                   ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/inode.c: In function ‘ntfs_inode_add_attrlist’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/inode.c:1264:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1264 |                         if (!ntfs_attr_lookup(ale->type, ale->name,
+      |                                                          ~~~^~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/reparse.c: In function ‘ntfs_fix_file_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/reparse.c:185:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  185 |                            && ntfs_names_are_equal(find.attr.file_name,
+      |                                                    ~~~~~~~~~^~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/reparse.c:187:38: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  187 |                                 found->file_name, found->file_name_length,
+      |                                 ~~~~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/unistr.c: In function ‘ntfs_file_value_upcase’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal/ntfs-native/source/libntfs-3g/unistr.c:432:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  432 |         ntfs_name_upcase((ntfschar*)&file_name_attr->file_name,
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+NTFS native resize: source/ABI verified, integer-only freestanding engine + bounded block adapter namespace
+PASS pinned FatFs R0.16 + patch 3: freestanding FAT32/exFAT read/write and raw-partition exFAT formatter built; not runtime or guest acceptance
+PASS read-only legacy native and clean CoW live-file mount; pending replay, bad CoW checksum and encryption refuse without writes
+PASS export preflight rejects Windows reserved names/case collisions, recursive source IDs, invalid UTF8 and denied preparation before first output byte
+PASS new raw real-partition exFAT, Unicode directory tree, empty/resident-sized/65537-byte files, no source writes
+exfatprogs version : 1.2.9
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal-exfat.img: clean. directories 2, files 5
+entry Documenti 4096 dir 1
+entry vuoto.txt 0 dir 0
+entry proof.bin 65537 dir 0
+entry mini.txt 4 dir 0
+PASS malformed boot geometry, filesystem metadata checksum/chain cycle and injected I/O refusal; no fixture writes
+PASS read-only real filesystem: root/readdir/lookup, Unicode, empty and 65537-byte streams, cross-cluster read, unaligned seek and EOF; no write API
+PASS real namespace adapters: FAT32/NTFS/exFAT create/write/seek/read/rename/remove through ForeignIo and FD, no readonly shim
+PASS actual new REAL exFAT partition export: zero-write preview, stale-table refusal before writes, existing partition entry preserved, publish last after verified copy; native live bytes and snapshot unchanged. NO VHD.
+exfatprogs version : 1.2.9
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal-exported.img: clean. directories 5, files 1
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-foreignfs-FKwgZmF2/normal-fat32.img: 2 files, 131/129022 clusters
+PASS normal actual RW namespace and NEW REAL partition export, independent fsck
+In file included from /home/user/tinymacOS/compat/ntfs/native_abi.h:8,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/abi.c:6:
+/home/user/tinymacOS/include/base.h:12:9: warning: "MIN" redefined
+   12 | #define MIN(a,b) ((a)<(b)?(a):(b))
+      |         ^~~
+In file included from /var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/include/ntfs-3g/volume.h:37,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/include/ntfs-3g/device.h:33,
+                 from /var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/abi.c:3:
+/usr/include/x86_64-linux-gnu/sys/param.h:102:9: note: this is the location of the previous definition
+  102 | #define MIN(a,b) (((a)<(b))?(a):(b))
+      |         ^~~
+/home/user/tinymacOS/include/base.h:13:9: warning: "MAX" redefined
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |         ^~~
+/usr/include/x86_64-linux-gnu/sys/param.h:103:9: note: this is the location of the previous definition
+  103 | #define MAX(a,b) (((a)>(b))?(a):(b))
+      |         ^~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/collate.c: In function ‘ntfs_collate_file_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/collate.c:230:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  230 |                         (ntfschar*)&file_name_attr1->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/collate.c:232:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  232 |                         (ntfschar*)&file_name_attr2->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_inode_lookup_by_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c:334:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  334 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c:455:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  455 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_filldir’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c:1001:49: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1001 |                         res = filldir(dirent, fn->file_name,
+      |                                               ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_delete’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/dir.c:1990:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1990 |                 if (ntfs_names_are_equal(fn->file_name, fn->file_name_length,
+      |                                          ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/index.c: In function ‘ntfs_ie_filename_get’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/index.c:277:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  277 |         return ntfs_attr_name_get(fn->file_name, fn->file_name_length);
+      |                                   ~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/inode.c: In function ‘ntfs_inode_add_attrlist’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/inode.c:1264:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1264 |                         if (!ntfs_attr_lookup(ale->type, ale->name,
+      |                                                          ~~~^~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/reparse.c: In function ‘ntfs_fix_file_name’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/reparse.c:185:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  185 |                            && ntfs_names_are_equal(find.attr.file_name,
+      |                                                    ~~~~~~~~~^~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/reparse.c:187:38: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  187 |                                 found->file_name, found->file_name_length,
+      |                                 ~~~~~^~~~~~~~~~~
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/unistr.c: In function ‘ntfs_file_value_upcase’:
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized/ntfs-native/source/libntfs-3g/unistr.c:432:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  432 |         ntfs_name_upcase((ntfschar*)&file_name_attr->file_name,
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+NTFS native resize: source/ABI verified, integer-only freestanding engine + bounded block adapter namespace
+PASS pinned FatFs R0.16 + patch 3: freestanding FAT32/exFAT read/write and raw-partition exFAT formatter built; not runtime or guest acceptance
+PASS read-only legacy native and clean CoW live-file mount; pending replay, bad CoW checksum and encryption refuse without writes
+PASS export preflight rejects Windows reserved names/case collisions, recursive source IDs, invalid UTF8 and denied preparation before first output byte
+PASS new raw real-partition exFAT, Unicode directory tree, empty/resident-sized/65537-byte files, no source writes
+exfatprogs version : 1.2.9
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized-exfat.img: clean. directories 2, files 5
+entry Documenti 4096 dir 1
+entry vuoto.txt 0 dir 0
+entry proof.bin 65537 dir 0
+entry mini.txt 4 dir 0
+PASS malformed boot geometry, filesystem metadata checksum/chain cycle and injected I/O refusal; no fixture writes
+PASS read-only real filesystem: root/readdir/lookup, Unicode, empty and 65537-byte streams, cross-cluster read, unaligned seek and EOF; no write API
+PASS real namespace adapters: FAT32/NTFS/exFAT create/write/seek/read/rename/remove through ForeignIo and FD, no readonly shim
+PASS actual new REAL exFAT partition export: zero-write preview, stale-table refusal before writes, existing partition entry preserved, publish last after verified copy; native live bytes and snapshot unchanged. NO VHD.
+exfatprogs version : 1.2.9
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized-exported.img: clean. directories 5, files 1
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-foreignfs-FKwgZmF2/sanitized-fat32.img: 2 files, 131/129022 clusters
+PASS sanitized actual RW namespace and NEW REAL partition export, independent fsck

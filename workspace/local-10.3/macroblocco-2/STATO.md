@@ -1,55 +1,35 @@
-# Macroblocco 2 — risultati in corso
+# Macroblocco 2 — completamento e verifiche
 
-Riferimento esclusivo: punto 2 del PDF fornito dall’utente, `tinymacOS/docs/piano.pdf`. Il macroblocco 1 è chiuso su indicazione esplicita dell’utente, mantenendo non verificati i collaudi fisici. Questo registro non è un piano sostitutivo.
+Riferimento esclusivo: punto 2 di `tinymacOS/docs/piano.pdf`, invariato. Questo documento registra risultati, non sostituisce il piano. Il macroblocco 1 resta chiuso su indicazione dell’utente con collaudi fisici non verificati. Nessun lavoro avviato sul macroblocco 3 e nessun incremento di versione/release.
 
-**Macroblocco 2 IN CORSO, non completo e non pubblicato come release.**
+**COMPLETO per implementazione e collaudi locali host + sistema reale eseguito in QEMU. Hardware fisico e Windows reale NON collaudati.** Le ricevute finali sono in `completamento/`; hash della build in `artifacts-final.json` e 1167 input congelati verificati invariati in `completamento/source-inputs-final.json`.
 
-## Aggiornamento vincolante della richiesta utente
+## Risultato funzionale
 
-La validazione finale è stata **fermata**. Il prototipo non pubblicato esportava un VHD contenente exFAT: **non soddisfa la richiesta** di una partizione exFAT reale e non viene accettato come completamento.
+- Utility Disco presenta il catalogo snapshot una volta sola sotto il disco montato: nessuna duplicazione di «Copia locale» o azioni snapshot. Paginazione, rotellina, tastiera, selezione stabile per nome, errori espliciti e usato/capacità con unità SI. Gli snapshot si aprono nel Finder come vere viste congelate in sola lettura.
+- `/Volumes/diskNsN` e sidebar Finder espongono volumi dati reali. NTFS, FAT32 ed exFAT hanno driver nativi **lettura/scrittura**, collegati a FD/syscall e normali operazioni FS2-facing: create/read/write/truncate/append, rename/delete, copia/taglia/incolla, Terminale e drag & drop anche fra filesystem.
+- Gli spostamenti cross-filesystem copiano e verificano tutti i byte prima di rimuovere la sorgente. Un errore non viene presentato come successo/rollback atomico; un’eventuale copia parziale può restare visibile. Rename/remove esterni invalidano prudentemente gli FD path-based, evitando scritture su un nuovo file che riutilizza lo stesso nome.
+- La scrittura NTFS usa libntfs-3g reale con preflight distinto pulizia/ibernazione, blocco dei metadati e file protetti. FAT32/exFAT usano FatFs R0.16 patch 3 bloccato per commit/SHA, non codice ospitato/FUSE. I callback sono limitati alla partizione e non possono scrivere tabelle dischi. Nessuna promessa assoluta su corruzione o interruzioni di alimentazione.
+- FileVault e snapshot **esclusi sui filesystem esterni**, come richiesto. I volumi dati nativi distinti usati come sorgente di esportazione restano in sola lettura.
+- **«Esporta una copia exFAT» crea una NUOVA PARTIZIONE REALE**, non un VHD e non una conversione/formattazione di partizioni esistenti. Si sceglie `diskN`, si esegue anteprima senza scritture e si conferma esplicitamente. La tabella deve essere verificata e invariata; si usa soltanto un intervallo realmente non allocato. La copia viene verificata con readback e la voce GPT/MBR pubblicata per ultima. Origine BPB uguale all’LBA reale. Originali e snapshot conservati. Su errore prima della pubblicazione può restare materiale nello spazio non allocato, non una falsa partizione completata. Le scritture GPT verificate non sono atomiche rispetto a perdita di corrente.
+- Terminale: `diskutil exportExFAT /.snapshots/nome diskN` mostra l’anteprima; `--confirm` autorizza la copia. La GUI esegue la stessa procedura anteprima/conferma. L’export 4Kn non supportato viene rifiutato prima delle scritture; questo non è un collaudo di Windows o dell’hardware fisico.
 
-**Destinazione scelta dall’utente:** nuova partizione exFAT nello spazio realmente non allocato, da popolare con la copia. Non una partizione esistente.
+## Prove eseguite
 
-Il blocco 2 comprende ora anche lettura **e scrittura** su NTFS, FAT32 ed exFAT tramite le normali operazioni del filesystem: Finder, Terminale, taglia/copia/incolla, rinomina, eliminazione e drag & drop, anche fra filesystem diversi. FileVault e snapshot restano esclusi per i filesystem esterni. I lettori in sola lettura e il prototipo VHD sono lavoro intermedio, non prova di completamento di questi requisiti. Nessuna partizione esistente va formattata o convertita implicitamente; sorgente e snapshot devono restare preservati.
+- **PASS normale + ASan/UBSan:** backend FAT32/exFAT e NTFS, nomi Unicode, file da 65.537 byte, letture disallineate/EOF, truncate/append, rename senza overwrite, rifiuto directory cicliche, remove/nonempty, paginazione, sola lettura/errori I/O e canarini esterni. `fat-volume-rw-host.log`, `ntfs-volume-rw-host.log`.
+- **PASS namespace e vera partizione exFAT host, normale + sanitizzatori:** driver attraverso i veri adapter volume/FD, anteprima senza scritture, tabella stale rifiutata, partizione esistente conservata, pubblicazione per ultima, snapshot/live distinti e fsck indipendenti. `foreignfs-rw-real-partition-host.log`.
+- **PASS regressioni:** foundation, risorse USB/font/overlay, browser, catalogo Utility Disco, runtime FS2, partizioni, disk editor, resize nativo; NTFS shrink/grow/ibernazione/errori con verifiche indipendenti. Log `final-*-host.log` e `ntfs-resize-regression.log`.
+- **PASS stessa ISO finale, GUI reale:** installazione, OpenCore primario verificato prima del primo avvio, NVMe senza ISO, account/home nominale, CoW restore, reinstallazione Recovery con SHA dell’intera partizione dati invariato, riavvio e verifica snapshot. `fs2-install-guest-result.json`.
+- **PASS stessa ISO, filesystem esterni scrivibili:** comandi Terminale reali; copia di stream da 65.537 byte in entrambe le direzioni FS2/foreign; catena S_MOVE FAT32→NTFS→exFAT→nativo; Taglia/Incolla contestuale Finder FAT32→NTFS; trascinamento reale con pulsante tenuto NTFS→exFAT; contenuti riletti. Export da Terminale di volume nativo e dalla GUI di snapshot in due nuove partizioni exFAT. `volume-export-guest-result.json`.
+- **PASS indipendente:** fsck FAT32/exFAT, consistency scan NTFS e lettore `dissect.fat` 3.13 per contenuti effettivi, Unicode, stream da 65.537 byte e BPB/LBA. SHA completo della sorgente nativa e della partizione preesistente di destinazione invariati. `independent-exfat-reader.json`.
+- **PASS stessa ISO, 43 snapshot:** catalogo, pagine con mouse/tastiera, unicità Copia locale, Finder snapshot congelato. Gli snapshot stress sono dichiaratamente aggiunti dall’host a disco già installato dalla GUI. `diskutility-catalogue-guest-result.json`.
 
-Pulizia locale eseguita prima di riprendere la validazione: da **126,14 MB a circa 112,3 MB** (circa **107,1 MiB**), margine di circa **15,7 MB** sul tetto di 128.000.000 byte. Rimossi bytecode rigenerabile e 31 duplicati locali delle schermate storiche M0–M3. I PNG originali sono stati recuperati da un object store indipendente creato dal bundle e controllati byte per byte tramite SHA256; nessuna perdita delle prove. Il ripristino del bundle richiede il confine shallow documentato in `../history-boundary.json`. Manifest: `../historical-image-compression.json`. Sorgenti, foto utente, font, USB, lavoro M4 e prove del blocco corrente preservati.
+## Tre screenshot richiesti
 
-**Nuovo backend FAT32/exFAT, solo test isolati:** aggiunti sorgenti FatFs R0.16 con patch 3, bloccati per commit/SHA256 in archivio compresso, adapter freestanding con vista limitata alla partizione e formatter exFAT reale (nessun VHD/MBR/GPT scritto dal driver). PASS normale + ASan/UBSan: file Unicode da 65.537 byte, letture disallineate/EOF, scrittura/troncamento/append, create/rename/remove, rifiuto sovrascrittura e cicli di directory, paginazione, errori I/O e sola lettura, canarini esterni invariati. Filesystem indipendenti FAT32/exFAT e partizione exFAT formattata dal nuovo driver superano i rispettivi fsck. Log: `completamento/fat-volume-rw-host.log`.
+Soltanto tre schermate finali, reali e non ritoccate: `schermate/finder.png`, `schermate/terminale.png`, `schermate/utility-disco.png`. Provenienza e SHA256 in `screenshots-final.json`. Nessun mockup, fotomontaggio o schermata generata. Non sono una certificazione di hardware fisico.
 
-**Non ancora integrato** nel namespace `/Volumes`, syscall, Finder, Terminale e operazioni fra filesystem. La scrittura NTFS e l’esportazione in una nuova partizione da spazio non allocato restano da completare. Questi test di backend non sono accettazione finale del blocco 2.
+## Conservazione e limiti
 
-Le prove descritte sotto sono checkpoint storici: non certificano il nuovo perimetro di scrittura/esportazione. Nessuna nuova release, incremento di versione, chiusura del blocco 2 o avanzamento al blocco 3.
+Pulizia locale effettuata prima della validazione: bytecode rigenerabile rimosso e duplicati di 31 schermate storiche verificati tramite SHA contro il bundle indipendentemente ripristinato. Originali storici recuperabili con `../history-boundary.json`; prove M0–M3, M4 sospeso, upload, font e USB preservati. Vedere `../historical-image-compression.json`.
 
-## Correzioni eseguite
-
-- Il catalogo `S_SNAP` appartiene al volume montato, non al disco selezionato. Utility Disco ora lo mostra una sola volta sotto quel disco: né «Copia locale» né gli snapshot vengono replicati sotto un altro disco nativo, live o Recovery. Le operazioni sullo snapshot controllano la selezione prima di agire.
-- Rimossa la limitazione ai primi otto snapshot nell’app: pagine da 16 con look-ahead, «Altri snapshot…» e «Snapshot precedenti…». La rotellina rende raggiungibili i controlli fuori dall’area visibile; la tastiera attraversa le stesse pagine. Nessun array proporzionale al catalogo e nessuna troncatura silenziosa a 8/16 elementi.
-- Il refresh conserva l’identità dello snapshot selezionato, non lo slot: cancellazione o riordino non possono reindirizzare silenziosamente Ripristina/Elimina allo snapshot successivo. Se l’ultima pagina scompare si torna a una pagina valida; gli errori di lettura sono espliciti e non mostrano un catalogo vecchio.
-- «Utilizzo» mostra usato e capacità reale, ciascuno formattato una sola volta con unità SI, per esempio `8.1 MB su 10.0 GB`.
-- «Mostra nel Finder» apre la vera vista in sola lettura `/.snapshots/<nome>`, non la directory live. Selezioni di altri dischi e snapshot scomparsi vengono rifiutati.
-- Aggiunta la posizione «Snapshot» nel Finder. Painting, clic, menu contestuale e destinazioni DnD condividono lo stesso hit test delle posizioni. Corretta anche la soglia verticale che avrebbe nascosto l’ultima riga alla dimensione predefinita del Finder (782×392).
-
-## Test host
-
-- PASS normale + ASan/UBSan sul modello della vera app: 43 snapshot raggiunti una volta ciascuno, una «Copia locale», due dischi, live/Recovery, pagine, rotellina, identità della selezione, letture fallite, apertura Finder e snapshot scomparso. `diskutility-catalogue-host.log`.
-- PASS normale + ASan/UBSan su usato/capacità con unità SI e buffer limitati. `used-capacity-host.log`.
-- PASS Finder/Time Machine/file panel normale + ASan/UBSan, inclusi 1100 file e hit test della nuova voce alla dimensione predefinita, nascosta correttamente nelle finestre troppo piccole. `browser-pages-host.log`.
-- PASS foundation completa, backend montato FS2, preservazione USB/font/overlay e build completa BIOS/UEFI/Recovery/app: log dedicati. Gli esiti del guest hanno ricevute autonome, non sono dedotti dai soli test del modello.
-
-## Collaudo guest
-
-**PASS guest finale**, ricevute `fs2-install-guest-result.json` e `diskutility-catalogue-guest-result.json`, stessa ISO di sviluppo SHA256 `3debba9e7e65245d015bbe2b086b90977098812c3506be97023dc15dfef6a765`. Tutti i processi di build/test sono terminati.
-
-- Installazione da GUI, OpenCore primario verificato prima del primo boot installato, avvio NVMe senza ISO, import dell’account e documenti, ripristino CoW, reinstallazione da Recovery con hash dell’intera partizione dati invariato: PASS.
-- 43 snapshot, una Copia locale, paginazione con rotellina + clic su Avanti/Indietro e con tastiera, verifica reale dello snapshot ID 33: PASS.
-- Apertura della Copia locale e dello snapshot della terza pagina nel Finder; i file congelati restano originali mentre il file live è diverso: PASS.
-- Voce Snapshot visibile alla dimensione predefinita e navigazione reale al catalogo `/.snapshots`, controllata con font effettivo e OCR: PASS.
-- 931 input della build confrontati e invariati, hash ISO/app in `artifacts.json`. Estratti lossless delle schermate con hash della fonte e rettangoli in `screenshots.json`; nessun montaggio o ritocco.
-
-Le prove intermedie sono supersedute dalla build finale: l’ispezione delle schermate ha rilevato la riga Snapshot nascosta per pochi pixel e un falso positivo del matcher su un font numerico. Il test ora richiede il font effettivo del testo, seleziona la finestra root corretta e controlla anche con OCR il percorso aperto dalla sidebar. I fixture da 43 snapshot sono aggiunti dall’host a un disco già installato tramite la GUI: non vengono presentati come creazione di 43 snapshot da parte del guest.
-
-## Limiti del macroblocco
-
-**Non implementate:** esportazione di una copia exFAT e montaggio/esplorazione dei volumi dati utente esterni e dei filesystem NTFS/FAT32/exFAT dalla sidebar. Il riconoscimento della firma filesystem non è un driver di mount. La vista snapshot del disco montato non viene spacciata per supporto ai volumi esterni.
-
-Rimane vincolante «Esporta una copia exFAT», preservando originali e snapshot. Nessun pulsante viene rinominato per simulare un’operazione non disponibile. Nessun passaggio al macroblocco 3, nessuna release e nessun incremento di versione.
+I vecchi log/checkpoint VHD/sola lettura non certificano il completamento: sono superseduti dalle ricevute finali sopra. Non viene dichiarata eseguita alcuna prova su GeForce/HDMI fisico, hardware USB reale aggiuntivo, Windows reale o chainload Windows. Nessuna release pubblicata.

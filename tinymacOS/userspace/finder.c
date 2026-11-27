@@ -14,6 +14,12 @@ static char prefix[48];
 static u64 prefixTick;
 static char trail[12][PATHLEN];
 static int hp = -1, hn, trav;
+#define VOLUME_PAGE 16
+#define VOLUME_PREVIOUS 2000
+#define VOLUME_NEXT 2001
+static Dirent volume_items[VOLUME_PAGE];
+static char volume_paths[VOLUME_PAGE][PATHLEN];
+static int volume_count,volume_base,volume_more,sidebar_offset;
 static int side(void)
 {
     return aw < 570 ? 145 : 171;
@@ -35,13 +41,32 @@ static int visible(void)
 #define navicon browser_icons
 static int ny(int i)
 {
-    return i < 5 ? 39 + i * 30 : 222 + (i - 5) * 30;
+    return (i < 5 ? 39 + i * 30 : 222 + (i - 5) * 30)-sidebar_offset;
 }
+static int vy(int i){return ny(BROWSER_PLACES)+28+i*30;}
+static int sidebar_visible(int y){return y>=32&&y+26<=ah-12;}
 static int sidebar_at(int y)
 {
-    for(int i=0;i<BROWSER_PLACES;i++)
-        if(ny(i)+26<=ah-12&&y>=ny(i)-2&&y<ny(i)+25)return i;
+    for(int i=0;i<BROWSER_PLACES;i++)if(sidebar_visible(ny(i))&&y>=ny(i)-2&&y<ny(i)+25)return i;
+    int row=0;
+    if(volume_base){int yy=vy(row++);if(sidebar_visible(yy)&&y>=yy-2&&y<yy+25)return VOLUME_PREVIOUS;}
+    for(int i=0;i<volume_count;i++){int yy=vy(row++);if(sidebar_visible(yy)&&y>=yy-2&&y<yy+25)return BROWSER_PLACES+i;}
+    if(volume_more){int yy=vy(row);if(sidebar_visible(yy)&&y>=yy-2&&y<yy+25)return VOLUME_NEXT;}
     return -1;
+}
+static const char*sidebar_path(int i){return i>=0&&i<BROWSER_PLACES?paths[i]:i>=BROWSER_PLACES&&i<BROWSER_PLACES+volume_count?volume_paths[i-BROWSER_PLACES]:0;}
+static void sidebar_refresh(void)
+{
+    volume_count=browser_page("/Volumes",volume_items,VOLUME_PAGE,1+volume_base,&volume_more);
+    while(!volume_count&&volume_base){volume_base=MAX(0,volume_base-VOLUME_PAGE);volume_count=browser_page("/Volumes",volume_items,VOLUME_PAGE,1+volume_base,&volume_more);}
+    if(volume_count<0){volume_count=0;volume_more=0;}
+    for(int i=0;i<volume_count;i++){strset(volume_paths[i],"/Volumes/",PATHLEN);append(volume_paths[i],volume_items[i].name,PATHLEN);}
+}
+static void sidebar_wheel(int delta)
+{
+    int last=vy(volume_count+!!volume_base+!!volume_more)+28;
+    int maximum=MAX(0,last+sidebar_offset-(ah-12));
+    sidebar_offset=MAX(0,MIN(maximum,sidebar_offset-MAX(-16,MIN(16,delta))*30));
 }
 static int bundle(Dirent *f)
 {
@@ -79,6 +104,7 @@ static const char *pretty(const char *s)
 }
 static void reload(void)
 {
+    sidebar_refresh();
     n = browser_page(cwd, files, BROWSER_PAGE, pagebase, &more);
     while(!n&&pagebase){pagebase=MAX(0,pagebase-BROWSER_PAGE);n=browser_page(cwd,files,BROWSER_PAGE,pagebase,&more);}
     if (n < 0) {
@@ -128,6 +154,16 @@ static void go(const char *p)
     ui_motion(FX_SLIDE);
     trace(cwd);
 }
+static void sidebar_select(int i)
+{
+ if(i==VOLUME_PREVIOUS||i==VOLUME_NEXT){
+  if((i==VOLUME_PREVIOUS&&!volume_base)||(i==VOLUME_NEXT&&!volume_more))return;
+  volume_base=MAX(0,volume_base+(i==VOLUME_NEXT?VOLUME_PAGE:-VOLUME_PAGE));sidebar_refresh();
+  sidebar_offset=MAX(0,222+(BROWSER_PLACES-5)*30-35);return;
+ }
+ const char*p=sidebar_path(i);if(p)go(p);
+}
+
 static void historygo(int d)
 {
     int p = hp + d;
@@ -270,15 +306,24 @@ static void paint(void)
     Text(16, 14, "Preferiti", F_SMALL, SUB);
     for (int i = 0; i < BROWSER_PLACES; i++) {
         int y = ny(i);
-        if (y + 26 > ah - 12)
+        if (!sidebar_visible(y))
             continue;
         if (eq(cwd, paths[i]) || (i == 7 && eq(cwd,KERNELDIR)))
             Box(8, y - 2, S - 16, 26, 6, SEL);
         Icon(16, y + 1, 19, navicon[i]);
         Text(43, y + 1, browser_label(i), F_SMALL, eq(cwd, paths[i]) ? EMP : TX);
     }
-    if (ah > 250)
-        Text(16, 198, "Posizioni", F_SMALL, SUB);
+    if(198-sidebar_offset>=32&&198-sidebar_offset<ah-26)Text(16,198-sidebar_offset,"Posizioni",F_SMALL,SUB);
+    int header=ny(BROWSER_PLACES);if(header>=32&&header<ah-26)Text(16,header,"Volumi collegati",F_SMALL,SUB);
+    int vr=0;
+    if(volume_base){int yy=vy(vr++);if(sidebar_visible(yy))Text(18,yy+1,"← Volumi precedenti",F_SMALL,TX);}
+    for(int i=0;i<volume_count;i++){
+        int yy=vy(vr++);if(!sidebar_visible(yy))continue;
+        if(eq(cwd,volume_paths[i]))Box(8,yy-2,S-16,26,6,SEL);
+        Icon(16,yy+1,19,33);Text(43,yy+1,volume_items[i].name,F_SMALL,TX);
+    }
+    if(volume_more){int yy=vy(vr);if(sidebar_visible(yy))Text(18,yy+1,"Altri volumi…",F_SMALL,TX);}
+
     const char *head = eq(cwd, HOME) ? "Inizio" : eq(cwd, "/") ? (si.live_cd?"tinymacOS Live":"Macintosh HD") : pretty(leaf(cwd));
     Text(x, 29, head, (int)strlen(head) > 26 || aw < 570 ? F_CAPTION : F_TITLE, TX);
     button(x, 62, 28, "←", 0);
@@ -365,7 +410,7 @@ static void paint(void)
 static int entryat(int x,int y){int left=side()+15;if(x<left||x>=aw-12||y<102||y>=ah-36)return -1;
     int cw=(aw-left-12)/cols(),col=(x-left)/MAX(1,cw);if(!listview&&(col>=cols()||y<103))return -1;
     int j=listview?(y-102)/31:(y-103)/82*cols()+col;return j>=0&&j<visible()&&j+offset<n?j+offset:-1;}
-static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;go(paths[j]);}
+static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;const char*place=sidebar_path(j);if(!place){sidebar_select(j);return;}go(place);}
     sel=sidebar?-1:entryat(x,y);Dirent wd;int writable=!sc(S_STAT,cwd,&wd,0,0)&&!wd.ro;
     unsigned m=AMASK(ACT_VIEW);if(sel>=0){m|=AMASK(ACT_OPEN)|AMASK(ACT_PROPS);if(!files[sel].dir)m|=AMASK(ACT_PREVIEW);if(bundle(files+sel))m|=AMASK(ACT_PACKAGE);
         m|=AMASK(ACT_COPY);if(writable&&!files[sel].ro)m|=AMASK(ACT_CUT)|AMASK(ACT_RENAME)|AMASK(ACT_DELETE);
@@ -381,13 +426,14 @@ static void event(Event *e)
         if(dialog)return;char dir[PATHLEN],placed[PATHLEN];strset(dir,e->d?HOME "/Desktop":cwd,PATHLEN);
         if(e->d==2){Dirent target;if(sc(S_LIST,HOME "/Desktop",&target,1,e->a)!=1||!target.dir||absolutepath(dir,HOME "/Desktop",target.name))return;}
         if(!e->d){int nav=e->a<side()?sidebar_at(e->b):-1;
-            if(nav>=0)strset(dir,paths[nav],PATHLEN);else{int i=entryat(e->a,e->b);if(i>=0&&files[i].dir)absolutepath(dir,cwd,files[i].name);}}
+            if(nav>=0){const char*place=sidebar_path(nav);if(!place)return;strset(dir,place,PATHLEN);}else{int i=entryat(e->a,e->b);if(i>=0&&files[i].dir)absolutepath(dir,cwd,files[i].name);}}
         Dirent from;int move=!e->c&&!sc(S_STAT,e->text,&from,0,0)&&!from.ro;int r=fileop_place(e->text,dir,move,placed);
         strset(note,r==FILEOP_CYCLE?"Spostamento annullato: stessa cartella o ciclo.":r<0?"Trascinamento non riuscito: controlla spazio e permessi.":move?"Elemento spostato.":"Copia creata.",96);reload();item_click.armed=0;return;
     }
     if(e->type==EV_CONTEXT){item_click.armed=0;context(e);return;}
     if (e->type == EV_SCROLL) {
         item_click.armed=0;
+        if(!dialog&&e->d&&e->b<side()){sidebar_wheel(e->a);return;}
         if (dialog == 7) inspect_nav(e->a>0 ? K_UP : K_DOWN);
         else if (!dialog){
             if(e->a<0&&offset>=MAX(0,n-visible())&&nextpage(1))return;
@@ -512,7 +558,7 @@ static void event(Event *e)
     int x = e->a, y = e->b, S = side();
     if (x < S) {
         int i=sidebar_at(y);
-        if(i>=0){go(paths[i]);return;}
+        if(i>=0){sidebar_select(i);return;}
     } else if (y >= ah - 35) {
         if((pagebase||more)&&x>=aw-78){nextpage(x<aw-48?-1:1);return;}
         if (bootpath(cwd))return;

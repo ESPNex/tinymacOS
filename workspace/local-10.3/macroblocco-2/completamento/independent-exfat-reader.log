@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "reader": "dissect.fat",
+  "version": "3.13",
+  "real_raw_partitions_not_vhd": true,
+  "checks": [
+    {
+      "image": "native-copy.img",
+      "path": "Documenti/esterno.txt",
+      "bytes": 21,
+      "sha256": "a102ebd98cddb543e605088170b1bf4f4fbf798b0b2d8a6a954a0c0e5177b8e8"
+    },
+    {
+      "image": "native-copy.img",
+      "path": "Documenti/caff\u00e8.txt",
+      "bytes": 65537,
+      "sha256": "42d26e0c8f1b6b1e620472622332c499a55cc3cbfc8d441dae76a7b5287725e9"
+    },
+    {
+      "image": "native-copy.img",
+      "path": "Documenti/vuoto.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "image": "snapshot-copy.img",
+      "path": "Users/Fs2Install/Documents/persistent.txt",
+      "bytes": 23,
+      "sha256": "06e9d98bd5c31f566fc106add2ed3e21b40c7a03fb4c17991108605d03aef54e"
+    }
+  ],
+  "windows_tested": false
+}

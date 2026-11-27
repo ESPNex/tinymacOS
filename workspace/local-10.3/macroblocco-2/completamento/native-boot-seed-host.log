@@ -1,0 +1,14 @@
+PASS trusted boot seed creates the backing /Volumes before public namespace protection; no public-write bypass
+PASS real native 32->24MiB: 384->288 allocatable slots; all 8 snapshots relocated/CRC-verified, backup SHA-verified, accounts/files/canaries preserved
+PASS native 24->32MiB: all snapshot/backup contents preserved while real inode/data capacity grows
+PASS actual fs_create/fs_write/fs_read enforce variable storage: 382 vs 286 additional 8KiB slots
+PASS allocated inode tail refuses shrink without writes
+PASS injected write errors never report success; incomplete header refuses mount
+PASS corrupt snapshot refuses resize before any write
+PASS trusted boot seed creates the backing /Volumes before public namespace protection; no public-write bypass
+PASS real native 32->24MiB: 384->288 allocatable slots; all 8 snapshots relocated/CRC-verified, backup SHA-verified, accounts/files/canaries preserved
+PASS native 24->32MiB: all snapshot/backup contents preserved while real inode/data capacity grows
+PASS actual fs_create/fs_write/fs_read enforce variable storage: 382 vs 286 additional 8KiB slots
+PASS allocated inode tail refuses shrink without writes
+PASS injected write errors never report success; incomplete header refuses mount
+PASS corrupt snapshot refuses resize before any write

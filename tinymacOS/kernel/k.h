@@ -49,6 +49,8 @@ typedef struct {
     int write;
     u32 backend;
     u64 inode, snapshot;
+    char foreign_path[PATHLEN];
+    u64 foreign_valid; /* exFAT initialized length; never expose uninitialized bytes */
 } FD;
 typedef struct {
     int pid, app, dying;

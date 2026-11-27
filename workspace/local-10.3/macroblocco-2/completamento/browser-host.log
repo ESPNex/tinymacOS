@@ -1,0 +1,8 @@
+PASS Finder context menu: folders can Copy/Cut, shared FILE clipboard enables Paste, TEXT clipboard cannot paste as a file, read-only folders refuse Cut/Paste and remain copyable
+PASS real Finder: bounded 64-entry pages enumerate 1100 files, last-page lookahead, back navigation and selection/double-click reset, safe retreat after deletion
+PASS real Time Machine: 33 snapshots in bounded 8-entry timeline pages, correct total count, previous/next navigation, no unreachable snapshots, retreat after delete
+PASS Finder context menu: folders can Copy/Cut, shared FILE clipboard enables Paste, TEXT clipboard cannot paste as a file, read-only folders refuse Cut/Paste and remain copyable
+PASS real Finder: bounded 64-entry pages enumerate 1100 files, last-page lookahead, back navigation and selection/double-click reset, safe retreat after deletion
+PASS real Time Machine: 33 snapshots in bounded 8-entry timeline pages, correct total count, previous/next navigation, no unreachable snapshots, retreat after delete
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance

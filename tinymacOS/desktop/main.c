@@ -672,7 +672,7 @@ static void input_wheel(int amount)
     for(int j=nz;j--;) {
         int id=order[j];View *v=views+id;
         if(v->dead || v->mini || !inside(mx,my,v->box))continue;
-        if(my>=v->box.y+TITLE)eventto(id,(Event){.type=EV_SCROLL,.a=clampi(amount,-16,16)});
+        if(my>=v->box.y+TITLE)eventto(id,(Event){.type=EV_SCROLL,.a=clampi(amount,-16,16),.b=mx-v->box.x-1,.c=my-v->box.y-TITLE,.d=1});
         break;
     }
 }

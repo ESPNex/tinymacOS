@@ -5,6 +5,8 @@
 #include "container.h"
 #include "nativefs.h"
 #include "firmware_boot.h"
+#include "volumes.h"
+#pragma weak vol_refresh
 #ifdef TMC_FS2_BACKEND
 #include "tmcbfs2_seed.h"
 #include "fs2_runtime.h"
@@ -532,6 +534,7 @@ int install_step(void)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
+    if(vol_refresh)vol_refresh(); /* old external handles cannot survive writes */
     int r = install_step_i();
     rec_unlock(&fs_gate, fl);
     return r;
@@ -567,6 +570,7 @@ int disk_operation(int op, int d)
 {
     u32 fl;
     rec_lock(&fs_gate, &fl);
+    if(op!=4&&vol_refresh)vol_refresh();
     int r = disk_operation_i(op, d);
     rec_unlock(&fs_gate, fl);
     return r;
@@ -629,12 +633,12 @@ int bootconfig_disk(int write,u32 flags)
 int disk_edit(DiskEdit *q,int apply)
 {
     u32 fl;rec_lock(&fs_gate,&fl);int r;
-    if(isbusy()||q->disk<0||q->disk>=sata_count()||q->disk==mounted){
+    if(q->op==DISK_EDIT_EXFAT_PUBLISH||isbusy()||q->disk<0||q->disk>=sata_count()||q->disk==mounted){
         r=q->result=DE_PROTECTED;
         strset(q->message,"Disco in uso: avvia da Recupero o dal supporto live.",sizeof q->message);
     }else{
         Medium m={sata_io,sata_flush,q->disk,sata_size(q->disk),0,sata_logical_bytes(q->disk)};
-        if(apply)volume_forget(q->disk);
+        if(apply){volume_forget(q->disk);if(vol_refresh)vol_refresh();}
         r=partition_edit(&m,q,apply);
     }
     rec_unlock(&fs_gate,fl);return r;
@@ -716,6 +720,7 @@ int disk_import(DiskImport*q,int commit){
   /* Large partition inventories live on the heap, not the kernel stack. */
   Layout*s=kmalloc(sizeof *s),*d=kmalloc(sizeof *d);
   if(s&&d&&layout_read(&sm,s)==2&&layout_read(&dm,d)==2){
+   if(commit&&vol_refresh)vol_refresh();
    r=fs2_external_import(q->source,s->data,s->parts[1].end-s->data+1,q->destination,d->data,d->parts[1].end-d->data+1,q->checkpoint,commit,&q->staging_blocks);
    strset(q->message,r?"Importazione non completata: verifica checkpoint, sblocco e spazio libero. Rimonta il disco prima di riprovare.":commit?"Checkpoint esterno importato: documenti e account sostituiti insieme. Snapshot del destinatario conservate.":"Anteprima verificata. --confirm sostituisce documenti E account sul destinatario; non modifica il disco sorgente.",sizeof q->message);
   }

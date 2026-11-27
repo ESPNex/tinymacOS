@@ -39,10 +39,10 @@ CK(offsetof(struct OriginalDevice,d_heads),offsetof(NativeNtfsDevice,d_heads));
 ''')
 run(C+['-c',abi,'-o',work/'abi.o'])
 objects=[]
-for p in sorted((src/'libntfs-3g').glob('*.c'))+[src/'ntfsprogs/ntfsresize.c']:
-    o=work/(p.name+'.o');run(C+['-c',p,'-o',o]);objects.append(o)
+for p in sorted((src/'libntfs-3g').glob('*.c'))+[src/'ntfsprogs/ntfsresize.c',root/'compat/ntfs/volume.c']:
+    o=work/((('adapter-' if p.is_relative_to(root/'compat') else '')+p.name)+'.o');run(C+['-c',p,'-o',o]);objects.append(o)
 raw=work/'engine-raw.o'
-run(['ld','-r','--gc-sections','-u','tmc_ntfsresize_run',*objects,'-o',raw])
+run(['ld','-r','--gc-sections','-u','tmc_ntfsresize_run','-u','tmc_ntfs_volume_run',*objects,'-o',raw])
 run(['objcopy','--strip-unneeded',raw])
 def prefix(src,dst):
     run(['objcopy','--prefix-symbols=ntp_',src,dst])

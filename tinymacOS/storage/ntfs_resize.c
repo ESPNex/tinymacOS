@@ -39,6 +39,7 @@ size_t ntp_strlen(const char*s){return strlen(s);}
 char*ntp_strchr(const char*s,int c){do{if(*s==(char)c)return (char*)s;}while(*s++);return 0;}
 char*ntp_strrchr(const char*s,int c){const char*p=0;do{if(*s==(char)c)p=s;}while(*s++);return (char*)p;}
 int ntp_strcmp(const char*a,const char*b){while(*a&&*a==*b)a++,b++;return (u8)*a-(u8)*b;}
+int ntp_strncmp(const char*a,const char*b,size_t n){while(n&&*a&&*a==*b)a++,b++,n--;return n?(u8)*a-(u8)*b:0;}
 int ntp_ffs(int n){return n?__builtin_ffs(n):0;}
 void*ntp_malloc(size_t n){
  if(!n)n=1;if(n>NT_HEAP-sizeof(Allocation)-16){ctx.error=ENOMEM;return 0;}n=(n+15)&~15ull;
@@ -143,3 +144,33 @@ int ntfs_resize_native(Medium*m,DiskEdit*q,int apply){
  if(error)return error==ENOSPC?DE_OCCUPIED:error==ENOMEM?DE_UNSUPPORTED:DE_PROTECTED;
  return DE_OK;
 }
+
+/* Filesystem operations share the existing bounded integer-only NTFS runtime;
+ * every operation is serialized by fs_gate, with no device-global path API. */
+#include "foreign_volume.h"
+#include "../compat/ntfs/volume_bridge.h"
+_Static_assert(sizeof(ForeignEntry)==sizeof(NtVolumeEntry),"NTFS entry bridge");
+extern long long ntp_tmc_ntfs_volume_run(NtVolumeRequest*,int,int);
+static ForeignIo*volume_io;
+static int volume_transfer(int d,u64 at,u32 n,void*p,int write){(void)d;ForeignIo*io=volume_io;if(!io||at>io->sectors||n>io->sectors-at)return -1;return write?io->write?io->write(io->context,at,n,p):-1:io->read(io->context,at,n,p);}
+static int volume_flush(int d){(void)d;return volume_io->flush(volume_io->context);}
+static int valid_volume_path(const char*p){if(!p||*p!='/'||strlen(p)>1020)return 0;while(*p){while(*p=='/')p++;const char*s=p;while(*p&&*p!='/'){if(*p==':'||*p=='\\')return 0;p++;}size_t n=p-s;if((n==1&&*s=='.')||(n==2&&s[0]=='.'&&s[1]=='.'))return 0;}return 1;}
+static i64 volume_call(ForeignIo*io,NtVolumeRequest*q){
+ if(volume_io||!io||!io->read||!io->flush||!io->sectors||io->sectors>TMC_DISK_MAX_SECTORS||!valid_volume_path(q->path)||(q->op==NT_VMOVE&&!valid_volume_path(q->target))||q->offset>0x7fffffffffffffffull-q->bytes)return FOREIGN_INVALID;
+ int write=q->op>=NT_VCREATE&&q->op!=NT_VREAD;if(write&&!io->write)return FOREIGN_READ_ONLY;
+ if(write&&eq(q->path,"/"))return FOREIGN_READ_ONLY;
+ Medium m={volume_transfer,volume_flush,0,io->sectors,volume_transfer,io->logical_bytes};memset(&ctx,0,sizeof ctx);ctx.m=&m;ctx.extent=io->sectors;ctx.epoch=utc_now();ctx.dry=1;volume_io=io;q->readonly=!io->write;
+ reportused=0;report[0]=0;first=(void*)arena;*first=(Allocation){NT_HEAP-sizeof *first,0,1,ALLOC_MAGIC};i64 result=FOREIGN_IO;
+ if(!__builtin_setjmp(ctx.jmp)){
+  if(!write||!(result=ntp_tmc_ntfs_volume_run(q,0,1))){ctx.dry=!write;ctx.error=0;result=ntp_tmc_ntfs_volume_run(q,write,0);}
+ }
+ if(ctx.io_failed||(write&&io->flush(io->context)))result=FOREIGN_IO;
+ if(ctx.high)erase(arena,ctx.high);first=0;volume_io=0;return result;
+}
+int nt_volume_stat(ForeignIo*i,const char*p,ForeignEntry*e){if(!e)return FOREIGN_INVALID;NtVolumeRequest q={.op=NT_VSTAT,.path=p,.entries=(void*)e};return volume_call(i,&q);}
+int nt_volume_list(ForeignIo*i,const char*p,ForeignEntry*e,int cap,int skip){if(cap<0||skip<0||(!e&&cap))return FOREIGN_INVALID;NtVolumeRequest q={.op=NT_VLIST,.path=p,.entries=(void*)e,.cap=cap,.skip=skip};return volume_call(i,&q);}
+int nt_volume_create(ForeignIo*i,const char*p,int d){NtVolumeRequest q={.op=NT_VCREATE,.path=p,.directory=d};return volume_call(i,&q);}
+int nt_volume_remove(ForeignIo*i,const char*p){NtVolumeRequest q={.op=NT_VREMOVE,.path=p};return volume_call(i,&q);}
+int nt_volume_move(ForeignIo*i,const char*p,const char*t){NtVolumeRequest q={.op=NT_VMOVE,.path=p,.target=t};return volume_call(i,&q);}
+i64 nt_volume_read(ForeignIo*i,const char*p,u64 at,void*b,size_t n){if((!b&&n)||n>0x7fffffff)return FOREIGN_INVALID;NtVolumeRequest q={.op=NT_VREAD,.path=p,.offset=at,.data=b,.bytes=n};return volume_call(i,&q);}
+i64 nt_volume_write(ForeignIo*i,const char*p,u64 at,const void*b,size_t n){if((!b&&n)||n>0x7fffffff)return FOREIGN_INVALID;NtVolumeRequest q={.op=NT_VWRITE,.path=p,.offset=at,.data=(void*)b,.bytes=n};return volume_call(i,&q);}

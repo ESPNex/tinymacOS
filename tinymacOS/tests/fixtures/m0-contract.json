@@ -685,7 +685,7 @@
     "workspace/webkit-tmc/tools/probe_media.py": "60d9ae55f91963944456e88173fec792609d0c9bf9d84ddf0f3bfa70eca82b5f",
     "workspace/webkit-tmc/tools/record-stdlib-headers.py": "bcd92ec6d1e13a546d438d1e4c36fa0a518eccc3d5a8287b26a1235655a45094",
     "workspace/webkit-tmc/tools/run-tests.py": "4419debaf6d3bfe3e7252154153df68898757b086d44d998985f86cb16bd90d2",
-    "workspace/webkit-tmc/tools/sync-system-sources.py": "fa239a8b4f3e77bfc199f5d2df8bccb7446257eafb09cd20608b6e2a3fc51d55",
+    "workspace/webkit-tmc/tools/sync-system-sources.py": "24436ac8fb413ae6e8c88e0115f42d709aef3b8b96c170009fdb71939c44b2fa",
     "workspace/webkit-tmc/tools/test-appearance.sh": "0e75ec61c0e3f5f63bc15d519885f2b67a79143bb1a5cd053fd17942d3ed4750",
     "workspace/webkit-tmc/tools/test-backend.sh": "25c4ac03d7415ac35fc0c20bb6f2f01793c23b55383a514ece22ad4aa829c7df",
     "workspace/webkit-tmc/tools/test-cleanup-contract.py": "da47c1bd01c8578def240049cbd30d77e17c67c7a092871c474471a5a4025648",

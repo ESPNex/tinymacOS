@@ -4,7 +4,7 @@
  * digest AND the selected extent, then requires an explicit destructive token.
  * Neither the filesystem probe nor a row index authorizes writes. */
 #define DISK_EDIT_CONFIRM 0x544d4344u
-enum { DISK_EDIT_CREATE=1, DISK_EDIT_DELETE=2, DISK_EDIT_RESIZE=3 };
+enum { DISK_EDIT_CREATE=1, DISK_EDIT_DELETE=2, DISK_EDIT_RESIZE=3, DISK_EDIT_EXFAT_PUBLISH=4 };
 typedef struct {
     int disk,op,number;
     u64 start,sectors,size;u32 confirm;

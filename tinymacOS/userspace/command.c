@@ -5,6 +5,7 @@
 #include "sha256.h"
 #include "sha1.h"
 #include "date.h"
+#include "volume_export.h"
 int strncmp(const char *, const char *, unsigned long); /* kernel/string.c */
 // The executable is shared on disk; exec resolves its invoked path and supplies argv[0].
 static ExecArgs A;
@@ -719,6 +720,13 @@ static int run(void)
         return IS("grep") && !hit;
     }
     if (IS("diskutil")) {
+        if(n>=2&&eq(V(1),"exportExFAT")){
+            if((n!=4&&n!=5)||path(pa,2)||(n==5&&!eq(V(4),"--confirm")))return fail("Uso: diskutil exportExFAT /.snapshots/nome diskN [--confirm]");
+            VolumeExport q={0};strset(q.source,pa,PATHLEN);strset(q.destination,V(3),PATHLEN);
+            int result=sc(S_DISK,14,&q,0,0);ln(q.message);if(result!=1)return 1;
+            say("Nuova partizione, LBA: ");num(q.part.start);say("; byte: ");num(q.bytes);ln("");
+            if(n==4)return 0;q.part.confirm=DISK_EDIT_CONFIRM;result=sc(S_DISK,14,&q,0,0);ln(q.message);if(!result){say("Volume exFAT: ");ln(q.destination);}return !!result;
+        }
         static DiskInfo di;
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
         if(n>=2&&eq(V(1),"importBackup")){

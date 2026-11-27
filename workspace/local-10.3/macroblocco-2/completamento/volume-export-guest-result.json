@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-volume-export-gtamyvbn",
+  "installed_work": "/var/tmp/tmc-fs2-install-67arlz_t",
+  "iso_sha256": "a1673175fd00487d7d21d24c44f7952ad771d47c6ac05ae0f6a6e20ff8546a9e",
+  "kernel_sha256": "1452b2a2a3d54eba78fa6f48d9da79c3ba6666c70fe6de10824f271620f92763",
+  "host_created_external_fixtures": true,
+  "windows_tested": false,
+  "physical_hardware_tested": false,
+  "checks": [
+    "Installed real Terminal creates/writes/reads/renames/deletes FAT32, NTFS, exFAT; copies 65537-byte streams both ways through native FS2",
+    "Actual cross-filesystem S_MOVE chain FAT32 -> NTFS -> exFAT -> native performs verified copy before source removal",
+    "Real Finder context Cut/Paste crosses FAT32->NTFS; held-button drag crosses NTFS->exFAT, actual bytes read back in Terminal",
+    "Installed authenticated export previews and creates NEW REAL exFAT disk2s2 inside verified unallocated gap; copied native source is mounted and read",
+    "Real Utility Disco previews/confirms export of immutable snapshot to another new real partition; original native live data and snapshot remain valid",
+    "Independent fsck accepts all three guest-written foreign filesystems and both NEW exFAT partitions; existing destination partition and native source full byte ranges SHA256 unchanged"
+  ],
+  "outputs": [
+    {
+      "file": "native-copy.img",
+      "sha256": "462297c8c1dc764eecd828f2bb1e5eecb49829113e6a41031a2b14fb5480b8ef",
+      "start": 133120,
+      "sectors": 67584
+    },
+    {
+      "file": "snapshot-copy.img",
+      "sha256": "96290fc7962b0fe739e5a14af8f562c632d281457bc4b81e283e2af19f980310",
+      "start": 200704,
+      "sectors": 67584
+    }
+  ],
+  "screenshots": [
+    "/var/tmp/tmc-volume-export-gtamyvbn/evidence/finder.png",
+    "/var/tmp/tmc-volume-export-gtamyvbn/evidence/terminale.png",
+    "/var/tmp/tmc-volume-export-gtamyvbn/evidence/utility-disco.png"
+  ]
+}

@@ -78,3 +78,5 @@ int val(const char *s) {
         n=n*10+*s++-'0';
     return n;
 }
+
+char *strchr(const char*s,int c){do{if((unsigned char)*s==(unsigned char)c)return (char*)s;}while(*s++);return 0;}

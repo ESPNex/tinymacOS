@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "macroblock_2_complete": false,
+  "release_ready": false,
+  "work": "/var/tmp/tmc-fs2-install-67arlz_t",
+  "iso_sha256": "a1673175fd00487d7d21d24c44f7952ad771d47c6ac05ae0f6a6e20ff8546a9e",
+  "kernel_sha256": "1452b2a2a3d54eba78fa6f48d9da79c3ba6666c70fe6de10824f271620f92763",
+  "host_appended_snapshot_stress": true,
+  "snapshot_count_before_guest": 43,
+  "physical_hardware_tested": false,
+  "foreign_filesystem_browsing_tested": false,
+  "exfat_export_tested": false,
+  "checks": [
+    "Real mouse wheel reveals Next; clicking Next and Previous reaches the correct actual snapshot pages without keyboard assistance",
+    "Actual installed Utility Disco renders 43 snapshots via bounded pages; keyboard crosses Next/Previous and verifies snapshot 33, beyond the old eight-slot ceiling",
+    "Mostra nel Finder opens the actual read-only local checkpoint and third-page snapshot; frozen marker bytes remain original while the live file is different",
+    "Finder Snapshot sidebar location navigates to the real /.snapshots catalogue; original live file and pre-existing snapshot remain usable"
+  ]
+}

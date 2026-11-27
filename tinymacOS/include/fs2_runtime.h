@@ -37,3 +37,6 @@ int fs2_install_encrypted(int,u64,u64,const void*,size_t,const char*,const u8[12
 
 int fs2_disk_rekey_reset(int,u64,u64,const char*,const u8[128],char[65]);
 int fs2_external_import(int,u64,u64,int,u64,u64,const char*,int,u64*);
+
+/* Kernel export sink only: positional writes without the editor truncation policy. */
+i64 fs2_write_at(Process*,int,u64,const void*,size_t);

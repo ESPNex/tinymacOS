@@ -2,6 +2,8 @@
 #include "window_update.h"
 volatile u64 tmc_window_draw_requests,tmc_window_draw_unchanged;
 #include "bootconfig.h"
+#include "volume_export.h"
+extern int volume_export(VolumeExport*);
 #include "tlsabi.h"
 #include "wordwaitabi.h"
 #include "threadfinishabi.h"
@@ -392,6 +394,10 @@ static Frame *syscall_inner(Frame *f)
             DiskEdit request;memcpy(&request,(void*)b,sizeof request);
             request.name[sizeof request.name-1]=0;
             r=disk_edit(&request,a==11);memcpy((void*)b,&request,sizeof request);
+        } else if(a==14&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(VolumeExport))&&OUT(b,sizeof(VolumeExport))){
+            VolumeExport request;memcpy(&request,(void*)b,sizeof request);
+            request.source[PATHLEN-1]=request.destination[PATHLEN-1]=0;
+            r=volume_export(&request);memcpy((void*)b,&request,sizeof request);
         } else if((a==12||a==13)&&boot.recovery&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskImport))&&OUT(b,sizeof(DiskImport))){
             DiskImport request;memcpy(&request,(void*)b,sizeof request);
             r=disk_import(&request,a==13);memcpy((void*)b,&request,sizeof request);

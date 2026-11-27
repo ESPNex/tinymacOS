@@ -7,6 +7,7 @@
 #include "../fs/btrfs.c"
 typedef struct PACK {char name[28];u32 date,id,base,crc,gen;} Entry;
 struct Boot boot;
+__attribute__((noreturn)) void retail_stop(void){abort();}
 int bootfs_lookup(const char*p){(void)p;return -2;}
 int bootfs_stat(int i,Dirent*d){(void)i;(void)d;return -1;}
 int bootfs_open(Process*p,int i,int w){(void)p;(void)i;(void)w;return -1;}
@@ -57,6 +58,10 @@ static int allocate_to_limit(void){
 }
 int main(void){
  media=malloc((size_t)TOTAL*512);assert(media);Medium m={io,flush,0,TOTAL};DiskEdit q={.start=BASE,.sectors=65536,.size=49152};
+ fixture();load_driver();seeding=1;
+ int volumes=seed("/Volumes",1,1,0);seeding=0;
+ assert(volumes>0&&nodes[volumes].kind==1&&nodes[volumes].ro);
+ puts("PASS trusted boot seed creates the backing /Volumes before public namespace protection; no public-write bypass");
  fixture();u8 beforehash[32],afterhash[32];sha_bytes(media,TOTAL*512,beforehash);assert(!native_resize(&m,&q,0)&&!writes);sha_bytes(media,TOTAL*512,afterhash);assert(!memcmp(beforehash,afterhash,32));assert(!native_resize(&m,&q,1));verify_all(49152);load_driver();assert(active_slots==288);
  puts("PASS real native 32->24MiB: 384->288 allocatable slots; all 8 snapshots relocated/CRC-verified, backup SHA-verified, accounts/files/canaries preserved");
  q.sectors=49152;q.size=65536;assert(!native_resize(&m,&q,0));assert(!native_resize(&m,&q,1));verify_all(65536);load_driver();assert(active_slots==384);

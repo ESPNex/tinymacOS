@@ -1,0 +1,37 @@
+{
+  "macroblock_2_complete_local": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "windows_tested": false,
+  "build_inputs_verified_unchanged": 1167,
+  "artifacts": {
+    "block2-ready-dev.iso": {
+      "sha256": "a1673175fd00487d7d21d24c44f7952ad771d47c6ac05ae0f6a6e20ff8546a9e",
+      "bytes": 227829760
+    },
+    "KernelCache": {
+      "sha256": "1452b2a2a3d54eba78fa6f48d9da79c3ba6666c70fe6de10824f271620f92763",
+      "bytes": 1347880
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "78e83d27a4ba893a7721bdc794935a0c2e0cb9837c48f3a52d667ff1f5f92dd4",
+      "bytes": 1347816
+    },
+    "finder.elf": {
+      "sha256": "b1ea42915e3432578fae986dff11863d84ddcc2f1bc7d14af6ec12931fea33ff",
+      "bytes": 50176
+    },
+    "terminal.elf": {
+      "sha256": "d3a5b86b1e4d062d12e84c58bc801773b901f5d30de101633a1876c040690f75",
+      "bytes": 37752
+    },
+    "diskutility.elf": {
+      "sha256": "390e47f22b93c464e72e9224dd41444ec4044ea43925cade4b8fbf3fd980ab3a",
+      "bytes": 41480
+    },
+    "command.elf": {
+      "sha256": "80f87bc4aa1e9c49cbd5391daac4e2fee818332fa4c4f8271f47bf67cfae302a",
+      "bytes": 62240
+    }
+  }
+}

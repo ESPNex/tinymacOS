@@ -1,5 +1,9 @@
 [
   {
+    "path": "include/volume_export.h",
+    "sha256": "0fe919eb3c3685590d4303b442583ccb73d5174129af257190647b9d8a5fe77b"
+  },
+  {
     "path": "include/caret.h",
     "sha256": "821bee4d2a1633dcad29657149b120284938746c8210c310575d652bc84c6f6c"
   },
@@ -13,11 +17,11 @@
   },
   {
     "path": "include/base.h",
-    "sha256": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30"
+    "sha256": "005d7ae3e76ab801be0eacb530e148007c363f0aaee9d4519ad2fa8ce147a76c"
   },
   {
     "path": "include/diskedit.h",
-    "sha256": "14b564566b8510290582d2c8cbf3b841f810e8dfa1625b06f680f572c8f6e0e2"
+    "sha256": "5f5b529ef9da898fa66f4e9c759b236a7da533eeb7a364c2239ca1f9327b6bcf"
   },
   {
     "path": "include/partition.h",
@@ -85,11 +89,11 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "02403d1af8a4711c569da9ccb41f4e05b5b29d19e326f94dda0ebbe9033b00a7"
+    "sha256": "55a29a56fe1dcb1c05df1d9561abefb6b65df7572d8299007b3fcff4b7eaee1a"
   },
   {
     "path": "kernel/k.h",
-    "sha256": "37d2daa6559f788ed575728f870606380fe95f0c54bad7e6befb832a34ccadd6"
+    "sha256": "3ab2011cfc735fdf4abca915992cfccd8b00c70495f90dcba773f8332fd84dbe"
   },
   {
     "path": "desktop/gfx.c",

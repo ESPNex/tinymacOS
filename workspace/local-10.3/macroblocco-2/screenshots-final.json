@@ -1,0 +1,23 @@
+[
+  {
+    "application": "Finder",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/finder.png",
+    "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/finder.png",
+    "sha256": "79abf96298a9d952c88a015647293cffac2c8eecc0093f699d5f3894c606e680",
+    "unaltered_real_qemu_screenshot": true
+  },
+  {
+    "application": "Terminale",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/terminale.png",
+    "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/terminale.png",
+    "sha256": "71044e549171c6b06d04b528bcdfd99ce3a1feadde07d3793a6f2f17f0837ce2",
+    "unaltered_real_qemu_screenshot": true
+  },
+  {
+    "application": "Utility Disco",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.png",
+    "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/utility-disco.png",
+    "sha256": "2330557d793b374aedc2697d98aa5016c0a44c011153b9d8b2729a6427b84e94",
+    "unaltered_real_qemu_screenshot": true
+  }
+]

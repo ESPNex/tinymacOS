@@ -1,6 +1,9 @@
 #include "volume.h"
 #include "display_size.h"
 #include "disk_size_input.h"
+#include "volume_export.h"
+static VolumeExport export_request;
+static int export_cursor;
 static DiskInfo d;
 #define SNAP_PAGE 16
 #define SNAP_PREVIOUS 98
@@ -225,6 +228,76 @@ static void snapshot_open(void)
     if(sc(S_STAT,path,&target,0,0)<0||!target.dir||sc(S_SPAWN,FINDER,path,0,0)<0)
         strset(msg,"Impossibile aprire lo snapshot nel Finder.",sizeof msg);
 }
+static int selected_path(char out[PATHLEN],int copy)
+{
+    if(sel<0||sel>=d.count)return 0;
+    if(installed()&&view>=100&&view<100+nsn){
+        if(copy&&eq(sn[view-100].name,"Installazione"))return 0;
+        strset(out,"/.snapshots/",PATHLEN);append(out,sn[view-100].name,PATHLEN);return 1;
+    }
+    if(view<200||view>=400||view-200>=d.disk[sel].map.count)return 0;
+    DiskPartition*p=&d.disk[sel].map.part[view-200];
+    if(copy&&(p->fs!=FS_TMC||(sel==d.current&&p->start==d.disk[sel].region_start[1])))return 0;
+    if(p->fs!=FS_TMC&&p->fs!=FS_FAT32&&p->fs!=FS_EXFAT&&p->fs!=FS_NTFS)return 0;
+    if(!copy&&sel==d.current&&p->start==d.disk[sel].region_start[1]){strset(out,"/Volumes/Macintosh HD",PATHLEN);return 1;}
+    strset(out,"/Volumes/disk",PATHLEN);addnum(out,sel,PATHLEN);append(out,"s",PATHLEN);addnum(out,p->number,PATHLEN);return 1;
+}
+static void volume_open(void)
+{
+    char path[PATHLEN];Dirent entry;
+    if(!selected_path(path,0)||sc(S_STAT,path,&entry,0,0)<0||!entry.dir||sc(S_SPAWN,FINDER,path,0,0)<0)
+        strset(msg,"Volume non leggibile: verifica formato, stato e tabella delle partizioni.",sizeof msg);
+}
+static void export_begin(void)
+{
+    memset(&export_request,0,sizeof export_request);
+    if(!selected_path(export_request.source,1)){
+        strset(msg,"Seleziona uno snapshot utente o un volume dati nativo.",sizeof msg);return;
+    }
+    if(si.live_cd){strset(msg,"Esporta dal sistema installato, senza modificare il supporto live o Recupero.",sizeof msg);return;}
+    strset(export_request.destination,"disk0",PATHLEN);
+    export_cursor=strlen(export_request.destination);dialog=6;msg[0]=0;
+}
+static void export_paint(void)
+{
+    int tw=MIN(510,aw-40),xx=(aw-tw)/2,yy=(ah-266)/2;
+    Sheet(xx,yy,tw,266,14);Icon(xx+20,yy+17,38,39);
+    Text(xx+72,yy+24,dialog==8?"Copia exFAT creata":"Esporta una copia exFAT",F_CAPTION,TX);
+    if(dialog==8){
+        lines(xx+20,yy+76,tw-40,export_request.message);
+        lines(xx+20,yy+150,tw-40,export_request.destination);
+        button(xx+tw-218,yy+219,88,"Chiudi",0);button(xx+tw-119,yy+219,97,"Mostra",1);return;
+    }
+    Text(xx+20,yy+73,"Disco di destinazione (diskN), solo spazio non allocato.",F_SMALL,TX);
+    Box(xx+20,yy+99,tw-40,32,6,ACC);Box(xx+21,yy+100,tw-42,30,5,CARD);
+    InputText(xx+29,yy+107,tw-58,export_request.destination,export_cursor,dialog==6,0,TX);
+    lines(xx+20,yy+149,tw-40,export_request.message[0]?export_request.message:"Anteprima obbligatoria. Crea una NUOVA partizione reale; nessuna partizione esistente viene formattata.");
+    button(xx+tw-218,yy+219,88,"Annulla",0);button(xx+tw-119,yy+219,97,dialog==7?"Attendi…":export_request.bytes?"Conferma":"Anteprima",1);
+}
+static void export_event(Event*e)
+{
+    int tw=MIN(510,aw-40),xx=(aw-tw)/2,yy=(ah-266)/2;
+    if(dialog==7)return;
+    int confirm=e->type==EV_KEY&&(e->a=='\n'||e->a=='\r');
+    if(e->type==EV_KEY&&e->a==27){dialog=0;return;}
+    if(e->type==EV_CLICK&&e->b>=yy+215&&e->b<yy+255){
+        if(e->a>=xx+tw-218&&e->a<xx+tw-130){dialog=0;return;}
+        if(e->a>=xx+tw-119&&e->a<xx+tw-22)confirm=1;
+    }
+    if(confirm){
+        if(dialog==8){sc(S_SPAWN,FINDER,export_request.destination,0,0);dialog=0;}
+        else{export_request.part.confirm=export_request.bytes?DISK_EDIT_CONFIRM:0;export_request.message[0]=0;dialog=7;}return;
+    }
+    if(dialog!=6||e->type!=EV_KEY)return;
+    char*value=export_request.destination;int k=e->a;export_request.bytes=0;export_request.part.confirm=0;
+    if(k==K_LEFT)export_cursor=text_prev(value,export_cursor);
+    else if(k==K_RIGHT)export_cursor=text_next(value,export_cursor);
+    else if(k==K_HOME)export_cursor=0;
+    else if(k==K_END)export_cursor=strlen(value);
+    else if(k==8||k==127)text_backspace(value,&export_cursor);
+    else if(k==K_DEL)text_delete(value,export_cursor);
+    else if(text_printable(k))text_insert(value,PATHLEN,&export_cursor,k);
+}
 static void yes(void)
 {
     if (dialog != 1)return;
@@ -346,9 +419,10 @@ static void paint(void)
         button(x + 118, 282, 96, "Verifica", 0);
         button(x + 222, 282, 96, "Elimina", 0);
         button(x, 322, 194, "Mostra nel Finder", 0);
+        if(!eq(sn[k].name,"Installazione"))button(x+204,322,194,"Esporta copia exFAT…",0);
         Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
         Text(x, ah - 31, msg[0] ? msg : "Snapshot CoW: blocchi condivisi, spazio occupato solo dalle modifiche.", F_SMALL, SUB);
-        if (dialog) {
+        if (dialog==1||dialog==2) {
             int tw = MIN(440, aw - 48), xx = (aw - tw) / 2, yy = (ah - 196) / 2;
             Sheet(xx, yy, tw, 196, 14);
             Icon(xx + 20, yy + 17, 39, 39);
@@ -363,6 +437,7 @@ static void paint(void)
             button(xx + tw - 218, yy + 149, 88, "Annulla", 0);
             button(xx + tw - 119, yy + 149, 97, dialog == 2 ? "Attendi…" : "Continua", 1);
         }
+        if(dialog>=6)export_paint();
         finish();
         return;
     }
@@ -376,9 +451,11 @@ static void paint(void)
         b[0]=0;addnum(b,start,64);pair(x,221,"Inizio LBA",b);b[0]=0;addnum(b,sectors,64);pair(x,254,"Settori",b);
         if(free)button(x,288,150,"Crea partizione…",1);
         else{button(x,288,110,"Elimina…",0);button(x+120,288,160,"Ridimensiona…",0);}
-        Text(x,336,free?"Crea un volume dati nativo nello spazio selezionato.":"RAW non significa vuoto. Ogni modifica richiede conferma.",F_SMALL,SUB);
+        if(!free){char route[PATHLEN];if(selected_path(route,0))button(x,330,170,"Mostra nel Finder",0);if(selected_path(route,1))button(x+180,330,194,"Esporta copia exFAT…",0);}
+        Text(x,380,free?"Crea un volume dati nativo nello spazio selezionato.":"RAW non significa vuoto. Ogni modifica richiede conferma.",F_SMALL,SUB);
         Box(r+1,ah-45,aw-r-1,1,0,EDGE);Text(x,ah-31,msg[0]?msg:"Per modificare il disco di avvio, usa Recupero o il supporto live.",F_SMALL,SUB);
-        if(dialog>=3)edit_paint();
+        if(dialog>=3&&dialog<=5)edit_paint();
+        if(dialog>=6)export_paint();
         finish();return;
     }
     Icon(x, 75, 57, view == -1 ? 33 : 39);
@@ -461,6 +538,7 @@ void app_main(void)
             changed = 1;
             if (baseevent(&e))continue;
             if (e.type == EV_CLOSE)quit();
+            if(dialog>=6){export_event(&e);continue;}
             if(dialog>=3){edit_event(&e);continue;}
             if (dialog) {
                 if (e.type == EV_KEY) {
@@ -481,6 +559,7 @@ void app_main(void)
                 if (e.a == 's')start(1);
                 if (e.a == 'r')start(3);
                 if (e.a == 'n')start(4);
+                if (e.a == 'e')export_begin();
                 if (e.a == K_UP || e.a == K_DOWN) {
                     side_move(e.a==K_DOWN?1:-1);
                 }
@@ -494,11 +573,15 @@ void app_main(void)
                     if (e.a >= x && e.a < x + 58)start(1);
                     else if (e.a >= x + 65 && e.a < x + 157)start(3);
                     else if (e.a >= x + 165 && e.a < x + 269)start(4);
+                } else if(view>=200&&view<400&&e.b>=326&&e.b<365){
+                    if(e.a>=x&&e.a<x+170)volume_open();else if(e.a>=x+180&&e.a<x+374)export_begin();
                 } else if(view>=200&&e.b>=284&&e.b<325){
                     if(view>=400&&e.a>=x&&e.a<x+150)edit_begin(DISK_EDIT_CREATE);
                     else if(view<400){if(e.a>=x&&e.a<x+110)edit_begin(DISK_EDIT_DELETE);else if(e.a>=x+120&&e.a<x+280)edit_begin(DISK_EDIT_RESIZE);}
                 } else if(view>=100&&view<100+nsn&&e.b>=318&&e.b<356&&e.a>=x&&e.a<x+194){
                     snapshot_open();
+                } else if(view>=100&&view<100+nsn&&e.b>=318&&e.b<356&&e.a>=x+204&&e.a<x+398){
+                    export_begin();
                 } else if (view >= 100 && view<200 && e.b >= 278 && e.b < 316) {
                     if (e.a >= x && e.a < x + 110)start(5);
                     else if (e.a >= x + 118 && e.a < x + 214)verify_now();
@@ -507,6 +590,10 @@ void app_main(void)
             }
         }
         if (changed)paint();
+        if(dialog==7){
+            slp(2);int result=sc(S_DISK,14,&export_request,0,0);
+            strset(msg,export_request.message,sizeof msg);dialog=result?6:8;if(result<0)export_request.bytes=0;paint();
+        }
         if(dialog==5){
             edit.confirm=DISK_EDIT_CONFIRM;
             int result=sc(S_DISK,11,&edit,0,0);

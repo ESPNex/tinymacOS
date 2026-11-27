@@ -10,6 +10,7 @@
 #include "nativefs.h"
 extern int ntfs_resize_native(Medium*,DiskEdit*,int);
 #define NATIVE_MIN 65536u
+static const u8 win_type[16]={0xa2,0xa0,0xd0,0xeb,0xe5,0xb9,0x33,0x44,0x87,0xc0,0x68,0xb6,0xb7,0x26,0x99,0xc7};
 static DiskMap editmap;
 static u8 bootsector[512],verifybuf[4096],mbrbuf[512],zero[4096];
 static Part table[128];
@@ -146,7 +147,7 @@ static int fattail(Medium*m,DiskEdit*q,DiskPartition*p,int apply){
 }
 int partition_edit(Medium*m,DiskEdit*q,int apply){
     if(medium_scale(m)!=1)return say(q,DE_UNSUPPORTED,"Modifica/resize 4Kn non supportati: nessuna scrittura.");
-    if(q->op<DISK_EDIT_CREATE||q->op>DISK_EDIT_RESIZE||!m->flush)return say(q,DE_INVALID,"Richiesta non valida.");
+    if(q->op<DISK_EDIT_CREATE||q->op>DISK_EDIT_EXFAT_PUBLISH||!m->flush)return say(q,DE_INVALID,"Richiesta non valida.");
     if(apply&&q->confirm!=DISK_EDIT_CONFIRM)return say(q,DE_PROTECTED,"Conferma esplicita obbligatoria.");
     if(!partition_scan(m,&editmap)||!editmap.safe)return say(q,DE_PROTECTED,"Tabella degradata, sovrapposta o non supportata: nessuna modifica.");
     if(editmap.scheme!=MAP_GPT&&editmap.scheme!=MAP_MBR)return say(q,DE_UNSUPPORTED,"Crea prima una tabella GPT con l’installer su disco vuoto.");
@@ -154,23 +155,24 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
     u8 hash[32];if(fingerprint(m,hash))return say(q,DE_IO,"Lettura metadati non riuscita.");
     if(apply&&memcmp(hash,q->stamp,32))return say(q,DE_STALE,"La tabella è cambiata: seleziona di nuovo la partizione.");
     memcpy(q->stamp,hash,32);DiskPartition*p=0;
-    if(q->op!=DISK_EDIT_CREATE){
+    if(q->op!=DISK_EDIT_CREATE&&q->op!=DISK_EDIT_EXFAT_PUBLISH){
         for(int i=0;i<editmap.count;i++)if(editmap.part[i].number==q->number)p=editmap.part+i;
         if(!p||p->start!=q->start||p->sectors!=q->sectors)return say(q,DE_STALE,"La selezione è cambiata: aggiorna l’elenco.");
     }
-    if(q->op==DISK_EDIT_CREATE){
+    if(q->op==DISK_EDIT_CREATE||q->op==DISK_EDIT_EXFAT_PUBLISH){
         int inside=0;for(int i=0;i<editmap.gaps;i++){DiskGap*g=editmap.gap+i;if(q->start>=g->start&&q->start-g->start<g->sectors&&q->size<=g->sectors-(q->start-g->start))inside=1;}
         if(!inside||q->size>0xffffffffull||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
         for(unsigned j=0;j<sizeof q->name;j++){unsigned char c=q->name[j];if(!c)break;if(c<32||c>126||j==sizeof q->name-1)return say(q,DE_INVALID,"Usa un nome ASCII di massimo 47 caratteri.");}
-        if(!apply)return say(q,0,"Crea BTRFS nativo (subset proprietario, non Btrfs Linux). Capacità file fissa.");
-        if(native_format(m,q))return say(q,DE_IO,"Errore di formattazione: partizione non pubblicata. Non riprovare senza verifica.");
+        if(!apply)return say(q,0,q->op==DISK_EDIT_EXFAT_PUBLISH?"Nuova partizione exFAT nello spazio non allocato verificato. Nessuna partizione esistente verrà formattata.":"Crea BTRFS nativo (subset proprietario, non Btrfs Linux). Capacità file fissa.");
+        if(q->op==DISK_EDIT_EXFAT_PUBLISH){if(readat(m,q->start,1,bootsector)||memcmp(bootsector+3,"EXFAT   ",8)||bootsector[510]!=85||bootsector[511]!=170)return say(q,DE_INVALID,"Copia exFAT non verificata: partizione non pubblicata.");}
+        if(q->op==DISK_EDIT_CREATE&&native_format(m,q))return say(q,DE_IO,"Errore di formattazione: partizione non pubblicata. Non riprovare senza verifica.");
         int slot=editmap.slot;
         if(editmap.scheme==MAP_GPT){
-            Part*t=table+slot;memset(t,0,sizeof *t);memcpy(t->type,dat_type,16);
+            Part*t=table+slot;memset(t,0,sizeof *t);memcpy(t->type,q->op==DISK_EDIT_EXFAT_PUBLISH?win_type:dat_type,16);
             SHA256 s;u8 id[32];sha_init(&s);sha_update(&s,q->stamp,32);sha_update(&s,&q->start,sizeof q->start);sha_update(&s,q->name,strlen(q->name));sha_final(&s,id);
             memcpy(t->id,id,16);t->id[6]=(t->id[6]&15)|64;t->id[8]=(t->id[8]&63)|128;
             t->start=q->start;t->end=(u64)q->start+q->size-1;for(int i=0;i<35&&q->name[i];i++)t->name[i]=(u8)q->name[i];
-        }else{u8*t=mbrbuf+446+slot*16;memset(t,0,16);t[4]=0xda;t[1]=t[5]=0xfe;t[2]=t[3]=t[6]=t[7]=0xff;w32(t+8,q->start);w32(t+12,q->size);}
+        }else{u8*t=mbrbuf+446+slot*16;memset(t,0,16);t[4]=q->op==DISK_EDIT_EXFAT_PUBLISH?7:0xda;t[1]=t[5]=0xfe;t[2]=t[3]=t[6]=t[7]=0xff;w32(t+8,q->start);w32(t+12,q->size);}
         q->number=slot+1;
     }else if(q->op==DISK_EDIT_DELETE){
         if(!apply)return say(q,0,"La partizione e l’accesso ai suoi dati saranno eliminati. Non è una cancellazione sicura.");
