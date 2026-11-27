@@ -150,6 +150,13 @@ void glass(Rect q, int r, int kind)
                 *p = blend(sample(blur, sx, sy), tint, rowShade);
                 continue;
             }
+            /* Interior: full coverage, zero refraction, no rim/shine. This is
+             * algebraically the same material, without per-pixel divisions,
+             * normal calculation, coverage lookup and clamping. */
+            if (ex >= MAX(r, 18) && ey >= MAX(r, 18)) {
+                *p = blend(sample(blur, sx, sy), tint, clampi(rowShade, 16, 245));
+                continue;
+            }
             int dx, dy, d = dist(i, j, q.w, q.h, r, &dx, &dy);
             int mask = coverage(i, j, q.w, q.h, r);
             if (!mask)continue;

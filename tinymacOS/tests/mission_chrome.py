@@ -8,11 +8,18 @@ import cv2,numpy as np
 from retail_guest import Retail
 from guest import ROOT
 iso=Path(os.environ['TMC_TEST_ISO']);w=Path(tempfile.mkdtemp(prefix='tmc-chrome-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
-os.environ['TMC_POINTER']='mouse';old=os.environ.get('TMC_UI_EXPECT_HALO')=='1'
+os.environ['TMC_POINTER']='mouse';os.environ.setdefault('TMC_TEST_INPUT','xhci-hub-kbd');old=os.environ.get('TMC_UI_EXPECT_HALO')=='1'
 record={'passed':False,'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'work':str(w),'checks':[],'old_halo_reproduction':old}
 def save(im,name,box):im.crop(box).save(ev/(name+'.png'),optimize=True)
 def check_cycles(g,orientation):
     g.move(650,660);time.sleep(2.4)
+    # Rebase material light at the measurement pointer before the golden image.
+    # Cold caches contain the boot pointer's highlight: both the published
+    # block-2 ISO and candidate differed by the SAME 4501 interior pixels,
+    # max delta 31, zero halo, on the first cycle. Do not confuse that with
+    # stale dim/shadow damage. Keep exact equality (no pixel tolerance) below.
+    if not old:
+        g.key('f10');time.sleep(1);g.key('esc');time.sleep(2)
     before=g.snap();W,H=before.size
     box=(0,34,110,H) if orientation=='left' else (0,H-110,W,H)
     src=np.asarray(before.crop(box)).astype(np.int16)

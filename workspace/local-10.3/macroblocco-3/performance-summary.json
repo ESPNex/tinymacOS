@@ -1,0 +1,63 @@
+{
+  "mission_control": {
+    "enter": {
+      "baseline_median_seconds": 2.862878019001073,
+      "candidate_median_seconds": 0.3508899910011678,
+      "reduction_percent": 87.74345296333647
+    },
+    "exit": {
+      "baseline_median_seconds": 3.0406282440017094,
+      "candidate_median_seconds": 0.6363944629993057,
+      "reduction_percent": 79.07029692779017
+    },
+    "cycle_cpu_ticks": {
+      "baseline_median": 899,
+      "candidate_median": 157,
+      "reduction_percent": 82.53615127919912
+    }
+  },
+  "library": {
+    "enter": {
+      "baseline_median_seconds": 0.4402082779997727,
+      "candidate_median_seconds": 0.3172487740012002,
+      "reduction_percent": 27.93211989499116
+    },
+    "exit": {
+      "baseline_median_seconds": 0.3141567149978073,
+      "candidate_median_seconds": 0.3122522560006473,
+      "reduction_percent": 0.6062130478965755
+    },
+    "cycle_cpu_ticks": {
+      "baseline_median": 101,
+      "candidate_median": 69,
+      "reduction_percent": 31.68316831683168
+    }
+  },
+  "drag_fixed_work": {
+    "baseline": {
+      "reports": 24,
+      "median_seconds": 0.16571897349967912,
+      "total_seconds": 4.208936382001411,
+      "maximum_seconds": 0.27985848100070143
+    },
+    "candidate": {
+      "reports": 24,
+      "median_seconds": 0.15466919549908198,
+      "total_seconds": 3.93462787700264,
+      "maximum_seconds": 0.27301541500128224
+    }
+  },
+  "drag_continuous": {
+    "baseline": {
+      "wall_seconds": 3.230341144000704,
+      "desktop_cpu_ticks": 211,
+      "reports": 60
+    },
+    "candidate": {
+      "wall_seconds": 3.225184820999857,
+      "desktop_cpu_ticks": 216,
+      "reports": 60
+    },
+    "interpretation": "saturated paced continuous input: scheduled CPU ticks do not demonstrate an improvement; use fixed-work latency samples separately"
+  }
+}

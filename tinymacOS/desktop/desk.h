@@ -1,5 +1,6 @@
 #pragma once
 #include "gfx.h"
+#include "animation_clock.h"
 #define BAR 34
 #include "window_chrome.h"
 #define TITLE TMC_CHROME_TITLE
@@ -17,7 +18,7 @@ typedef struct {
 typedef struct {
     Win s;
     int used, mini, max, dead, n, stamp, sw, sh, oldw, oldh, contentAge, contentFx, focusWait;
-    u64 key, contentTick;
+    u64 key, contentTick, surfaceContent;
     Rect box, saved;
     Motion motion;
     u32 *surface, *previous;

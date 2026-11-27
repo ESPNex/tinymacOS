@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 2 complete, including TMCFS2-only retirement of generation-1 native filesystem. Host/real-QEMU/independent postshutdown acceptance complete locally; authenticated main publication recorded separately. No release/version bump or block 3 work.",
+  "status": "Macroblock 3 complete locally: animation clocks, bit-exact glass interior fast path, real Mission Control texture reuse and library hover invalidation. Host normal/sanitized, retail before/after QEMU, Dock pixel restoration, 18 windows and fixed-work dragging acceptance PASS. No release/version bump or block 4 work.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 2,
-  "active_macroblock_title": "Utility Disco e Gestione Volumi",
+  "active_macroblock": 3,
+  "active_macroblock_title": "Prestazioni, Grafica e Animazioni",
   "active_macroblock_complete": true,
   "background_work_running": false,
   "release_ready": false,
@@ -90,24 +90,11 @@
   },
   "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
   "current_checks": {
-    "evidence": "macroblocco-2/STATO.md",
-    "diskutility_catalogue": "PASS actual app normal + ASan/UBSan: 43 snapshots exactly once, local checkpoint unique, mounted-disk guard, paginated mouse wheel/keyboard, stable name selection and explicit errors",
-    "usage_units": "PASS normal + ASan/UBSan: used/total values each formatted once with SI units",
-    "guest": "PASS final same-ISO GUI install/OpenCore/NVMe/Recovery, expanded foreign RW/real-partition export, 43-snapshot catalogue",
-    "exfat_export": "PASS new REAL exFAT partition only in verified unallocated space, zero-write preview, explicit confirm and stale-table check, bounded verified copy, publish last; actual Terminal and Utility Disco; source/native snapshot/existing partition SHA unchanged. NO VHD.",
-    "foreign_filesystem_browsing": "PASS real Finder sidebar and mounted namespace; native data volume sources read-only, NTFS/FAT32/exFAT read/write.",
-    "background_work_running": false,
-    "snapshot_finder": "PASS actual guest: read-only local checkpoint and page-three snapshot open in Finder; frozen marker differs from live file; default-height Snapshot sidebar visible with actual /.snapshots route validated by font-specific matcher and OCR",
-    "iso_sha256": "a1673175fd00487d7d21d24c44f7952ad771d47c6ac05ae0f6a6e20ff8546a9e",
-    "build": "PASS final build, 1167 frozen source/test/build hashes unchanged",
-    "foreign_filesystem_read_write": "PASS actual namespace/FD/syscalls/Terminal/Finder, normal+sanitized host and real guest; cut/paste, drag, copies/moves cross-FS. Foreign FileVault/snapshots excluded.",
-    "workspace_cleanup": {
-      "before_bytes": 126135240,
-      "after_bytes": 112291870,
-      "description": "Removed regenerable Python bytecode and 31 redundant local historical M0-M3 screenshot PNGs. Exact originals independently recovered and SHA256 checked from durable Git bundle with documented shallow boundary; original receipts remain valid. No source/upload/font/USB/active evidence/paused M4 removed.",
-      "evidence": "historical-image-compression.json"
-    },
-    "fat32_exfat_write_backend": "PASS pinned patched FatFs integrated into shipping build, standalone/namespace/guest RW and independent fsck."
+    "evidence": "macroblocco-3/VERIFICA.md",
+    "host": "PASS normal + ASan/UBSan animation/material/cache and foundation/M0",
+    "guest": "PASS retail before/after, Dock bottom/left pixel equality, 18 windows, dragging endpoints and fixed-work latency",
+    "block2_preserved": "No storage/native FS changes; kernels and listed apps byte-identical to baseline build",
+    "hardware": "NOT TESTED"
   },
   "macroblock_1_closure": {
     "status": "closed_by_explicit_user_instruction_with_unverified_physical_acceptance",
@@ -173,5 +160,22 @@
     ],
     "physical_hardware_tested": false,
     "windows_tested": false
+  },
+  "macroblock_3": {
+    "complete_local": true,
+    "evidence": "macroblocco-3/VERIFICA.md",
+    "iso_sha256": "97ba0570fe036e0615c12941a2f5af3a16ab19940947f13d6893c6d1024394d6",
+    "production_inputs_verified": 1077,
+    "guest_receipts_passed": [
+      "baseline.json",
+      "candidate.json",
+      "chrome.json",
+      "many-windows-candidate.json",
+      "drag-baseline.json",
+      "drag-candidate.json"
+    ],
+    "performance_summary": "macroblocco-3/performance-summary.json",
+    "physical_hardware_tested": false,
+    "release_ready": false
   }
 }

@@ -1,0 +1,94 @@
+{
+  "process_abi": [
+    9592,
+    4,
+    40,
+    2352,
+    72,
+    16,
+    23
+  ],
+  "passed": true,
+  "iso_sha256": "d66323d0b9955cf6743d63fbc5142bfed5ce5d98d5a5d9d390ea2aad6845b1d1",
+  "work": "/var/tmp/tmc-animations-e8hih0z2",
+  "measurements": {
+    "mission_control": [
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 2.8716532019971055,
+          "framebuffer_observations": 56
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 3.0406282440017094,
+          "framebuffer_observations": 56
+        },
+        "desktop_cpu_ticks": 899
+      },
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 2.7044610849989112,
+          "framebuffer_observations": 52
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 3.0489522949974344,
+          "framebuffer_observations": 60
+        },
+        "desktop_cpu_ticks": 897
+      },
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 2.862878019001073,
+          "framebuffer_observations": 58
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 2.959785756000201,
+          "framebuffer_observations": 60
+        },
+        "desktop_cpu_ticks": 910
+      }
+    ],
+    "library": [
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 0.5091812270002265,
+          "framebuffer_observations": 5
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 0.3141567149978073,
+          "framebuffer_observations": 1
+        },
+        "desktop_cpu_ticks": 117
+      },
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 0.4402082779997727,
+          "framebuffer_observations": 4
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 0.3178296070000215,
+          "framebuffer_observations": 1
+        },
+        "desktop_cpu_ticks": 101
+      },
+      {
+        "enter": {
+          "seconds_to_exact_geometry": 0.43828774400026305,
+          "framebuffer_observations": 4
+        },
+        "exit": {
+          "seconds_to_exact_geometry": 0.3090010230007465,
+          "framebuffer_observations": 1
+        },
+        "desktop_cpu_ticks": 100
+      }
+    ],
+    "drag": {
+      "wall_seconds": 3.230341144000704,
+      "desktop_cpu_ticks": 211,
+      "reports": 60
+    }
+  },
+  "physical_hardware_tested": false,
+  "timing_endpoint": "bit-exact saturated-orange opaque geometry mask; not whole-glass pixel equality",
+  "open_windows": 8
+}

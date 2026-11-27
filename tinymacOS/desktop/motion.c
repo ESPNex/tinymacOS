@@ -23,7 +23,7 @@ int motionstep(View *v, Rect *q, int *alpha, int *bend) {
     *alpha = 255;
     *bend = 0;
     if (!m->kind)return 256;
-    int dt = MIN(8ull, sys.ticks - m->last);
+    int dt = animation_delta(sys.ticks, m->last, m->dur - m->age);
     m->last = sys.ticks;
     m->age = MIN(m->dur, m->age + dt);
     int t = sys.reduce_motion ? 256 : clampi(m->age * 256 / m->dur, 0, 256), p = ease(t);

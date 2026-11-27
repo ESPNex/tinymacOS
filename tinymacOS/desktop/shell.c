@@ -190,10 +190,20 @@ void shell_control_pointer(int down)
     if(ov==OV_CONTROL&&want)control_pointer(panel,down);
     else control_cancel();
 }
+static Rect libcell(Rect,int);
+static int libcount(void);
 void shell_mouse(void)
 {
+    static int libraryHover=-2, lightBucket=-1;
     hover = dockhit(mx, my);
-    if (ov && want)dirty = 1;
+    if (ov == OV_LIBRARY && want) {
+        int hit=-1;
+        for(int j=0;j<libcount();j++)if(inside(mx,my,libcell(panel,j)))hit=j;
+        /* The material light depends on x, not y. Keep exact lighting. */
+        int bucket=mx;
+        if(hit!=libraryHover||bucket!=lightBucket)dirty=1;
+        libraryHover=hit;lightBucket=bucket;
+    } else if (ov && want)dirty = 1;
 }
 int shell_step(int dt)
 {

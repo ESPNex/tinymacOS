@@ -1,0 +1,294 @@
+{
+  "passed": true,
+  "label": "candidate",
+  "work": "/var/tmp/tmc-many-windows-wbp5hymy",
+  "iso_sha256": "97ba0570fe036e0615c12941a2f5af3a16ab19940947f13d6893c6d1024394d6",
+  "physical_hardware_tested": false,
+  "process_abi": [
+    9592,
+    4,
+    40,
+    2352,
+    72,
+    16
+  ],
+  "open_windows": 18,
+  "before_noop_keys": [
+    {
+      "pid": 1,
+      "app": 0,
+      "cpu": 6956,
+      "window": 0,
+      "seq": 0
+    },
+    {
+      "pid": 2,
+      "app": 1,
+      "cpu": 11,
+      "window": 2,
+      "seq": 2
+    },
+    {
+      "pid": 3,
+      "app": 2,
+      "cpu": 15,
+      "window": 3,
+      "seq": 347
+    },
+    {
+      "pid": 5,
+      "app": 6,
+      "cpu": 3,
+      "window": 5,
+      "seq": 2
+    },
+    {
+      "pid": 7,
+      "app": 6,
+      "cpu": 5,
+      "window": 7,
+      "seq": 2
+    },
+    {
+      "pid": 9,
+      "app": 6,
+      "cpu": 4,
+      "window": 9,
+      "seq": 2
+    },
+    {
+      "pid": 11,
+      "app": 6,
+      "cpu": 1,
+      "window": 11,
+      "seq": 2
+    },
+    {
+      "pid": 13,
+      "app": 6,
+      "cpu": 4,
+      "window": 13,
+      "seq": 2
+    },
+    {
+      "pid": 15,
+      "app": 6,
+      "cpu": 4,
+      "window": 15,
+      "seq": 2
+    },
+    {
+      "pid": 17,
+      "app": 6,
+      "cpu": 3,
+      "window": 17,
+      "seq": 2
+    },
+    {
+      "pid": 19,
+      "app": 6,
+      "cpu": 2,
+      "window": 19,
+      "seq": 2
+    },
+    {
+      "pid": 21,
+      "app": 6,
+      "cpu": 1,
+      "window": 21,
+      "seq": 2
+    },
+    {
+      "pid": 23,
+      "app": 6,
+      "cpu": 1,
+      "window": 23,
+      "seq": 2
+    },
+    {
+      "pid": 25,
+      "app": 6,
+      "cpu": 2,
+      "window": 25,
+      "seq": 2
+    },
+    {
+      "pid": 27,
+      "app": 6,
+      "cpu": 3,
+      "window": 27,
+      "seq": 2
+    },
+    {
+      "pid": 29,
+      "app": 6,
+      "cpu": 0,
+      "window": 29,
+      "seq": 2
+    },
+    {
+      "pid": 31,
+      "app": 6,
+      "cpu": 1,
+      "window": 31,
+      "seq": 2
+    },
+    {
+      "pid": 33,
+      "app": 6,
+      "cpu": 1,
+      "window": 33,
+      "seq": 2
+    },
+    {
+      "pid": 35,
+      "app": 6,
+      "cpu": 0,
+      "window": 35,
+      "seq": 2
+    }
+  ],
+  "draw_requests_before": 363,
+  "draw_unchanged_before": 0,
+  "after_noop_keys": [
+    {
+      "pid": 1,
+      "app": 0,
+      "cpu": 6967,
+      "window": 0,
+      "seq": 0
+    },
+    {
+      "pid": 2,
+      "app": 1,
+      "cpu": 11,
+      "window": 2,
+      "seq": 2
+    },
+    {
+      "pid": 3,
+      "app": 2,
+      "cpu": 15,
+      "window": 3,
+      "seq": 347
+    },
+    {
+      "pid": 5,
+      "app": 6,
+      "cpu": 3,
+      "window": 5,
+      "seq": 2
+    },
+    {
+      "pid": 7,
+      "app": 6,
+      "cpu": 5,
+      "window": 7,
+      "seq": 2
+    },
+    {
+      "pid": 9,
+      "app": 6,
+      "cpu": 4,
+      "window": 9,
+      "seq": 2
+    },
+    {
+      "pid": 11,
+      "app": 6,
+      "cpu": 1,
+      "window": 11,
+      "seq": 2
+    },
+    {
+      "pid": 13,
+      "app": 6,
+      "cpu": 4,
+      "window": 13,
+      "seq": 2
+    },
+    {
+      "pid": 15,
+      "app": 6,
+      "cpu": 4,
+      "window": 15,
+      "seq": 2
+    },
+    {
+      "pid": 17,
+      "app": 6,
+      "cpu": 3,
+      "window": 17,
+      "seq": 2
+    },
+    {
+      "pid": 19,
+      "app": 6,
+      "cpu": 2,
+      "window": 19,
+      "seq": 2
+    },
+    {
+      "pid": 21,
+      "app": 6,
+      "cpu": 1,
+      "window": 21,
+      "seq": 2
+    },
+    {
+      "pid": 23,
+      "app": 6,
+      "cpu": 1,
+      "window": 23,
+      "seq": 2
+    },
+    {
+      "pid": 25,
+      "app": 6,
+      "cpu": 2,
+      "window": 25,
+      "seq": 2
+    },
+    {
+      "pid": 27,
+      "app": 6,
+      "cpu": 3,
+      "window": 27,
+      "seq": 2
+    },
+    {
+      "pid": 29,
+      "app": 6,
+      "cpu": 0,
+      "window": 29,
+      "seq": 2
+    },
+    {
+      "pid": 31,
+      "app": 6,
+      "cpu": 1,
+      "window": 31,
+      "seq": 2
+    },
+    {
+      "pid": 33,
+      "app": 6,
+      "cpu": 1,
+      "window": 33,
+      "seq": 2
+    },
+    {
+      "pid": 35,
+      "app": 6,
+      "cpu": 0,
+      "window": 35,
+      "seq": 2
+    }
+  ],
+  "calculator_sequences_changed_after_noop": [],
+  "draw_requests_after": 375,
+  "draw_unchanged_after": 12,
+  "idle_sample_wall_seconds": 12.000109213000542,
+  "idle_desktop_scheduled_ticks": 24,
+  "mouse_and_Terminal_responsive": true
+}

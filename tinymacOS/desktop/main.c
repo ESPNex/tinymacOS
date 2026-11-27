@@ -315,26 +315,7 @@ u64 backdrop_key(Rect q)
     }
     return key;
 }
-static int cache(View *v, u64 tag, int focus)
-{
-    Rect q = v->box;
-    int correct = v->sw == q.w && v->sh == q.h;
-    if (!correct || !v->surface) {
-        dropbuf(&v->surface);
-        v->surface = buf(q.w, q.h);
-        v->sw = q.w;
-        v->sh = q.h;
-        v->key = 0;
-    }
-    if (!v->surface)return 0;
-    if (v->key == tag || v->dead)return 1;
-    copyout(q, undo);
-    wincontent(v, focus);
-    copyout(q, v->surface);
-    copyin(q, undo);
-    v->key = tag;
-    return 1;
-}
+#include "window_surface.h"
 void wintile(int i, Rect q)
 {
     View *v = views + i;
@@ -386,7 +367,7 @@ static void render(int dt)
     {
         int target = mc ? 112 : 0;
         if (mcdim != target) {
-            int step = 28;
+            int step = sys.reduce_motion ? 112 : dt * 7;
             mcdim += mcdim < target ? MIN(step, target - mcdim) : -MIN(step, mcdim - target);
             dirty = 1;
         }
@@ -424,7 +405,7 @@ static void render(int dt)
             int radius = MAX(2, MIN(18, q.w * 18 / MAX(1, v->box.w)));
             if(!standalone_dialog(v))shadow(q, radius, focus == i ? 52 : 29);
             if (v->previous && !mk && !sys.reduce_motion && !standalone_dialog(v)) {
-                v->contentAge += MIN(7ull, sys.ticks - v->contentTick);
+                v->contentAge += animation_delta(sys.ticks, v->contentTick, 21 - v->contentAge);
                 v->contentTick = sys.ticks;
                 int t = ease(clampi(v->contentAge * 256 / 21, 0, 256));
                 // Animate the contents, not the window frame: keep the title and outline stationary.
@@ -812,7 +793,7 @@ void app_main(void)
             wallEpoch++;
             dirty = 1;
         }
-        int dt = MIN(7ull, s.ticks - last);
+        int dt = animation_delta(s.ticks, last, 64);
         last = s.ticks;
         if (s.theme != sys.theme || s.wall != sys.wall || s.dark != sys.dark) {
             memcpy(prevwall, back, (u64)W * H * 4);

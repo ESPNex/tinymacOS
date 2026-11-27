@@ -1,0 +1,44 @@
+{
+  "base_commit": "d1fabeb78d31d36ea626d9a3aae6aa7da81ccb85",
+  "production_inputs_frozen": 1077,
+  "artifacts": {
+    "tmc-block3-retail.iso": {
+      "sha256": "97ba0570fe036e0615c12941a2f5af3a16ab19940947f13d6893c6d1024394d6",
+      "bytes": 227780608
+    },
+    "kernel.elf": {
+      "sha256": "c96dc0c509bb022e4303896698a52ced2896bfc8def9ceba663c82e21ae7f607",
+      "bytes": 1298664
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "2da1e377bfc1c853a589db5e7336702daeb5b9ed2878d9b251083f07a4d9723a",
+      "bytes": 1298664
+    },
+    "desktop.elf": {
+      "sha256": "caaa6d4b4d5c057d5b173366a36d7adf0c75b32fad84051dad09a2099a7399b6",
+      "bytes": 2799104
+    }
+  },
+  "binaries_bit_identical_to_block2_build": [
+    "kernel.elf",
+    "RecoveryKernel.elf",
+    "finder.elf",
+    "terminal.elf",
+    "textedit.elf",
+    "settings.elf",
+    "calculator.elf",
+    "diskutility.elf",
+    "installer.elf"
+  ],
+  "guest_receipts_passed": [
+    "baseline.json",
+    "candidate.json",
+    "chrome.json",
+    "many-windows-candidate.json",
+    "drag-baseline.json",
+    "drag-candidate.json"
+  ],
+  "physical_hardware_tested": false,
+  "windows_tested": false,
+  "release_ready": false
+}

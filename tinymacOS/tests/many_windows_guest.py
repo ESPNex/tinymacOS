@@ -4,22 +4,23 @@ Read-only QMP memory observations, no injected guest actions or test syscall.
 from pathlib import Path
 import os,sys,time,struct,json,hashlib,subprocess,tempfile
 from retail_guest import Retail
+from kernel_layout import process_layout
 from input_pixels import cursor
 build=Path(os.environ['TMC_BUILD']);iso=Path(os.environ['TMC_STAGE_ISO']);qa=Path(os.environ['TMC_QA_DIR'])
 label=os.environ.get('TMC_PERF_LABEL','candidate');baseline=os.environ.get('TMC_PERF_BASELINE')=='1'
 w=Path(tempfile.mkdtemp(prefix='tmc-many-windows-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 os.environ.update(TMC_STORAGE='nvme',TMC_MEM='512',TMC_SMP='2',TMC_POINTER='mouse',OCR_ROOT=os.environ['TOOLROOT'])
 symbols={x.split()[-1]:int(x.split()[0],16) for x in subprocess.check_output(['nm','--defined-only',str(build/'kernel.debug')],text=True).splitlines() if len(x.split())>=3}
-# Compiled from the current, unchanged Process/Win ABI (see layout host check).
-stride,appoff,cpuoff,winoff,winbytes,seqoff=7768,4,40,528,72,16
+# Compile the current ABI; descriptor changes must not silently break observers.
+stride,appoff,cpuoff,winoff,winbytes,seqoff,nproc=process_layout()
 r={'passed':False,'label':label,'work':str(w),'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'physical_hardware_tested':False,'process_abi':[stride,appoff,cpuoff,winoff,winbytes,seqoff]}
 try:
  with Retail(iso,w,ev,'many-windows',live=True) as g:
   def memory(name,n):
    p=w/'observation.bin';g.req('pmemsave',val=symbols[name],size=n,filename=str(p));return p.read_bytes()
   def processes():
-   b=memory('proc',stride*23);rows=[]
-   for i in range(23):
+   b=memory('proc',stride*nproc);rows=[]
+   for i in range(nproc):
     at=i*stride;pid,app=struct.unpack_from('<ii',b,at)
     if pid:
      rows.append({'pid':pid,'app':app,'cpu':struct.unpack_from('<Q',b,at+cpuoff)[0],'window':struct.unpack_from('<i',b,at+winoff)[0],'seq':struct.unpack_from('<I',b,at+winoff+seqoff)[0]})
