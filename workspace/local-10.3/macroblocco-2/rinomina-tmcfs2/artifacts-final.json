@@ -1,0 +1,40 @@
+{
+  "base_commit": "667a815862013234d0add20d9fddf92a1ff584f0",
+  "production_inputs_unchanged_since_build": true,
+  "test_only_changes_after_build": [
+    "tinymacOS/tests/rename_tmcfs2_guest.py",
+    "tinymacOS/tests/volume_export_fixture.c"
+  ],
+  "source_inputs": 1170,
+  "artifacts": {
+    "tmcfs2-rename-dev.iso": {
+      "sha256": "54fe22e34674266e0609df72244d62c438415115fac699897571f252f7498cf1",
+      "bytes": 227829760
+    },
+    "KernelCache": {
+      "sha256": "c3b55973b9a4aadbea0271bd5b4956ab0e902324da120b054f47c83f31ff4875",
+      "bytes": 1347880
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "28d5945f3edec65dc5b58a2a4bce0b83c9a6dc59229bff92247e2193b62b0609",
+      "bytes": 1347816
+    },
+    "finder.elf": {
+      "sha256": "0fd6e9b341ec4ce989f86bf630beaa1348b344efd2328933d5cad261662ce682",
+      "bytes": 50176
+    },
+    "diskutility.elf": {
+      "sha256": "a848154a6e8f77687d3c4c2f964bc814154dd3ba17c3c1bc9a5e559b0d0c73f1",
+      "bytes": 41480
+    },
+    "command.elf": {
+      "sha256": "2925e0de216bc88965ddcff47931489464f2a383d7ffb11765895be7c8b8ba4f",
+      "bytes": 62240
+    }
+  },
+  "guest_passed": true,
+  "guest_postshutdown_resume": true,
+  "physical_hardware_tested": false,
+  "windows_tested": false,
+  "release_ready": false
+}

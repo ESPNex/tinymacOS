@@ -1,0 +1,20 @@
+PASS read-only extraction of actual guest export: large.bin, 65537 bytes
+PASS read-only extraction of actual guest export: dopo-cartella/interno.txt, 8 bytes
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-rename-tmcfs2-5i9r81h8/fat32-after.img: 5 files, 134/129022 clusters
+ntfsresize v2022.10.3 (libntfs-3g)
+Device name        : /var/tmp/tmc-rename-tmcfs2-5i9r81h8/ntfs-after.img
+NTFS volume version: 3.1
+Cluster size       : 4096 bytes
+Current volume size: 67105280 bytes (68 MB)
+Current device size: 67108864 bytes (68 MB)
+Checking filesystem consistency ...
+  0.00 percent completed100.00 percent completed
+Accounting clusters ...
+Space in use       : 3 MB (4.0%)
+Collecting resizing constraints ...
+You might resize at 2682880 bytes or 3 MB (freeing 65 MB).
+Please make a test run using both the -n and -s options before real resizing!
+exfatprogs version : 1.2.9
+/var/tmp/tmc-rename-tmcfs2-5i9r81h8/exfat-after.img: clean. directories 3, files 8
+PASS After actual guest poweroff, same shipping TMCFS2 core mounts created partition and independently extracts exact 65537-byte payload + renamed child; original 3 partition entries unchanged; independent foreign fsck passes

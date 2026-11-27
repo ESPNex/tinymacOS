@@ -11,7 +11,7 @@ printf 'tinymacOS FAT32 resize: file bytes must survive both operations.\n' > "$
 mcopy -i "$out/input.fat" "$out/check.txt" ::/CHECK.TXT
 python3 tools/build-ntfs.py "$out"
 C=(-O1 -g -ffunction-sections -fdata-sections -fno-builtin -DTMC_NTFS_HOST -Iinclude -Iarch)
-S=(tests/diskedit_host.c storage/diskedit.c storage/ntfs_resize.c storage/partition.c storage/maintenance.c storage/native_resize.c storage/native_cow.c crypto/sha256.c kernel/string.c)
+S=(tests/diskedit_host.c storage/diskedit.c storage/tmcbfs2.c storage/ntfs_resize.c storage/partition.c storage/maintenance.c storage/native_resize.c storage/native_cow.c crypto/sha256.c kernel/string.c)
 gcc "${C[@]}" "${S[@]}" "$out/k-native-ntfs.o" -no-pie -Wl,--gc-sections -o "$out/host"
 gcc "${C[@]}" -fsanitize=address,undefined -fno-omit-frame-pointer "${S[@]}" "$out/k-native-ntfs.o" -no-pie -Wl,--gc-sections -o "$out/sanitized"
 for test in host sanitized;do

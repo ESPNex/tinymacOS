@@ -6,6 +6,9 @@
 #include <assert.h>
 #include <string.h>
 #include "disklayout.h"
+#include "tmcbfs2.h"
+void*kmalloc(size_t n){return malloc(n);}
+void kfree(void*p){free(p);}
 static u8*disk,*fatfixture;
 static const u32 z=524288,fa=2048,fn=131072,foreign=400000;
 static int writes,failat=-1;
@@ -45,6 +48,16 @@ static DiskEdit selected(int op,int number,u32 size){
 }
 static void hashforeign(u8 h[32]){sha_bytes(disk+(u64)foreign*512,32768*512,h);}
 static void output(const char*dir,int scheme,const char*name,u32 sectors){char file[1024];snprintf(file,sizeof file,"%s/%s-%s.fat",dir,scheme==MAP_GPT?"gpt":"mbr",name);FILE*f=fopen(file,"wb");assert(f);assert(fwrite(disk+(u64)fa*512,512,sectors,f)==sectors);assert(!fclose(f));}
+static u64 native_base;
+static int t2read(void*x,u64 b,void*p){(void)x;return io(0,native_base+b*32,32,p,0);}
+static int t2write(void*x,u64 b,const void*p){(void)x;return io(0,native_base+b*32,32,(void*)p,1);}
+static int t2flush(void*x){(void)x;return 0;}static void*t2alloc(void*x,size_t n){(void)x;return malloc(n);}static void t2free(void*x,void*p){(void)x;free(p);}
+static void check_created(DiskEdit*q){
+ native_base=q->start;Tmc2 fs;T2Io io2={0,q->size/32,t2read,t2write,t2flush,t2alloc,t2free};assert(!tmc2_mount(&fs,io2));u64 id,snap;assert(!tmc2_create(&fs,1,"caffè.txt",T2_FILE,&id));u8*proof=malloc(65537),*actual=malloc(65537);assert(proof&&actual);for(unsigned i=0;i<65537;i++)proof[i]=(i*17+23)&255;
+ assert(tmc2_write(&fs,id,0,proof,65537)==65537);assert(!tmc2_move(&fs,id,1,"rinominato.txt"));assert(!tmc2_snapshot(&fs,"immutabile",&snap));assert(tmc2_write(&fs,id,0,"LIVE",4)==4);assert(!tmc2_truncate(&fs,id,4));assert(tmc2_snapshot_read(&fs,"immutabile",id,0,actual,65537)==65537&&!memcmp(proof,actual,65537));assert(!tmc2_verify(&fs));tmc2_close(&fs);
+ assert(!tmc2_mount(&fs,io2));T2Entry e;assert(!tmc2_lookup(&fs,1,"rinominato.txt",&e)&&e.size==4);assert(!tmc2_snapshot_verify(&fs,"immutabile"));tmc2_close(&fs);free(actual);free(proof);
+ puts("PASS newly created TMCFS2 mounts with the shipping system core: Unicode file >8KiB, rename, CoW immutable snapshot, live truncate and cold remount");
+}
 static void run(int scheme,const char*out){
  fixture(scheme);u8 ms[32],after[32],bootstrap[446];hashforeign(ms);memcpy(bootstrap,disk,446);
  DiskEdit q=selected(DISK_EDIT_RESIZE,1,98304);assert(!partition_edit(&m,&q,0)&&!writes);q.confirm=DISK_EDIT_CONFIRM;allowed_start=fa;allowed_count=fn;
@@ -54,8 +67,9 @@ static void run(int scheme,const char*out){
  printf("PASS %s real FAT32 shrink 64->48 MiB and grow back: BPB, backup, FSINFO and partition updated; foreign NTFS/bootstrap unchanged\n",scheme==MAP_GPT?"GPT":"MBR");
  q=selected(DISK_EDIT_DELETE,2,0);assert(!partition_edit(&m,&q,0));q.confirm=DISK_EDIT_CONFIRM;allowed_count=0;assert(!partition_edit(&m,&q,1));hashforeign(after);assert(!memcmp(ms,after,32));assert(partition_scan(&m,&x)&&x.count==1);
  puts("PASS deletion of occupied NTFS removes only selected table entry, preserving its payload");
- q=(DiskEdit){.disk=0,.op=DISK_EDIT_CREATE,.start=135168,.size=65536};strcpy(q.name,"Dati nativi");assert(!partition_edit(&m,&q,0));q.confirm=DISK_EDIT_CONFIRM;allowed_start=q.start;allowed_count=q.size;assert(!partition_edit(&m,&q,1));assert(partition_scan(&m,&x)&&x.count==2&&x.part[1].fs==FS_TMC);assert(!memcmp(disk+(u64)q.start*512,"TMCBFS1",7));assert(!memcmp(bootstrap,disk,446));hashforeign(after);assert(!memcmp(ms,after,32));
- puts("PASS native fixed-slot partition formatted before GPT/MBR publication; snapshots cleared; adjacent data unchanged");
+ q=(DiskEdit){.disk=0,.op=DISK_EDIT_CREATE,.start=135168,.size=65536};strcpy(q.name,"Dati nativi");assert(!partition_edit(&m,&q,0));q.confirm=DISK_EDIT_CONFIRM;allowed_start=q.start;allowed_count=q.size;assert(!partition_edit(&m,&q,1));assert(partition_scan(&m,&x)&&x.count==2&&x.part[1].fs==FS_TMC2);assert(!memcmp(disk+(u64)q.start*512,"TMCBFS2",7));assert(!memcmp(bootstrap,disk,446));hashforeign(after);assert(!memcmp(ms,after,32));
+ check_created(&q);hashforeign(after);assert(!memcmp(ms,after,32));
+ puts("PASS same-system TMCFS2 CoW core formats and verifies new GPT/MBR partitions before publication; adjacent data unchanged");
  fixture(scheme);q=selected(DISK_EDIT_DELETE,1,0);assert(!partition_edit(&m,&q,0));assert(partition_edit(&m,&q,1)==DE_PROTECTED&&!writes);q.confirm=DISK_EDIT_CONFIRM;disk[440]^=1;assert(partition_edit(&m,&q,1)==DE_STALE&&!writes);puts("PASS mandatory confirmation and stale metadata reject with zero writes");
  fixture(scheme);q=selected(DISK_EDIT_RESIZE,2,16384);assert(partition_edit(&m,&q,0)<0&&!writes);puts("PASS invalid NTFS metadata rejected by the native engine with zero writes");
  fixture(scheme);u8*b=disk+(u64)fa*512;u32 r=b[14]|b[15]<<8,f;memcpy(&f,b+36,4);u32 cluster=110000;for(int i=0;i<2;i++)p32(disk+(u64)(fa+r+i*f)*512+cluster*4,0x0fffffff);

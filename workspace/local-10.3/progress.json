@@ -1,6 +1,6 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 2 COMPLETE for implementation and local host/real-QEMU acceptance. Authenticated main publication follows. No release/version bump, no macroblock 3 work, no physical-hardware/Windows acceptance claim.",
+  "status": "Macroblock 2 complete; Rename/TMCFS2 follow-up complete in implementation and local host/real-QEMU/postshutdown acceptance; main publication receipt maintained separately. No release/version bump or macroblock 3 work.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
@@ -143,5 +143,16 @@
     "snapshot_catalogue": "PASS final same-ISO 43-snapshot guest + immutable snapshot Finder views",
     "independent_reader": "PASS dissect.fat 3.13 actual copied Unicode/65537-byte content and real partition LBA in BPB",
     "screenshots": "Exactly three unaltered real guest screenshots in macroblocco-2/schermate/"
+  },
+  "rename_tmcfs2_followup": {
+    "complete_local": true,
+    "evidence": "macroblocco-2/rinomina-tmcfs2/VERIFICA.md",
+    "guest": "PASS actual Utility Disco format/open and context-menu file+directory Rename on native Home/FAT32/NTFS/exFAT/new TMCFS2",
+    "postshutdown": "PASS read-only TMCFS2 extraction + independent foreign filesystem checks; test-helper resume documented",
+    "iso_sha256": "54fe22e34674266e0609df72244d62c438415115fac699897571f252f7498cf1",
+    "physical_hardware_tested": false,
+    "windows_tested": false,
+    "no_existing_media_conversion": true,
+    "tmcfs2_resize_supported": false
   }
 }

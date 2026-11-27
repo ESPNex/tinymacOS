@@ -12,13 +12,14 @@
 static int fd;static u64 base;
 static int rd(void*x,u64 b,void*p){(void)x;return pread(fd,p,T2_BLOCK,base+b*T2_BLOCK)==T2_BLOCK?0:-1;}
 static int wr(void*x,u64 b,const void*p){(void)x;return pwrite(fd,p,T2_BLOCK,base+b*T2_BLOCK)==T2_BLOCK?0:-1;}
+static int deny_write(void*x,u64 b,const void*p){(void)x;(void)b;(void)p;assert(!"read-only extractor attempted a write");return -1;}
 static int fl(void*x){(void)x;return fsync(fd);}
 static void*al(void*x,size_t n){(void)x;return malloc(n);}static void fr(void*x,void*p){(void)x;free(p);}
 static u64 node(Tmc2*t,u64 parent,const char*name,int kind){u64 id;assert(!tmc2_create(t,parent,name,kind,&id));return id;}
 int main(int argc,char**argv){
  assert(argc>=5&&!strncmp(argv[2],"/var/tmp/",9));int seed=!strcmp(argv[1],"seed");assert(seed||!strcmp(argv[1],"extract"));
  fd=open(argv[2],seed?O_RDWR:O_RDONLY);assert(fd>=0);base=strtoull(argv[3],0,0)*512;u64 blocks=strtoull(argv[4],0,0)/32;
- Tmc2 fs;T2Io io={0,blocks,rd,seed?wr:0,fl,al,fr};
+ Tmc2 fs;T2Io io={0,blocks,rd,seed?wr:deny_write,fl,al,fr};
  if(seed){
   assert(!tmc2_format(&fs,io));u64 d=node(&fs,1,"Documenti",T2_DIR),f=node(&fs,d,"esterno.txt",T2_FILE);assert(tmc2_write(&fs,f,0,"EXTERNAL_NATIVE_GUEST",21)==21);
   f=node(&fs,d,"caffè.txt",T2_FILE);u8 p[65537];for(unsigned i=0;i<sizeof p;i++)p[i]=(i*17+23)&255;assert(tmc2_write(&fs,f,0,p,sizeof p)==sizeof p);node(&fs,d,"vuoto.txt",T2_FILE);

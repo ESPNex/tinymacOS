@@ -826,13 +826,13 @@
     {
       "file": "userspace/diskutility.c",
       "before": "BTRFS nativo: subset proprietario, non Btrfs Linux.",
-      "after": "Formato tinymacOS, non Btrfs Linux.",
+      "after": "TMCFS2, filesystem proprietario del sistema.",
       "occurrences": 1
     },
     {
       "file": "userspace/diskutility.c",
       "before": "Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.",
-      "after": "Nativo: 8.3–33.5 MB. FAT32: spazio libero in coda. NTFS: controllo Windows.",
+      "after": "Resize: FAT32, NTFS e nativo legacy. TMCFS2: non disponibile.",
       "occurrences": 1
     },
     {
@@ -892,13 +892,13 @@
     {
       "file": "userspace/command.c",
       "before": "Macintosh HD - Dati è gi\\u00e0 montato su / (BTRFS subset, struttura APFS).",
-      "after": "Macintosh HD - Dati è gi\\u00e0 montato su / (filesystem nativo tinymacOS).",
+      "after": "Macintosh HD - Dati è già montato su / — ",
       "occurrences": 1
     },
     {
       "file": "include/partition.h",
       "before": "BTRFS nativo (subset)",
-      "after": "tinymacOS (nativo)",
+      "after": "TMCFS2",
       "occurrences": 1
     }
   ]

@@ -52,7 +52,7 @@ command = read('userspace/command.c')
 for alias in ('fsck_apfs', 'mount_apfs', 'newfs_apfs'):
     assert f'IS("{alias}")' in command
 partition = read('include/partition.h')
-assert '"tinymacOS (nativo)"' in partition and '"BTRFS"' in partition
+assert '"TMCFS2"' in partition and '"Btrfs (Linux)"' in partition and '"TMCFS (legacy)"' in partition
 for path in ('userspace/about.c', 'userspace/settings.c', 'desktop/recovery.c'):
     assert '10.2.6' in read(path), ('public version changed before release gates', path)
 

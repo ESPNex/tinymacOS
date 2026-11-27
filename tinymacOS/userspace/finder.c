@@ -7,6 +7,8 @@ static ClickPair item_click;
 static char cwd[PATHLEN] = HOME, field[PATHLEN], note[96], cwdarg[PATHLEN];
 static Dirent files[BROWSER_PAGE];
 static int n, sel = -1, listview, offset, dialog, pagebase, more;
+static int field_at,field_selected;
+static char rename_source[PATHLEN],dialog_error[96];
 static u32 rev;
 static Clipboard clipboard;
 static int paste_selected;
@@ -243,10 +245,11 @@ static void act(int k)
         openfile();
     else if (k == ACT_NEW || k == 30) {
         dialog = k == ACT_NEW ? 1 : 2;
-        field[0] = 0;
+        field[0] = 0;field_at=field_selected=0;dialog_error[0]=0;
     } else if (k == ACT_RENAME && sel >= 0) {
-        dialog = 3;
-        strset(field, files[sel].name, sizeof field);
+        Dirent parent;if(files[sel].ro||sc(S_STAT,cwd,&parent,0,0)||parent.ro){strset(note,"Questo elemento è in sola lettura.",96);return;}
+        dialog = 3;strset(rename_source,p,PATHLEN);dialog_error[0]=0;
+        strset(field, files[sel].name, sizeof field);field_at=strlen(field);field_selected=1;
     } else if (k == ACT_DELETE && sel >= 0) {
         dialog = 4;
         strset(field, files[sel].name, sizeof field);
@@ -287,10 +290,11 @@ static void confirm(void)
     else if (field[0] && !eq(field, ".") && !eq(field, "..") && !hasslash(field)
              && absolutepath(b, cwd, field) == 0) {
         if (dialog == 3)
-            r = sc(S_MOVE, a, b, 0, 0);
+            r = eq(rename_source,b)?0:sc(S_MOVE, rename_source, b, 0, 0);
         else
             r = sc(S_CREATE, b, dialog == 1, 0, 0);
     }
+    if(dialog<=3&&r<0){strset(dialog_error,"Nome non valido, già usato o elemento non scrivibile.",sizeof dialog_error);return;}
     strset(note, r == -REMOVE_READ_ONLY ? "Elemento o contenuto in sola lettura" : r == -REMOVE_IO ? "Errore di scrittura: eliminazione non completata" : r < 0 ? "Operazione non riuscita: verifica nome e permessi" : "", 96);
     dialog = 0;
     ui_motion(FX_DISSOLVE);
@@ -402,7 +406,15 @@ static void paint(void)
             addnum(details, files[sel].size, 90);
             append(details, files[sel].ro ? " byte  ·  Sola lettura" : " byte  ·  Lettura e scrittura", 90);
         }
-        if(dialog<=3)inputmodal(dialog==1?"Nuova cartella":dialog==2?"Nuovo file":"Rinomina",field,details,0);
+        if(dialog<=3){
+            int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-184)/2;
+            Sheet(x,y,w,184,15);Text(x+16,y+12,dialog==1?"Nuova cartella":dialog==2?"Nuovo file":"Rinomina",F_BOLD,TX);
+            Box(x+16,y+43,w-32,35,5,PANEL);
+            if(field_selected&&field[0])Box(x+24,y+49,MIN(w-50,text_columns(field,strlen(field))*9+3),24,3,SOFT);
+            InputText(x+25,y+52,w-50,field,field_at,1,0,TX);
+            Text(x+16,y+91,dialog_error[0]?dialog_error:details,F_SMALL,dialog_error[0]?EMP:SUB);
+            button(x+w-210,y+139,92,"Annulla",0);button(x+w-108,y+139,92,dialog==3?"Rinomina":"Crea",1);
+        }
         else modal(dialog==4?"Eliminare questo elemento?":"Informazioni",field,details);
     }
     finish();
@@ -466,17 +478,24 @@ static void event(Event *e)
         return;
     }
     if (dialog) {
-        if (e->type != EV_KEY)
-            return;
-        int k = e->a;
-        if (k == 27)
-            dialog = 0;
-        else if (k == '\n')
-            confirm();
-        else if (dialog <= 3) {
-            text_append_key(field,48,k);
-        }
-        return;
+        if(e->type==EV_CLICK&&dialog<=3){int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-184)/2;
+            if(e->b>=y+139&&e->b<y+165){if(e->a>=x+w-210&&e->a<x+w-118)dialog=0;else if(e->a>=x+w-108&&e->a<x+w-16)confirm();}
+            else if(e->a>=x+16&&e->a<x+w-16&&e->b>=y+43&&e->b<y+78){field_selected=0;field_at=strlen(field);}return;}
+        if(e->type!=EV_KEY)return;int k=e->a;
+        if(k==27)dialog=0;else if(k=='\n'||k=='\r')confirm();
+        else if(dialog<=3){
+            if(e->b&&(k=='a'||k=='A')){field_selected=1;field_at=strlen(field);}
+            else if(e->b&&(k=='u'||k=='U')){field[0]=0;field_at=field_selected=0;}
+            else if(k==K_LEFT){field_at=field_selected?0:text_prev(field,field_at);field_selected=0;}
+            else if(k==K_RIGHT){field_at=field_selected?strlen(field):text_next(field,field_at);field_selected=0;}
+            else if(k==K_HOME){field_at=0;field_selected=0;}
+            else if(k==K_END){field_at=strlen(field);field_selected=0;}
+            else if(k==8||k==127||k==K_DEL||(!e->b&&text_printable(k))){
+                if(field_selected){field[0]=0;field_at=field_selected=0;}
+                else if(k==8||k==127)text_backspace(field,&field_at);else if(k==K_DEL)text_delete(field,field_at);
+                if(!e->b&&text_printable(k))text_insert(field,48,&field_at,k);dialog_error[0]=0;
+            }
+        }return;
     }
     if (e->type == EV_ACTION) {
         item_click.armed=0;

@@ -8,6 +8,9 @@
 #include "disklayout.h"
 #include "diskedit.h"
 #include "nativefs.h"
+#include "tmcbfs2.h"
+extern void*kmalloc(size_t);
+extern void kfree(void*);
 extern int ntfs_resize_native(Medium*,DiskEdit*,int);
 #define NATIVE_MIN 65536u
 static const u8 win_type[16]={0xa2,0xa0,0xd0,0xeb,0xe5,0xb9,0x33,0x44,0x87,0xc0,0x68,0xb6,0xb7,0x26,0x99,0xc7};
@@ -81,24 +84,20 @@ static int logical_delete(Medium*m,DiskPartition*target){
     }
     return -1;
 }
-static u32 crc_c(const u8*p,unsigned n){u32 c=~0u;while(n--){c^=*p++;for(int j=0;j<8;j++)c=(c>>1)^(0x82f63b78u&-(c&1));}return ~c;}
+/* The SAME CoW core and 16KiB on-disk format used by the installer.
+ * New partitions only; never a conversion of an existing native volume. */
+typedef struct {Medium*m;DiskEdit*q;} Format2;
+static int format_read(void*x,u64 block,void*p){Format2*f=x;if(block>=f->q->size/32)return -1;return readat(f->m,f->q->start+block*32,32,p);}
+static int format_write(void*x,u64 block,const void*p){Format2*f=x;if(block>=f->q->size/32)return -1;for(unsigned n=0;n<32;n+=8)if(writeat(f->m,f->q->start+block*32+n,8,(const u8*)p+n*512))return -1;return 0;}
+static int format_flush(void*x){return ((Format2*)x)->m->flush(((Format2*)x)->m->d);}
+static void*format_alloc(void*x,size_t n){(void)x;return kmalloc(n);}
+static void format_free(void*x,void*p){(void)x;kfree(p);}
 static int native_format(Medium*m,DiskEdit*q){
-    /* Current native fixed-slot format, NOT Linux Btrfs. Do not use a Linux
-     * Btrfs type GUID. Initialize all snapshot/backup slots before publication. */
-    memset(zero,0,sizeof zero);
-    for(u32 j=0;j<NATIVE_MIN;j+=8)if(writeat(m,q->start+j,8,zero))return -1;
-    u8 root[512]={0};root[0]=1;if(writeat(m,q->start+64,1,root))return -1;
-    u8 sb[4096]={0};u64 total=(u64)q->size*512,used=6288ull*512,v=65536;
-    memcpy(sb+32,q->stamp,16);memcpy(sb+0x30,&v,8);memcpy(sb+0x40,"_BHRfS_M",8);
-    v=1;memcpy(sb+0x48,&v,8);v=69632;memcpy(sb+0x50,&v,8);v=73728;memcpy(sb+0x58,&v,8);
-    memcpy(sb+0x70,&total,8);memcpy(sb+0x78,&used,8);v=6;memcpy(sb+0x80,&v,8);v=1;memcpy(sb+0x88,&v,8);
-    w32(sb+0x90,4096);w32(sb+0x94,4096);w32(sb+0x98,4096);w32(sb+0x9c,4096);
-    memcpy(sb+3248,&v,8);memcpy(sb+3256,&total,8);memcpy(sb+3264,&used,8);w32(sb+3272,4096);w32(sb+3276,4096);w32(sb+3280,4096);
-    memcpy(sb+3296,sb+32,16);memcpy(sb+3312,sb+32,16);w32(sb,crc_c(sb+32,4064));
-    if(writeat(m,q->start+128,8,sb))return -1;
-    memset(root,0,512);memcpy(root,"SNAPCAT1",8);w32(root+8,2);if(writeat(m,q->start+136,1,root))return -1;
-    memset(root,0,512);memcpy(root,"TMCBFS1\0",8);w32(root+8,2);w32(root+12,384);w32(root+16,144);w32(root+20,1);
-    return writeat(m,q->start,1,root);
+ Format2 f={m,q};T2Io io={&f,q->size/32,format_read,format_write,format_flush,format_alloc,format_free};Tmc2 fs;
+ /* Invalidate both old superblock positions in the verified FREE extent. */
+ memset(zero,0,sizeof zero);for(unsigned n=0;n<64;n+=8)if(writeat(m,q->start+n,8,zero))return -1;
+ if(tmc2_format(&fs,io))return -1;int r=tmc2_verify(&fs);tmc2_close(&fs);if(r)return -1;
+ if(tmc2_mount(&fs,io))return -1;r=tmc2_verify(&fs);tmc2_close(&fs);return r;
 }
 static int fattail(Medium*m,DiskEdit*q,DiskPartition*p,int apply){
     u64 a=p->start;if(readat(m,a,1,bootsector))return DE_IO;
@@ -161,9 +160,9 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
     }
     if(q->op==DISK_EDIT_CREATE||q->op==DISK_EDIT_EXFAT_PUBLISH){
         int inside=0;for(int i=0;i<editmap.gaps;i++){DiskGap*g=editmap.gap+i;if(q->start>=g->start&&q->start-g->start<g->sectors&&q->size<=g->sectors-(q->start-g->start))inside=1;}
-        if(!inside||q->size>0xffffffffull||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
+        if(!inside||(editmap.scheme==MAP_MBR&&(q->start>0xffffffffull||q->size>0xffffffffull))||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
         for(unsigned j=0;j<sizeof q->name;j++){unsigned char c=q->name[j];if(!c)break;if(c<32||c>126||j==sizeof q->name-1)return say(q,DE_INVALID,"Usa un nome ASCII di massimo 47 caratteri.");}
-        if(!apply)return say(q,0,q->op==DISK_EDIT_EXFAT_PUBLISH?"Nuova partizione exFAT nello spazio non allocato verificato. Nessuna partizione esistente verrà formattata.":"Crea BTRFS nativo (subset proprietario, non Btrfs Linux). Capacità file fissa.");
+        if(!apply)return say(q,0,q->op==DISK_EDIT_EXFAT_PUBLISH?"Nuova partizione exFAT nello spazio non allocato verificato. Nessuna partizione esistente verrà formattata.":"Crea TMCFS2: lo stesso filesystem proprietario CoW del sistema, non APFS né Btrfs Linux.");
         if(q->op==DISK_EDIT_EXFAT_PUBLISH){if(readat(m,q->start,1,bootsector)||memcmp(bootsector+3,"EXFAT   ",8)||bootsector[510]!=85||bootsector[511]!=170)return say(q,DE_INVALID,"Copia exFAT non verificata: partizione non pubblicata.");}
         if(q->op==DISK_EDIT_CREATE&&native_format(m,q))return say(q,DE_IO,"Errore di formattazione: partizione non pubblicata. Non riprovare senza verifica.");
         int slot=editmap.slot;
@@ -179,6 +178,7 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
         if(p->logical){if(logical_delete(m,p))return say(q,DE_IO,"Errore durante l’aggiornamento EBR. Interrompi le modifiche e verifica il disco.");return say(q,0,"Partizione logica eliminata; contenitore esteso conservato.");}
         if(editmap.scheme==MAP_GPT)memset(table+p->number-1,0,sizeof(Part));else memset(mbrbuf+446+16*(p->number-1),0,16);
     }else{
+        if(p->fs==FS_TMC2)return say(q,DE_UNSUPPORTED,"Il ridimensionamento TMCFS2 non è implementato: nessuna scrittura. La creazione usa tutta la capacità selezionata.");
         if(p->logical||(p->fs!=FS_FAT32&&p->fs!=FS_NTFS&&p->fs!=FS_TMC))return say(q,DE_UNSUPPORTED,"Servono partizioni primarie native, FAT32 o NTFS.");
         u64 end=(u64)p->start+q->size,max=(u64)p->start+p->sectors;
         for(int j=0;j<editmap.gaps;j++)if(editmap.gap[j].start==max){max+=editmap.gap[j].sectors;break;}

@@ -33,3 +33,7 @@ Soltanto tre schermate finali, reali e non ritoccate: `schermate/finder.png`, `s
 Pulizia locale effettuata prima della validazione: bytecode rigenerabile rimosso e duplicati di 31 schermate storiche verificati tramite SHA contro il bundle indipendentemente ripristinato. Originali storici recuperabili con `../history-boundary.json`; prove M0–M3, M4 sospeso, upload, font e USB preservati. Vedere `../historical-image-compression.json`.
 
 I vecchi log/checkpoint VHD/sola lettura non certificano il completamento: sono superseduti dalle ricevute finali sopra. Non viene dichiarata eseguita alcuna prova su GeForce/HDMI fisico, hardware USB reale aggiuntivo, Windows reale o chainload Windows. Nessuna release pubblicata.
+
+## Follow-up Rinomina e TMCFS2
+
+Completato e verificato localmente: dialogo modificabile/cliccabile e azione contestuale Rinomina su tutti i backend scrivibili; nuovi volumi Utility Disco realmente TMCFS2 CoW. Nessuna conversione dei volumi legacy. Build/host/GUI e controllo a guest spento PASS; dettagli e limiti in [rinomina-tmcfs2/VERIFICA.md](rinomina-tmcfs2/VERIFICA.md). Le evidenze precedenti in questo documento restano riferite alla ISO storica, non alla nuova build.

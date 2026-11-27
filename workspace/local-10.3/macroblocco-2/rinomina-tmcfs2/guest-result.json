@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-rename-tmcfs2-5i9r81h8",
+  "iso_sha256": "54fe22e34674266e0609df72244d62c438415115fac699897571f252f7498cf1",
+  "kernel_sha256": "c3b55973b9a4aadbea0271bd5b4956ab0e902324da120b054f47c83f31ff4875",
+  "checks": [
+    "Actual Utility Disco creates new TMCFS2 in verified unallocated space, recognizes TMCFS2 and Mostra nel Finder opens it; real directory/file writes and 65537-byte copy work",
+    "Actual Rinomina context menu + editable dialog rename file and directory on native home, readback of file and nested child succeeds",
+    "Actual Rinomina context menu + editable dialog rename file and directory on FAT32, readback of file and nested child succeeds",
+    "Actual Rinomina context menu + editable dialog rename file and directory on NTFS, readback of file and nested child succeeds",
+    "Actual Rinomina context menu + editable dialog rename file and directory on exFAT, readback of file and nested child succeeds",
+    "Actual Rinomina context menu + editable dialog rename file and directory on new TMCFS2, readback of file and nested child succeeds",
+    "After actual guest poweroff, same shipping TMCFS2 core mounts created partition and independently extracts exact 65537-byte payload + renamed child; original 3 partition entries unchanged; independent foreign fsck passes"
+  ],
+  "physical_hardware_tested": false,
+  "windows_tested": false,
+  "resumed_readonly_postshutdown_verification": true,
+  "created_partition_start": 331776
+}

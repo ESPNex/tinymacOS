@@ -1,0 +1,584 @@
+PASS pinned Linux sources and complete function extractions (not a full HCD claim)
+PASS canonical upstream pins: usbcore-manifest.json 31
+PASS canonical upstream pins: usbhid-manifest.json 12
+PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
+storage/maintenance.c: In function 'layout_read':
+storage/maintenance.c:82:9: warning: unused variable 'z' [-Wunused-variable]
+   82 |     u64 z = m->z;
+      |         ^
+Imported icon atlas: 14 artworks, 15 slots, 6 sizes
+SVG Control Center: 13 original SVG sources; deterministic antialiased masks
+Settings SVG: six original SVG sources, deterministic antialiased alpha masks
+In file included from include/text_input.h:2,
+                 from desktop/login.c:1:
+desktop/login.c: In function 'login_input':
+include/base.h:13:22: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |                      ^
+desktop/login.c:426:32: note: in expansion of macro 'MAX'
+  426 |     int *at=&carets[field];*at=MAX(0,MIN(*at,strlen(p)));
+      |                                ^~~
+In file included from include/abi.h:2,
+                 from userspace/lib.h:2,
+                 from userspace/ui.h:2,
+                 from userspace/volume.h:2,
+                 from userspace/inspector.c:1:
+userspace/inspector.c: In function 'inspect_nav':
+include/base.h:13:22: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |                      ^
+userspace/inspector.c:105:15: note: in expansion of macro 'MAX'
+  105 |         off = MAX(0, file.size - (binary ? 12 * nrows() : 160));
+      |               ^~~
+In file included from include/abi.h:2,
+                 from userspace/lib.h:2,
+                 from userspace/ui.h:2,
+                 from userspace/filebrowser.h:2,
+                 from userspace/filepanel.h:2,
+                 from userspace/filepanel.c:1:
+userspace/filepanel.c: In function 'filepanel_event':
+include/base.h:13:22: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |                      ^
+userspace/filepanel.c:169:15: note: in expansion of macro 'MAX'
+  169 |     p->cursor=MAX(0,MIN(p->cursor,strlen(s)));
+      |               ^~~
+userspace/settings.c: In function 'row2':
+userspace/settings.c:84:37: warning: unused parameter 'w' [-Wunused-parameter]
+   84 | static void row2(int x, int ry, int w, const char *l, const char *v)
+      |                                 ~~~~^
+Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64
+In file included from /home/user/tinymacOS/compat/ntfs/native_abi.h:8,
+                 from /var/tmp/tmc-rename-tmcfs2/ntfs-native/abi.c:6:
+/home/user/tinymacOS/include/base.h:12:9: warning: "MIN" redefined
+   12 | #define MIN(a,b) ((a)<(b)?(a):(b))
+      |         ^~~
+In file included from /var/tmp/tmc-rename-tmcfs2/ntfs-native/source/include/ntfs-3g/volume.h:37,
+                 from /var/tmp/tmc-rename-tmcfs2/ntfs-native/source/include/ntfs-3g/device.h:33,
+                 from /var/tmp/tmc-rename-tmcfs2/ntfs-native/abi.c:3:
+/usr/include/x86_64-linux-gnu/sys/param.h:102:9: note: this is the location of the previous definition
+  102 | #define MIN(a,b) (((a)<(b))?(a):(b))
+      |         ^~~
+/home/user/tinymacOS/include/base.h:13:9: warning: "MAX" redefined
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |         ^~~
+/usr/include/x86_64-linux-gnu/sys/param.h:103:9: note: this is the location of the previous definition
+  103 | #define MAX(a,b) (((a)>(b))?(a):(b))
+      |         ^~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/collate.c: In function 'ntfs_collate_file_name':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/collate.c:230:36: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  230 |                         (ntfschar*)&file_name_attr1->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/collate.c:232:36: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  232 |                         (ntfschar*)&file_name_attr2->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c: In function 'ntfs_inode_lookup_by_name':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c:334:44: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  334 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c:455:44: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  455 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c: In function 'ntfs_filldir':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c:1001:49: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1001 |                         res = filldir(dirent, fn->file_name,
+      |                                               ~~^~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c: In function 'ntfs_delete':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/dir.c:1990:44: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1990 |                 if (ntfs_names_are_equal(fn->file_name, fn->file_name_length,
+      |                                          ~~^~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/index.c: In function 'ntfs_ie_filename_get':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/index.c:277:37: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  277 |         return ntfs_attr_name_get(fn->file_name, fn->file_name_length);
+      |                                   ~~^~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/inode.c: In function 'ntfs_inode_add_attrlist':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/inode.c:1264:61: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1264 |                         if (!ntfs_attr_lookup(ale->type, ale->name,
+      |                                                          ~~~^~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/reparse.c: In function 'ntfs_fix_file_name':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/reparse.c:185:61: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  185 |                            && ntfs_names_are_equal(find.attr.file_name,
+      |                                                    ~~~~~~~~~^~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/reparse.c:187:38: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  187 |                                 found->file_name, found->file_name_length,
+      |                                 ~~~~~^~~~~~~~~~~
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/unistr.c: In function 'ntfs_file_value_upcase':
+/var/tmp/tmc-rename-tmcfs2/ntfs-native/source/libntfs-3g/unistr.c:432:37: warning: taking address of packed member of 'struct <anonymous>' may result in an unaligned pointer value [-Waddress-of-packed-member]
+  432 |         ntfs_name_upcase((ntfschar*)&file_name_attr->file_name,
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+NTFS native resize: source/ABI verified, integer-only freestanding engine + bounded block adapter namespace
+PASS pinned FatFs R0.16 + patch 3: freestanding FAT32/exFAT read/write and raw-partition exFAT formatter built; not runtime or guest acceptance
+kernel/kext.c: In function 'kext_log':
+kernel/kext.c:502:34: warning: unused parameter 't' [-Wunused-parameter]
+  502 | static void kext_log(const char *t)
+      |                      ~~~~~~~~~~~~^
+kernel/net.c: In function 'lwip_tx':
+kernel/net.c:59:22: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+   59 |                 char b[110];
+      |                      ^
+kernel/net.c: In function 'net_ping':
+kernel/net.c:239:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  239 |             char b[28];
+      |                  ^
+kernel/net.c:255:25: warning: unused variable 'hx' [-Wunused-variable]
+  255 |             const char *hx = "0123456789abcdef";
+      |                         ^~
+kernel/net.c:254:18: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  254 |             char b[24];
+      |                  ^
+kernel/net.c: In function 'dns_recv':
+kernel/net.c:456:14: warning: variable 'b' set but not used [-Wunused-but-set-variable]
+  456 |         char b[72];
+      |              ^
+drivers/linux_usb.c: In function 'tmc_lx_os_error':
+drivers/linux_usb.c:24:34: warning: unused parameter 'message' [-Wunused-parameter]
+   24 | void tmc_lx_os_error(const char *message){logstr(message);logstr("\n");}
+      |                      ~~~~~~~~~~~~^~~~~~~
+fs/bootfs.c: In function 'bootfs_open':
+fs/bootfs.c:154:13: warning: missing initializer for field 'backend' of 'FD' [-Wmissing-field-initializers]
+  154 |             };
+      |             ^
+In file included from fs/bootfs.c:1:
+fs/../kernel/k.h:50:9: note: 'backend' declared here
+   50 |     u32 backend;
+      |         ^~~~~~~
+fs/btrfs.c: In function 'fs_open_i':
+fs/btrfs.c:525:13: warning: missing initializer for field 'backend' of 'FD' [-Wmissing-field-initializers]
+  525 |             };
+      |             ^
+In file included from fs/btrfs.c:4:
+fs/../kernel/k.h:50:9: note: 'backend' declared here
+   50 |     u32 backend;
+      |         ^~~~~~~
+fs/volumes.c:41:12: warning: 'no_flush' defined but not used [-Wunused-function]
+   41 | static int no_flush(void*x){(void)x;return 0;}
+      |            ^~~~~~~~
+storage/diskedit.c:25:12: warning: 'nonzero' defined but not used [-Wunused-function]
+   25 | static int nonzero(const u8*p,unsigned n){while(n--)if(*p++)return 1;return 0;}
+      |            ^~~~~~~
+storage/maintenance.c: In function 'layout_read':
+storage/maintenance.c:82:9: warning: unused variable 'z' [-Wunused-variable]
+   82 |     u64 z = m->z;
+      |         ^
+compat/linux/xhci_runtime.c:12:22: warning: 'usb_hcds_loaded' defined but not used [-Wunused-variable]
+   12 | static unsigned long usb_hcds_loaded;
+      |                      ^~~~~~~~~~~~~~~
+In file included from compat/linux/xhci_mem.c:2:
+In function 'xhci_add_in_port',
+    inlined from 'xhci_setup_port_arrays' at compat/linux/../../vendor/linux-v6.12/xhci-mem.c:2213:3,
+    inlined from 'tmc_xhci_xhci_mem_init' at compat/linux/../../vendor/linux-v6.12/xhci-mem.c:2531:6:
+compat/linux/../../vendor/linux-v6.12/xhci-mem.c:2080:12: warning: 'minor_revision' may be used uninitialized [-Wmaybe-uninitialized]
+ 2080 |         if (rhub->min_rev < minor_revision)
+      |            ^
+compat/linux/../../vendor/linux-v6.12/xhci-mem.c: In function 'tmc_xhci_xhci_mem_init':
+compat/linux/../../vendor/linux-v6.12/xhci-mem.c:1989:28: note: 'minor_revision' was declared here
+ 1989 |         u8 major_revision, minor_revision, tmp_minor_revision;
+      |                            ^~~~~~~~~~~~~~
+In file included from compat/linux/xhci_ring.c:2:
+compat/linux/../../vendor/linux-v6.12/xhci-ring.c: In function 'tmc_xhci_xhci_handle_command_timeout':
+compat/linux/../../vendor/linux-v6.12/xhci-ring.c:1626:25: warning: unused variable 'str' [-Wunused-variable]
+ 1626 |         char            str[XHCI_MSG_MAX];
+      |                         ^~~
+In file included from compat/linux/xhci_hub.c:2:
+In function 'xhci_create_usb3x_bos_desc',
+    inlined from 'tmc_xhci_xhci_hub_control' at compat/linux/../../vendor/linux-v6.12/xhci-hub.c:1250:12:
+compat/linux/../../vendor/linux-v6.12/xhci-hub.c:65:38: warning: 'bcdUSB' may be used uninitialized [-Wmaybe-uninitialized]
+   65 |                 if (i == 0 || bcdUSB < rev) {
+      |                               ~~~~~~~^~~~~
+compat/linux/../../vendor/linux-v6.12/xhci-hub.c: In function 'tmc_xhci_xhci_hub_control':
+compat/linux/../../vendor/linux-v6.12/xhci-hub.c:42:41: note: 'bcdUSB' was declared here
+   42 |         u16                             bcdUSB;
+      |                                         ^~~~~~
+In file included from vendor/linux-v6.12/hid-quirks.c:19:
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:24:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   24 |         { "ELAN0000", 0 },
+      |         ^
+In file included from compat/linux/usbcore-include/linux/hid.h:21,
+                 from vendor/linux-v6.12/hid-quirks.c:15:
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:25:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   25 |         { "ELAN0100", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:26:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   26 |         { "ELAN0600", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:27:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   27 |         { "ELAN0601", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:28:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   28 |         { "ELAN0602", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:29:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   29 |         { "ELAN0603", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:30:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   30 |         { "ELAN0604", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:31:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   31 |         { "ELAN0605", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:32:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   32 |         { "ELAN0606", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:33:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   33 |         { "ELAN0607", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:34:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   34 |         { "ELAN0608", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:35:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   35 |         { "ELAN0609", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:36:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   36 |         { "ELAN060B", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:37:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   37 |         { "ELAN060C", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:38:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   38 |         { "ELAN060F", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:39:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   39 |         { "ELAN0610", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:40:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   40 |         { "ELAN0611", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:41:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   41 |         { "ELAN0612", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:42:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   42 |         { "ELAN0615", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:43:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   43 |         { "ELAN0616", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:44:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   44 |         { "ELAN0617", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:45:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   45 |         { "ELAN0618", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:46:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   46 |         { "ELAN0619", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:47:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   47 |         { "ELAN061A", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:49:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   49 |         { "ELAN061C", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:50:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   50 |         { "ELAN061D", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:51:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   51 |         { "ELAN061E", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:52:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   52 |         { "ELAN061F", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:53:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   53 |         { "ELAN0620", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:54:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   54 |         { "ELAN0621", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:55:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   55 |         { "ELAN0622", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:56:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   56 |         { "ELAN0623", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:57:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   57 |         { "ELAN0624", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:58:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   58 |         { "ELAN0625", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:59:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   59 |         { "ELAN0626", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:60:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   60 |         { "ELAN0627", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:61:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   61 |         { "ELAN0628", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:62:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   62 |         { "ELAN0629", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:63:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   63 |         { "ELAN062A", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:64:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   64 |         { "ELAN062B", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:65:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   65 |         { "ELAN062C", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:66:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   66 |         { "ELAN062D", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:67:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   67 |         { "ELAN062E", 0 }, /* Lenovo V340 Whiskey Lake U */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:68:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   68 |         { "ELAN062F", 0 }, /* Lenovo V340 Comet Lake U */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:69:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   69 |         { "ELAN0631", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:70:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   70 |         { "ELAN0632", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:71:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   71 |         { "ELAN0633", 0 }, /* Lenovo S145 */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:72:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   72 |         { "ELAN0634", 0 }, /* Lenovo V340 Ice lake */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:73:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   73 |         { "ELAN0635", 0 }, /* Lenovo V1415-IIL */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:74:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   74 |         { "ELAN0636", 0 }, /* Lenovo V1415-Dali */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:75:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   75 |         { "ELAN0637", 0 }, /* Lenovo V1415-IGLR */
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore-include/linux/input/elan-i2c-ids.h:76:9: warning: missing initializer for field 'cls' of 'const struct acpi_device_id' [-Wmissing-field-initializers]
+   76 |         { "ELAN1000", 0 },
+      |         ^
+compat/linux/usbcore-include/linux/mod_devicetable.h:220:15: note: 'cls' declared here
+  220 |         __u32 cls;
+      |               ^~~
+compat/linux/usbcore_bridge.c: In function 'enqueue':
+compat/linux/usbcore_bridge.c:35:127: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   35 |  if(usb_pipeint(u->pipe)){struct bridge_endpoint *e=u->ep->hcpriv;if(!e){kfree(r);return -ENODEV;}if(u->transfer_buffer_length<0||(unsigned)u->transfer_buffer_length>e->packet){kfree(r);return -EMSGSIZE;}r->endpoint=e;r->bounce=kmalloc(e->packet,f);if(!r->bounce){kfree(r);return -ENOMEM;}if(usb_pipeout(u->pipe)&&u->transfer_buffer_length)memcpy(r->bounce,u->transfer_buffer,u->transfer_buffer_length);}
+      |                                                                                                                               ^
+PASS native loader segment contract: kernel.elf, loaded end 0x9a297bc, 6121540 bytes below ceiling
+PASS native loader segment contract: RecoveryKernel.elf, loaded end 0x9a297bc, 6121540 bytes below ceiling
+PASS production USB binary profile: live and Recovery entry jumps to canonical USB/HID; scheduler creates canonical worker; full HID linked
+BaseSystem UDIF: 8391958 B; data fork 8388608 B; SHA-256 3a8d255aa60dfa35c077109526c09f20614b28fab17c884c3b3e1d588eb7fe91
+In file included from boot/loader.c:74:
+boot/fatimage.h: In function 'geometry':
+boot/fatimage.h:37:5: warning: missing initializer for field 'fat12' of 'FatImage' [-Wmissing-field-initializers]
+   37 |     };
+      |     ^
+boot/fatimage.h:20:9: note: 'fat12' declared here
+   20 |     int fat12;
+      |         ^~~~~
+In file included from boot/loader.c:75:
+boot/containerboot.h: In function 'container_recovery':
+boot/containerboot.h:38:5: warning: missing initializer for field 'fat12' of 'FatImage' [-Wmissing-field-initializers]
+   38 |     f=(FatImage){p,size,spc,fs,r,root,rs,ds,(size-ds)/spc};
+      |     ^
+boot/fatimage.h:20:9: note: 'fat12' declared here
+   20 |     int fat12;
+      |         ^~~~~
+In file included from boot/loader.c:8:
+boot/bootdefault.h: At top level:
+boot/bootdefault.h:108:19: warning: 'boot_restore_default' defined but not used [-Wunused-function]
+  108 | static EFI_STATUS boot_restore_default(EFI_RUNTIME_SERVICES*rs)
+      |                   ^~~~~~~~~~~~~~~~~~~~
+In file included from boot/loader.c:74:
+boot/fatimage.h: In function 'geometry':
+boot/fatimage.h:37:5: warning: missing initializer for field 'fat12' of 'FatImage' [-Wmissing-field-initializers]
+   37 |     };
+      |     ^
+boot/fatimage.h:20:9: note: 'fat12' declared here
+   20 |     int fat12;
+      |         ^~~~~
+In file included from boot/loader.c:75:
+boot/containerboot.h: In function 'container_recovery':
+boot/containerboot.h:38:5: warning: missing initializer for field 'fat12' of 'FatImage' [-Wmissing-field-initializers]
+   38 |     f=(FatImage){p,size,spc,fs,r,root,rs,ds,(size-ds)/spc};
+      |     ^
+boot/fatimage.h:20:9: note: 'fat12' declared here
+   20 |     int fat12;
+      |         ^~~~~
+In file included from boot/loader.c:8:
+boot/bootdefault.h: At top level:
+boot/bootdefault.h:108:19: warning: 'boot_restore_default' defined but not used [-Wunused-function]
+  108 | static EFI_STATUS boot_restore_default(EFI_RUNTIME_SERVICES*rs)
+      |                   ^~~~~~~~~~~~~~~~~~~~
+In file included from boot/firmware_tools.c:6:
+boot/bootdefault.h:145:19: warning: 'boot_install_default' defined but not used [-Wunused-function]
+  145 | static EFI_STATUS boot_install_default(EFI_RUNTIME_SERVICES*rs,const void*path,UINTN bytes){
+      |                   ^~~~~~~~~~~~~~~~~~~~
+boot/bootdefault.h:108:19: warning: 'boot_restore_default' defined but not used [-Wunused-function]
+  108 | static EFI_STATUS boot_restore_default(EFI_RUNTIME_SERVICES*rs)
+      |                   ^~~~~~~~~~~~~~~~~~~~
+In file included from boot/firmware_tools.c:5:
+boot/gopmode.h:23:12: warning: 'gop_framebuffer_usable' defined but not used [-Wunused-function]
+   23 | static int gop_framebuffer_usable(const EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *mode)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+boot/firmware_tools.c:9:13: warning: 'num' defined but not used [-Wunused-function]
+    9 | static void num(UINT64 n){CHAR16 b[24];int k=0;do{b[k++]=L'0'+n%10;n/=10;}while(n&&k<23);for(int i=0;i<k/2;i++){CHAR16 q=b[i];b[i]=b[k-i-1];b[k-i-1]=q;}b[k]=0;say(b);}
+      |             ^~~
+In file included from boot/firmware_tools.c:6:
+boot/bootdefault.h:145:19: warning: 'boot_install_default' defined but not used [-Wunused-function]
+  145 | static EFI_STATUS boot_install_default(EFI_RUNTIME_SERVICES*rs,const void*path,UINTN bytes){
+      |                   ^~~~~~~~~~~~~~~~~~~~
+In file included from boot/firmware_tools.c:5:
+boot/gopmode.h:23:12: warning: 'gop_framebuffer_usable' defined but not used [-Wunused-function]
+   23 | static int gop_framebuffer_usable(const EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *mode)
+      |            ^~~~~~~~~~~~~~~~~~~~~~
+PASS native 4096-byte FAT BPB; all 29 file paths/contents independently read back
+PASS native 4096-byte FAT BPB; all 3 file paths/contents independently read back
+xorriso 1.5.6 : RockRidge filesystem manipulator, libburnia project.
+
+xorriso : NOTE : Environment variable SOURCE_DATE_EPOCH encountered with value 1735689600
+ISO (outside source): /var/tmp/tmc-rename-tmcfs2/tmcfs2-rename-dev.iso

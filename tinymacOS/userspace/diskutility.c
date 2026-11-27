@@ -73,7 +73,7 @@ static void edit_paint(void)
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"Formato tinymacOS, non Btrfs Linux.":"Nativo: 8.3–33.5 MB. FAT32: spazio libero in coda. NTFS: controllo Windows.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"TMCFS2, filesystem proprietario del sistema.":"Resize: FAT32, NTFS e nativo legacy. TMCFS2: non disponibile.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
         if(edit.op!=DISK_EDIT_DELETE){char size[80]="Dimensione effettiva: ",exact[32];disk_size_mb_exact(exact,sizeof exact,edit.size);append(size,exact,sizeof size);append(size," MB",sizeof size);Text(xx+20,yy+166,size,F_SMALL,TX);}
@@ -141,6 +141,10 @@ static void refresh(void)
 static int installed(void)
 {
     return sel >= 0 && sel < d.count && d.disk[sel].layout == 2 && sel == d.current && !si.live_cd;
+}
+static const char*data_format(void){
+ if(sel>=0&&sel<d.count){DiskMap*m=&d.disk[sel].map;for(int i=0;i<m->count;i++)if(m->part[i].start==d.disk[sel].region_start[1]&&filesystem_native(m->part[i].fs))return filesystem_name(m->part[i].fs);}
+ return "Filesystem nativo";
 }
 static int nvol(void)
 {
@@ -237,8 +241,8 @@ static int selected_path(char out[PATHLEN],int copy)
     }
     if(view<200||view>=400||view-200>=d.disk[sel].map.count)return 0;
     DiskPartition*p=&d.disk[sel].map.part[view-200];
-    if(copy&&(p->fs!=FS_TMC||(sel==d.current&&p->start==d.disk[sel].region_start[1])))return 0;
-    if(p->fs!=FS_TMC&&p->fs!=FS_FAT32&&p->fs!=FS_EXFAT&&p->fs!=FS_NTFS)return 0;
+    if(copy&&(!filesystem_native(p->fs)||(sel==d.current&&p->start==d.disk[sel].region_start[1])))return 0;
+    if(!filesystem_native(p->fs)&&p->fs!=FS_FAT32&&p->fs!=FS_EXFAT&&p->fs!=FS_NTFS)return 0;
     if(!copy&&sel==d.current&&p->start==d.disk[sel].region_start[1]){strset(out,"/Volumes/Macintosh HD",PATHLEN);return 1;}
     strset(out,"/Volumes/disk",PATHLEN);addnum(out,sel,PATHLEN);append(out,"s",PATHLEN);addnum(out,p->number,PATHLEN);return 1;
 }
@@ -452,7 +456,7 @@ static void paint(void)
         if(free)button(x,288,150,"Crea partizione…",1);
         else{button(x,288,110,"Elimina…",0);button(x+120,288,160,"Ridimensiona…",0);}
         if(!free){char route[PATHLEN];if(selected_path(route,0))button(x,330,170,"Mostra nel Finder",0);if(selected_path(route,1))button(x+180,330,194,"Esporta copia exFAT…",0);}
-        Text(x,380,free?"Crea un volume dati nativo nello spazio selezionato.":"RAW non significa vuoto. Ogni modifica richiede conferma.",F_SMALL,SUB);
+        Text(x,380,free?"Crea un volume TMCFS2 nello spazio selezionato.":"RAW non significa vuoto. Ogni modifica richiede conferma.",F_SMALL,SUB);
         Box(r+1,ah-45,aw-r-1,1,0,EDGE);Text(x,ah-31,msg[0]?msg:"Per modificare il disco di avvio, usa Recupero o il supporto live.",F_SMALL,SUB);
         if(dialog>=3&&dialog<=5)edit_paint();
         if(dialog>=6)export_paint();
@@ -470,7 +474,7 @@ static void paint(void)
         display_size(s,sizeof s,view>=0?(u64)z[view]*512:(u64)d.disk[sel].sectors*512);
     pair(x, 155, view == 1 && installed() ? "Utilizzo" : "Capacità", s);
     pair(x, 188, "Formato", view < 0 ? partition_scheme(d.disk[sel].map.scheme) : view == 1 ?
-         "Volume dati nativo" : view == 3 ? "Immagine di ripristino" : "Volume EFI (FAT16)");
+         data_format() : view == 3 ? "Immagine di ripristino" : "Volume EFI (FAT16)");
     if (view == 1 && installed()) {
         char k[24] = "";
         addnum(k, fi.snaps, 24);

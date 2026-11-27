@@ -784,7 +784,8 @@ static int run(void)
                 if (sc(S_SNAP, 5, 0, &fi, 0))
                     return fail("Volume non disponibile.");
                 sc(S_SNAP, 6, 0, 0, &ei);
-                ln("Contenitore cont0 — filesystem nativo");
+                const char*format="Filesystem nativo";if(di.current>=0&&di.current<di.count){DiskMap*m=&di.disk[di.current].map;for(int j=0;j<m->count;j++)if(m->part[j].start==di.disk[di.current].region_start[1]&&filesystem_native(m->part[j].fs))format=filesystem_name(m->part[j].fs);}
+                say("Contenitore cont0 — ");ln(format);
                 say("  Volume \"Macintosh HD\": ");
                 char usage[96];display_usage(usage,sizeof usage,fi.used,fi.total);say(usage);
                 say(" · generazione ");
@@ -910,7 +911,8 @@ static int run(void)
         if (sc(S_DISK, 0, &di, 0, 0))return 1;
         int dsk = di.current;
         if (dsk >= 0 && dsk < di.count && di.disk[dsk].layout) {
-            ln("Macintosh HD - Dati è gi\u00e0 montato su / (filesystem nativo tinymacOS).");
+            const char*format="Filesystem nativo";DiskMap*m=&di.disk[dsk].map;for(int j=0;j<m->count;j++)if(m->part[j].start==di.disk[dsk].region_start[1]&&filesystem_native(m->part[j].fs))format=filesystem_name(m->part[j].fs);
+            say("Macintosh HD - Dati è già montato su / — ");ln(format);
             return 0;
         }
         return fail("mount_apfs: nessun volume da montare. Vedi «diskutil list».");

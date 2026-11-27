@@ -37,7 +37,7 @@ static int read_sectors(void*x,u64 at,u32 n,void*p){return sectors(x,at,n,p,0);}
 static int write_sectors(void*x,u64 at,u32 n,const void*p){return sectors(x,at,n,(void*)p,1);}
 static int flush_volume(void*x){return sata_flush(((Volume*)x)->disk);}
 static int page_read(void*x,u64 block,void*p){return block>=((Volume*)x)->sectors/32?-1:bytes(x,block*T2_BLOCK,p,T2_BLOCK);}
-static int no_write(void*x,u64 b,const void*p){(void)x;(void)b;(void)p;return -1;}
+static int page_write(void*x,u64 b,const void*p){Volume*v=x;return b>=v->sectors/32?-1:sectors(v,b*32,32,(void*)p,1);}
 static int no_flush(void*x){(void)x;return 0;}
 static void*allocate(void*x,size_t n){(void)x;return n==4096?(void*)page_get():kmalloc(n);}
 static void deallocate(void*x,void*p){(void)x;if(!p)return;if(kmalloc_owns(p))kfree(p);else page_put((u64)p);}
@@ -46,6 +46,7 @@ static int stat_foreign(Volume*v,const char*p,ForeignEntry*e){ForeignIo io=forei
 static i64 data_foreign(Volume*v,const char*p,u64 off,void*b,size_t n,int w){ForeignIo io=foreign_io(v);return v->type==FS_NTFS?(w?nt_volume_write(&io,p,off,b,n):nt_volume_read(&io,p,off,b,n)):(w?fat_volume_write(&io,p,off,b,n):fat_volume_read(&io,p,off,b,n));}
 static int foreign_entry(const ForeignEntry*e,Dirent*d){if(strlen(e->name)>=sizeof d->name)return -1;*d=(Dirent){.dir=e->dir,.ro=e->ro,.size=e->size};strset(d->name,e->name,sizeof d->name);return 0;}
 void vol_refresh(void){
+ fsrev++;
  for(int i=0;i<nvolumes;i++){Volume*v=volumes+i;if(v->native){tmc2_close(v->native);kfree(v->native);}kfree(v->reader);}
  memset(volumes,0,sizeof volumes);nvolumes=0;inventory_error=0;discovered=0;if(++generation==0)generation=1;
 }
@@ -55,7 +56,7 @@ static void discover(void){
   Medium medium={sata_io,sata_flush,disk,sata_size(disk),0,sata_logical_bytes(disk)};
   if(!partition_scan(&medium,&inventory)||!inventory.safe)continue;
   for(int i=0;i<inventory.count;i++){DiskPartition*p=inventory.part+i;
-   if(p->fs!=FS_FAT32&&p->fs!=FS_NTFS&&p->fs!=FS_EXFAT&&p->fs!=FS_TMC)continue;
+   if(p->fs!=FS_FAT32&&p->fs!=FS_NTFS&&p->fs!=FS_EXFAT&&!filesystem_native(p->fs))continue;
    if(disk==current&&p->start==current_base&&p->sectors==current_size)continue;
    /* Never expose ESP/Recovery/system payloads as user-native volumes. */
    if(!memcmp(p->type,esp_type,16)||!memcmp(p->type,src_type,16))continue;
@@ -68,7 +69,7 @@ static int mount(Volume*v){
  if(v->reader||v->native)return 0;u8 magic[8];if(bytes(v,0,magic,8))return -1;
  if(!memcmp(magic,"TMCBFS2\0",8)){
   Tmc2*t=kmalloc(sizeof *t);if(!t)return -1;
-  if(tmc2_mount(t,(T2Io){v,v->sectors/32,page_read,no_write,no_flush,allocate,deallocate})){kfree(t);return -1;}v->native=t;return 0;
+  if(tmc2_mount(t,(T2Io){v,v->sectors/32,page_read,page_write,flush_volume,allocate,deallocate})){kfree(t);return -1;}v->native=t;return 0;
  }
  ForeignFs*f=kmalloc(sizeof *f);if(!f)return -1;
  if(fv_mount(f,v,v->sectors*512,bytes)){kfree(f);return -1;}v->reader=f;return 0;
@@ -85,14 +86,14 @@ static int resolve(Volume*v,const char*inner,FvNode*out){
  if(v->native)n=(FvNode){.id=1,.dir=1};else if(fv_root(v->reader,&n))return -1;
  while(*inner){while(*inner=='/')inner++;if(!*inner)break;char name[48];unsigned len=0;while(*inner&&*inner!='/'){if(len>=47)return -1;name[len++]=*inner++;}name[len]=0;
   if(!n.dir)return -1;
-  if(v->native){T2Entry e;if(tmc2_lookup(v->native,n.id,name,&e))return -1;n=(FvNode){.id=e.key,.size=e.size,.valid=e.size,.dir=e.kind==T2_DIR};strset(n.name,e.name,48);}
+  if(v->native){T2Entry e;if(tmc2_lookup(v->native,n.id,name,&e))return -1;n=(FvNode){.id=e.key,.size=e.size,.valid=e.size,.dir=e.kind==T2_DIR,.flags=(n.flags|e.reserved)&1};strset(n.name,e.name,48);}
   else{FvNode child;if(fv_lookup(v->reader,&n,name,&child))return -1;n=child;}
  }*out=n;return 0;
 }
 static void entry(const FvNode*n,Dirent*d){*d=(Dirent){.id=n->id,.dir=n->dir,.ro=1,.size=n->size};strset(d->name,n->name,48);}
 int vol_stat(const char*p,Dirent*d){
  char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<0||!d)return -1;
- if(!at){*d=(Dirent){.dir=1,.ro=1};strset(d->name,"Volumes",48);return 0;}Volume*v=volumes+at-1;if(v->type!=FS_TMC){ForeignEntry e;if(stat_foreign(v,inner,&e)||foreign_entry(&e,d))return -1;if(eq(inner,"/"))strset(d->name,v->name,48);return 0;}FvNode n;if(resolve(v,inner,&n))return -1;entry(&n,d);if(eq(inner,"/"))strset(d->name,v->name,48);return 0;
+ if(!at){*d=(Dirent){.dir=1,.ro=1};strset(d->name,"Volumes",48);return 0;}Volume*v=volumes+at-1;if(!filesystem_native(v->type)){ForeignEntry e;if(stat_foreign(v,inner,&e)||foreign_entry(&e,d))return -1;if(eq(inner,"/"))strset(d->name,v->name,48);return 0;}FvNode n;if(resolve(v,inner,&n))return -1;entry(&n,d);if(v->native)d->ro=n.flags&1;if(eq(inner,"/"))strset(d->name,v->name,48);return 0;
 }
 int vol_list(const char*p,Dirent*d,int cap,int skip){
  char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<0||cap<0||skip<0||(!d&&cap))return -1;
@@ -103,16 +104,16 @@ int vol_list(const char*p,Dirent*d,int cap,int skip){
    if(total++<skip)continue;d[n]=(Dirent){.id=i+1,.dir=1,.ro=volumes[i].type==FS_TMC};strset(d[n++].name,volumes[i].name,48);
   }return n;
  }
- Volume*v=volumes+at-1;if(v->type!=FS_TMC){if(!cap)return 0;ForeignIo io=foreign_io(v);ForeignEntry*page=kmalloc(sizeof *page*MIN(cap,8));if(!page)return -1;int n=0;while(n<cap){int want=MIN(cap-n,8),r=v->type==FS_NTFS?nt_volume_list(&io,inner,page,want,skip+n):fat_volume_list(&io,inner,page,want,skip+n);if(r<0){n=-1;break;}for(int j=0;j<r;j++)if(foreign_entry(page+j,d+n+j)){n=-1;goto listed;}n+=r;if(r<want)break;}listed:kfree(page);return n;}FvNode parent;if(resolve(v,inner,&parent)||!parent.dir)return -1;u64 cookie=0;int n=0,r=0;
- if(v->native){T2Entry e;while(n<cap&&(r=tmc2_readdir(v->native,parent.id,&cookie,&e))==1){if(skip){skip--;continue;}d[n]=(Dirent){.id=e.key,.dir=e.kind==T2_DIR,.ro=1,.size=e.size};strset(d[n++].name,e.name,48);}}
+ Volume*v=volumes+at-1;if(!filesystem_native(v->type)){if(!cap)return 0;ForeignIo io=foreign_io(v);ForeignEntry*page=kmalloc(sizeof *page*MIN(cap,8));if(!page)return -1;int n=0;while(n<cap){int want=MIN(cap-n,8),r=v->type==FS_NTFS?nt_volume_list(&io,inner,page,want,skip+n):fat_volume_list(&io,inner,page,want,skip+n);if(r<0){n=-1;break;}for(int j=0;j<r;j++)if(foreign_entry(page+j,d+n+j)){n=-1;goto listed;}n+=r;if(r<want)break;}listed:kfree(page);return n;}FvNode parent;if(resolve(v,inner,&parent)||!parent.dir)return -1;u64 cookie=0;int n=0,r=0;
+ if(v->native){T2Entry e;while(n<cap&&(r=tmc2_readdir(v->native,parent.id,&cookie,&e))==1){if(skip){skip--;continue;}d[n]=(Dirent){.id=e.key,.dir=e.kind==T2_DIR,.ro=(parent.flags|e.reserved)&1,.size=e.size};strset(d[n++].name,e.name,48);}}
  else{FvNode e;while(n<cap&&(r=fv_next(v->reader,&parent,&cookie,&e))==1){if(skip){skip--;continue;}entry(&e,d+n++);}}
  return r<0?-1:n;
 }
 int vol_open(Process*p,const char*name,int write){
  char q[PATHLEN];const char*inner=0;int at=path(name,q,&inner);if(at==-2)return -2;if(at<=0)return -1;Volume*v=volumes+at-1;
- if(v->type!=FS_TMC){ForeignEntry e;if(stat_foreign(v,inner,&e)||e.dir||(write&&e.ro))return -1;for(int fd=0;fd<12;fd++)if(!p->fd[fd].id){p->fd[fd]=(FD){.id=-1,.backend=4,.write=write,.snapshot=((u64)generation<<32)|(at-1)};strset(p->fd[fd].foreign_path,inner,PATHLEN);return fd;}return -1;}
- if(write)return -1;FvNode n;if(resolve(v,inner,&n)||n.dir)return -1;
- for(int fd=0;fd<12;fd++)if(!p->fd[fd].id){p->fd[fd]=(FD){.id=-1,.backend=v->native?5:4,.gen=n.start,.write=n.flags,.inode=v->native?n.id:n.size,.snapshot=((u64)generation<<32)|(at-1),.foreign_valid=n.valid};
+ if(!filesystem_native(v->type)){ForeignEntry e;if(stat_foreign(v,inner,&e)||e.dir||(write&&e.ro))return -1;for(int fd=0;fd<12;fd++)if(!p->fd[fd].id){p->fd[fd]=(FD){.id=-1,.backend=4,.write=write,.snapshot=((u64)generation<<32)|(at-1)};strset(p->fd[fd].foreign_path,inner,PATHLEN);return fd;}return -1;}
+ FvNode n;if(resolve(v,inner,&n)||n.dir||(write&&(!v->native||n.flags&1)))return -1;
+ for(int fd=0;fd<12;fd++)if(!p->fd[fd].id){p->fd[fd]=(FD){.id=-1,.backend=v->native?5:4,.gen=n.start,.write=v->native?write:n.flags,.inode=v->native?n.id:n.size,.snapshot=((u64)generation<<32)|(at-1),.foreign_valid=n.valid};
   /* NTFS uses an MFT ID; all other foreign files use a cluster/slot index. */
   if(v->reader&&v->reader->type==FS_NTFS)p->fd[fd].gen=n.id;
   return fd;
@@ -122,18 +123,23 @@ int vol_read(Process*p,int fd,void*out,int count){
  if(fd<0||fd>=12||count<0||(!out&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
  if((f->backend!=4&&f->backend!=5)||!f->id||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;Volume*v=volumes+at;i64 r;
  if(f->backend==5)r=tmc2_read(v->native,f->inode,f->at,out,count);
+ else if(v->reader){FvNode n={.start=(u32)f->gen,.size=f->inode,.valid=f->foreign_valid,.flags=f->write};r=fv_read(v->reader,&n,f->at,out,count);}
  else r=data_foreign(v,f->foreign_path,f->at,out,count,0);
  if(r>=0)f->at+=r;return r;
 }
 int vol_seek(Process*p,int fd,u64 off){if(fd<0||fd>=12||off>T2_MAX_BYTES)return -1;FD*f=p->fd+fd;if(!f->id||(f->backend!=4&&f->backend!=5)||(f->snapshot>>32)!=generation)return -1;f->at=off;return 0;}
-int vol_exportable(const char*p){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at<=0||!eq(inner,"/"))return 0;Volume*v=volumes+at-1;return v->type==FS_TMC&&!mount(v);}
+int vol_exportable(const char*p){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at<=0||!eq(inner,"/"))return 0;Volume*v=volumes+at-1;return filesystem_native(v->type)&&!mount(v);}
 
 int vol_write(Process*p,int fd,const void*data,int count){
  if(fd<0||fd>=12||count<0||(!data&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
- if(f->backend!=4||!f->id||!f->write||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;
- i64 r=data_foreign(volumes+at,f->foreign_path,f->at,(void*)data,count,1);if(r>=0)f->at+=r;return r;
+ if((f->backend!=4&&f->backend!=5)||!f->id||!f->write||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;
+ Volume*v=volumes+at;i64 r;
+ if(f->backend==5){T2Entry e;if(!v->native||tmc2_stat(v->native,f->inode,&e)||e.reserved&1)return -1;r=tmc2_write(v->native,f->inode,f->at,data,count);if(r>=0&&tmc2_truncate(v->native,f->inode,f->at+r))r=-1;}else r=data_foreign(v,f->foreign_path,f->at,(void*)data,count,1);if(r>=0){f->at+=r;fsrev++;}return r;
 }
-int vol_create(const char*p,int dir){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<=0||eq(inner,"/"))return -1;Volume*v=volumes+at-1;if(v->type==FS_TMC)return -1;ForeignIo io=foreign_io(v);return (v->type==FS_NTFS?nt_volume_create(&io,inner,dir):fat_volume_create(&io,inner,dir))? -1:0;}
+static int native_parent(Volume*v,const char*p,FvNode*parent,char name[48]){char q[PATHLEN];strset(q,p,PATHLEN);int at=strlen(q);while(at&&q[at-1]!='/')at--;if(!at||!q[at]||strlen(q+at)>=48)return -1;strset(name,q+at,48);if(at==1)q[1]=0;else q[at-1]=0;if(resolve(v,q,parent)||!v->native||!parent->dir||(parent->flags&1))return -1;return 0;}
+int vol_create(const char*p,int dir){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<=0||eq(inner,"/"))return -1;Volume*v=volumes+at-1;
+ fsrev++;if(filesystem_native(v->type)){FvNode parent;char name[48];u64 id;return native_parent(v,inner,&parent,name)?-1:tmc2_create(v->native,parent.id,name,dir?T2_DIR:T2_FILE,&id);}
+ ForeignIo io=foreign_io(v);return (v->type==FS_NTFS?nt_volume_create(&io,inner,dir):fat_volume_create(&io,inner,dir))? -1:0;}
 static int remove_foreign(Volume*v,const char*p,unsigned flags,unsigned depth){
  ForeignEntry e;if(depth>48||stat_foreign(v,p,&e))return -REMOVE_BAD_PATH;if(e.ro)return -REMOVE_READ_ONLY;
  if(((flags&REMOVE_FILE_ONLY)&&e.dir)||((flags&REMOVE_DIR_ONLY)&&!e.dir))return -REMOVE_WRONG_TYPE;
@@ -141,6 +147,16 @@ static int remove_foreign(Volume*v,const char*p,unsigned flags,unsigned depth){
  if(e.dir&&(flags&REMOVE_RECURSIVE)){for(;;){ForeignEntry child;int r=v->type==FS_NTFS?nt_volume_list(&io,p,&child,1,0):fat_volume_list(&io,p,&child,1,0);if(r<0)return -REMOVE_IO;if(!r)break;char q[PATHLEN];if(strlen(p)+strlen(child.name)+2>PATHLEN)return -REMOVE_BAD_PATH;strset(q,p,PATHLEN);append(q,"/",PATHLEN);append(q,child.name,PATHLEN);r=remove_foreign(v,q,REMOVE_RECURSIVE,depth+1);if(r)return r;}}
  int r=v->type==FS_NTFS?nt_volume_remove(&io,p):fat_volume_remove(&io,p);return !r?0:r==FOREIGN_NOT_EMPTY?-REMOVE_NOT_EMPTY:r==FOREIGN_READ_ONLY?-REMOVE_READ_ONLY:-REMOVE_IO;
 }
-int vol_remove(const char*p,unsigned flags){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<=0||eq(inner,"/")||volumes[at-1].type==FS_TMC)return -REMOVE_READ_ONLY;if(++generation==0)generation=1;return remove_foreign(volumes+at-1,inner,flags,0);}
+static int remove_native(Volume*v,u64 id,unsigned flags,unsigned depth,int apply){
+ T2Entry e;if(depth>48||tmc2_stat(v->native,id,&e))return -REMOVE_IO;if(e.reserved&1)return -REMOVE_READ_ONLY;
+ if(((flags&REMOVE_FILE_ONLY)&&e.kind==T2_DIR)||((flags&REMOVE_DIR_ONLY)&&e.kind!=T2_DIR))return -REMOVE_WRONG_TYPE;
+ if(e.kind==T2_DIR){u64 cookie=0;T2Entry child;int r;while((r=tmc2_readdir(v->native,id,&cookie,&child))==1){if(!(flags&REMOVE_RECURSIVE))return -REMOVE_NOT_EMPTY;r=remove_native(v,child.key,REMOVE_RECURSIVE,depth+1,apply);if(r)return r;}if(r<0)return -REMOVE_IO;}
+ return !apply?0:tmc2_remove(v->native,id)?-REMOVE_IO:0;
+}
+int vol_remove(const char*p,unsigned flags){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at==-2)return -2;if(at<=0||eq(inner,"/"))return -REMOVE_READ_ONLY;Volume*v=volumes+at-1;
+ if(filesystem_native(v->type)){FvNode n;if(resolve(v,inner,&n)||!v->native)return -REMOVE_READ_ONLY;if(n.flags&1)return -REMOVE_READ_ONLY;fsrev++;if(++generation==0)generation=1;int r=remove_native(v,n.id,flags,0,0);return r?r:remove_native(v,n.id,flags,0,1);}
+ fsrev++;if(++generation==0)generation=1;return remove_foreign(v,inner,flags,0);}
 /* -3 = a cross-filesystem move; copy/verify/remove is handled by fs_move. */
-int vol_move(const char*a,const char*b){char qa[PATHLEN],qb[PATHLEN];const char*pa=0,*pb=0;int ia=path(a,qa,&pa),ib=path(b,qb,&pb);if(ia==-2&&ib==-2)return -2;if(ia<=0||ib<=0)return (ia==-2||ib==-2)?-3:-1;if(ia!=ib)return -3;Volume*v=volumes+ia-1;if(v->type==FS_TMC||eq(pa,"/")||eq(pb,"/"))return -1;if(++generation==0)generation=1;ForeignIo io=foreign_io(v);return (v->type==FS_NTFS?nt_volume_move(&io,pa,pb):fat_volume_move(&io,pa,pb))?-1:0;}
+int vol_move(const char*a,const char*b){char qa[PATHLEN],qb[PATHLEN];const char*pa=0,*pb=0;int ia=path(a,qa,&pa),ib=path(b,qb,&pb);if(ia==-2&&ib==-2)return -2;if(ia<=0||ib<=0)return (ia==-2||ib==-2)?-3:-1;if(ia!=ib)return -3;Volume*v=volumes+ia-1;if(eq(pa,"/")||eq(pb,"/"))return -1;
+ if(filesystem_native(v->type)){FvNode n,parent;char name[48];if(resolve(v,pa,&n)||!v->native||(n.flags&1)||native_parent(v,pb,&parent,name))return -1;fsrev++;if(++generation==0)generation=1;return tmc2_move(v->native,n.id,parent.id,name);}
+ fsrev++;if(++generation==0)generation=1;ForeignIo io=foreign_io(v);return (v->type==FS_NTFS?nt_volume_move(&io,pa,pb):fat_volume_move(&io,pa,pb))?-1:0;}

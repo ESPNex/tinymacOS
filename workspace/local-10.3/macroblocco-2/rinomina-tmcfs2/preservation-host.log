@@ -1,0 +1,4 @@
+PASS: all 29 OS integration sources and 12 native ABI copies match the workspace overlay.
+PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
+PASS static UI inventory: 149 files, 2586 literals; not a visual acceptance claim
+PASS M0: lexer + safety mutation test, 568 locked font/asset/vendor/USB inputs, truthful native FS labels and preserved public version; no hardware claim
