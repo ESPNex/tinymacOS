@@ -134,7 +134,7 @@ static void paint(void)
     button(x, ah - 72, MIN(142, aw - x - 12), longnote ? "Apri in TextEdit" : exists ? "Modifica nota" : "Aggiungi nota",
            1);
     Text(x, ah - 31, notice[0] ? notice : "Invio per scrivere", F_SMALL, SUB);
-    if (edit)modal("Promemoria del giorno", memo, "Una nota per data. Vuota per rimuoverla.");
+    if (edit)inputmodal("Promemoria del giorno", memo, "Una nota per data. Vuota per rimuoverla.",0);
     finish();
 }
 void app_main(void)

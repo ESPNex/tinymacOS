@@ -349,8 +349,8 @@ static void paint(void)
             addnum(details, files[sel].size, 90);
             append(details, files[sel].ro ? " byte  ·  Sola lettura" : " byte  ·  Lettura e scrittura", 90);
         }
-        modal(dialog == 1 ? "Nuova cartella" : dialog == 2 ? "Nuovo file" : dialog == 3 ? "Rinomina" : dialog == 4 ?
-              "Eliminare questo elemento?" : "Informazioni", field, details);
+        if(dialog<=3)inputmodal(dialog==1?"Nuova cartella":dialog==2?"Nuovo file":"Rinomina",field,details,0);
+        else modal(dialog==4?"Eliminare questo elemento?":"Informazioni",field,details);
     }
     finish();
 }

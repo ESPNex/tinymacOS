@@ -2,6 +2,8 @@
 #include "input_budget.h"
 #include "pointer_scale.h"
 #include "click_pair.h"
+#include "caret.h"
+static u64 caret_activity;
 View views[NPROC];
 u32 *desk_ras;               /* global C_RASTER staging (one payload at a time) */
 int order[NPROC], nz, dirty = 1, mx, my, buttons;
@@ -130,7 +132,10 @@ static Rect inset(Rect q, int dx, int dy)
 }
 void eventto(int i, Event e)
 {
-    if (i >= 0 && !views[i].dead)sc(S_SEND, views[i].s.pid, &e, 0, 0);
+    if (i >= 0 && !views[i].dead){
+        if(e.type==EV_KEY||e.type==EV_CLICK||e.type==EV_ACTION)caret_activity=sys.ticks;
+        sc(S_SEND, views[i].s.pid, &e, 0, 0);
+    }
 }
 int focuswin(int i)
 {
@@ -148,6 +153,7 @@ int focuswin(int i)
             break;
         }
     if (old != i) {
+        caret_activity=sys.ticks;
         v->focusWait = 12;
         dirty = 1;
     }
@@ -361,10 +367,12 @@ static void scanrect(int x, int y, int w, int h)
 {
     sc(S_PRESENT, canvas, ((u64)(u32)x << 32) | (u32)y, ((u64)(u32)w << 32) | (u32)h, ((u64)(u32)W << 32) | (u32)H);
 }
+#include "caret_overlay.h"
 static void render(int dt)
 {
     dirty = 0;
     undocursor();
+    caret_erase();
     restorebg();
     if (wallpaper_age < 32 && !sys.reduce_motion) {
         wallpaper_age = MIN(32, wallpaper_age + dt);
@@ -466,6 +474,7 @@ static void render(int dt)
         j++;
     }
     if(sys.recovery)recovery_bar_draw();else shell_draw();
+    caret_paint();
     drawcursor();
     sc(S_PRESENT, canvas, 0, 0, ((u64)(u32)W << 32) | (u32)H);
     cursorDirty = 0;
@@ -842,6 +851,7 @@ void app_main(void)
         for(unsigned batch=0;batch<TMC_MESSAGE_FRAME_BUDGET && sc(S_EVENT,&e,0,0,0)>0;++batch)if(!gate){if(e.type==EV_CONTEXT_READY)context_ready(&e);else if(e.type==EV_DRAG_READY)drag_ready(&e);}
         if(filedrag.released&&sys.ticks>filedrag.until)drag_reset();
         if (gate) {
+            if(caret_valid)caret_present_partial();
             if (login_step()) {
                 cursorValid = 0;
                 wallEpoch++;
@@ -870,6 +880,7 @@ void app_main(void)
         }
         if (!sys.recovery&&shell_step(dt))dirty = 1;
         if (dirty)render(dt);
+        else if(caret_pending())caret_present_partial();
         else if (cursorDirty) {
             int X = curx, Y = cury, ww = curw, hh = curh;
             undocursor();

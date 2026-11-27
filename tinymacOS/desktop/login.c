@@ -1,4 +1,5 @@
 #include "text_input.h"
+#include "caret.h"
 #include "desk.h"
 #include "date.h"
 #include "activity.h"
@@ -192,7 +193,7 @@ static void field_draw(int i)
             if(textw(visible,F_BODY)<=r.w-32||end<=carets[i])break;end=text_prev(s,end);}
         text(r.x+16,r.y+7,visible,F_BODY,0xffffff);cx=r.x+16+textw(prefix,F_BODY);
     }
-    if(i==field&&typed[i]&&blink&&!account.working)rect(MIN(r.x+r.w-12,cx),r.y+8,1,17,0xffffff);
+    if(i==field&&blink&&!account.working)rect(MIN(r.x+r.w-12,cx),r.y+8,1,17,0xffffff);
 }
 void login_draw(void)
 {
@@ -464,9 +465,9 @@ int login_step(void)
         shake--;
         dirty = 1;
     }
-    if (minute != (int)sys.minute || blink != (int)(((sys.ticks-caretTick)/64%2)==0)) {
+    if (minute != (int)sys.minute || blink != caret_phase(sys.ticks,caretTick,sys.reduce_motion)) {
         minute = sys.minute;
-        blink = ((sys.ticks-caretTick)/64%2)==0;
+        blink = caret_phase(sys.ticks,caretTick,sys.reduce_motion);
         dirty = 1;
     }
     return 0;

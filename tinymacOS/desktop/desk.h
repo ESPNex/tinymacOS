@@ -50,6 +50,7 @@ void recovery_background(void);
 void recovery_draw(void);
 int recovery_click(int,int);
 void recovery_bar_draw(void);
+int recovery_overlay_open(void);
 int recovery_bar_click(int,int);
 int recovery_key(Event *);
 void shell_base(void);

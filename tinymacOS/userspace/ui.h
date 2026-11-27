@@ -18,7 +18,11 @@ void begin(void);
 void finish(void);
 void Box(int, int, int, int, int, u32);
 void Text(int, int, const char *, int, u32);
-/* Locked production F_MONO advances are 8px; split UTF-8 on Draw boundaries. */
+/* Locked production F_MONO advances are 8px; compact glyph references avoid UTF-8 truncation. */
+/* Focus and blink are composited centrally, without republishing app frames. */
+void InputText(int, int, int, const char *, int, int, int, u32);
+void inputmodal(const char *, const char *, const char *, int);
+void Caret(int, int, int, int, u32);
 void MonoText(int, int, const char *, int, u32);
 int TextWidth(const char *, int);
 void Center(int, int, const char *, int, u32);

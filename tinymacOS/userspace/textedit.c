@@ -239,8 +239,8 @@ static void paint(void)
     for (int i = firstline; i < nlines && i < firstline + nrows; i++) {
         MonoText(28,70+(i-firstline)*20,doc+starts[i],endline(i)-starts[i],TX);
     }
-    if(j>=firstline&&j<firstline+nrows)
-        Box(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, 0, ACC);
+    if(!dialog&&j>=firstline&&j<firstline+nrows)
+        Caret(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, ACC);
     char z[96] = "Riga ";
     addnum(z, j + 1, 96);
     append(z, "   /   ", 96);

@@ -227,11 +227,8 @@ static int editor(int draw, int hitx, int hity)
         int z = b - a;
         if (!draw && hity >= y - 2 && hity < y + 20)return text_offset(body,a,b,MAX(0,(hitx-x)/8));
         if (draw) {
-            char s[360];
-            memcpy(s, body + a, z);
-            s[z] = 0;
-            Text(x, y, s, F_MONO, STICKY ? 0x34322c : TX);
-            if (!focus && i == here)Box(x + text_columns(body+a,MIN(z,cur-a)) * 8, y + 1, 1, 16, 0, STICKY ? 0x423941 : ACC);
+            MonoText(x,y,body+a,z,STICKY ? 0x34322c : TX);
+            if (!focus && !confirm && i == here)Caret(x + text_columns(body+a,MIN(z,cur-a)) * 8, y + 1, 1, 16, STICKY ? 0x423941 : ACC);
         }
     }
     return cur;
@@ -245,7 +242,14 @@ static void paint(void)
     Text(14, 14, STICKY ? "Tutti i memo" : "Tutte le note", F_BOLD, TX);
     button(r - 43, 11, 30, "+", 1);
     Box(10, 48, r - 20, 27, 8, focus ? SEL : SOFT);
-    Text(18, 53, *search ? search : "Cerca", F_SMALL, focus ? EMP : SUB);
+    if(*search){
+        int cols=MAX(1,(r-36)/8),off=text_offset(search,0,strlen(search),MAX(0,text_columns(search,strlen(search))-cols));
+        MonoText(18,53,search+off,strlen(search)-off,focus?EMP:SUB);
+        if(focus&&!confirm)Caret(18+8*text_columns(search+off,strlen(search)-off),54,1,17,EMP);
+    }else{
+        Text(18,53,"Cerca",F_SMALL,SUB);
+        if(focus&&!confirm)Caret(18,54,1,17,EMP);
+    }
     int st = firstrow();
     for (int j = st; j < ns && j < st + MAX(1, (ah - 135) / 55); j++) {
         int y = 89 + (j - st) * 55;

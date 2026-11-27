@@ -1,5 +1,13 @@
 [
   {
+    "path": "include/caret.h",
+    "sha256": "821bee4d2a1633dcad29657149b120284938746c8210c310575d652bc84c6f6c"
+  },
+  {
+    "path": "include/mono_wire.h",
+    "sha256": "087ac36fd3bd8549744bbd9f6d8efefb498f315af0913dda4eefd191b3d7d98e"
+  },
+  {
     "path": "include/window_update.h",
     "sha256": "ee5c1fa6071202b26d35021da435e6cd8ce6705262ef5e62e2b6195a2e5841a5"
   },
@@ -85,7 +93,7 @@
   },
   {
     "path": "desktop/gfx.c",
-    "sha256": "337eea6411beb1673d8804eb71349f6fcd191a48c237b2f2b2ecab6035238dfd"
+    "sha256": "c4758c09e6230c2ec402745b14cc779057ca720f7e27663c89975f4afbcc1144"
   },
   {
     "path": "kernel/memory.c",
@@ -97,7 +105,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "353dc82e5658efa897a3a99d22acca1a8ca6d119347bec207c8898d61e677f6f"
+    "sha256": "b46dd8d723f8e35515453126763b77a8f71267a574f84b80b82fd614769a3e66"
   },
   {
     "path": "include/vmabi.h",

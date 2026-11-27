@@ -30,3 +30,11 @@ Inoltre: guardia di ritiro USB e sincronizzazione overlay PASS; compilazione fre
 Nessuna build ISO completa, link finale, avvio guest, prova visuale o prova hardware della 10.3. Nell'ambiente corrente non risultano disponibili qemu-system-x86_64, xorriso, mformat, nasm né gli header EFI nel percorso standard. Le prove della 10.2.6 sono storiche e **non vengono riutilizzate come PASS della nuova build**.
 
 Nessuna release, tag o pubblicazione 10.3. Safari escluso e suoi sorgenti invariati.
+
+## Aggiornamento M1 (successivo all’audit iniziale)
+
+- Budget Draw risolto con C_MONO: un riferimento al glifo per scalare Unicode, verificato contro tutte le 207 voci dell'atlante fornito. Draw e NCMDS non sono stati ingranditi. Test della vera paint di TextEdit su 27 combinazioni fino a 1278×1024 (limite utile delle finestre). Un carattere non disponibile resta un solo glifo «?», senza alterare il file.
+- C_CARET è un descrittore statico: il compositor mostra solo quello della finestra attiva, lo nasconde dietro overlay e durante animazioni, reimposta la fase visibile all'input e aggiorna piccoli rettangoli sul lampeggio. Non ripubblica i frame delle app. Il login/setup disegnato direttamente mantiene il suo meccanismo dedicato, ora con caret anche nei campi vuoti e politica temporale condivisa.
+- InputText condiviso per campi normali e password: scorrimento orizzontale e posizione UTF-8; le password serializzano soltanto riferimenti ai pallini. Adottato in selettore file, Installer e conferma chiave, Utility Disco, FileVault anche in Recovery, ricerca Impostazioni e dialoghi editabili Finder/Calendario. TextEdit, Note/Memo e Terminale emettono il descrittore appropriato senza duplicare il cursore.
+- Ambiente build ripristinato (QEMU, OVMF, EFI, strumenti ISO e OCR). Prima build ha completato compilazione app/kernel ma si è fermata a mkfs.fat fuori PATH; nessun PASS ISO assegnato a quel tentativo.
+- Autenticazione CLI riuscita e checkpoint 25314a2 pubblicato su main, hash remoto verificato. Nessuna release 10.3 creata.

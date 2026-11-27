@@ -160,7 +160,7 @@ static void paint(void)
     hsearch = (R) {10, 12, S - 20, 28};
     if (focus_search)Box(8, 10, S - 16, 32, 9, ACC);
     Box(hsearch.x, hsearch.y, hsearch.w, hsearch.h, 8, focus_search ? CARD : SOFT);
-    Text(20, 19, query[0] ? query : "Cerca", F_SMALL, query[0] ? TX : SUB);
+    if(query[0])InputText(20,19,S-40,query,strlen(query),0,0,TX);else Text(20,19,"Cerca",F_SMALL,SUB);
     // Voci filtrate
     nhpane = 0;
     int y = 56;
@@ -333,12 +333,8 @@ static void paint(void)
         row2(x, r1 + 40, w, "INGRESSO", "Tastiera e mouse USB");
     }
     if (modal_mode == 1) {
-        char dots[65];
-        int n = (int)strlen(modal_buf);
-        for (int i = 0; i < n;i++)dots[i] = '.';
-        dots[n] = 0;
-        modal("Passphrase di crittografia", n ? dots : "Inserisci la passphrase",
-              modal_err ? "Operazione non riuscita: riprova." : "Invio per confermare · Esc per annullare");
+        inputmodal("Passphrase di crittografia",modal_buf,
+              modal_err ? "Operazione non riuscita: riprova." : "Invio per confermare · Esc per annullare",1);
     } else if (modal_mode == 2)
         modal("Ripristinare lo snapshot?", sel_snap >= 0 ? snaps[sel_snap].name : "",
               "Invio per confermare · Esc per annullare");
@@ -362,6 +358,7 @@ static void paint(void)
             Text(hresmenu.x+26,yy+2,label,F_SMALL,TX);
         }
     }
+    if(focus_search&&!modal_mode&&!res_open)InputText(20,19,S-40,query,strlen(query),1,0,TX);
     finish();
 }
 

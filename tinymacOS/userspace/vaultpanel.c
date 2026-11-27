@@ -35,12 +35,12 @@ void vault_view_draw(int x,int y,int w,int h)
   vt(28,90,op==1?"Attivazione FileVault":op==2?"Disattiva la cifratura":op==4?"Sblocca il volume":op==5?"Cambia password del volume":op==8?"Annulla attivazione non iniziata":"Rigenera la chiave di recupero",F_CAPTION,TX);
   if(vi.format>=2&&(op==1||op==2))vt(28,337,"Recovery: prepara una copia esterna. Ripresa, non rollback.",F_MICRO,SUB);
   vt(28,123,op==1&&!si.recovery?"Inserisci la password del tuo account.":op==8?"Inserisci la password del tuo account.":"Puoi usare anche la chiave di recupero.",F_SMALL,SUB);
-  for(int i=0;i<fields;i++){const char *label=i==0?(op==4?"Password o chiave di recupero":op==1?"Nuova password del volume":"Password attuale"):i==1&&op==5?"Nuova password":"Conferma password";vt(28,159+i*57,label,F_SMALL,SUB);vb(28,179+i*57,vw-56,32,6,i==focus?SEL:PANEL);char dots[65];int n=strlen(input[i]);memset(dots,'*',n);dots[n]=0;vt(39,187+i*57,dots,F_MONO,TX);}
+  for(int i=0;i<fields;i++){const char *label=i==0?(op==4?"Password o chiave di recupero":op==1?"Nuova password del volume":"Password attuale"):i==1&&op==5?"Nuova password":"Conferma password";vt(28,159+i*57,label,F_SMALL,SUB);vb(28,179+i*57,vw-56,32,6,i==focus?SEL:PANEL);InputText(vx+39,vy+187+i*57,vw-78,input[i],strlen(input[i]),i==focus,1,TX);}
   if(notice[0])vt(28,354,notice,F_SMALL,SUB);vbutton(28,vh-58,120,"Annulla",0);vbutton(vw-180,vh-58,150,"Continua",1);
  }else{
   vt(28,90,"Salva la chiave di recupero",F_CAPTION,TX);vt(28,125,"Conservala in un luogo sicuro, fuori da questo disco.",F_BODY,TX);
   char half[33];memcpy(half,q.recovery,32);half[32]=0;vt(28,171,half,F_MONO,TX);memcpy(half,q.recovery+32,32);vt(28,198,half,F_MONO,TX);memset(half,0,sizeof half);
-  vt(28,247,"Conferma gli ultimi 8 caratteri della chiave:",F_SMALL,SUB);vb(28,277,vw-56,35,6,SEL);vt(40,285,input[0],F_MONO,TX);if(notice[0])vt(28,335,notice,F_SMALL,SUB);vbutton(vw-220,vh-58,190,"Ho salvato la chiave",1);
+  vt(28,247,"Conferma gli ultimi 8 caratteri della chiave:",F_SMALL,SUB);vb(28,277,vw-56,35,6,SEL);InputText(vx+40,vy+285,vw-80,input[0],strlen(input[0]),1,0,TX);if(notice[0])vt(28,335,notice,F_SMALL,SUB);vbutton(vw-220,vh-58,190,"Ho salvato la chiave",1);
  }
 }
 static void begin_op(int a){op=a;page=1;focus=0;fields=a==1?2:a==5?3:1;wipe_inputs();notice[0]=0;}

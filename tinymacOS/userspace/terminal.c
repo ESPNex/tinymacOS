@@ -6,7 +6,7 @@
 static char cwd[PATHLEN] = HOME, oldcwd[PATHLEN] = HOME, input[INPUT], saved[INPUT], history[NH][INPUT],
                            screen[NR][400], redir[PATHLEN], readfrom[PATHLEN];
 static u8 kinds[NR];
-static int nh, hpos, nt, scroll, cur, job, stage, count, mode, last, mark;
+static int nh, hpos, nt, scroll, cur, job, stage, count, mode, last;
 static ExecArgs cmd[STAGES];
 static ExecResult result;
 static Dirent matches[NSLOTS];
@@ -369,7 +369,7 @@ static void paint(void)
     for (int i = start; i < end; i++, y += 19) {
         int k = i % NR;
         int lo,hi;if(selection_bounds(i,&lo,&hi))Box(14+text_columns(screen[k],lo)*8,y,MAX(1,text_columns(screen[k]+lo,hi-lo))*8,18,0,dark?0x315780:0xb9d7ff);
-        Text(14, y, screen[k], F_MONO, kinds[k] == 1 ? pr : kinds[k] == 2 ? (dark ? 0xf1a89c : 0x953b30) : fg);
+        MonoText(14,y,screen[k],strlen(screen[k]),kinds[k] == 1 ? pr : kinds[k] == 2 ? (dark ? 0xf1a89c : 0x953b30) : fg);
     }
     if (!scroll && !job) {
         for (int i = 0; i < nr; i++, y += 19) {
@@ -377,8 +377,8 @@ static void paint(void)
             int begin=text_offset(q,0,strlen(q),i*c),end=text_offset(q,begin,strlen(q),c),z=end-begin;
             memcpy(row,q+begin,z);row[z]=0;
             int caret=text_columns(q,pre+cur);
-            if(caret/c==i&&mark){int x=14+(caret%c)*8;Box(x,y+1,2,15,0,fg);}
-            Text(14, y, row, F_MONO, fg);
+            if(caret/c==i){int x=14+(caret%c)*8;Caret(x,y+1,2,15,fg);}
+            MonoText(14,y,row,z,fg);
         }
     }
     Box(0, ah - 26, aw, 1, 0, EDGE);
@@ -463,9 +463,7 @@ void app_main(void)
     addnum(s, si.year, 80);
     append(s, " su console", 80);
     output(s, strlen(s), 0);
-    mark = 1;
     paint();
-    u64 stamp = 0;
     for (;;) {
         Event e;
         int dirty = 0;
@@ -484,12 +482,6 @@ void app_main(void)
         }
         if (job && sc(S_RESULT, &result, 0, 0, 0) > 0) {
             collect();
-            dirty = 1;
-        }
-        u64 t = sc(S_TICKS, 0, 0, 0, 0) / 56;
-        if (t != stamp) {
-            stamp = t;
-            mark = si.reduce_motion || !(t & 1);
             dirty = 1;
         }
         if (dirty)paint();

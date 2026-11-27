@@ -123,7 +123,7 @@ static void paint(void)
         Text(x,115,reinstall?"Nuove chiavi; dopo il riavvio creerai un nuovo account.":"La password dell’account importato resta distinta e invariata.",F_SMALL,SUB);
         for(int i=0;i<2;i++){
             Text(x,150+i*65,i?"Conferma password":"Password del volume",F_SMALL,SUB);
-            Box(x,173+i*65,w,32,6,i==focus?SEL:PANEL);char dots[65];int n=strlen(password[i]);memset(dots,'*',n);dots[n]=0;Text(x+12,181+i*65,dots,F_MONO,TX);memset(dots,0,sizeof dots);
+            Box(x,173+i*65,w,32,6,i==focus?SEL:PANEL);InputText(x+12,181+i*65,w-24,password[i],strlen(password[i]),i==focus,1,TX);
         }
         if(enc_error[0])Text(x,293,enc_error,F_SMALL,SUB);
         Text(x,318,reinstall?"Non è una cancellazione fisica sicura del supporto.":"Capacità utile: circa l’80% dello spazio dati grezzo.",F_SMALL,SUB);
@@ -132,7 +132,7 @@ static void paint(void)
         Text(x,67,"Conservala fuori dal disco. Non viene salvata nei documenti.",F_SMALL,SUB);
         char half[33];memcpy(half,encryption.recovery,32);half[32]=0;Text(x,104,half,F_MONO,TX);memcpy(half,encryption.recovery+32,32);Text(x,131,half,F_MONO,TX);memset(half,0,sizeof half);
         Text(x,180,"Conferma gli ultimi 8 caratteri della chiave:",F_SMALL,SUB);
-        Box(x,207,w,32,6,SEL);Text(x+12,215,key_check,F_MONO,TX);
+        Box(x,207,w,32,6,SEL);InputText(x+12,215,w-24,key_check,strlen(key_check),1,0,TX);
         Text(x,255,"Non perdere password e chiave: i dati non sono recuperabili.",F_SMALL,SUB);
         if(enc_error[0])Text(x,293,enc_error,F_SMALL,SUB);
     }else if (!page) {

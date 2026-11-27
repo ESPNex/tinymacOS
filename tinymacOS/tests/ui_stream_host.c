@@ -23,18 +23,35 @@ int main(void){
  assert(writefile("/source",payload,sizeof payload)==sizeof payload&&sizes[0]==sizeof payload);partial=1;assert(readfile("/source",readback,sizeof readback)==sizeof payload&&!memcmp(payload,readback,sizeof payload));partial=0;
  assert(!copyfile("/source","/destination")&&sizes[1]==sizeof payload&&!memcmp(files[0],files[1],sizeof payload));assert(copyfile("/source","/destination")<0&&!memcmp(files[0],files[1],sizeof payload));
  assert(writefile("/destination","",0)==0&&!sizes[1]);fail_write=1;assert(writefile("/destination",payload,sizeof payload)<0);assert(readfile("/source",readback,-1)<0);assert(closed>=7);
- /* Exercise actual Draw serialization: 99-byte payload, no cut scalar,
-  * consecutive chunks reconstruct the complete rendered text. */
- static char utf[801],joined[801];for(int i=0;i<400;i++){utf[2*i]=(char)0xc3;utf[2*i+1]=(char)0xa0;}
+ /* Actual compact Draw serialization: one reference per Unicode scalar,
+  * including accents/symbols; unknown four-byte scalars consume one cell. */
+ static char utf[801];for(int i=0;i<400;i++){utf[2*i]=(char)0xc3;utf[2*i+1]=(char)0xa0;}
  utf[800]=0;begin();MonoText(28,70,utf,800,0);
- int offset=0,columns=0;assert(count==9);
+ int columns=0;assert(count==5);
  for(int i=0;i<count;i++){
-  Draw *q=list+i;int size=strlen(q->text);assert(q->type==C_TEXT&&q->style==F_MONO&&size<=99&&size%2==0);
-  assert(q->x==28+columns*8&&q->y==70);memcpy(joined+offset,q->text,size);offset+=size;columns+=size/2;
+  Draw *q=list+i;assert(q->type==C_MONO&&q->w<=99&&q->w>0);
+  assert(q->x==28+columns*8&&q->y==70);
+  for(int j=0;j<q->w;j++)assert(mono_code((u8)q->text[j]-1)==0xe0);
+  columns+=q->w;
  }
- joined[offset]=0;assert(offset==800&&!memcmp(joined,utf,801));
- begin();MonoText(0,0,utf,98,0);assert(count==1&&strlen(list[0].text)==98);
+ assert(columns==400);
+ begin();MonoText(0,0,"à€😀",9,0);assert(count==1&&list[0].w==3);
+ assert(mono_code((u8)list[0].text[0]-1)==0xe0);
+ assert(mono_code((u8)list[0].text[1]-1)==0x20ac);
+ assert(mono_code((u8)list[0].text[2]-1)=='?');
  begin();MonoText(0,0,utf,0,0);assert(count==0);
- puts("PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes");
+ puts("PASS MonoText 10.3: compact Draw uses one reference per scalar, accents/symbols preserved, unsupported scalar consumes one cell, 8px advances; Draw size/NCMDS unchanged");
+ begin();InputText(10,20,80,"Segrèto",8,1,1,0);
+ int carets=0,masked=0;
+ for(int i=0;i<count;i++){
+  if(list[i].type==C_CARET){carets++;assert(list[i].x>=10&&list[i].x<90);}
+  if(list[i].type==C_MONO){masked+=list[i].w;for(int j=0;j<list[i].w;j++)assert(mono_code((u8)list[i].text[j]-1)==0x2022);}
+ }
+ assert(carets==1&&masked==7);
+ begin();InputText(0,0,48,"",0,1,1,0);assert(count==1&&list[0].type==C_CARET&&list[0].x==0);
+ begin();InputText(0,0,48,"abcdefghijklmnop",16,1,0,0);
+ assert(count==2&&list[0].w==5&&list[1].type==C_CARET&&list[1].x==40);
+ begin();InputText(0,0,80,"abc",3,0,0,0);assert(count==1&&list[0].type==C_MONO);
+ puts("PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar");
  puts("PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure");
 }

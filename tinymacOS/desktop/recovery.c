@@ -80,6 +80,7 @@ int recovery_click(int x,int y)
  * no Dock, widgets, Control Center or Liquid Glass are enabled here. */
 static int bar_menu=-1, bar_pick, info_open, power_confirm;
 static Rect bar_hits[7], bar_popup;
+int recovery_overlay_open(void){return bar_menu>=0||info_open||power_confirm;}
 static struct {const char *label;int action,enabled;} bar_items[8];
 static int bar_count;
 enum {RM_INFO=1001,RM_RESTART,RM_OFF,RM_STARTUP,RM_TERMINAL,RM_DISK,RM_CLOSE,RM_MIN,RM_COPY,RM_PASTE,RM_BACKUP,RM_ERASE};

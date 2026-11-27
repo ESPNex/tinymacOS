@@ -67,9 +67,9 @@ static void edit_paint(void)
     if(dialog==3){
         Text(xx+20,yy+101,edit.op==DISK_EDIT_DELETE?"Conferma":"Dimensione (MiB)",F_SMALL,TX);
         Box(xx+157,yy+94,tw-178,30,6,editfield==0?ACC:EDGE);Box(xx+158,yy+95,tw-180,28,5,CARD);
-        Text(xx+168,yy+101,edit.op==DISK_EDIT_DELETE?editname:editsize,F_BODY,TX);
+        const char *value=edit.op==DISK_EDIT_DELETE?editname:editsize;InputText(xx+168,yy+101,tw-200,value,strlen(value),editfield==0,0,TX);
         if(edit.op==DISK_EDIT_CREATE){
-            Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);Text(xx+168,yy+143,editname,F_BODY,TX);
+            Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
         }
         lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"Nativo: 8–32 MiB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.");
     }else{

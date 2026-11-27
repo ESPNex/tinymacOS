@@ -1,0 +1,8 @@
+PASS real caret overlay: input-visible phase, blink, reduce-motion, reset counter, focus/modal/lock/Mission Control/motion suppression, bounded geometry, exact background restoration and tiny partial damage only
+PASS actual Note paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Memo paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing
+PASS real caret overlay: input-visible phase, blink, reduce-motion, reset counter, focus/modal/lock/Mission Control/motion suppression, bounded geometry, exact background restoration and tiny partial damage only
+PASS actual Note paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Memo paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing

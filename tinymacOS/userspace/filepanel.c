@@ -68,11 +68,8 @@ static void field_draw(FilePanel *p,int x,int y,int w,const char *s,int focus)
 {
     if(p->focus==focus)Box(x-2,y-2,w+4,29,7,ACC);
     Box(x,y,w,25,5,CARD);
-    int at=p->focus==focus?p->cursor:strlen(s),columns=MAX(5,(w-18)/8);
-    int start=text_offset(s,0,at,MAX(0,text_columns(s,at)-columns+1));
-    int end=text_offset(s,start,strlen(s),columns);char display[PATHLEN];
-    memcpy(display,s+start,end-start);display[end-start]=0;Text(x+8,y+4,display,F_MONO,TX);
-    if(p->focus==focus&&(si.ticks/64%2)==0){int col=text_columns(s+start,at-start);Box(x+8+col*8,y+4,1,17,0,EMP);}
+    int active=p->focus==focus&&!p->overwrite&&(!p->newfolder||focus==3);
+    InputText(x+8,y+4,w-16,s,p->focus==focus?p->cursor:strlen(s),active,0,TX);
 }
 void filepanel_draw(FilePanel *p)
 {

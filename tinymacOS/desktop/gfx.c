@@ -1,4 +1,5 @@
 #include "gfx.h"
+#include "mono_wire.h"
 extern const u8 icons[];static u8 fontdata[3*1024*1024],compressed[4*1024*1024];
 static int asset(int id,u8*b,u32 cap){long n=sc(S_ART,id,0,0,0);if(n<=0||n>cap)return -1;for(int i=0;i<n;i+=65536){int z=MIN(n-i,65536);if(sc(S_ART,id,i,b+i,z)!=z)return -1;}return n;}
 int W, H, night, recovery_mode;
@@ -315,6 +316,21 @@ void text(int x, int y, const char *s, int f, u32 col)
         x += g->adv;
     }
 }
+/* Compact Mono references use the same locked glyph table as UTF-8 text.
+ * Wire count is bounded before any lookup. Pixel clipping matches text(). */
+static void mono_run(int x,int y,const Draw *q)
+{
+    int n=MAX(0,MIN(99,q->w));u32 ink=color(q->ink);
+    for(int k=0;k<n&&x<x2;k++,x+=8){
+        unsigned ref=(u8)q->text[k];int i=ref&&ref<=207?(int)ref-1:'?'-32;
+        if(i>=ng)i='?'-32;
+        const Glyph *g=font[F_MONO].g+i;const u8 *p=bits+g->off;
+        for(int j=MAX(0,y1-y);j<MIN((int)font[F_MONO].h,y2-y);j++)
+            for(int col=MAX(0,x1-x);col<MIN(g->w,x2-x);col++){
+                int alpha=p[j*g->w+col];if(alpha)pix(x+col,y+j,ink,alpha);
+            }
+    }
+}
 void center(int cx, int y, const char *s, int f, u32 col)
 {
     text(cx - textw(s, f) / 2, y, s, f, col);
@@ -342,7 +358,8 @@ void client(int x, int y, int w, int h, Draw *d, int n)
                 center(X, Y, q->text, q->style & 127, q->ink);
             else
                 text(X, Y, q->text, q->style, q->ink);
-        } else if (q->type == C_ICON)
+        } else if (q->type == C_MONO)mono_run(X,Y,q);
+        else if (q->type == C_ICON)
             icon(X, Y, q->w, (int8_t)q->style);
         else if (q->type == C_LINE)
             line(X, Y, x + q->w, y + q->h, q->ink);

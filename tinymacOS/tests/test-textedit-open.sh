@@ -7,4 +7,6 @@ for mode in normal sanitized;do
  flags=();[[ $mode != sanitized ]] || flags=(-fsanitize=address,undefined -fno-omit-frame-pointer)
  gcc -O1 -g -fno-builtin -ffunction-sections -fdata-sections -Iinclude -Iarch "${flags[@]}" tests/textedit_open_host.c kernel/string.c -Wl,--gc-sections -o "$out/$mode"
  "$out/$mode"
+ gcc -O1 -g -fno-builtin -ffunction-sections -fdata-sections -Iinclude -Iarch "${flags[@]}" tests/textedit_frame_host.c kernel/string.c -Wl,--gc-sections -o "$out/frame-$mode"
+ "$out/frame-$mode"
 done

@@ -1,4 +1,6 @@
 #include "ui.h"
+#include "mono_wire.h"
+#include "caret.h"
 int aw, ah;
 SysInfo si;
 char wintitle[48];
@@ -44,21 +46,38 @@ void Text(int x, int y, const char *s, int f, u32 c)
     Draw *q = op(C_TEXT, x, y, 0, 0, f, c, 0);
     strset(q->text, s, 100);
 }
-/* Draw.text has 100 bytes, not 100 Unicode scalars. TextEdit must never
- * silently drop the remainder of a visual row or split an accented glyph. */
+/* Fixed-cell text uses the existing font repertoire's compact wire format.
+ * 99 glyphs fit in one command regardless of their UTF-8 byte lengths. */
 void MonoText(int x,int y,const char *s,int bytes,u32 color)
 {
     while(bytes>0&&*s){
-        char chunk[100];int n=0,columns=0;
-        while(n<bytes&&s[n]){
-            int next=text_next(s,n);
-            if(next>bytes||next>99)break;
-            n=next;columns++;
+        Draw *q=op(C_MONO,x,y,0,0,0,color,0);int n=0;
+        while(bytes>0&&*s&&n<99){
+            int used;unsigned code=mono_decode(s,bytes,&used);
+            q->text[n++]=(char)mono_reference(code);s+=used;bytes-=used;
         }
-        if(!n)return;
-        memcpy(chunk,s,n);chunk[n]=0;Text(x,y,chunk,F_MONO,color);
-        x+=columns*8;s+=n;bytes-=n;
+        q->w=n;x+=n*8;
     }
+}
+void Caret(int x,int y,int w,int h,u32 ink)
+{
+    if(caret_dimensions(w,h))op(C_CARET,x,y,w,h,0,ink,0);
+}
+/* Shared single-line edit rendering. secret never serializes source bytes;
+ * both masked and normal fields reserve a cell for the insertion marker. */
+void InputText(int x,int y,int width,const char *s,int at,int active,int secret,u32 ink)
+{
+    int len=strlen(s);at=MAX(0,MIN(at,len));
+    while(at>0&&((u8)s[at]&0xc0)==0x80)at--;
+    int columns=MAX(1,width/8-1),col=text_columns(s,at);
+    int start=text_offset(s,0,at,MAX(0,col-columns));
+    int end=text_offset(s,start,len,columns);
+    if(secret){
+        int visible=text_columns(s+start,end-start),done=0;
+        while(done<visible){Draw *q=op(C_MONO,x+done*8,y,MIN(99,visible-done),0,0,ink,0);
+            for(int j=0;j<q->w;j++)q->text[j]=(char)mono_reference(0x2022);done+=q->w;}
+    }else MonoText(x,y,s+start,end-start,ink);
+    if(active)Caret(x+8*text_columns(s+start,at-start),y,1,17,ink);
 }
 void Center(int x, int y, const char *s, int f, u32 c)
 {
@@ -88,6 +107,12 @@ void modal(const char *name, const char *value, const char *hint)
     Text(x + 25, y + 52, value + MAX(0, l - (w - 59) / 9), F_MONO, TX);
     Text(x + 16, y + 91, hint, F_SMALL, SUB);
     Text(x + 16, y + 115, "Invio per confermare  ·  Esc per annullare", F_MICRO, EMP);
+}
+void inputmodal(const char *name,const char *value,const char *hint,int secret)
+{
+    modal(name,"",hint);
+    int w=MIN(460,aw-40),x=(aw-w)/2,y=(ah-154)/2;
+    InputText(x+25,y+52,w-50,value,strlen(value),1,secret,TX);
 }
 int baseevent(Event *e)
 {
