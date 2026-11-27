@@ -1,0 +1,9 @@
+{
+  "tinymacOS/boot/loader.c": "a9306018c7a10faeb6d9cf6aa010e00eb8b57a931a7c55af6f138810f5fc25ba",
+  "tinymacOS/boot/gopmode.h": "ede8523da3f39ec1528650639fed0d477f9e8699ea5a7c198ec0dcbc1bcecb1a",
+  "tinymacOS/include/bootconfig.h": "dc78cf1677b5788c0ffdcbaa472b138d6c84229e01f1569c46d298efc9c38fd8",
+  "tinymacOS/kernel/syscall.c": "02403d1af8a4711c569da9ccb41f4e05b5b29d19e326f94dda0ebbe9033b00a7",
+  "tinymacOS/tests/bootconfig.c": "10ddc853b74b06e9faa42f3486274905bb5d6967ec84c5c924e3acf4b4972939",
+  "tinymacOS/tests/gop_mode_host.c": "e6e597b6a99d077be2312eb7e9775672578d1a7ff109fc2ec154d324617c4019",
+  "tinymacOS/tests/test-gop-modes.sh": "686141e7aa35ddbcf4f9ede82985f3cb2a1cfa23df7484646b77fc575039a947"
+}

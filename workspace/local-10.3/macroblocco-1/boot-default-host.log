@@ -1,0 +1,10 @@
+PASS dedicated OpenCore Boot0000 comes first; Microsoft/fallback variables and original BootOrder backup are byte-identical
+PASS repeated registration is idempotent and does not rewrite NVRAM
+PASS backup denial prevents both entry creation and BootOrder changes
+PASS BootOrder failure removes only the newly created native entry, preserving Microsoft
+PASS invalid load-option path is rejected without writes
+PASS dedicated OpenCore Boot0000 comes first; Microsoft/fallback variables and original BootOrder backup are byte-identical
+PASS repeated registration is idempotent and does not rewrite NVRAM
+PASS backup denial prevents both entry creation and BootOrder changes
+PASS BootOrder failure removes only the newly created native entry, preserving Microsoft
+PASS invalid load-option path is rejected without writes

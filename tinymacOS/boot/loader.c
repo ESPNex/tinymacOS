@@ -6,6 +6,7 @@
 #include "bootconfig.h"
 #include "bootconsole.h"
 #include "bootdefault.h"
+#include "gopmode.h"
 #define FAIL(s) do{st->ConOut->OutputString(st->ConOut,L"Impossibile avviare tinymacOS.\r\n");return EFI_LOAD_ERROR;}while(0)
 static struct Boot bi;
 static EFI_SYSTEM_TABLE *ginst;
@@ -97,16 +98,15 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
         UINTN n;
         if (EFI_ERROR(go->QueryMode(go, i, &n, &m)))
             continue;
+        if(!m||n<sizeof *m||!gop_usable(m)){if(m)bs->FreePool(m);continue;}
         int w = m->HorizontalResolution, h = m->VerticalResolution, s = w * h;
         if (w == 1280 && h == 800)s += 4000000;
         if (w == 1024 && h == 768)
             s += 2000000;
-        /* Keep every mode whose pixels fit the desktop framebuffers (1920x1080). */
-        /* !(w & 7): the stdvga DISPI only accepts 8px-aligned widths, and
-           duplicates would pin the Settings mode cycler on one entry. */
-        if (w >= 800 && h >= 600 && w <= 1920 && h <= 1080 && !(w & 7) &&
-            (UINT64)w * h <= 1920ULL * 1080 && m->PixelFormat <= 1) {
-            if((bi.boot_flags&TMC_BOOT_DISPLAY)&&w==(int)(((bi.boot_flags>>8)&255)*8)&&h==(int)((bi.boot_flags>>16)&2047))preferred=i;
+        /* Accept only framebuffer layouts the rasterizer supports. The 8px
+         * DISPI constraint is emulator-specific, not a firmware GOP filter. */
+        {
+            if((bi.boot_flags&TMC_BOOT_DISPLAY)&&w==(int)bootconfig_width(bi.boot_flags)&&h==(int)bootconfig_height(bi.boot_flags))preferred=i;
             if (s > score) {
                 score = s;
                 best = i;
@@ -141,14 +141,14 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     if(preferred>=0 && !EFI_ERROR(go->SetMode(go,preferred)))best=preferred;
     else if (best < 0 || EFI_ERROR(go->SetMode(go, best)))
         FAIL("No compatible 32-bit GOP mode");
+    if (!gop_framebuffer_usable(go->Mode))
+        FAIL("GOP framebuffer bounds/layout");
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *m = go->Mode->Info;
     bi.fb = go->Mode->FrameBufferBase;
     bi.w = m->HorizontalResolution;
     bi.h = m->VerticalResolution;
     bi.stride = m->PixelsPerScanLine;
-    bi.rgb = m->PixelFormat == 0;
-    if (bi.fb + (UINT64)bi.stride * bi.h * 4 > 0x100000000ULL)
-        FAIL("GOP outside 32-bit physical map");
+    bi.rgb = gop_rgb(m);
     UINT32 verbose=0;UINTN vsize=sizeof verbose;EFI_GUID vg=TMC_SIP_GUID;
     if(!EFI_ERROR(st->RuntimeServices->GetVariable(L"tinymacOS-verbose",&vg,0,&vsize,&verbose))&&verbose==1)bi.boot_flags|=TMC_BOOT_VERBOSE;
     /* Global Apple boot-args may be inherited from another OS/older OpenCore.

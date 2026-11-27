@@ -1,0 +1,68 @@
+"""Same real USB playback on baseline/candidate, read-only QMP observations.
+No instrumentation control, injected counter or performance test syscall.
+"""
+from pathlib import Path
+import os,time,struct,json,hashlib,subprocess,tempfile
+from retail_guest import Retail
+from guest import KEYS
+build=Path(os.environ['TMC_BUILD']);iso=Path(os.environ['TMC_STAGE_ISO']);qa=Path(os.environ['TMC_QA_DIR']);qa.mkdir(parents=True,exist_ok=True)
+label=os.environ.get('TMC_PERF_LABEL','candidate');w=Path(tempfile.mkdtemp(prefix='tmc-m4-profile-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
+os.environ.update(TMC_STORAGE='nvme',TMC_MEM='512',TMC_SMP='2',TMC_POINTER='tablet')
+def syms(name):return {x.split()[-1]:int(x.split()[0],16) for x in subprocess.check_output(['nm','--defined-only',str(build/name)],text=True).splitlines() if len(x.split())>=3}
+k=syms('kernel.debug');u=syms('desktop.debug');root=Path(__file__).resolve().parents[1]
+layout=w/'layout.c';layout.write_text('#include <stdio.h>\n#include "'+str(root/'kernel/k.h')+'"\nint main(){printf("%zu %zu %zu %zu %zu",sizeof(Process),__builtin_offsetof(Process,root),__builtin_offsetof(Process,cpu_ticks),__builtin_offsetof(Process,win),__builtin_offsetof(Win,seq));}')
+subprocess.run(['gcc','-I'+str(root/'include'),'-I'+str(root/'arch'),str(layout),'-o',str(w/'layout')],check=True)
+stride,rootoff,cpuoff,winoff,seqoff=map(int,subprocess.check_output([str(w/'layout')]).split())
+r={'passed':False,'label':label,'work':str(w),'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'physical_hardware_tested':False,'tsc_units':'uncalibrated guest TSC, not GPU time','stages':{}}
+class QA(Retail):
+ def type(self,text):
+  for c in text:self.key(KEYS.get(c,('shift-'+c.lower() if c.isupper() else c)),dt=.045,hold=.02)
+try:
+ with QA(iso,w,ev,'m4-profile',live=True) as g:
+  def physical(addr,n):
+   p=w/'observation.bin';g.req('pmemsave',val=addr,size=n,filename=str(p));return p.read_bytes()
+  def proc():return physical(k['proc'],stride*23)
+  def desktop():
+   p=proc()
+   for i in range(1,23):
+    at=i*stride
+    if struct.unpack_from('<ii',p,at)[1]==0:return struct.unpack_from('<Q',p,at+rootoff)[0],struct.unpack_from('<Q',p,at+cpuoff)[0]
+   raise AssertionError('desktop missing')
+  def virtual(addr,n):
+   cr3,_=desktop();result=b''
+   while n:
+    table=cr3
+    for shift in [39,30,21,12]:
+     e=struct.unpack('<Q',physical(table+((addr>>shift)&511)*8,8))[0];assert e&1 and not(e&128 and shift!=12);table=e&0x000ffffffffff000
+    z=min(n,4096-(addr&4095));result+=physical(table+(addr&4095),z);n-=z;addr+=z
+   return result
+  def snap():return {'perf':list(struct.unpack('<16Q',virtual(u['tmc_desktop_perf'],128))),'pit':struct.unpack('<Q',physical(k['ticks'],8))[0],'desktop_cpu':desktop()[1]}
+  def stage(name,fn):
+   a=snap();t=time.monotonic();fn();elapsed=time.monotonic()-t;b=snap();d=[v-x for x,v in zip(a['perf'],b['perf'])]
+   r['stages'][name]={'wall_seconds':elapsed,'pit_ticks':b['pit']-a['pit'],'desktop_cpu_samples':b['desktop_cpu']-a['desktop_cpu'],'counters':d,'queue_max_ticks':b['perf'][7]}
+  g.enroll('M4Perf');g.key('f2');g.visible('Sessione locale')
+  for i in range(12):g.cmd('open -a Calculator');time.sleep(.22)
+  time.sleep(3);p=proc();r['open_windows']=sum(struct.unpack_from('<i',p,i*stride+winoff)[0]>0 for i in range(23));assert r['open_windows']>=14
+  stage('idle_many',lambda:time.sleep(3))
+  def library():
+   g.key('ctrl-shift-a');g.visible('Libreria app')
+   for i in range(16):g.move(400+(i%4)*100,260+(i%3)*100)
+   g.key('esc');time.sleep(1)
+  stage('library_hover',library)
+  def mission():
+   g.key('f10');time.sleep(1.5);g.move(500,330);g.key('f10');time.sleep(1.5)
+  stage('mission',mission)
+  # Position comes from rendered window title, not hard-coded kernel geometry.
+  g.key('f6');g.visible('Standard');x,y=g.visible('Calcolatrice',box=(0,34,1280,700));
+  def drag():
+   g.move(x+15,y+3);g.mouse(True)
+   for i in range(10):g.move(x+15+8*i,y+3+3*i)
+   g.mouse(False);time.sleep(.7)
+  stage('window_drag',drag)
+  g.key('f2');g.visible('Sessione locale');t=time.monotonic();g.cmd('echo M4_PROFILE_INPUT','M4_PROFILE_INPUT');r['terminal_echo_wall_seconds']=time.monotonic()-t;g.shot('m4-profile-responsive')
+  assert all(x['counters'][0]>0 for name,x in r['stages'].items() if name!='idle_many');r['passed']=True
+finally:
+ (qa/('m4-profile-'+label+'.json')).write_text(json.dumps(r,indent=2)+'\n')
+ for p in w.glob('*.ppm'):p.unlink()
+ (w/'observation.bin').unlink(missing_ok=True)
+print('PASS M4 real many-window profile',label,r['open_windows'],flush=True)

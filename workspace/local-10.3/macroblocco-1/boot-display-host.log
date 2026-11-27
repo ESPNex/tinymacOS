@@ -1,0 +1,6 @@
+PASS actual kernel boot display: late BSP/4-thread progress and verbose logs cannot repaint a userspace frame after first-present handoff
+PASS concurrent splash writer drains before ownership transfer; no delayed write survives first full repaint
+PASS boot display normal
+PASS actual kernel boot display: late BSP/4-thread progress and verbose logs cannot repaint a userspace frame after first-present handoff
+PASS concurrent splash writer drains before ownership transfer; no delayed write survives first full repaint
+PASS boot display sanitized

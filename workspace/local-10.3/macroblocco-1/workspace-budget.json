@@ -1,0 +1,11 @@
+{
+  "files": 2091,
+  "bytes": 125715995,
+  "MB": 125.72,
+  "MiB": 119.89,
+  "user_limit_bytes": 128000000,
+  "bytes_below_user_limit": 2284005,
+  "guard_files": 9000,
+  "guard_bytes": 126877696,
+  "ok": true
+}

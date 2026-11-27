@@ -1,0 +1,27 @@
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64

@@ -1,0 +1,5 @@
+#pragma once
+/* Read-only through ordinary QMP memory observation in QA; no test syscall.
+ * TSC units are not nanoseconds/GPU timings. Same instrumentation on baseline. */
+extern u64 tmc_desktop_perf[16];
+static inline u64 desktop_stamp(void){u32 a,d;asm volatile("lfence; rdtsc":"=a"(a),"=d"(d)::"memory");return (u64)d<<32|a;}

@@ -1,0 +1,22 @@
+{
+  "block1-dev.iso": {
+    "bytes": 227643392,
+    "sha256": "9ec7a4dae20fade346b86a59b50fe6ad1f37a7d8407063bf7bd70f0b7be2fc6e"
+  },
+  "BOOTX64.EFI": {
+    "bytes": 174080,
+    "sha256": "111c12c619b792341ccfd52d4bfde86ba3a59b15653d08ed797f1fb1a63410e5"
+  },
+  "RECBOOT.EFI": {
+    "bytes": 162816,
+    "sha256": "7311b1184948b06791a8809b89d1169a977f851901b9bc9ec5509f0f700e8104"
+  },
+  "KernelCache": {
+    "bytes": 1229032,
+    "sha256": "56abd00fe0fbf96ffc9bd33ca85b7a5ff34f891c5adc27c243965e4512a42329"
+  },
+  "RecoveryKernel.elf": {
+    "bytes": 1228968,
+    "sha256": "4802d7945f3fb4df96b6f97b02d26eab3dc76ea83d266f64e69e7d7ca57d0071"
+  }
+}

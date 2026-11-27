@@ -1,95 +1,108 @@
 {
   "version_target": "10.3",
-  "base": "10.2.6 / 30C1",
-  "status": "Development: M0 local gates and M1/M2/M3 plan acceptance COMPLETE. M3 real locked CPU/allocator producers, interval process/aggregate telemetry, APIC 1/4/8 CPU and PIC/PIT UP real workload acceptance PASS; M0/M1/FV003/M2 regressions PASS on final M3 ISO. No M4 work, hardware certification or release.",
+  "status": "Restarted from macroblock 1 of the user-provided PDF. NOT COMPLETE. No later macroblock authorized as completed under this plan.",
+  "authoritative_plan": "tinymacOS/docs/piano.pdf",
+  "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
+  "supplied_title": "Changelog 10.2.7 – Piano di Sviluppo",
+  "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
+  "active_macroblock": 1,
+  "active_macroblock_title": "Boot, Installazione e Hardware",
+  "active_macroblock_complete": false,
   "background_work_running": false,
-  "Safari_in_scope": false,
-  "published": false,
-  "ISO_built": true,
-  "guest_tested": true,
+  "release_ready": false,
   "hardware_tested": false,
+  "Safari_in_scope": false,
   "decisions": {
     "OpenCore": "replace Windows Boot Manager as primary boot flow, preserve Microsoft EFI files and Windows chainload with rollback",
     "exFAT": "export a copy, retain original and snapshots"
   },
-  "macroblocks": {
-    "M0": "Revisited explicitly: local cleanup with immutable remote readback; extended source baseline reconstructed honestly; 135-file/2337-literal inventory, 20 wording fixes, font/USB/disk safety gates; two clean builds yield 32 byte-identical artifacts including ISO; targeted live/Recovery guest PASS. Full visual/hardware matrix remains M7.",
-    "M1": "COMPLETE local plan gates: full normal+ASan/UBSan host tests, fresh same-ISO USB/pixel matrix setup/Terminal/TextEdit/Note/Memo/Installer/native Recovery, 144000/141735B UTF8 native save/close/reopen SHA256 round-trips, actual GUI-created FV003 no-echo bad/good password unlock. Evidence m1/VERIFICA.md; not hardware certification.",
-    "M2": "COMPLETE local plan gates. 64-bit block ABI and GPT/FS2 geometry up to explicit 16TiB limit; full-gap v3 with v1/v2 reads; decimal SI/parser boundaries; three same-final-ISO GUI 3TiB guests, 2.5TiB gap, foreign bytes preserved, cold native/Recovery no ISO and Installer/Utility/Terminal consistency. Full normal+ASan/UBSan host acceptance and M1 regression PASS. Evidence m2/VERIFICA.md. Hardware NOT TESTED.",
-    "M3": "COMPLETE all local plan gates. Correct real timer producers (pinned kernel != idle), SMP process tick synchronization, PIT fallback, actual online CPU mask, interval normalized aggregate/process CPU, pause/sort/reset and 8-core UI. Locked managed/free/UEFI-reserved/user backing and actual per-process page-table counts; cache explicitly not separately attributed. Normal+ASan/UBSan host and four real guest configurations (APIC 1/4/8, PIT UP) cover idle, single/multicore load, sleep, alloc/free 8MiB and VM commit/release 4MiB, cold native UI/report. M0/M1/FV003 and M2 normal/sanitized + 3TiB 4Kn guest regression PASS. See m3/VERIFICA.md; not physical certification.",
-    "M4": "pending",
-    "M5": "pending; exFAT detection is not a mount/export driver",
-    "M6": "initial audit only; OpenCore 1.0.8 already vendored; persistent installation/BootOrder/rollback and GOP fix pending",
-    "M7": "not started"
-  },
-  "checks": {
-    "host_suites_normal_and_sanitized": "PASS foundation including M3 plus complete 13-family M2 host gate; exact logs in m3/",
-    "freestanding_objects_compiled": [
-      "ui.c",
-      "textedit.c",
-      "diskutility.c",
-      "monitor.c"
-    ],
-    "USB_retirement_guard": "PASS",
-    "source_overlay_sync": "PASS",
-    "full_build": "PASS final M3 coordinated BIOS/UEFI/Recovery/app build, no release/version change",
-    "guest": "PASS M3 APIC 1/4/8 CPUs and PIC/PIT UP real workload/cold UI; full M1/FV003 and M2 3TiB 4Kn regression on same ISO",
-    "physical_hardware": "NOT RUN",
-    "M2": {
-      "host": "PASS test-m2-acceptance.sh, 13 suites normal + ASan/UBSan",
-      "foundation": "PASS final foundation + M0 workspace + deterministic supplied fonts",
-      "capacity_limit": "Supported maximum 16TiB; high base and high relative FS2 I/O exercised, >limit fails closed; unsupported legacy operations refuse without writes",
-      "guest": "PASS nvme-4096 / nvme-512 / sata-512, real 3TiB and 2.5TiB genuine gap, native and Recovery ISO-detached cold boots, three-view agreement, all synthetic foreign partition bytes verified",
-      "M1_regression": "PASS full native UTF8/text/caret/password matrix and actual GUI-created FV003 bad/good no-echo unlock on same final ISO",
-      "iso_sha256": "40f897e83a2e83bfb548cd63bac0be4f93586c54afded28261315a277d7a7c82",
+  "previous_functional_checkpoint": "1b545caba4abb34145d37d088866eb77e3149129",
+  "previous_plan_status_is_historical": true,
+  "historical_evidence": {
+    "macroblocks": {
+      "M0": "Revisited explicitly: local cleanup with immutable remote readback; extended source baseline reconstructed honestly; 135-file/2337-literal inventory, 20 wording fixes, font/USB/disk safety gates; two clean builds yield 32 byte-identical artifacts including ISO; targeted live/Recovery guest PASS. Full visual/hardware matrix remains M7.",
+      "M1": "COMPLETE local plan gates: full normal+ASan/UBSan host tests, fresh same-ISO USB/pixel matrix setup/Terminal/TextEdit/Note/Memo/Installer/native Recovery, 144000/141735B UTF8 native save/close/reopen SHA256 round-trips, actual GUI-created FV003 no-echo bad/good password unlock. Evidence m1/VERIFICA.md; not hardware certification.",
+      "M2": "COMPLETE local plan gates. 64-bit block ABI and GPT/FS2 geometry up to explicit 16TiB limit; full-gap v3 with v1/v2 reads; decimal SI/parser boundaries; three same-final-ISO GUI 3TiB guests, 2.5TiB gap, foreign bytes preserved, cold native/Recovery no ISO and Installer/Utility/Terminal consistency. Full normal+ASan/UBSan host acceptance and M1 regression PASS. Evidence m2/VERIFICA.md. Hardware NOT TESTED.",
+      "M3": "COMPLETE all local plan gates. Correct real timer producers (pinned kernel != idle), SMP process tick synchronization, PIT fallback, actual online CPU mask, interval normalized aggregate/process CPU, pause/sort/reset and 8-core UI. Locked managed/free/UEFI-reserved/user backing and actual per-process page-table counts; cache explicitly not separately attributed. Normal+ASan/UBSan host and four real guest configurations (APIC 1/4/8, PIT UP) cover idle, single/multicore load, sleep, alloc/free 8MiB and VM commit/release 4MiB, cold native UI/report. M0/M1/FV003 and M2 normal/sanitized + 3TiB 4Kn guest regression PASS. See m3/VERIFICA.md; not physical certification.",
+      "M4": "pending",
+      "M5": "pending; exFAT detection is not a mount/export driver",
+      "M6": "initial audit only; OpenCore 1.0.8 already vendored; persistent installation/BootOrder/rollback and GOP fix pending",
+      "M7": "not started"
+    },
+    "checks": {
+      "host_suites_normal_and_sanitized": "PASS foundation including M3 plus complete 13-family M2 host gate; exact logs in m3/",
+      "freestanding_objects_compiled": [
+        "ui.c",
+        "textedit.c",
+        "diskutility.c",
+        "monitor.c"
+      ],
+      "USB_retirement_guard": "PASS",
+      "source_overlay_sync": "PASS",
+      "full_build": "PASS final M3 coordinated BIOS/UEFI/Recovery/app build, no release/version change",
+      "guest": "PASS M3 APIC 1/4/8 CPUs and PIC/PIT UP real workload/cold UI; full M1/FV003 and M2 3TiB 4Kn regression on same ISO",
       "physical_hardware": "NOT RUN",
-      "evidence": "m2/VERIFICA.md"
+      "M2": {
+        "host": "PASS test-m2-acceptance.sh, 13 suites normal + ASan/UBSan",
+        "foundation": "PASS final foundation + M0 workspace + deterministic supplied fonts",
+        "capacity_limit": "Supported maximum 16TiB; high base and high relative FS2 I/O exercised, >limit fails closed; unsupported legacy operations refuse without writes",
+        "guest": "PASS nvme-4096 / nvme-512 / sata-512, real 3TiB and 2.5TiB genuine gap, native and Recovery ISO-detached cold boots, three-view agreement, all synthetic foreign partition bytes verified",
+        "M1_regression": "PASS full native UTF8/text/caret/password matrix and actual GUI-created FV003 bad/good no-echo unlock on same final ISO",
+        "iso_sha256": "40f897e83a2e83bfb548cd63bac0be4f93586c54afded28261315a277d7a7c82",
+        "physical_hardware": "NOT RUN",
+        "evidence": "m2/VERIFICA.md"
+      },
+      "M0": {
+        "source_and_safety_contract": "PASS, including negative test for removal of destructive warning",
+        "font_rebuild": "PASS supplied OTFs only, exact production TFN/panic font",
+        "same_environment_repeatability": "PASS 32 artifacts incl full ISO, different-length clean external paths; first absolute-path leak documented and fixed",
+        "NTFS_regression": "PASS actual shrink/grow + hibernated/corrupt/write-failure cases, normal and ASan/UBSan, independent ntfscat/ntfsresize",
+        "GUI_guest": "PASS final repeatable ISO: setup/home, local-only backup warning, Monitor, display settings, Recovery menu/version",
+        "published_10.2.6": "Tag target and six asset sizes/digests re-read from GitHub, unchanged; no fresh release ISO download claimed",
+        "cross_machine_builds": "NOT TESTED",
+        "physical_hardware": "NOT RUN"
+      },
+      "M1_final": {
+        "host": "PASS normal + ASan/UBSan, foundation + M0 workspace + deterministic supplied fonts",
+        "guest": "PASS full fresh USB/pixel matrix and native long UTF8 save/reopen",
+        "no_echo_backend": "PASS actual GUI-created FV003, native ISO-detached Recovery, bad password rejected/good password accepted; FileVault GUI Attivo",
+        "iso_sha256": "76d7a6b52b3167fd132434136503569241d1ae37cc63c4208a7369a1b0db8018",
+        "evidence": "m1/VERIFICA.md",
+        "physical_hardware": "NOT RUN"
+      },
+      "M3": {
+        "host": "PASS real accounting + 8-thread shared-process exact increments, real allocator/VM exhaustion/teardown, interval/overflow helper and actual Monitor sample/paint, normal + ASan/UBSan",
+        "guest": "PASS four fresh complete same-ISO configurations: APIC 1/4/8, PIC/PIT UP. Actual threads, idle, single/multicore, sleep, S_ALLOC/free 8MiB, VM commit/release 4MiB, independent read-only raw report validation and cold native boot/Monitor",
+        "regressions": "PASS M0 workspace/locked supplied fonts/USB/overlay, full foundation, full M2 normal+sanitized, M1 native UTF8/password and real FV003, M2 3TiB 4Kn native/Recovery no ISO",
+        "iso_sha256": "1e12b7a6f740b67c956d89588a341245b0e22be72a08a244c1f6f49fd4e15132",
+        "metrics_contract": "tinymacOS/docs/MONITORAGGIO-10.3.md",
+        "evidence": "m3/VERIFICA.md",
+        "physical_hardware": "NOT RUN"
+      }
     },
-    "M0": {
-      "source_and_safety_contract": "PASS, including negative test for removal of destructive warning",
-      "font_rebuild": "PASS supplied OTFs only, exact production TFN/panic font",
-      "same_environment_repeatability": "PASS 32 artifacts incl full ISO, different-length clean external paths; first absolute-path leak documented and fixed",
-      "NTFS_regression": "PASS actual shrink/grow + hibernated/corrupt/write-failure cases, normal and ASan/UBSan, independent ntfscat/ntfsresize",
-      "GUI_guest": "PASS final repeatable ISO: setup/home, local-only backup warning, Monitor, display settings, Recovery menu/version",
-      "published_10.2.6": "Tag target and six asset sizes/digests re-read from GitHub, unchanged; no fresh release ISO download claimed",
-      "cross_machine_builds": "NOT TESTED",
-      "physical_hardware": "NOT RUN"
-    },
-    "M1_final": {
-      "host": "PASS normal + ASan/UBSan, foundation + M0 workspace + deterministic supplied fonts",
-      "guest": "PASS full fresh USB/pixel matrix and native long UTF8 save/reopen",
-      "no_echo_backend": "PASS actual GUI-created FV003, native ISO-detached Recovery, bad password rejected/good password accepted; FileVault GUI Attivo",
-      "iso_sha256": "76d7a6b52b3167fd132434136503569241d1ae37cc63c4208a7369a1b0db8018",
-      "evidence": "m1/VERIFICA.md",
-      "physical_hardware": "NOT RUN"
-    },
-    "M3": {
-      "host": "PASS real accounting + 8-thread shared-process exact increments, real allocator/VM exhaustion/teardown, interval/overflow helper and actual Monitor sample/paint, normal + ASan/UBSan",
-      "guest": "PASS four fresh complete same-ISO configurations: APIC 1/4/8, PIC/PIT UP. Actual threads, idle, single/multicore, sleep, S_ALLOC/free 8MiB, VM commit/release 4MiB, independent read-only raw report validation and cold native boot/Monitor",
-      "regressions": "PASS M0 workspace/locked supplied fonts/USB/overlay, full foundation, full M2 normal+sanitized, M1 native UTF8/password and real FV003, M2 3TiB 4Kn native/Recovery no ISO",
-      "iso_sha256": "1e12b7a6f740b67c956d89588a341245b0e22be72a08a244c1f6f49fd4e15132",
-      "metrics_contract": "tinymacOS/docs/MONITORAGGIO-10.3.md",
-      "evidence": "m3/VERIFICA.md",
-      "physical_hardware": "NOT RUN"
+    "git": {
+      "target_branch": "main",
+      "remote": "https://github.com/ESPNex/tinymacOS",
+      "previous_checkpoint_pushed": "32bd7a8c545a7ef84358647945ef45d2c06180fd",
+      "previous_remote_hash_verified": true,
+      "note": "This file accompanies the completed M3 commit; its own non-self-referential hash is in Git history and authenticated remote readback. Source publication is distinct from an ISO release."
     }
   },
-  "next_steps": [
-    "Publish complete M3 source/evidence checkpoint to ESPNex/tinymacOS main using authenticated GitHub CLI; no release/tag/version bump.",
-    "M4 is the next separate macroblock in the ordered plan; not started by this work.",
-    "M4\u2013M7, physical Windows/GOP/USB certification and release gates remain open; Safari excluded."
-  ],
-  "references": [
-    "tinymacOS/docs/PIANO-10.3.md",
-    "workspace/local-10.3/AUDIT-INIZIALE.md",
-    "workspace/local-10.3/logs/foundation.log",
-    "workspace/local-10.3/m2/VERIFICA.md",
-    "workspace/local-10.3/m3/VERIFICA.md"
-  ],
-  "git": {
-    "target_branch": "main",
-    "remote": "https://github.com/ESPNex/tinymacOS",
-    "previous_checkpoint_pushed": "32bd7a8c545a7ef84358647945ef45d2c06180fd",
-    "previous_remote_hash_verified": true,
-    "note": "This file accompanies the completed M3 commit; its own non-self-referential hash is in Git history and authenticated remote readback. Source publication is distinct from an ISO release."
+  "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
+  "current_checks": {
+    "source_manifest": "macroblocco-1/source-manifest.json",
+    "evidence": "macroblocco-1/STATO.md",
+    "build": "PASS development build, NOT a completed macroblock or release",
+    "gop_host": "PASS normal + ASan/UBSan: actual loader predicates and backward-compatible BootConfig",
+    "boot_default_host": "PASS normal + ASan/UBSan EFI variable algorithm; NOT actual Windows boot",
+    "guest": "PASS QEMU/OVMF USB setup, display settings and Recovery targeted smoke; NOT physical hardware",
+    "partition_host": "PASS targeted Windows gaps, actual partition installer and large-disk/16TiB regressions, normal + ASan/UBSan",
+    "preservation": "PASS canonical USB/protected inputs, supplied fonts, source overlay",
+    "open_requirements": [
+      "Real user home name migration, not just sidebar display label",
+      "Physical GeForce 310/HDMI/monitor acceptance; firmware modes cannot be assumed",
+      "End-to-end installed OpenCore/actual Windows chainload and restoration acceptance"
+    ],
+    "background_work_running": false
   }
 }

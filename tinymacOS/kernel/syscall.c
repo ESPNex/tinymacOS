@@ -261,7 +261,7 @@ static Frame *syscall_inner(Frame *f)
         if(b==1){r=(video_runtime_available()?1:0)|(!boot.install_len?2:0);break;}
         if(!session_open()||a>=boot.nmodes)break;
         {int w=boot.modes[a]>>16,h=boot.modes[a]&65535;
-         if(video_runtime_available())r=video_setmode(w,h);
+         if(video_runtime_available()&&!(w&7))r=video_setmode(w,h);
          else {int z=bootconfig_disk(2,bootconfig_display(w,h));r=z>=0?1:z;}}
 
         break;

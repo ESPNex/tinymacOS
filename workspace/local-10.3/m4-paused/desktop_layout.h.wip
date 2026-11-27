@@ -1,0 +1,28 @@
+#pragma once
+#include "base.h"
+/* Per-account desktop metadata only. Never rename/move content to reorder. */
+#define DESK_ENTRIES 384
+#define DESK_IW 122
+#define DESK_IH 83
+typedef struct {char name[48];int x,y;} DeskPlace;
+typedef struct {u64 magic,generation,checksum;DeskPlace place[DESK_ENTRIES];} DeskLayout;
+#define DESK_MAGIC 0x315459414c4b5344ull
+static inline u64 desk_checksum(const DeskLayout *d){const u8*p=(const u8 *)d;u64 h=1469598103934665603ull;for(unsigned i=0;i<sizeof *d;i++)if(i<16||i>=24)h=(h^p[i])*1099511628211ull;return h;}
+static inline int desk_valid(const DeskLayout*d){if(d->magic!=DESK_MAGIC||!d->generation||d->checksum!=desk_checksum(d))return 0;for(int i=0;i<DESK_ENTRIES;i++){const DeskPlace*p=d->place+i;if(p->name[47]||p->x<0||p->x>32767||p->y<0||p->y>32767)return 0;}return 1;}
+static inline int desk_overlap(int x,int y,int X,int Y){return x<X+DESK_IW&&X<x+DESK_IW&&y<Y+DESK_IH&&Y<y+DESK_IH;}
+static inline int desk_find(const DeskLayout*d,const char*name){for(int i=0;i<DESK_ENTRIES;i++)if(d->place[i].name[0]&&eq(d->place[i].name,name))return i;return -1;}
+static inline int desk_free(const DeskLayout*d,int self,int x,int y,int w,int h){
+ if(x<4||x+DESK_IW>w-4||y<210||y+DESK_IH>h-95)return 0;
+ for(int i=0;i<DESK_ENTRIES;i++)if(i!=self&&d->place[i].name[0]&&desk_overlap(x,y,d->place[i].x,d->place[i].y))return 0;
+ return 1;
+}
+static inline int desk_position(DeskLayout*d,int i,int x,int y,int w,int h){
+ x=MAX(4,MIN(x,w-DESK_IW-4));y=MAX(210,MIN(y,h-DESK_IH-95));
+ if(desk_free(d,i,x,y,w,h)){d->place[i].x=x;d->place[i].y=y;return 1;}
+ /* Nearest available grid point; no overlap, including a densely packed desk. */
+ int bx=-1,by=0;u64 distance=~0ull;
+ for(int Y=210;Y+DESK_IH<=h-95;Y+=DESK_IH+8)for(int X=w-DESK_IW-8;X>=4;X-=DESK_IW+6)if(desk_free(d,i,X,Y,w,h)){
+  i64 dx=X-x,dy=Y-y;u64 z=dx*dx+dy*dy;if(z<distance){distance=z;bx=X;by=Y;}
+ }
+ if(bx<0)return 0;d->place[i].x=bx;d->place[i].y=by;return 1;
+}

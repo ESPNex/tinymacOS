@@ -85,7 +85,7 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "0c09cb19deeb5a8164e69ef004483df2be66ece8aa7073fee64053dc055f223b"
+    "sha256": "02403d1af8a4711c569da9ccb41f4e05b5b29d19e326f94dda0ebbe9033b00a7"
   },
   {
     "path": "kernel/k.h",

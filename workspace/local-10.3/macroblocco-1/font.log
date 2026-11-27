@@ -1,0 +1,3 @@
+TFN2: 11 faces, 207 glyphs, 2178265 bytes; no external font fallback or inherited face
+Emergency 8x15 ASCII rebuilt from supplied Mono Regular, no inherited glyphs
+PASS deterministic TFN2: only 5 supplied OTFs opened, all 11 faces rebuilt, 207 glyphs each; no inherited mono, fallback or host font; 8px terminal grid and original UI symbols; lock matches. NOT guest/media validation.
