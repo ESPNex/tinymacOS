@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "iso_sha256": "2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149",
+  "fonts": {
+    "live": {
+      "bytes": 2178265,
+      "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+      "exact_locked_production_font": true
+    },
+    "installed": {
+      "bytes": 2178265,
+      "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+      "exact_locked_production_font": true
+    },
+    "recovery": {
+      "bytes": 2178265,
+      "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+      "exact_locked_production_font": true
+    }
+  },
+  "kernels": {
+    "live.cache": "8f9f6a6b6075bd0804c85c0da87a3d823d87f63281df3c086c6d63ffebb7201f",
+    "disk.cache": "8f9f6a6b6075bd0804c85c0da87a3d823d87f63281df3c086c6d63ffebb7201f"
+  },
+  "catalog_sha256": {
+    "live": "7afb81ef61367fe1a1173d0f41a48a9ea66711cf194a6786064888d72e337093",
+    "installed": "0e381601582701fcea2e5a1a05f129164ec92c935374bbaddbeff72fff70ccbf",
+    "recovery": "189e8a2d10b16f17e39e3c529b3f552393f6e1371fbabbb3d7328cd46e913099"
+  },
+  "panic_font": {
+    "sha256": "ad842acc7c3a6f193362e17c51f92544289b38af79c0fb3740d50bb8ddc62009",
+    "bytes": 1425,
+    "found_in": [
+      "live.cache",
+      "disk.cache",
+      "recovery.elf"
+    ]
+  },
+  "canonical_USB_profile": {
+    "profile": "canonical-usb-hid",
+    "passed": true,
+    "kernels": {
+      "kernel.elf": {
+        "sha256": "7a0684f9df07b915c153488356803057e59fbfac36a73a418aebaf1213f9a53e",
+        "input_init": "0x4035210",
+        "entry_bytes": "e96bd7ffff",
+        "canonical_start": "0x4032980",
+        "scheduler_references_worker": "0x4032a90",
+        "whole_HID_symbols_present": true
+      },
+      "RecoveryKernel.elf": {
+        "sha256": "b371f1558331edcebcf29b97d9171fbf622a64354e153691abdb2123535d68ba",
+        "input_init": "0x4035210",
+        "entry_bytes": "e96bd7ffff",
+        "canonical_start": "0x4032980",
+        "scheduler_references_worker": "0x4032a90",
+        "whole_HID_symbols_present": true
+      }
+    }
+  },
+  "actual_ISO_live_installed_and_Recovery_match_binary_guard": true,
+  "mono_source_file": "tinymacOSMonoRegular.otf",
+  "no_external_font_fallback": true,
+  "build": "30C1",
+  "no_Safari_or_full_WebKit_claim": true,
+  "locked_production_font_in_all_three_namespaces": true
+}

@@ -1,0 +1,22 @@
+{
+  "version": "10.2.6",
+  "build": "30C1",
+  "published": true,
+  "software_gates_passed": true,
+  "host_suites": 9,
+  "guest_suites": 17,
+  "extra_negative_baseline": true,
+  "source_commit": "2d31862200898711817ab9c7decb724953728d25",
+  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.6-pre-release",
+  "one_ISO": true,
+  "iso_sha256": "2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149",
+  "physical_mouse_base_30B21_confirmed_by_user": true,
+  "physical_hardware_1026_tested": false,
+  "PMBR_of_affected_PC_not_observed": true,
+  "workspace_under_128MiB": true,
+  "receipts": [
+    "verification.json",
+    "publication-readback.json",
+    "downloaded-media-audit.json"
+  ]
+}

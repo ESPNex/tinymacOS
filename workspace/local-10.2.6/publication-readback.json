@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "version": "10.2.6",
+  "build": "30C1",
+  "release_url": "https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.6-pre-release",
+  "release_id": 460023359,
+  "one_ISO": true,
+  "title": "tinymacOS 10.2.6",
+  "source_commit": "2d31862200898711817ab9c7decb724953728d25",
+  "all_previous_tags_unchanged": 25,
+  "only_new_tag": "v10.2.6-pre-release",
+  "only_main_and_vendor_syslinux_branches": true,
+  "assets": [
+    {
+      "name": "tinymacOS-10.2.6-x86_64.iso",
+      "sha256": "2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149",
+      "bytes": 329580544,
+      "download_readback": true
+    },
+    {
+      "name": "tinymacOS-10.2.6-NVMe-boot-helper.img",
+      "sha256": "d956dd8bc5f60fe07cc71d40e660fdb80305eb6709a5752eb63b11479bf415f5",
+      "bytes": 17825792,
+      "download_readback": true
+    },
+    {
+      "name": "tinymacOS-10.2.6-sorgenti.zip",
+      "sha256": "080ce2abe6d786ef0ec9f97989058d734c1e474dd2e70354a9b989b7b7f5247d",
+      "bytes": 41024119,
+      "download_readback": true
+    },
+    {
+      "name": "VALIDAZIONE-10.2.6.md",
+      "sha256": "4b0189fe5a8d4cb93292cf422a9075812187c74d32034bed5f9873725c85f21e",
+      "bytes": 3918,
+      "download_readback": true
+    },
+    {
+      "name": "VERIFICA-FINALE-10.2.6.tar.gz",
+      "sha256": "46d5b799090709bdf4ef12389655138326c4a9d818ffc4d4f4f01d6441173408",
+      "bytes": 19942301,
+      "download_readback": true
+    },
+    {
+      "name": "SHA256SUMS",
+      "sha256": "9ad4b3b7dae9a8f01136f4413c8a98bc75546f4d1d365e0c4dcae00d702a5c17",
+      "bytes": 478,
+      "download_readback": true
+    }
+  ],
+  "helper_retained_unchanged": true,
+  "physical_1026_hardware_tested": false,
+  "real_Windows_certification": false,
+  "Safari_full_WebKit_included": false
+}

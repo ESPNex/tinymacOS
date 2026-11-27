@@ -167,10 +167,8 @@
     "Kernel startup adds NVMe enumeration via storage_init; build and filesystem differ; no causal conclusion.",
     "Freeze precedes interactive desktop drag-and-drop; earlier frame fairness change did not resolve physical report."
   ],
-  "missing_evidence": [
-    "Hardware acceptance of restored canonical profile on affected PC"
-  ],
-  "current_action": "Published 30B21 restores verified 10.2.4 canonical USB/HID profile; all six public assets redownloaded and verified, final downloaded ISO kernels match guarded build. Physical acceptance remains open.",
+  "missing_evidence": [],
+  "current_action": "CLOSED for 30B21: user explicitly confirms mouse works on the affected physical PC. 10.2.6 keeps canonical only; its own physical acceptance remains pending.",
   "source_comparison_is_historical_pre_rollback": true,
   "latest_user_report": "30B20 also fails physically; user reiterates 10.2.4 works",
   "user_confirmed_installer_was_Recovery_Reinstall_without_native_installation": true,

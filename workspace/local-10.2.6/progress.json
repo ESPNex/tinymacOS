@@ -1,7 +1,7 @@
 {
   "version": "10.2.6",
   "build": "30C1",
-  "status": "software gates complete; publication pending",
+  "status": "published; six public assets downloaded and verified; downloaded ISO audited",
   "physical_mouse_30B21_confirmed_by_user": true,
   "workspace_bytes_reclaimed": 34156310,
   "canonical_only_binary_guard_passed": true,
@@ -16,5 +16,10 @@
   "host_suites": 9,
   "many_windows_comparison_passed": true,
   "DnD_real_mouse_passed": true,
-  "PMBR_coverage_and_signature_guest_passed": true
+  "PMBR_coverage_and_signature_guest_passed": true,
+  "published": true,
+  "source_commit": "2d31862200898711817ab9c7decb724953728d25",
+  "physical_hardware_1026_tested": false,
+  "publication_receipt": "publication-readback.json",
+  "downloaded_ISO_audit": "downloaded-media-audit.json"
 }
