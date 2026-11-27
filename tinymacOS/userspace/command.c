@@ -1,4 +1,6 @@
 #include "path.h"
+#include "display_size.h"
+#include "disk_size_input.h"
 #include "fileops.h"
 #include "sha256.h"
 #include "sha1.h"
@@ -732,11 +734,11 @@ static int run(void)
             for(int i=0;i<di.count;i++){
                 if(only>=0&&i!=only)continue;
                 DiskMap*m=&di.disk[i].map;
-                say("/dev/disk");num(i);say(" (internal, physical): ");num(di.disk[i].sectors/2048);say(" MiB · ");ln(partition_scheme(m->scheme));
+                say("/dev/disk");num(i);say(" (internal, physical): ");char capacity[40];display_size(capacity,sizeof capacity,(u64)di.disk[i].sectors*512);say(capacity);say(" · ");ln(partition_scheme(m->scheme));
                 for(int j=0;j<m->count;j++){DiskPartition*p=m->part+j;
-                    say("  disk");num(i);say("s");num(p->number);say("  ");say(filesystem_name(p->fs));say("  ");num(p->sectors/2048);say(" MiB  LBA ");num(p->start);say("  ");ln(p->name);
+                    say("  disk");num(i);say("s");num(p->number);say("  ");say(filesystem_name(p->fs));say("  ");display_size(capacity,sizeof capacity,(u64)p->sectors*512);say(capacity);say("  LBA ");num(p->start);say("  ");ln(p->name);
                 }
-                for(int j=0;j<m->gaps;j++){say("  Spazio non allocato  ");if(m->gap[j].sectors<2048)say("<1");else num(m->gap[j].sectors/2048);say(" MiB  LBA ");num(m->gap[j].start);ln("");}
+                for(int j=0;j<m->gaps;j++){say("  Spazio non allocato  ");display_size(capacity,sizeof capacity,(u64)m->gap[j].sectors*512);say(capacity);say("  LBA ");num(m->gap[j].start);ln("");}
                 if(!m->safe){say("  Protetto: ");ln(m->reason);}
             }
             if(!di.count)ln("Nessun disco collegato.");return 0;
@@ -744,21 +746,22 @@ static int run(void)
         if(n>=2&&(eq(V(1),"deletePartition")||eq(V(1),"addPartition")||eq(V(1),"resizeVolume"))){
             int create=eq(V(1),"addPartition"),del=eq(V(1),"deletePartition");
             int args=create?6:del?3:4,apply=n==args+1&&eq(V(args),"--confirm");
-            if(n!=args&&!apply)return fail("Uso: diskutil deletePartition diskNsM [--confirm] | resizeVolume diskNsM MiB [--confirm] | addPartition diskN LBA MiB nome [--confirm]");
+            if(n!=args&&!apply)return fail("Uso: diskutil deletePartition diskNsM [--confirm] | resizeVolume diskNsM MB [--confirm] | addPartition diskN LBA MB nome [--confirm]");
             DiskEdit q={.op=create?DISK_EDIT_CREATE:del?DISK_EDIT_DELETE:DISK_EDIT_RESIZE};
             if(create){
                 q.disk=diskid(V(2));u32 mb;
-                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_uint(V(4),&mb)||!mb||mb>TMC_DISK_MAX_MIB)return fail("Disco, LBA o dimensione non validi.");
-                q.size=mb*2048;strset(q.name,V(5),sizeof q.name);
+                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_size_mb(V(4),&mb))return fail("Disco, LBA o dimensione non validi.");
+                q.size=mb;strset(q.name,V(5),sizeof q.name);
             }else{
                 if(disk_partition_id(V(2),&q.disk,&q.number)||q.disk>=di.count)return fail("Identificatore partizione non valido.");
                 DiskPartition*p=0;DiskMap*m=&di.disk[q.disk].map;
                 for(int j=0;j<m->count;j++)if(m->part[j].number==q.number)p=m->part+j;
                 if(!p)return fail("Partizione non trovata.");
                 q.start=p->start;q.sectors=p->sectors;
-                if(!del){u32 mb;if(disk_uint(V(3),&mb)||!mb||mb>TMC_DISK_MAX_MIB)return fail("Dimensione MiB non valida.");q.size=mb*2048;}
+                if(!del){u32 mb;if(disk_size_mb(V(3),&mb))return fail("Dimensione MB non valida.");q.size=mb;}
             }
             int r=sc(S_DISK,10,&q,0,0);ln(q.message);if(r)return 1;
+            if(!del){char size[40];disk_size_mb_exact(size,sizeof size,q.size);say("Dimensione effettiva: ");say(size);ln(" MB (allineata per difetto)");}
             if(!apply){ln("Solo anteprima: nessuna scrittura. Esegui un backup; aggiungi --confirm per applicare.");return 0;}
             q.confirm=DISK_EDIT_CONFIRM;r=sc(S_DISK,11,&q,0,0);ln(q.message);return !!r;
         }
@@ -771,12 +774,10 @@ static int run(void)
                 if (sc(S_SNAP, 5, 0, &fi, 0))
                     return fail("Volume non disponibile.");
                 sc(S_SNAP, 6, 0, 0, &ei);
-                ln("Container cont0 — disco interno (BTRFS subset, struttura APFS)");
+                ln("Contenitore cont0 — filesystem nativo");
                 say("  Volume \"Macintosh HD\": ");
-                num(fi.used / 1024);
-                say(" KB usati su ");
-                num(fi.total / 1024);
-                say(" KB · generazione ");
+                char usage[96];display_usage(usage,sizeof usage,fi.used,fi.total);say(usage);
+                say(" · generazione ");
                 num(fi.gen);
                 ln("");
                 say("  Crittografia: ");
@@ -866,7 +867,7 @@ static int run(void)
                     ln(p->name);say("Filesystem: ");ln(filesystem_name(p->fs));say("Inizio LBA: ");num(p->start);say(" · settori: ");num(p->sectors);ln("");
                     ln("Riconoscimento in sola lettura. RAW non significa spazio libero.");
                 }else{
-                    ln(di.disk[i].model);num(di.disk[i].sectors/2048);say(" MiB · ");ln(partition_scheme(m->scheme));ln(m->reason);
+                    ln(di.disk[i].model);char capacity[40];display_size(capacity,sizeof capacity,(u64)di.disk[i].sectors*512);say(capacity);say(" · ");ln(partition_scheme(m->scheme));ln(m->reason);
                 }
                 return 0;
             }
@@ -959,7 +960,7 @@ static int run(void)
     if(IS("pbcopy")||IS("pbpaste")){
         static Clipboard q;
         if(n!=1)return fail("Uso: comando | pbcopy oppure pbpaste");
-        if(IS("pbcopy")){if(A.inlen>=CLIP_BYTES)return fail("Testo troppo lungo per gli appunti (256 KiB).");memset(&q,0,sizeof q);q.kind=CLIP_TEXT;memcpy(q.data,A.in,A.inlen);if(strlen(q.data)!=A.inlen)return fail("Gli appunti accettano testo senza byte NUL.");return sc(S_CLIPBOARD,1,&q,0,0)<0;}
+        if(IS("pbcopy")){if(A.inlen>=CLIP_BYTES)return fail("Testo troppo lungo per gli appunti (262.1 kB).");memset(&q,0,sizeof q);q.kind=CLIP_TEXT;memcpy(q.data,A.in,A.inlen);if(strlen(q.data)!=A.inlen)return fail("Gli appunti accettano testo senza byte NUL.");return sc(S_CLIPBOARD,1,&q,0,0)<0;}
         if(sc(S_CLIPBOARD,0,&q,0,0)<0||q.kind!=CLIP_TEXT)return fail("Nessun testo negli appunti.");emit(q.data,strlen(q.data));return 0;
     }
     if (n < 2 || path(pa, 1))return 2;
@@ -989,7 +990,7 @@ void app_main(void)
         r = run();
         if (full) {
             nout = 0;
-            r = fail("Risultato troppo grande per questa sessione (8 KiB).");
+            r = fail("Risultato troppo grande per questa sessione (8192 byte).");
         } else if (r && !nout && !(IS("grep") && r == 1)) {
             say(V(0));
             say(": ");

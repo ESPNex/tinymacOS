@@ -1,5 +1,6 @@
 #pragma once
 #include "ui.h"
+#include "display_size.h"
 #include "sha256.h"
 #define KERNELDIR KCDIR
 static inline int bootpath(const char *p)
@@ -11,7 +12,7 @@ static inline int bootpath(const char *p)
     }
     return 0;
 }
-static inline void exactsize(char *s, u32 bytes, int cap)
+static inline void exactsize(char *s, u64 bytes, int cap)
 {
     char n[24];
     number(n, bytes);
@@ -23,18 +24,9 @@ static inline void exactsize(char *s, u32 bytes, int cap)
     }
     append(s, " byte", cap);
 }
-static inline void sizebadge(char *s, u32 bytes, int cap)
+static inline void sizebadge(char *s, u64 bytes, int cap)
 {
-    *s = 0;
-    if (bytes < 1024) {
-        exactsize(s, bytes, cap);
-        return;
-    }
-    u32 unit = bytes < 1048576 ? 1024 : 1048576;
-    addnum(s, bytes / unit, cap);
-    append(s, ",", cap);
-    addnum(s, (u64)(bytes % unit) * 10 / unit, cap);
-    append(s, unit == 1024 ? " KiB" : " MiB", cap);
+    display_size(s,cap,bytes);
 }
 static inline const char *syskind(const Dirent *d)
 {

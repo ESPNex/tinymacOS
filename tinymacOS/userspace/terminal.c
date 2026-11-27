@@ -335,7 +335,7 @@ static void clipboard_action(int action){
  if(action==ACT_COPY||action==ACT_CUT){
   if(action==ACT_CUT&&selection){note("L’output è in sola lettura: usa Copia.");return;}
   memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_TEXT;int at=0;
-  if(selection){int first=MIN(anchor_row,end_row),last=MAX(anchor_row,end_row);for(int row=first;row<=last;row++){int lo=0,hi=0;selection_bounds(row,&lo,&hi);int z=MAX(0,hi-lo);if(at+z+(row<last)>=CLIP_BYTES){note("Selezione troppo lunga per gli appunti (256 KiB).");return;}memcpy(clipboard.data+at,screen[row%NR]+lo,z);at+=z;if(row<last)clipboard.data[at++]='\n';}}
+  if(selection){int first=MIN(anchor_row,end_row),last=MAX(anchor_row,end_row);for(int row=first;row<=last;row++){int lo=0,hi=0;selection_bounds(row,&lo,&hi);int z=MAX(0,hi-lo);if(at+z+(row<last)>=CLIP_BYTES){note("Selezione troppo lunga per gli appunti (262.1 kB).");return;}memcpy(clipboard.data+at,screen[row%NR]+lo,z);at+=z;if(row<last)clipboard.data[at++]='\n';}}
   else strset(clipboard.data,input,sizeof clipboard.data);
   if(!sc(S_CLIPBOARD,1,&clipboard,0,0)&&action==ACT_CUT&&!job)input[cur=0]=0;
  }else if(action==ACT_PASTE){

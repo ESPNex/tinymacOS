@@ -46,6 +46,10 @@ PASS actual Memo paint: one caret in empty/nonempty editor or search, none behin
 PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing
 PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
 PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
 PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
 In file included from include/abi.h:2,
                  from userspace/lib.h:2,
@@ -61,8 +65,8 @@ userspace/filepanel.c:169:15: note: in expansion of macro 'MAX'
   169 |     p->cursor=MAX(0,MIN(p->cursor,strlen(s)));
       |               ^~~
 userspace/settings.c: In function 'row2':
-userspace/settings.c:83:37: warning: unused parameter 'w' [-Wunused-parameter]
-   83 | static void row2(int x, int ry, int w, const char *l, const char *v)
+userspace/settings.c:84:37: warning: unused parameter 'w' [-Wunused-parameter]
+   84 | static void row2(int x, int ry, int w, const char *l, const char *v)
       |                                 ~~~~^
 In file included from include/text_input.h:2,
                  from desktop/login.c:1:

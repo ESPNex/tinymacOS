@@ -157,10 +157,18 @@ int install_begin_i(int d)
     int table_ok=partition_scan(&medium,&inventory);
     if((!table_ok||!inventory.safe)&&!(inventory.pmbr_signature_repairable&&inventory.scheme==MAP_GPT&&medium_scale(&medium)==1))return err("Tabella cambiata: nessuna modifica.");
     coexist=inventory.scheme!=MAP_EMPTY;install_scale=medium_scale(&medium);if(install_scale!=1&&install_scale!=8)return err("Geometria logica non supportata.");
-    install_start=coexist?inventory.start:0;install_end=coexist?install_start+TC_SECTORS:medium.z;
+    u32 span=TC_SECTORS;
+#ifdef TMC_FS2_BACKEND
+    /* Claim only the scanner-selected genuine gap, not the whole disk or
+     * neighbouring partitions. Old installed v1 containers are not resized. */
+    if(coexist)span=container_span(inventory.sectors);
+#endif
+    if(coexist&&(span<TC_SECTORS||inventory.start>medium.z||span>medium.z-inventory.start))return err("Estensione non allocata non valida: nessuna modifica.");
+    install_start=coexist?inventory.start:0;install_end=coexist?install_start+span:medium.z;
     install_esp=coexist?install_start:LESP;install_data=coexist?install_start+TC_DATA:LDATA;
-    install_rec=coexist?install_start+TC_REC:target_rec(medium.z);install_source=coexist?install_start+TC_SOURCE:target_source(medium.z);
-    install_duet=coexist?install_start+TC_DUET:TMC_DUET_LBA;
+    install_rec=coexist?install_start+container_rec(span):target_rec(medium.z);
+    install_source=coexist?install_rec+NREC:target_source(medium.z);
+    install_duet=coexist?install_source+NESP+1:TMC_DUET_LBA;
     if(sata_io(d,0,1,oldmbr,0))return err("Lettura MBR non riuscita.");
     if(coexist&&inventory.scheme==MAP_GPT){
         if(sata_io(d,1,1,&oldprimary,0)||sata_io(d,medium.z-1,1,&oldbackup,0)||sata_io(d,oldprimary.entries,(oldprimary.num*128+511)/512,oldparts,0))return err("Lettura GPT non riuscita.");
@@ -217,7 +225,11 @@ static int unchanged(int d)
 static int coexist_plan(void)
 {
     if(!unchanged(st.target))return -1;
-    descriptor=(NativeContainer){.version=1,.sectors=TC_SECTORS,.data=TC_DATA,.rec=TC_REC,.source=TC_SOURCE,.duet=TC_DUET};
+    descriptor=(NativeContainer){.version=1,.sectors=install_end-install_start,.data=TC_DATA,
+        .rec=install_rec-install_start,.source=install_source-install_start,.duet=install_duet-install_start};
+#ifdef TMC_FS2_BACKEND
+    descriptor.version=2;
+#endif
     memcpy(descriptor.magic,TC_MAGIC,8);guid(descriptor.id,31);guid(descriptor.esp_id,32);
     descriptor.crc=crc32(&descriptor,sizeof descriptor);
     /* Reserved FAT sectors 9/10 are outside its allocation tables and files. */
@@ -241,7 +253,7 @@ static int coexist_plan(void)
         primary.crc=crc32(&primary,primary.size);backup.crc=crc32(&backup,backup.size);
     }else{
         u8*p=mbr+446+inventory.slot*16;memset(p,0,16);p[1]=p[5]=254;p[2]=p[3]=p[6]=p[7]=255;p[4]=0xef;
-        memcpy(p+8,&install_start,4);u32 n=TC_SECTORS;memcpy(p+12,&n,4);
+        memcpy(p+8,&install_start,4);u32 n=install_end-install_start;memcpy(p+12,&n,4);
     }
     return 0;
 }
@@ -300,7 +312,7 @@ int install_step_i()
     u32 z = sata_size(d);
 #ifdef TMC_FS2_BACKEND
     if(st.state==INSTALL_DATA){
-        u32 sectors=coexist?TC_DATA_N:target_rec(z)-install_data;
+        u32 sectors=install_rec-install_data;
         int result;
         if(enrollment.enabled){char recovery[65]={0};result=fs2_install_encrypted(d,install_data,sectors,snapshot,sizeof snapshot,enrollment.password,enrollment.random,recovery);erase(recovery,sizeof recovery);enrollment_clear();}
         else result=fs2_install_data(d,install_data,sectors,snapshot,sizeof snapshot,0);
@@ -341,7 +353,7 @@ int install_step_i()
         pos = 0;
         if (st.state == INSTALL_SCAN) {
             if (install_rec - 1 < install_data + BACKUP_OFF + NDATA)
-                return err("Disco troppo piccolo per il layout: servono almeno 96 MiB.");
+                return err("Disco troppo piccolo per il layout: servono almeno 100.7 MB.");
             if (fs_snapshot(snapshot, sizeof snapshot))
                 return err("Copia del volume utente non riuscita.");
 #ifdef TMC_FS2_BACKEND
@@ -362,7 +374,7 @@ int install_step_i()
             note(INSTALL_VERIFY, "Verifica dell’installazione");
         } else {
 #ifdef TMC_FS2_BACKEND
-            u32 sectors=coexist?TC_DATA_N:target_rec(z)-install_data;
+            u32 sectors=install_rec-install_data;
             if(fs2_install_data(d,install_data,sectors,snapshot,sizeof snapshot,1))return err("Rilettura TMCBFS2 non riuscita: disco non attivato.");
             st.done+=NDATA;
 #endif
@@ -407,6 +419,10 @@ void disk_info_i(DiskInfo *r)
         Medium raw={sata_io,sata_flush,d,m.z,0,sata_logical_bytes(d)};partition_scan(&raw,&r->disk[d].map);
         int t = layout_read(&m, &layout_info);
         r->disk[d].layout = t;
+        if(t)for(int j=0;j<(t==2?4:2);j++){
+            r->disk[d].region_start[j]=layout_info.parts[j].start;
+            r->disk[d].region_sectors[j]=layout_info.parts[j].end-layout_info.parts[j].start+1;
+        }
         r->disk[d].healthy = t && layout_info.pv && layout_info.bv;
 #ifdef TMC_FS2_BACKEND
         int v2=t==2?fs2_disk_present(d,layout_info.data,layout_info.parts[1].end-layout_info.data+1):0;

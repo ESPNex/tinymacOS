@@ -125,7 +125,7 @@ static void prompt(int m)
 static void paste(const char *s, int n)
 {
     if (n > TEXTEDIT_LIMIT - length) {
-        strset(status, "Limite documento: 256 KiB", 96);
+        strset(status, "Limite documento: 262.1 kB", 96);
         return;
     }
     memmove(doc + cursor + n, doc + cursor, length - cursor + 1);
@@ -147,7 +147,7 @@ static void act(int a)
         } else
             blank();
     } else if (a == ACT_COPY) {
-        if(length>=CLIP_BYTES){strset(status,"Testo troppo lungo per gli appunti condivisi (256 KiB).",96);return;}
+        if(length>=CLIP_BYTES){strset(status,"Testo troppo lungo per gli appunti condivisi (262.1 kB).",96);return;}
         memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_TEXT;memcpy(clipboard.data,doc,length+1);
         strset(status,sc(S_CLIPBOARD,1,&clipboard,0,0)<0?"Appunti non disponibili.":"Testo copiato negli appunti condivisi.",96);
     } else if (a == ACT_PASTE){

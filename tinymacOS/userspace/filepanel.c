@@ -55,7 +55,7 @@ static int accept(FilePanel *p)
     int exists=sc(S_STAT,path,&d,0,0)>=0;
     if(exists&&d.dir){navigate(p,path);return 0;}
     if(!p->save&&!exists){message(p,"Il file selezionato non esiste.");return 0;}
-    if(!p->save&&d.size>TEXTEDIT_LIMIT){message(p,"Documento troppo grande per TextEdit (256 KiB).");return 0;}
+    if(!p->save&&d.size>TEXTEDIT_LIMIT){message(p,"Documento troppo grande per TextEdit (262.1 kB).");return 0;}
     if(p->save){
         char dir[PATHLEN];strset(dir,path,PATHLEN);parentpath(dir);
         if(sc(S_STAT,dir,&parent,0,0)<0||!parent.dir||parent.ro||(exists&&d.ro)){message(p,"La destinazione non e scrivibile.");return 0;}
@@ -84,7 +84,7 @@ void filepanel_draw(FilePanel *p)
     for(int i=0;i<7;i++){
         int yy=y+115+i*27;if(yy+25>y+h-112)break;
         if(eq(p->cwd,browser_paths[i]))Box(x+12,yy-2,p->side-16,25,6,SEL);
-        Icon(x+19,yy+2,17,-browser_icons[i]);Text(x+43,yy+3,browser_labels[i],F_SMALL,TX);
+        Icon(x+19,yy+2,17,-browser_icons[i]);Text(x+43,yy+3,browser_label(i),F_SMALL,TX);
     }
     Text(l,y+88,"Nome",F_SMALL,SUB);Text(x+w-89,y+88,"Tipo",F_SMALL,SUB);
     Line(l,y+110,x+w-12,y+110,EDGE);

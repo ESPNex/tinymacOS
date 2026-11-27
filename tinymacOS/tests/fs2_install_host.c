@@ -24,17 +24,24 @@ static void run_fs2(int scheme){
  fixture(scheme);u8 before[3][32],after[3][32];digest(before);assert(!install_begin_i(0));guard_start=install_start;guard_end=install_end;write_guard=1;
  while(isbusy())assert(!install_step_i());assert(st.state==INSTALL_DONE&&st.done==st.total);digest(after);assert(!memcmp(before,after,sizeof before));
  Medium m={sata_io,sata_flush,0,sectors};Layout map;assert(layout_read(&m,&map)==2);assert(map.data==guard_start+TC_DATA);assert(!memcmp(disk+(u64)map.data*512,"TMCBFS2",8));
- assert(fs2_disk_present(0,map.data,TC_DATA_N)==1);
- VaultRequest statusq={.disk=0};VaultInfo statusinfo;int statusresult;assert(fs2_volume_control(0,0,&statusq,&statusinfo,&statusresult)&&!statusresult&&statusinfo.format==2&&!statusinfo.enabled);assert(!fs2_disk_verify(0,map.data,TC_DATA_N));assert(!fs2_seed_snapshot(snapshot,sizeof snapshot));assert(!fs2_install_data(0,map.data,TC_DATA_N,snapshot,sizeof snapshot,1));
+ u32 data_sectors=map.rec-map.data;
+ assert(data_sectors==container_span(inventory.sectors)-(TC_SECTORS-TC_DATA_N));
+ NativeContainer *descriptor=(void*)(disk+(u64)(guard_start+TC_HEADER)*512);
+ assert(descriptor->version==2&&container_bounds(descriptor,guard_end-guard_start));
+ static DiskMap allocated;assert(partition_scan(&m,&allocated)&&allocated.safe);
+ int found=0;for(int i=0;i<allocated.count;i++)if(allocated.part[i].start==guard_start){assert(allocated.part[i].sectors==guard_end-guard_start);found=1;}
+ assert(found&&guard_end-guard_start>TC_SECTORS);
+ assert(fs2_disk_present(0,map.data,data_sectors)==1);
+ VaultRequest statusq={.disk=0};VaultInfo statusinfo;int statusresult;assert(fs2_volume_control(0,0,&statusq,&statusinfo,&statusresult)&&!statusresult&&statusinfo.format==2&&!statusinfo.enabled);assert(!fs2_disk_verify(0,map.data,data_sectors));assert(!fs2_seed_snapshot(snapshot,sizeof snapshot));assert(!fs2_install_data(0,map.data,data_sectors,snapshot,sizeof snapshot,1));
  /* Production OFFLINE backup adapter, not just the core API. */
- assert(fs2_disk_backup(0,map.data,TC_DATA_N,0)==0);assert(!fs2_disk_backup(0,map.data,TC_DATA_N,1));assert(fs2_disk_backup(0,map.data,TC_DATA_N,0)==1);
- target.disk=0;target.base=map.data;target.sectors=TC_DATA_N;
- T2Io io={0,TC_DATA_N/32,rd,wr,fl,al,fr};Tmc2 fs;T2Entry dir,file;assert(!tmc2_mount(&fs,io));u64 shared=tmc2_used_blocks(&fs);assert(!tmc2_lookup(&fs,1,"Documents",&dir)&&!tmc2_lookup(&fs,dir.key,"proof.txt",&file));
+ assert(fs2_disk_backup(0,map.data,data_sectors,0)==0);assert(!fs2_disk_backup(0,map.data,data_sectors,1));assert(fs2_disk_backup(0,map.data,data_sectors,0)==1);
+ target.disk=0;target.base=map.data;target.sectors=data_sectors;
+ T2Io io={0,data_sectors/32,rd,wr,fl,al,fr};Tmc2 fs;T2Entry dir,file;assert(!tmc2_mount(&fs,io));u64 shared=tmc2_used_blocks(&fs);assert(!tmc2_lookup(&fs,1,"Documents",&dir)&&!tmc2_lookup(&fs,dir.key,"proof.txt",&file));
  assert(tmc2_write(&fs,file.key,0,"CHANGED",7)==7);tmc2_close(&fs);
- assert(!fs2_disk_backup(0,map.data,TC_DATA_N,2));assert(!fs2_install_data(0,map.data,TC_DATA_N,snapshot,sizeof snapshot,1));
- assert(!fs2_disk_backup(0,map.data,TC_DATA_N,1));assert(!tmc2_mount(&fs,io));assert(tmc2_used_blocks(&fs)<shared+20);tmc2_close(&fs);
- mounted=0;assert(fs2_disk_backup(0,map.data,TC_DATA_N,1)<0&&fs2_disk_backup(0,map.data,TC_DATA_N,2)<0&&fs2_disk_reset(0,map.data,TC_DATA_N)<0);mounted=-1;
- assert(!fs2_disk_reset(0,map.data,TC_DATA_N));assert(!fs2_disk_verify(0,map.data,TC_DATA_N));assert(!fs2_disk_backup(0,map.data,TC_DATA_N,0));
+ assert(!fs2_disk_backup(0,map.data,data_sectors,2));assert(!fs2_install_data(0,map.data,data_sectors,snapshot,sizeof snapshot,1));
+ assert(!fs2_disk_backup(0,map.data,data_sectors,1));assert(!tmc2_mount(&fs,io));assert(tmc2_used_blocks(&fs)<shared+20);tmc2_close(&fs);
+ mounted=0;assert(fs2_disk_backup(0,map.data,data_sectors,1)<0&&fs2_disk_backup(0,map.data,data_sectors,2)<0&&fs2_disk_reset(0,map.data,data_sectors)<0);mounted=-1;
+ assert(!fs2_disk_reset(0,map.data,data_sectors));assert(!fs2_disk_verify(0,map.data,data_sectors));assert(!fs2_disk_backup(0,map.data,data_sectors,0));
  assert(!tmc2_mount(&fs,io));u8 account[512];assert(!tmc2_account(&fs,0,account,0));for(unsigned j=0;j<512;j++)assert(!account[j]);
  T2Entry home,prefs;assert(!tmc2_lookup(&fs,1,"Users",&home)&&!tmc2_lookup(&fs,home.key,"User",&home));assert(!tmc2_lookup(&fs,home.key,"Documents",&dir));u64 cookie=0;assert(!tmc2_readdir(&fs,dir.key,&cookie,&file));
  assert(!tmc2_lookup(&fs,home.key,"Library",&prefs)&&!tmc2_lookup(&fs,prefs.key,"Preferences",&prefs)&&!tmc2_lookup(&fs,prefs.key,"com.tinymacos.appearance.plist",&file));assert(file.kind==T2_FILE&&!file.size);assert(tmc2_write(&fs,file.key,0,"defaults",8)==8);tmc2_close(&fs);

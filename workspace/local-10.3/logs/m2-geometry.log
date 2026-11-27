@@ -1,0 +1,4 @@
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date

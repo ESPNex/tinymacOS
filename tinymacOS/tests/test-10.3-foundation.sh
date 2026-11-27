@@ -2,7 +2,7 @@
 # Host gate only: this script does NOT claim a complete 10.3 release or guest QA.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-for suite in textedit-open ui-stream display-size cpu-sample windows-gaps caret filepanel;do
+for suite in textedit-open ui-stream display-size cpu-sample windows-gaps caret filepanel m2-geometry;do
  bash "tests/test-$suite.sh"
 done
 python3 tools/check-usb-retirement.py

@@ -32,7 +32,7 @@ try:
   with disk.open('rb') as f:r['firmware_repaired_before_OS']=f.read(512)!=bytes(old)
   assert not r['firmware_repaired_before_OS'],'Firmware repaired PMBR before OS; this cannot prove native repair'
   g.cmd('echo SIGNATURE_REPAIR_IMPORT > Documents/proof.txt')
-  g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.visible('10240 MiB non allocati');g.visible('GPT verificata; copertura MBR protettivo' if coverage else 'GPT verificata; firma MBR assente');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.visible('Confermo destinazione e ripristino MBR protettivo');g.shot('pmbr-explicit-repair-confirmation')
+  g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.visible('10.7 GB non allocati');g.visible('GPT verificata; copertura MBR protettivo' if coverage else 'GPT verificata; firma MBR assente');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.visible('Confermo destinazione e ripristino MBR protettivo');g.shot('pmbr-explicit-repair-confirmation')
   assert fingerprints(disk,ranges)==before
   g.key('esc');g.visible('Seleziona la destinazione');assert fingerprints(disk,ranges)==before
   r['checks'].append(('Stale/saturated EE coverage with valid 55AA' if coverage else 'Missing 55AA')+': valid GPT recognized; explicit consent, preflight/cancel zero writes')
@@ -41,7 +41,14 @@ try:
   m=f.read(512);assert m[510:512]==b'\x55\xaa';expected=bytearray(old)
   if coverage:struct.pack_into('<I',expected,458,total-1)
   assert m[440:510]==bytes(expected[440:510]);f.seek(1024);entries=f.read(16384);assert entries[:512]==original_entries
-  start=struct.unpack_from('<Q',entries,4*128+32)[0];assert start>=gap and start<rec
+  start,end=struct.unpack_from('<QQ',entries,4*128+32);assert start==gap and end==rec-1
+  f.seek((start+9)*512);descriptor=f.read(512);assert descriptor[:8]==b'TMCVOL23'
+  version,span,data,internal_rec,source,duet=struct.unpack_from('<6I',descriptor,8)
+  assert version==2 and span==rec-gap and data==49152 and internal_rec==span-73728
+  f.seek((start+data)*512);sb=f.read(128);assert sb[:8]==b'TMCBFS2\0'
+  assert struct.unpack_from('<Q',sb,16)[0]==(internal_rec-data)//32
+  r['full_selected_gap_sectors']=span;r['actual_FS2_data_sectors']=internal_rec-data
+  r['checks'].append('Complete selected 10GiB gap allocated by v2 container, FS2 spans the real middle extent; no 96MiB cap or hidden leftover gap')
   f.seek((start+10)*512);assert f.read(512)==bytes(old)
  assert occupied_boundaries()==occupied
  r['checks'].append(('Only EE coverage normalized' if coverage else 'Only 55AA restored')+' at activation; disk ID, unrelated PMBR fields, four existing GPT entries and occupied boundaries preserved; exact original MBR saved')

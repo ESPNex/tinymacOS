@@ -59,7 +59,7 @@ int layout_read(Medium *m, Layout *x)
             x->pv=x->bv=1;x->type=2;x->container=1;
             x->esp=p->start;x->data=p->start+h.data;x->rec=p->start+h.rec;x->source=p->start+h.source;
             memcpy(x->g.guid,h.id,16);memcpy(x->parts[0].id,h.esp_id,16);
-            u32 a[]={x->esp,x->data,x->rec,x->source},n[]={NESP,TC_DATA_N,NREC,NESP+1};
+            u32 a[]={x->esp,x->data,x->rec,x->source},n[]={NESP,h.rec-h.data,NREC,NESP+1};
             for(int j=0;j<4;j++){x->parts[j].start=a[j];x->parts[j].end=a[j]+n[j]-1;}
             return 2;
         }

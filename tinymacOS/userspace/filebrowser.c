@@ -3,6 +3,7 @@
 const char *const browser_labels[BROWSER_PLACES] = {"Inizio", "Scrivania", "Documenti", "Download", "Immagini", "Applicazioni", "Disco di avvio", "KernelCollections", "Libreria"};
 const char *const browser_paths[BROWSER_PLACES] = {HOME, HOME "/Desktop", DOCS, HOME "/Downloads", HOME "/Pictures", "/Applications", "/", KCDIR, "/Library"};
 const int browser_icons[BROWSER_PLACES] = {8, 9, 6, 10, 11, 13, 33, 32, 37};
+const char *browser_label(int i){return i==0&&si.user[0]?si.user:i>=0&&i<BROWSER_PLACES?browser_labels[i]:"";}
 int browser_list(const char *path, Dirent *entries, int cap)
 {
     return sc(S_LIST, path, entries, cap, 0);

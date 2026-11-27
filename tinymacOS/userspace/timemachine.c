@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "display_size.h"
 // Time Machine: backup front-end over the snapshot subsystem (S_SNAP).
 // Snapshots share immutable blocks; writes preserve prior versions by CoW.
 // A local checkpoint is not protection against failure of the physical disk.
@@ -99,10 +100,7 @@ static void paint(void)
         fill = 164;
     Box(30, 134, fill, 9, 5, ACC);
     char z[56] = "";
-    addnum(z, fi.used / 1024, 56);
-    append(z, " KB su ", 56);
-    addnum(z, fi.total / 1024, 56);
-    append(z, " KB", 56);
+    display_usage(z,sizeof z,fi.used,fi.total);
     Text(30, 152, z, F_SMALL, SUB);
     Text(30, 178, "Backup", F_SMALL, SUB);
     z[0] = 0;

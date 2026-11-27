@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "display_size.h"
 #include "vaultview.h"
 static int vault_open;
 // Impostazioni di Sistema, layout "System Settings" di macOS: colonna
@@ -271,8 +272,7 @@ static void paint(void)
         addnum(ns, fi.snaps, 24);
         row2(x, r0 + 40, w, "SNAPSHOT", ns);
         char dim[64] = "";
-        addnum(dim, fi.used / 1024, 64);
-        append(dim, " KB usati", 64);
+        display_size(dim,sizeof dim,fi.used);append(dim," usati",sizeof dim);
         row2(x, r0 + 80, w, "DIMENSIONE", dim);
         nbk = 0;
         hbk[nbk] = (R) {x, 236, 130, 26};
@@ -323,10 +323,7 @@ static void paint(void)
         if (fill > (u64)w)fill = w;
         if (fill)Box(x, 298, (int)fill, 12, 6, ACC);
         char dim[80] = "";
-        addnum(dim, fi.used / 1024, 80);
-        append(dim, " KB usati su ", 80);
-        addnum(dim, fi.total / 1024, 80);
-        append(dim, " KB", 80);
+        display_usage(dim,sizeof dim,fi.used,fi.total);
         Text(x, 320, dim, F_SMALL, SUB);
         int r1 = rowcard(x, 360, w, 2);
         row2(x, r1, w, "UTENTE", si.user[0] ? si.user : "—");

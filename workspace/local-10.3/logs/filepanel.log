@@ -1,0 +1,2 @@
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance

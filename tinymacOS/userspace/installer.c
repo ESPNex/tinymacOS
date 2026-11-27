@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "display_size.h"
 // The assistant is an ordinary Ring-3 window. Only the kernel owns disk addresses.
 static InstallInfo info;
 static int page, choice = -1, confirm, dirty = 1;
@@ -146,7 +147,7 @@ static void paint(void)
         Center(aw/2, 61, reinstall?"Scegli il sistema nativo da reinstallare senza inizializzare i dati.":"tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
         if (!info.count) {
             Text(x, 122, "Nessun disco rilevato.", F_BOLD, TX);
-            Text(x, 154, reinstall?"Collega il disco con l’installazione da ripristinare.":"Collega un disco con almeno 96 MiB non allocati.", F_SMALL, SUB);
+            Text(x, 154, reinstall?"Collega il disco con l’installazione da ripristinare.":"Collega un disco con almeno 100.7 MB non allocati.", F_SMALL, SUB);
         }
         int slots = MAX(1, (foot - 104) / 64), first = MAX(0, choice - slots + 1);
         for (int i = first; i < info.count && i < first + slots; i++) {
@@ -157,8 +158,8 @@ static void paint(void)
             diskname(s, i);
             Text(x + 53, y + 3, s, F_SMALL, TX);
             s[0] = 0;
-            if(!reinstall&&info.disk[i].available&&info.disk[i].available<2048)append(s,"<1",80);else addnum(s, (reinstall?info.disk[i].sectors:info.disk[i].available) / 2048, 80);
-            append(s, reinstall?" MiB · ":" MiB non allocati · ",80);append(s,partition_scheme(info.disk[i].scheme),80);
+            display_size(s,sizeof s,(u64)(reinstall?info.disk[i].sectors:info.disk[i].available)*512);
+            append(s,reinstall?" · ":" non allocati · ",sizeof s);append(s,partition_scheme(info.disk[i].scheme),80);
             append(s,info.disk[i].usable?"":" · Non disponibile",80);
             Text(x + 53, y + 23, s, F_MICRO, SUB);
             Text(x + 53, y + 41, !reinstall&&info.disk[i].usable&&!info.disk[i].repair_mbr_signature?info.disk[i].formats:info.disk[i].reason,F_MICRO,SUB);
@@ -170,8 +171,8 @@ static void paint(void)
         Icon(x, 77, 46, 33);
         Text(x + 58, 82, s, F_BOLD, TX);
         s[0] = 0;
-        addnum(s, (reinstall?info.disk[choice].sectors:info.disk[choice].available) / 2048, 80);
-        append(s, reinstall?" MiB · ":" MiB non allocati · ",80);append(s,partition_scheme(info.disk[choice].scheme),80);
+        display_size(s,sizeof s,(u64)(reinstall?info.disk[choice].sectors:info.disk[choice].available)*512);
+        append(s,reinstall?" · ":" non allocati · ",sizeof s);append(s,partition_scheme(info.disk[choice].scheme),80);
         Text(x + 58, 106, s, F_SMALL, SUB);
         Box(x, 146, w, 1, 0, EDGE);
         Text(x, 164, reinstall?(encrypted?"Tutti i dati utente e le vecchie chiavi verranno eliminati.":"Verrà riscritto soltanto il volume di sistema selezionato."):"Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);

@@ -224,6 +224,7 @@ typedef struct {
         u32 sectors;
         int layout, healthy, backup;
         char model[44];
+        u32 region_start[4],region_sectors[4]; /* verified native layout, not UI estimates */
         DiskMap map;
     } disk[8];
 } DiskInfo;

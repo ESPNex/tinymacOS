@@ -33,6 +33,10 @@ static int key(FilePanel*p,int k){Event e={.type=EV_KEY,.a=k};return filepanel_e
 int main(void)
 {
     static FilePanel p;aw=758;ah=480;
+    assert(eq(browser_label(0),"Inizio"));strset(si.user,"Giulia",sizeof si.user);
+    assert(eq(browser_label(0),"Giulia")&&eq(browser_label(1),"Scrivania"));
+    assert(eq(browser_paths[0],HOME)); /* label only: never relocate encrypted persistent paths */
+
     filepanel_open(&p,1,DOCS "/new.txt");assert(p.active&&eq(p.cwd,DOCS));assert(key(&p,'\n')==1&&eq(p.result,DOCS "/new.txt")&&!writes);
     filepanel_open(&p,1,DOCS "/existing.txt");assert(key(&p,'\n')==0&&p.overwrite&&p.active);assert(key(&p,27)==0&&!p.overwrite&&p.active);assert(key(&p,'\n')==0&&p.overwrite);assert(key(&p,'\n')==1&&!p.active&&!writes);
     filepanel_open(&p,1,DOCS "/locked.txt");assert(key(&p,'\n')==0&&!p.overwrite&&p.message[0]);

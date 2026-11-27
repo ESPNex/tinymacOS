@@ -1,5 +1,6 @@
 #include "volume.h"
 #include "display_size.h"
+#include "disk_size_input.h"
 static DiskInfo d;
 static SnapInfo sn[8];
 static FsInfo fi;
@@ -9,12 +10,6 @@ static char msg[160], snapname[32];
 static DiskEdit edit;
 static char editsize[16],editname[48];
 static int editfield;
-static int decimal(const char*s,u32*n)
-{
-    u32 v=0;if(!*s)return -1;
-    for(;*s;s++){if(*s<'0'||*s>'9'||v>TMC_DISK_MAX_MIB)return -1;v=v*10+*s-'0';}
-    if(!v||v>TMC_DISK_MAX_MIB)return -1;*n=v;return 0;
-}
 static void edit_begin(int operation)
 {
     if(sel<0||sel>=d.count||view<200)return;
@@ -31,15 +26,15 @@ static void edit_begin(int operation)
         DiskPartition*p=m->part+j;edit.number=p->number;edit.start=p->start;edit.sectors=p->sectors;edit.size=p->sectors;
         editname[0]=0;
     }
-    editsize[0]=0;addnum(editsize,edit.size/2048,sizeof editsize);dialog=3;
+    disk_size_mb_exact(editsize,sizeof editsize,edit.size);dialog=3;
 }
 static void edit_preview(void)
 {
     if(edit.op==DISK_EDIT_DELETE){
         if(!eq(editname,"ELIMINA")){strset(msg,"Digita ELIMINA per confermare la selezione.",sizeof msg);return;}
     }else{
-        u32 mb;if(decimal(editsize,&mb)){strset(msg,"Inserisci una dimensione intera in MiB.",sizeof msg);return;}
-        edit.size=mb*2048;strset(edit.name,editname,sizeof edit.name);
+        u32 size;if(disk_size_mb(editsize,&size)){strset(msg,"Dimensione MB non valida (fino a 6 decimali).",sizeof msg);return;}
+        edit.size=size;strset(edit.name,editname,sizeof edit.name);
     }
     if(!sc(S_DISK,10,&edit,0,0)){dialog=4;msg[0]=0;}
     else strset(msg,edit.message,sizeof msg);
@@ -65,15 +60,16 @@ static void edit_paint(void)
     else{append(target," · LBA ",sizeof target);addnum(target,edit.start,sizeof target);}
     Text(xx+20,yy+66,target,F_SMALL,SUB);
     if(dialog==3){
-        Text(xx+20,yy+101,edit.op==DISK_EDIT_DELETE?"Conferma":"Dimensione (MiB)",F_SMALL,TX);
+        Text(xx+20,yy+101,edit.op==DISK_EDIT_DELETE?"Conferma":"Dimensione (MB)",F_SMALL,TX);
         Box(xx+157,yy+94,tw-178,30,6,editfield==0?ACC:EDGE);Box(xx+158,yy+95,tw-180,28,5,CARD);
         const char *value=edit.op==DISK_EDIT_DELETE?editname:editsize;InputText(xx+168,yy+101,tw-200,value,strlen(value),editfield==0,0,TX);
         if(edit.op==DISK_EDIT_CREATE){
             Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
         }
-        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"Nativo: 8–32 MiB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.");
+        lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"BTRFS nativo: subset proprietario, non Btrfs Linux.":"Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.");
     }else{
         lines(xx+20,yy+105,tw-40,edit.message);
+        if(edit.op!=DISK_EDIT_DELETE){char size[80]="Dimensione effettiva: ",exact[32];disk_size_mb_exact(exact,sizeof exact,edit.size);append(size,exact,sizeof size);append(size," MB",sizeof size);Text(xx+20,yy+166,size,F_SMALL,TX);}
         Text(xx+20,yy+188,"Esegui prima un backup. Non scollegare il disco.",F_SMALL,TX);
     }
     button(xx+tw-218,yy+237,88,"Annulla",0);
@@ -200,7 +196,7 @@ static void yes(void)
     dialog = 2;
     strset(msg, "Operazione in corso…", sizeof msg);
 }
-static const char *names[] = {"Macintosh HD", "Macintosh HD - Dati", "Recovery", "Sistema locale"};
+static const char *names[] = {"Macintosh HD", "Macintosh HD - Dati", "Recovery", "Origine sistema"};
 static u32 colors[] = {0x65a9f3, 0x85c4bb, 0xd5aff0, 0xa6b5c6};
 static int rail(void)
 {
@@ -250,9 +246,10 @@ static void paint(void)
         Text(v<0?32:38,y+2,label,F_SMALL,TX);
     }
     button(x, 13, 57, "SOS", 0);
-    button(x + 65, 13, 89, "Copia dati", 0);
-    button(x + 162, 13, 92, "Recupero…", 0);
-    button(x + 262, 13, 104, "Nuovo snapshot", 0);
+    /* A local FS2 checkpoint is already a snapshot in the catalogue. Do not
+     * expose a duplicate backup button; exFAT export gets its own real flow in M5. */
+    button(x + 65, 13, 92, "Recupero…", 0);
+    button(x + 165, 13, 104, "Nuovo snapshot", 0);
     Box(r + 1, 52, aw - r - 1, 1, 0, EDGE);
     if (!d.count) {
         Icon(x, 88, 50, 39);
@@ -270,10 +267,10 @@ static void paint(void)
         addnum(s, sn[k].id, 64);
         pair(x, 155, "ID", s);
         s[0] = 0;
-        d2(s, 64, sn[k].date);
+        if(sn[k].date)d2(s,64,sn[k].date);else strset(s,"Non disponibile",sizeof s);
         pair(x, 188, "Data", s);
         s[0] = 0;
-        sizebadge(s, 1680 * 512, 64);
+        strset(s,"Condivisa (CoW)",sizeof s);
         pair(x, 221, "Dimensione", s);
         pair(x, 254, "Stato", "Immutabile · crc32c");
         button(x, 282, 110, "Ripristina", 1);
@@ -317,16 +314,16 @@ static void paint(void)
     Icon(x, 75, 57, view == -1 ? 33 : 39);
     Text(x + 69, 77, view < 0 ? "Disco interno" : names[view], F_CAPTION, TX);
     Text(x + 70, 109, view < 0 ? d.disk[sel].model : "Volume del disco interno", F_SMALL, SUB);
-    int mb = d.disk[sel].sectors / 2048, z[] = {20, MAX(0, mb - 45), 4, 20};
-    if (d.disk[sel].layout != 2)z[1] = MAX(0, mb - 21);
+    const u32 *z=d.disk[sel].region_sectors;
+    u64 sum=0;for(int j=0;j<(d.disk[sel].layout==2?4:2);j++)sum+=z[j];
     char s[64] = "";
     if (view == 1 && installed()) {
         display_size(s,sizeof s,fi.used);
     } else
-        display_size(s,sizeof s,view>=0?(u64)z[view]*1048576:(u64)d.disk[sel].sectors*512);
+        display_size(s,sizeof s,view>=0?(u64)z[view]*512:(u64)d.disk[sel].sectors*512);
     pair(x, 155, view == 1 && installed() ? "Utilizzo" : "Capacità", s);
     pair(x, 188, "Formato", view < 0 ? partition_scheme(d.disk[sel].map.scheme) : view == 1 ?
-         "BTRFS subset (struttura APFS)" : view == 3 ? "Immagine di ripristino" : "Volume EFI (FAT16)");
+         "Volume dati nativo" : view == 3 ? "Immagine di ripristino" : "Volume EFI (FAT16)");
     if (view == 1 && installed()) {
         char k[24] = "";
         addnum(k, fi.snaps, 24);
@@ -336,21 +333,27 @@ static void paint(void)
              ei.state ? (ei.locked ? "Bloccata" : "Attiva") : "Disattiva");
     }
     int sw = w - 2;
-    if (d.disk[sel].layout) {
-        int n = d.disk[sel].layout == 2 ? 4 : 2, off = 0;
-        for (int j = 0; j < n; j++) {
-            int len = j == n - 1 ? sw - off : MAX(4, sw * z[j] / MAX(1, mb));
-            Box(x + off, 275, len, 14, 2, colors[j]);
-            off += len;
+    if(view<0){
+        DiskMap *map=&d.disk[sel].map;u64 total=MAX(1u,d.disk[sel].sectors);
+        Box(x,275,sw,14,6,SOFT);
+        for(int j=0;j<map->count;j++){
+            int at=(u64)sw*map->part[j].start/total;
+            int len=MAX(1,(int)((u64)sw*map->part[j].sectors/total));
+            if(at<sw)Box(x+at,275,MIN(len,sw-at),14,0,colors[j%4]);
         }
-        for (int j = 0; j < n; j++) {
-            int xx = x + (j % 2) * (w / 2), yy = 300 + j / 2 * 24;
-            Box(xx, yy + 5, 8, 8, 4, colors[j]);
-            Text(xx + 14, yy, names[j], F_SMALL, SUB);
+        Text(x,304,"Partizioni del disco · spazio non allocato in grigio",F_SMALL,SUB);
+    }else if(d.disk[sel].layout&&sum){
+        int n=d.disk[sel].layout==2?4:2,off=0;
+        for(int j=0;j<n;j++){
+            int len=j==n-1?sw-off:(int)((u64)sw*z[j]/sum);
+            if(len)Box(x+off,275,len,14,2,colors[j]);off+=len;
         }
-    } else {
-        Box(x, 275, sw, 14, 6, SOFT);
-        Text(x, 305, "Seleziona una partizione o lo spazio non allocato nella barra laterale.", F_SMALL, SUB);
+        for(int j=0;j<n;j++){
+            int xx=x+(j%2)*(w/2),yy=300+j/2*24;
+            Box(xx,yy+5,8,8,4,colors[j]);Text(xx+14,yy,names[j],F_SMALL,SUB);
+        }
+    }else{
+        Box(x,275,sw,14,6,SOFT);Text(x,305,"Dimensioni del volume non disponibili.",F_SMALL,SUB);
     }
     Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
     Text(x, ah - 31, msg[0] ? msg : d.disk[sel].backup ? "Copia dei dati disponibile in Recupero." :
@@ -405,7 +408,6 @@ void app_main(void)
             }
             if (e.type == EV_KEY) {
                 if (e.a == 's')start(1);
-                if (e.a == 'b')start(2);
                 if (e.a == 'r')start(3);
                 if (e.a == 'n')start(4);
                 if (e.a == K_UP || e.a == K_DOWN) {
@@ -420,9 +422,8 @@ void app_main(void)
                     if(e.b>=51&&side_row(row,&dd,&vv,label)){sel=dd;view=vv;msg[0]=0;}
                 } else if (e.b >= 10 && e.b < 43) {
                     if (e.a >= x && e.a < x + 58)start(1);
-                    else if (e.a >= x + 65 && e.a < x + 155)start(2);
-                    else if (e.a >= x + 162 && e.a < x + 255)start(3);
-                    else if (e.a >= x + 262 && e.a < x + 366)start(4);
+                    else if (e.a >= x + 65 && e.a < x + 157)start(3);
+                    else if (e.a >= x + 165 && e.a < x + 269)start(4);
                 } else if(view>=200&&e.b>=284&&e.b<325){
                     if(view>=400&&e.a>=x&&e.a<x+150)edit_begin(DISK_EDIT_CREATE);
                     else if(view<400){if(e.a>=x&&e.a<x+110)edit_begin(DISK_EDIT_DELETE);else if(e.a>=x+120&&e.a<x+280)edit_begin(DISK_EDIT_RESIZE);}

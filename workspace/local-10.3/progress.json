@@ -15,7 +15,7 @@
   "macroblocks": {
     "M0": "plan and baseline hashes recorded; initial audit done",
     "M1": "Implementation and targeted host/integration guest checks PASS; hardware and exhaustive app-field matrix remain final release gates",
-    "M2": "shared SI formatter and first UI migrations PASS; full migration, home name, duplicate snapshot and unallocated-space diagnosis pending",
+    "M2": "Implementation and targeted normal/sanitized host + full ISO + real GUI installation/cold-boot guest PASS. Full selected gap FS2 v2, v1 reader compatibility, decimal sizes/input, actual extents, account home labels and duplicate snapshot action fixed. Physical and unsupported-capacity release gates remain.",
     "M3": "multicore CPU interval source fix and actual sample() host tests PASS; RAM accounting audit and runtime verification pending",
     "M4": "pending",
     "M5": "pending; exFAT detection is not a mount/export driver",
@@ -34,12 +34,20 @@
     "source_overlay_sync": "PASS",
     "full_build": "PASS M1 development ISO, no release",
     "guest": "PASS M1 real USB/screenshot checks: empty setup field, Terminal, TextEdit UTF-8 tail and Home/End/newline, Note, Memo",
-    "physical_hardware": "NOT RUN"
+    "physical_hardware": "NOT RUN",
+    "M2": {
+      "foundation": "PASS including M2 geometry/actual Utility Disco paint",
+      "legacy_partition_installer": "PASS normal + ASan/UBSan",
+      "FS2_installer": "PASS normal + ASan/UBSan, GPT/MBR, encryption/reset/PMBR protection",
+      "full_build": "PASS development ISO; old integration version strings retained, not release",
+      "guest": "PASS real GUI install in 10GiB genuine gap, v2 descriptor/full FS2 data extent, occupied boundaries + GPT entries unchanged, PMBR consent/cancel, ISO-detached cold NVMe boot and imported account/file",
+      "physical_hardware": "NOT RUN",
+      "capacity_limit": "Existing 1TiB ABI/backend ceiling retained; >2TB not claimed supported"
+    }
   },
   "next_steps": [
-    "M2: correct fixed 96MiB coexistence allocation, SI units, real extents and home labels",
-    "M3 audit RAM and runtime load",
-    "Continue M4-M7"
+    "M3: audit installed/usable/allocator RAM distinctions and runtime CPU accounting",
+    "Continue M4-M7 in order; hardware and full release matrix pending"
   ],
   "references": [
     "tinymacOS/docs/PIANO-10.3.md",
@@ -49,7 +57,8 @@
   "git": {
     "target_branch": "main",
     "remote": "https://github.com/ESPNex/tinymacOS",
-    "checkpoint_pushed": "25314a229ec652ea2ffdc6ecdcfa77fec425aa7d",
-    "remote_hash_verified": true
+    "checkpoint_pushed": "459ee0c",
+    "remote_hash_verified": true,
+    "note": "Previous verified remote checkpoint; M2 source/evidence commit follows this record (avoid self-referential commit hash)."
   }
 }

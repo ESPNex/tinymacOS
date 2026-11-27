@@ -105,7 +105,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "b46dd8d723f8e35515453126763b77a8f71267a574f84b80b82fd614769a3e66"
+    "sha256": "b809451319317d1924793be61d42b11c2f264a83d8740f975cfd1fd1e3d03bce"
   },
   {
     "path": "include/vmabi.h",

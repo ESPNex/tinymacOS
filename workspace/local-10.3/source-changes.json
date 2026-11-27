@@ -1,21 +1,29 @@
 {
-  "stage": "10.3 foundation, not release source freeze",
+  "stage": "10.3 M2 integration checkpoint, not release source freeze",
   "sha256": {
-    "include/display_size.h": "23cdbdbeedd1456982cb9fbbb0f8bce8cbcfd13ba6addafab12f9ff02311eb24",
+    "include/display_size.h": "8256dbf6f6115a7a9fe864bd8a16f1d5447af4a9fab4bff365e241d7df6eb829",
     "include/cpu_sample.h": "73673c19f723e4f7f2c1549921f93adf0ecff660f1e9169998c221f8206bda83",
-    "userspace/ui.h": "d2934af5ca04cd59bdb323187127651530551c6261fea80bb200d785bb96a8b8",
-    "userspace/ui.c": "add9503503057e3c943ea9c7b908d4b158258a71a21e3037236c142a16a19e96",
-    "userspace/textedit.c": "ae770672e8ff4f8c27819efb10fb01693a1e956b6a6f32d8fbed859de1a302cd",
+    "userspace/ui.h": "a716a4f7e5975de1b2b952492e89373dd49f5fac3412f465e974a3a4c074e771",
+    "userspace/ui.c": "a47f306b407eafc28e195193a79b7129a29a5515201b648c4f8b7bea7d4e6228",
+    "userspace/textedit.c": "bdc17427f97c05398527d813cfc27a1ec6f77ef3f07eca745188cea323941074",
     "userspace/monitor.c": "3a06a97c383901050c6cbad3d5eedccef4e04b040175cd332113592d84fe02eb",
-    "userspace/diskutility.c": "0dac8bf752d888d7b669351f3e0265405c18cd4ea5ef297190b2557c3a11990a",
+    "userspace/diskutility.c": "e31a5b0afd018e8cf221e032dc49a4ec6b36f95f6abc65ac235cdbc9dfc04533",
     "tests/cpu_sample_host.c": "c76b55067333fdf986f0684b8a17c58780cb0b839f603072801c3ef661d3a08a",
     "tests/monitor_sample_host.c": "b15f501123b09733142be22cec2bd73548e9dc3bbc3337a94361d6175e0b74ae",
     "tests/display_size_host.c": "e7c92c9eeee8c7b81162612b352b4556129fa2ed69681bf5726e56f8badf187b",
     "tests/textedit_open_host.c": "cb24f2f3abdb9b954adc6322fc058da2e030b92bad7aae2031edb77aab456b8f",
-    "tests/ui_stream_host.c": "48eac320137d31ecf5bf1586d1d48c744c3c8f59005f76ef21a2caaa3effc156",
+    "tests/ui_stream_host.c": "6b08f8e8417c11e938e27415b01e37a87126a0e68c97f7e11c57a935cf5892c8",
     "tests/test-display-size.sh": "5c9a23ec00280dbedde64fec0cf72802469817bd4e0631fa797a1e065b7c547e",
     "tests/test-cpu-sample.sh": "93d21987113c6b998c19a7e437481a0886ba084d8939295409edc2056dafad77",
-    "tests/test-10.3-foundation.sh": "dbbb4a53d5c4704e181ce4216e6f4f90ce09387c65a3d4857573d15037de0a80",
-    "docs/PIANO-10.3.md": "7fa181ee8168c56ca2ce9f67987877a1f9795a452564499ab6eff41cd0687394"
+    "tests/test-10.3-foundation.sh": "a539e7d429f30e4826ee0aca3fd83a781ae43302a53b8921cc98a51e60be2f1f",
+    "docs/PIANO-10.3.md": "9f8d97bb8803989be24650e8dd2ce9acb0f1d7708662aca6bd3010214449baf7",
+    "include/container.h": "da6c93de174ff0b955ec91e676c63ac7f2165a27771a0fc46fac923147affe9f",
+    "include/disk_size_input.h": "3eb4f79c8853e06614e0c1c7577ca983e080411ede1045276048efb28e5cd5dc",
+    "include/abi.h": "b809451319317d1924793be61d42b11c2f264a83d8740f975cfd1fd1e3d03bce",
+    "fs/install.c": "5e0e61293c32dea7c5c94d2aa0358c5631b0d4b74ad914080cdd983e1b74769a",
+    "storage/maintenance.c": "c59fd66fb93b86f25bb1995b675a34599908edd637965335c71c7abf2370e5ee",
+    "userspace/filebrowser.c": "4dcf4c16ce5c20348566414b1e54ff2346699ac5ec96c09e7a4689bd93c8915e",
+    "tests/m2_geometry_host.c": "11a0b736c9e90f27abbdbc6b95747d5fffa02b740804160d7730c855053a0b78",
+    "tests/diskutility_extent_host.c": "9aab0eb32bcfd55d2c8558026cd5bbcbbaf23d80f4573e87f497fdc6a273e42f"
   }
 }

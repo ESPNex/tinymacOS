@@ -160,7 +160,7 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
     }
     if(q->op==DISK_EDIT_CREATE){
         int inside=0;for(int i=0;i<editmap.gaps;i++){DiskGap*g=editmap.gap+i;if(q->start>=g->start&&q->start-g->start<g->sectors&&q->size<=g->sectors-(q->start-g->start))inside=1;}
-        if(!inside||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 32 MiB allineati, una voce libera e un nome.");
+        if(!inside||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
         for(unsigned j=0;j<sizeof q->name;j++){unsigned char c=q->name[j];if(!c)break;if(c<32||c>126||j==sizeof q->name-1)return say(q,DE_INVALID,"Usa un nome ASCII di massimo 47 caratteri.");}
         if(!apply)return say(q,0,"Crea BTRFS nativo (subset proprietario, non Btrfs Linux). Capacità file fissa.");
         if(native_format(m,q))return say(q,DE_IO,"Errore di formattazione: partizione non pubblicata. Non riprovare senza verifica.");
@@ -183,7 +183,7 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
         if(!q->size||q->size%2048||end>max||q->size==p->sectors)return say(q,DE_INVALID,"Dimensione non valida o spazio contiguo insufficiente.");
         int ntfs=p->fs==FS_NTFS,native=p->fs==FS_TMC;
         int r=native?native_resize(m,q,0):ntfs?ntfs_resize_native(m,q,0):fattail(m,q,p,0);
-        if(r&&native)return say(q,r,r==DE_OCCUPIED?"Nodi allocati nella coda di dati o snapshot: libera spazio prima di ridurre.":"Nativo: capacità 8–32 MiB con numero di slot variabile; decifra FileVault e verifica dati/snapshot prima di riprovare.");
+        if(r&&native)return say(q,r,r==DE_OCCUPIED?"Nodi allocati nella coda di dati o snapshot: libera spazio prima di ridurre.":"Nativo: capacità 8.3–33.5 MB con numero di slot variabile; decifra FileVault e verifica dati/snapshot prima di riprovare.");
         if(!apply&&native&&!r)return say(q,0,"Ridimensiona la capacità nativa e ricolloca snapshot e copia locale; conserva tutti i file. Backup esterno obbligatorio.");
         if(r&&ntfs)return say(q,r,"NTFS non idoneo: volume sporco, ibernato, incoerente o risorse insufficienti. Nessuna scrittura.");
         if(r)return say(q,r,r==DE_OCCUPIED?"La coda contiene cluster allocati: nessuna scrittura. Serve uno strumento con rilocazione.":"FAT32 non idonea: controlla pulizia, copie FAT, backup e capacità della FAT.");

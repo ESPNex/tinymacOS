@@ -11,3 +11,9 @@ static inline void display_size(char *out,int cap,u64 bytes)
     if(unit){char fraction[3]={'.',(char)('0'+(bytes%scale)/(scale/10)),0};append(out,fraction,cap);}
     append(out,units[unit],cap);
 }
+
+static inline void display_usage(char *out,int cap,u64 used,u64 total)
+{
+    char capacity[40];display_size(out,cap,used);display_size(capacity,sizeof capacity,total);
+    append(out," su ",cap);append(out,capacity,cap);
+}

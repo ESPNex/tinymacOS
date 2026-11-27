@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-pmbr-signature-hbh0vzlq",
+  "iso_sha256": "09ea821f864998e3373e0741ab3f4685dc797f1b9a582953e9fe27b18225a5de",
+  "synthetic_layout_only": true,
+  "physical_Windows_tested": false,
+  "firmware_repaired_before_OS": false,
+  "checks": [
+    "Missing 55AA: valid GPT recognized; explicit consent, preflight/cancel zero writes",
+    "Complete selected 10GiB gap allocated by v2 container, FS2 spans the real middle extent; no 96MiB cap or hidden leftover gap",
+    "Only 55AA restored at activation; disk ID, unrelated PMBR fields, four existing GPT entries and occupied boundaries preserved; exact original MBR saved",
+    "Cold native NVMe boot with ISO detached imports original live account/document and reports 30C1"
+  ],
+  "full_selected_gap_sectors": 20971520,
+  "actual_FS2_data_sectors": 20848640
+}

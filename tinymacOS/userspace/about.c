@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "display_size.h"
 static void pair(int x, int y, const char *n, const char *s)
 {
     Text(x, y, n, F_SMALL, SUB);
@@ -22,10 +23,8 @@ static void paint(void)
     Box(x, 130, aw - x - 17, 1, 0, EDGE);
     pair(x, 145, "Processore", si.cpu);
     char s[90] = "";
-    addnum(s, si.free >> 20, 90);
-    append(s, " MiB liberi / ", 90);
-    addnum(s, si.total >> 20, 90);
-    append(s, " MiB disponibili", 90);
+    char capacity[40];display_size(s,sizeof s,si.free);append(s," liberi / ",sizeof s);
+    display_size(capacity,sizeof capacity,si.total);append(s,capacity,sizeof s);append(s," disponibili",sizeof s);
     pair(x, 194, "Memoria", s);
     pair(x, 243, "Volume dati", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
     s[0] = 0;

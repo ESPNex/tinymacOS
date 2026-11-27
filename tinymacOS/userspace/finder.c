@@ -65,6 +65,7 @@ static int idico(Dirent *f)
 }
 static const char *pretty(const char *s)
 {
+    if(eq(s,"User"))return (eq(cwd,HOME)||eq(cwd,"/Users"))?(si.user[0]?si.user:"Inizio"):s;
     const char *from[] = {"Desktop", "Documents", "Downloads", "Pictures", "Applications", "User", "Welcome.txt"};
     const char *to[] = {"Scrivania", "Documenti", "Download", "Immagini", "Applicazioni", "Inizio", "Benvenuto.txt"};
     for (int i = 0; i < 7; i++)if (eq(s, from[i]))return to[i];
@@ -267,7 +268,7 @@ static void paint(void)
         if (eq(cwd, paths[i]) || (i == 7 && eq(cwd,KERNELDIR)))
             Box(8, y - 2, S - 16, 26, 6, SEL);
         Icon(16, y + 1, 19, navicon[i]);
-        Text(43, y + 1, navs[i], F_SMALL, eq(cwd, paths[i]) ? EMP : TX);
+        Text(43, y + 1, browser_label(i), F_SMALL, eq(cwd, paths[i]) ? EMP : TX);
     }
     if (ah > 250)
         Text(16, 198, "Posizioni", F_SMALL, SUB);
