@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "version": "10.2.6",
+  "build": "30C1",
+  "host_suites": 9,
+  "candidate_guest_suites": 17,
+  "extra_negative_many_windows_baseline": true,
+  "canonical_USB_only_live_and_Recovery": true,
+  "retired_native_USB_sources_and_symbols_absent": true,
+  "DnD_context_clipboard_Terminal_and_cold_persistence": true,
+  "PMBR_coverage_and_signature_consent_cancel_preservation_and_cold_boot": true,
+  "PMBR_coverage_case_on_affected_PC_not_observed": true,
+  "native4Kn_install_boot_reinstall_and_same_extent_encrypt_decrypt": true,
+  "many_windows": {
+    "passed": true,
+    "scope": "QEMU real UI, 18 native windows; scheduler tick observations, not a physical benchmark",
+    "baseline_ISO_sha256": "b1f19e5222f293ceec14fac26a386acc41eb1670d8d9c46504cdf1ea6b12d682",
+    "candidate_ISO_sha256": "2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149",
+    "baseline_same_calculator_redraw_increments_seq": true,
+    "candidate_same_calculator_redraw_increments_seq": false,
+    "duplicate_draws_suppressed_during_noop_keys": 10,
+    "sample_seconds": [
+      12.000097565000033,
+      12.000100807999843
+    ],
+    "desktop_scheduled_ticks": [
+      1651,
+      513
+    ],
+    "relative_observed_reduction": 0.6892792247122956,
+    "mouse_and_Terminal_responsive": true,
+    "physical_hardware_tested": false
+  },
+  "physical_mouse_base_30B21_confirmed_by_user": true,
+  "physical_hardware_1026_tested": false,
+  "real_Windows_certification": false,
+  "Safari_full_WebKit_included": false,
+  "helper_retained_unchanged_from_30B18_not_newly_boot_tested": true,
+  "final_iso": {
+    "filename": "tinymacOS-10.2.6-x86_64.iso",
+    "bytes": 329580544,
+    "sha256": "2b702ce411b1e2cb9e5427f3e2ecdf1fc0849ee834b48871e73aa40c78c31149"
+  },
+  "publication_status": "separate publication-readback.json"
+}

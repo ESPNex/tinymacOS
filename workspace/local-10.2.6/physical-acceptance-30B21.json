@@ -1,0 +1,6 @@
+{
+  "build": "30B21",
+  "user_confirmed_same_physical_PC_mouse_works": true,
+  "confirmation": "Explicit yes to the question asking whether 30B21 fixes mouse on the affected physical PC",
+  "does_not_certify_all_USB_devices_or_1026": true
+}

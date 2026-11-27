@@ -5,7 +5,6 @@
 #include "base.h"
 #define TMC_USBROUTE_TEST 1
 static int has_ehci;
-static u32 pci_find_after(u32 cls,u32 after){assert(cls==0x0c0320&&!after);return has_ehci?0x8000e800u:0;}
 static u32 regs[64],selected,writes[8],values[8];static unsigned nw,delay,logs;
 static int locked,inaccessible_after_write;
 static u32 pci_reg(u32 dev,int off){(void)dev;return regs[off/4];}
@@ -40,16 +39,5 @@ int main(void)
  init(0x0f358086);regs[0xd4/4]=~0u;usb_route_intel_xhci(0x8000a000);assert(!nw);
  init(0x0f358086);regs[2]=0x0c032000;usb_route_intel_xhci(0x8000a000);assert(!nw);
  init(0x1e318086);regs[0x2c/4]=0x90a8104d;usb_route_intel_xhci(0x8000a000);assert(!nw);
- has_ehci=1;init(0x0f358086);assert(!usb_route_intel_xhci_recover(0x8000a000,1,0)&&!nw);
- assert(!usb_route_intel_xhci_recover(0x8000a000,0,1)&&!nw);
- assert(usb_route_intel_xhci_recover(0x8000a000,0,0));
- assert(nw==1&&writes[0]==0xd0&&values[0]==0x95&&delay==100&&regs[0xd8/4]==4);
- assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&nw==1);
- init(0x0f351234);assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
- init(0x0f358086);regs[0xd4/4]=~0u;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
- init(0x0f358086);regs[0xd0/4]=~0u;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
- init(0x0f358086);regs[0xd4/4]=0;assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
- has_ehci=0;init(0x0f358086);assert(!usb_route_intel_xhci_recover(0x8000a000,0,0)&&!nw);
- puts("PASS empty-HID fallback: only switchable masked USB2 bits, one retry; any live pointer or keyboard blocks remux; unknown/all-ones/zero mask/no companion rejected");
  puts("PASS routing guard: unknown/foreign/non-xHCI/all-ones registers and known non-switchable subsystem receive no writes");
 }

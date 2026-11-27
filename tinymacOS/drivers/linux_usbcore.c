@@ -1,4 +1,3 @@
-#ifdef TMC_USB_CANONICAL
 /* SPDX-License-Identifier: GPL-2.0-only */
 #include "../kernel/k.h"
 #include <stdarg.h>
@@ -35,9 +34,7 @@ int tmc_usb_canonical_start(void){int r=tmc_linux_xhci_module_init();if(r){boot_
  do{tmc_usb_stack_poll();usb_delay_ms(1);}while(tmc_usbcore_os_clock_ms()<deadline&&(!tmc_usb_canonical_counters.bound_keys||!tmc_usb_canonical_counters.bound_pointers));
  }return r;}
 
-#endif
 
-#ifdef TMC_USB_CANONICAL
 void tmc_usb_kernel_worker(void)
 {
  for(;;){
@@ -47,4 +44,3 @@ void tmc_usb_kernel_worker(void)
   asm volatile("sti; int $129"::"D"(1ul):"memory");
  }
 }
-#endif

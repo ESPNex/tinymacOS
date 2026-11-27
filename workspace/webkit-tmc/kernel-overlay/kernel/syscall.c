@@ -1,4 +1,6 @@
 #include "k.h"
+#include "window_update.h"
+volatile u64 tmc_window_draw_requests,tmc_window_draw_unchanged;
 #include "bootconfig.h"
 #include "tlsabi.h"
 #include "wordwaitabi.h"
@@ -637,6 +639,15 @@ static Frame *syscall_inner(Frame *f)
         u32 fl;
         spin_lock(&sched_lock, &fl);
         if (p->draw && b <= NCMDS && IN(a, b * sizeof(Draw))) {
+            tmc_window_draw_requests++;
+            int title_valid=c&&string(c,s,48);
+            if((!title_valid||eq(p->win.title,s))&&
+               window_commands_equal(p->draw,p->ndraw,(const Draw *)a,b)){
+                /* Do not bump seq and invalidate every overlapping glass
+                 * cache when an application publishes an identical frame. */
+                tmc_window_draw_unchanged++;r=0;
+                spin_unlock(&sched_lock,fl);break;
+            }
             memcpy(p->draw, (void *)a, b * sizeof(Draw));
             for (u64 j = 0; j < b; j++)
                 p->draw[j].text[99] = 0;
@@ -670,7 +681,7 @@ static Frame *syscall_inner(Frame *f)
             p->ndraw = b;
             p->win.transition = d <= FX_DISSOLVE ? d : 0;
             p->win.seq++;
-            if (c && string(c, s, 48))
+            if (title_valid)
                 strset(p->win.title, s, 48);
             r = 0;
         }

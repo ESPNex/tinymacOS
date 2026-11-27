@@ -439,12 +439,11 @@ void scheduler_init(void)
         panic("cannot start session", 0, 0);
     if (kernel_thread(clock_worker) < 0)
         panic("cannot start clock worker", 0, 0);
-#ifdef TMC_USB_CANONICAL
     extern void tmc_usb_kernel_worker(void);
     int usb_thread=kernel_thread(tmc_usb_kernel_worker);
     if(usb_thread<0)panic("cannot start USB worker",0,0);
     task[usb_thread].pin=0;
-#endif
+
     logstr("[sched] desktop up\n");
     smp_start();
     logstr("[sched] smp done\n");

@@ -16,6 +16,8 @@ for debug,retail in [('kernel.debug','kernel.elf'),('recovery-kernel.debug','Rec
  for line in subprocess.check_output(['nm','-S','--defined-only',str(out/debug)],text=True).splitlines():
   a=line.split()
   if len(a)==4:symbols[a[3]]=(int(a[0],16),int(a[1],16))
+ for retired in ['tmc_linux_mouse_attach','tmc_linux_generic_attach','usb_input_prepare','xhci_controller_init','ehci_init','uhci_init']:
+  assert retired not in symbols,'retired alternate USB path linked: '+retired
  for n in ['input_init','tmc_usb_canonical_start','tmc_usb_kernel_worker','scheduler_init','tmc_usb_stack_init','tmc_usbcore_hid_parse_report','tmc_usbcore_hidinput_connect','tmc_usbcore_hid_add_device']:assert n in symbols,n
  b=(out/retail).read_bytes();at,n=symbols['input_init'];entry=address_bytes(b,at,n)
  assert len(entry)==5 and entry[0]==0xe9,'input_init must directly select canonical startup'

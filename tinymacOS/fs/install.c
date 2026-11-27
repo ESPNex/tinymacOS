@@ -224,7 +224,10 @@ static int coexist_plan(void)
     u8*esp=(u8*)boot.install_esp;
     memcpy(esp+TC_HEADER*512,&descriptor,512);memcpy(esp+TC_OLD_MBR*512,oldmbr,512);
     memcpy(mbr,oldmbr,512);memcpy(mbr,bios_coexist_mbr,440);
-    if(inventory.pmbr_signature_repairable){mbr[510]=85;mbr[511]=170;}
+    if(inventory.pmbr_signature_repairable){
+        if(inventory.pmbr_signature_repairable&1){mbr[510]=85;mbr[511]=170;}
+        if(inventory.pmbr_signature_repairable&2)for(int i=0;i<4;i++)if(mbr[450+i*16]==0xee){u32 coverage=sata_size(st.target)-1;memcpy(mbr+458+i*16,&coverage,4);}
+    }
     for(int i=0;i<=432;i++){
         u64 v;memcpy(&v,mbr+i,8);
         if(v==0x1badb002aabbccddull){v=install_duet;memcpy(mbr+i,&v,8);}

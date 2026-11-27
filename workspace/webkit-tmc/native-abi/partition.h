@@ -12,7 +12,7 @@ typedef struct { u32 start,sectors; int number,fs,logical; u8 type[16]; char nam
 typedef struct { u32 start,sectors; } DiskGap;
 typedef struct {
     int scheme,safe,count,gaps,slot;
-    int pmbr_signature_repairable; /* GPT copies+protective entry verified; installer confirmation only */
+    int pmbr_signature_repairable; /* flags: 1 missing 55AA, 2 stale EE coverage; identical GPTs; installer consent only */
     u32 start,sectors; /* largest aligned unallocated extent; never RAW */
     DiskPartition part[DISK_PARTS];
     DiskGap gap[DISK_GAPS];

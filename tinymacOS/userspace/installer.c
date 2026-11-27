@@ -176,7 +176,7 @@ static void paint(void)
         Box(x, 146, w, 1, 0, EDGE);
         Text(x, 164, reinstall?(encrypted?"Tutti i dati utente e le vecchie chiavi verranno eliminati.":"Verrà riscritto soltanto il volume di sistema selezionato."):"Sistema, dati e Recupero useranno solo la nuova destinazione.", F_SMALL, TX);
         Text(x, 189, reinstall?(encrypted?"Sistema e Recovery restano invariati. Serve il nuovo enrollment.":"Documenti, account, FileVault e snapshot restano invariati."):"Le altre partizioni e il loro contenuto restano invariati.", F_SMALL, SUB);
-        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Nessun rollback.":"Si usa la copia locale verificata, non un aggiornamento online."):info.disk[choice].repair_mbr_signature?"Firma MBR 55 AA assente: verra ripristinata dopo conferma.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
+        Text(x, 209, reinstall?(encrypted?"Un’interruzione può rendere i dati inaccessibili. Nessun rollback.":"Si usa la copia locale verificata, non un aggiornamento online."):info.disk[choice].repair_mbr_signature?"MBR protettivo: firma/copertura ripristinate solo con consenso.":"L’avvio BIOS avrà un menu; il codice MBR originale è conservato.", F_SMALL, SUB);
         if(info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))){
             button(x,240,310,reinstall?"Inizializza dati cifrati…":encrypted?"FileVault attivo · Modifica…":"Proteggi con FileVault…",0);
             Text(x+326,247,encrypted?"Chiave confermata":reinstall?"Volume già sbloccato":"Facoltativo · tasto E",F_SMALL,SUB);
@@ -185,7 +185,7 @@ static void paint(void)
         Box(x + 12, foot - 52, 20, 20, 5, confirm ? ACC : EDGE);
         if (confirm)
             Center(x + 22, foot - 53, "✓", F_SMALL, si.dark ? 0x142525 : 0xffffff);
-        Text(x + 42, foot - 51, !reinstall&&info.disk[choice].repair_mbr_signature?"Confermo destinazione e ripristino firma MBR":"Confermo la destinazione selezionata", F_SMALL, TX);
+        Text(x + 42, foot - 51, !reinstall&&info.disk[choice].repair_mbr_signature?"Confermo destinazione e ripristino MBR protettivo":"Confermo la destinazione selezionata", F_SMALL, TX);
     } else if (page == 3) {
         Icon(x, 23, 52, 38);
         Text(x, 95, reinstall?(encrypted?"Inizializzazione cifrata":"Reinstallazione in corso"):"Installazione in corso", F_TITLE, TX);

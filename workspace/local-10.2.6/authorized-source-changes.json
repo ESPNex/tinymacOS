@@ -1,0 +1,147 @@
+{
+  "authorization": "User authorizes 10.2.6: retire broken alternate USB path, keep hardware-confirmed canonical stack, restore pre-rollback DnD, clean historical artifacts, repair only provable PMBR metadata with consent, optimize duplicate window redraws/idle scanout. Prior authorized FS2/font/installer changes retained.",
+  "inputs": {
+    "assets/panicfont.inc": {
+      "baseline_sha256": "2cfe7336d8907ad3b0dcc780be6bf1a5125f29a555f9e17a348a02a27e8d93e9",
+      "hotfix_sha256": "6eae97438ece6b9d79f7d3b55527530f003ce356ad712f861f757f528dddc318"
+    },
+    "assets/type.tfn": {
+      "baseline_sha256": "17b8004b11b20bd9d7151e3d4cb5fba9608dea94be1a35f33114880462929cc6",
+      "hotfix_sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6"
+    },
+    "build.sh": {
+      "baseline_sha256": "7ac8b19340decfba2c5e5cd1591cf72b63aad0642579187ec3eb257a279c03b7",
+      "hotfix_sha256": "78cb8e4501656688f39f4abd41434277f7a02eab4102613b6602b085ab0e420f"
+    },
+    "desktop/main.c": {
+      "baseline_sha256": "74ecd050897b5166e7f2ef269e80af03721f664e6ded520d1fcf8b5f9e1e10e5",
+      "hotfix_sha256": "e555328d833c83a03d34e5b1daa3bb99b5a08ee975ac8f06a62f570a2aa7347f"
+    },
+    "drivers/ehci.c": {
+      "baseline_sha256": "fd6fe2a5de3636b00f9d76e0a46970e6ebadf59b0eadab2765f011f49eb1dab5",
+      "hotfix_sha256": "15872590c701bac2998b9793ee1e24aa018208ddf5941aa4cfdd621242b20897"
+    },
+    "drivers/linux_usb.c": {
+      "baseline_sha256": "fd546d01e94a4c3516cb5dfbfaddd44319832bc1c037ddadea348238fdd8ef68",
+      "hotfix_sha256": "3aa5274b934392c1f927332429f91ffc8664f348c7c7ba607a35f309b99fec7b"
+    },
+    "drivers/linux_usbcore.c": {
+      "baseline_sha256": "8667dec02553f4243dfd83aef6fbfc06a0eabf0706cefc58cc438a35e9ff441d",
+      "hotfix_sha256": "9cc9c1bb2db27542ac292cbaa681d57fb8c8f21e18badec634e02aeb00166767"
+    },
+    "drivers/usbroute.c": {
+      "baseline_sha256": "d89d84dc60702c2d17a9ea80c523bb4d985ffd102db5e1d928c91dc03ad00b8f",
+      "hotfix_sha256": "3caec017cf558fa9dcbb37fb5f5a4c0d7ba98158491bb7dcc5b65ecdd34386ec"
+    },
+    "drivers/xhci.c": {
+      "baseline_sha256": "b659a758ddd569059f92d3153597bb428738acd0a0f22b084ceb1ed4de8b7c71",
+      "hotfix_sha256": "d31dec26d8a7670e7672977e7731ea3c9053a91c412d54cf863e067401f6564f"
+    },
+    "fs/install.c": {
+      "baseline_sha256": "abb6593615d136c9ea56c99928eb34bb1b9274aa94618ae0cf5fd6a9b2881b28",
+      "hotfix_sha256": "f350bf316e690652fcb28de2e6e2a1d2cc66f07209f60ff137044efd2e114273"
+    },
+    "include/abi.h": {
+      "baseline_sha256": "11b37b4b27fe1a2e47ab3481fd7d3076b2596c6b7dee1f31176580932f8cbb22",
+      "hotfix_sha256": "353dc82e5658efa897a3a99d22acca1a8ca6d119347bec207c8898d61e677f6f"
+    },
+    "include/linux_usb.h": {
+      "baseline_sha256": "5a0e0d3f4ea24650e75af302f9d48e609936e2dc2c6dd40eda6e5deabb59112e",
+      "hotfix_sha256": "cd89ae4749de7466a011201ae1e790c13cdc70ee70b9799b040d0b69fc491adc"
+    },
+    "include/partition.h": {
+      "baseline_sha256": "5d12c1d7c8c5664180eb530a5f050ce723d4c3d4d40adfd8ea7f52bcb0865ae6",
+      "hotfix_sha256": "866adde03423953833f0e6474f760bb9a86f9320ae4b5f847596d8f257b24ba5"
+    },
+    "include/usbroute.h": {
+      "baseline_sha256": "875861726c4ad3775617fe726d85b5a0c2b2c1ef7cafca584f619a01f84ccf6a",
+      "hotfix_sha256": "f6b6c54f70793073a8c7d7775cbb05f19d90201a512fc6017aae41ee06e302fa"
+    },
+    "kernel/sched.c": {
+      "baseline_sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380",
+      "hotfix_sha256": "ff6152042dfedc4ed0b6b43e969bce6c093333db97221798d94e818f2fa5600e"
+    },
+    "kernel/syscall.c": {
+      "baseline_sha256": "67754ab34fa9efc7249e34ce7b09593968f17945fcbc86408c4106aa92f980e1",
+      "hotfix_sha256": "6c00bdd0784f02c9538a260f8751eaa8cebad021b7f571f0a2189565f7da3535"
+    },
+    "storage/partition.c": {
+      "baseline_sha256": "6881732fe3563d32fb902c37353149ec628c6241e99946b261b1be08c3affe7e",
+      "hotfix_sha256": "5b472b4618553e68984c9f7414cd47db7303aca76383765a484ec6331215540c"
+    },
+    "userspace/about.c": {
+      "baseline_sha256": "01232c34e885f571141338a122637286d99df7c329075dace0eb86e1c10a0b0e",
+      "hotfix_sha256": "0ce7d8d5545c678ad4b41027701c8ee8ceeda04b2a809ec46c2447281f0dcadd"
+    },
+    "userspace/command.c": {
+      "baseline_sha256": "dc824c1520b540c553a648dcef5c3be2c74d2524c7c8a17ca2513b1ae8b3fa0e",
+      "hotfix_sha256": "7a1c44011372cc877622fd2b61414882b5c2c37dd89e97a30cc3fb49306d56a9"
+    },
+    "userspace/diskutility.c": {
+      "baseline_sha256": "bd8939f86ae15b45d3ee5aacff61388a4005dd93e7797886a483ea64397a11d1",
+      "hotfix_sha256": "2d69c3c8a000755de52d0803d79945a81ad12b543704e286a1ec7331db7affd5"
+    },
+    "userspace/installer.c": {
+      "baseline_sha256": "9cbe6e30aa630f60546bec005657fa45ffa642059577f634b9c77de2a9b78121",
+      "hotfix_sha256": "4334fe4a3d9eed4cbe2d01359c5e4add54e03fff33704d13cc4eec405e9c0d71"
+    },
+    "userspace/settings.c": {
+      "baseline_sha256": "745b8062ab7e52a0bc4e5691aaf9dc2c5a107a78a820159a41b3cd712420ea43",
+      "hotfix_sha256": "578bddce0a361d01ae42f91ed002db4a9b28d249cf9e3c7e0417488319e1714d"
+    }
+  },
+  "removed_inputs": {
+    "assets/font-source/Display-Semibold.ttf": {
+      "baseline_sha256": "65a5691c4ad56246f217e09fe22342a7ab267ed196b71ffaf805cdfbb8d73cb2",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "assets/font-source/OFL.txt": {
+      "baseline_sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "assets/font-source/wordmark.json": {
+      "baseline_sha256": "398939942e1e6ea50b82a4e35d451570b027a41f110f7e0bb75389229d5a27a8",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/hid_parser.c": {
+      "baseline_sha256": "2e0533cada3f48bdc3fd041c4a87200dcf62f88128fb91d0b3d635d5b36f31d1",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/usb_config.c": {
+      "baseline_sha256": "73a598eccafe5c5d2d682ab91b4845d9d53ea1a948056392c8a1a7c4ad45a244",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/usb_generic.c": {
+      "baseline_sha256": "a409a993ed4cc747285465bd85a3e2b487fbc7dfac54ddaa3ff6f2ccb56e5559",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/usb_hub.c": {
+      "baseline_sha256": "852f4ecaafb3f408815aeda78c82e0ab9889be8a2f056f5cf43a9b80f0d169d2",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/usb_input.c": {
+      "baseline_sha256": "013e92adf31711168ae83d65036f49f8473a73a3a4af5c17934a6fa52f3ae35b",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "compat/linux/usb_keyboard.c": {
+      "baseline_sha256": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "drivers/hidconfig.c": {
+      "baseline_sha256": "896f4928d736745f86c15d5f2469d2f9cdc9ce401af56407828abd0fb181c21b",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "drivers/uhci.c": {
+      "baseline_sha256": "0ea8699a41cd441f8107dec6022e7bc2c5c7c3403f560e5c0dec6ad768f4f555",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "drivers/usbinput.c": {
+      "baseline_sha256": "7d957d1e57cd105927076d44a09944e61afd004010b9900b3df86a069fd95aa3",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    },
+    "include/usbhost.h": {
+      "baseline_sha256": "b3c18420180b84121a1b1239b56074abffdf39553946ff1dc4ac3004d5c1f1f8",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996"
+    }
+  }
+}

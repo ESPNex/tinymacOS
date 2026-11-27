@@ -1,0 +1,130 @@
+{
+  "history_restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+  "removed": [
+    {
+      "path": "drivers/usbinput.c",
+      "sha256": "7d957d1e57cd105927076d44a09944e61afd004010b9900b3df86a069fd95aa3"
+    },
+    {
+      "path": "drivers/uhci.c",
+      "sha256": "fe43356fa69cc00c0b490c34f2ba49264f8d07a2d8caa353ba2a2b18eff339a4"
+    },
+    {
+      "path": "include/usbhost.h",
+      "sha256": "4d3344f362cbde7bd151177ae39bacc3c00876a99cfbc842c71a438a9d0198ba"
+    },
+    {
+      "path": "include/usb_retry.h",
+      "sha256": "08ad80029c49a55422315f14d8ae6eaf333a3575c3be49ee830d0b0e47e6f43f"
+    },
+    {
+      "path": "compat/linux/usb_input.c",
+      "sha256": "013e92adf31711168ae83d65036f49f8473a73a3a4af5c17934a6fa52f3ae35b"
+    },
+    {
+      "path": "compat/linux/usb_generic.c",
+      "sha256": "a409a993ed4cc747285465bd85a3e2b487fbc7dfac54ddaa3ff6f2ccb56e5559"
+    },
+    {
+      "path": "compat/linux/usb_keyboard.c",
+      "sha256": "a76ad103b8cab12da4e8183165b307d5facdc0c78509cc918bd38935ef20d55c"
+    },
+    {
+      "path": "compat/linux/usb_config.c",
+      "sha256": "73a598eccafe5c5d2d682ab91b4845d9d53ea1a948056392c8a1a7c4ad45a244"
+    },
+    {
+      "path": "compat/linux/usb_hub.c",
+      "sha256": "852f4ecaafb3f408815aeda78c82e0ab9889be8a2f056f5cf43a9b80f0d169d2"
+    },
+    {
+      "path": "compat/linux/hid_parser.c",
+      "sha256": "2e0533cada3f48bdc3fd041c4a87200dcf62f88128fb91d0b3d635d5b36f31d1"
+    },
+    {
+      "path": "tests/usb_retry_native.c",
+      "sha256": "13b3dd4f90ff0e4652c1ddb77de01cb307004b9d439f8775458cde0f357ea7bf"
+    },
+    {
+      "path": "tests/test-usb-retry-native.sh",
+      "sha256": "54e0ed4924154036f8c9c4ed85df4ac82dec25a741dfaefa967de78d3992f037"
+    },
+    {
+      "path": "tests/usbinput_contract.c",
+      "sha256": "5a6b3f258a0b5e0a575f581fd53efd670c91c957758c4a10842006dc1e4759b8"
+    },
+    {
+      "path": "tests/linux_usb_generic.c",
+      "sha256": "6ef5d2dfca6fd879712f7a0e02cdd068b40c4c6ff3d556c09b0505a4f045847e"
+    },
+    {
+      "path": "tests/linux_usb_host_runtime.c",
+      "sha256": "92a375dfc605a7ca7a98993449da54a7cddf0b43fc6b85ae111644d3106242cb"
+    },
+    {
+      "path": "tests/linux_usbmouse.c",
+      "sha256": "51f4f44f41fe410d3f6b310558254358cf410e5517ed2b69b03377cc09cca2e2"
+    },
+    {
+      "path": "tests/linux_usbkbd.c",
+      "sha256": "cb77a33dbf1e296b01bdf62fc79f16961e0d5411b787af5acb366a571dddfcc6"
+    },
+    {
+      "path": "tests/linux_urb.c",
+      "sha256": "c650f63f204f6d89f1a822e3461f65201fd177d2a70994a2f89e23e29bf1d51c"
+    },
+    {
+      "path": "tests/linux_message.c",
+      "sha256": "45cec7697960f4f25f1e47c78ae25094ae96c1ddbdb3b695f1a1a447cc824eb5"
+    },
+    {
+      "path": "tests/linux_mouse_lifecycle.c",
+      "sha256": "4a752c6771b13b48ce732a32301557f897df721b2992f2d94c5babc6f19ec7e7"
+    },
+    {
+      "path": "tests/linux_config.c",
+      "sha256": "7dc88ef3b822f860f53984cb5ce1dea96be27f43feec988807e14e1db65e2107"
+    },
+    {
+      "path": "tests/linux_config_runtime.c",
+      "sha256": "9cafe9442be5e6bf2c4be95c10b451e86d956bab9d9fbf9e0164f5298cc9e753"
+    },
+    {
+      "path": "tests/linux_hid_parser.c",
+      "sha256": "4c17c1330510db15cdeee9a364769434736c60141afb9ed82733da2188316d0c"
+    },
+    {
+      "path": "tests/linux_hid_runtime.c",
+      "sha256": "746347b0d99b15cc19e63ef34b636fcb5a2d952c04b6e3baba39b8d021152d93"
+    },
+    {
+      "path": "tests/linux_hid_generic.c",
+      "sha256": "2a831b9ca7459fff3ec1ee451630abd609a6ba053cf1c919e69bf93c8bc5882f"
+    },
+    {
+      "path": "tests/linux_hub.c",
+      "sha256": "8d9e6716937f72e24efac0c1da65b8f41e68d528d4599c13fafc3dabad3c70a0"
+    },
+    {
+      "path": "tests/hidconfig.c",
+      "sha256": "0837e716d5a02c64440712587fc7d9ce2d7134fcfd200946ecf27793bf1976d1"
+    },
+    {
+      "path": "tests/relative_pointer.c",
+      "sha256": "de7422e58e134cb1d6a896960ef4f5f3090594b8f6d0a179c9cda3ac6a958184"
+    },
+    {
+      "path": "tests/linux_ps2.c",
+      "sha256": "657b63d75dbc746e37a8c8dddb653801f4c81e14e8e818bba7bb278689cc570f"
+    },
+    {
+      "path": "tests/linux_psmouse.c",
+      "sha256": "3e792c2f0cdd3f1319997ccdcf37fe92cea87458fa92e5764dabe0f309083578"
+    },
+    {
+      "path": "drivers/hidconfig.c",
+      "sha256": "896f4928d736745f86c15d5f2469d2f9cdc9ce401af56407828abd0fb181c21b"
+    }
+  ],
+  "kept": "canonical USB core/HID, original shared XHCI/EHCI physical drivers, PIT and OS services; immutable vendor pins retained"
+}

@@ -36,7 +36,9 @@ try:
   def memory(n,size):
    p=work/'memory.bin';g.req('pmemsave',val=address(n),size=size,filename=str(p));return p.read_bytes()
   def counts():return list(struct.unpack('<6Q',memory('tmc_usb_canonical_counters',48)))
-  def native():return list(struct.unpack('<9Q',memory('tmc_linux_usb_stats',72)))
+  def native():
+   assert not any(s.endswith(' tmc_linux_usb_stats') for s in symbols),'retired native facade must not be linked'
+   return [0]*9
   def wait_bound(keyboards,pointers):
    deadline=time.monotonic()+35
    while time.monotonic()<deadline:

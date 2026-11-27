@@ -1,5 +1,5 @@
 {
-  "status": "OPEN: physical pointer regression remains unresolved",
+  "status": "CLOSED: user confirms 30B21 mouse works on affected physical PC",
   "user_confirmed": {
     "mouse": "wired USB",
     "connection": "direct PC port",
@@ -177,8 +177,9 @@
   "installer_message_does_not_establish_corrupt_Windows_table": true,
   "30B20_recovery_patch_did_not_fix_reported_PC": true,
   "30B21_candidate_built_not_published_yet": false,
-  "physical_mouse_fix_confirmed": false,
+  "physical_mouse_fix_confirmed": true,
   "binary_build_comparison": "binary-usb-profile-1024-vs-30B20.json",
   "30B21_published_with_restored_canonical_profile": true,
-  "30B21_source_commit": "598beb795f18bc72c42e91e34756c23018462996"
+  "30B21_source_commit": "598beb795f18bc72c42e91e34756c23018462996",
+  "user_confirmation_build": "30B21"
 }

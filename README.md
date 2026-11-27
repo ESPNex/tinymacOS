@@ -2,21 +2,13 @@
 
 Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazioni native e Recovery con kernel dedicato. Non è macOS e non esegue le applicazioni macOS.
 
-**Versione attuale: 10.2.5 Tramontana · build 30B21 · pre-release.**
+**Versione attuale: 10.2.6 Tramontana · build 30C1 · pre-release.**
 
-[Scarica l’unica ISO BIOS+UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.2.5-pre-release/tinymacOS-10.2.5-x86_64.iso) · [Sorgenti e verifiche](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.5-pre-release) · [Novità della 10.2.5](tinymacOS/docs/NOTE-10.2.5.md)
+[Scarica l’unica ISO BIOS+UEFI](https://github.com/ESPNex/tinymacOS/releases/download/v10.2.6-pre-release/tinymacOS-10.2.6-x86_64.iso) · [Sorgenti e verifiche](https://github.com/ESPNex/tinymacOS/releases/tag/v10.2.6-pre-release) · [Note](tinymacOS/docs/NOTE-10.2.6.md) · [Validazione e hash](tinymacOS/docs/VALIDAZIONE-10.2.6.md)
 
-**10.2.5:** FS2 su tutto l’extent dati, NVMe nativo e installazione/avvio UEFI 4Kn, conversione/deattivazione cifratura sullo stesso extent da Recovery; Finder Taglia/Copia/Incolla e appunti Terminale; trasferimento file drag-and-drop disabilitato dal rollback 30B19. [Accettazione e hash](tinymacOS/docs/RELEASE-READINESS-10.2.5.md).
+**10.2.6:** solo stack USB/HID canonical, base 30B21 confermata dall'utente sul PC fisico; vecchio adattatore alternativo rimosso. Drag-and-drop ripristinato, Finder Taglia/Copia/Incolla e appunti Terminale conservati. Ripristino della copertura PMBR soltanto con GPT identiche/valide e consenso; nessun bypass delle protezioni Windows. Ridotto il lavoro di composizione con molte finestre. Conservati font UI/Mono forniti, FS2, installazione/avvio 4Kn e conversione/disattivazione cifratura in-place. Circa 34 MB di artefatti storici/temporanei rimossi dal workspace.
 
-**Storico della revisione 30B17:** font della ISO 10.2.4 ripristinato e bloccato nel packaging; gestione per-frame degli eventi mouse/drag; inventario dello spazio non allocato conservato su GPT protette, senza convertire RAW/MSR in spazio libero. [Correzioni, test e limiti](tinymacOS/docs/HOTFIX-10.2.5-30B17.md). Safari completo non è incluso.
-
-**Rebuild 30B18:** UI dai quattro OTF forniti e vero Mono Regular per Terminale e panic; nessuna famiglia di fallback. FS2 obbligatorio nel build di produzione. Audit font nei tre ambienti e 14 suite guest della nuova ISO chiusi. [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B18.md) · [Verifica della build](tinymacOS/docs/VALIDAZIONE-10.2.5-30B18.md).
-
-**Revisione 30B19:** rollback desktop/input esatto alla 10.2.4, drag-and-drop file disabilitato; GPT riconosciuta anche senza firma MBR e ripristino disponibile solo nell'installer con doppia GPT valida, spazio realmente non allocato e consenso esplicito. Nessuna conferma del mouse sul PC fisico. [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B19.md).
-
-**Storico 30B20:** recupero degli errori temporanei negli adattatori USB nativi e guida Recovery/live; non ha risolto il blocco fisico segnalato. [Note](tinymacOS/docs/NOTE-10.2.5-30B20.md).
-
-**Revisione 30B21:** il confronto con la ISO ufficiale 10.2.4 ha individuato una diversa selezione di compilazione USB. Ripristinato e imposto lo stack canonical USB/HID della versione funzionante, incluso il worker, in live/installato e Recovery. Controllo sul codice macchina e audit della ISO; prove del percorso canonical e riconnessione. **Conferma sul PC fisico ancora necessaria.** [Note e limiti](tinymacOS/docs/NOTE-10.2.5-30B21.md) · [Verifica](tinymacOS/docs/VALIDAZIONE-10.2.5-30B21.md).
+**Verifica:** 9 suite host, 17 suite guest della stessa ISO finale e confronto con 18 finestre sulla 30B21. La nuova 10.2.6 resta da confermare sul PC fisico; il PMBR reale dell'utente non è stato acquisito. Safari/WebKit completo non è incluso. [Storico del ripristino mouse 30B21](tinymacOS/docs/NOTE-10.2.5-30B21.md).
 
 ## Funzioni principali
 
@@ -27,7 +19,7 @@ Sistema operativo desktop sperimentale **x86-64**, con kernel proprio, applicazi
 - Desktop con Finder a doppio clic, Terminale, editor, utility e temi chiaro/scuro.
 - FileVault nativo: volume dati cifrato, sblocco prima del desktop, chiave di recupero e gestione da Impostazioni/Recovery.
 - Interfaccia Liquid Glass, Dock e Centro di Controllo.
-- Tastiera italiana e input USB con controller xHCI/EHCI/UHCI; componenti USB/input Linux integrati e variante canonica sperimentale opzionale.
+- Tastiera italiana e unico stack USB core/HID canonical, con controller originali xHCI/EHCI. Nessun selettore per il percorso USB nativo ritirato.
 - Avvio ottico BIOS/UEFI, installazione su SATA/NVMe e Recovery nativa offline, scura e opaca.
 
 ## Da sapere

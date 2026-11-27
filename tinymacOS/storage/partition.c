@@ -93,7 +93,7 @@ int partition_scan(Medium*m,DiskMap*x)
     u8 mbr[512];memcpy(mbr,sector,512);int protective=0;
     for(int i=0;i<4;i++)if(mbr[446+16*i+4]==0xee)protective++;
     if(!mbr_signature_ok&&!protective&&memcmp(other,"EFI PART",8))return bad(x,"Tabella non riconosciuta: disco protetto");
-    u32 lo=1,hi=m->z;const char *unsafe_reason=0;
+    u32 lo=1,hi=m->z;int pmbr_repair=0;const char *unsafe_reason=0;
     if(protective||!memcmp(other,"EFI PART",8)){
         x->scheme=MAP_GPT;Gpt a,b;int av=header(m,scale,&a,entries),bv=header(m,m->z-scale,&b,mirror);
         if(!av&&!bv)return bad(x,"GPT non valida: nessuna modifica consentita");
@@ -104,9 +104,12 @@ int partition_scan(Medium*m,DiskMap*x)
         else if(protective!=1)unsafe_reason="Voce MBR protettiva assente o duplicata: disco protetto";
         else if(!x->safe)unsafe_reason="Copie GPT discordanti: disco protetto";
         for(int i=0;i<4;i++){u8*t=mbr+446+16*i;
-            if(!mbr_signature_ok&&!t[4]&&nz(t,16)){x->safe=0;unsafe_reason="Voce MBR residua: disco protetto";}
+            if(!t[4]&&nz(t,16)){x->safe=0;unsafe_reason="Voce MBR residua: disco protetto";}
             if(t[4]&&t[4]!=0xee){x->safe=0;unsafe_reason="MBR ibrido non supportato: disco protetto";}
-            if(t[4]==0xee&&(t[0]||rd32(t+8)!=1||rd32(t+12)!=m->z/scale-1)){x->safe=0;unsafe_reason="MBR protettivo incoerente: disco protetto";}
+            if(t[4]==0xee){
+                if(t[0]||rd32(t+8)!=1){x->safe=0;unsafe_reason="MBR protettivo: avvio o LBA iniziale ambiguo, disco protetto";}
+                if(rd32(t+12)!=m->z/scale-1)pmbr_repair|=2;
+            }
         }
         for(u32 i=0;i<h->num;i++){
             if(!nz(p[i].type,16)){if(x->slot<0)x->slot=i;continue;}
@@ -139,9 +142,15 @@ int partition_scan(Medium*m,DiskMap*x)
         for(int i=0;i<primary;i++){DiskPartition*p=x->part+i;int t=p->type[0];if(t==5||t==15||t==0x85){p->fs=FS_OTHER;strset(p->name,"Partizione estesa",sizeof p->name);if(!extended(m,x,p->start,p->sectors,&logical))return 0;}}
     }
     if(!x->safe)return bad(x,unsafe_reason?unsafe_reason:"Tabella non verificata: disco protetto");
-    if(x->scheme==MAP_GPT&&!mbr_signature_ok){
-        x->pmbr_signature_repairable=x->slot>=0;
-        return bad(x,"GPT verificata; firma MBR assente: serve conferma ripristino");
+    if(x->scheme==MAP_GPT){
+        if(!mbr_signature_ok)pmbr_repair|=1;
+        if(pmbr_repair){
+            /* Validated identical GPT copies, unambiguous sole EE entry,
+             * valid nonoverlapping extents; only installer may normalize
+             * coverage/signature, after explicit consent and fresh recheck. */
+            x->pmbr_signature_repairable=x->slot>=0?pmbr_repair:0;
+            return bad(x,(pmbr_repair&2)?"GPT verificata; copertura MBR protettivo da ripristinare con consenso":"GPT verificata; firma MBR assente: serve conferma ripristino");
+        }
     }
     if(x->slot<0){strset(x->reason,"Tabella piena: nessuna voce libera",sizeof x->reason);return 1;}
     strset(x->reason,x->sectors?"Spazio non allocato disponibile":"Nessuno spazio non allocato",sizeof x->reason);return 1;

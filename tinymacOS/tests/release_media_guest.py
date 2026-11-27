@@ -1,6 +1,6 @@
 """Final dual-mode optical package smoke: UEFI and BIOS/OpenDuet, real SATA.
-The full filesystem matrix uses the separately shipped exact native UEFI ISO;
-independent extracted-file hashes connect both media to identical OS payloads.
+The filesystem and optical matrix use the same final single BIOS+UEFI ISO;
+independent extracted-kernel hashes connect the media to the guarded build.
 """
 from pathlib import Path
 import hashlib,json,os,struct,tempfile
@@ -10,7 +10,7 @@ base=Path(os.environ['TMC_QA_DIR']);iso=Path(os.environ['TMC_DUAL_ISO']);root=Pa
 w=Path(tempfile.mkdtemp(prefix='tmc-release-optical-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir()
 font=Path(os.environ['TMC_FONT']).read_bytes();pixels.b=font;pixels.nf,pixels.ng=struct.unpack_from('<II',font,4);pixels.codes={c:j for j,c in enumerate(struct.unpack_from(f'<{pixels.ng}I',font,12))};pixels.start=12+pixels.ng*4;pixels.pix=pixels.start+pixels.nf*(pixels.ng*8+4);pixels.word.cache_clear()
 old=retail_guest.locate;retail_guest.locate=lambda im,text,faces=(0,1,2,3,5,6,8),threshold=.88:old(im,text,faces,threshold)
-os.environ.update(TMC_STORAGE='sata',TMC_MEM='1024',TMC_SMP='2',TMC_POINTER='tablet',TMC_BIOS_ISO=str(iso),OCR_ROOT=os.environ['TOOLROOT'])
+os.environ.update(TMC_STORAGE='sata',TMC_MEM=os.environ.get('TMC_OPTICAL_MEM','512'),TMC_SMP='2',TMC_POINTER='tablet',TMC_BIOS_ISO=str(iso),OCR_ROOT=os.environ['TOOLROOT'])
 r={'passed':False,'work':str(w),'iso_sha256':hashlib.file_digest(iso.open('rb'),'sha256').hexdigest(),'physical_hardware_tested':False,'checks':[]}
 try:
  for firmware in ['uefi','bios']:

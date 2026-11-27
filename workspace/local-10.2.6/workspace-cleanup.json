@@ -1,0 +1,90 @@
+{
+  "removed": [
+    {
+      "path": "workspace/local-10.2.5/hotfix/evidence-30B17.tar.xz",
+      "bytes": 3271636,
+      "sha256": "b9618c415918335c97e261f8c55bac14d91c98b9fc3b1cea882a0327d2308518",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+      "reason": "historical artifact retained in published Git history"
+    },
+    {
+      "path": "workspace/local-10.2.5/hotfix/evidence-30B20.tar.xz",
+      "bytes": 11552032,
+      "sha256": "09afeb89ff8b2aa4f74115ca97763ea929dbc69d2061e351b1b365a7ae7e08cc",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+      "reason": "historical artifact retained in published Git history"
+    },
+    {
+      "path": "workspace/local-10.2.5/hotfix/evidence-30B18.tar.xz",
+      "bytes": 4001344,
+      "sha256": "758c50548e2510977c0cdf164dc8cf5bb09b0745de15ac066b5fa9121f95d2c5",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+      "reason": "historical artifact retained in published Git history"
+    },
+    {
+      "path": "workspace/local-10.2.5/hotfix/evidence-30B19.tar.xz",
+      "bytes": 10251620,
+      "sha256": "89df5d3e6b71df8bc213f8a50c221a07373aafbf8b9756fd708aab7bc95da018",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+      "reason": "historical artifact retained in published Git history"
+    },
+    {
+      "path": "tinymacOS/consegna/Aurora-avvio-login-Finder.webm",
+      "bytes": 2233798,
+      "sha256": "82e139475bcc790af1ae8c893a48b846800a53da87688b918b2fbccf45081fb4",
+      "restore_commit": "598beb795f18bc72c42e91e34756c23018462996",
+      "reason": "historical artifact retained in published Git history"
+    },
+    {
+      "path": "confronti/font-30B17-vs-Inter.png",
+      "bytes": 27414,
+      "sha256": "01c197e846e7e032769165797f22f31d637566543c7e1eec0f3a3d6387c863ad",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "confronti/terminale-panic-mono.png",
+      "bytes": 32327,
+      "sha256": "70edd177ef28d3bf473d344e6e8de1a6b8f12719b821913c85368a1804880260",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "confronti/tinymacosfonts.tfn",
+      "bytes": 2178265,
+      "sha256": "24add187754c57f6d8f160fe0a2608a9b946979713eec2b92dc653cb4daf97a6",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "confronti/font-senza-fallback.png",
+      "bytes": 26243,
+      "sha256": "2daa2b7b9cbbe92e6b943c227fad6c89de41a5bc27ffe75d804898d8fb914106",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "confronti/tinymacosfonts.json",
+      "bytes": 6991,
+      "sha256": "e8076e84cf313fc19e3c27abb0a269be8a8864bdc701a689f3cbf62f51a3818f",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "confronti/tinymacosfonts-confronto.png",
+      "bytes": 33968,
+      "sha256": "65d2403ab652fdd807491747c0db697c2386e83e5e8861844b6ab7c1e6d93c00",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    },
+    {
+      "path": "tinymacOS/state/vars.fd",
+      "bytes": 540672,
+      "sha256": "5d2ac383371b408398accee7ec27c8c09ea5b74a0de0ceea6513388b15be5d1e",
+      "restore_commit": null,
+      "reason": "generated comparison or disposable firmware state; production font sources retained"
+    }
+  ],
+  "reclaimed_bytes": 34156310,
+  "production_fonts_and_Safari_sources_preserved": true
+}

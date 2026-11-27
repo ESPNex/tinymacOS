@@ -1,0 +1,20 @@
+{
+  "version": "10.2.6",
+  "build": "30C1",
+  "status": "software gates complete; publication pending",
+  "physical_mouse_30B21_confirmed_by_user": true,
+  "workspace_bytes_reclaimed": 34156310,
+  "canonical_only_binary_guard_passed": true,
+  "DnD_sources_restored": true,
+  "PMBR_coverage_repair_host_passed": true,
+  "many_window_optimizations": [
+    "deduplicate identical draw commands, excluding raster/title/content changes",
+    "idle scanout refresh without recompositing every open window"
+  ],
+  "hardware_acceptance_1026": false,
+  "candidate_guest_suites": 17,
+  "host_suites": 9,
+  "many_windows_comparison_passed": true,
+  "DnD_real_mouse_passed": true,
+  "PMBR_coverage_and_signature_guest_passed": true
+}

@@ -29,7 +29,7 @@ with tempfile.TemporaryDirectory(prefix='tmc-nvme-helper-',dir='/var/tmp') as sc
  licenses=tree/'LICENSES';licenses.mkdir()
  for name in ['LICENSE.txt']:shutil.copyfile(v/name,licenses/('OpenCore-'+name))
  shutil.copyfile(root/'vendor/tmc-nvme-dxe/LICENSE.txt',licenses/'NvmExpressDxe.txt');shutil.copyfile(root/'vendor/tmc-ps2-keymap/LICENSE.txt',licenses/'TmcPs2.txt')
- (tree/'README.TXT').write_text('tinymacOS 10.2.5 development NVMe boot helper\nKeep this USB/SATA helper attached when BIOS cannot read NVMe.\nNo kernel or user documents reside on this helper. Select the installed NVMe system in OpenCore.\nRequires actual BIOS USB/SATA boot support. Does not modify or flash system firmware.\nSource-built BSD NVMe DXE supplies pre-OS BlockIO only; the native kernel owns runtime queues.\nNot a standalone operating system or a claim of physical hardware certification.\n')
+ (tree/'README.TXT').write_text('tinymacOS 10.2.6 development NVMe boot helper\nKeep this USB/SATA helper attached when BIOS cannot read NVMe.\nNo kernel or user documents reside on this helper. Select the installed NVMe system in OpenCore.\nRequires actual BIOS USB/SATA boot support. Does not modify or flash system firmware.\nSource-built BSD NVMe DXE supplies pre-OS BlockIO only; the native kernel owns runtime queues.\nNot a standalone operating system or a claim of physical hardware certification.\n')
  fat=w/'helper.fat';sectors=32768
  with fat.open('xb') as f:f.truncate(sectors*512)
  run('mkfs.fat','--invariant','-F16','-s1','-h2048','-n','TMCNVMEBOOT',fat)

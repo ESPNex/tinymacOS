@@ -1,18 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0-only */
+/* Physical EHCI OS services for the sole canonical USB stack. */
 #include "../kernel/k.h"
-#include "usbhost.h"
-#include "usb_retry.h"
-#include "linux_usb.h"
 #include "linux_ehci_hcd.h"
-/* Platform services + class/enumeration boundary only. All frame/QH/TD,
- * bandwidth, toggles, completion, unlink and root-hub hardware operations
- * are in byte-exact original Linux EHCI sources in ehci_runtime.c.
- * UsbInput class bindings are still the separate native-to-Linux adapter;
- * this does not purport to be complete Linux USB core/usbhid integration. */
-struct EhciInput;
-struct EhciPipe {struct EhciInput *device;unsigned index;};
-static struct EhciInput {UsbInput usb;TmcEhciDevice *device;unsigned controller,configured;struct EhciPipe context[USB_INPUT_INTERFACES];} inputs[4][USB_INPUT_DEVICES];
-static unsigned used[4];
+extern void usb_delay_ms(unsigned);
 u8 tmc_ehci_os_in8(u16 port){return inb(port);}
 u16 tmc_ehci_os_in16(u16 port){return inw(port);}
 u32 tmc_ehci_os_in32(u16 port){return inl(port);}
@@ -36,79 +26,3 @@ u32 tmc_ehci_os_read32(const volatile void *p){return *(const volatile u32 *)p;}
 void tmc_ehci_os_write32(volatile void *p,u32 value){*(volatile u32 *)p=value;asm volatile("":::"memory");}
 u64 tmc_ehci_os_clock_ns(void){extern u64 tmc_lx_os_clock_ns(void);return tmc_lx_os_clock_ns();}
 void tmc_ehci_os_fatal(void){logstr("Linux EHCI fatal invariant\n");for(;;)asm volatile("cli; hlt");}
-static int linux_control(UsbInput *u,int rt,int request,int value,int index,int n)
-{
- struct EhciInput *d=u->host;if(n<0||(unsigned)n>sizeof u->desc)return -1;
- tmc_linux_ehci_device_state(d->device,u->address,u->max_packet0,d->configured);
- int rc=tmc_linux_ehci_control(d->device,rt,request,value,index,u->desc,n,1000);
- u->ctrl_bytes=rc<0?0:(unsigned)rc;if(rc>=0&&rt==0&&request==9)d->configured=!!value;
- return rc==-32?-2:rc<0?-1:0;
-}
-static int root_control(void *context,unsigned rt,unsigned request,unsigned value,unsigned index,u8 *buffer,unsigned n)
-{return tmc_linux_ehci_hub((unsigned)(u64)context,(rt<<8)|request,value,index,buffer,n);}
-static void arm(struct EhciInput *,unsigned);
-static void complete(void *context,int status,unsigned n)
-{
- struct EhciPipe *c=context;struct EhciInput *d=c->device;UsbInputPipe *p=d->usb.pipe+c->index;p->armed=0;
- if(status){
-  input_diag.transfer_errors++;
-  if(p->proto==1){const u8 zero[8]={0};if(p->linux_keyboard)(void)tmc_linux_keyboard_report(p,zero,8);else hid_keys(zero);}
-  int retry=usb_input_retry(p,status,ticks);
-  if(p->linux_mouse)(void)tmc_linux_mouse_error(p,retry?status:-108);
-  if(p->linux_generic)tmc_linux_generic_error(p,!retry);
-  return;
- }
- p->failures=0;p->halted=0;usb_input_report(&d->usb,c->index,n);arm(d,c->index);
-}
-static void arm(struct EhciInput *d,unsigned index)
-{
- UsbInputPipe *p=d->usb.pipe+index;d->context[index]=(struct EhciPipe){d,index};
- int rc=tmc_linux_ehci_interrupt(d->device,p->ep,p->packet,d->usb.speed==3?(1u<<MIN((p->interval?p->interval:1)-1,15u)):(p->interval?p->interval:1),p->report,complete,d->context+index);
- if(rc){input_diag.transfer_errors++;usb_input_retry(p,rc,ticks);}else p->armed=1;
-}
-static void attach(unsigned c,unsigned speed,unsigned hub,unsigned hub_port,unsigned depth);
-static void hub_children(struct EhciInput *d,unsigned depth)
-{
- UsbInput *u=&d->usb;if(depth>=3||usb_input_control(u,0xa0,6,0x2900,0,u->desc,9)<7)return;
- if(u->desc[0]<7||u->desc[1]!=0x29)return;unsigned ports=MIN(u->desc[2],15u),delay=MAX(20u,(unsigned)u->desc[5]*2);
- for(unsigned p=1;p<=ports;p++)(void)usb_input_control(u,0x23,3,8,p,0,0);usb_delay_ms(delay);
- for(unsigned p=1;p<=ports&&used[d->controller]<USB_INPUT_DEVICES;p++){
-  unsigned status;if(tmc_linux_hub_port_init(usb_input_control,u,p,u->speed==1?2:u->speed==2?1:3,&status))continue;
-  attach(d->controller,status&1024?3:status&512?2:1,u->speed==3?u->address:u->hub,u->speed==3?p:u->hub_port,depth+1);
- }
-}
-static void attach(unsigned c,unsigned speed,unsigned hub,unsigned hub_port,unsigned depth)
-{
- if(used[c]>=USB_INPUT_DEVICES)return;struct EhciInput *d=&inputs[c][used[c]++];d->controller=c;d->usb.speed=speed;d->usb.hub=hub;d->usb.hub_port=hub_port;
- d->device=tmc_linux_ehci_device(c,speed==2?1:speed==3?3:2);if(!d->device)return;
- if(hub){struct EhciInput *tt=NULL;for(unsigned i=0;i+1<used[c];i++)if(inputs[c][i].usb.address==hub)tt=&inputs[c][i];if(!tt||tmc_linux_ehci_translator(d->device,tt->device,hub_port,0,666))return;}
- d->usb.host=d;d->usb.control=linux_control;int kind=usb_input_enumerate(&d->usb,used[c]);
- if(kind==1){tmc_linux_ehci_device_state(d->device,d->usb.address,d->usb.max_packet0,1);for(unsigned j=0;j<d->usb.npipe;j++)arm(d,j);}
- else if(kind==2){tmc_linux_ehci_device_state(d->device,d->usb.address,d->usb.max_packet0,1);hub_children(d,depth);}
-}
-void ehci_init(void)
-{
- int rc=tmc_linux_ehci_module_init();if(rc){logstr("Linux EHCI initialization failed\n");return;}
- for(unsigned c=0;c<tmc_linux_ehci_controllers()&&c<4;c++){
-  for(unsigned port=1;port<=tmc_linux_ehci_ports(c)&&used[c]<USB_INPUT_DEVICES;port++){
-   (void)tmc_linux_ehci_hub(c,0x2303,8,port,NULL,0);usb_delay_ms(20);unsigned status=0;
-   if(tmc_linux_hub_port_init(root_control,(void *)(u64)c,port,3,&status))continue;
-   attach(c,status&1024?3:status&512?2:1,0,0,0);
-  }
-  device_add("Linux EHCI host controller (polled)","usb",0);
- }
-}
-void ehci_poll(void)
-{
- tmc_linux_ehci_poll();
- for(unsigned c=0;c<tmc_linux_ehci_controllers()&&c<4;c++)for(unsigned i=0;i<used[c];i++){
-  struct EhciInput *d=&inputs[c][i];for(unsigned j=0;j<d->usb.npipe;j++){
-   UsbInputPipe *p=d->usb.pipe+j;if(p->armed!=-1||ticks<p->retry_at)continue;p->armed=0;
-   if(p->halted){
-    if(usb_input_control(&d->usb,2,1,0,0x80|p->ep,0,0)<0){usb_input_retry(p,-32,ticks);continue;}
-    tmc_linux_ehci_reset_toggle(d->device,p->ep);p->halted=0;
-   }
-   arm(d,j);
-  }
- }
-}

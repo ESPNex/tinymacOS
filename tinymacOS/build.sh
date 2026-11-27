@@ -11,8 +11,9 @@ D=$(realpath -m "$TMC_BUILD"); case "$D/" in "$ROOT/"*) echo 'Use a build direct
 python3 tools/media_path.py "$D" "$D/$TMC_ISO"
 mkdir -p "$D"; export TMC_BUILD="$D"; export LC_ALL=C
 python3 tools/linux-source-contract.py
+python3 tools/check-usb-retirement.py
 C=(-O2 ${TMC_FS2_BACKEND:+-DTMC_FS2_BACKEND} ${TMC_DEBUG:+-DTMC_DEBUG} -g0 -ffreestanding -fno-stack-protector -fno-builtin -fno-asynchronous-unwind-tables -fno-unwind-tables -mno-red-zone -mgeneral-regs-only -fno-ident -ffile-prefix-map="$ROOT"=. -Wall -Wextra -Wno-misleading-indentation -Wno-sign-compare -Iinclude -Iarch)
-if [[ "${TMC_USB_CANONICAL:-0}" == 1 ]];then C+=(-DTMC_USB_CANONICAL);fi
+C+=(-DTMC_USB_CANONICAL) # compatibility constant, no alternate USB build exists
 U=("${C[@]}" -fpie -fno-plt -Iuserspace -Idesktop);L=(-nostdlib --build-id=none -z noexecstack -z max-page-size=0x1000)
 E=("${C[@]}" -fPIC -Dmemcpy=tmc_efi_copy -Dmemset=tmc_efi_set -fshort-wchar -DGNU_EFI_USE_MS_ABI -I"$EFIINC" -I"$EFIINC/x86_64")
 for f in crypto/sha256.c kernel/string.c storage/maintenance.c storage/partition.c;do gcc "${E[@]}" -c "$f" -o "$D/efi-${f##*/}.o";done
@@ -53,24 +54,18 @@ LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/l
       net/lwip/core/ipv4/ip4_addr.c net/lwip/core/ipv4/ip4_frag.c net/lwip/netif/ethernet.c
       net/lwip/core/tcp.c net/lwip/core/tcp_in.c net/lwip/core/tcp_out.c)
 for f in arch/*.S arch/*.c kernel/*.c drivers/*.c fs/*.c storage/*.c crypto/*.c crypto/monocypher/monocypher.c "${LWIP[@]}";do o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Inet/include -Inet/lwip/include -c "$f" -o "$D/$o";KOBJ+=("$o");done
-# Real pinned upstream Linux Boot mouse/keyboard + implemented USB/input compatibility.
-# xHCI remains native; whole original UHCI/EHCI feed the class adapter.
+# Sole canonical USB core/HID with shared original XHCI/EHCI transports.
 # Whole original Linux DMA pool allocator uses its own private kernel ABI.
 gcc "${C[@]}" -fno-pie -Icompat/linux/dma-include -Wno-unused-parameter -c compat/linux/dma_pool.c -o "$D/k-linux-dma-pool.o"
 KOBJ+=(k-linux-dma-pool.o)
-# Complete original UHCI HCD/queue/hub/PCI on private real polled runtime.
-gcc "${C[@]}" -fwrapv -fno-pie -Icompat/linux/uhci-include -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable -c compat/linux/uhci_runtime.c -o "$D/k-linux-uhci.o"
-KOBJ+=(k-linux-uhci.o)
 for f in compat/linux/ehci_runtime.c compat/linux/ehci_pci.c;do
  o="k-${f//\//-}.o";gcc "${C[@]}" -fwrapv -fno-pie -Icompat/linux/ehci-include -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable -c "$f" -o "$D/$o";KOBJ+=("$o");done
 for f in compat/linux/xhci_{runtime,pci,mem,ring,hub,extcaps,debug}.c;do
  o="k-${f//\//-}.o";gcc "${C[@]}" -fwrapv -fno-pie -Icompat/linux/xhci-include -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable -c "$f" -o "$D/$o";KOBJ+=("$o");done
 
-for f in compat/linux/ps2_protocol.c compat/linux/ps2_input.c compat/linux/psmouse_input.c compat/linux/usb_config.c compat/linux/usb_hub.c compat/linux/hid_parser.c compat/linux/usb_generic.c compat/linux/usb_input.c compat/linux/usb_keyboard.c vendor/linux-v6.12/urb.c vendor/linux-v6.12/usbmouse.c;do
+for f in compat/linux/ps2_services.c compat/linux/ps2_protocol.c compat/linux/ps2_input.c compat/linux/psmouse_input.c;do
  o="k-${f//\//-}.o";gcc "${C[@]}" -fno-pie -Icompat/linux/include -Wno-unused-parameter -c "$f" -o "$D/$o";KOBJ+=("$o");done
-if [[ "${TMC_USB_CANONICAL:-0}" == 1 ]];then
- bash tools/build-usbcore.sh "$D" "${C[@]}";KOBJ+=(k-linux-usbcore.o)
-fi
+bash tools/build-usbcore.sh "$D" "${C[@]}";KOBJ+=(k-linux-usbcore.o)
 # driver kernel extensions (ELF relocatables loaded from /System/Library/Extensions)
 for k in e1000 wifi;do gcc "${C[@]}" -fno-pie -Iinclude -c "net/kext/$k.c" -o "$D/kext-$k.o";done
 # Upstream CPU Jitter RNG must not be optimized: preserve timing work and enable all health tests.

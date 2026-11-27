@@ -1,12 +1,16 @@
 /* SPDX-License-Identifier: GPL-2.0-or-later */
 #include "../kernel/k.h"
 #include "linux_usb.h"
-#include "usbhost.h"
+extern void usb_delay_ms(unsigned);
 /* Kernel-side services for the Linux USB/input compatibility subset.
  * The pre-existing user-space POSIX libc cannot perform these operations.
  * Both GFP classes are non-sleeping here and fail on heap exhaustion.
  */
 static Spin linux_usb_lock;
+/* Physical EHCI/xHCI CONFIGFLAG handoff exclusion, independent of any class adapter. */
+static unsigned physical_cf_gate;
+void tmc_linux_usb_cf_begin(void){unsigned n=0;while(!__atomic_compare_exchange_n(&physical_cf_gate,&n,1,0,__ATOMIC_ACQUIRE,__ATOMIC_RELAXED)){n=0;asm volatile("pause");}}
+void tmc_linux_usb_cf_end(void){__atomic_store_n(&physical_cf_gate,0,__ATOMIC_RELEASE);}
 void *tmc_lx_os_alloc(size_t n){return n&&n<=65536?kmalloc(n):0;}
 void tmc_lx_os_free(void *p){kfree(p);}
 void *tmc_lx_os_dma_alloc(size_t n,u64 *dma)
@@ -17,11 +21,8 @@ void *tmc_lx_os_dma_alloc(size_t n,u64 *dma)
 void tmc_lx_os_dma_free(void *p,u64 dma){if(p&&(u64)p==dma)page_put(dma);}
 u32 tmc_lx_os_lock(void){u32 flags;spin_lock(&linux_usb_lock,&flags);return flags;}
 void tmc_lx_os_unlock(u32 flags){spin_unlock(&linux_usb_lock,flags);}
-void tmc_lx_os_pointer(int x,int y,int buttons,int wheel){hid_relative(x,y,buttons,wheel);}
-void tmc_lx_os_hwheel(int delta){hid_horizontal(delta);}
 void tmc_lx_os_error(const char *message){logstr(message);logstr("\n");}
 
-void tmc_lx_os_keyboard(const u8 bitmap[32],unsigned mods){hid_linux_keys(bitmap,mods);}
 u32 tmc_lx_os_irq_save(void){return irq_save();}
 void tmc_lx_os_irq_restore(u32 flags){irq_restore(flags);}
 void tmc_lx_os_spin_wait(void){tlb_shoot_poll();asm volatile("pause");}
@@ -48,17 +49,6 @@ u64 tmc_lx_os_clock_ms(void)
  }
  return linux_tsc()/linux_tsc_per_ms;
 }
-
-/* Complete Linux descriptor core uses private objects and real kernel memory
- * and PIT-channel-2 delays; it shares neither fake URBs nor descriptor reads. */
-void *tmc_config_os_alloc(size_t n){return n&&n<=65536?kmalloc(n):0;}
-void tmc_config_os_free(void *p){kfree(p);}
-void tmc_config_os_delay(unsigned ms){usb_delay_ms(ms);}
-
-/* The isolated Linux HID parser needs >64 KiB for upstream usage tables.
- * Its own checked allocation budget bounds all allocations to 2 MiB total. */
-void *tmc_hid_os_alloc(size_t n){return n&&n<=512*1024+16?kmalloc(n):0;}
-void tmc_hid_os_free(void *p){kfree(p);}
 
 /* Private physical-HCD hrtimers need sub-millisecond elapsed time even with
  * IF clear. Same CPU0 calibrated TSC and limits as the millisecond service. */

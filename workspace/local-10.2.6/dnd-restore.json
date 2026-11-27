@@ -1,0 +1,9 @@
+{
+  "source_commit": "8f586a05c361ba49858dd49197d7c0a4a57d0d8e",
+  "restored": [
+    "desktop/main.c",
+    "drivers/input.c",
+    "desktop/input_budget.h"
+  ],
+  "canonical_USB_hardware_accepted_by_user": true
+}

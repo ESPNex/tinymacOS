@@ -1,5 +1,9 @@
 [
   {
+    "path": "include/window_update.h",
+    "sha256": "ee5c1fa6071202b26d35021da435e6cd8ce6705262ef5e62e2b6195a2e5841a5"
+  },
+  {
     "path": "include/base.h",
     "sha256": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30"
   },
@@ -9,7 +13,7 @@
   },
   {
     "path": "include/partition.h",
-    "sha256": "f45d05de444c3fe13ca41eef64a112b634545239f5a3e51e9f2163fd5361dcc0"
+    "sha256": "866adde03423953833f0e6474f760bb9a86f9320ae4b5f847596d8f257b24ba5"
   },
   {
     "path": "include/clipboard.h",
@@ -41,7 +45,7 @@
   },
   {
     "path": "kernel/sched.c",
-    "sha256": "6dff739a4611ae40105c3de5cd3052e1a3310cd98aa72ff449020c430560e380"
+    "sha256": "ff6152042dfedc4ed0b6b43e969bce6c093333db97221798d94e818f2fa5600e"
   },
   {
     "path": "include/uaccess_gate.h",
@@ -73,7 +77,7 @@
   },
   {
     "path": "kernel/syscall.c",
-    "sha256": "67754ab34fa9efc7249e34ce7b09593968f17945fcbc86408c4106aa92f980e1"
+    "sha256": "6c00bdd0784f02c9538a260f8751eaa8cebad021b7f571f0a2189565f7da3535"
   },
   {
     "path": "kernel/k.h",
@@ -93,7 +97,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "f70dc3274834e3d2b7ab52c6f3bc1b90a446651f527f5ac5b97bf6230c597036"
+    "sha256": "353dc82e5658efa897a3a99d22acca1a8ca6d119347bec207c8898d61e677f6f"
   },
   {
     "path": "include/vmabi.h",

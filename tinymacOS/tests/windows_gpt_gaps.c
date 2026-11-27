@@ -48,6 +48,13 @@ int main(void){
  backup.crc^=1;assert(!partition_scan(&m,&x)&&!x.safe);assert(strstr(x.reason,"backup"));check_gap(&x);puts("PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden");
  fixture();primary.crc^=1;assert(!partition_scan(&m,&x)&&!x.safe);assert(strstr(x.reason,"primaria"));check_gap(&x);puts("PASS validated backup inventory exposes same gap without silently repairing Windows GPT");
  fixture();copy[2].attrs^=1;backup.ecrc=crc32(copy,sizeof copy);backup.crc=0;backup.crc=crc32(&backup,92);assert(!partition_scan(&m,&x)&&!x.safe);check_gap(&x);assert(strstr(x.reason,"discordanti"));puts("PASS discordant valid GPT copies: gap visible, unsafe allocation refused");
- fixture();u32 wrong=total-2;memcpy(pmbr+458,&wrong,4);assert(!partition_scan(&m,&x)&&!x.safe);assert(strstr(x.reason,"MBR protettivo"));check_gap(&x);puts("PASS stale protective MBR: specific reason, gap retained, no write bypass");
+ fixture();u32 wrong=total-2;memcpy(pmbr+458,&wrong,4);assert(!partition_scan(&m,&x)&&!x.safe);assert((x.pmbr_signature_repairable&2)&&strstr(x.reason,"MBR protettivo"));check_gap(&x);puts("PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked");
+
+ fixture();u32 saturate=0xffffffff;memcpy(pmbr+458,&saturate,4);assert(!partition_scan(&m,&x)&&x.pmbr_signature_repairable==2);check_gap(&x);
+ fixture();pmbr[446]=128;assert(!partition_scan(&m,&x)&&!x.pmbr_signature_repairable);
+ fixture();pmbr[454]=2;assert(!partition_scan(&m,&x)&&!x.pmbr_signature_repairable);
+ fixture();pmbr[462+8]=1;assert(!partition_scan(&m,&x)&&!x.pmbr_signature_repairable);
+ fixture();memcpy(pmbr+458,&saturate,4);backup.crc^=1;assert(!partition_scan(&m,&x)&&!x.pmbr_signature_repairable);
+ puts("PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked");
  fixture();table[2].end=table[3].start-1;primary.ecrc=crc32(table,sizeof table);primary.crc=0;primary.crc=crc32(&primary,92);memcpy(copy,table,sizeof copy);backup.ecrc=primary.ecrc;backup.crc=0;backup.crc=crc32(&backup,92);assert(partition_scan(&m,&x)&&x.safe&&x.sectors<free_n);assert(!writes);puts("PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space");
 }
