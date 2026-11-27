@@ -3,6 +3,7 @@ Synthetic foreign partitions (not Windows certification), never physical media.
 """
 from pathlib import Path
 import hashlib,json,os,struct,tempfile,time,uuid,zlib
+from uefi_variables import vars_active
 from retail_guest import Retail
 from boot_recovery import RecoveryKey
 from m2_sparse_check import verify_foreign
@@ -57,8 +58,18 @@ try:
         g.enroll(name='CapacityQA');terminal(g);g.cmd('echo M2_NATIVE_IMPORT > Documents/m2-proof.txt');g.cmd('diskutil list');g.visible(capacity);g.visible(allocated);g.visible('FOREIGN_1')
         g.cmd('open -a "Disk Utility"');g.visible('Disco interno');g.visible(capacity);g.visible('Non allocato · '+allocated);g.shot('m2-live-utility-gap')
         g.key('ctrl-w');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.visible(allocated+' non allocati');g.key('down');g.key('ret');g.visible('Conferma l’installazione');assert fingerprints()==before;g.shot('m2-installer-genuine-gap')
-        g.key('spc');g.key('ret');g.visible('Il disco è pronto',600);g.key('ret');g.p.wait(timeout=20)
+        g.key('spc');g.key('ret');g.visible('Il disco è pronto',600);g.visible('OpenCore è stato impostato come avvio principale.');g.key('ret');g.p.wait(timeout=20)
     assert fingerprints()==before
+    variables=vars_active(w/'target/vars.fd');gg=uuid.UUID('8be4df61-93ca-11d2-aa0d-00e098032b8c').bytes_le
+    first=struct.unpack_from('<H',variables[(gg,'BootOrder')])[0];option=variables[(gg,f'Boot{first:04X}')]
+    assert 'tinymacOS OpenCore'.encode('utf-16le') in option
+    at=6
+    while option[at:at+2]!=b'\0\0':at+=2
+    device=option[at+2:];assert device[:4]==bytes([4,1,42,0])
+    number,base_lba,count_lba=struct.unpack_from('<IQQ',device,4)
+    assert number==3 and base_lba==start//scale and count_lba==span//scale
+    r['opencore_verified_before_first_native_boot']=True
+    ok('Before first installed boot: real EFI BootOrder already prefers new target OpenCore; short HD path identifies correct partition and native logical LBAs')
     with disk.open('rb') as f:
         f.seek(2*logical);p=f.read(16384);a,b=struct.unpack_from('<QQ',p,2*128+32);assert a*scale==start and (b+1)*scale==end
         f.seek((start+9)*512);h=f.read(512);assert h[:8]==b'TMCVOL23' and struct.unpack_from('<I',h,8)[0]==(3 if span>0xffffffff else 2)

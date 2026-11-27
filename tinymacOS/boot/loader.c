@@ -7,6 +7,10 @@
 #include "bootconsole.h"
 #include "bootdefault.h"
 #include "gopmode.h"
+#include "firmware_boot.h"
+static EFI_RUNTIME_SERVICES *physical_runtime;
+/* SysV entry called only by the supervisor on BSP, with physical EFI CR3. */
+static u64 install_runtime_default(const void*path,u64 bytes){return boot_install_default(physical_runtime,path,bytes);}
 #define FAIL(s) do{st->ConOut->OutputString(st->ConOut,L"Impossibile avviare tinymacOS.\r\n");return EFI_LOAD_ERROR;}while(0)
 static struct Boot bi;
 static EFI_SYSTEM_TABLE *ginst;
@@ -83,7 +87,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     if (EFI_ERROR(bs->HandleProtocol(st->ConsoleOutHandle,&gg,(void **)&go)) &&
         EFI_ERROR(bs->LocateProtocol(&gg, 0, (void **)&go)))
         FAIL("GOP unavailable");
-    ginst = st;
+    ginst = st;physical_runtime=st->RuntimeServices;
     if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))
         || EFI_ERROR(bs->HandleProtocol(li->DeviceHandle, &sg, (void **)&fs)) || EFI_ERROR(fs->OpenVolume(fs, &root))
        )FAIL("volume");
@@ -315,6 +319,8 @@ kernel_loaded:
         for(unsigned j=0;j<20;j++)sum+=p[j];
         if(!(sum&255)){bi.rsdp=a;break;}
     }
+    EFI_PHYSICAL_ADDRESS runtime_stack=0xffffffff;
+    if(!EFI_ERROR(bs->AllocatePages(AllocateMaxAddress,EfiLoaderData,32,&runtime_stack)))bi.firmware_stack=runtime_stack+32*4096;
     vmsg("[loader] entering native kernel, ExitBootServices\n");
     for (int tries = 0; tries < 8; tries++) {
         UINTN n = sizeof(mmapbuf), key, ds;
@@ -324,6 +330,18 @@ kernel_loaded:
         bi.map = (UINTN)mmapbuf;
         bi.bytes = n;
         bi.step = ds;
+        /* Retain physical-mode runtime services; NEVER call SetVirtualAddressMap.
+         * All loader/boot/runtime pages are excluded from this OS PMM. Validate
+         * every original paging-structure page before handing the bridge over. */
+        u64 cr3,cr4;__asm__ volatile("mov %%cr3,%0":"=r"(cr3));__asm__ volatile("mov %%cr4,%0":"=r"(cr4));
+        cr3&=0x000ffffffffff000ull;unsigned budget=4096;bi.firmware_magic=bi.firmware_cr3=bi.firmware_default=0;
+        if(bi.firmware_stack&&!(cr4&(1ull<<12))&&firmware_tables_kept(cr3,4,&budget,mmapbuf,n,ds)&&
+           firmware_kept((u64)physical_runtime,sizeof *physical_runtime,mmapbuf,n,ds)&&
+           firmware_kept((u64)physical_runtime->GetVariable,1,mmapbuf,n,ds)&&
+           firmware_kept((u64)physical_runtime->SetVariable,1,mmapbuf,n,ds)&&
+           firmware_kept((u64)install_runtime_default,1,mmapbuf,n,ds)){
+            bi.firmware_magic=FW_RUNTIME_MAGIC;bi.firmware_cr3=cr3;bi.firmware_default=(u64)install_runtime_default;
+        }
         EFI_STATUS r = bs->ExitBootServices(image, key);
         if (!EFI_ERROR(r)) {
             __asm__ volatile("cli; cld");

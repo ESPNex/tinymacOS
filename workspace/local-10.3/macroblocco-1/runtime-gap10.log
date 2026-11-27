@@ -1,0 +1,4 @@
+PASS Before first installed boot: real EFI BootOrder already prefers new target OpenCore; short HD path identifies correct partition and native logical LBAs
+PASS Real GUI 12.0 GB 512B install: container owns entire 10.0 GB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap
+PASS ISO-detached cold native boot: imported account/file usable; Terminal physical/container/data sizes and Utility physical disk agree with independent GPT/FS2 geometry
+PASS Same installed disk after cold Recovery boot: Installer, Utility Disco and Terminal all show physical capacity 12.0 GB; container 10.0 GB remains distinct and foreign metadata intact

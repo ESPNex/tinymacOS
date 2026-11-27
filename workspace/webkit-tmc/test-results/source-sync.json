@@ -53,7 +53,7 @@
   },
   {
     "path": "kernel/sched.c",
-    "sha256": "57f56235f87289216b971a1d0c36cad56375cf170d7bfe5e62d311fd4b7c393f"
+    "sha256": "d4f1e64640a9153935fb6c082f378938057b6cbe1860631f775cdebebaf55b8c"
   },
   {
     "path": "include/uaccess_gate.h",
@@ -89,7 +89,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "e90ceb7f2c09461fe26ad6ef22ce43f4496468a2692aa433c9898f7abc24d264"
+    "sha256": "37d2daa6559f788ed575728f870606380fe95f0c54bad7e6befb832a34ccadd6"
   },
   {
     "path": "desktop/gfx.c",
@@ -105,7 +105,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "be6896143d9c2ebc139bed2e15eeb6b65b69f364bd1311035315b1b0b717cb8c"
+    "sha256": "9b03502c420875189a92929a45bdf56740429fa652e5fcdf0326317dfbf4000f"
   },
   {
     "path": "include/vmabi.h",

@@ -1,0 +1,43 @@
+{
+  "development_only": true,
+  "release_ready": false,
+  "build_inputs_verified_unchanged": true,
+  "artifacts": {
+    "block1-final-dev.iso": {
+      "bytes": 227710976,
+      "sha256": "6f0f824d1ebe57036e1a82e4cd81523207f0057122e12589d2f9ab292e85da65"
+    },
+    "BOOTX64.EFI": {
+      "bytes": 177152,
+      "sha256": "86ed998f4664e3f6163a1a0f51c038b8c6116836d0bbdb3b62fc19a1748d40e4"
+    },
+    "RECBOOT.EFI": {
+      "bytes": 173056,
+      "sha256": "66cf4cade985b40d148ecf3f687c2ec4c4e5ce0c0307fd05ef765a72afee8f2d"
+    },
+    "KernelCache": {
+      "bytes": 1237288,
+      "sha256": "4733f482cb510cbdb12416286ac55dada346460b9cc3f00a5ccd83a6b2d4b075"
+    },
+    "RecoveryKernel.elf": {
+      "bytes": 1237224,
+      "sha256": "bac2a9f389edea554814f3de0b180d0d45e95d441b944365d04cbecfc442b75d"
+    },
+    "TmcVideo.EFI": {
+      "bytes": 9728,
+      "sha256": "cc1b7cfc9a8e4cbe371c7b7908e3dbdd516ea0d7a1ec12b207ed2919b1b2c0ac"
+    },
+    "TmcRestore.EFI": {
+      "bytes": 9728,
+      "sha256": "832f66f6776492cbe95f69820cb55851f683511823ce972736bdc1edfe419d87"
+    },
+    "install.esp": {
+      "bytes": 25165824,
+      "sha256": "063de45fce17f3451a89fd17ca55d7e9dfc94f22559ace38979e66be9a834513"
+    },
+    "install-4k.esp": {
+      "bytes": 25165824,
+      "sha256": "745628fa2d18333a7159bd6b1012bfbbb7385f08c6838252b84114044744d493"
+    }
+  }
+}

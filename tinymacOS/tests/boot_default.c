@@ -53,5 +53,10 @@ int main(void){
  reset();before=writes;assert(EFI_ERROR(boot_restore_default(&rs))&&writes==before);
  reset();assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));deny_order=1;assert(EFI_ERROR(boot_restore_default(&rs)));order_is(0,9,10);assert(indexof(L"tinymacOS-default-disabled",&vendor)<0);original();
  puts("PASS restore without backup or with denied BootOrder never pretends success or destroys options; disabled flag is rolled back on write failure");
+ reset();assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));set(L"Boot0009",&global,7,0,0);
+ assert(!EFI_ERROR(boot_restore_default(&rs)));i=indexof(L"BootOrder",&global);assert(vars[i].bytes==2&&*(u16*)vars[i].data==10);assert(indexof(L"Boot000A",&global)>=0);
+ puts("PASS restore filters removed-media entries without recreating phantom devices; surviving original entries retain their order");
+ reset();assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));set(L"Boot0009",&global,7,0,0);set(L"Boot000A",&global,7,0,0);assert(EFI_ERROR(boot_restore_default(&rs)));order_is(0,9,10);
+ puts("PASS all original devices missing: refuses an empty replacement instead of deleting the usable OpenCore boot order");
  reset();assert(EFI_ERROR(boot_set_default(&rs,path,0)));assert(!writes);puts("PASS invalid load-option path is rejected without writes");return 0;
 }

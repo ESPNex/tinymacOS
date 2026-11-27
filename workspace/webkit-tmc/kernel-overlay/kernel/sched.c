@@ -12,7 +12,8 @@ static Frame *mkframe(int ti, int pi, u64 ip, u64 sp, int user)
     fx_new(t->fx);
     t->state = 1;
     t->pi = pi;
-    t->pin = -1;
+    /* EFI variable runtime services are serialized and issued on the BSP. */
+    t->pin = user && proc[pi].app==INSTALLER ? 0 : -1;
     t->at = -1;
     t->wake = 0;
     t->wait_word = 0;

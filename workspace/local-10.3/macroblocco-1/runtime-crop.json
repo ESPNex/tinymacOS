@@ -1,0 +1,10 @@
+{
+  "source_sha256": "3fd82007afda395c63fecc8dc0d58c9ee3d9226cba3c350b4b217a9fa2d91490",
+  "crop_box": [
+    327,
+    390,
+    1085,
+    637
+  ],
+  "editing": "lossless rectangular crop only; no added/replaced pixels"
+}

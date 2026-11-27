@@ -176,6 +176,7 @@ typedef struct {
     u64 done, total;
     char message[112];
     InstallDisk disk[SETUP_MAX_DISKS];
+    int boot_status; /* 1: verified EFI primary; 0: unavailable/BIOS; -1: EFI update refused */
 } InstallInfo;
 
 static inline int darktheme(unsigned t)

@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 512,
+  "storage_bus": "nvme",
+  "disk_sectors": 23437500,
+  "selected_gap_sectors": 19531776,
+  "work": "/var/tmp/tmc-m2-capacity-39yzxl82",
+  "checks": [
+    "Before first installed boot: real EFI BootOrder already prefers new target OpenCore; short HD path identifies correct partition and native logical LBAs",
+    "Real GUI 12.0 GB 512B install: container owns entire 10.0 GB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap",
+    "ISO-detached cold native boot: imported account/file usable; Terminal physical/container/data sizes and Utility physical disk agree with independent GPT/FS2 geometry",
+    "Same installed disk after cold Recovery boot: Installer, Utility Disco and Terminal all show physical capacity 12.0 GB; container 10.0 GB remains distinct and foreign metadata intact"
+  ],
+  "iso_sha256": "6f0f824d1ebe57036e1a82e4cd81523207f0057122e12589d2f9ab292e85da65",
+  "opencore_verified_before_first_native_boot": true,
+  "actual_data_sectors": 19408896,
+  "foreign_content": {
+    "all_foreign_bytes_verified": true,
+    "method": "SEEK_DATA/HOLE zero holes plus every allocated 512B sector",
+    "nonzero_foreign_sectors": 32,
+    "sha256": "c874c0a80ad59447476af9c9e53cdfc1d88844184a7360f62e60657bb21ef26f"
+  }
+}

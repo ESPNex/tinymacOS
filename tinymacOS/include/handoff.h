@@ -12,6 +12,8 @@ struct Boot {
     uint32_t recovery;            /* set by the dedicated Recovery kernel */
     uint64_t install_4k, recovery_4k; /* verified 4096-byte FAT media, live only */
     uint32_t csr;                 /* SIP config from NVRAM: bit0 = enabled */
+    /* Append-only: keep all old handoff offsets, including SIP, unchanged. */
+    uint64_t firmware_magic,firmware_cr3,firmware_default,firmware_stack;
 };
 struct Elf {
     unsigned char id[16];

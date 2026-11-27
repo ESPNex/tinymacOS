@@ -1,0 +1,22 @@
+PASS dedicated OpenCore Boot0000 comes first; Microsoft/fallback variables and original BootOrder backup are byte-identical
+PASS repeated registration is idempotent and does not rewrite NVRAM
+PASS backup denial prevents both entry creation and BootOrder changes
+PASS BootOrder failure removes only the newly created native entry, preserving Microsoft
+PASS failed/mismatched BootOrder readback restores and verifies original order before deleting new option
+PASS denied rollback retains referenced boot option, original backup and Microsoft entries
+PASS explicit restore returns exact original order and blocks future auto-promotion; Microsoft options and backup preserved
+PASS restore without backup or with denied BootOrder never pretends success or destroys options; disabled flag is rolled back on write failure
+PASS restore filters removed-media entries without recreating phantom devices; surviving original entries retain their order
+PASS all original devices missing: refuses an empty replacement instead of deleting the usable OpenCore boot order
+PASS invalid load-option path is rejected without writes
+PASS dedicated OpenCore Boot0000 comes first; Microsoft/fallback variables and original BootOrder backup are byte-identical
+PASS repeated registration is idempotent and does not rewrite NVRAM
+PASS backup denial prevents both entry creation and BootOrder changes
+PASS BootOrder failure removes only the newly created native entry, preserving Microsoft
+PASS failed/mismatched BootOrder readback restores and verifies original order before deleting new option
+PASS denied rollback retains referenced boot option, original backup and Microsoft entries
+PASS explicit restore returns exact original order and blocks future auto-promotion; Microsoft options and backup preserved
+PASS restore without backup or with denied BootOrder never pretends success or destroys options; disabled flag is rolled back on write failure
+PASS restore filters removed-media entries without recreating phantom devices; surviving original entries retain their order
+PASS all original devices missing: refuses an empty replacement instead of deleting the usable OpenCore boot order
+PASS invalid load-option path is rejected without writes

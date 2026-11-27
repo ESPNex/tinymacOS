@@ -4,6 +4,7 @@
 #include "biosboot.h"
 #include "container.h"
 #include "nativefs.h"
+#include "firmware_boot.h"
 #ifdef TMC_FS2_BACKEND
 #include "tmcbfs2_seed.h"
 #include "fs2_runtime.h"
@@ -152,7 +153,7 @@ int install_begin_i(int d)
     if(enrollment.enabled&&(!enrollment.acknowledged||enrollment.disk!=d||enrollment.reset))return err("Destinazione cifrata cambiata: riconfigura FileVault.");
 #endif
     st.target = d;
-    st.done = pos = 0;
+    st.done = pos = 0;st.boot_status=0;
     Medium medium={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
     int table_ok=partition_scan(&medium,&inventory);
     if((!table_ok||!inventory.safe)&&!(inventory.pmbr_signature_repairable&&inventory.scheme==MAP_GPT&&medium_scale(&medium)==1))return err("Tabella cambiata: nessuna modifica.");
@@ -389,6 +390,17 @@ int install_step_i()
                 if(inventory.scheme==MAP_GPT && (commit(d,backup.entries*install_scale,(backup.num*128+511)/512,parts)||commit(d,backup.at*install_scale,1,&backup)||commit(d,primary.entries*install_scale,(primary.num*128+511)/512,parts)||commit(d,primary.at*install_scale,1,&primary)))return err("Aggiornamento GPT interrotto: usa la copia GPT valida.");
                 if(commit(d,0,1,mbr))return err("Aggiornamento avvio fallito: MBR originale conservato nel volume.");
             }else if(commit(d,backup.entries*install_scale,32,parts)||commit(d,backup.at*install_scale,1,&backup)||commit(d,primary.entries*install_scale,32,parts)||commit(d,primary.at*install_scale,1,&primary)||commit(d,0,1,mbr))return err("Finalizzazione GPT non riuscita. Non usare questo disco.");
+            /* Only after all target bytes, seals and partition tables have
+             * been committed/read back. Short-form HD resolves the NEW target,
+             * never the live USB/CD controller or the currently mounted disk. */
+            FirmwareTarget target={.logical_bytes=install_scale*512};
+            if(!coexist||inventory.scheme==MAP_GPT){
+                Part*p=parts+(coexist?inventory.slot:0);target.number=(coexist?inventory.slot:0)+1;
+                target.start=p->start;target.sectors=p->end-p->start+1;target.gpt=1;memcpy(target.signature,p->id,16);
+            }else{
+                target.number=inventory.slot+1;target.start=install_start;target.sectors=install_end-install_start;memcpy(target.signature,mbr+440,4);
+            }
+            st.boot_status=firmware_install_default(&target);
             erase(snapshot, sizeof snapshot);
             enrollment_clear();
             note(INSTALL_DONE, "Installazione completata e verificata");

@@ -3,7 +3,8 @@ Disposable virtual NVMe only. No host formatting/import of the target volume.
 This gate does not certify scalable encryption, backups or 4Kn installation.
 """
 from pathlib import Path
-import hashlib,json,os,struct,tempfile
+import hashlib,json,os,struct,tempfile,uuid
+from uefi_variables import vars_active
 from retail_guest import Retail
 from boot_recovery import RecoveryKey
 import pixels,retail_guest
@@ -29,13 +30,24 @@ def data_digest():
  return h.hexdigest()
 try:
  with Retail(iso,w,ev,'fs2-install',disk='target',live=False) as g:
-  g.enroll(name='Fs2Install');g.key('f2');g.visible('Sessione locale');g.cmd('pwd','/Users/Fs2Install');g.cmd('echo $HOME','/Users/Fs2Install');g.cmd('echo IMPORTED_FROM_LIVE_ACCOUNT > Documents/imported.txt');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.shot('fs2-real-installer-completed');g.key('ret');g.p.wait(timeout=20)
+  g.enroll(name='Fs2Install');g.key('f2');g.visible('Sessione locale');g.cmd('pwd','/Users/Fs2Install');g.cmd('echo $HOME','/Users/Fs2Install');g.cmd('echo IMPORTED_FROM_LIVE_ACCOUNT > Documents/imported.txt');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.visible('OpenCore è stato impostato come avvio principale.');g.shot('fs2-real-installer-completed');g.key('ret');g.p.wait(timeout=20)
+ # This readback occurs BEFORE ANY installed/native boot, ISO still used
+ # for the completed installer. It must not be satisfied by loader repair.
+ globalguid=uuid.UUID('8be4df61-93ca-11d2-aa0d-00e098032b8c').bytes_le
+ vendor=uuid.UUID('3f9a25c4-71b2-4e83-a4c1-5e9d278b6c10').bytes_le
+ variables=vars_active(w/'target/vars.fd');order=variables[(globalguid,'BootOrder')];first=struct.unpack_from('<H',order)[0]
+ installed_option=variables[(globalguid,f'Boot{first:04X}')]
+ assert 'tinymacOS OpenCore'.encode('utf-16le') in installed_option and '\\EFI\\OC\\OpenCore.efi'.encode('utf-16le') in installed_option
+ assert variables[(vendor,'tinymacOS-previousBootOrder')].startswith(b'TMCBOOT2')
+ r['opencore_verified_before_first_native_boot']=True
+ ok('Installer itself already promotes OpenCore FIRST in real OVMF NVRAM before any native boot; UI reports verified preference, original order backed up')
  a,b=data_range()
  with disk.open('rb') as f:
   f.seek(a*512);superblock=f.read(128);assert superblock[:8]==b'TMCBFS2\0';assert struct.unpack_from('<Q',superblock,16)[0]==(b-a+1)//32
  ok('Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted')
  with Installed('/not-attached',w,ev,'fs2-installed',disk='target',boot_disk=True) as g:
   assert str(iso) not in str(g.req('query-block'));g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('pwd','/Users/Fs2Install');g.cmd('echo $HOME','/Users/Fs2Install');g.cmd('bootverbose log','[fs2] mounted full data extent');g.cmd('cat Documents/imported.txt','IMPORTED_FROM_LIVE_ACCOUNT');g.cmd('echo FS2_INSTALL_PERSISTENT > Documents/persistent.txt');g.cmd('diskutil apfs snapshot create installer-guest','Snapshot creato.');g.cmd('echo CHANGED > Documents/persistent.txt');g.cmd('diskutil apfs snapshot restore installer-guest','Volume ripristinato.');g.cmd('cat Documents/persistent.txt','FS2_INSTALL_PERSISTENT');g.shot('fs2-installed-import-and-cow');g.cmd('off');g.p.wait(timeout=20)
+ variables=vars_active(w/'target/vars.fd');assert struct.unpack_from('<H',variables[(globalguid,'BootOrder')])[0]==first and variables[(globalguid,f'Boot{first:04X}')]==installed_option
  ok('Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore')
  before=data_digest()
  with Recovery('/not-attached',w,ev,'fs2-recovery',disk='target',boot_disk=True) as g:

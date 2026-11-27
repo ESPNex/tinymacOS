@@ -1,0 +1,8 @@
+PASS confirmed install registers GUID HD/File OpenCore first; expanded full physical path reuses same option without NVRAM writes
+PASS ordinary boot respects rollback; new explicit installation re-enables preference and reuses retained option; Microsoft entries unchanged
+PASS refused write restores prior opt-out flag; native LBA path validates MBR/GPT signatures and refuses invalid geometry
+PASS EFI bridge page-table retention: entire four-level tree required, conventional/reclaimed or missing table pages, high/misaligned roots and exhausted budget refuse before firmware calls
+PASS confirmed install registers GUID HD/File OpenCore first; expanded full physical path reuses same option without NVRAM writes
+PASS ordinary boot respects rollback; new explicit installation re-enables preference and reuses retained option; Microsoft entries unchanged
+PASS refused write restores prior opt-out flag; native LBA path validates MBR/GPT signatures and refuses invalid geometry
+PASS EFI bridge page-table retention: entire four-level tree required, conventional/reclaimed or missing table pages, high/misaligned roots and exhausted budget refuse before firmware calls

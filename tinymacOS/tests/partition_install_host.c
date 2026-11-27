@@ -6,6 +6,9 @@
 #include <string.h>
 #include "../fs/install.c"
 struct Boot boot;
+/* Firmware itself is not emulated by these media-state tests. The separate
+ * EFI-store host gate and real OVMF guest execute the actual service. */
+int firmware_install_default(const void*p){const FirmwareTarget*t=p;u8 dp[FW_BOOT_PATH_BYTES];assert(firmware_boot_path(t,dp)==FW_BOOT_PATH_BYTES);return 0;}
 u64 ticks=987654321;
 u32 persistent;
 static u8 *disk;

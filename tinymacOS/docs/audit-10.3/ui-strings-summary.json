@@ -8,12 +8,12 @@
     "Network/vendor/third-party messages outside these directories are not covered"
   ],
   "source_files": {
-    "boot/bootdefault.h": "46c96b815e2cc32058efcd8414de83f6aa50f9a15b322e00d53b24d002792c38",
+    "boot/bootdefault.h": "0c21a503602b50c21dea7188e0f2f1f7d4b7c01424bd5422a5406af4066db3c4",
     "boot/containerboot.h": "48ca973c24e9ae732a2200c2b71a85cae77745c195f356d66a8c94eb9c724925",
     "boot/fatimage.h": "90501504562e81256dcc07a128c126b962fca2aeeb62d3d1501d8340a592500c",
-    "boot/firmware_tools.c": "e529c0eadad7e231bcbb907b7a905209c6885658d1de4718da6f8c6aceb1bd83",
+    "boot/firmware_tools.c": "69cf16f88dd38965a1d8e3c24d1b3fdf446f522261ee440156da157ba3539e1e",
     "boot/gopmode.h": "ede8523da3f39ec1528650639fed0d477f9e8699ea5a7c198ec0dcbc1bcecb1a",
-    "boot/loader.c": "648c8eebc1411c6b4140d09c3286f6215e531fc8eedc73d2275a4515aa89d317",
+    "boot/loader.c": "c5f3bbfe10f910a8109dcb18902a3deeb98ebf256dde6e430dc306aed26c58fc",
     "boot/minuefi.h": "43134d4e95e9292f95d9f257c6e0a85dc5a718ffdb6bda3a513dfce7c4057e7a",
     "boot/recoveryboot.h": "55f23c16a5413eb3bbb240d084e51dab7cf23edf7dd027885d97eda247ebb6d7",
     "boot/splash.h": "ef8dda891bb47967adb13f20036cf830524d46da0e4394df37696d3890e0b528",
@@ -34,11 +34,11 @@
     "desktop/shell.c": "0f74f4ed78c0dc0cef71277514183ccd448104ccb02858ef5e160dc86a6f66db",
     "fs/bootfs.c": "7b3e779ac9c695238967544ac8f3c4ec6811dc8d8b848b5492ec236237829f80",
     "fs/btrfs.c": "755b8c279fa7833448873023eb35e4e9f191da30ddfda4d1f8de755d8993823f",
-    "fs/install.c": "bdca73e5949f9a1ad9a08873ab28d2cf748255962c839fe4aaa9c89b7fe46779",
+    "fs/install.c": "754461cb0858c17da7db8e9c78633377fb9402ef2a10d9d2443aeb86cdfb0146",
     "fs/tmcbfs2_install.c": "de4bd9e82153ae5f9ad771031e1415626c060b790cfdf922382cb786bf1f5191",
     "fs/tmcbfs2_runtime.c": "bc80247135fbd4b0dde8a51a5ecb0d37f4a96bda2c9746c39af27df72592976a",
     "fs/tmcbfs2_volume.c": "d2cdb7c0f7687d4994a1d4f7b11a462d5fdab1b79cf0487d539631d75708219e",
-    "include/abi.h": "be6896143d9c2ebc139bed2e15eeb6b65b69f364bd1311035315b1b0b717cb8c",
+    "include/abi.h": "9b03502c420875189a92929a45bdf56740429fa652e5fcdf0326317dfbf4000f",
     "include/base.h": "d3e3f4ee845f96aa418feef4ad81c8114a92b86d8b16c7dd6cb6d8b2a0680c30",
     "include/biosboot.h": "650153342101c06523d83720406b1a466f4c9941c2ab6606175a5fd70c371e9b",
     "include/bootconfig.h": "dc78cf1677b5788c0ffdcbaa472b138d6c84229e01f1569c46d298efc9c38fd8",
@@ -53,10 +53,11 @@
     "include/diskedit.h": "14b564566b8510290582d2c8cbf3b841f810e8dfa1625b06f680f572c8f6e0e2",
     "include/disklayout.h": "6cfb6329d490c974a3aaa2061bbbd421ac64ae8e4d2504c3048baad723527d22",
     "include/display_size.h": "8256dbf6f6115a7a9fe864bd8a16f1d5447af4a9fab4bff365e241d7df6eb829",
+    "include/firmware_boot.h": "1a7374d125f66f4dec5cba516f198351b0c2c30c4103df92765e7b95323ad48d",
     "include/fs2_convert.h": "56305752742044e5f78ba3a2d59332be1de41e8ed69dfe3cbfc4bb49d5416173",
     "include/fs2_runtime.h": "08998e28481964a0251a7d97610caa4dfa9ac35a46e780ae0f87c4cc2b527693",
     "include/fs2_volume.h": "96fd4ec2d319db4f4f07856d72e8270307454fd8aa65f65c1af226aad106f83d",
-    "include/handoff.h": "fa252ea9dcb57057f5fe58ae8659de5d4621ac53e89832f10dcac33e14d80a28",
+    "include/handoff.h": "41605aa04108b8ec4f07fafe927c8ca8b1aee3f6e579875715398b4a3e6c9bb0",
     "include/hidconfig.h": "abc74bc53a581c2f8a65ff2e9118ef8f0d95839f545ebe07713c6dcb0ceb7928",
     "include/hidtablet.h": "2fadffc3299b44c01716884d6d4ea8fa34a50b926e65e251615157993fb7abac",
     "include/home_name.h": "f1e86e259fdf4cdc25436db1668abb7474e458ff2c83c91791d4af67da956e58",
@@ -127,7 +128,7 @@
     "userspace/fontmetrics.c": "5c156ce3f4c481e9423e7da70f33eff735c7377c9530683b9334887bc42da9d7",
     "userspace/gallery.c": "58d5e4864106d35fb2fdeaf7670c132690c35bac2b5ee49e689ce1f6fc365d77",
     "userspace/inspector.c": "22a091ee3c67de2635a910863693832e9f0465a4b117bbca977d51578b8a5689",
-    "userspace/installer.c": "6051320aea8bb3469f5208aa52ec77379e784d24865ccdc2940210f04cc7f467",
+    "userspace/installer.c": "fa8892de4b097380eca05e4b5cb42a36e4449ab812846b416294ac345f9dbde4",
     "userspace/lib.h": "2f21719845a604d8afa93a5a76cb450bfc54da28ab053036166a6ae010c13e16",
     "userspace/monitor.c": "c2ff6969bb8b30ecf2b49fcb957b470c53129e3ea77f9625d4837acc309bb18e",
     "userspace/notebook.h": "df680c2f56c6b37f7b92c93b654382ec2495322e97f190ecca804bb7bfdd4ced",
@@ -148,20 +149,20 @@
     "userspace/vaultview.h": "afe70ff1b60b3fdc5a9c546bd6421e318e02d58823e56243166e127eb4059c43",
     "userspace/volume.h": "52265915bf6f0b3cf57e8d2d1c5574c88cd7445d8dd55b238bd0a1b019eb9760"
   },
-  "literal_count": 2457,
+  "literal_count": 2468,
   "counts_by_directory": {
-    "boot": 98,
+    "boot": 106,
     "desktop": 287,
     "fs": 267,
-    "include": 155,
+    "include": 156,
     "storage": 143,
-    "userspace": 1507
+    "userspace": 1509
   },
   "counts_by_tag": {
     "diagnostic-or-assert-hint": 50,
-    "identifier-or-fragment-hint": 1159,
+    "identifier-or-fragment-hint": 1165,
     "safety-retain-meaning": 127,
-    "technical-review": 23,
-    "text-review": 1118
+    "technical-review": 24,
+    "text-review": 1122
   }
 }

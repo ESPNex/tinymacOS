@@ -207,7 +207,7 @@ static void paint(void)
         Text(x, y + 47, reinstall?(encrypted?"Volume cifrato nuovo e verificato, vecchie chiavi ritirate.":"Il sistema è stato verificato dopo la riscrittura."):"Puoi avviare tinymacOS senza il supporto di installazione.", F_SMALL, SUB);
         Text(x, y + 81, reinstall?(encrypted?"Sblocca con la nuova password e crea un nuovo account.":"Documenti e account sono stati conservati."):"1.  Spegni il computer.", F_BODY, TX);
         Text(x, y + 112, reinstall?"Chiudi l’assistente e riavvia dal menu Recupero.":"2.  Rimuovi il supporto di installazione.", F_BODY, TX);
-        Text(x, y + 143, reinstall?"":"3.  BIOS: scegli 2. UEFI: avvia EFI/BOOT/BOOTX64.EFI dal nuovo volume.", F_BODY, TX);
+        Text(x, y + 143, reinstall?"":info.boot_status==1?"3.  OpenCore è stato impostato come avvio principale.":info.boot_status<0?"3.  Il firmware ha rifiutato la preferenza: scegli OpenCore dal menu UEFI.":"3.  BIOS: scegli 2. UEFI: seleziona OpenCore dal nuovo volume.", F_BODY, TX);
     } else {
         Icon(x, 18, 58, page == 5 ? 33 : 38);
         Text(x, 106, page == 5 ? (reinstall?"Reinstallazione non riuscita":"Installazione interrotta") : "Sistema già installato", F_TITLE, TX);

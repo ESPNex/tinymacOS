@@ -11,6 +11,8 @@ w=Path(previous['work']);assert str(w).startswith('/var/tmp/tmc-fs2-install-');e
 globalguid=uuid.UUID('8be4df61-93ca-11d2-aa0d-00e098032b8c').bytes_le
 vendor=uuid.UUID('3f9a25c4-71b2-4e83-a4c1-5e9d278b6c10').bytes_le
 before=vars_active(w/'target/vars.fd');original=before[(vendor,'tinymacOS-previousBootOrder')];assert original.startswith(b'TMCBOOT2')
+restorable=b''.join(original[i:i+2] for i in range(8,len(original),2) if (globalguid,f'Boot{struct.unpack_from("<H",original,i)[0]:04X}') in before)
+assert restorable or len(original)==8
 order=before[(globalguid,'BootOrder')];first=struct.unpack_from('<H',order)[0];option=before[(globalguid,f'Boot{first:04X}')]
 assert 'tinymacOS OpenCore'.encode('utf-16le') in option and '\\EFI\\OC\\OpenCore.efi'.encode('utf-16le') in option
 r={'passed':False,'physical_hardware_tested':False,'windows_boot_tested':False,'iso_sha256':previous['iso_sha256'],'work':str(w),'checks':['Actual installed NVRAM first entry is dedicated OpenCore, original BootOrder backup retained']}
@@ -52,9 +54,9 @@ try:
  after=vars_active(w/'target/vars.fd');assert after[(globalguid,'BootOrder')]==order and after[(vendor,'tinymacOS-previousBootOrder')]==original
  with Firmware('/not-attached',w,ev,'firmware-restore',disk='target',boot_disk=True) as g:
   g.choose('Ripristina ordine di avvio');g.text_wait('Ripristino ordine di avvio');g.key('r');g.text_wait('Operazione verificata');g.shot('uefi-original-boot-order-restored')
- after=vars_active(w/'target/vars.fd');assert after[(globalguid,'BootOrder')]==original[8:] and after[(vendor,'tinymacOS-default-disabled')]==struct.pack('<I',1)
+ after=vars_active(w/'target/vars.fd');assert after[(globalguid,'BootOrder')]==restorable and after[(vendor,'tinymacOS-default-disabled')]==struct.pack('<I',1)
  assert after[(globalguid,f'Boot{first:04X}')]==option and after[(vendor,'tinymacOS-previousBootOrder')]==original
- ok('User-confirmed real EFI tool restores exact original BootOrder, retains OpenCore option/backup and persists auto-promotion disable flag')
+ ok('User-confirmed real EFI tool restores original order of surviving devices (removed installer media skipped), retains OpenCore option/backup and persists auto-promotion disable flag')
  r['passed']=True
 except Exception as e:r['failure']=str(e);raise
 finally:(qa/'block1-firmware-guest-result.json').write_text(json.dumps(r,indent=2)+'\n')

@@ -1,6 +1,6 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 1 incomplete: real home migration and same-ISO install/gap/UEFI tool tests PASS; installation-time OpenCore promotion, real Windows chainload and physical GeForce HDMI requirement remain open.",
+  "status": "Macroblock 1: install-time OpenCore activation now implemented and verified BEFORE first native boot; same final ISO passes fresh install/Recovery, ~10GB gap/512B, 3TiB/4Kn coexistence and real EFI restore. Still not physically accepted on GeForce/HDMI or actual Windows.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 – Piano di Sviluppo",
@@ -90,22 +90,22 @@
   },
   "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
   "current_checks": {
-    "source_manifest": "macroblocco-1/home-source-manifest.json",
+    "source_manifest": "macroblocco-1/runtime-source-manifest.json",
     "evidence": "macroblocco-1/STATO.md",
-    "build": "PASS complete BIOS/UEFI/Recovery/apps/EFI tools; development only",
-    "iso_sha256": "234bad9e9f40c75bf965884a2b396c2bb74d32f2978c239045fdd6d851d282eb",
+    "build": "PASS final complete BIOS/UEFI/Recovery/apps/tools and unchanged build inputs; development only",
+    "iso_sha256": "6f0f824d1ebe57036e1a82e4cd81523207f0057122e12589d2f9ab292e85da65",
     "home_host": "PASS actual legacy/FS2/FV003, UTF8 names, collision refusal, frozen snapshots, UI canonical paths; normal + ASan/UBSan",
     "home_guest": "PASS GUI install/import, real pwd/HOME, cold ISO-detached NVMe, CoW and Recovery reinstall; independent read-only inode inspection finds no physical User duplicate",
-    "boot_default_host": "PASS normal + ASan/UBSan including failed/mismatched readback and denied rollback",
-    "firmware_guest": "PASS installed real OpenCore tools: read-only GOP/EDID diagnostic and exact original BootOrder restore; actual OVMF store independently decoded",
-    "partition_guest": "PASS same-ISO ~10GB gap/512B and 3TiB disk/2.5TiB gap/4Kn, native+Recovery, foreign bytes verified",
+    "boot_default_host": "PASS normal + ASan/UBSan: install-time registration, physical-path equivalence, failure rollback, opt-out, removed-media restore filtering and retained EFI paging structures",
+    "firmware_guest": "PASS before any native boot: actual OVMF default entry targets newly committed ESP; no duplicate on cold boot; real GOP tool and post-ISO-removal original-order restore verified",
+    "partition_guest": "PASS SAME FINAL ISO: ~10GB gap/512B and 3TiB disk/2.5TiB gap/4Kn, correct native HD device-path coordinates, native+Recovery, every foreign byte verified",
     "partition_host": "PASS current Windows gaps, GPT/MBR installer and large-disks normal+sanitized",
     "preservation": "PASS foundation/M0, canonical USB and locked supplied font/assets, source overlay/string inventory",
     "open_requirements": [
-      "OpenCore promotion occurs at first native installed boot; not yet guaranteed directly on installer completion with Windows already primary",
-      "Real Windows chainload acceptance, not synthetic partitions",
-      "Physical GeForce 310/HDMI/monitor: actual modes and higher-resolution result unverified; no new native NVIDIA driver"
+      "Actual installed Windows chainload acceptance; synthetic foreign partitions and mock Windows EFI variables are not Windows certification",
+      "Physical GeForce 310 HDMI monitor: collect actual GOP/EDID output and prove higher-resolution result; no native NVIDIA modesetting driver added"
     ],
-    "background_work_running": false
+    "background_work_running": false,
+    "diagnostic": "macroblocco-1/Diagnostica-video-UEFI.zip"
   }
 }

@@ -1,0 +1,23 @@
+{
+  "tinymacOS/arch/firmware.S": "16bce3dd073cd494874b36da341fe5ef0e03805280286781785e4c6f337dbc22",
+  "tinymacOS/boot/bootdefault.h": "0c21a503602b50c21dea7188e0f2f1f7d4b7c01424bd5422a5406af4066db3c4",
+  "tinymacOS/boot/firmware_tools.c": "69cf16f88dd38965a1d8e3c24d1b3fdf446f522261ee440156da157ba3539e1e",
+  "tinymacOS/boot/loader.c": "c5f3bbfe10f910a8109dcb18902a3deeb98ebf256dde6e430dc306aed26c58fc",
+  "tinymacOS/docs/audit-10.3/ui-strings-summary.json": "e57b1d39d57073efb0c58f325fca49d47eccdb091df47f077fa6745f580150d1",
+  "tinymacOS/docs/audit-10.3/ui-strings.csv": "37b93bb5f6651cf405a1996fdc8c2fee1d5683e90e17bc6bb0138cb25507b519",
+  "tinymacOS/fs/install.c": "754461cb0858c17da7db8e9c78633377fb9402ef2a10d9d2443aeb86cdfb0146",
+  "tinymacOS/include/abi.h": "9b03502c420875189a92929a45bdf56740429fa652e5fcdf0326317dfbf4000f",
+  "tinymacOS/include/firmware_boot.h": "1a7374d125f66f4dec5cba516f198351b0c2c30c4103df92765e7b95323ad48d",
+  "tinymacOS/include/handoff.h": "41605aa04108b8ec4f07fafe927c8ca8b1aee3f6e579875715398b4a3e6c9bb0",
+  "tinymacOS/kernel/firmware.c": "3feb06c20726288f553969976058359bcc99a40c73c746235477c52de3dd751e",
+  "tinymacOS/kernel/k.h": "37d2daa6559f788ed575728f870606380fe95f0c54bad7e6befb832a34ccadd6",
+  "tinymacOS/kernel/sched.c": "d4f1e64640a9153935fb6c082f378938057b6cbe1860631f775cdebebaf55b8c",
+  "tinymacOS/tests/block1_firmware_guest.py": "4925049ececf54dd3a0a90e0240362359db8da0ee36a66125703fe5a7c63eac8",
+  "tinymacOS/tests/boot_default.c": "1c02802a18025b912768800f877d663e6cfcbc13fe706878e94a0b97f8c2404e",
+  "tinymacOS/tests/firmware_boot_host.c": "9b8ea8df01b3b931f221ea37174807df99396b02fae40ab8402e2016be94cd23",
+  "tinymacOS/tests/fs2_install_guest.py": "b32e1058689fee84167c4a6271521b0a35256f2e89fd948fa89175cfb6948ba9",
+  "tinymacOS/tests/m2_capacity_guest.py": "191dec33b99698380a9f86db2cdd2e51f184b15f0ec88145f3b70c4d62622392",
+  "tinymacOS/tests/partition_install_host.c": "5b09eec52ccb4eed24987c3e8becca0955ac445434b7e88e00330d37c81eb6bc",
+  "tinymacOS/tests/test-firmware-boot.sh": "06a3f295b7b5b01e4a40152d20905379d20d2514efe95d4fedd9c8108b1a7c44",
+  "tinymacOS/userspace/installer.c": "fa8892de4b097380eca05e4b5cb42a36e4449ab812846b416294ac345f9dbde4"
+}

@@ -1,0 +1,6 @@
+{
+  "standalone_read_only_diagnostic": true,
+  "os_release": false,
+  "efi_sha256": "cc1b7cfc9a8e4cbe371c7b7908e3dbdd516ea0d7a1ec12b207ed2919b1b2c0ac",
+  "zip_sha256": "677add19a6db69cc2ddca9c6a61e124b4bbf595f2d3e38949cb908fdcb642c72"
+}

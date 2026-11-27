@@ -22,7 +22,7 @@ EFI_STATUS _entry(EFI_HANDLE image,EFI_SYSTEM_TABLE*st)
   else if(result==EFI_NOT_FOUND)result=EFI_SUCCESS;
  }
  if(result==EFI_ABORTED)return EFI_SUCCESS;
- say(EFI_ERROR(result)?L"\r\nOperazione NON verificata. Usa le impostazioni del firmware.\r\n":L"\r\nOperazione verificata. Nessun file Microsoft modificato.\r\n");
+ say(EFI_ERROR(result)?L"\r\nOperazione NON verificata. Usa le impostazioni del firmware.\r\n":L"\r\nOperazione verificata. Nessun file Microsoft modificato.\r\nLe voci di dispositivi non piu presenti vengono ignorate.\r\n");
 #else
  say(L"Diagnostica video UEFI (nessuna modifica)\r\nFirmware: ");say(st->FirmwareVendor);say(L"\r\n");
  EFI_GUID gg=EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;EFI_GRAPHICS_OUTPUT_PROTOCOL*g=0;

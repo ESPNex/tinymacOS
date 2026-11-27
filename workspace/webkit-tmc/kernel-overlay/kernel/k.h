@@ -104,6 +104,7 @@ int input_pop(Event *);
 void rtc(SysInfo *);
 void platform_init(void);
 int power(int);
+int firmware_install_default(const void*);
 void arch_rsp0(u64);
 void enter_frame(Frame *) __attribute__((noreturn));
 extern Spin sched_lock;
