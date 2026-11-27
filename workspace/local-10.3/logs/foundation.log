@@ -1,0 +1,36 @@
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional
+PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
+PASS 10.3 foundation host gate only; ISO, guest and hardware acceptance still pending

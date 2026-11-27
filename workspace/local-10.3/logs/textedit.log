@@ -1,0 +1,4 @@
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional

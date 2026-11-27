@@ -1,29 +1,31 @@
 #include "ui.h"
+#include "display_size.h"
+#include "cpu_sample.h"
 static ProcInfo rows[NPROC];
 static int n, paused, sort, selected = -1, cpu, history[42], hlen;
-static u64 lastTick, lastBusy;
+static u64 lastTick;
 static int corep[8];
 static u64 ptick[8], pbusy[8];
 static void sample(void)
 {
     SysInfo t;
     sc(S_INFO, &t, 0, 0, 0);
-    if (lastTick && t.ticks > lastTick) {
-        cpu = MIN(100ull, (t.busy_ticks - lastBusy) * 100 / (t.ticks - lastTick));
-        if (hlen == 42)memmove(history, history + 1, 41 * sizeof(int));
-        else hlen++;
-        history[hlen - 1] = cpu;
+    si=t;lastTick=t.ticks;
+    int nc=MIN(8,(int)t.ncpu);if(nc<0)nc=0;
+    u64 total=0,busy=0;
+    for(int c=0;c<nc;c++){
+        u64 dt,db;
+        cpu_interval(t.core_ticks[c],t.core_busy[c],ptick[c],pbusy[c],&dt,&db);
+        corep[c]=cpu_percent(db,dt);total+=dt;busy+=db;
+        ptick[c]=t.core_ticks[c];pbusy[c]=t.core_busy[c];
     }
-    lastTick = t.ticks;
-    lastBusy = t.busy_ticks;
-    si = t;
-    int nc = t.ncpu;
-    if (nc > 8)nc = 8;
-    for (int c = 0; c < nc; c++) {
-        u64 dt = t.core_ticks[c] - ptick[c], db = t.core_busy[c] - pbusy[c];
-        corep[c] = (ptick[c] && dt) ? (int)MIN(100ull, db * 100 / dt) : 0;
-        ptick[c] = t.core_ticks[c];
-        pbusy[c] = t.core_busy[c];
+    for(int c=nc;c<8;c++){ptick[c]=pbusy[c]=0;corep[c]=0;}
+    /* busy_ticks is summed across CPUs, while ticks is a wall clock. Dividing
+     * the former by the latter incorrectly saturates multicore load at 100%. */
+    cpu=cpu_percent(busy,total);
+    if(total){
+        if(hlen==42)memmove(history,history+1,41*sizeof(int));else hlen++;
+        history[hlen-1]=cpu;
     }
     n = sc(S_PS, rows, NPROC, 0, 0);
     for (int i = 0; i < n; i++)for (int j = i + 1; j < n;
@@ -54,12 +56,11 @@ static void paint(void)
             int X = gx + 3 + (42 - hlen + j) * (gw - 7) / 41;
             Line(x, y + 68 - history[j - 1] * 44 / 100, X, y + 68 - history[j] * 44 / 100, si.dark ? 0x7edbb8 : 0x167855);
         }
-    Text(26, y + 67, paused ? "In pausa" : "Stima sui tick", F_MICRO, SUB);
+    Text(26, y + 67, paused ? "In pausa" : "Campioni scheduler", F_MICRO, SUB);
     int x = w + 37;
     Text(x, y + 10, "Memoria in uso", F_SMALL, SUB);
     z[0] = 0;
-    addnum(z, (si.total - si.free) >> 20, 90);
-    append(z, " MiB", 90);
+    display_size(z,sizeof z,si.total>=si.free?si.total-si.free:0);
     Text(x, y + 26, z, F_TITLE, TX);
     Box(x, y + 65, w - 29, 7, 3, SOFT);
     Box(x, y + 65, MAX(3, (int)((si.total - si.free) * (w - 29) / MAX(1ull, si.total))), 7, 3, ACC);

@@ -1,0 +1,21 @@
+{
+  "stage": "10.3 foundation, not release source freeze",
+  "sha256": {
+    "include/display_size.h": "23cdbdbeedd1456982cb9fbbb0f8bce8cbcfd13ba6addafab12f9ff02311eb24",
+    "include/cpu_sample.h": "73673c19f723e4f7f2c1549921f93adf0ecff660f1e9169998c221f8206bda83",
+    "userspace/ui.h": "d2934af5ca04cd59bdb323187127651530551c6261fea80bb200d785bb96a8b8",
+    "userspace/ui.c": "add9503503057e3c943ea9c7b908d4b158258a71a21e3037236c142a16a19e96",
+    "userspace/textedit.c": "ae770672e8ff4f8c27819efb10fb01693a1e956b6a6f32d8fbed859de1a302cd",
+    "userspace/monitor.c": "3a06a97c383901050c6cbad3d5eedccef4e04b040175cd332113592d84fe02eb",
+    "userspace/diskutility.c": "0dac8bf752d888d7b669351f3e0265405c18cd4ea5ef297190b2557c3a11990a",
+    "tests/cpu_sample_host.c": "c76b55067333fdf986f0684b8a17c58780cb0b839f603072801c3ef661d3a08a",
+    "tests/monitor_sample_host.c": "b15f501123b09733142be22cec2bd73548e9dc3bbc3337a94361d6175e0b74ae",
+    "tests/display_size_host.c": "e7c92c9eeee8c7b81162612b352b4556129fa2ed69681bf5726e56f8badf187b",
+    "tests/textedit_open_host.c": "cb24f2f3abdb9b954adc6322fc058da2e030b92bad7aae2031edb77aab456b8f",
+    "tests/ui_stream_host.c": "48eac320137d31ecf5bf1586d1d48c744c3c8f59005f76ef21a2caaa3effc156",
+    "tests/test-display-size.sh": "5c9a23ec00280dbedde64fec0cf72802469817bd4e0631fa797a1e065b7c547e",
+    "tests/test-cpu-sample.sh": "93d21987113c6b998c19a7e437481a0886ba084d8939295409edc2056dafad77",
+    "tests/test-10.3-foundation.sh": "dbbb4a53d5c4704e181ce4216e6f4f90ce09387c65a3d4857573d15037de0a80",
+    "docs/PIANO-10.3.md": "7fa181ee8168c56ca2ce9f67987877a1f9795a452564499ab6eff41cd0687394"
+  }
+}

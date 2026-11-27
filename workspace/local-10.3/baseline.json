@@ -1,0 +1,9 @@
+{
+  "base": "10.2.6 / 30C1",
+  "sha256": {
+    "userspace/textedit.c": "b5fca17383933bc76e6a3e0aa68e9c499e862ac319591269f699d8d7ae8cb1b0",
+    "userspace/diskutility.c": "2d69c3c8a000755de52d0803d79945a81ad12b543704e286a1ec7331db7affd5",
+    "userspace/monitor.c": "571b36ad7bc745c3cc4f25a1d12063f453f070ff6b0f3c8963dc7897f411e34a",
+    "tests/textedit_open_host.c": "4c371c75ac7ad433af470a4cb46e51171dbf244b33335a42d8761223552d04d4"
+  }
+}

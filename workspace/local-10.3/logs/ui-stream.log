@@ -1,0 +1,4 @@
+PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure

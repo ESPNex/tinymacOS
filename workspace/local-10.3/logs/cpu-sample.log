@@ -1,0 +1,4 @@
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained

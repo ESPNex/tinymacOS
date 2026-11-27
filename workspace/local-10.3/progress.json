@@ -1,0 +1,50 @@
+{
+  "version_target": "10.3",
+  "base": "10.2.6 / 30C1",
+  "status": "development, partial source changes with passing host tests; NOT a complete release",
+  "background_work_running": false,
+  "Safari_in_scope": false,
+  "published": false,
+  "ISO_built": false,
+  "guest_tested": false,
+  "hardware_tested": false,
+  "decisions": {
+    "OpenCore": "replace Windows Boot Manager as primary boot flow, preserve Microsoft EFI files and Windows chainload with rollback",
+    "exFAT": "export a copy, retain original and snapshots"
+  },
+  "macroblocks": {
+    "M0": "plan and baseline hashes recorded; initial audit done",
+    "M1": "TextEdit source corrections and host tests PASS; whole-frame Draw budget, global fields, guest/visual acceptance pending",
+    "M2": "shared SI formatter and first UI migrations PASS; full migration, home name, duplicate snapshot and unallocated-space diagnosis pending",
+    "M3": "multicore CPU interval source fix and actual sample() host tests PASS; RAM accounting audit and runtime verification pending",
+    "M4": "pending",
+    "M5": "pending; exFAT detection is not a mount/export driver",
+    "M6": "initial audit only; OpenCore 1.0.8 already vendored; persistent installation/BootOrder/rollback and GOP fix pending",
+    "M7": "not started"
+  },
+  "checks": {
+    "host_suites_normal_and_sanitized": 5,
+    "freestanding_objects_compiled": [
+      "ui.c",
+      "textedit.c",
+      "diskutility.c",
+      "monitor.c"
+    ],
+    "USB_retirement_guard": "PASS",
+    "source_overlay_sync": "PASS",
+    "full_build": "NOT RUN",
+    "guest": "NOT RUN",
+    "physical_hardware": "NOT RUN"
+  },
+  "next_steps": [
+    "Resolve TextEdit full-frame Draw budget and add high-resolution/UTF-8 stress coverage",
+    "Restore complete external build/guest toolchain, build and run TextEdit/Monitor guest regressions",
+    "Reproduce post-install gap report against actual GPT/FS2 extent",
+    "Continue M2-M6 and full release gates without relabeling 10.2.6 evidence"
+  ],
+  "references": [
+    "tinymacOS/docs/PIANO-10.3.md",
+    "workspace/local-10.3/AUDIT-INIZIALE.md",
+    "workspace/local-10.3/logs/foundation.log"
+  ]
+}

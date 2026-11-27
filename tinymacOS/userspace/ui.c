@@ -44,6 +44,22 @@ void Text(int x, int y, const char *s, int f, u32 c)
     Draw *q = op(C_TEXT, x, y, 0, 0, f, c, 0);
     strset(q->text, s, 100);
 }
+/* Draw.text has 100 bytes, not 100 Unicode scalars. TextEdit must never
+ * silently drop the remainder of a visual row or split an accented glyph. */
+void MonoText(int x,int y,const char *s,int bytes,u32 color)
+{
+    while(bytes>0&&*s){
+        char chunk[100];int n=0,columns=0;
+        while(n<bytes&&s[n]){
+            int next=text_next(s,n);
+            if(next>bytes||next>99)break;
+            n=next;columns++;
+        }
+        if(!n)return;
+        memcpy(chunk,s,n);chunk[n]=0;Text(x,y,chunk,F_MONO,color);
+        x+=columns*8;s+=n;bytes-=n;
+    }
+}
 void Center(int x, int y, const char *s, int f, u32 c)
 {
     Text(x, y, s, f | 128, c);

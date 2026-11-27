@@ -23,5 +23,18 @@ int main(void){
  assert(writefile("/source",payload,sizeof payload)==sizeof payload&&sizes[0]==sizeof payload);partial=1;assert(readfile("/source",readback,sizeof readback)==sizeof payload&&!memcmp(payload,readback,sizeof payload));partial=0;
  assert(!copyfile("/source","/destination")&&sizes[1]==sizeof payload&&!memcmp(files[0],files[1],sizeof payload));assert(copyfile("/source","/destination")<0&&!memcmp(files[0],files[1],sizeof payload));
  assert(writefile("/destination","",0)==0&&!sizes[1]);fail_write=1;assert(writefile("/destination",payload,sizeof payload)<0);assert(readfile("/source",readback,-1)<0);assert(closed>=7);
+ /* Exercise actual Draw serialization: 99-byte payload, no cut scalar,
+  * consecutive chunks reconstruct the complete rendered text. */
+ static char utf[801],joined[801];for(int i=0;i<400;i++){utf[2*i]=(char)0xc3;utf[2*i+1]=(char)0xa0;}
+ utf[800]=0;begin();MonoText(28,70,utf,800,0);
+ int offset=0,columns=0;assert(count==9);
+ for(int i=0;i<count;i++){
+  Draw *q=list+i;int size=strlen(q->text);assert(q->type==C_TEXT&&q->style==F_MONO&&size<=99&&size%2==0);
+  assert(q->x==28+columns*8&&q->y==70);memcpy(joined+offset,q->text,size);offset+=size;columns+=size/2;
+ }
+ joined[offset]=0;assert(offset==800&&!memcmp(joined,utf,801));
+ begin();MonoText(0,0,utf,98,0);assert(count==1&&strlen(list[0].text)==98);
+ begin();MonoText(0,0,utf,0,0);assert(count==0);
+ puts("PASS MonoText 10.3: actual Draw chunks preserve all UTF-8 bytes and 8px advances, no ABI changes");
  puts("PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure");
 }

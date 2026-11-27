@@ -9,7 +9,7 @@ static Clipboard clipboard;
 static int starts[TEXTEDIT_LIMIT + 2], nlines;
 static void layout(void)
 {
-    int width = MAX(20, MIN(88, (aw - 67) / 8));
+    int width = MAX(1, (aw - 56) / 8);
     int n = 0, col = 0;
     starts[n++] = 0;
     for (int i = 0; i < length;) {
@@ -39,6 +39,36 @@ static int endline(int j)
     if (e > starts[j] && doc[e - 1] == '\n')
         e--;
     return e;
+}
+/* Viewport scrolling does not move the insertion point. Only input/navigation
+ * explicitly follows the caret, never paint() or a periodic redraw. */
+static int visible_rows(void){return MAX(1,(ah-115)/20);}
+static void viewport(int follow)
+{
+    layout();
+    int rows=visible_rows(),j=cursorline();
+    if(follow){if(j<firstline)firstline=j;if(j>=firstline+rows)firstline=j-rows+1;}
+    firstline=MAX(0,MIN(firstline,MAX(0,nlines-rows)));
+}
+static void scroll_document(int delta)
+{
+    /* Clamp input before multiplication, including synthetic INT_MIN. */
+    delta=MAX(-nlines,MIN(nlines,delta));
+    firstline-=delta*3;viewport(0);
+}
+static int line_cursor_end(int j)
+{
+    int e=endline(j);
+    /* A soft-wrap boundary belongs to the following row. End/click must
+     * stay on the requested visual row, rather than jump to the next one. */
+    if(j+1<nlines&&e==starts[j+1]&&e>starts[j])e=text_prev(doc,e);
+    return e;
+}
+static void document_click(int x,int y)
+{
+    viewport(0);
+    int j=MIN(nlines-1,MAX(0,firstline+(y-70)/20));
+    cursor=text_offset(doc,starts[j],line_cursor_end(j),MAX(0,(x-28+4)/8));
 }
 static int saved(void)
 {
@@ -179,10 +209,10 @@ static void key(Event *e)
         if (k == K_HOME)
             cursor = starts[j];
         else if (k == K_END)
-            cursor = endline(j);
+            cursor = line_cursor_end(j);
         else {
             j = MAX(0, MIN(nlines - 1, j + (k == K_UP ? -1 : 1)));
-            cursor = text_offset(doc,starts[j],endline(j),col);
+            cursor = text_offset(doc,starts[j],line_cursor_end(j),col);
         }
     } else if(k=='\n'||text_printable(k)){
         if(text_insert(doc,sizeof doc,&cursor,k)){length=strlen(doc);dirty=1;}
@@ -191,16 +221,12 @@ static void key(Event *e)
 }
 static void paint(void)
 {
-    layout();
+    viewport(0);
     begin();
     title(dirty ? "* " : "", leaf(path));
     /* The chooser is the only surface while modal; keep the document in memory. */
     if(picker.active){filepanel_draw(&picker);finish();return;}
-    int nrows = MAX(2, (ah - 115) / 20), j = cursorline();
-    if (j < firstline)
-        firstline = j;
-    if (j >= firstline + nrows)
-        firstline = j - nrows + 1;
+    int nrows = visible_rows(), j = cursorline();
     Box(0, 0, aw, 47, 0, PANEL);
     button(13, 10, 55, "Nuovo", 0);
     button(75, 10, 57, "Apri", 0);
@@ -211,13 +237,10 @@ static void paint(void)
     Box(0, 48, aw, ah - 82, 0, CARD);
     Box(0, ah - 34, aw, 1, 0, EDGE);
     for (int i = firstline; i < nlines && i < firstline + nrows; i++) {
-        char s[360];
-        int n = MIN(358, endline(i) - starts[i]);
-        memcpy(s, doc + starts[i], n);
-        s[n] = 0;
-        Text(28, 70 + (i - firstline) * 20, s, F_MONO, TX);
+        MonoText(28,70+(i-firstline)*20,doc+starts[i],endline(i)-starts[i],TX);
     }
-    Box(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, 0, ACC);
+    if(j>=firstline&&j<firstline+nrows)
+        Box(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, 0, ACC);
     char z[96] = "Riga ";
     addnum(z, j + 1, 96);
     append(z, "   /   ", 96);
@@ -279,10 +302,9 @@ void app_main(void)
                 }
             }
             if(dialog&&e.type==EV_CLICK){confirm_click(&e);continue;}
-            if (e.type == EV_KEY)
-                key(&e);
-            if (!dialog && e.type == EV_ACTION)
-                act(e.a);
+            if (e.type == EV_KEY){key(&e);viewport(1);}
+            if (!dialog && e.type == EV_ACTION){act(e.a);viewport(1);}
+            if (!dialog && e.type == EV_SCROLL){scroll_document(e.a);continue;}
             if (!dialog && e.type == EV_CLICK) {
                 if (e.b < 46) {
                     if (e.a < 70)
@@ -294,8 +316,7 @@ void app_main(void)
                     else if (e.a < 298)
                         prompt(1);
                 } else if (e.b >= 67 && e.b < ah - 33) {
-                    int j = MIN(nlines - 1, MAX(0, firstline + (e.b - 67) / 20));
-                    cursor = text_offset(doc,starts[j],endline(j),MAX(0,(e.a-24)/8));
+                    document_click(e.a,e.b);
                 }
             }
         }

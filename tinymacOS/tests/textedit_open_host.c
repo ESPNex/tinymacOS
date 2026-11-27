@@ -27,5 +27,27 @@ int main(void){
  picker.active=0;prompt(1);assert(picker.active&&picker.save&&!dialog&&opens==5);
  picker.active=0;dialog=3;dk(27);assert(!closed&&dirty);dialog=3;dk('\n');assert(closed==1);
  readmode=1;assert(load("/large")<0&&length==7&&eq(doc,"UNSAVED"));readmode=2;assert(load("/large")<0&&length==7&&eq(doc,"UNSAVED"));readmode=0;assert(!load("/large")&&length==65536&&doc[0]=='Q'&&!dirty);
+ /* Wrapping never mutates document bytes; width follows the actual window,
+  * not the obsolete 88-column ceiling. UTF-8 offsets stay scalar-aligned. */
+ blank();aw=1056;ah=215;
+ for(int i=0;i<400;i++)paste("à",2);
+ char original[1024];memcpy(original,doc,length+1);int saved_length=length;
+ layout();assert(starts[1]==250&&nlines==4);
+ aw=216;layout();assert(starts[1]==40&&nlines==20);
+ assert(length==saved_length&&!memcmp(original,doc,length+1));
+ cursor=0;firstline=0;scroll_document(-3);assert(firstline==9&&cursor==0);
+ viewport(0);assert(firstline==9); /* redraw leaves scrolled view intact */
+ document_click(28,70);assert(cursor==starts[9]);
+ document_click(44,70);assert(cursor==starts[9]+4);
+ document_click(10000,70);assert(cursorline()==9);
+ key(&(Event){.type=EV_KEY,.a=K_END});assert(cursorline()==9);
+ viewport(1);assert(firstline==9);
+ scroll_document(-2147483647-1);assert(firstline==nlines-visible_rows());
+ scroll_document(2147483647);assert(firstline==0);
+ assert(length==saved_length&&!memcmp(original,doc,length+1));
+ blank();paste("prima\nseconda\n",14);layout();assert(nlines==3);
+ cursor=0;key(&(Event){.type=EV_KEY,.a=K_END});assert(cursor==5);
+ key(&(Event){.type=EV_KEY,.a=K_RIGHT});assert(cursor==6&&cursorline()==1);
+ puts("PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged");
  puts("PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional");
 }
