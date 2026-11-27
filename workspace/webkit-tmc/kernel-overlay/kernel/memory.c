@@ -8,6 +8,7 @@ static void kfree_l(void *p);
 u64 totalpages, freepages, *kroot;
 static int hint = 256;
 static unsigned limit;
+static u64 firmware_pages,userpages;
 static void mark(unsigned n) {
     used[n >> 3] |= 1u << (n & 7);
 }
@@ -63,7 +64,12 @@ void mem_init(void) {
     memset(used, 255, sizeof used);
     for (u64 o = 0; o < boot.bytes; o += boot.step) {
         u8 *d = (u8 *)(boot.map + o);
-        if (*(u32 *)d != 7)
+        u32 type=*(u32 *)d;
+        /* UEFI RAM types, not MMIO/reserved holes and not installed DIMM size.
+         * Firmware/loader/runtime/ACPI pages are not silently called free. */
+        if((type>=1&&type<=7)||type==9||type==10)
+            firmware_pages+=*(u64 *)(d+24);
+        if (type != 7)
             continue;
         u64 start = *(u64 *)(d + 8) >> 12, n = *(u64 *)(d + 24);
         for (u64 j = MAX(256ull, start); j < MIN(start + n, 16777216ull); j++) {
@@ -203,6 +209,7 @@ int vm_add(u64 *r, u64 a, u64 flags) {
         u64 p = page_get_l();
         if (p) {
             *e = p | 5 | flags;
+            userpages++;
             ok = 1;
         }
     }
@@ -233,6 +240,7 @@ void vm_unmap(u64 *r, u64 a) {
         /* kmem_lock prevents table mutation while peers acknowledge. Waiters
          * service the mailbox even with IRQs off; no page is reused early. */
         tlb_shoot(a);
+        userpages--;
         page_put_l(detached);
     }
     spin_unlock(&kmem_lock, fl);
@@ -250,6 +258,7 @@ int user_ok(u64 a, u64 n, int write) {
     return 1;
 }
 static void drop(u64 p, int level) {  // kmem_lock held
+    if (!level)userpages--;
     if (level) {
         u64 *t = (u64 *)p;
         for (int i = 0; i < 512; i++)
@@ -328,4 +337,30 @@ static void kfree_l(void *p) {
         } else
             h = h->next;
     }
+}
+
+/* Allocator snapshot is independent of scheduler lock; never acquire sched_lock
+ * from here. Firmware and managed totals are fixed after boot. Cache pages are
+ * included in system/reserved backing; there is no separate cache attribution. */
+void mem_info(SysInfo *s)
+{
+    u32 fl;spin_lock(&kmem_lock,&fl);
+    s->total=totalpages*PAGE;s->free=freepages*PAGE;
+    s->ram_bytes=firmware_pages*PAGE;
+    s->reserved_bytes=s->ram_bytes>=s->total?s->ram_bytes-s->total:0;
+    s->user_bytes=userpages*PAGE;
+    spin_unlock(&kmem_lock,fl);
+}
+static u64 resident(u64 p,int level)
+{
+    if(!level)return PAGE;
+    u64 n=0,*t=(u64 *)p;
+    for(int i=0;i<512;i++)if(t[i]&1)n+=resident(t[i]&ADDR,level-1);
+    return n;
+}
+u64 vm_resident(u64 *root)
+{
+    u32 fl;spin_lock(&kmem_lock,&fl);
+    u64 n=root&&(root[1]&1)?resident(root[1]&ADDR,3):0;
+    spin_unlock(&kmem_lock,fl);return n;
 }

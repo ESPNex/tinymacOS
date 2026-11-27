@@ -1,0 +1,258 @@
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64
+PASS GPT actual installer, bounded writes, FAT32/NTFS/RAW hashes unchanged, original MBR saved, relocated mount/firstaid/backup/restore
+PASS MBR actual installer, bounded writes, FAT32/NTFS/RAW hashes unchanged, original MBR saved, relocated mount/firstaid/backup/restore
+PASS metadata changed after selection: refusal before first write
+PASS GPT 25 injected write failures preserve every existing FAT32/NTFS/RAW byte
+PASS metadata changed after selection: refusal before first write
+PASS MBR 25 injected write failures preserve every existing FAT32/NTFS/RAW byte
+PASS degraded GPT refuses allocation without writes
+PASS overlapping MBR refuses allocation without writes
+PASS occupied/RAW partitions are never allocation candidates
+PASS logical NTFS via EBR is inventoried; entire extended partition remains reserved
+PASS cyclic/malformed EBR refuses allocation
+PASS GPT actual installer, bounded writes, FAT32/NTFS/RAW hashes unchanged, original MBR saved, relocated mount/firstaid/backup/restore
+PASS MBR actual installer, bounded writes, FAT32/NTFS/RAW hashes unchanged, original MBR saved, relocated mount/firstaid/backup/restore
+PASS metadata changed after selection: refusal before first write
+PASS GPT 25 injected write failures preserve every existing FAT32/NTFS/RAW byte
+PASS metadata changed after selection: refusal before first write
+PASS MBR 25 injected write failures preserve every existing FAT32/NTFS/RAW byte
+PASS degraded GPT refuses allocation without writes
+PASS overlapping MBR refuses allocation without writes
+PASS occupied/RAW partitions are never allocation candidates
+PASS logical NTFS via EBR is inventoried; entire extended partition remains reserved
+PASS cyclic/malformed EBR refuses allocation
+Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64
+PASS MBR extent crossing the 32-bit address limit refuses before writes on a 3TiB disk
+PASS actual GPT installer + maintenance at 1953125000 sectors (1000000000000 bytes), native extent near high LBA 1952600064, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual GPT installer + maintenance at 34359738368 sectors (17592186044416 bytes), native extent near high LBA 34359214080, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual MBR installer + maintenance at 2147483648 sectors (1099511627776 bytes), native extent near high LBA 2146959360, foreign entry preserved, strict write canaries, primary/backup readback
+PASS above-16TiB capacity is explicitly rejected without I/O or writes; no signed LBA truncation at 0x80000000
+PASS 1TB/16TiB actual installer normal
+PASS MBR extent crossing the 32-bit address limit refuses before writes on a 3TiB disk
+PASS actual GPT installer + maintenance at 1953125000 sectors (1000000000000 bytes), native extent near high LBA 1952600064, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual GPT installer + maintenance at 34359738368 sectors (17592186044416 bytes), native extent near high LBA 34359214080, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual MBR installer + maintenance at 2147483648 sectors (1099511627776 bytes), native extent near high LBA 2146959360, foreign entry preserved, strict write canaries, primary/backup readback
+PASS above-16TiB capacity is explicitly rejected without I/O or writes; no signed LBA truncation at 0x80000000
+PASS 1TB/16TiB actual installer sanitized
+PASS actual 4Kn fresh installer: GPT headers at physical 4096-byte LBAs, native entry/PMBR units, mirrored arrays, aligned full data extent, decoded inventory and sealed-system verification
+PASS production Recovery adapter: real same-extent conversion/deactivation on 4Kn layout, kernel recovery-key acknowledgement before steps, restart/resume authentication, imported account/file/snapshot preserved and every public extent byte-identical
+PASS native 4Kn install and conversion adapter normal
+PASS actual 4Kn fresh installer: GPT headers at physical 4096-byte LBAs, native entry/PMBR units, mirrored arrays, aligned full data extent, decoded inventory and sealed-system verification
+PASS production Recovery adapter: real same-extent conversion/deactivation on 4Kn layout, kernel recovery-key acknowledgement before steps, restart/resume authentication, imported account/file/snapshot preserved and every public extent byte-identical
+PASS native 4Kn install and conversion adapter sanitized
+In file included from /home/user/tinymacOS/compat/ntfs/native_abi.h:8,
+                 from /var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/abi.c:6:
+/home/user/tinymacOS/include/base.h:12:9: warning: "MIN" redefined
+   12 | #define MIN(a,b) ((a)<(b)?(a):(b))
+      |         ^~~
+In file included from /var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/include/ntfs-3g/volume.h:37,
+                 from /var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/include/ntfs-3g/device.h:33,
+                 from /var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/abi.c:3:
+/usr/include/x86_64-linux-gnu/sys/param.h:102:9: note: this is the location of the previous definition
+  102 | #define MIN(a,b) (((a)<(b))?(a):(b))
+      |         ^~~
+/home/user/tinymacOS/include/base.h:13:9: warning: "MAX" redefined
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |         ^~~
+/usr/include/x86_64-linux-gnu/sys/param.h:103:9: note: this is the location of the previous definition
+  103 | #define MAX(a,b) (((a)>(b))?(a):(b))
+      |         ^~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/collate.c: In function ‘ntfs_collate_file_name’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/collate.c:230:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  230 |                         (ntfschar*)&file_name_attr1->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/collate.c:232:36: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  232 |                         (ntfschar*)&file_name_attr2->file_name,
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_inode_lookup_by_name’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c:334:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  334 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c:455:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  455 |                                 (ntfschar*)&ie->key.file_name.file_name,
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_filldir’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c:1001:49: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1001 |                         res = filldir(dirent, fn->file_name,
+      |                                               ~~^~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c: In function ‘ntfs_delete’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/dir.c:1990:44: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1990 |                 if (ntfs_names_are_equal(fn->file_name, fn->file_name_length,
+      |                                          ~~^~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/index.c: In function ‘ntfs_ie_filename_get’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/index.c:277:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  277 |         return ntfs_attr_name_get(fn->file_name, fn->file_name_length);
+      |                                   ~~^~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/inode.c: In function ‘ntfs_inode_add_attrlist’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/inode.c:1264:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+ 1264 |                         if (!ntfs_attr_lookup(ale->type, ale->name,
+      |                                                          ~~~^~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/reparse.c: In function ‘ntfs_fix_file_name’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/reparse.c:185:61: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  185 |                            && ntfs_names_are_equal(find.attr.file_name,
+      |                                                    ~~~~~~~~~^~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/reparse.c:187:38: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  187 |                                 found->file_name, found->file_name_length,
+      |                                 ~~~~~^~~~~~~~~~~
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/unistr.c: In function ‘ntfs_file_value_upcase’:
+/var/tmp/tmc-diskedit-test-XO0tOtq7/ntfs-native/source/libntfs-3g/unistr.c:432:37: warning: taking address of packed member of ‘struct <anonymous>’ may result in an unaligned pointer value [-Waddress-of-packed-member]
+  432 |         ntfs_name_upcase((ntfschar*)&file_name_attr->file_name,
+      |                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+NTFS native resize: source/ABI verified, integer-only freestanding engine + bounded block adapter namespace
+PASS GPT real FAT32 shrink 64->48 MiB and grow back: BPB, backup, FSINFO and partition updated; foreign NTFS/bootstrap unchanged
+PASS deletion of occupied NTFS removes only selected table entry, preserving its payload
+PASS native fixed-slot partition formatted before GPT/MBR publication; snapshots cleared; adjacent data unchanged
+PASS mandatory confirmation and stale metadata reject with zero writes
+PASS invalid NTFS metadata rejected by the native engine with zero writes
+PASS allocated tail cluster rejects FAT32 shrink without boundary changes
+PASS dirty/divergent FAT copies reject resize before writes
+PASS injected table-write errors never report success or write foreign payload/MBR bootstrap (not an atomicity guarantee)
+PASS MBR real FAT32 shrink 64->48 MiB and grow back: BPB, backup, FSINFO and partition updated; foreign NTFS/bootstrap unchanged
+PASS deletion of occupied NTFS removes only selected table entry, preserving its payload
+PASS native fixed-slot partition formatted before GPT/MBR publication; snapshots cleared; adjacent data unchanged
+PASS mandatory confirmation and stale metadata reject with zero writes
+PASS invalid NTFS metadata rejected by the native engine with zero writes
+PASS allocated tail cluster rejects FAT32 shrink without boundary changes
+PASS dirty/divergent FAT copies reject resize before writes
+PASS injected table-write errors never report success or write foreign payload/MBR bootstrap (not an atomicity guarantee)
+PASS first/last EBR logical deletion retains valid, empty extended container
+PASS extended partition deletion is explicit and supported
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/gpt-shrunk.fat: 1 files, 2/96254 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/gpt-grown.fat: 1 files, 2/129022 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/mbr-shrunk.fat: 1 files, 2/96254 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/mbr-grown.fat: 1 files, 2/129022 clusters
+PASS host: independent fsck.fat and exact file readback on both schemes/sizes
+PASS GPT real FAT32 shrink 64->48 MiB and grow back: BPB, backup, FSINFO and partition updated; foreign NTFS/bootstrap unchanged
+PASS deletion of occupied NTFS removes only selected table entry, preserving its payload
+PASS native fixed-slot partition formatted before GPT/MBR publication; snapshots cleared; adjacent data unchanged
+PASS mandatory confirmation and stale metadata reject with zero writes
+PASS invalid NTFS metadata rejected by the native engine with zero writes
+PASS allocated tail cluster rejects FAT32 shrink without boundary changes
+PASS dirty/divergent FAT copies reject resize before writes
+PASS injected table-write errors never report success or write foreign payload/MBR bootstrap (not an atomicity guarantee)
+PASS MBR real FAT32 shrink 64->48 MiB and grow back: BPB, backup, FSINFO and partition updated; foreign NTFS/bootstrap unchanged
+PASS deletion of occupied NTFS removes only selected table entry, preserving its payload
+PASS native fixed-slot partition formatted before GPT/MBR publication; snapshots cleared; adjacent data unchanged
+PASS mandatory confirmation and stale metadata reject with zero writes
+PASS invalid NTFS metadata rejected by the native engine with zero writes
+PASS allocated tail cluster rejects FAT32 shrink without boundary changes
+PASS dirty/divergent FAT copies reject resize before writes
+PASS injected table-write errors never report success or write foreign payload/MBR bootstrap (not an atomicity guarantee)
+PASS first/last EBR logical deletion retains valid, empty extended container
+PASS extended partition deletion is explicit and supported
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/gpt-shrunk.fat: 1 files, 2/96254 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/gpt-grown.fat: 1 files, 2/129022 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/mbr-shrunk.fat: 1 files, 2/96254 clusters
+fsck.fat 4.2 (2021-01-31)
+/var/tmp/tmc-diskedit-test-XO0tOtq7/mbr-grown.fat: 1 files, 2/129022 clusters
+PASS sanitized: independent fsck.fat and exact file readback on both schemes/sizes
+PASS real native 32->24MiB: 384->288 allocatable slots; all 8 snapshots relocated/CRC-verified, backup SHA-verified, accounts/files/canaries preserved
+PASS native 24->32MiB: all snapshot/backup contents preserved while real inode/data capacity grows
+PASS actual fs_create/fs_write/fs_read enforce variable storage: 382 vs 286 additional 8KiB slots
+PASS allocated inode tail refuses shrink without writes
+PASS injected write errors never report success; incomplete header refuses mount
+PASS corrupt snapshot refuses resize before any write
+PASS real native 32->24MiB: 384->288 allocatable slots; all 8 snapshots relocated/CRC-verified, backup SHA-verified, accounts/files/canaries preserved
+PASS native 24->32MiB: all snapshot/backup contents preserved while real inode/data capacity grows
+PASS actual fs_create/fs_write/fs_read enforce variable storage: 382 vs 286 additional 8KiB slots
+PASS allocated inode tail refuses shrink without writes
+PASS injected write errors never report success; incomplete header refuses mount
+PASS corrupt snapshot refuses resize before any write
+PASS actual FS2 format/import/verify at >2TiB base and 16KiB write/read at >32-bit relative sector offset on a 3TiB device; no LBA narrowing
+PASS actual stale/saturated PMBR installer: cancel writes nothing, consent repairs coverage (and missing signature), preserves all occupied extents/existing GPT entries/disk ID, saves exact original MBR; degraded GPT refuses
+PASS actual FS2 missing-55AA installer: preflight/cancel zero writes, confirmed install restores only signature with planned boot/table activation, existing extents/entries unchanged, old MBR saved, degraded peer refused
+PASS actual GPT fresh TMCBFS2 installer: core formats full selected data extent, verifies files/accounts and shared-root initial backup after remount, only then activates table; existing FAT32/NTFS/RAW bytes unchanged
+PASS actual MBR fresh TMCBFS2 installer: core formats full selected data extent, verifies files/accounts and shared-root initial backup after remount, only then activates table; existing FAT32/NTFS/RAW bytes unchanged
+PASS actual kernel encrypted-volume adapter: aligned 4KiB native I/O, locked/unlocked access, smaller truthful logical capacity, private accounts, offline verify/checkpoint/restore, lock/reprobe/recovery, legacy sector bypass denied, corrupt envelope cannot fall through to format/reset; existing FAT32/NTFS/RAW hashes unchanged (QA envelope creation, not GUI acceptance)
+PASS actual GPT encrypted Recovery RESET: new volume key + password + independently pre-confirmed recovery, old credentials rejected, blank accounts/documents/catalogue, cold new recovery unlock, foreign extents unchanged; no secure-erase or interruption rollback claim
+PASS actual GPT ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged
+PASS actual MBR encrypted Recovery RESET: new volume key + password + independently pre-confirmed recovery, old credentials rejected, blank accounts/documents/catalogue, cold new recovery unlock, foreign extents unchanged; no secure-erase or interruption rollback claim
+PASS 8 real adapter reset write interruptions: old access or incomplete/new/fail-closed encrypted state, never plaintext fallback or false success; unrelated extents unchanged
+PASS actual MBR ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged
+PASS invalid source refuses before any target write; injected target failure never activates the new volume
+PASS actual FS2 format/import/verify at >2TiB base and 16KiB write/read at >32-bit relative sector offset on a 3TiB device; no LBA narrowing
+PASS actual stale/saturated PMBR installer: cancel writes nothing, consent repairs coverage (and missing signature), preserves all occupied extents/existing GPT entries/disk ID, saves exact original MBR; degraded GPT refuses
+PASS actual FS2 missing-55AA installer: preflight/cancel zero writes, confirmed install restores only signature with planned boot/table activation, existing extents/entries unchanged, old MBR saved, degraded peer refused
+PASS actual GPT fresh TMCBFS2 installer: core formats full selected data extent, verifies files/accounts and shared-root initial backup after remount, only then activates table; existing FAT32/NTFS/RAW bytes unchanged
+PASS actual MBR fresh TMCBFS2 installer: core formats full selected data extent, verifies files/accounts and shared-root initial backup after remount, only then activates table; existing FAT32/NTFS/RAW bytes unchanged
+PASS actual kernel encrypted-volume adapter: aligned 4KiB native I/O, locked/unlocked access, smaller truthful logical capacity, private accounts, offline verify/checkpoint/restore, lock/reprobe/recovery, legacy sector bypass denied, corrupt envelope cannot fall through to format/reset; existing FAT32/NTFS/RAW hashes unchanged (QA envelope creation, not GUI acceptance)
+PASS actual GPT encrypted Recovery RESET: new volume key + password + independently pre-confirmed recovery, old credentials rejected, blank accounts/documents/catalogue, cold new recovery unlock, foreign extents unchanged; no secure-erase or interruption rollback claim
+PASS actual GPT ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged
+PASS actual MBR encrypted Recovery RESET: new volume key + password + independently pre-confirmed recovery, old credentials rejected, blank accounts/documents/catalogue, cold new recovery unlock, foreign extents unchanged; no secure-erase or interruption rollback claim
+PASS 8 real adapter reset write interruptions: old access or incomplete/new/fail-closed encrypted state, never plaintext fallback or false success; unrelated extents unchanged
+PASS actual MBR ENCRYPTED fresh installer: password validation/cancel with zero writes, recovery disclosed before writes, FV003 + seed/accounts/snapshot created by real state machine, cold password/recovery unlock, duplicate create refused, foreign extents unchanged
+PASS invalid source refuses before any target write; injected target failure never activates the new volume
+PASS actual FS2 kernel backend: 64KiB file, 1100 files/inode IDs beyond bootfs 1024, separate bootfs handles, 64-bit seek, overwrite truncation, rename, CoW snapshot restore/delete, private account slots, paged snapshot catalogue, read-only snapshot namespace/FD isolation, atomic local checkpoints and volume capacity
+PASS actual FS2 kernel backend: 64KiB file, 1100 files/inode IDs beyond bootfs 1024, separate bootfs handles, 64-bit seek, overwrite truncation, rename, CoW snapshot restore/delete, private account slots, paged snapshot catalogue, read-only snapshot namespace/FD isolation, atomic local checkpoints and volume capacity
+PASS actual external import adapters source=plain destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=plain destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS external import kernel adapters normal
+PASS actual external import adapters source=plain destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=plain destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=plain: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS actual external import adapters source=FV003 destination=FV003: explicit Recovery/offline/distinct disks, read-only preview, 128KiB+account, preserved target checkpoint, no source writes, unchanged outside data extent, independent cold unlocks
+PASS external import kernel adapters sanitized
+PASS actual FS2 same-extent encrypt/decrypt: password/recovery, files, private account and CoW snapshot preserved; truthful capacity reduced/restored, wrong credential has zero writes
+PASS 96 relocation write/flush/torn-unit interruptions: reopen authenticates saved password slot via recovery, resumes and fully verifies; never formats or drops account/snapshot
+PASS wrong credential read-only, damaged conversion journal fails closed
+PASS deleted plaintext remnants scrubbed; 48 write/flush/torn cleanup interruptions resume without data loss or plaintext residue
+PASS same-extent FS2 conversion normal
+PASS actual FS2 same-extent encrypt/decrypt: password/recovery, files, private account and CoW snapshot preserved; truthful capacity reduced/restored, wrong credential has zero writes
+PASS 96 relocation write/flush/torn-unit interruptions: reopen authenticates saved password slot via recovery, resumes and fully verifies; never formats or drops account/snapshot
+PASS wrong credential read-only, damaged conversion journal fails closed
+PASS deleted plaintext remnants scrubbed; 48 write/flush/torn cleanup interruptions resume without data loss or plaintext residue
+PASS same-extent FS2 conversion sanitized
+PASS actual NVMe transport: 1TiB high-LBA 128KiB PRP-list write/flush/read, sparse NSIDs 1/7, namespace/model discovery
+PASS repeated queue wrap/phase/CID handling and direct two-page PRPs
+PASS real 4Kn partial-sector RMW preserves every neighboring byte (not a 4Kn boot/partition claim)
+PASS out-of-range/namespace/zero-count refusal without writes; NVMe error completion consumed without false success
+PASS MDTS-limited 128KiB request splits into sixteen independently completed 8KiB commands
+PASS CID mismatch and command timeout disable/fail the controller; no retry or success claim after unknown write outcome
+PASS NVMe transport normal
+PASS actual NVMe transport: 1TiB high-LBA 128KiB PRP-list write/flush/read, sparse NSIDs 1/7, namespace/model discovery
+PASS repeated queue wrap/phase/CID handling and direct two-page PRPs
+PASS real 4Kn partial-sector RMW preserves every neighboring byte (not a 4Kn boot/partition claim)
+PASS out-of-range/namespace/zero-count refusal without writes; NVMe error completion consumed without false success
+PASS MDTS-limited 128KiB request splits into sixteen independently completed 8KiB commands
+PASS CID mismatch and command timeout disable/fail the controller; no retry or success claim after unknown write outcome
+PASS NVMe transport sanitized
+PASS M2 host gates; real guest >2TB/4Kn/three-view cold-boot acceptance remains a separate required gate

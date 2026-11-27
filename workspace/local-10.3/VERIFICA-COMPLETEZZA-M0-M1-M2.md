@@ -1,10 +1,12 @@
 # Verifica di completezza M0–M2
 
-## Verdetto corrente dopo la chiusura M2
+## Verdetto corrente dopo la chiusura M3
 
 **M1: gate locali host/guest ora chiusi**, con accettazione fresca completa, round-trip nativo di file UTF-8 da 144.000/141.735 byte, input/caret continuo e password in setup/Installer/Recovery, no-echo e vero sblocco FV003 da Terminale. Ricevuta dettagliata: [`m1/VERIFICA.md`](m1/VERIFICA.md).
 
-**M2: completo rispetto ai gate locali del piano.** ABI/LBA a 64 bit e limite esplicito 16 TiB; tre installazioni GUI da 3 TiB (NVMe 4Kn, NVMe 512 B, AHCI 512 B) con gap reale da 2,5 TiB, cold boot nativo/Recovery senza ISO e confronto Installer/Utility Disco/Terminale. Suite host completa normale/sanitizzata, M0/font e nuova regressione M1 sulla stessa ISO finale PASS. Ricevuta: [`m2/VERIFICA.md`](m2/VERIFICA.md). Nessuna certificazione hardware, release o avanzamento M3.
+**M2: completo rispetto ai gate locali del piano.** ABI/LBA a 64 bit e limite esplicito 16 TiB; tre installazioni GUI da 3 TiB (NVMe 4Kn, NVMe 512 B, AHCI 512 B) con gap reale da 2,5 TiB, cold boot nativo/Recovery senza ISO e confronto Installer/Utility Disco/Terminale. Suite host completa normale/sanitizzata, M0/font e nuova regressione M1 sulla stessa ISO finale PASS. Ricevuta: [`m2/VERIFICA.md`](m2/VERIFICA.md). Nessuna certificazione hardware o release; M3 è rendicontato separatamente qui sotto.
+
+**M3: completo rispetto ai gate locali del piano.** Produttori reali CPU/memoria corretti, percentuali per intervalli, RAM pool/riservata/backing processo, host normale/sanitizzato e guest APIC 1/4/8 core + PIC/PIT UP con idle/carico/sleep/allocazione-rilascio PASS. Regressioni M0/M1/M2 sulla ISO finale PASS; ricevuta [`m3/VERIFICA.md`](m3/VERIFICA.md). M4 non avviato, nessuna release/certificazione hardware.
 
 Il resto di questo documento conserva il precedente audit su `f7576f6` per rendere verificabile quali mancanze sono state corrette; non è il verdetto corrente su M1/M2. Le tabelle e le mancanze nelle sezioni successive sono storiche e sono state chiuse dalle ricevute M1 e M2 sopra.
 

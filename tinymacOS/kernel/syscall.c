@@ -36,8 +36,7 @@ static Spin alloc_lock,clip_lock;
 static void info(SysInfo *s)
 {
     memset(s, 0, sizeof * s);
-    s->total = totalpages * PAGE;
-    s->free = freepages * PAGE;
+    mem_info(s);
     s->ticks = ticks;
     s->switches = switches;
     s->w = boot.w;
@@ -82,22 +81,24 @@ static void info(SysInfo *s)
     s->dark = boot.recovery?1:dark;
     s->csr = boot.csr;
     s->recovery=boot.recovery;
-    s->busy_ticks = busy_ticks;
     strset(s->cpu, cpuname, sizeof s->cpu);
     u32 ifl;
     spin_lock(&sched_lock, &ifl);
+    s->busy_ticks = busy_ticks;
+    s->cpu_online_mask = smp_online_mask()&255;
+    for(int c=0;c<8;c++)s->ncpu+=(s->cpu_online_mask>>c)&1;
+    for (int c=0;c<8;c++) {
+        s->core_busy[c]=cpus[c].core_busy;
+        s->core_ticks[c]=cpus[c].core_ticks;
+    }
     for (int i = 1; i < NPROC; i++)
         if (proc[i].pid && !proc[i].dying)
             s->procs++;
     spin_unlock(&sched_lock, ifl);
     clock_info(s);
-    s->ncpu = ncpu_online > 8 ? 8 : ncpu_online;
     s->current_cpu=pc()->cpu;
+    s->current_pid=current()->pid;
     s->boot_flags=boot.boot_flags;
-    for (int c = 0; c < 8; c++) {
-        s->core_busy[c] = cpus[c].core_busy;
-        s->core_ticks[c] = cpus[c].core_ticks;
-    }
 }
 static i64 alloc(Process *p, u64 n)
 {
@@ -577,12 +578,16 @@ static Frame *syscall_inner(Frame *f)
                 if (proc[i].pid && !proc[i].dying) {
                     Process *q = proc + i;
                     z[r] = (ProcInfo) {
-                        q->pid, q->app, 0, q->tasks, q->switches, {0}, 0
+                        .pid=q->pid, .app=q->app, .threads=q->tasks, .switches=q->switches
                     };
                     for (int j = 1; j < NTASK; j++)
-                        if (task[j].pi == i && task[j].state)
-                            z[r].state = task[j].state;
+                        if (task[j].pi == i) {
+                            if(task[j].state==1)z[r].state=1;
+                            else if(task[j].state==2&&!z[r].state)z[r].state=2;
+                        }
                     z[r].cpu_ticks = q->cpu_ticks;
+                    z[r].sample_ticks = cpu_samples;
+                    z[r].resident_bytes = vm_resident(q->root);
                     strset(z[r].name, q->app == COMMAND ? q->program : appname(q->app), 24);
                     r++;
                 }

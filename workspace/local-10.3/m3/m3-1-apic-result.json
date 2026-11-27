@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "requested_cpus": 1,
+  "timer": "apic",
+  "work": "/var/tmp/tmc-m3-guest-fekoo79w",
+  "iso_sha256": "1e12b7a6f740b67c956d89588a341245b0e22be72a08a244c1f6f49fd4e15132",
+  "checks": [
+    "Real Monitor 1-CPU bars and allocator labels; pause/sort freezes CPU card and resume works; guest sysstat completed actual threads/sleep/alloc/VM test and saved 13 native records",
+    "Raw coherent real scheduler windows: idle/sleep low, one worker normalized by 1 cores, all-core load rises; monotonic per-core and shared-process samples without underflow",
+    "Actual S_ALLOC 8MiB and VM commit 4MiB grow pool/user/per-process resident counters exactly; free/release return all user backing, only bounded empty page-table overhead remains",
+    "Cold native boot without ISO retains the guest-written report and functional Monitor telemetry"
+  ],
+  "intervals": {
+    "idle": {
+      "total_pct": 1.2658227848101267,
+      "process_pct": 0.0,
+      "samples": 158,
+      "wall_ticks": 161,
+      "per_core_pct": [
+        1.2658227848101267
+      ]
+    },
+    "one": {
+      "total_pct": 100.0,
+      "process_pct": 98.9795918367347,
+      "samples": 196,
+      "wall_ticks": 200,
+      "per_core_pct": [
+        100.0
+      ]
+    },
+    "multi": {
+      "total_pct": 100.0,
+      "process_pct": 97.46192893401015,
+      "samples": 197,
+      "wall_ticks": 200,
+      "per_core_pct": [
+        100.0
+      ]
+    },
+    "sleep": {
+      "total_pct": 0.6369426751592356,
+      "process_pct": 0.0,
+      "samples": 157,
+      "wall_ticks": 160,
+      "per_core_pct": [
+        0.6369426751592356
+      ]
+    }
+  },
+  "memory": {
+    "mem0": [
+      296960000,
+      166232064,
+      535937024,
+      238977024,
+      129933312
+    ],
+    "alloc": [
+      296960000,
+      157827072,
+      535937024,
+      238977024,
+      138321920
+    ],
+    "free": [
+      296960000,
+      166215680,
+      535937024,
+      238977024,
+      129933312
+    ],
+    "commit": [
+      296960000,
+      162013184,
+      535937024,
+      238977024,
+      134127616
+    ],
+    "release": [
+      296960000,
+      166207488,
+      535937024,
+      238977024,
+      129933312
+    ]
+  }
+}

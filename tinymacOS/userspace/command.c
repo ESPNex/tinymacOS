@@ -137,6 +137,7 @@ error:
     }
     return status;
 }
+#include "sysstat.h"
 static int run(void)
 {
     if(IS("fdesetup")){
@@ -147,6 +148,7 @@ static int run(void)
         ln("FileVault aperto in Impostazioni.");return 0;
     }
 
+    if(IS("sysstat"))return sysstat();
     int n = A.argc;
     Dirent d, b;
     SysInfo t;

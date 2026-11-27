@@ -3,7 +3,7 @@
 extern volatile u32 *lapic_mmio(void);
 Process proc[NPROC];
 Task task[NTASK];
-u64 ticks, switches, busy_ticks;
+u64 ticks, switches, busy_ticks,cpu_samples;
 Spin sched_lock;
 static int nextpid = 1;
 static Frame *mkframe(int ti, int pi, u64 ip, u64 sp, int user)
@@ -304,6 +304,19 @@ static void reap(void)
 }
 int idle_slots[8];
 static int left_behind[8];
+/* sched_lock held: all exported CPU counters and process increments form one
+ * coherent sample. pin is affinity, NOT idleness (USB worker is pinned). */
+void cpu_account_tick(void)
+{
+    PerCpu *c=pc();
+    c->core_ticks++;
+    cpu_samples++;
+    if(cur!=idle_slots[c->cpu]){
+        c->core_busy++;
+        busy_ticks++;
+        current()->cpu_ticks++;
+    }
+}
 Frame *schedule(Frame *f)
 {
     // sched_lock is held (IRQs off). Release the previous task's CPU claim

@@ -17,7 +17,7 @@ static inline int cpu_percent(u64 busy,u64 total)
 static inline int cpu_interval(u64 tick,u64 busy,u64 oldtick,u64 oldbusy,u64 *dt,u64 *db)
 {
     *dt=*db=0;
-    if(!oldtick||tick<=oldtick||busy<oldbusy)return 0;
+    if(!oldtick||tick<=oldtick||busy<oldbusy||busy>tick||oldbusy>oldtick)return 0;
     u64 t=tick-oldtick,b=busy-oldbusy;
     /* Reject inconsistent/non-atomic snapshots; never display an underflow.
      * Bound aggregate addition for the eight exported cores. */

@@ -1,0 +1,94 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "work": "/var/tmp/tmc-m1-acceptance-mqp_1ung",
+  "checks": [
+    "Setup empty/name/password/confirmation: real Tab focus, continuous per-key visible caret, masked password fields",
+    "Terminal normal prompt: empty/continuous typing/arrows/backspace caret",
+    "Terminal real no-echo aliases: invariant prompt pixels/cursor for typing/deletion/movement, Escape and backend failure return safely",
+    "TextEdit empty and continuous UTF8 typing/arrows/backspace caret",
+    "Note: continuous typing, UTF8 movement/deletion and caret suppression behind menu",
+    "Memo: continuous typing, UTF8 movement/deletion and caret suppression behind menu",
+    "Installer: empty/masked password and Tab confirmation per-key visible caret; cancel discards enrollment before installation",
+    "Native guest TextEdit raw: 144000 UTF8 bytes, SHA256 exact after click/scroll/resize/Home-End/insert/backspace/save/close/reopen/save",
+    "Native guest TextEdit lines: 141735 UTF8 bytes, SHA256 exact after click/scroll/resize/Home-End/insert/backspace/save/close/reopen/save",
+    "Installed native Recovery, ISO detached: FileVault empty/typed masked fields and Tab caret verified, activation cancelled"
+  ],
+  "iso_sha256": "1e12b7a6f740b67c956d89588a341245b0e22be72a08a244c1f6f49fd4e15132",
+  "markers": {
+    "setup-name-empty": [
+      529,
+      440,
+      1,
+      17
+    ],
+    "setup-password-empty": [
+      529,
+      481,
+      1,
+      17
+    ],
+    "setup-confirm-empty": [
+      529,
+      522,
+      1,
+      17
+    ],
+    "Terminal-normal-empty": [
+      489,
+      235,
+      2,
+      15
+    ],
+    "Terminal-no-echo": [
+      481,
+      254,
+      2,
+      15
+    ],
+    "TextEdit-empty": [
+      355,
+      246,
+      2,
+      16
+    ],
+    "Note-empty": [
+      588,
+      296,
+      1,
+      16
+    ],
+    "Memo-empty": [
+      567,
+      332,
+      1,
+      16
+    ],
+    "installer-password-empty": [
+      344,
+      354,
+      1,
+      17
+    ],
+    "installer-confirm-empty": [
+      344,
+      419,
+      1,
+      17
+    ],
+    "recovery-password-empty": [
+      499,
+      389,
+      1,
+      17
+    ],
+    "recovery-confirm-empty": [
+      499,
+      446,
+      1,
+      17
+    ]
+  },
+  "host_prepared_long_document_inputs_only": true
+}

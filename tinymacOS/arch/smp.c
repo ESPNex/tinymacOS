@@ -12,6 +12,7 @@ static Spin shoot_lock;
 static TmcTLBMailbox shoot_mailbox;
 static u8 ap_boot_stacks[7][8192] ALIGNED(16);
 static volatile u32 online_mask;
+u32 smp_online_mask(void){return __atomic_load_n(&online_mask,__ATOMIC_ACQUIRE)|1;}
 static u16 pit_cnt(void)
 {
     outb(0x43, 0x00);

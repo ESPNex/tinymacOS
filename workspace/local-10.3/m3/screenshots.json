@@ -1,0 +1,50 @@
+[
+  {
+    "file": "m3-1-apic-monitor-crop.png",
+    "crop_xyxy": [
+      296,
+      62,
+      1118,
+      730
+    ],
+    "original_file": "m3-cold-monitor-1cores.png",
+    "original_sha256": "bde1502ac24fbb9417d8a3e53c74784d1672088755103b8f4f4bb7b64ba525d5",
+    "sha256": "d5c82032b4f6690aa7245d248ee6f0de6a8c8f1b7200b80fad2333448935bac2"
+  },
+  {
+    "file": "m3-1-pit-monitor-crop.png",
+    "crop_xyxy": [
+      296,
+      62,
+      1118,
+      730
+    ],
+    "original_file": "m3-cold-monitor-1cores.png",
+    "original_sha256": "57600c3b27baa8f959bc340ab0855dda8467ea83008d54dbfac6fde18f494fdf",
+    "sha256": "70e6262abfe0b865c3ca14f89282c64f7f66d8165746e324df511b7139990d52"
+  },
+  {
+    "file": "m3-4-apic-monitor-crop.png",
+    "crop_xyxy": [
+      296,
+      62,
+      1118,
+      730
+    ],
+    "original_file": "m3-cold-monitor-4cores.png",
+    "original_sha256": "373f2dafc8ededa707456e613dcc6cade9f6e07a341b74b329eff6d72c0001d6",
+    "sha256": "eec8f31107e9330a00186aa853c347560fa716780f736cf78501e09b4119a324"
+  },
+  {
+    "file": "m3-8-apic-monitor-crop.png",
+    "crop_xyxy": [
+      296,
+      62,
+      1118,
+      730
+    ],
+    "original_file": "m3-cold-monitor-8cores.png",
+    "original_sha256": "0381982779070b5a0d230ab3e4b5441048bd37df02b0630bf15cfd2868c52fd2",
+    "sha256": "b178ac8a6e743ed373201e302875ca167388baffc373661e40093de5893093d3"
+  }
+]

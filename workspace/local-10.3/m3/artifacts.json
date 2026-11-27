@@ -1,0 +1,34 @@
+{
+  "m3.iso": {
+    "bytes": 227647488,
+    "sha256": "1e12b7a6f740b67c956d89588a341245b0e22be72a08a244c1f6f49fd4e15132"
+  },
+  "KernelCache": {
+    "bytes": 1233128,
+    "sha256": "1dd567a7bd2a110ee70f81192d45b01a0bd27165b92c8dae3871fa7075e15c09"
+  },
+  "RecoveryKernel.elf": {
+    "bytes": 1233064,
+    "sha256": "2664b40c6864b513cc9242fb87b27468a98e5934414c61448b6190ec9245d764"
+  },
+  "BOOTX64.EFI": {
+    "bytes": 174080,
+    "sha256": "94b5a2a1bf37487bf42d00ac9519e95ac7899289253dec1fb265c97438be9ff4"
+  },
+  "RECBOOT.EFI": {
+    "bytes": 162304,
+    "sha256": "a47446fe9c44f9c5943a262beba4d7bb6d19b73f99e32e3f3d41676c102eb948"
+  },
+  "terminal.elf": {
+    "bytes": 33496,
+    "sha256": "816e667d9a1dd723c346d2a97db5561bb891696899af3977640d777e6c0ba7be"
+  },
+  "textedit.elf": {
+    "bytes": 33360,
+    "sha256": "a3409160dab1078e11dd65abdd04cd0c9be6542b3fa8a02b0311de5562ddcba6"
+  },
+  "desktop.elf": {
+    "bytes": 2799104,
+    "sha256": "3ac9efd43c1aa435df348a7856b5bac4e3ddce476467001c58b60482a73406ae"
+  }
+}

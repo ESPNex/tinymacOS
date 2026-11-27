@@ -13,7 +13,7 @@
 extern struct Boot boot;
 extern u64 *kroot, totalpages, freepages, ticks, switches;
 extern u32 fsrev, npci, persistent, apic_enabled, usednodes, theme, wall, dock, reduce_motion, opaque, dark;
-extern u64 busy_ticks;
+extern u64 busy_ticks,cpu_samples;
 extern char cpuname[56];
 void serial_init(void);
 void logstr(const char *);
@@ -22,6 +22,10 @@ void loghex(u64);
 __attribute__((noreturn)) void retail_stop(void);
 #define panic(...) retail_stop()
 void mem_init(void);
+void mem_info(SysInfo *);
+u64 vm_resident(u64 *);
+void cpu_account_tick(void);
+u32 smp_online_mask(void);
 u64 page_get(void);
 void page_put(u64);
 u64 *vm_new(void);

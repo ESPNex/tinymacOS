@@ -58,6 +58,8 @@ typedef struct {
     u64 switches;
     char name[24];
     u64 cpu_ticks;
+    u64 sample_ticks; /* all-CPU timer sample clock, atomic with cpu_ticks */
+    u64 resident_bytes; /* committed user leaf pages, excludes tables/shared kernel */
 } ProcInfo;
 typedef struct {
     u64 total, free, ticks, switches;
@@ -71,6 +73,9 @@ typedef struct {
     u32 nmodes, modes[24];       /* switchable resolutions (w<<16|h) */
     u32 recovery;                /* isolated native Recovery session */
     u32 csr;                     /* SIP: bit0 = enabled (live NVRAM config) */
+    u32 current_pid;
+    u32 cpu_online_mask; /* CPU slot bitmap; AP failures need not be contiguous */
+    u64 ram_bytes, reserved_bytes, user_bytes; /* UEFI-described RAM; non-managed; user leaf backing */
 } SysInfo;
 typedef struct {
     u64 id, parent;

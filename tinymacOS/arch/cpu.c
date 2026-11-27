@@ -97,15 +97,10 @@ Frame *dispatch(Frame *f)
         // Local APIC timer: per-CPU preemption, accounting and scheduling.
         PerCpu *P = pc();
         if (!P->core_ticks) { logstr("[vec64] first on cpu="); lognum(P->cpu); logstr("\n"); }
-        P->core_ticks++;
-        if (task[cur].pin < 0) {
-            P->core_busy++;
-            __sync_fetch_and_add(&busy_ticks, 1);
-            current()->cpu_ticks++;
-        }
         eoi(0);
         u32 fl;
         spin_lock(&sched_lock, &fl);
+        cpu_account_tick();
         Frame *r = schedule(f);
         spin_unlock(&sched_lock, fl);
         return r;
@@ -125,6 +120,7 @@ Frame *dispatch(Frame *f)
         if (!apic_enabled) {
             u32 fl;
             spin_lock(&sched_lock, &fl);
+            cpu_account_tick(); /* UP PIT fallback has the same sampling semantics. */
             Frame *r = schedule(f);
             spin_unlock(&sched_lock, fl);
             return r;

@@ -14,5 +14,9 @@ int main(void){
  assert(!cpu_interval(99,70,100,20,&dt,&db));
  assert(!cpu_interval(200,19,100,20,&dt,&db));
  assert(!cpu_interval(200,121,100,20,&dt,&db));
+ assert(!cpu_interval(200,201,100,20,&dt,&db));
+ assert(!cpu_interval(200,150,100,101,&dt,&db));
+ assert(!cpu_interval(~0ull,0,1,0,&dt,&db));
+ assert(!cpu_interval(3,1,~0ull-3,~0ull-10,&dt,&db));
  puts("PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX");
 }

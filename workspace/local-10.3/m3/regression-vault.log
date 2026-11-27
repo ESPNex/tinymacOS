@@ -1,0 +1,1 @@
+PASS native Terminal no-echo -> actual GUI-created FV003; wrong password rejected, correct password unlocked, independent FileVault status verified
