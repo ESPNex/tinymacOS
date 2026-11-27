@@ -194,7 +194,7 @@ static void field_draw(int i)
     carets[i]=MAX(0,MIN(carets[i],len));
     int col=text_columns(s,carets[i]),startcol=MAX(0,col-(secret?18:21));
     roundr(r.x,r.y,r.w,r.h,17,i==field?0x284969:0x172c45,238);
-    const char *hint = !setup() ? (account.volume_locked?"Password o chiave di recupero":"Inserisci la password") : i == 0 ? "Nome utente" : i == 1 ?
+    const char *hint = !setup() ? (account.volume_locked?"Password o chiave di recupero":"Inserisci la password") : i == 0 ? "Nome account" : i == 1 ?
                        "Password · almeno 8 caratteri" : "Conferma password";
     int cx=r.x+16;
     if (!s[0])text(r.x+(i==field?24:17),r.y+8,hint,F_SMALL,0xf3f5fc);
@@ -230,11 +230,10 @@ void login_draw(void)
         seed_draw();
     } else {
         center(cx, y + sz + 8, account.state == SESSION_BROKEN ? "Account non disponibile" : setup() ?
-               (account.working ? form.name : "Crea un account") :
+               (account.working ? form.name : "Crea un account computer") :
                account.name, setup() ? F_CAPTION : F_TITLE, 0xffffff);
-        if (setup() &&
-                !account.working)center(cx, y + sz + 36, sys.persistent ? "L’account resta su questo disco dopo il riavvio." :
-                                            "Potrai conservare questo account installando il sistema.", F_SMALL, 0xe8edf8);
+        if(setup()&&!account.working&&!sys.persistent)
+            center(cx,y+sz+36,"Account temporaneo finché non installi tinymacOS.",F_SMALL,0xe8edf8);
         if (account.working) {
             // Replace the form, not the boot bar. Input stays disabled until the real
             // authentication operation finishes; there is no minimum display delay.
@@ -276,7 +275,7 @@ void login_draw(void)
         Rect r = {cx - 169, H / 2 - 67, 338, 134};
         shadow(r, 17, 80);
         glass(r, 17, MAT_SHEET);
-        center(cx, r.y + 14, confirmPower == 2 ? "Spegnere il sistema?" : "Riavviare il sistema?", F_CAPTION, TX);
+        center(cx, r.y + 14, confirmPower == 2 ? "Vuoi spegnere il computer?" : "Vuoi riavviare il computer?", F_CAPTION, TX);
         center(cx, r.y + 47, "I documenti non salvati andranno persi.", F_SMALL, SUB);
         for (int j = 0; j < 2; j++) {
             Rect b = {r.x + 20 + j * 151, r.y + 81, 145, 30};

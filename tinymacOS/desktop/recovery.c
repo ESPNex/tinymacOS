@@ -6,7 +6,7 @@ static DiskInfo disks;
 static int selected, choice, armed=-1;
 static char result[100];
 static const char *titles[]={"Ripristina da una copia locale",REINSTALLER_TITLE,"Utility Disco","Terminale","Disco di avvio","Crea una copia locale","Inizializza i dati utente"};
-static const char *details[]={"Recupera documenti, account e preferenze salvati.","Ripristina il sistema senza modificare i documenti.","Controlla e ripara i volumi di questo computer."};
+static const char *details[]={"Recupera documenti, account e preferenze salvati.","Reinstalla tinymacOS senza eliminare i documenti.","Ripara o inizializza un disco."};
 static Rect card(void){return (Rect){(W-660)/2,MAX(50,(H-390)/2),660,390};}
 static Rect row(int i){Rect q=card();return (Rect){q.x+24,q.y+28+86*i,q.w-48,76};}
 static Rect confirm_box(void){Rect q=card();return (Rect){q.x+35,q.y+95,q.w-70,205};}
@@ -91,12 +91,12 @@ static void menu_contents(void)
     bar_count=0;int active=topwin()>=0;
     switch(bar_menu){
     case 0:menu_item("Disco di avvio…",RM_STARTUP,1);menu_item("Riavvia…",RM_RESTART,1);menu_item("Spegni…",RM_OFF,1);break;
-    case 1:menu_item("Info sul Recupero",RM_INFO,1);if(active)menu_item("Esci dall’app",RM_CLOSE,1);break;
+    case 1:menu_item("Informazioni su Recupero",RM_INFO,1);if(active)menu_item("Esci dall’app",RM_CLOSE,1);break;
     case 2:menu_item("Chiudi finestra",RM_CLOSE,active);break;
     case 3:/* The maintenance clients expose no clipboard action. */menu_item("Copia",RM_COPY,0);menu_item("Incolla",RM_PASTE,0);break;
     case 4:menu_item("Terminale",RM_TERMINAL,1);menu_item("Utility Disco",RM_DISK,1);menu_item("Disco di avvio…",RM_STARTUP,1);menu_item("Crea una copia locale…",RM_BACKUP,1);menu_item("Inizializza i dati utente…",RM_ERASE,1);break;
     case 5:menu_item("Riduci a icona",RM_MIN,active);menu_item("Terminale",RM_TERMINAL,1);menu_item("Utility Disco",RM_DISK,1);break;
-    case 6:menu_item("Info sul Recupero",RM_INFO,1);break;
+    case 6:menu_item("Informazioni su Recupero",RM_INFO,1);break;
     }
 }
 static void menu_action(int a)
@@ -142,7 +142,7 @@ void recovery_bar_draw(void)
     }
     if(info_open||power_confirm||result[0]){
         Rect a=message_box();shadow(a,14,52);roundr(a.x,a.y,a.w,a.h,14,0x303033,255);
-        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.6":power_confirm==1?"Riavviare il computer?":"Spegnere il computer?";
+        const char *title=result[0]?"Recupero":info_open?"Recupero tinymacOS 10.2.6":power_confirm==1?"Vuoi riavviare il computer?":"Vuoi spegnere il computer?";
         center(W/2,a.y+20,title,F_BOLD,0xf2f2f2);
         center(W/2,a.y+59,result[0]?result:info_open?"Versione 10.2.6 · 30C1":"Le operazioni non salvate andranno perse.",F_BODY,0xc0c0c4);
         if(info_open||result[0]){button_face((Rect){a.x+a.w-126,a.y+118,102,34},0);center(a.x+a.w-75,a.y+124,"Fine",F_BODY,TX);}

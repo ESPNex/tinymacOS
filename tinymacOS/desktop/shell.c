@@ -475,7 +475,7 @@ static void dock(void)
                 break;
             }
         if (hover == k && tipA > 3 && !want) {
-            const char *name = pins[k] ? appname(pins[k]) : "Libreria app";
+            const char *name = pins[k] ? appname(pins[k]) : "Applicazioni";
             int tw = textw(name, F_SMALL) + 22;
             Rect tt = vert ? (Rect) {
                 q.x + q.w + 9, b.y + b.h / 2 - 13, tw, 27
@@ -554,7 +554,7 @@ static int menus(int k, const char **s, int *a)
     if (k == 0) {
         ADD("Info su tinymacOS", 105);
         ADD("Impostazioni di Sistema", 104);
-        ADD("Libreria app", 161);
+        ADD("Applicazioni", 161);
         ADD("Utility Disco…",100+DISKUTIL);
         ADD("Blocca schermo", 152);
         ADD("Riavvia…", 150);
@@ -562,7 +562,7 @@ static int menus(int k, const char **s, int *a)
     } else if (k == 1) {
         ADD("Cerca un’app…", 162);
         if (app) {
-            ADD("Contrai finestra", 141);
+            ADD("Riduci a icona", 141);
             ADD("Chiudi finestra", 142);
         }
     } else if (k == 2) {
@@ -574,8 +574,8 @@ static int menus(int k, const char **s, int *a)
         } else if(app==NOTES||app==STICKIES||app==TERMINAL){ADD(app==NOTES?"Nuova nota":app==STICKIES?"Nuovo memo":"Nuova finestra",ACT_NEW);if(app!=TERMINAL){ADD("Salva",ACT_SAVE);ADD("Elimina…",ACT_DELETE);}}
         else if (app == TEXTEDIT) {
             ADD("Nuovo documento", ACT_NEW);
-            ADD("Apri documento…", ACT_OPEN);
-            ADD("Salva documento", ACT_SAVE);
+            ADD("Apri…", ACT_OPEN);
+            ADD("Salva", ACT_SAVE);
         } else {
             ADD("Apri Finder", 101);
             ADD("Apri TextEdit", 103);
@@ -593,14 +593,14 @@ static int menus(int k, const char **s, int *a)
     } else if (k == 4) {
         if (app == FINDER) {
             ADD("Vista rapida", ACT_PREVIEW);
-            ADD("Griglia / elenco", ACT_VIEW);
+            ADD("Come icone / Come elenco", ACT_VIEW);
         }
         ADD("Centro di Controllo", 163);
     } else if (k == 5) {
         ADD("Mission Control", 164);
         if (app) {
-            ADD("Contrai", 141);
-            ADD("Zoom / ripristina", 140);
+            ADD("Riduci a icona", 141);
+            ADD("Zoom", 140);
             ADD("Chiudi", 142);
         }
     } else {
@@ -689,7 +689,7 @@ static void paintoverlay(void)
     }
     if (ov == OV_SEARCH) {
         icon(x + 19, y + 26, 27, 20);
-        if(!query[0])text(x+59,y+23,"Cerca app e documenti",F_TITLE,SUB);
+        if(!query[0])text(x+59,y+23,"Ricerca Spotlight",F_TITLE,SUB);
         inputline((Rect){x+59,y+26,q.w-135,18},query,queryAt,caret_phase(sys.ticks,fieldTick,sys.reduce_motion),TX);
         roundr(x + q.w - 61, y + 26, 39, 24, 8, INK(I_CARD), 193);
         center(x + q.w - 41, y + 32, "ESC", F_MICRO, SUB);
@@ -708,7 +708,7 @@ static void paintoverlay(void)
     }
     if (ov == OV_LIBRARY) {
         text(x + 25, y + 11, "Applicazioni", F_SMALL, SUB);
-        text(x + 23, y + 30, "Libreria app", F_TITLE, TX);
+        text(x + 23, y + 30, "Applicazioni", F_TITLE, TX);
         text(x + q.w - 137, y + 42, sys.live_cd?"14 applicazioni":"13 applicazioni", F_SMALL, SUB);
         for (int j = 0; j < libcount(); j++) {
             Rect c = libcell(q, j);
@@ -721,7 +721,7 @@ static void paintoverlay(void)
         return;
     }
     text(x + 23, y + 15, "tinymacOS  /  Tramontana", F_MICRO, INK(I_ACC_TXT));
-    text(x + 22, y + 39, ov == OV_HELP ? "Scorciatoie" : ov == OV_OFF ? "Spegnere il sistema?" : "Riavviare il sistema?",
+    text(x + 22, y + 39, ov == OV_HELP ? "Scorciatoie" : ov == OV_OFF ? "Vuoi spegnere il computer?" : "Vuoi riavviare il computer?",
          F_TITLE, TX);
     text(x + 23, y + 91, ov == OV_HELP ? "Win+Spazio: Cerca · Ctrl+↑: Mission Control" :
          "I documenti non salvati andranno persi.", F_BODY, SUB);
@@ -827,16 +827,16 @@ int shell_click(int x, int y)
 static void showctx(void){if(cmn){menuId=7;keyboardPick=-1;overlay_show(OV_MENU);trace("menu contestuale");}}
 void context_ready(Event*e){if(!pending||e->a!=pending||e->d!=nonce||topwin()<0||views[topwin()].s.pid!=pending)return;
     pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW};
-    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Griglia / elenco"};
+    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Come icone / Come elenco"};
     for(int j=0;j<12;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
 void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;dirty=1;
     if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Centro di Controllo",163);showctx();return;}
-    int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Apri Libreria",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Libreria app",161);showctx();return;}
+    int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Mostra applicazioni",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Applicazioni",161);showctx();return;}
     for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(mx,my,v->box))continue;focuswin(i);owner=v->s.pid;
         int x=mx-v->box.x-1,y=my-v->box.y-TITLE;
         if(y>=0&&v->s.app==FINDER){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
-        if(y>=0&&(v->s.app==TEXTEDIT||v->s.app==TERMINAL)){if(v->s.app==TERMINAL)cmadd("Taglia",ACT_CUT);cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);if(v->s.app==TEXTEDIT)cmadd("Salva documento",ACT_SAVE);}
-        cmadd("Contrai finestra",141);cmadd("Zoom / ripristina",140);cmadd("Chiudi finestra",142);showctx();return;}
+        if(y>=0&&(v->s.app==TEXTEDIT||v->s.app==TERMINAL)){if(v->s.app==TERMINAL)cmadd("Taglia",ACT_CUT);cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);if(v->s.app==TEXTEDIT)cmadd("Salva",ACT_SAVE);}
+        cmadd("Riduci a icona",141);cmadd("Zoom",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina",205);cmadd("Elimina…",206);}}
     else if(inside(mx,my,widget)){cmadd("Apri Calendario",100+CALENDAR);}
     else {desktopFocus=1;cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd(INSTALLER_TITLE "…",100+INSTALLER);}showctx();}

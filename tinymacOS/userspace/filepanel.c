@@ -58,9 +58,9 @@ static int accept(FilePanel *p)
     if(!p->save&&d.size>TEXTEDIT_LIMIT){message(p,"Documento troppo grande per TextEdit (262.1 kB).");return 0;}
     if(p->save){
         char dir[PATHLEN];strset(dir,path,PATHLEN);parentpath(dir);
-        if(sc(S_STAT,dir,&parent,0,0)<0||!parent.dir||parent.ro||(exists&&d.ro)){message(p,"La destinazione non e scrivibile.");return 0;}
+        if(sc(S_STAT,dir,&parent,0,0)<0||!parent.dir||parent.ro||(exists&&d.ro)){message(p,"La destinazione non è scrivibile.");return 0;}
         if(exists&&!p->overwrite){strset(p->result,path,PATHLEN);p->overwrite=1;return 0;}
-        if(p->overwrite&&!eq(path,p->result)){p->overwrite=0;message(p,"La destinazione e cambiata. Conferma nuovamente.");return 0;}
+        if(p->overwrite&&!eq(path,p->result)){p->overwrite=0;message(p,"La destinazione è cambiata. Conferma nuovamente.");return 0;}
     }
     strset(p->result,path,PATHLEN);p->active=0;p->overwrite=0;ui_motion(FX_DISSOLVE);return 1;
 }
@@ -75,7 +75,7 @@ void filepanel_draw(FilePanel *p)
 {
     geometry(p);if(si.fsrev!=p->revision)filepanel_refresh(p);
     int x=p->x,y=p->y,w=p->w,h=p->h,l=x+p->side+12,cw=w-p->side-24;
-    DialogSheet(x,y,w,h,14);Text(x+18,y+13,p->save?"Salva documento":"Apri documento",F_BOLD,TX);
+    DialogSheet(x,y,w,h,14);Text(x+18,y+13,p->save?"Salva":"Apri",F_BOLD,TX);
     if(p->pagebase||p->more){char page[32]="Pagina ";addnum(page,p->pagebase/BROWSER_PAGE+1,sizeof page);Text(x+w-175,y+16,page,F_SMALL,SUB);button(x+w-78,y+9,28,"<",0);button(x+w-44,y+9,28,">",0);}
     button(x+12,y+48,39,"Su",0);
     field_draw(p,x+61,y+48,w-73,p->location,2);
@@ -96,18 +96,18 @@ void filepanel_draw(FilePanel *p)
         char name[48];memcpy(name,d->name,end);name[end]=0;
         Text(l+27,yy+5,name,F_SMALL,TX);Text(x+w-89,yy+5,d->dir?"Cartella":"File",F_MICRO,SUB);
     }
-    if(!p->count)Text(l+8,y+126,"Cartella vuota",F_SMALL,SUB);
+    if(!p->count)Text(l+8,y+126,"Nessun elemento",F_SMALL,SUB);
     if(p->offset>0)Text(x+w-24,y+88,"^",F_SMALL,SUB);
     if(p->offset+p->rows<p->count)Text(x+w-24,y+h-110,"v",F_SMALL,SUB);
-    Text(x+16,y+h-92,p->save?"Salva con nome:":"Nome file:",F_SMALL,TX);
+    Text(x+16,y+h-92,p->save?"Salva col nome:":"Nome:",F_SMALL,TX);
     field_draw(p,x+133,y+h-97,w-149,p->name,1);
-    Text(x+16,y+h-62,p->message[0]?p->message:si.persistent?"Volume persistente":"Sessione live: dati temporanei",F_SMALL,p->message[0]?EMP:SUB);
+    if(p->message[0]||!si.persistent)Text(x+16,y+h-62,p->message[0]?p->message:"I documenti non saranno conservati al riavvio.",F_SMALL,p->message[0]?EMP:SUB);
     button(x+12,y+h-37,119,"Nuova cartella",0);
     button(x+w-201,y+h-37,85,"Annulla",0);button(x+w-106,y+h-37,94,p->save?"Salva":"Apri",1);
     if(p->overwrite||p->newfolder){
         int mw=MIN(410,w-28),mx=x+(w-mw)/2,my=y+(h-150)/2;
         DialogSheet(mx,my,mw,150,12);Text(mx+16,my+13,p->overwrite?"Sostituire il documento?":"Nuova cartella",F_BOLD,TX);
-        if(p->overwrite){Text(mx+16,my+47,leaf(p->result),F_SMALL,TX);Text(mx+16,my+75,"Il file esistente verra sostituito.",F_SMALL,SUB);}
+        if(p->overwrite){Text(mx+16,my+47,leaf(p->result),F_SMALL,TX);Text(mx+16,my+75,"Il file esistente verrà sostituito.",F_SMALL,SUB);}
         else field_draw(p,mx+16,my+47,mw-32,p->folder,3);
         button(mx+mw-200,my+109,87,"Annulla",0);button(mx+mw-103,my+109,87,p->overwrite?"Sostituisci":"Crea",1);
     }

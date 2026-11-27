@@ -116,6 +116,6 @@ void control_draw(Rect p){
     /* Space below circles is reserved for a real, live hover/focus description. */
     int hit=-1;for(int id=0;id<CC_COUNT;id++)if(control_hit(p,mx,my,id)){hit=id;break;}
     if(hit<0)hit=focus;
-    const char *tips[]={"Aspetto chiaro / scuro","Trasparenza del vetro","Riduci movimento","Posizione del Dock","Cambia sfondo","Mission Control","Blocca sessione","Cambia tema","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema"};
+    const char *tips[]={"Aspetto","Riduci trasparenza","Riduci movimento","Posizione del Dock","Cambia sfondo","Mission Control","Blocca schermo","Cambia tema","Calcolatrice","Calendario","Terminale","Impostazioni di Sistema"};
     if(hit>=0)center(p.x+p.w/2,p.y+sz(p,490),tips[hit],F_MICRO,muted);
 }

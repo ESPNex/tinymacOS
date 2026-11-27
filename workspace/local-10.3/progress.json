@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 5 COMPLETE for implementation and local host/real-QEMU acceptance: actual CPU/RAM telemetry with explicit validity, TextEdit word/scalar wrap and soft-edge caret plus visible internal wheel/track/thumb scrolling, Calculator history glass +8px. Final full retail build, normal+ASan/UBSan foundation/M0, real 4-core workload and allocator counters, GUI install/cold boot, exact-pixel UTF8/scroll/resize and saved-byte integrity, Win+R vs R/F12 boot gate PASS. No block 6, public version bump, release or hardware certification.",
+  "status": "Macroblock 6 COMPLETE for implementation and local host/real-QEMU acceptance: native Italian wording and redundant text cleanup with retained safety/capability warnings; actual live/disk/Recovery bundle display names; decimal SI size display and exact backend limit labels. Final retail build, foundation normal+ASan/UBSan, 12 current M2 families in two documented batches, M0 workspace, actual 4Kn 3.2TB/2.7TB GUI install/cold native/internal Recovery capacities and foreign preservation, Open/Save/Quick Look UTF8 plus unchanged Calculator regression PASS. No public version/release, additional block or physical certification.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 5,
-  "active_macroblock_title": "Applicazioni di Sistema",
+  "active_macroblock": 6,
+  "active_macroblock_title": "Localizzazione, Testi e Unit\u00e0 di Misura",
   "active_macroblock_complete": true,
   "background_work_running": false,
   "release_ready": false,
@@ -90,11 +90,12 @@
   },
   "frozen_unfinished_work": "workspace/local-10.3/m4-paused/STATO.md",
   "current_checks": {
-    "evidence": "macroblocco-5/VERIFICA.md",
-    "host": "PASS full foundation incl actual apps5 normal+ASan/UBSan, M3 timer/allocator, UTF8 long disk round-trip, block4 desktop/fields and M0 workspace",
-    "guest": "PASS real 4-core scheduler workloads and 8MiB alloc/free + 4MiB commit/release, fresh GUI install/cold boot, exact pixels on TextEdit scroll/resize and every original saved byte; Calculator history; Win+R vs R/F12",
-    "block2_preserved": "All storage/FS sources unchanged; TMCFS2-only rejection gate PASS. Kernels, Finder and Terminal byte-identical to block4.",
-    "iso_sha256": "dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177",
+    "evidence": "macroblocco-6/VERIFICA.md",
+    "host": "PASS normal+ASan/UBSan foundation incl native wording/units and prior input/TextEdit/telemetry; 12 current M2 families in two documented batches; M0 workspace",
+    "guest": "PASS current Italian setup/settings/Monitor/Applications, 3.2TB 4Kn GUI install and 2.7TB genuine gap, cold native/internal Recovery SI three-view agreement with foreign bytes intact; Open/Save/Quick Look UTF8 native dialogs and Calculator",
+    "bundle_metadata": "PASS 31 actual generated plists across live/disk/Recovery with stable executable paths and public version",
+    "legacy_retirement": "TMCFS2-only remains; obsolete deleted legacy-resize test entry removed from QA wrapper, never restored",
+    "iso_sha256": "daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c",
     "hardware": "NOT TESTED"
   },
   "macroblock_1_closure": {
@@ -210,6 +211,29 @@
     "exact_textedit_pixels_compared": 1381760,
     "utf8_saved_bytes_verified": 8208,
     "guest_cpus": 4,
+    "physical_hardware_tested": false,
+    "release_ready": false
+  },
+  "macroblock_6": {
+    "complete_local": true,
+    "evidence": "macroblocco-6/VERIFICA.md",
+    "wording_policy": "tinymacOS/docs/LOCALIZZAZIONE.md",
+    "review_register": "tinymacOS/docs/audit-10.3/localization-6-changes.json",
+    "iso_sha256": "daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c",
+    "production_inputs_verified": 1079,
+    "production_paths_changed": 18,
+    "native_files_audited": 149,
+    "final_static_literals": 2473,
+    "review_entries": 112,
+    "built_bundle_plists_verified": 31,
+    "guest_receipts_passed": [
+      "capacity-ui-guest.json",
+      "dialogs-guest.json"
+    ],
+    "native_logical_bytes": 4096,
+    "storage_host_families_passed": 12,
+    "storage_host_execution": "Two batches, documented stale wrapper entry for removed legacy test; first seven and remaining five each passed. Not a single uninterrupted final wrapper invocation.",
+    "calculator_binary_unchanged_from_block5": true,
     "physical_hardware_tested": false,
     "release_ready": false
   }

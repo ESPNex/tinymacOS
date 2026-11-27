@@ -1,0 +1,790 @@
+{
+  "scope": "Italian native UI wording and SI display; product identity, security, destructive warnings, binary storage geometry and CLI interfaces preserved",
+  "base_commit": "7a615ecb82b817976faf9fbca09f7c1d5fd190c3",
+  "changes": [
+    {
+      "file": "include/abi.h",
+      "before": "\"Monitor Attività\"",
+      "after": "\"Monitoraggio Attività\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "include/abi.h",
+      "before": "\"Impostazioni\"",
+      "after": "\"Impostazioni di Sistema\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"Crea un account\"",
+      "after": "\"Crea un account computer\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"Nome utente\"",
+      "after": "\"Nome account\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"L’account resta su questo disco dopo il riavvio.\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"Potrai conservare questo account installando il sistema.\"",
+      "after": "\"Account temporaneo finché non installi tinymacOS.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"Spegnere il sistema?\"",
+      "after": "\"Vuoi spegnere il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "\"Riavviare il sistema?\"",
+      "after": "\"Vuoi riavviare il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/control.c",
+      "before": "\"Blocca sessione\"",
+      "after": "\"Blocca schermo\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/control.c",
+      "before": "\"Trasparenza del vetro\"",
+      "after": "\"Riduci trasparenza\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/control.c",
+      "before": "\"Aspetto chiaro / scuro\"",
+      "after": "\"Aspetto\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Libreria app\"",
+      "after": "\"Applicazioni\"",
+      "occurrences": 4,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Apri Libreria\"",
+      "after": "\"Mostra applicazioni\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Contrai finestra\"",
+      "after": "\"Riduci a icona\"",
+      "occurrences": 2,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Contrai\"",
+      "after": "\"Riduci a icona\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Zoom / ripristina\"",
+      "after": "\"Zoom\"",
+      "occurrences": 2,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Apri documento…\"",
+      "after": "\"Apri…\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Salva documento\"",
+      "after": "\"Salva\"",
+      "occurrences": 2,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Griglia / elenco\"",
+      "after": "\"Come icone / Come elenco\"",
+      "occurrences": 2,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Cerca app e documenti\"",
+      "after": "\"Ricerca Spotlight\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Spegnere il sistema?\"",
+      "after": "\"Vuoi spegnere il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/shell.c",
+      "before": "\"Riavviare il sistema?\"",
+      "after": "\"Vuoi riavviare il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/recovery.c",
+      "before": "\"Info sul Recupero\"",
+      "after": "\"Informazioni su Recupero\"",
+      "occurrences": 2,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/recovery.c",
+      "before": "\"Riavviare il computer?\"",
+      "after": "\"Vuoi riavviare il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/recovery.c",
+      "before": "\"Spegnere il computer?\"",
+      "after": "\"Vuoi spegnere il computer?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/recovery.c",
+      "before": "\"Ripristina il sistema senza modificare i documenti.\"",
+      "after": "\"Reinstalla tinymacOS senza eliminare i documenti.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "desktop/recovery.c",
+      "before": "\"Controlla e ripara i volumi di questo computer.\"",
+      "after": "\"Ripara o inizializza un disco.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Salva documento\"",
+      "after": "\"Salva\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Apri documento\"",
+      "after": "\"Apri\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Salva con nome:\"",
+      "after": "\"Salva col nome:\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Nome file:\"",
+      "after": "\"Nome:\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"La destinazione non e scrivibile.\"",
+      "after": "\"La destinazione non è scrivibile.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"La destinazione e cambiata. Conferma nuovamente.\"",
+      "after": "\"La destinazione è cambiata. Conferma nuovamente.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Il file esistente verra sostituito.\"",
+      "after": "\"Il file esistente verrà sostituito.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Volume persistente\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Sessione live: dati temporanei\"",
+      "after": "\"I documenti non saranno conservati al riavvio.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "\"Cartella vuota\"",
+      "after": "\"Nessun elemento\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "\"Salva come\"",
+      "after": "\"Salva con nome\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "\"Pronto\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "\"Chiudere senza salvare?\"",
+      "after": "\"Vuoi salvare le modifiche?\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/preview.c",
+      "before": "\"VISTA RAPIDA   /   FINDER\"",
+      "after": "\"Vista rapida\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/preview.c",
+      "before": "\"  ·  Documento locale\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/finder.c",
+      "before": "\"Crea una cartella o un file qui sotto.\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/finder.c",
+      "before": "\"Griglia\"",
+      "after": "\"Icone\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Schermo\"",
+      "after": "\"Schermi\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Sicurezza e privacy\"",
+      "after": "\"Privacy e sicurezza\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Backup\"",
+      "after": "\"Time Machine\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"COLORE\"",
+      "after": "\"Colore dettagli\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"FINESTRA\"",
+      "after": "\"Finestre\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Materiale\"",
+      "after": "\"Riduci trasparenza\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Animazioni\"",
+      "after": "\"Riduci movimento\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"RISOLUZIONE\"",
+      "after": "\"Risoluzione\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"USCITA\"",
+      "after": "\"Schermo\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"ASPETTO\"",
+      "after": "\"Aspetto\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"MATERIALE\"",
+      "after": "\"Trasparenza\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Il dock si sposta tra la sinistra e il bordo inferiore.\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Posizione\"",
+      "after": "\"Posizione sullo schermo\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Cambio risoluzione immediato disponibile.\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Avvio live: per salvare la scelta serve un sistema installato.\"",
+      "after": "\"Installa tinymacOS per conservare la risoluzione.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Se l’account non è leggibile, il login offre «Reimposta l’account».\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Nessuna copia\"",
+      "after": "\"Nessun backup\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Copia ora\"",
+      "after": "\"Esegui backup ora\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Nessuno snapshot: usa «Copia ora» per la prima copia.\"",
+      "after": "\"Nessun backup disponibile.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Data e ora lette dall'orologio del computer.\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Volume live temporaneo\"",
+      "after": "\"Volume temporaneo\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"SPAZIO SU DISCO\"",
+      "after": "\"Archiviazione\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "\"Passphrase di crittografia\"",
+      "after": "\"Password di crittografia\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/installer.c",
+      "before": "\"Per configurare l’installazione di tinymacOS, fai clic su Continua.\"",
+      "after": "\"Per installare tinymacOS, fai clic su Continua.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/installer.c",
+      "before": "\"Per una nuova installazione avvia il desktop live della ISO.\"",
+      "after": "\"Per una nuova installazione, avvia dal supporto di installazione.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/installer.c",
+      "before": "\"Scegli il sistema nativo da reinstallare senza inizializzare i dati.\"",
+      "after": "\"Seleziona il disco su cui reinstallare tinymacOS.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/installer.c",
+      "before": "\"Per una nuova installazione, avvia dalla ISO.\"",
+      "after": "\"Per una nuova installazione, avvia dal supporto di installazione.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/diskutility.c",
+      "before": "\"Esegui SOS\"",
+      "after": "\"Esegui S.O.S.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/diskutility.c",
+      "before": "\"Snapshot CoW: blocchi condivisi, spazio occupato solo dalle modifiche.\"",
+      "after": "\"Gli snapshot condividono lo spazio con il volume di origine.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/diskutility.c",
+      "before": "\"Il volume torna allo stato puntuale dello snapshot.\"",
+      "after": "\"Il volume verrà ripristinato allo stato dello snapshot.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Monitor Attività\"",
+      "after": "\"Monitoraggio Attività\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Monitoraggio in tempo reale\"",
+      "after": "\"\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Telemetria non disponibile\"",
+      "after": "\"Dati CPU non disponibili\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Attività del sistema\"",
+      "after": "\"Monitoraggio Attività\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"CPU attiva · totale normalizzato\"",
+      "after": "\"Carico CPU\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Memoria gestita in uso\"",
+      "after": "\"Memoria utilizzata\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Timer; include kernel, non cicli o frequenza.\"",
+      "after": "\"Campioni timer; attività kernel inclusa.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Un core pieno su 4 equivale al 25% totale.\"",
+      "after": "\"CPU normalizzata sul totale dei core.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\" / gestita \"",
+      "after": "\" / totale gestita \"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\" / altro pool \"",
+      "after": "\" / sistema \"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Riservata/non gestita UEFI: \"",
+      "after": "\"Riservata al sistema: \"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"Cache non separata; include backing di sistema.\"",
+      "after": "\"Cache inclusa, non conteggiata separatamente.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"RAM UTENTE\"",
+      "after": "\"MEMORIA\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "\"THR\"",
+      "after": "\"THREAD\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/notebook.h",
+      "before": "\"Crea un nuovo elemento con +.\"",
+      "after": "\"Nessuna nota\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "Vuoi salvare le modifiche?",
+      "after": "Vuoi chiudere senza salvare?",
+      "occurrences": 1,
+      "kind": "avoid suggesting a nonexistent Save button"
+    },
+    {
+      "file": "userspace/preview.c",
+      "before": "#include \"preview.h\"",
+      "after": "#include \"preview.h\"\n#include \"display_size.h\"",
+      "occurrences": 1,
+      "kind": "units"
+    },
+    {
+      "file": "userspace/preview.c",
+      "before": "        addnum(info, file->size, sizeof info);\n        append(info, \" byte\", sizeof info);",
+      "after": "        display_size(info,sizeof info,file->size);",
+      "occurrences": 1,
+      "kind": "units"
+    },
+    {
+      "file": "userspace/finder.c",
+      "before": "            addnum(details, files[sel].size, 90);\n            append(details, files[sel].ro ? \" byte  ·  Sola lettura\" : \" byte  ·  Lettura e scrittura\", 90);",
+      "after": "            char capacity[40];display_size(capacity,sizeof capacity,files[sel].size);append(details,capacity,sizeof details);\n            append(details, files[sel].ro ? \"  ·  Sola lettura\" : \"  ·  Lettura e scrittura\", 90);",
+      "occurrences": 1,
+      "kind": "units"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "#include \"ui.h\"",
+      "after": "#include \"ui.h\"\n#include \"display_size.h\"",
+      "occurrences": 1,
+      "kind": "units"
+    },
+    {
+      "file": "userspace/textedit.c",
+      "before": "    addnum(z, length, 96);\n    append(z, \" byte\", 96);",
+      "after": "    char capacity[40];display_size(capacity,sizeof capacity,length);append(z,capacity,sizeof z);",
+      "occurrences": 1,
+      "kind": "units"
+    },
+    {
+      "file": "storage/partition.c",
+      "before": "\"Geometria non supportata (massimo 16 TiB)\"",
+      "after": "\"Geometria non supportata (limite 17.592186044416 TB)\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "storage/diskedit.c",
+      "before": "\"Resize FAT32/NTFS oltre 2 TiB non supportato: nessuna scrittura.\"",
+      "after": "\"Ridimensionamento FAT32/NTFS oltre 2.19902325504 TB non supportato: nessuna scrittura.\"",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "int cols[]={21,76,aw-320,aw-264,aw-164,aw-80};",
+      "after": "int cols[]={21,76,aw-326,aw-264,aw-164,aw-80};",
+      "occurrences": 1,
+      "kind": "layout"
+    },
+    {
+      "file": "desktop/login.c",
+      "before": "        if (setup() &&\n                !account.working)center(cx, y + sz + 36, sys.persistent ? \"\" :\n                                            \"Account temporaneo finché non installi tinymacOS.\", F_SMALL, 0xe8edf8);",
+      "after": "        if(setup()&&!account.working&&!sys.persistent)\n            center(cx,y+sz+36,\"Account temporaneo finché non installi tinymacOS.\",F_SMALL,0xe8edf8);",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "        Text(x, 365, \"\", F_SMALL, SUB);\n",
+      "after": "",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "        Text(x, 390, \"\", F_SMALL, SUB);\n",
+      "after": "",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "        Text(x, 278, \"\", F_SMALL, SUB);\n",
+      "after": "",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "        Text(x,390,(caps&1)?\"\":\"Il cambio di risoluzione richiede un riavvio.\",F_MICRO,SUB);",
+      "after": "        if(!(caps&1))Text(x,390,\"Il cambio di risoluzione richiede un riavvio.\",F_MICRO,SUB);",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "si.reduce_motion ? \"Ridotte\" : \"Complete\"",
+      "after": "si.reduce_motion ? \"Attivo\" : \"Non attivo\"",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/settings.c",
+      "before": "hbk[nbk] = (R) {x, 236, 130, 26};",
+      "after": "hbk[nbk] = (R) {x, 236, 138, 26};",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/monitor.c",
+      "before": "    Text(15,9,stats_valid?\"\":\"Dati CPU non disponibili\",F_SMALL,SUB);",
+      "after": "    if(!stats_valid)Text(15,9,\"Dati CPU non disponibili\",F_SMALL,SUB);",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/filepanel.c",
+      "before": "    Text(x+16,y+h-62,p->message[0]?p->message:si.persistent?\"\":\"I documenti non saranno conservati al riavvio.\",F_SMALL,p->message[0]?EMP:SUB);",
+      "after": "    if(p->message[0]||!si.persistent)Text(x+16,y+h-62,p->message[0]?p->message:\"I documenti non saranno conservati al riavvio.\",F_SMALL,p->message[0]?EMP:SUB);",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/finder.c",
+      "before": "        if(!bootpath(cwd))Text(x, 151, \"\", F_SMALL, SUB);\n",
+      "after": "",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/notebook.h",
+      "before": "} else Text(r + 20, 83, \"Nessuna nota\", F_BODY, ink);",
+      "after": "} else Text(r + 20, 83, STICKY?\"Nessun memo\":\"Nessuna nota\", F_BODY, ink);",
+      "occurrences": 1,
+      "kind": "remove redundant draw / localized layout"
+    },
+    {
+      "file": "userspace/diskutility.c",
+      "before": "SOS",
+      "after": "S.O.S.",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "userspace/diskutility.c",
+      "before": "SOS completato. Il volume è valido.",
+      "after": "S.O.S. completato. Il volume è valido.",
+      "occurrences": 1,
+      "kind": "wording"
+    },
+    {
+      "file": "tools/system_volume.py",
+      "kind": "localized bundle metadata",
+      "before": "CFBundleDisplayName = English executable/bundle name",
+      "after": "13 Italian CFBundleDisplayName values; executable names, bundle paths, CFBundleName, identifiers and public versions unchanged",
+      "occurrences": 13
+    }
+  ]
+}

@@ -63,12 +63,12 @@ static void size_line(int x,int y,const char *label,u64 value)
 static void paint(void)
 {
     begin();
-    Text(15,9,stats_valid?"Monitoraggio in tempo reale":"Telemetria non disponibile",F_SMALL,SUB);
-    Text(14,29,"Attività del sistema",F_TITLE,TX);
+    if(!stats_valid)Text(15,9,"Dati CPU non disponibili",F_SMALL,SUB);
+    Text(14,29,"Monitoraggio Attività",F_TITLE,TX);
     button(aw-107,21,90,paused?"Riprendi":"Pausa",paused);
     int w=(aw-38)/2,y=79,x=w+37;
     Box(13,y,w,155,13,CARD);Box(24+w,y,w,155,13,CARD);
-    Text(26,y+10,"CPU attiva · totale normalizzato",F_SMALL,SUB);
+    Text(26,y+10,"Carico CPU",F_SMALL,SUB);
     char z[100]="—";if(cpu_valid){z[0]=0;addnum(z,cpu,sizeof z);append(z,"%",sizeof z);}Text(25,y+30,z,F_TITLE,TX);
     int gx=100,gw=w-103;Box(gx,y+22,gw,52,6,SOFT);
     if(hlen>1)for(int j=1;j<hlen;j++){
@@ -76,19 +76,19 @@ static void paint(void)
         Line(a,y+68-history[j-1]*44/100,b,y+68-history[j]*44/100,si.dark?0x7edbb8:0x167855);
     }
     Text(26,y+85,paused?"In pausa":!stats_valid?"Dati non disponibili":!cpu_valid?"In attesa di un intervallo valido":"Campioni per intervallo",F_MICRO,SUB);
-    Text(26,y+104,"Timer; include kernel, non cicli o frequenza.",F_MICRO,SUB);
-    Text(26,y+122,"Un core pieno su 4 equivale al 25% totale.",F_MICRO,SUB);
+    Text(26,y+104,"Campioni timer; attività kernel inclusa.",F_MICRO,SUB);
+    Text(26,y+122,"CPU normalizzata sul totale dei core.",F_MICRO,SUB);
     u64 used=memory_valid?si.total-si.free:0;
-    Text(x,y+10,"Memoria gestita in uso",F_SMALL,SUB);
+    Text(x,y+10,"Memoria utilizzata",F_SMALL,SUB);
     if(memory_valid)display_size(z,sizeof z,used);else strset(z,"—",sizeof z);Text(x,y+30,z,F_TITLE,TX);
     Box(x,y+65,w-29,6,3,SOFT);Box(x,y+65,cpu_percent(used,si.total)*(w-29)/100,6,3,ACC);
     char v[32];
     if(memory_valid){
-        strset(z,"Libera ",sizeof z);display_size(v,sizeof v,si.free);append(z,v,sizeof z);append(z," / gestita ",sizeof z);display_size(v,sizeof v,si.total);append(z,v,sizeof z);Text(x,y+80,z,F_MICRO,SUB);
-        strset(z,"Utente ",sizeof z);display_size(v,sizeof v,si.user_bytes);append(z,v,sizeof z);append(z," / altro pool ",sizeof z);display_size(v,sizeof v,used-si.user_bytes);append(z,v,sizeof z);Text(x,y+97,z,F_MICRO,SUB);
-        size_line(x,y+114,"Riservata/non gestita UEFI: ",si.reserved_bytes);
+        strset(z,"Libera ",sizeof z);display_size(v,sizeof v,si.free);append(z,v,sizeof z);append(z," / totale gestita ",sizeof z);display_size(v,sizeof v,si.total);append(z,v,sizeof z);Text(x,y+80,z,F_MICRO,SUB);
+        strset(z,"Utente ",sizeof z);display_size(v,sizeof v,si.user_bytes);append(z,v,sizeof z);append(z," / sistema ",sizeof z);display_size(v,sizeof v,used-si.user_bytes);append(z,v,sizeof z);Text(x,y+97,z,F_MICRO,SUB);
+        size_line(x,y+114,"Riservata al sistema: ",si.reserved_bytes);
     }else Text(x,y+80,"Dati RAM non disponibili",F_MICRO,SUB);
-    Text(x,y+131,"Cache non separata; include backing di sistema.",F_MICRO,SUB);
+    Text(x,y+131,"Cache inclusa, non conteggiata separatamente.",F_MICRO,SUB);
     int slot=0;
     for(int c=0;c<8;c++)if(stats_valid&&si.cpu_online_mask&(1u<<c)){
         int X=17+(slot/4)*(aw-25)/2,Y=245+(slot%4)*17,bw=(aw-25)/2-105;slot++;
@@ -98,8 +98,8 @@ static void paint(void)
     }
     int yy=328;Text(17,yy,process_valid?"Processi · % CPU sul totale":"Processi · dati non disponibili",F_BOLD,TX);
     button(aw-145,yy-6,127,sort?"Ordina: CPU":"Ordina: PID",0);
-    int cols[]={21,76,aw-320,aw-264,aw-164,aw-80};
-    const char *head[]={"PID","NOME","THR","RAM UTENTE","% CPU","STATO"};
+    int cols[]={21,76,aw-326,aw-264,aw-164,aw-80};
+    const char *head[]={"PID","NOME","THREAD","MEMORIA","% CPU","STATO"};
     for(int j=0;j<6;j++)Text(cols[j],yy+29,head[j],F_MICRO,SUB);
     int off=row_offset();
     for(int j=off;j<n&&j<off+visible_rows();j++){
@@ -116,7 +116,7 @@ static void paint(void)
 }
 void app_main(void)
 {
-    win(820,620,"Monitor Attività");sample();paint();trace("telemetria del kernel attiva");
+    win(820,620,"Monitoraggio Attività");sample();paint();trace("telemetria del kernel attiva");
     for(;;){
         int d=0;u64 t=sc(S_TICKS,0,0,0,0);Event e;
         while(sc(S_EVENT,&e,0,0,0)>0){

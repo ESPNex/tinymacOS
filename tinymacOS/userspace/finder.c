@@ -333,7 +333,7 @@ static void paint(void)
     button(x, 62, 28, "←", 0);
     button(x + 33, 62, 28, "→", 0);
     char brief[96];int fit=MAX(18,(aw-x-92)/7);if(strlen(cwd)>(size_t)fit){strset(brief,"…/",96);append(brief,leaf(cwd),96);}else strset(brief,cwd,96);Text(x + 73, 67, brief, F_SMALL, SUB);
-    button(aw - 97, 21, 78, listview ? "Griglia" : "Elenco", 0);
+    button(aw - 97, 21, 78, listview ? "Icone" : "Elenco", 0);
     Box(x, 95, aw - x - 19, 1, 0, EDGE);
     if (listview) {
         Box(left, 94, aw - left - 12, 1, 0, EDGE);
@@ -371,7 +371,6 @@ static void paint(void)
     }
     if (!n) {
         Text(x, 123, "Questa cartella è vuota.", F_BODY, SUB);
-        if(!bootpath(cwd))Text(x, 151, "Crea una cartella o un file qui sotto.", F_SMALL, SUB);
     }
     int fy = ah - 36;
     Box(S + 1, fy - 2, aw - S - 1, 1, 0, EDGE);
@@ -403,8 +402,8 @@ static void paint(void)
             strset(details, sel>=0 && files[sel].dir ? "La cartella e tutto il suo contenuto verranno eliminati." : "Il file verrà eliminato.", 90);
         if (dialog == 5 && sel >= 0) {
             strset(details, files[sel].dir ? "Cartella  ·  " : "File  /  ", 90);
-            addnum(details, files[sel].size, 90);
-            append(details, files[sel].ro ? " byte  ·  Sola lettura" : " byte  ·  Lettura e scrittura", 90);
+            char capacity[40];display_size(capacity,sizeof capacity,files[sel].size);append(details,capacity,sizeof details);
+            append(details, files[sel].ro ? "  ·  Sola lettura" : "  ·  Lettura e scrittura", 90);
         }
         if(dialog<=3){
             int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-184)/2;

@@ -8,6 +8,8 @@ int main(void)
     check(1024,"1.0 kB");check(999999,"999.9 kB");
     check(1000000,"1.0 MB");check(1048576,"1.0 MB");
     check(1000000000ull,"1.0 GB");check(10737418240ull,"10.7 GB");
+    check(999999999ull,"999.9 MB");check(999999999999ull,"999.9 GB");
+    check(1099511627776ull,"1.0 TB");check(8388608,"8.3 MB");
     check(1000000000000ull,"1.0 TB");check(999999999999999ull,"999.9 TB");
     check(~(u64)0,"18.4 EB");
     for(int cap=1;cap<=32;cap++){

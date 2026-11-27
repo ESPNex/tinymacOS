@@ -18,7 +18,7 @@ static FsInfo fi;
 static EncInfo ei;
 static SessionInfo acct;
 
-static const char *const pname[] = {"Aspetto", "Schermo", "Sicurezza e privacy", "Backup", "Data e ora", "Generali"};
+static const char *const pname[] = {"Aspetto", "Schermi", "Privacy e sicurezza", "Time Machine", "Data e ora", "Generali"};
 static const int pglyph[] = {ICON_SETTINGS_APPEARANCE, ICON_SETTINGS_DISPLAY,
     ICON_SETTINGS_PRIVACY, ICON_SETTINGS_BACKUP, ICON_SETTINGS_CLOCK, ICON_SETTINGS_GENERAL};
 #define NP 6
@@ -192,7 +192,7 @@ static void paint(void)
             Center(xx + tw / 2, yy + th + 6, j ? "Scuro" : "Chiaro", F_SMALL, on ? EMP : SUB);
             hlight[j] = (R) {xx - 3, yy - 3, tw + 6, th + 26};
         }
-        Text(x, 202, "COLORE", F_MICRO, SUB);
+        Text(x, 202, "Colore dettagli", F_MICRO, SUB);
         Box(x, 220, w, 46, 10, PANEL);
         for (int j = 0; j < NTHEME; j++) {
             int rx = x + 20 + j * 40, ry = 230;
@@ -212,12 +212,12 @@ static void paint(void)
             if (si.wall == (u32)j)Box(xx + 3, yy + wh + 3, ww - 6, 2, 1, ACC);
             hwall[j] = (R) {xx, yy, ww, wh + 7};
         }
-        Text(x, 410, "FINESTRA", F_MICRO, SUB);
+        Text(x, 410, "Finestre", F_MICRO, SUB);
         int r0 = rowcard(x, 428, w, 2);
-        row2(x, r0, w, "Materiale", si.opaque ? "Opaco" : "Trasparente");
+        row2(x, r0, w, "Riduci trasparenza", si.opaque ? "Opaco" : "Trasparente");
         hsw[0] = (R) {x + w - 56, r0 + 7, 38, 22};
         sw(hsw[0], si.opaque);
-        row2(x, r0 + 40, w, "Animazioni", si.reduce_motion ? "Ridotte" : "Complete");
+        row2(x, r0 + 40, w, "Riduci movimento", si.reduce_motion ? "Attivo" : "Non attivo");
         hsw[1] = (R) {x + w - 56, r0 + 47, 38, 22};
         sw(hsw[1], si.reduce_motion);
     } else if (pane == 1) {
@@ -227,23 +227,22 @@ static void paint(void)
         addnum(s, si.h, 65);
         int r0 = rowcard(x, 84, w, 4);
         append(s, " >", 65);
-        row2(x, r0, w, "RISOLUZIONE", s);
+        row2(x, r0, w, "Risoluzione", s);
         hres = (R) {x, r0, w, 40};
-        row2(x, r0 + 40, w, "USCITA", "Schermo integrato");
+        row2(x, r0 + 40, w, "Schermo", "Schermo integrato");
         char ap[40];
         strset(ap, themename(si.theme), 40);
         append(ap, si.dark ? " \xc2\xb7 scuro" : " \xc2\xb7 chiaro", 40);
-        row2(x, r0 + 80, w, "ASPETTO", ap);
-        row2(x, r0 + 120, w, "MATERIALE", si.opaque ? "Opaco, senza rifrazione" : "Vetro traslucido");
+        row2(x, r0 + 80, w, "Aspetto", ap);
+        row2(x, r0 + 120, w, "Trasparenza", si.opaque ? "Opaco, senza rifrazione" : "Vetro traslucido");
         Text(x, 270, "DOCK", F_MICRO, SUB);
         int r1 = rowcard(x, 288, w, 1);
-        row2(x, r1, w, "Posizione", si.dock ? "Sinistra" : "In basso");
+        row2(x, r1, w, "Posizione sullo schermo", si.dock ? "Sinistra" : "In basso");
         hsw[0] = (R) {x + w - 56, r1 + 7, 38, 22};
         sw(hsw[0], si.dock);
-        Text(x, 365, "Il dock si sposta tra la sinistra e il bordo inferiore.", F_SMALL, SUB);
         int caps=sc(S_RESMODE,0,1,0,0);
-        Text(x,390,(caps&1)?"Cambio risoluzione immediato disponibile.":"Il cambio di risoluzione richiede un riavvio.",F_MICRO,SUB);
-        if(!(caps&1)&&!(caps&2))Text(x,413,"Avvio live: per salvare la scelta serve un sistema installato.",F_MICRO,SUB);
+        if(!(caps&1))Text(x,390,"Il cambio di risoluzione richiede un riavvio.",F_MICRO,SUB);
+        if(!(caps&1)&&!(caps&2))Text(x,413,"Installa tinymacOS per conservare la risoluzione.",F_MICRO,SUB);
         if(msg[0])Text(x,338,msg,F_SMALL,TX);
     } else if (pane == 2) {
         if(vault_open){
@@ -262,12 +261,11 @@ static void paint(void)
         int r1 = rowcard(x, 286, w, 2);
         row2(x, r1, w, "NOME", acct.name[0] ? acct.name : "—");
         row2(x, r1 + 40, w, "ACCESSO", "All’avvio del sistema");
-        Text(x, 390, "Se l’account non è leggibile, il login offre «Reimposta l’account».", F_SMALL, SUB);
         }
     } else if (pane == 3) {
         Text(x, 78, "TIME MACHINE", F_MICRO, SUB);
         int r0 = rowcard(x, 96, w, 3);
-        row2(x, r0, w, "STATO", nsn ? "Snapshot locale salvato" : "Nessuna copia");
+        row2(x, r0, w, "STATO", nsn ? "Snapshot locale salvato" : "Nessun backup");
         char ns[24] = "";
         addnum(ns, fi.snaps, 24);
         row2(x, r0 + 40, w, "SNAPSHOT", ns);
@@ -275,7 +273,7 @@ static void paint(void)
         display_size(dim,sizeof dim,fi.used);append(dim," usati",sizeof dim);
         row2(x, r0 + 80, w, "DIMENSIONE", dim);
         nbk = 0;
-        hbk[nbk] = (R) {x, 236, 130, 26};
+        hbk[nbk] = (R) {x, 236, 138, 26};
         nbk++;
         if (nsn) {
             hbk[nbk] = (R) {x + 142, 236, 120, 26};
@@ -285,7 +283,7 @@ static void paint(void)
             hbk[nbk] = (R) {x + 386, 236, 100, 26};
             nbk++;
         }
-        const char *blab[] = {"Copia ora", "Ripristina", "Verifica", "Elimina"};
+        const char *blab[] = {"Esegui backup ora", "Ripristina", "Verifica", "Elimina"};
         for (int i = 0;i < nbk;i++)button(hbk[i].x, hbk[i].y, hbk[i].w, blab[i], i == 0);
         if (msg[0])Text(x, 272, msg, F_SMALL, SUB);
         nsnapshow = 0;
@@ -301,7 +299,7 @@ static void paint(void)
                 Text(x + 16, ry + 8, snaps[i].name, F_SMALL, i == sel_snap ? EMP : TX);
                 hsnap[i] = (R) {x, ry, w, rh};
             }
-        } else Text(x, 312, "Nessuno snapshot: usa «Copia ora» per la prima copia.", F_SMALL, SUB);
+        } else Text(x, 312, "Nessun backup disponibile.", F_SMALL, SUB);
     } else if (pane == 4) {
         char t[24], d[32];
         clockstr(t, 24);
@@ -310,14 +308,13 @@ static void paint(void)
         Center(x + w / 2, 176, d, F_BODY, SUB);  // date now clears the clock
         int r0 = rowcard(x, 216, w, 1);
         row2(x, r0, w, "SORGENTE", "Orologio del computer");
-        Text(x, 278, "Data e ora lette dall'orologio del computer.", F_SMALL, SUB);
     } else {
         int r0 = rowcard(x, 84, w, 4);
         row2(x, r0, w, "VERSIONE", "tinymacOS 10.2.6 (30C1)");
         row2(x, r0 + 40, w, "NOME", "Tramontana");
         row2(x, r0 + 80, w, "PROCESSORE", si.cpu);
-        row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume live temporaneo");
-        Text(x, 274, "SPAZIO SU DISCO", F_MICRO, SUB);
+        row2(x, r0 + 120, w, "ARCHIVIAZIONE", si.persistent ? "Macintosh HD - Dati" : "Volume temporaneo");
+        Text(x, 274, "Archiviazione", F_MICRO, SUB);
         Box(x, 298, w, 12, 6, SOFT);
         u64 fill = fi.total ? (u64)w * fi.used / fi.total : 0;
         if (fill > (u64)w)fill = w;
@@ -330,7 +327,7 @@ static void paint(void)
         row2(x, r1 + 40, w, "INGRESSO", "Tastiera e mouse USB");
     }
     if (modal_mode == 1) {
-        inputmodal_at("Passphrase di crittografia",modal_buf,
+        inputmodal_at("Password di crittografia",modal_buf,
               modal_err ? "Operazione non riuscita: riprova." : "Invio per confermare · Esc per annullare",1,modalAt);
     } else if (modal_mode == 2)
         modal("Ripristinare lo snapshot?", sel_snap >= 0 ? snaps[sel_snap].name : "",

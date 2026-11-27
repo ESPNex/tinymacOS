@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 4096,
+  "storage_bus": "nvme",
+  "disk_sectors": 6442450944,
+  "selected_gap_sectors": 5368709120,
+  "work": "/var/tmp/tmc-m2-capacity-_80lz_sn",
+  "checks": [
+    "Localized setup heading and account field visible with original font/threshold; temporary-account warning retained",
+    "Actual native Italian settings panes, Schermi and Privacy e sicurezza labels, storage units, Monitor memory/CPU caveats and Applicazioni surface visible",
+    "Before first installed boot: real EFI BootOrder already prefers new target OpenCore; short HD path identifies correct partition and native logical LBAs",
+    "Real GUI 3.2 TB 4096B install: container owns entire 2.7 TB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap",
+    "ISO-detached cold native boot: imported account/file usable; Terminal physical/container/data sizes and Utility physical disk agree with independent GPT/FS2 geometry",
+    "Same installed disk after cold Recovery boot: Installer, Utility Disco and Terminal all show physical capacity 3.2 TB; container 2.7 TB remains distinct and foreign metadata intact"
+  ],
+  "iso_sha256": "daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c",
+  "opencore_verified_before_first_native_boot": true,
+  "actual_data_sectors": 5368586240,
+  "foreign_content": {
+    "all_foreign_bytes_verified": true,
+    "method": "SEEK_DATA/HOLE zero holes plus every allocated 512B sector",
+    "nonzero_foreign_sectors": 32,
+    "sha256": "f067f4b501fdf7b9112a5225d47ea90272485e91f397e9c9b40dbf6e1c40b80c"
+  }
+}

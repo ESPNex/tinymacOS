@@ -387,7 +387,7 @@ static void paint(void)
         if(strlen(label)>24){label[23]='.';label[24]=0;} /* narrow labels; full info at right */
         Text(v<0?32:38,y+2,label,F_SMALL,TX);
     }
-    button(x, 13, 57, "SOS", 0);
+    button(x, 13, 57, "S.O.S.", 0);
     /* A local FS2 checkpoint is already a snapshot in the catalogue. Do not
      * expose a duplicate backup button; exFAT export must use a separate, implemented copy flow. */
     button(x + 65, 13, 92, "Recupero…", 0);
@@ -421,14 +421,14 @@ static void paint(void)
         button(x, 322, 194, "Mostra nel Finder", 0);
         if(!eq(sn[k].name,"Installazione"))button(x+204,322,194,"Esporta copia exFAT…",0);
         Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
-        Text(x, ah - 31, msg[0] ? msg : "Snapshot CoW: blocchi condivisi, spazio occupato solo dalle modifiche.", F_SMALL, SUB);
+        Text(x, ah - 31, msg[0] ? msg : "Gli snapshot condividono lo spazio con il volume di origine.", F_SMALL, SUB);
         if (dialog==1||dialog==2) {
             int tw = MIN(440, aw - 48), xx = (aw - tw) / 2, yy = (ah - 196) / 2;
             Sheet(xx, yy, tw, 196, 14);
             Icon(xx + 20, yy + 17, 39, 39);
             Text(xx + 73, yy + 23, op == 5 ? "Ripristina snapshot" : op == 7 ? "Elimina snapshot" : "Nuovo snapshot",
                  F_CAPTION, TX);
-            Text(xx + 20, yy + 75, op == 5 ? "Il volume torna allo stato puntuale dello snapshot." :
+            Text(xx + 20, yy + 75, op == 5 ? "Il volume verrà ripristinato allo stato dello snapshot." :
                  op == 7 ? "L’immagine verrà eliminata definitivamente." : "Viene creata una copia puntuale del volume.",
                  F_SMALL, TX);
             Text(xx + 20, yy + 99, op == 5 ? "I file creati dopo lo snapshot verranno persi." : op == 7 ?
@@ -510,7 +510,7 @@ static void paint(void)
         int tw = MIN(440, aw - 48), xx = (aw - tw) / 2, yy = (ah - 196) / 2;
         Sheet(xx, yy, tw, 196, 14);
         Icon(xx + 20, yy + 17, 39, 39);
-        Text(xx + 73, yy + 23, op == 1 ? "Esegui SOS" : op == 2 ? "Crea una copia locale" : op == 3 ? "Apri Recupero" :
+        Text(xx + 73, yy + 23, op == 1 ? "Esegui S.O.S." : op == 2 ? "Crea una copia locale" : op == 3 ? "Apri Recupero" :
              "Nuovo snapshot", F_CAPTION, TX);
         Text(xx + 20, yy + 75, op == 1 ? "Controlla i dati e ripara la mappa delle partizioni." : op == 2 ?
              "Salva documenti, account e preferenze sul disco." : op == 3 ?
@@ -609,7 +609,7 @@ void app_main(void)
                 okmsg = op == 4 ? "Snapshot creato." : op == 5 ? "Volume ripristinato." : "Snapshot eliminato.";
             } else {
                 rr = sc(S_DISK, op, sel, 0, 0);
-                okmsg = op == 2 ? "Copia locale salvata e verificata." : "SOS completato. Il volume è valido.";
+                okmsg = op == 2 ? "Copia locale salvata e verificata." : "S.O.S. completato. Il volume è valido.";
             }
             dialog = 0;
             if (op == 4 && !rr) {

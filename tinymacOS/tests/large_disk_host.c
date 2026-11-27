@@ -36,6 +36,6 @@ int main(void){
  free(disk);disk=0;sparse_high=sparse_window=0;
  puts("PASS MBR extent crossing the 32-bit address limit refuses before writes on a 3TiB disk");
  large_run(1953125000u,MAP_GPT);large_run(TMC_DISK_MAX_SECTORS,MAP_GPT);large_run(2147483648ull,MAP_MBR);
- Medium too_big={sata_io,sata_flush,0,TMC_DISK_MAX_SECTORS+1u};static DiskMap x;int before=writes;assert(!partition_scan(&too_big,&x)&&!x.safe&&strstr(x.reason,"16 TiB")&&writes==before);
+ Medium too_big={sata_io,sata_flush,0,TMC_DISK_MAX_SECTORS+1u};static DiskMap x;int before=writes;assert(!partition_scan(&too_big,&x)&&!x.safe&&strstr(x.reason,"17.592186044416 TB")&&writes==before);
  puts("PASS above-16TiB capacity is explicitly rejected without I/O or writes; no signed LBA truncation at 0x80000000");return 0;
 }

@@ -13,14 +13,14 @@ Mappatura del macroblocco 4 del piano fornito (`piano.pdf`). Nessun cambio di ve
 |---|---|
 | Win+Spazio | Cerca applicazioni e documenti |
 | Ctrl+↑ | Entra/esce da Mission Control; Esc esce |
-| Win+Maiusc+A | Libreria applicazioni |
+| Win+Maiusc+A | Applicazioni |
 | Win+Tab | Passa alla finestra precedente |
 | Win+W / Win+Q | Chiude la finestra/app attiva nel modello a singola finestra per processo |
 | Win+M | Riduce a icona la finestra attiva |
 | Win+Ctrl+Q | Blocca la sessione |
 | Win+Maiusc+N, con la Scrivania attiva | Nuova cartella, con finestra diretta della Scrivania, senza avviare Finder |
 
-I precedenti tasti funzione per lanciare direttamente le applicazioni non sono più scorciatoie di sistema. Usa Cerca, Dock o Libreria.
+I precedenti tasti funzione per lanciare direttamente le applicazioni non sono più scorciatoie di sistema. Usa Spotlight, Dock o Applicazioni.
 
 ## Finder
 

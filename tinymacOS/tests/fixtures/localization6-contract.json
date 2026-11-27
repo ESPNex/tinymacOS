@@ -1,0 +1,17 @@
+{
+  "base_commit": "7a615ecb82b817976faf9fbca09f7c1d5fd190c3",
+  "algorithm_and_abi_outside_literals_sha256": {
+    "include/abi.h": "16d59ea97a6edddc348ccffabe62a4ac5cc71b887debc26a2dc63e497c825fd7",
+    "storage/partition.c": "32f1ebf4981ac4092cf2f99224bf95832c0ae5fb6873d4d82eb4a649023e4d06",
+    "storage/diskedit.c": "0d7b5186a6e822ab651e52b54694e30d6e5e1963cfe977798bd7bf8989165a73",
+    "desktop/recovery.c": "737b0d77768232c194838606627e348e0ddd7174b3f3b0d0d7389d66aa369e96",
+    "desktop/shell.c": "f22b4aa68fdd88064524f07128b78b024897720ce6bbc136cfad735708e0f0e3",
+    "desktop/control.c": "78b85035e52a66723406a32d0b947203be781cd7322497c955bfdb8061984f66",
+    "userspace/installer.c": "d23052f733c930d5d2fa5bdb884edf688cd6fbe827c00c2cae669f6a576a0ec3",
+    "userspace/diskutility.c": "f42c52623f47a4c5823c6407826c92fe84f550b3cec83ab11a34053a38eec6c3"
+  },
+  "binary_limits": {
+    "capacity_bytes": 17592186044416,
+    "resize_bytes": 2199023255040
+  }
+}

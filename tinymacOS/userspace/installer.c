@@ -155,12 +155,12 @@ static void paint(void)
     }else if (!page) {
         Icon(aw/2-64, 30, 128, 38);
         Center(aw/2, 178, "tinymacOS Tramontana", F_TITLE, TX);
-        Center(aw/2, 229, reinstall?"Per reinstallare il sistema, fai clic su Continua.":"Per configurare l’installazione di tinymacOS, fai clic su Continua.", F_SMALL, SUB);
+        Center(aw/2, 229, reinstall?"Per reinstallare il sistema, fai clic su Continua.":"Per installare tinymacOS, fai clic su Continua.", F_SMALL, SUB);
         Center(aw/2, 266, reinstall?"Richiede tinymacOS già installato; documenti e account conservati.":"Le partizioni esistenti non verranno inizializzate.", F_SMALL, SUB);
-        if(reinstall)Center(aw/2, 300, "Per una nuova installazione avvia il desktop live della ISO.", F_SMALL, SUB);
+        if(reinstall)Center(aw/2, 300, "Per una nuova installazione, avvia dal supporto di installazione.", F_SMALL, SUB);
     } else if (page == 1) {
         Center(aw/2, 19, "Seleziona la destinazione", F_TITLE, TX);
-        Center(aw/2, 61, reinstall?"Scegli il sistema nativo da reinstallare senza inizializzare i dati.":"tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
+        Center(aw/2, 61, reinstall?"Seleziona il disco su cui reinstallare tinymacOS.":"tinymacOS verrà installato soltanto nello spazio non allocato.", F_SMALL, SUB);
         if (!info.count) {
             Text(x, 122, "Nessun disco rilevato.", F_BOLD, TX);
             Text(x, 154, reinstall?"Collega il disco con l’installazione da ripristinare.":"Collega un disco con almeno 100.7 MB non allocati.", F_SMALL, SUB);
@@ -232,7 +232,7 @@ static void paint(void)
             Text(x, 212, info.message, F_SMALL, SUB);
         } else {
             Text(x, 167, "Stai usando il sistema avviato dal disco.", F_BODY, TX);
-            Text(x, 209, "Per una nuova installazione, avvia dalla ISO.", F_SMALL, SUB);
+            Text(x, 209, "Per una nuova installazione, avvia dal supporto di installazione.", F_SMALL, SUB);
         }
     }
     Box(r, foot, aw - r, 1, 0, EDGE);

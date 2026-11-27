@@ -67,7 +67,7 @@ int main(void){
  char expected[32];display_size(expected,sizeof expected,f.total-f.free);assert(contains(expected));display_size(expected,sizeof expected,ps[0].resident_bytes);assert(contains(expected));
  step(4);assert(cpu==100);resume();assert(!cpu_valid&&!rowvalid[0]);step(1);assert(cpu_valid);
  ps_error=1;step(1);assert(!process_valid&&!n&&cpu_valid);paint();assert(contains("Processi · dati non disponibili"));ps_error=0;step(1);assert(process_valid&&!rowvalid[0]);step(1);assert(rowvalid[0]);
- info_error=1;sample();assert(!stats_valid&&!cpu_valid&&!memory_valid&&!n);paint();assert(contains("Telemetria non disponibile")&&contains("Dati RAM non disponibili"));info_error=0;sample();assert(!cpu_valid);step(1);assert(cpu_valid);
+ info_error=1;sample();assert(!stats_valid&&!cpu_valid&&!memory_valid&&!n);paint();assert(contains("Dati CPU non disponibili")&&contains("Dati RAM non disponibili"));info_error=0;sample();assert(!cpu_valid);step(1);assert(cpu_valid);
  f.free=f.total+4096;sample();assert(!memory_valid);paint();assert(contains("Dati RAM non disponibili"));f.free=32*1024*1024;
  f.cpu_online_mask=1;f.ncpu=1;sample();assert(!cpu_valid);step(1);assert(cpu==100&&rowcpu[0]==100);f.core_ticks[0]=1;f.core_busy[0]=0;sample();assert(!cpu_valid&&!rowvalid[0]);
  puts("PASS actual Monitor: real delta CPU normalized 1/4 cores, exact allocator/resident rendering, baseline/reset/pause/process failure marked unavailable (not invented zero), memory invariants, recovery after errors");

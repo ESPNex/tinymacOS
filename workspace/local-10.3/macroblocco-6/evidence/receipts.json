@@ -1,0 +1,67 @@
+[
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-_80lz_sn/evidence/m6-setup-account.png",
+    "original_sha256": "c74cebb7be198c26227fb46617f960d056b9131500654e6be3a8720b8b542e2f",
+    "crop": [
+      505,
+      300,
+      779,
+      600
+    ],
+    "persisted_file": "evidence/setup-account.png",
+    "persisted_sha256": "8797664ca2a9cc1885da120658581122513b4b5ccc83dd1994fc3771d69357e5",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-_80lz_sn/evidence/m6-settings-appearance.png",
+    "original_sha256": "b9c31af07b7849155b7948909c4650a00d55b59d02f6f5b38d70eabe989a0342",
+    "crop": [
+      204,
+      86,
+      1078,
+      684
+    ],
+    "persisted_file": "evidence/settings-italian.png",
+    "persisted_sha256": "63b777c17700ad4748c63a102920f500b34d4afce6e4c1f9e42368a74573585d",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-_80lz_sn/evidence/m6-save-panel.png",
+    "original_sha256": "d21520090d66cdb6fdbab03ad71734688a3e686ed7d398e8ce938c784b835329",
+    "crop": [
+      292,
+      166,
+      1035,
+      640
+    ],
+    "persisted_file": "evidence/save-panel.png",
+    "persisted_sha256": "7ba0673a5a77cced9fcd63d83a104c83e02054306113aa682d6557134f51d3a9",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-_80lz_sn/evidence/m2-recovery-installer.png",
+    "original_sha256": "7c0ff14c358cdf9fa329b45768351012d8f345ef144d7e68e3fc89e11ab7b569",
+    "crop": [
+      255,
+      135,
+      1025,
+      636
+    ],
+    "persisted_file": "evidence/recovery-capacity-tb.png",
+    "persisted_sha256": "698cd296deb47f7e978afd4b2f765a97d7fe920254bba370a888c090574ad339",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-_80lz_sn/evidence/m6-calculator-history.png",
+    "original_sha256": "975afece952a7ea9d029f0495cc0b3ff37a92d8eb5493d4a97c518d17745bc76",
+    "crop": [
+      350,
+      160,
+      972,
+      598
+    ],
+    "persisted_file": "evidence/calculator-preview.png",
+    "persisted_sha256": "fb75f3d07bfaea2176008f70b1fee801f33e236ab7898fb2f2672f9008460b9b",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  }
+]

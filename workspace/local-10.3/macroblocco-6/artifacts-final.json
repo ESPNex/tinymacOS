@@ -1,0 +1,88 @@
+{
+  "base_commit": "7a615ecb82b817976faf9fbca09f7c1d5fd190c3",
+  "production_inputs_verified": 1079,
+  "production_paths_changed_from_block5": [
+    "tinymacOS/desktop/control.c",
+    "tinymacOS/desktop/login.c",
+    "tinymacOS/desktop/recovery.c",
+    "tinymacOS/desktop/shell.c",
+    "tinymacOS/include/abi.h",
+    "tinymacOS/storage/diskedit.c",
+    "tinymacOS/storage/partition.c",
+    "tinymacOS/tools/run-qemu.sh",
+    "tinymacOS/tools/system_volume.py",
+    "tinymacOS/userspace/diskutility.c",
+    "tinymacOS/userspace/filepanel.c",
+    "tinymacOS/userspace/finder.c",
+    "tinymacOS/userspace/installer.c",
+    "tinymacOS/userspace/monitor.c",
+    "tinymacOS/userspace/notebook.h",
+    "tinymacOS/userspace/preview.c",
+    "tinymacOS/userspace/settings.c",
+    "tinymacOS/userspace/textedit.c"
+  ],
+  "physical_hardware_tested": false,
+  "release_ready": false,
+  "artifacts": {
+    "tmc-block6-retail.iso": {
+      "sha256": "daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c",
+      "bytes": 227809280
+    },
+    "KernelCache": {
+      "sha256": "28b31de201c81ec9b8c42ac5a92531e93e9b83a84c9e726333c385550296b76d",
+      "bytes": 1298728
+    },
+    "kernel.elf": {
+      "sha256": "b4e336c0514e86e385e6ffd5b36fff6b7e0b998c5612c792e747ecf359f5a43c",
+      "bytes": 1298664
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "daeb359066e68ec8ab1923c568484bc71d218fc52fb7365cd0253e0820e7526d",
+      "bytes": 1298664
+    },
+    "BOOTX64.EFI": {
+      "sha256": "93dbf993a6110b77cc084e89906fe8be2dc3312191433720565551b9aa08fdee",
+      "bytes": 177152
+    },
+    "RECBOOT.EFI": {
+      "sha256": "2814e5b876622110d0e465bb8c05bbb3ce067dd92eea4114888c600c29d918fe",
+      "bytes": 173056
+    },
+    "desktop.elf": {
+      "sha256": "97723ed062b671f0596ca8fb6df72d7bd79a9563a996677c8926a9727c700da4",
+      "bytes": 2811392
+    },
+    "finder.elf": {
+      "sha256": "57b5bb5a6a18a1454415a64889905d5a0b300634d11710cc58d77d556b14856c",
+      "bytes": 50240
+    },
+    "terminal.elf": {
+      "sha256": "39e3e3f31a0464be9845a4b3e0b202e9e4c6f4b99c974cce8d2e80da38c557ac",
+      "bytes": 37752
+    },
+    "monitor.elf": {
+      "sha256": "779cca55b50838c88f60d0e94341bbf26c8781f99099110a1a29e4ccdcc6555a",
+      "bytes": 29184
+    },
+    "textedit.elf": {
+      "sha256": "dd42474a83f713126829162e47b0b98827b1b089e58171596e33c6e2a8615a13",
+      "bytes": 41632
+    },
+    "calculator.elf": {
+      "sha256": "71758d74964f95a3b23c6b8ea43f9ffe2b60f878f0389409a1b82e437802eccf",
+      "bytes": 25352
+    }
+  },
+  "source_tests": {
+    "localization6_host.c": "f30ecb5f1b49c7d4edb888ee222bf5af8bff2c2eaf6c6ee8b884003b77b3eec5",
+    "test-localization6.sh": "44a6b624d4e0382ce7e0b0a674701fa341a7569d4268946f5bd8c6f9bb46f17d",
+    "localization6_source_contract.py": "6958f0b62232919ac061086d1ac1c2eb3e0b3e28cdb222576c2d8c5dc1de51e8",
+    "localization6_bundle_check.py": "88b1a52531ca91ae5d919319dac648862716bf75c5b413040499e5fd9ba8784f",
+    "localization6_guest.py": "772218e8bc778ce0dfafd935466c46cf9f1d775124a65276f3df827619cdfd14",
+    "localization6_dialogs_guest.py": "5f0e79885450b2fbf058abafc20504c12b3b6bd573e4f8fff33e56be698674c3",
+    "test-10.3-foundation.sh": "f1e0602538a4b217d7b14b73c6863dcf9e98acbc4309ed9d0789f4383975bfe9",
+    "test-m2-acceptance.sh": "2e6b97bf1773f8d1f5cbdda82d13ba2ed497175af991e264ccbe76cb8a228794"
+  },
+  "storage_test_execution": "Current 12 M2 families passed in two batches. First seven passed before an obsolete runner entry for the deleted legacy-native resize test stopped the wrapper; that entry was removed, never restored. Last five then executed explicitly on unchanged production inputs. Do not describe this as one uninterrupted final wrapper invocation.",
+  "calculator_binary_unchanged_from_block5": true
+}

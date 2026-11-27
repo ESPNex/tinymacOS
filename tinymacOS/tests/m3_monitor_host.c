@@ -38,7 +38,7 @@ int main(void){
  fixture.ncpu=8;fixture.cpu_online_mask=255;sample();
  int sizes[]={660,820,1280};
  for(unsigned k=0;k<COUNT(sizes);k++){
-  aw=sizes[k];ah=620;paint();assert(contains("CPU 7")&&contains("RAM UTENTE")&&contains("% CPU")&&count<NCMDS);
+  aw=sizes[k];ah=620;paint();assert(contains("CPU 7")&&contains("MEMORIA")&&contains("% CPU")&&count<NCMDS);
   for(int j=0;j<count;j++)if(list[j].type==C_RECT){assert(list[j].w>=0&&list[j].h>=0&&list[j].x>=0&&list[j].x+list[j].w<=aw);}
   fixture.free=fixture.total+4096;si=fixture;paint(); /* bad input cannot underflow progress bar */
  }

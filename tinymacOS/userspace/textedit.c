@@ -1,4 +1,5 @@
 #include "ui.h"
+#include "display_size.h"
 #include "filepanel.h"
 static FilePanel picker;
 static int hasfile;
@@ -256,7 +257,7 @@ static void paint(void)
     button(13, 10, 55, "Nuovo", 0);
     button(75, 10, 57, "Apri", 0);
     button(139, 10, 60, "Salva", 1);
-    button(206, 10, 91, "Salva come", 0);
+    button(206, 10, 91, "Salva con nome", 0);
     Text(aw - 117, 16, "Testo semplice", F_SMALL, SUB);
     Box(0, 47, aw, 1, 0, EDGE);
     Box(0, 48, aw, ah - 82, 0, CARD);
@@ -273,14 +274,13 @@ static void paint(void)
     char z[96] = "Riga ";
     addnum(z, j + 1, 96);
     append(z, "   /   ", 96);
-    addnum(z, length, 96);
-    append(z, " byte", 96);
-    Text(15, ah - 25, status[0] ? status : dirty ? "Modifiche non salvate" : "Pronto", F_SMALL, dirty ? EMP : SUB);
+    char capacity[40];display_size(capacity,sizeof capacity,length);append(z,capacity,sizeof z);
+    Text(15, ah - 25, status[0] ? status : dirty ? "Modifiche non salvate" : "", F_SMALL, dirty ? EMP : SUB);
     Text(aw - 165, ah - 25, z, F_SMALL, SUB);
     if (dialog) {
         int w=MIN(460,aw-40),x=(aw-w)/2,y=(ah-190)/2;
         Sheet(x,y,w,190,14);
-        Text(x+20,y+23,dialog==3?"Chiudere senza salvare?":dialog==5?"Creare un nuovo documento?":"Aprire un altro documento?",F_CAPTION,TX);
+        Text(x+20,y+23,dialog==3?"Vuoi chiudere senza salvare?":dialog==5?"Creare un nuovo documento?":"Aprire un altro documento?",F_CAPTION,TX);
         Text(x+20,y+66,leaf(path),F_BODY,TX);
         Text(x+20,y+98,"Le modifiche non salvate andranno perse.",F_SMALL,SUB);
         button(x+w-238,y+144,104,"Annulla",0);

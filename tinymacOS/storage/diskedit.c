@@ -182,7 +182,7 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
         u64 end=(u64)p->start+q->size,max=(u64)p->start+p->sectors;
         for(int j=0;j<editmap.gaps;j++)if(editmap.gap[j].start==max){max+=editmap.gap[j].sectors;break;}
         if(!q->size||q->size%2048||end>max||q->size==p->sectors)return say(q,DE_INVALID,"Dimensione non valida o spazio contiguo insufficiente.");
-        if(q->size>0xffffffffull||p->sectors>0xffffffffull)return say(q,DE_UNSUPPORTED,"Resize FAT32/NTFS oltre 2 TiB non supportato: nessuna scrittura.");
+        if(q->size>0xffffffffull||p->sectors>0xffffffffull)return say(q,DE_UNSUPPORTED,"Ridimensionamento FAT32/NTFS oltre 2.19902325504 TB non supportato: nessuna scrittura.");
         int ntfs=p->fs==FS_NTFS;
         int r=ntfs?ntfs_resize_native(m,q,0):fattail(m,q,p,0);
         if(r&&ntfs)return say(q,r,"NTFS non idoneo: volume sporco, ibernato, incoerente o risorse insufficienti. Nessuna scrittura.");

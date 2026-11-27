@@ -15,6 +15,11 @@ def macho(p):
         segs.append(struct.pack('<II16sQQQQiiII',0x19,72,name.encode(),a,(ms+4095)&~4095,off,fs,prot,prot,0,0))
     cmds=b''.join(segs)+struct.pack('<IIQQ',0x80000028,24,ep,0);head=struct.pack('<8I',0xfeedfacf,0x1000007,3,2,len(segs)+1,len(cmds),1,0)+cmds;body[:len(head)]=head;return bytes(body)
 apps=[('finder','Finder','/System/Library/CoreServices'),('terminal','Terminal','/Applications/Utilities'),('textedit','TextEdit','/Applications'),('settings','System Settings','/Applications'),('about','About This Computer','/System/Library/CoreServices'),('calculator','Calculator','/Applications'),('calendar','Calendar','/Applications'),('monitor','Activity Monitor','/Applications/Utilities'),('gallery','Gallery','/Applications'),('diskutility','Disk Utility','/Applications/Utilities'),('notes','Notes','/Applications'),('stickies','Stickies','/Applications'),('timemachine','Time Machine','/Applications')]
+# UI display names are localized; executable names, bundle paths and IDs stay stable.
+display_names={'finder':'Finder','terminal':'Terminale','textedit':'TextEdit',
+ 'settings':'Impostazioni di Sistema','about':'Info su tinymacOS','calculator':'Calcolatrice',
+ 'calendar':'Calendario','monitor':'Monitoraggio Attività','gallery':'Galleria',
+ 'diskutility':'Utility Disco','notes':'Note','stickies':'Memo','timemachine':'Time Machine'}
 if mode=='recovery':apps=[x for x in apps if x[0] in ('terminal','diskutility','settings')]
 if mode in ('live','recovery'):apps+=[('installer','Install tinymacOS','/Applications')]
 files={};paths=['/'];entries=[(-1,1,'',None)]
@@ -23,7 +28,7 @@ def add(p,data):
     pa,name=p.rsplit('/',1);parent=add(pa or '/',None);id=len(paths);paths.append(p);entries.append((parent,int(data is None),name,data));return id
 for x in ['/System','/Applications','/bin','/usr','/sbin']:add(x,None)
 for src,name,loc in apps:
-    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleDisplayName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.6','CFBundleVersion':'30C1','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
+    base=loc+'/'+name+'.app/Contents';add(base+'/Info.plist',plistlib.dumps({'CFBundleExecutable':name,'CFBundleName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else name),'CFBundleDisplayName':(('Reinstalla tinymacOS Tramontana' if mode=='recovery' else 'Installa tinymacOS Tramontana') if src=='installer' else display_names[src]),'CFBundleIdentifier':'org.tinymacos.'+src,'CFBundlePackageType':'APPL','CFBundleShortVersionString':'10.2.6','CFBundleVersion':'30C1','CFBundleIconFile':'AppIcon.png'}));add(base+'/MacOS/'+name,macho(D/(src+'.elf')))
 for svg in sorted(Path('assets/control-center').glob('*.svg')):add('/System/Library/CoreServices/ControlCenter/Symbols/'+svg.name,svg.read_bytes())
 add('/System/Library/CoreServices/ControlCenter/Symbols/manifest.json',(D/'control-svg.json').read_bytes())
 add('/System/Library/CoreServices/WindowServer',macho(D/'desktop.elf'));add('/System/Library/CoreServices/SystemVersion.plist',plistlib.dumps({'ProductName':'tinymacOS','ProductVersion':'10.2.6','ProductBuildVersion':'30C1'}));add('/System/Library/KernelCollections',None)

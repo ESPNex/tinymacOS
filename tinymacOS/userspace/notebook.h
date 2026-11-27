@@ -272,7 +272,7 @@ static void paint(void)
     if (id >= 0) {
         editor(1, 0, 0);
         if (!*body)Text(r + 25, 76, "Scrivi qui…", F_BODY, ink);
-    } else Text(r + 20, 83, "Crea un nuovo elemento con +.", F_BODY, ink);
+    } else Text(r + 20, 83, STICKY?"Nessun memo":"Nessuna nota", F_BODY, ink);
     Text(r + 20, ah - 27, status, F_SMALL, ink);
     if (confirm) {
         int x = (aw - 337) / 2, y = (ah - 130) / 2;

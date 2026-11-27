@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-m2-capacity-_80lz_sn",
+  "iso_sha256": "daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c",
+  "checks": [
+    "Actual TextEdit opens native UTF-8 bytes; localized Salva con nome, Save As and Open choosers render, cancel without changing the document",
+    "Finder Quick Look displays correctly converted actual file size and Italian title; native cat retains original accented/euro document content",
+    "Macroblock 5 Calculator result/history and +8px glass geometry retained in the macroblock 6 build; normal native shutdown"
+  ],
+  "physical_hardware_tested": false,
+  "host_prepared_document": false
+}

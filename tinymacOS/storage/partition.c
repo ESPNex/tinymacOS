@@ -82,7 +82,7 @@ static int extended(Medium*m,DiskMap*x,u32 base,u32 size,int *number)
 int partition_scan(Medium*m,DiskMap*x)
 {
     memset(x,0,sizeof *x);x->slot=-1;
-    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Geometria non supportata (massimo 16 TiB)");
+    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Geometria non supportata (limite 17.592186044416 TB)");
     if(m->io(m->d,0,1,sector,0)||m->io(m->d,scale,1,other,0))return bad(x,"Errore di lettura della tabella");
     if(!nz(sector,512)&&!nz(other,512)){
         /* A zero first sector is NOT proof of an empty disk. The legacy blank

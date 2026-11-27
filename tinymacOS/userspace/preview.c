@@ -1,4 +1,5 @@
 #include "preview.h"
+#include "display_size.h"
 // Read-only snapshots for Finder's Space-bar preview. Never opens an fd for writing.
 static char name[48], info[76], body[643];
 static int symbol;
@@ -22,8 +23,7 @@ void preview_read(const char *path, const Dirent *file, int icon_id) {
         }
     } else {
         int n = readfile(path, body, 640);
-        addnum(info, file->size, sizeof info);
-        append(info, " byte", sizeof info);
+        display_size(info,sizeof info,file->size);
         if (n <= 0)strset(body, n < 0 ? "Lettura non riuscita." : "File vuoto.", sizeof body);
         else {
             body[n] = 0;
@@ -37,14 +37,14 @@ void preview_read(const char *path, const Dirent *file, int icon_id) {
             }
         }
     }
-    append(info, file->ro ? "  ·  Sola lettura" : "  ·  Documento locale", sizeof info);
+    append(info, file->ro ? "  ·  Sola lettura" : "", sizeof info);
 
 }
 void preview_draw(void) {
     int w = MIN(478, aw - 54), h = MIN(238, ah - 22), x = (aw - w) / 2, y = (ah - h) / 2;
     Sheet(x, y, w, h, 17);
     Icon(x + 17, y + 14, 41, symbol);
-    Text(x + 70, y + 12, "VISTA RAPIDA   /   FINDER", F_MICRO, EMP);
+    Text(x + 70, y + 12, "Vista rapida", F_MICRO, EMP);
     Text(x + 69, y + 31, name, F_CAPTION, TX);
     Box(x + 15, y + 66, w - 30, h - 107, 11, CARD);
     int pos = 0, limit = MAX(12, MIN(70, (w - 62) / 8));
