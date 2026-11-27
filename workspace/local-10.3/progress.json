@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 3 complete locally: animation clocks, bit-exact glass interior fast path, real Mission Control texture reuse and library hover invalidation. Host normal/sanitized, retail before/after QEMU, Dock pixel restoration, 18 windows and fixed-work dragging acceptance PASS. No release/version bump or block 4 work.",
+  "status": "Macroblock 4 COMPLETE for local implementation + normal/sanitized host + full foundation/M0 + same-final-ISO retail live, GUI TMCFS2 installation, cold native and internal Recovery guest acceptance. Win/Command vs Ctrl, Win+R without plain R/F12, direct desktop New Folder, persistent free positions, cross-window real drops and all-system-field cursor/click handlers. No block 5, version bump or release/hardware certification.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 3,
-  "active_macroblock_title": "Prestazioni, Grafica e Animazioni",
+  "active_macroblock": 4,
+  "active_macroblock_title": "Desktop, Input e Scorciatoie",
   "active_macroblock_complete": true,
   "background_work_running": false,
   "release_ready": false,
@@ -175,6 +175,22 @@
       "drag-candidate.json"
     ],
     "performance_summary": "macroblocco-3/performance-summary.json",
+    "physical_hardware_tested": false,
+    "release_ready": false
+  },
+  "macroblock_4": {
+    "complete_local": true,
+    "evidence": "macroblocco-4/VERIFICA.md",
+    "keyboard_guide": "tinymacOS/docs/SCORCIATOIE.md",
+    "iso_sha256": "39b040509a63a4cfa4ca3d9136744fc430dcfc432b8226e46c2b8d4c6752d413",
+    "production_inputs_verified": 1079,
+    "guest_receipts_passed": [
+      "guest.json",
+      "boot-keys.json",
+      "recovery-final.json"
+    ],
+    "host_actual_field_families_normal_and_sanitized": 7,
+    "native_cold_and_recovery_without_iso": true,
     "physical_hardware_tested": false,
     "release_ready": false
   }

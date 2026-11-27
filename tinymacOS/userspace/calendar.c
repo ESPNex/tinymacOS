@@ -4,6 +4,7 @@
 static int yr, mo, dy, edit, exists, longnote, marks[32];
 static u32 lastrev;
 static char memo[68], prev[68], notice[80];
+static int memoAt,memoSelected;
 static void two(char *s, int v, int cap)
 {
     if (v < 10)append(s, "0", cap);
@@ -85,6 +86,7 @@ static void editing(void)
     strset(prev, memo, sizeof prev);
     edit = 1;
     ui_motion(FX_SHEET);
+    memoAt=strlen(memo);memoSelected=0;
 }
 static int split(void)
 {
@@ -134,7 +136,7 @@ static void paint(void)
     button(x, ah - 72, MIN(142, aw - x - 12), longnote ? "Apri in TextEdit" : exists ? "Modifica nota" : "Aggiungi nota",
            1);
     Text(x, ah - 31, notice[0] ? notice : "Invio per scrivere", F_SMALL, SUB);
-    if (edit)inputmodal("Promemoria del giorno", memo, "Una nota per data. Vuota per rimuoverla.",0);
+    if (edit)inputmodal_at("Promemoria del giorno", memo, "Una nota per data. Vuota per rimuoverla.",0,memoAt);
     finish();
 }
 void app_main(void)
@@ -164,9 +166,11 @@ void app_main(void)
                     strset(memo, prev, sizeof memo);
                     edit = 0;
                 } else if (k == '\n' || (e.b && k == 's'))save();
-                else text_append_key(memo,sizeof memo,k);
+                else text_edit_key(memo,sizeof memo,&memoAt,&memoSelected,k,e.b);
                 continue;
             }
+            if(edit&&e.type==EV_CLICK){int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-143)/2;
+                if(e.a>=x+16&&e.a<x+w-16&&e.b>=y+43&&e.b<y+78){memoAt=text_hit_offset(memo,memoAt,w-50,e.a-x-25);memoSelected=0;}}
             if (edit)continue;
             if (e.type == EV_KEY) {
                 if (e.a == K_LEFT)step(-1);

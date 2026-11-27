@@ -1,6 +1,7 @@
 #pragma once
 #include "gfx.h"
 #include "animation_clock.h"
+#include "shortcuts.h"
 #define BAR 34
 #include "window_chrome.h"
 #define TITLE TMC_CHROME_TITLE
@@ -70,7 +71,7 @@ int motionstep(View *, Rect *, int *, int *);
 void motionfinish(View *);
 u64 backdrop_key(Rect);
 void wintile(int, Rect);
-enum {OV_NONE, OV_SEARCH, OV_CONTROL, OV_LIBRARY, OV_OVERVIEW, OV_MENU, OV_HELP, OV_RESTART, OV_OFF};
+enum {OV_NONE, OV_SEARCH, OV_CONTROL, OV_LIBRARY, OV_OVERVIEW, OV_MENU, OV_HELP, OV_RESTART, OV_OFF, OV_NEW_FOLDER};
 
 extern int gate;
 void login_enter(void);
@@ -79,6 +80,11 @@ void login_input(Event *);
 int login_step(void);
 void avatar(int, int, int);
 void shell_reset(void);
+int shell_desktop_active(void);
+void shell_window_focus(void);
+void shell_new_folder(void);
+int shell_desktop_drop(const char *,int,int,int,int);
+void shell_drop_position(const char *,int,int);
 
 void shell_context(void);void context_ready(Event*);
 

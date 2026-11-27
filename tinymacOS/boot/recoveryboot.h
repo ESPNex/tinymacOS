@@ -1,5 +1,7 @@
 #pragma once
 #include "minuefi.h"
+#include <eficonex.h>
+#include "shortcuts.h"
 #include "recovery_origin.h"
 // Private vendor GUID for the tinymacOS SIP variable (tinymacOS-csr).
 // Firmwares commonly reject unknown names in EFI_GLOBAL_VARIABLE: with a
@@ -54,12 +56,28 @@ static inline int recflag(EFI_BOOT_SERVICES *bs, EFI_HANDLE d)
     if(EFI_ERROR(io->WriteBlocks(io,io->Media->MediaId,lba,block,buf))||EFI_ERROR(io->FlushBlocks(io)))return 0;
     return 1;
 }
+static EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL *boot_input_ex;
+static inline void boot_keys_init(EFI_SYSTEM_TABLE *st)
+{
+    EFI_GUID guid=EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID;
+    if(EFI_ERROR(st->BootServices->HandleProtocol(st->ConsoleInHandle,&guid,(void**)&boot_input_ex)))boot_input_ex=0;
+}
+static inline int boot_key_read(EFI_SYSTEM_TABLE *st,EFI_INPUT_KEY *key,unsigned *state)
+{
+    *state=0;
+    if(boot_input_ex){EFI_KEY_DATA data;
+        if(EFI_ERROR(boot_input_ex->ReadKeyStrokeEx(boot_input_ex,&data)))return 0;
+        *key=data.Key;*state=data.KeyState.KeyShiftState;return 1;
+    }
+    /* A firmware without Text Input Ex cannot identify Command. It may still
+     * use OpenCore's explicit Recovery entry; never reinterpret plain R/F12. */
+    return !EFI_ERROR(st->ConIn->ReadKeyStroke(st->ConIn,key));
+}
 static inline int recovery_key(EFI_SYSTEM_TABLE *st)
 {
-    for (int j = 0; j < 45; j++) {
-        EFI_INPUT_KEY k;
-        if (!EFI_ERROR(st->ConIn->ReadKeyStroke(st->ConIn, &k)) && (k.UnicodeChar == 'r' || k.UnicodeChar == 'R' ||
-                k.ScanCode == SCAN_F12))return 1;
+    for(int j=0;j<45;j++){
+        EFI_INPUT_KEY k;unsigned state;
+        if(boot_key_read(st,&k,&state)&&key_boot_recovery(k.UnicodeChar,state))return 1;
         st->BootServices->Stall(20000);
     }
     return 0;

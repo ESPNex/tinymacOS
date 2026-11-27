@@ -18,7 +18,9 @@ int main(void){
  memset(q.data,'X',INPUT);q.data[INPUT]=0;assert(!clipboard_access(1,&q));strcpy(input,"intact");cur=6;clipboard_action(ACT_PASTE);assert(!strcmp(input,"intact")&&cur==6);
  input[cur=0]=0;drop_path("/Users/User/Documents/a b\"$\\.txt");assert(!strcmp(input,"\"/Users/User/Documents/a b\\\"\\$\\\\.txt\" ")&&!job);
  nt=scroll=0;line("first output",12,0);line("second output",13,0);Event begin={.a=14,.b=12,.c=1,.d=1};select_event(&begin);Event end={.a=14+6*8,.b=31,.c=0};select_event(&end);assert(selection&&!selecting);clipboard_action(ACT_COPY);assert(!clipboard_access(0,&q)&&!strcmp(q.data,"first output\nsecond"));clipboard_action(ACT_CUT);assert(!strcmp(screen[0],"first output"));
- selection=0;job=99;Event ctrlc={.a='c',.b=1};key(&ctrlc);assert(kills==1);job=0;strcpy(input,"shortcuts");cur=strlen(input);Event copy={.a='C',.b=1,.c=1};key(&copy);input[cur=0]=0;Event paste={.a='V',.b=1,.c=1};key(&paste);assert(!strcmp(input,"shortcuts")&&kills==1);
+ selection=0;job=99;Event ctrlc={.a='c',.b=1};key(&ctrlc);assert(kills==1);job=0;strcpy(input,"shortcuts");cur=strlen(input);Event copy={.a='c',.b=1,.d=KEY_COMMAND};key(&copy);input[cur=0]=0;Event paste={.a='v',.b=1,.d=KEY_COMMAND};key(&paste);assert(!strcmp(input,"shortcuts")&&kills==1);
+ nt=scroll=job=0;selection=selecting=0;strcpy(cwd,"/Users/User");strcpy(actual_home,cwd);strcpy(input,"abcdef");cur=6;
+ char pre[INPUT+96];prompt(pre,sizeof pre);Event inputclick={.a=14+8*(text_columns(pre,strlen(pre))+2),.b=12,.c=1,.d=1};select_event(&inputclick);assert(cur==2&&!selection);Event insert={.a='X'};key(&insert);assert(!strcmp(input,"abXcdef"));
  clipboard_clear();assert(!clipboard_access(0,&q)&&!q.kind&&!q.data[0]);
- puts("PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing");return 0;
+ puts("PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Command+C/V vs preserved Control+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing");return 0;
 }

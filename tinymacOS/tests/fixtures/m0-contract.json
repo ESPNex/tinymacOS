@@ -428,7 +428,7 @@
     "compat/linux/xhci_services2.inc": "a3cac5fe10a5ba7a3655b668723890d74c69eea7139596e51d41023463d3e50f",
     "compat/ntfs/format.c": "2ff5a0311ee258d5bed88ebe7de138fb4af80aa34ae06d8b2ebd0383a63b0c01",
     "compat/ntfs/native_abi.h": "753c2b8b6f35bc9e3160ff4421ea33494ee6048117f53160c90d47d14d6aa45e",
-    "drivers/input.c": "6c2fb04aafcd5ce1dee6dbc6552184f5f09f6b61e478612f9c2aa52d783c3242",
+    "drivers/input.c": "2227d0221f4d4f95d33876305a0ea54c16fdc40cd315f2a60e78656636e81fe6",
     "tools/build-usbcore.sh": "e3b426af2d589df20427e5172ac274f69e11810dff660907e868385fed0a4028",
     "vendor/linux-v6.12/config.c": "8e504205acef2343e46ab17af2535ecea4957466a990a6b72e08144005f30dcf",
     "vendor/linux-v6.12/dmapool.c": "be3b955c81490569dc088c23ddf8c55b80380f094d80352c9e5d11fa98c182d2",
@@ -755,16 +755,16 @@
       "OPERAZIONE IRREVERSIBILE: elimina dati, account e snapshot.",
       "Non perdere password e chiave: i dati non sono recuperabili.",
       "Confermo destinazione e ripristino MBR protettivo",
-      "Un’interruzione può rendere i dati inaccessibili. Non annullabile."
+      "Un\u2019interruzione pu\u00f2 rendere i dati inaccessibili. Non annullabile."
     ],
     "userspace/textedit.c": [
       "Le modifiche non salvate andranno perse."
     ],
     "userspace/notebook.h": [
-      "L’operazione non può essere annullata."
+      "L\u2019operazione non pu\u00f2 essere annullata."
     ],
     "userspace/vaultpanel.c": [
-      "Integrità non valida. Non inizializzare il disco.",
+      "Integrit\u00e0 non valida. Non inizializzare il disco.",
       "Prepara una copia esterna. Ripresa possibile, annullamento no."
     ],
     "userspace/timemachine.c": [
@@ -772,19 +772,19 @@
       "I file creati dopo il backup verranno persi."
     ],
     "desktop/login.c": [
-      "Impossibile leggere l’account. Il disco non è stato reimpostato.",
-      "Azzera solo l’account inutilizzabile: i documenti restano sul disco."
+      "Impossibile leggere l\u2019account. Il disco non \u00e8 stato reimpostato.",
+      "Azzera solo l\u2019account inutilizzabile: i documenti restano sul disco."
     ],
     "desktop/recovery.c": [
       "I dati verranno eliminati.",
-      "Confermi l’operazione sul disco selezionato?"
+      "Confermi l\u2019operazione sul disco selezionato?"
     ]
   },
   "wording_changes": [
     {
       "file": "userspace/installer.c",
       "before": "tinymacOS gia installato",
-      "after": "tinymacOS già installato",
+      "after": "tinymacOS gi\u00e0 installato",
       "occurrences": 1
     },
     {
@@ -795,8 +795,8 @@
     },
     {
       "file": "userspace/installer.c",
-      "before": "Un’interruzione può rendere i dati inaccessibili. Nessun rollback.",
-      "after": "Un’interruzione può rendere i dati inaccessibili. Non annullabile.",
+      "before": "Un\u2019interruzione pu\u00f2 rendere i dati inaccessibili. Nessun rollback.",
+      "after": "Un\u2019interruzione pu\u00f2 rendere i dati inaccessibili. Non annullabile.",
       "occurrences": 1
     },
     {
@@ -807,7 +807,7 @@
     },
     {
       "file": "userspace/settings.c",
-      "before": "Nessuna modalità GOP",
+      "before": "Nessuna modalit\u00e0 GOP",
       "after": "Nessuna risoluzione disponibile",
       "occurrences": 2
     },
@@ -831,19 +831,19 @@
     },
     {
       "file": "userspace/diskutility.c",
-      "before": "Nativo: 8.3–33.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.",
+      "before": "Nativo: 8.3\u201333.5 MB, slot variabili. FAT32: coda libera. NTFS: rilocazione e controllo Windows.",
       "after": "Resize: FAT32 e NTFS. TMCFS2: non disponibile.",
       "occurrences": 1
     },
     {
       "file": "userspace/diskutility.c",
-      "before": "Snapshot valido: integrità crc32c verificata.",
-      "after": "Integrità dello snapshot verificata.",
+      "before": "Snapshot valido: integrit\u00e0 crc32c verificata.",
+      "after": "Integrit\u00e0 dello snapshot verificata.",
       "occurrences": 1
     },
     {
       "file": "userspace/diskutility.c",
-      "before": "Immutabile · crc32c",
+      "before": "Immutabile \u00b7 crc32c",
       "after": "Sola lettura",
       "occurrences": 1
     },
@@ -867,14 +867,14 @@
     },
     {
       "file": "userspace/timemachine.c",
-      "before": "L'immagine del backup verrà eliminata.",
-      "after": "Lo snapshot verrà eliminato.",
+      "before": "L'immagine del backup verr\u00e0 eliminata.",
+      "after": "Lo snapshot verr\u00e0 eliminato.",
       "occurrences": 1
     },
     {
       "file": "userspace/timemachine.c",
       "before": "Backup valido (crc32c).",
-      "after": "Integrità del backup verificata.",
+      "after": "Integrit\u00e0 del backup verificata.",
       "occurrences": 1
     },
     {
@@ -891,8 +891,8 @@
     },
     {
       "file": "userspace/command.c",
-      "before": "Macintosh HD - Dati è gi\\u00e0 montato su / (BTRFS subset, struttura APFS).",
-      "after": "Macintosh HD - Dati è già montato su / — ",
+      "before": "Macintosh HD - Dati \u00e8 gi\\u00e0 montato su / (BTRFS subset, struttura APFS).",
+      "after": "Macintosh HD - Dati \u00e8 gi\u00e0 montato su / \u2014 ",
       "occurrences": 1
     },
     {
@@ -901,5 +901,11 @@
       "after": "TMCFS2",
       "occurrences": 1
     }
-  ]
+  ],
+  "macroblock4_input_modifier_audit": {
+    "base_commit": "04ddc8362a14bec5458c4fcafa1067672d48880a",
+    "before_sha256": "6c2fb04aafcd5ce1dee6dbc6552184f5f09f6b61e478612f9c2aa52d783c3242",
+    "after_sha256": "2227d0221f4d4f95d33876305a0ea54c16fdc40cd315f2a60e78656636e81fe6",
+    "change": "Only Event.d=m&255 added to emitted keyboard events; canonical USB/HID queues, transport, parser, layout, merge/repeat and upstream pins unchanged. Required to distinguish physical Command, Control and AltGr."
+  }
 }

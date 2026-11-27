@@ -4,11 +4,11 @@
 static InstallInfo info;
 static int page, choice = -1, confirm, dirty = 1;
 static int reinstall, reinstall_pending;
-static int encrypted,focus;
+static int encrypted,focus,inputAt[3],inputSelected[3];
 static VaultRequest encryption;
 static char password[2][65],key_check[9],enc_error[96];
 static void encryption_clear(void){
- memset(&encryption,0,sizeof encryption);memset(password,0,sizeof password);memset(key_check,0,sizeof key_check);encrypted=0;focus=0;enc_error[0]=0;
+ memset(&encryption,0,sizeof encryption);memset(password,0,sizeof password);memset(key_check,0,sizeof key_check);encrypted=0;focus=0;memset(inputAt,0,sizeof inputAt);memset(inputSelected,0,sizeof inputSelected);enc_error[0]=0;
 }
 static void encryption_discard(void){
  VaultRequest q={.disk=-1};sc(S_INSTALL,5,&q,0,0);memset(&q,0,sizeof q);encryption_clear();
@@ -112,6 +112,22 @@ static void diskname(char*s, int d)
     append(s, info.disk[d].model, 80);
 }
 static int rail(void){return 0;}
+/* Shared by retail and Recovery installer. All coordinates are client-local. */
+static int installer_field_event(const Event *e)
+{
+    int x=rail()+24,w=aw-x-23;
+    if(page!=7&&page!=8)return 0;
+    if(e->type==EV_KEY&&e->a!=27&&e->a!='\n'){
+        if(page==7){if(e->a=='\t')focus^=1;else text_edit_key(password[focus],65,&inputAt[focus],&inputSelected[focus],e->a,e->b);}
+        else text_edit_key(key_check,9,&inputAt[2],&inputSelected[2],e->a,e->b);
+        return 1;
+    }
+    if(e->type==EV_CLICK&&e->a>=x&&e->a<x+w){
+        if(page==7&&((e->b>=173&&e->b<205)||(e->b>=238&&e->b<270))){focus=e->b>=238;inputAt[focus]=text_hit_offset(password[focus],inputAt[focus],w-24,e->a-x-12);inputSelected[focus]=0;return 1;}
+        if(page==8&&e->b>=207&&e->b<239){inputAt[2]=text_hit_offset(key_check,inputAt[2],w-24,e->a-x-12);inputSelected[2]=0;return 1;}
+    }
+    return 0;
+}
 static void paint(void)
 {
     begin();
@@ -124,7 +140,7 @@ static void paint(void)
         Text(x,115,reinstall?"Nuove chiavi; dopo il riavvio creerai un nuovo account.":"La password dell’account importato resta distinta e invariata.",F_SMALL,SUB);
         for(int i=0;i<2;i++){
             Text(x,150+i*65,i?"Conferma password":"Password del volume",F_SMALL,SUB);
-            Box(x,173+i*65,w,32,6,i==focus?SEL:PANEL);InputText(x+12,181+i*65,w-24,password[i],strlen(password[i]),i==focus,1,TX);
+            Box(x,173+i*65,w,32,6,i==focus?SEL:PANEL);InputText(x+12,181+i*65,w-24,password[i],inputAt[i],i==focus,1,TX);
         }
         if(enc_error[0])Text(x,293,enc_error,F_SMALL,SUB);
         Text(x,318,reinstall?"Non è una cancellazione fisica sicura del supporto.":"Capacità utile: circa l’80% dello spazio dati grezzo.",F_SMALL,SUB);
@@ -133,7 +149,7 @@ static void paint(void)
         Text(x,67,"Conservala fuori dal disco. Non viene salvata nei documenti.",F_SMALL,SUB);
         char half[33];memcpy(half,encryption.recovery,32);half[32]=0;Text(x,104,half,F_MONO,TX);memcpy(half,encryption.recovery+32,32);Text(x,131,half,F_MONO,TX);memset(half,0,sizeof half);
         Text(x,180,"Conferma gli ultimi 8 caratteri della chiave:",F_SMALL,SUB);
-        Box(x,207,w,32,6,SEL);InputText(x+12,215,w-24,key_check,strlen(key_check),1,0,TX);
+        Box(x,207,w,32,6,SEL);InputText(x+12,215,w-24,key_check,inputAt[2],1,0,TX);
         Text(x,255,"Non perdere password e chiave: i dati non sono recuperabili.",F_SMALL,SUB);
         if(enc_error[0])Text(x,293,enc_error,F_SMALL,SUB);
     }else if (!page) {
@@ -259,11 +275,9 @@ void app_main(void)
                 else if (info.state == INSTALL_SCAN && sc(S_INSTALL, 3, 0, 0, 0) == 0)
                     quit();
             }
+            if(installer_field_event(&e))continue;
             if (e.type == EV_KEY) {
-                if(page==7&&e.a!=27&&e.a!='\n'){
-                    if(e.a=='\t')focus^=1;else text_append_key(password[focus],65,e.a);
-                }else if(page==8&&e.a!=27&&e.a!='\n')text_append_key(key_check,9,e.a);
-                else if(page==2&&info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))&&(e.a=='e'||e.a=='E')){encryption_discard();go(7);}
+                if(page==2&&info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))&&(e.a=='e'||e.a=='E')){encryption_discard();go(7);}
                 else if (e.a == 27)
                     back();
                 else if (e.a == '\n')
@@ -277,8 +291,7 @@ void app_main(void)
             }
             if (e.type == EV_CLICK) {
                 int foot = ah - 52, x = rail() + 24;
-                if(page==7&&e.b>=173&&e.b<270){focus=e.b>=238;}
-                else if(page==2&&info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))&&e.b>=240&&e.b<266){encryption_discard();go(7);}
+                if(page==2&&info.encryption_available&&(!reinstall||(can()&&can_reset[choice]))&&e.b>=240&&e.b<266){encryption_discard();go(7);}
                 else if (e.b >= foot + 9 && e.b <= foot + 44) {
                     if (e.a >= aw - (page==8?210:151)) {
                         if (page == 3)

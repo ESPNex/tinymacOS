@@ -108,12 +108,13 @@ void modal(const char *name, const char *value, const char *hint)
     Text(x + 16, y + 91, hint, F_SMALL, SUB);
     Text(x + 16, y + 115, "Invio per confermare  ·  Esc per annullare", F_MICRO, EMP);
 }
-void inputmodal(const char *name,const char *value,const char *hint,int secret)
+void inputmodal_at(const char *name,const char *value,const char *hint,int secret,int at)
 {
     modal(name,"",hint);
     int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-143)/2;
-    InputText(x+25,y+52,w-50,value,strlen(value),1,secret,TX);
+    InputText(x+25,y+52,w-50,value,at,1,secret,TX);
 }
+void inputmodal(const char *name,const char *value,const char *hint,int secret){inputmodal_at(name,value,hint,secret,strlen(value));}
 int baseevent(Event *e)
 {
     if (e->type == EV_THEME) {

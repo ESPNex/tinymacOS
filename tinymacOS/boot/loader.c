@@ -33,9 +33,9 @@ static void load_boot_config(EFI_FILE_PROTOCOL *root)
 static void poll_rec(void)
 {
     if (want_rec || !ginst)return;
-    EFI_INPUT_KEY k;
-    if (!EFI_ERROR(ginst->ConIn->ReadKeyStroke(ginst->ConIn,&k))) {
-        if(k.UnicodeChar=='r'||k.UnicodeChar=='R'||k.ScanCode==SCAN_F12)want_rec=1;
+    EFI_INPUT_KEY k;unsigned state;
+    if (boot_key_read(ginst,&k,&state)) {
+        if(key_boot_recovery(k.UnicodeChar,state))want_rec=1;
         if((k.UnicodeChar=='v'||k.UnicodeChar=='V')&&!(bi.boot_flags&TMC_BOOT_VERBOSE)){
             bi.boot_flags|=TMC_BOOT_VERBOSE;bootconsole_clear(&bi,&verbose_console);vmsg("[loader] verbose selected with V\n");
         }
@@ -46,7 +46,7 @@ static void progress(EFI_BOOT_SERVICES *bs, int *shown, int target)
 {
     while (*shown < target) {
         splash_bar(&bi, ++*shown);
-        poll_rec();   /* R (o F12) durante la mela: salta al Recupero */
+        poll_rec();   /* Win+R during the boot logo selects native Recovery. */
         bs->Stall(9000);
     }
 }
@@ -87,7 +87,7 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     if (EFI_ERROR(bs->HandleProtocol(st->ConsoleOutHandle,&gg,(void **)&go)) &&
         EFI_ERROR(bs->LocateProtocol(&gg, 0, (void **)&go)))
         FAIL("GOP unavailable");
-    ginst = st;physical_runtime=st->RuntimeServices;
+    ginst = st;physical_runtime=st->RuntimeServices;boot_keys_init(st);
     if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))
         || EFI_ERROR(bs->HandleProtocol(li->DeviceHandle, &sg, (void **)&fs)) || EFI_ERROR(fs->OpenVolume(fs, &root))
        )FAIL("volume");
@@ -256,7 +256,7 @@ recover:
         }
     }
 #endif
-    if (want_rec)goto recover;   /* R premuto durante la mela */
+    if (want_rec)goto recover;   /* Command+R held during the boot logo */
     EFI_DEVICE_PATH *dp = devpath(li->DeviceHandle);
     for (int k = 0; dp && !IsDevicePathEnd(dp) && k < 64; k++, dp = NextDevicePathNode(dp)) {
         if (DevicePathType(dp) == MEDIA_DEVICE_PATH && DevicePathSubType(dp) == MEDIA_HARDDRIVE_DP &&

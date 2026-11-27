@@ -132,12 +132,13 @@ int filepanel_event(FilePanel *p,const Event *e)
         if(cancel){p->overwrite=p->newfolder=0;p->focus=1;p->cursor=strlen(p->name);return 0;}
         if(confirm)return p->overwrite?accept(p):folder_create(p);
         if(p->overwrite)return 0;
+        if(e->type==EV_CLICK&&in(e->a,e->b,mx+16,my+47,mw-32,25)){p->cursor=text_hit_offset(p->folder,p->cursor,mw-48,e->a-mx-24);p->replace=0;return 0;}
     }else if(e->type==EV_CLICK){
         int a=e->a,b=e->b;
         if((p->pagebase||p->more)&&in(a,b,x+w-78,y+9,62,26)){panel_page(p,a<x+w-48?-1:1);return 0;}
         if(in(a,b,x+12,y+48,39,26)){navigate(p,"..");return 0;}
-        if(in(a,b,x+61,y+48,w-73,25)){p->focus=2;p->cursor=strlen(p->location);p->replace=1;return 0;}
-        if(in(a,b,x+133,y+h-97,w-149,25)){p->focus=1;p->cursor=strlen(p->name);p->replace=1;return 0;}
+        if(in(a,b,x+61,y+48,w-73,25)){p->cursor=text_hit_offset(p->location,p->focus==2?p->cursor:strlen(p->location),w-89,a-x-69);p->focus=2;p->replace=0;return 0;}
+        if(in(a,b,x+133,y+h-97,w-149,25)){p->cursor=text_hit_offset(p->name,p->focus==1?p->cursor:strlen(p->name),w-165,a-x-141);p->focus=1;p->replace=0;return 0;}
         if(in(a,b,x+12,y+h-37,119,26)){p->newfolder=1;p->folder[0]=0;p->focus=3;p->cursor=0;p->replace=0;return 0;}
         if(in(a,b,x+w-201,y+h-37,85,26)){p->active=0;ui_motion(FX_DISSOLVE);return -1;}
         if(in(a,b,x+w-106,y+h-37,94,26))return accept(p);

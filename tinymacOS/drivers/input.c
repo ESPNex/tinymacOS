@@ -92,7 +92,7 @@ static void emit(int k, int m)
         v = K_UP;
     if (v)
         put((Event) {
-        .type = EV_KEY, .a = v, .b = ctrl, .c = shift
+        .type = EV_KEY, .a = v, .b = ctrl, .c = shift, .d = m & 255
     });
 }
 void input_key_usage(int usage,int modifiers)

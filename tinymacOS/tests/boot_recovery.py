@@ -1,4 +1,4 @@
-"""Select Recovery with an ordinary USB key at the boot logo; do not attach any other device."""
+"""Select Recovery with an ordinary USB Command+R shortcut at the boot logo; do not attach any other device."""
 import time
 class RecoveryKey:
     recovery_text='Scegli come proseguire.'
@@ -10,5 +10,5 @@ class RecoveryKey:
             if time.monotonic()-start>7 and hasattr(self,'firmware_picker'):self.firmware_picker()
             time.sleep(.04)
         else:raise AssertionError('Logo di avvio non osservato')
-        for _ in range(9):self.key('r',.12)
+        for _ in range(9):self.key('meta_l-r',.12,hold=.20)
         if self.recovery_text:self.visible(self.recovery_text,32)

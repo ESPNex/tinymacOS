@@ -10,7 +10,7 @@ static AuthRequest form;
 static char confirm[65], notice[112], setup_code[33];
 static int field, confirmPower, blink = -1, minute = -1, lastPhase = -1, shake, reset_arm;
 static u64 spinStart, caretTick;
-static int carets[3], typed[3];
+static int carets[3], typed[3], selected[3], seedAt;
 static u32 glow[1920 * 1080];
 int gate;
 static void wipe(void *p, int n)
@@ -26,8 +26,8 @@ static void notice_set(const char *s)
 void login_enter(void)
 {
     gate = 1;
-    field = 0;
-    memset(carets,0,sizeof carets);memset(typed,0,sizeof typed);caretTick=sys.ticks;
+    field = 0;seedAt=0;
+    memset(selected,0,sizeof selected);memset(carets,0,sizeof carets);memset(typed,0,sizeof typed);caretTick=sys.ticks;
     confirmPower = 0;
     shake = 0;
     reset_arm = 0;
@@ -147,8 +147,8 @@ static void seed_draw(void)
     if (!setup_code[0])text(r.x + 16, r.y + 8, "32 cifre esadecimali · non è la password", F_SMALL, 0xe9ecf6);
     else {
         text(r.x + 16, r.y + 7, setup_code, F_MONO, 0xffffff);
-        if (blink)rect(r.x + 18 + textw(setup_code, F_MONO), r.y + 9, 1, 16, 0xffffff);
     }
+    if(blink){char prefix[33];seedAt=MAX(0,MIN(seedAt,strlen(setup_code)));memcpy(prefix,setup_code,seedAt);prefix[seedAt]=0;rect(r.x+16+textw(prefix,F_MONO),r.y+8,1,17,0xffffff);}
     roundr(b.x, b.y, b.w, b.h, 17, 0xf4f7ff, 233);
     center(cx, b.y + 8, "Continua", F_SMALL, 0x1c2b45);
     center(cx, b.y + b.h + 9, notice[0] ? notice :
@@ -168,6 +168,24 @@ static unsigned hovermask(void)
     m|=(unsigned)inside(mx,my,resetbox())<<4;
     return m;
 }
+/* Nearest UTF-8 boundary in precisely the viewport used by field_draw. */
+static int login_hit(const char *s,int at,Rect r,int secret,int pixel)
+{
+    int len=strlen(s);at=MAX(0,MIN(at,len));
+    int startcol=MAX(0,text_columns(s,at)-(secret?18:21));
+    int start=text_offset(s,0,len,startcol);
+    if(secret)return text_offset(s,start,len,MAX(0,MIN(19,(pixel+4)/9)));
+    char prefix[128];
+    while(start<at){memcpy(prefix,s+start,at-start);prefix[at-start]=0;
+        if(textw(prefix,F_BODY)<=r.w-38)break;start=text_next(s,start);}
+    int previous=0;
+    for(int p=start;p<len;){int next=text_next(s,p);memcpy(prefix,s+start,next-start);prefix[next-start]=0;
+        int width=textw(prefix,F_BODY);if(pixel<(previous+width)/2)return p;
+        previous=width;p=next;}
+    return len;
+}
+static int seed_hit(int pixel){char prefix[33];int old=0,n=strlen(setup_code);
+    for(int i=1;i<=n;i++){memcpy(prefix,setup_code,i);prefix[i]=0;int width=textw(prefix,F_MONO);if(pixel<(old+width)/2)return i-1;old=width;}return n;}
 static void field_draw(int i)
 {
     Rect r = inputbox(i);
@@ -353,6 +371,7 @@ void login_input(Event *e)
         }
         if (account.needs_seed) {
             if (inside(mx, my, seed_box(1)))seed_submit();
+            else if(inside(mx,my,seed_box(0))){seedAt=seed_hit(mx-seed_box(0).x-16);caretTick=sys.ticks;blink=1;}
             return;
         }
         if (inside(mx, my, submitbox())) {
@@ -361,7 +380,7 @@ void login_input(Event *e)
         }
         for (int i = 0; i < (setup() ? 3 : 1); i++)if (inside(mx, my, inputbox(i))){
             field=i;char *value=setup()&&i==0?form.name:setup()&&i==2?confirm:form.password;
-            carets[i]=strlen(value);caretTick=sys.ticks;blink=1;
+            carets[i]=login_hit(value,carets[i],inputbox(i),!setup()||i!=0,mx-inputbox(i).x-16);selected[i]=0;caretTick=sys.ticks;blink=1;
         }
         return;
     }
@@ -392,16 +411,17 @@ void login_input(Event *e)
         return;
     }
     if (account.needs_seed) {
-        int n = strlen(setup_code);
-        if (k == '\n') {
-            seed_submit();
-            return;
-        }
-        if (k == 27 || (e->b && (k == 'u' || k == 'a')))wipe(setup_code, sizeof setup_code);
-        else if (k == 8 && n)setup_code[n - 1] = 0;
-        else if (!e->b && n < 32 && ((k >= '0' && k <= '9') || (k >= 'a' && k <= 'f') || (k >= 'A' && k <= 'F'))) {
-            setup_code[n] = (char)k;
-            setup_code[n + 1] = 0;
+        seedAt=MAX(0,MIN(seedAt,strlen(setup_code)));
+        if (k == '\n') {seed_submit();return;}
+        if (k == 27 || (key_command(e) && (k == 'a' || k == 'u'))){wipe(setup_code,sizeof setup_code);seedAt=0;}
+        else if(!key_command(e)&&!key_control(e)){
+            if(k==K_LEFT)seedAt=text_prev(setup_code,seedAt);
+            else if(k==K_RIGHT)seedAt=text_next(setup_code,seedAt);
+            else if(k==K_HOME)seedAt=0;
+            else if(k==K_END)seedAt=strlen(setup_code);
+            else if(k==8)text_backspace(setup_code,&seedAt);
+            else if(k==K_DEL)text_delete(setup_code,seedAt);
+            else if((k>='0'&&k<='9')||(k>='a'&&k<='f')||(k>='A'&&k<='F'))text_insert(setup_code,sizeof setup_code,&seedAt,k);
         }
         notice[0] = 0;
         return;
@@ -424,17 +444,8 @@ void login_input(Event *e)
     char *p = setup() && field == 0 ? form.name : setup() && field == 2 ? confirm : form.password;
     int max = p == form.name ? 31 : 64;
     int *at=&carets[field];*at=MAX(0,MIN(*at,strlen(p)));
-    if (e->b) {
-        if (k == 'u' || k == 'a'){wipe(p, max + 1);*at=0;}
-        return;
-    }
-    if(k==K_LEFT)*at=text_prev(p,*at);
-    else if(k==K_RIGHT)*at=text_next(p,*at);
-    else if(k==K_HOME)*at=0;
-    else if(k==K_END)*at=strlen(p);
-    else if(k==8)text_backspace(p,at);
-    else if(k==K_DEL)text_delete(p,*at);
-    else if(text_printable(k)){if(text_insert(p,max+1,at,k))typed[field]=1;}
+    if(key_control(e)&&!key_command(e))return;
+    if(text_edit_key(p,max+1,at,&selected[field],k,key_command(e))&&text_printable(k)&&!key_command(e))typed[field]=1;
     notice[0] = 0;
 }
 int login_step(void)

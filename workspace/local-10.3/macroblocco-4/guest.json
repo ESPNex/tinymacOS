@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "physical_hardware_tested": false,
+  "work": "/var/tmp/tmc-desktop4-acceptance-8gbvrpa3",
+  "iso_sha256": "39b040509a63a4cfa4ca3d9136744fc430dcfc432b8226e46c2b8d4c6752d413",
+  "checks": [
+    "Setup proportional-field click inserts within Dsk4; account authenticates as Desk4. Command+W closes Finder.",
+    "Desktop right-click opens direct New Folder sheet with NO client windows/Finder; mouse insertion creates Cartella4.",
+    "Icon follows exact non-grid delta (+147,-193), then remains visible/draggable over the desktop widget.",
+    "Removed F2/F11 do not launch apps; Win+Space launches Terminal. Win+C/V copies/pastes while Ctrl+C interrupts; prompt click inserts at the correct column.",
+    "Actual desktop-origin drops route to Terminal as a quoted path and to Finder as a real file move; payload contents preserved.",
+    "Finder -> arbitrary desktop drop performs the real move back and preserves file bytes.",
+    "Command+M, Control+Up/Escape, Command+Shift+A and Command+Control+Q/unlock work via actual USB modifiers.",
+    "Real Installer password and confirmation carets visible; click repositions insertion. Encryption setup cancelled before any disk write.",
+    "Fresh GUI installation writes native TMCFS2 and imports account/files/desktop preferences; OpenCore preference verified by installer.",
+    "Cold installed boot WITHOUT ISO: exact arbitrary icon position and transferred payload persist; imported Desk4 account authenticates.",
+    "Installed native Recovery WITHOUT ISO entered with Win+R; Ctrl+F2 menu, Terminal click insertion and FileVault password/confirmation carets verified. Activation cancelled."
+  ],
+  "host_formatted_target": false,
+  "saved_folder_label_position": [
+    1100,
+    135
+  ],
+  "carets": {
+    "live-Terminal-click": [
+      458,
+      219,
+      2,
+      15
+    ],
+    "terminal-drop-target": [
+      458,
+      219,
+      2,
+      15
+    ],
+    "installer-password": [
+      320,
+      363,
+      1,
+      17
+    ],
+    "installer-confirm": [
+      320,
+      428,
+      1,
+      17
+    ],
+    "Recovery-Terminal-click": [
+      450,
+      219,
+      2,
+      15
+    ],
+    "Recovery-FileVault-password": [
+      499,
+      389,
+      1,
+      17
+    ],
+    "Recovery-FileVault-confirm": [
+      499,
+      446,
+      1,
+      17
+    ]
+  },
+  "resume_stage": "recovery"
+}

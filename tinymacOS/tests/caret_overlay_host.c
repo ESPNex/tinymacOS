@@ -41,6 +41,7 @@ int main(void)
     v->cmd[0].x=10;gate=1;assert(!caret_pick(&box,&ink));gate=0;
     mc=1;assert(!caret_pick(&box,&ink));mc=0;
     v->motion.kind=AN_OPEN;assert(!caret_pick(&box,&ink));v->motion.kind=0;
+    sys.recovery=1;assert(caret_pick(&box,&ink));overlay=1;assert(!caret_pick(&box,&ink));overlay=0;sys.recovery=0;
     assert(scanned_pixels<1000);
     puts("PASS real caret overlay: input-visible phase, blink, reduce-motion, reset counter, focus/modal/lock/Mission Control/motion suppression, bounded geometry, exact background restoration and tiny partial damage only");
 }

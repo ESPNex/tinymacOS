@@ -188,7 +188,7 @@ int recovery_key(Event *e)
         else if(e->a=='\n'){Rect a=confirm_box();recovery_click(a.x+a.w-100,a.y+170);}
         return 1;
     }
-    if(e->a==K_F10){bar_menu=bar_menu<0?4:-1;bar_pick=-1;dirty=1;return 1;}
+    if(key_control(e)&&e->a==K_F2){bar_menu=bar_menu<0?4:-1;bar_pick=-1;dirty=1;return 1;}
     if(bar_menu<0){
         if(topwin()<0&&armed<0){
             if(e->a==K_UP||e->a==K_DOWN){choice=(choice+(e->a==K_UP?2:1))%3;dirty=1;return 1;}

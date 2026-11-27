@@ -1,5 +1,7 @@
 #include "gfx.h"
 #include "mono_wire.h"
+#include "caret.h"
+#include "text_input.h"
 extern const u8 icons[];static u8 fontdata[3*1024*1024],compressed[4*1024*1024];
 static int asset(int id,u8*b,u32 cap){long n=sc(S_ART,id,0,0,0);if(n<=0||n>cap)return -1;for(int i=0;i<n;i+=65536){int z=MIN(n-i,65536);if(sc(S_ART,id,i,b+i,z)!=z)return -1;}return n;}
 int W, H, night, recovery_mode;
@@ -330,6 +332,17 @@ static void mono_run(int x,int y,const Draw *q)
                 int alpha=p[j*g->w+col];if(alpha)pix(x+col,y+j,ink,alpha);
             }
     }
+}
+void inputline(Rect q,const char *s,int at,int active,u32 ink)
+{
+    int len=strlen(s);at=clampi(at,0,len);while(at>0&&((u8)s[at]&0xc0)==0x80)at--;
+    int cols=MAX(1,q.w/8-1),start=text_offset(s,0,at,MAX(0,text_columns(s,at)-cols));
+    int end=text_offset(s,start,len,cols),done=0;
+    for(int i=start;i<end;){Draw d={.type=C_MONO,.ink=ink};
+        while(i<end&&d.w<99){int n;unsigned c=mono_decode(s+i,end-i,&n);d.text[d.w++]=(char)mono_reference(c);i+=n;}
+        mono_run(q.x+done*8,q.y,&d);done+=d.w;
+    }
+    if(active)rect(q.x+8*text_columns(s+start,at-start),q.y,1,17,ink);
 }
 void center(int cx, int y, const char *s, int f, u32 col)
 {

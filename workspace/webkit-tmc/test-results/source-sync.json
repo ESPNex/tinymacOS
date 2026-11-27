@@ -97,7 +97,7 @@
   },
   {
     "path": "desktop/gfx.c",
-    "sha256": "c4758c09e6230c2ec402745b14cc779057ca720f7e27663c89975f4afbcc1144"
+    "sha256": "adbc6afd89292e4b8cb427c377a82ea7a37122160561a1e072728a05d6450b87"
   },
   {
     "path": "kernel/memory.c",
@@ -109,7 +109,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "9b03502c420875189a92929a45bdf56740429fa652e5fcdf0326317dfbf4000f"
+    "sha256": "026b93930e8b9b582c79511166ec60f473c7777cbb1b342528deae598397b1a5"
   },
   {
     "path": "include/vmabi.h",

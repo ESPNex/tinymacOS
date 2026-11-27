@@ -12,7 +12,7 @@ static int pend = -1, drag = -1, mode, ax, ay, wallEpoch;
 static Rect drag0;
 static ClickPair client_click;
 static u64 pointer_when;
-static struct {int pid,token,started,ready,released,x,y,copy;u64 until;char path[PATHLEN];} filedrag;
+static struct {int pid,token,started,ready,released,x,y,copy,startx,starty;u64 until;char path[PATHLEN];} filedrag;
 static u32 drag_serial;
 static int select_pid;
 static void drag_reset(void){memset(&filedrag,0,sizeof filedrag);cursorDirty=1;}
@@ -20,12 +20,14 @@ static void drag_deliver(void){
  if(!filedrag.started||!filedrag.ready||!filedrag.released)return;
  if(shell_overlay_open()){drag_reset();return;}
  int dropx=filedrag.x,dropy=filedrag.y;
+ if(filedrag.pid==-2){if(dropy>=BAR)shell_desktop_drop(filedrag.path,dropx,dropy,dropx-filedrag.startx,dropy-filedrag.starty);drag_reset();return;}
  Event e={.type=EV_DROP,.c=filedrag.copy};strset(e.text,filedrag.path,sizeof e.text);
  for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(dropx,dropy,v->box))continue;
   if(dropy>=v->box.y+TITLE&&(v->s.app==FINDER||v->s.app==TERMINAL)){e.a=dropx-v->box.x-1;e.b=dropy-v->box.y-TITLE;focuswin(i);eventto(i,e);}drag_reset();return;}
  /* A bare desktop is a destination folder. Transfer is performed by the
   * originating Finder, not by privileged arbitrary filesystem writes. */
- if(dropy>=BAR&&!shell_overlay_open()&&filedrag.pid>0){for(int j=0;j<nz;j++){int i=order[j];if(views[i].s.pid==filedrag.pid&&!views[i].dead){int folder=shell_drop_folder(dropx,dropy);e.d=folder<0?1:2;e.a=folder;eventto(i,e);break;}}}
+ if(dropy>=BAR&&!shell_overlay_open()&&filedrag.pid==-1){shell_desktop_drop(filedrag.path,dropx,dropy,dropx-filedrag.startx,dropy-filedrag.starty);drag_reset();return;}
+ if(dropy>=BAR&&!shell_overlay_open()&&filedrag.pid>0){for(int j=0;j<nz;j++){int i=order[j];if(views[i].s.pid==filedrag.pid&&!views[i].dead){int folder=shell_drop_folder(dropx,dropy);e.d=folder<0?1:2;e.a=folder;if(folder<0)shell_drop_position(filedrag.path,dropx,dropy);eventto(i,e);break;}}}
  drag_reset();
 }
 static void drag_ready(Event*e){
@@ -67,7 +69,7 @@ static void viewtrace(int app, Rect r)
 #define viewtrace(app, r) ((void)0)
 #endif
 static int wallpaper_age = 32;
-// Mission Control: windows eased into a full-screen grid (F10).
+// Mission Control: windows eased into a full-screen grid (Control + Up).
 int mc = 0;
 static int mcdim;
 static Rect mcslot(Rect, int, int);
@@ -142,6 +144,7 @@ int focuswin(int i)
     if (i < 0 || !views[i].used || views[i].dead)return -1;
     View *v = views + i;
     int old = topwin();
+    if(!sys.recovery)shell_window_focus();
     if (v->mini) {
         v->mini = 0;
         startmotion(v, AN_RESTORE, dockrect(v->s.app), v->box, 36);
@@ -596,7 +599,7 @@ static void down(void)
     drag_reset();select_pid=0;
     if(!sys.recovery&&!shell_overlay_open()){
         int hit=0;for(int j=nz;j--;){View*v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
-        if(!hit&&shell_drag_source(mx,my,filedrag.path)){filedrag.pid=-1;filedrag.ready=1;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
+        int source=!hit?shell_drag_source(mx,my,filedrag.path):0;if(source){filedrag.pid=source==2?-2:-1;filedrag.ready=1;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
     }
     if(sys.recovery){
         if(recovery_bar_click(mx,my))return;
@@ -661,19 +664,15 @@ static void input(Event *e)
 {
     if (e->type == EV_KEY) {
         if(sys.recovery&&recovery_key(e))return;
-        if (e->b && e->c && (e->a == 'q' || e->a == 'Q')) {
-            action(152);
-            return;
-        }
+        int command=key_command(e),k=key_lower(e->a);
+        /* Normalize command dispatch once. Control remains a distinct terminal
+         * control key; it no longer aliases desktop/app Command shortcuts. */
+        e->b=command;if(command)e->a=k;
+        if (command && key_control(e) && k=='q') {action(152);return;}
+        if (command && e->c && k=='n' && !sys.recovery && shell_desktop_active()) {shell_new_folder();return;}
         if (!sys.recovery&&shell_key(e))return;
-        if(e->a==K_F11){if(sys.live_cd)launch(INSTALLER);return;}
-        if (e->a >= K_F1 && e->a <= K_F9) {
-            launch(1 + e->a - K_F1);
-            return;
-        }
-        if (e->b && (e->a == 'w' || e->a == 'm')) {
-            action(e->a == 'w' ? 142 : 141);
-            return;
+        if (command && (k=='w'||k=='m'||k=='q')) {
+            action(k=='m'?141:142);return;
         }
         if (e->b && e->a == '\t' && nz > 1) {
             for (int j = nz - 2; j >= 0; j--)if (!views[order[j]].dead) {
@@ -682,7 +681,9 @@ static void input(Event *e)
                 }
             return;
         }
+        if(key_control(e)&&!command&&(topwin()<0||views[topwin()].s.app!=TERMINAL))return;
         if(e->a==27&&filedrag.started){drag_reset();return;}
+        if(topwin()>=0 && views[topwin()].s.app==TERMINAL)e->b=command||key_control(e);
         eventto(topwin(), *e);
     } else if (e->type == EV_MOUSE || e->type == EV_POINTER_ABS) {
         pointer_when=e->when?e->when:sys.ticks;
@@ -721,10 +722,10 @@ static void input(Event *e)
         }
         if((e->c&1)&&filedrag.pid&&!filedrag.started&&
            (mx-filedrag.x>6||filedrag.x-mx>6||my-filedrag.y>6||filedrag.y-my>6)){
-            filedrag.started=1;filedrag.until=sys.ticks+200;
+            filedrag.started=1;filedrag.startx=filedrag.x;filedrag.starty=filedrag.y;filedrag.until=sys.ticks+200;
             if(filedrag.pid>0)for(int j=0;j<nz;j++){int i=order[j];View*v=views+i;if(v->s.pid==filedrag.pid&&!v->dead){eventto(i,(Event){.type=EV_DRAG_BEGIN,.a=filedrag.x-v->box.x-1,.b=filedrag.y-v->box.y-TITLE,.d=filedrag.token});break;}}
         }
-        if(filedrag.started){filedrag.copy=!!((unsigned char)e->text[0]&0xdd);cursorDirty=1;}
+        if(filedrag.started){filedrag.copy=!!((unsigned char)e->text[0]&KEY_OPTION);cursorDirty=1;}
         if(select_pid)for(int j=0;j<nz;j++){int i=order[j];View*v=views+i;if(v->s.pid==select_pid&&!v->dead){eventto(i,(Event){.type=EV_SELECT,.a=mx-v->box.x-1,.b=my-v->box.y-TITLE,.c=!!(e->c&1)});break;}}
         if(!(e->c&1)&&(buttons&1)){select_pid=0;if(filedrag.started){filedrag.released=1;filedrag.x=mx;filedrag.y=my;filedrag.until=sys.ticks+200;drag_deliver();}else drag_reset();}
         buttons = e->c;

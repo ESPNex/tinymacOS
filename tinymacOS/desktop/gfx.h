@@ -44,4 +44,5 @@ void copyin(Rect, const u32 *);
 void sprite(const u32 *, int, int, Rect, int, int, int, int);
 void button_face(Rect, int);
 
+void inputline(Rect,const char *,int,int,u32);
 void alpha_symbol(const u8 *,int,Rect,u32);

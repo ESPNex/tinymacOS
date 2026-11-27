@@ -6,7 +6,7 @@ static int vault_open;
 // laterale cercabile a sinistra, schede raggruppate a destra. Ogni controllo
 // è collegato a una API reale (S_PREF, S_SNAP, S_INFO, S_SESSION).
 
-static int pane, focus_search;
+static int pane, focus_search,queryAt,querySelected,modalAt,modalSelected;
 static int res_open,res_pick,res_scroll;
 enum { RES_ROWS=8, RES_ROW=24, RES_PAD=6 };
 static char query[24];
@@ -161,7 +161,7 @@ static void paint(void)
     hsearch = (R) {10, 12, S - 20, 28};
     if (focus_search)Box(8, 10, S - 16, 32, 9, ACC);
     Box(hsearch.x, hsearch.y, hsearch.w, hsearch.h, 8, focus_search ? CARD : SOFT);
-    if(query[0])InputText(20,19,S-40,query,strlen(query),0,0,TX);else Text(20,19,"Cerca",F_SMALL,SUB);
+    if(query[0])InputText(20,19,S-40,query,queryAt,0,0,TX);else Text(20,19,"Cerca",F_SMALL,SUB);
     // Voci filtrate
     nhpane = 0;
     int y = 56;
@@ -330,8 +330,8 @@ static void paint(void)
         row2(x, r1 + 40, w, "INGRESSO", "Tastiera e mouse USB");
     }
     if (modal_mode == 1) {
-        inputmodal("Passphrase di crittografia",modal_buf,
-              modal_err ? "Operazione non riuscita: riprova." : "Invio per confermare · Esc per annullare",1);
+        inputmodal_at("Passphrase di crittografia",modal_buf,
+              modal_err ? "Operazione non riuscita: riprova." : "Invio per confermare · Esc per annullare",1,modalAt);
     } else if (modal_mode == 2)
         modal("Ripristinare lo snapshot?", sel_snap >= 0 ? snaps[sel_snap].name : "",
               "Invio per confermare · Esc per annullare");
@@ -355,7 +355,7 @@ static void paint(void)
             Text(hresmenu.x+26,yy+2,label,F_SMALL,TX);
         }
     }
-    if(focus_search&&!modal_mode&&!res_open)InputText(20,19,S-40,query,strlen(query),1,0,TX);
+    if(focus_search&&!modal_mode&&!res_open)InputText(20,19,S-40,query,queryAt,1,0,TX);
     finish();
 }
 
@@ -367,7 +367,8 @@ static void apply_resolution(int i){
 }
 static void click(int ax, int ay)
 {
-    if (modal_mode)return;
+    if(modal_mode){if(modal_mode==1){int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-143)/2;
+        if(ax>=x+16&&ax<x+w-16&&ay>=y+43&&ay<y+78){modalAt=text_hit_offset(modal_buf,modalAt,w-50,ax-x-25);modalSelected=0;}}return;}
     if(pane==2&&vault_open){
         if(si.recovery){Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);return;}
         if(ax>=208){Event e={.type=EV_CLICK,.a=ax,.b=ay};vault_view_event(&e);return;}
@@ -375,7 +376,7 @@ static void click(int ax, int ay)
     }
     if(res_open){if(hit(hresmenu,ax,ay)){int j=(ay-hresmenu.y-RES_PAD)/RES_ROW;if(ay>=hresmenu.y+RES_PAD&&j<MIN((int)si.nmodes-res_scroll,RES_ROWS))apply_resolution(res_scroll+j);return;}res_open=0;if(!hit(hres,ax,ay))return;}
     if (hit(hsearch, ax, ay)) {
-        focus_search = 1;
+        queryAt=text_hit_offset(query,queryAt,hsearch.w-24,ax-20);querySelected=0;focus_search = 1;
         return;
     }
     focus_search = 0;
@@ -413,7 +414,7 @@ static void click(int ax, int ay)
                 if (encpass[i]) {
                     modal_mode = 1;
                     modal_op = encact[i];
-                    modal_buf[0] = 0;
+                    modal_buf[0] = 0;modalAt=modalSelected=0;
                     modal_err = 0;
                 } else {
                     int rr = sc(S_SNAP, 6, encact[i], 0, 0);
@@ -463,7 +464,7 @@ static void key(Event *e)
             modal_mode = 0;
             strset(msg, rr ? "Operazione non riuscita." : "Crittografia aggiornata.", sizeof msg);
             refresh();
-        } else {text_append_key(modal_buf,65,k);modal_err=0;}
+        } else {text_edit_key(modal_buf,65,&modalAt,&modalSelected,k,e->b);modal_err=0;}
 
         return;
     }
@@ -480,10 +481,10 @@ static void key(Event *e)
     }
     if (focus_search) {
         if (k == 27) {
-            query[0] = 0;
+            query[0] = 0;queryAt=querySelected=0;
             focus_search = 0;
         } else if (k == '\n')focus_search = 0;
-        else text_append_key(query,sizeof query,k);
+        else text_edit_key(query,sizeof query,&queryAt,&querySelected,k,e->b);
         if (query[0] && !match(pname[pane])) {
             for (int i = 0; i < NP;i++)if (match(pname[i])) {
                     pane = i;

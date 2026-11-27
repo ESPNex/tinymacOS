@@ -24,6 +24,7 @@ void Text(int, int, const char *, int, u32);
 /* Locked production F_MONO advances are 8px; compact glyph references avoid UTF-8 truncation. */
 /* Focus and blink are composited centrally, without republishing app frames. */
 void InputText(int, int, int, const char *, int, int, int, u32);
+void inputmodal_at(const char *,const char *,const char *,int,int);
 void inputmodal(const char *, const char *, const char *, int);
 void Caret(int, int, int, int, u32);
 void MonoText(int, int, const char *, int, u32);

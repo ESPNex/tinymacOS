@@ -1,0 +1,41 @@
+[
+  {
+    "original_external_path": "/var/tmp/tmc-desktop4-acceptance-8gbvrpa3/evidence/desktop4-free-widget-overlap.png",
+    "original_sha256": "1b5cae7a734c4565084767cd78cdf843381f8e7a728f3f98ec66dd8b6565750d",
+    "crop": [
+      985,
+      62,
+      1260,
+      215
+    ],
+    "persisted_file": "evidence/desktop-live-widget.png",
+    "persisted_sha256": "a8663817646abfd228238d3e301dc94c8e55d8e765f2bc3da741e9b89784ff6f",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-desktop4-acceptance-8gbvrpa3/evidence/desktop4-cold-persistent-position.png",
+    "original_sha256": "c451a6b19976e68d0fd1675b82d3a0ca206cbdc9f5694b46d776d9507d3feb6e",
+    "crop": [
+      985,
+      62,
+      1260,
+      215
+    ],
+    "persisted_file": "evidence/desktop-cold-widget.png",
+    "persisted_sha256": "1673cf69ab8e95b8779533bdfdd78cd5a234423dcbce8358d917ef27e8bde4ec",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-desktop4-acceptance-8gbvrpa3/evidence/desktop4-recovery-fields-active.png",
+    "original_sha256": "4791a71091974df0b3736bc1b8920b58beb20bb820e77ff4999428907d63b52b",
+    "crop": [
+      375,
+      155,
+      1100,
+      715
+    ],
+    "persisted_file": "evidence/recovery-fields.png",
+    "persisted_sha256": "0d9c8357b7004f05b3f672b419725d328a38d75b0bde1251cee58dc8cc7e7629",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  }
+]

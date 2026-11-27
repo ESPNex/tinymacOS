@@ -38,3 +38,25 @@ static inline int text_field_length(const char *s,int capacity)
 /* Byte boundaries <-> fixed-cell columns, never split a multibyte scalar. */
 static inline int text_columns(const char *s,int end){int n=0;for(int i=0;i<end&&s[i];i=text_next(s,i))n++;return n;}
 static inline int text_offset(const char *s,int start,int end,int columns){while(columns-->0&&start<end)start=text_next(s,start);return MIN(start,end);}
+
+/* Fixed-cell single-line mouse hit, with the same viewport as InputText. */
+static inline int text_hit_offset(const char *s,int at,int width,int pixel)
+{
+    int len=strlen(s),cols=MAX(1,width/8-1);at=MAX(0,MIN(at,len));
+    int start=text_offset(s,0,at,MAX(0,text_columns(s,at)-cols));
+    return text_offset(s,start,len,MAX(0,MIN(cols,(pixel+4)/8)));
+}
+static inline int text_edit_key(char *s,int cap,int *at,int *selected,int k,int command)
+{
+    int len=strlen(s);*at=MAX(0,MIN(*at,len));while(*at>0&&((u8)s[*at]&0xc0)==0x80)(*at)--;
+    if(command){if(k=='a'||k=='A'){*selected=1;*at=strlen(s);return 1;}if(k==130||k==131){*at=k==130?0:strlen(s);*selected=0;return 1;}return 0;}
+    if(k==130){*at=*selected?0:text_prev(s,*at);*selected=0;return 1;}
+    if(k==131){*at=*selected?strlen(s):text_next(s,*at);*selected=0;return 1;}
+    if(k==133||k==134){*at=k==133?0:strlen(s);*selected=0;return 1;}
+    if(k==8||k==127||k==132||text_printable(k)){
+        if(*selected){s[0]=0;*at=*selected=0;}
+        else if(k==8||k==127)text_backspace(s,at);else if(k==132)text_delete(s,*at);
+        if(text_printable(k))text_insert(s,cap,at,k);return 1;
+    }
+    return 0;
+}

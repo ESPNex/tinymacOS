@@ -1,4 +1,5 @@
 #include "path.h"
+#include "shortcuts.h"
 #define NH 40
 #define NR 240
 #define STAGES 6
@@ -352,7 +353,13 @@ static void select_event(Event*e){
  if(!e->d&&!selecting)return;
  int rows=MAX(3,(ah-43)/19),c=cols();char q[INPUT+96];prompt(q,sizeof q);append(q,input,sizeof q);
  int nr=job?0:text_columns(q,strlen(q))/c+1,end=MAX(0,nt-scroll),start=MAX(MAX(0,nt-NR),end-rows+(scroll?0:nr));
- if(start>=end||e->b<12||e->b>=12+(end-start)*19){if(!e->c)selecting=0;return;}
+ int inputY=12+(end-start)*19;
+ if(e->d&&!job&&!scroll&&e->b>=inputY&&e->b<inputY+nr*19){
+  char prefix[INPUT+96];prompt(prefix,sizeof prefix);
+  int column=(e->b-inputY)/19*c+MAX(0,(e->a-14+4)/8)-text_columns(prefix,strlen(prefix));
+  cur=text_offset(input,0,strlen(input),MAX(0,column));selection=selecting=0;return;
+ }
+ if(start>=end||e->b<12||e->b>=inputY){if(!e->c)selecting=0;return;}
  int row=start+(e->b-12)/19,col=MAX(0,(e->a-14+4)/8),at=text_offset(screen[row%NR],0,strlen(screen[row%NR]),col);
  if(e->d){anchor_row=row;anchor_byte=at;selecting=1;}
  end_row=row;end_byte=at;selection=anchor_row!=end_row||anchor_byte!=end_byte;if(!e->c)selecting=0;
@@ -435,7 +442,13 @@ static void key(Event *e)
         else if(text_printable(k))text_insert(secret_input,sizeof secret_input,&secret_at,k);
         return;
     }
-    if(e->b&&e->c&&(k=='c'||k=='C'||k=='v'||k=='V'||k=='x'||k=='X')){clipboard_action(k=='v'||k=='V'?ACT_PASTE:k=='x'||k=='X'?ACT_CUT:ACT_COPY);return;}
+    if(key_command(e)&&(k=='c'||k=='C'||k=='v'||k=='V'||k=='x'||k=='X')){clipboard_action(k=='v'||k=='V'?ACT_PASTE:k=='x'||k=='X'?ACT_CUT:ACT_COPY);return;}
+    if(key_command(e)){
+        if(k=='k'||k=='K'){nt=scroll=0;selection=0;}
+        else if(k=='n'||k=='N')sc(S_SPAWN,TERMINAL,cwd,0,0);
+        else if(k==K_LEFT)cur=0;else if(k==K_RIGHT)cur=n;
+        return;
+    }
     if (e->b && (k == 'c' || k == 'C')) {
         if (job)sc(S_KILL, job, 0, 0, 0);
         else {

@@ -2,6 +2,8 @@
 #include "desk.h"
 #include "control.h"
 #include "date.h"
+#include "caret.h"
+#include "desktop_layout.h"
 #define NS 9
 static const int pins[NS] = {FINDER, 0, CALENDAR, GALLERY, TEXTEDIT, CALC, TERMINAL, MONITOR, SETTINGS};
 static int mag[NS], hover = -1, oldHover = -2, tipA, bounceA, bounceTime, dockAge = 28, dockLast = -1;
@@ -12,13 +14,75 @@ static int cmx,cmy,owner,pending,nonce,cmn,codes[16],deskSel=-2,lastHit=-2,keybo
 static unsigned deskRev=~0u;static u64 deskTick;static int ndesk;static Dirent ondesk[NSLOTS];
 static const char *cmtext[16];
 static void cmadd(const char*s,int a){if(cmn<16){cmtext[cmn]=s;codes[cmn++]=a;}}
+static DesktopLayout desktopLayout;
+static int layoutLoaded,desktopFocus,queryAt,querySelected,folderAt,folderSelected;
+static int fieldPhase=-1;static u64 fieldTick,pendingUntil;
+static char folderName[48],folderError[100],pendingName[48];static int pendingX,pendingY;
+static const char *layoutPath=HOME "/Library/Preferences/Desktop.layout";
 static int dmax(void){return MAX(1,(H-314)/91);}
-static Rect deskcell(int i){return (Rect){W-135-(i/dmax())*128,220+(i%dmax())*91,122,83};}
-static int dcount(void){return MIN(ndesk+!!sys.live_cd,dmax()*MAX(1,(W-150)/128));}
+static int dcount(void){return ndesk+!!sys.live_cd;}
+static const char *position_name(int slot){int i=slot-!!sys.live_cd;return i<0?"@installer":ondesk[i].name;}
+static u64 position_id(int slot){int i=slot-!!sys.live_cd;return i<0?~0ull:ondesk[i].id;}
+static void layout_load(void){
+    desktop_layout_init(&desktopLayout);int fd=sc(S_OPEN,layoutPath,0,0,0);
+    if(fd>=0){int at=0;while(at<sizeof desktopLayout){int n=sc(S_READ,fd,(u8*)&desktopLayout+at,MIN(MAXFILE,sizeof desktopLayout-at),0);if(n<=0)break;at+=n;}sc(S_CLOSE,fd,0,0,0);
+        if(at!=sizeof desktopLayout||!desktop_layout_valid(&desktopLayout))desktop_layout_init(&desktopLayout);}
+    layoutLoaded=1;
+}
+static int layout_save(void){
+    sc(S_CREATE,HOME "/Library",1,0,0);sc(S_CREATE,HOME "/Library/Preferences",1,0,0);
+    int fd=sc(S_OPEN,layoutPath,1,0,0);
+    if(fd<0){if(sc(S_CREATE,layoutPath,0,0,0)<0)return 0;fd=sc(S_OPEN,layoutPath,1,0,0);}if(fd<0)return 0;
+    int at=0;while(at<sizeof desktopLayout){int n=MIN(MAXFILE,sizeof desktopLayout-at);if(sc(S_WRITE,fd,(u8*)&desktopLayout+at,n,0)!=n)break;at+=n;}sc(S_CLOSE,fd,0,0,0);return at==sizeof desktopLayout;
+}
+static Rect deskcell(int slot){
+    int cap=dmax()*MAX(1,(W-150)/128),i=slot%cap;
+    Rect fallback={W-135-(i/dmax())*128,220+(i%dmax())*91,122,83};
+    int p=desktop_position_find(&desktopLayout,position_id(slot),position_name(slot),0);
+    return desktop_position_box(p<0?0:desktopLayout.items+p,fallback,W,H);
+}
+static void position_set(int slot,int x,int y){
+    int p=desktop_position_find(&desktopLayout,position_id(slot),position_name(slot),1);if(p<0)return;
+    Rect q=desktop_position_box(0,(Rect){x,y,122,83},W,H);DesktopPosition*v=desktopLayout.items+p;
+    v->x=q.x;v->y=q.y;v->id=position_id(slot);strset(v->name,position_name(slot),48);
+}
+int shell_desktop_active(void){return desktopFocus||topwin()<0;}
+void shell_window_focus(void){desktopFocus=0;}
+void shell_drop_position(const char *path,int x,int y){
+    const char *base=path;for(const char*p=path;*p;p++)if(*p=='/')base=p+1;
+    strset(pendingName,base,sizeof pendingName);pendingX=x-61;pendingY=y-25;pendingUntil=sys.ticks+1000;
+}
+void shell_new_folder(void){
+    strset(folderName,"Nuova cartella",sizeof folderName);folderError[0]=0;folderAt=strlen(folderName);folderSelected=1;fieldTick=sys.ticks;
+    overlay_show(OV_NEW_FOLDER);
+}
+
 static int entryid(int slot){return slot-(int)sys.live_cd;}
-static int deskhit(int x,int y){for(int k=0;k<dcount();k++)if(inside(x,y,deskcell(k)))return entryid(k);return -2;}
+static int deskhit(int x,int y){for(int k=dcount();k--;)if(inside(x,y,deskcell(k)))return entryid(k);return -2;}
 static void deskpath(char *s,int i){strset(s,HOME "/Desktop",PATHLEN);if(i>=0&&i<ndesk){append(s,"/",PATHLEN);append(s,ondesk[i].name,PATHLEN);}}
 static void reveal(char cmd,int i){char path[PATHLEN],s[PATHLEN]={'@',cmd,':',0};deskpath(path,i);if(strlen(path)+3>=PATHLEN)return;append(s,path,PATHLEN);openarg(FINDER,s);}
+static void folder_confirm(void){
+    if(!folderName[0]||eq(folderName,".")||eq(folderName,"..")||strchr(folderName,'/')){strset(folderError,"Scegli un nome valido senza /.",sizeof folderError);return;}
+    char path[PATHLEN];strset(path,HOME "/Desktop/",PATHLEN);append(path,folderName,PATHLEN);
+    if(sc(S_CREATE,path,1,0,0)<0){strset(folderError,"Cartella non creata: nome già presente o permesso negato.",sizeof folderError);return;}
+    shell_drop_position(path,cmx,cmy);overlay_show(0);dirty=1;
+}
+int shell_desktop_drop(const char *path,int x,int y,int dx,int dy){
+    int slot=-1;char candidate[PATHLEN];
+    for(int k=0;k<dcount();k++){
+        int i=k-!!sys.live_cd;
+        if(i<0){if(eq(path,"@installer"))slot=k;}
+        else{deskpath(candidate,i);if(eq(path,candidate))slot=k;}
+    }
+    if(slot<0)return 0;
+    int target=deskhit(x,y);
+    if(target>=0&&ondesk[target].dir&&slot-!!sys.live_cd!=target){
+        if(eq(path,"@installer"))return 1;
+        char dest[PATHLEN];deskpath(dest,target);append(dest,"/",PATHLEN);append(dest,position_name(slot),PATHLEN);
+        if(sc(S_MOVE,path,dest,0,0)<0){strset(folderError,"Elemento non spostato: controlla nome e permessi.",sizeof folderError);}dirty=1;return 1;
+    }
+    Rect q=deskcell(slot);position_set(slot,q.x+dx,q.y+dy);layout_save();lastHit=-2;desktopFocus=1;dirty=1;return 1;
+}
 static void deskopen(int i){if(i==-1)launch(INSTALLER);else if(i>=0&&i<ndesk){char p[PATHLEN];deskpath(p,i);openarg(ondesk[i].dir?FINDER:TEXTEDIT,p);}}
 
 typedef struct {
@@ -95,7 +159,7 @@ void overlay_show(int n)
     popFrames = 0;
     pick = 0;
     if (n == OV_SEARCH) {
-        query[0] = 0;
+        query[0] = 0;queryAt=querySelected=0;fieldTick=sys.ticks;
         hits();
     }
     dirty = 1;
@@ -208,6 +272,7 @@ void shell_mouse(void)
 int shell_step(int dt)
 {
     int changed = 0;
+    if(ov&&want&&(ov==OV_SEARCH||ov==OV_NEW_FOLDER)){int phase=caret_phase(sys.ticks,fieldTick,sys.reduce_motion);if(phase!=fieldPhase){fieldPhase=phase;changed=1;}}
     if (dockLast < 0)dockLast = sys.dock;
     if (dockLast != (int)sys.dock) {
         dockLast = sys.dock;
@@ -349,7 +414,7 @@ static void chrome(int id, Rect q, int r, int kind)
 }
 void shell_reset(void)
 {
-    pending=0;deskSel=-2;lastHit=-2;ov = want = 0;
+    pending=0;deskSel=-2;lastHit=-2;ov = want = 0;layoutLoaded=0;deskRev=~0u;desktopFocus=0;pendingName[0]=0;
     query[0] = 0;
     pick = 0;
     hover = -1;
@@ -423,9 +488,8 @@ static void dock(void)
         }
     }
 }
-void shell_base(void)
+static void desktop_icons(void)
 {
-    if(deskRev!=sys.fsrev){ndesk=MAX(0,sc(S_LIST,HOME "/Desktop",ondesk,NSLOTS,0));deskRev=sys.fsrev;deskSel=-2;}
     for(int k=0;k<dcount();k++){
         int i=entryid(k);Rect q=deskcell(k);const char *name=i<0?INSTALLER_TITLE:ondesk[i].name;
         icon(q.x+36,q.y+2,50,i<0?38:ondesk[i].dir?6:7);
@@ -439,6 +503,14 @@ void shell_base(void)
         if(strlen(name)>=20){label[16]='.';label[17]='.';label[18]=0;}
         int nw=MIN(124,textw(label,F_SMALL)+12);roundr(q.x+(q.w-nw)/2,q.y+56,nw,23,7,i==deskSel?0x146be3:0x181a24,i==deskSel?245:136);center(q.x+q.w/2,q.y+59,label,F_SMALL,0xffffff);
     }
+}
+void shell_base(void)
+{
+    if(!layoutLoaded)layout_load();
+    if(deskRev!=sys.fsrev){ndesk=MAX(0,sc(S_LIST,HOME "/Desktop",ondesk,NSLOTS,0));deskRev=sys.fsrev;deskSel=-2;
+        for(int j=0;j<DESKTOP_POSITIONS;j++)if(desktopLayout.items[j].used){int found=0;for(int k=0;k<dcount();k++)if(desktopLayout.items[j].id==position_id(k)||eq(desktopLayout.items[j].name,position_name(k))){found=1;break;}if(!found)desktopLayout.items[j].used=0;}
+    }
+    if(pendingName[0]){for(int k=0;k<dcount();k++)if(eq(position_name(k),pendingName)){position_set(k,pendingX,pendingY);layout_save();pendingName[0]=0;break;}if(sys.ticks>pendingUntil)pendingName[0]=0;}
     widget = (Rect) {
         W - 291, BAR + 32, 265, 143
     };
@@ -447,7 +519,7 @@ void shell_base(void)
             widget.x - 17, widget.y - 16, widget.w + 34, widget.h + 38
         });
         u64 key = tilekey(widget, b, sys.day + (sys.month + sys.year * 12) * 32);
-        if (reuse(tiles + 2, b, key))return;
+        if (reuse(tiles + 2, b, key)){desktop_icons();return;}
         shadow(widget, 21, 41);
         glass(widget, 21, MAT_WIDGET);
         int x = widget.x, y = widget.y, m = clampi(sys.month, 1, 12), year = sys.year, day = MAX(1, sys.day),
@@ -472,6 +544,7 @@ void shell_base(void)
     } else widget = (Rect) {
         0, 0, 0, 0
     };
+    desktop_icons();
 }
 static int menus(int k, const char **s, int *a)
 {
@@ -548,7 +621,7 @@ static Rect targetpanel(void)
     }
     if (ov == OV_CONTROL)return control_bounds(W,H);
     int w = ov == OV_LIBRARY ? 688 : ov == OV_SEARCH ? 510 : 434,
-        h = ov == OV_SEARCH ? 94 + MIN(6, MAX(1, count)) * 46 : ov == OV_LIBRARY ? 469 : 188;
+        h = ov == OV_SEARCH ? 94 + MIN(6, MAX(1, count)) * 46 : ov == OV_LIBRARY ? 469 : ov==OV_NEW_FOLDER?212:188;
     return (Rect) {
         (W - w) / 2, ov == OV_SEARCH ? H / 5 : (H - h) / 2 - 15, w, h
     };
@@ -574,7 +647,7 @@ static void itemchoice(int a)
     if(ov==OV_MENU && menuId==7){
         int dest=topwin();overlay_show(0);
         if(owner && (dest<0||views[dest].s.pid!=owner))return;
-        if(a==201){openarg(FINDER,HOME "/Desktop");return;}if(a==202){reveal('n',-1);return;}
+        if(a==201){openarg(FINDER,HOME "/Desktop");return;}if(a==202){shell_new_folder();return;}
         if(a==203){deskopen(deskSel);return;}if(a>=204&&a<=206){reveal(a==204?'i':a==205?'r':'d',deskSel);return;}
     }else overlay_show(0);
     if (a == 164)mc_enter();
@@ -596,6 +669,14 @@ static void paintoverlay(void)
     shadow(q, 20, 54);
     glass(q, ov == OV_MENU ? 13 : 22, ov == OV_MENU ? MAT_MENU : MAT_SHEET);
     int x = q.x, y = q.y;
+    if(ov==OV_NEW_FOLDER){
+        text(x+22,y+17,"Nuova cartella",F_BOLD,TX);roundr(x+20,y+55,q.w-40,36,7,INK(I_CARD),255);
+        if(folderSelected)roundr(x+29,y+63,MIN(q.w-61,text_columns(folderName,strlen(folderName))*8),18,2,INK(I_SEL),180);
+        inputline((Rect){x+30,y+64,q.w-60,18},folderName,folderAt,caret_phase(sys.ticks,fieldTick,sys.reduce_motion),TX);
+        if(folderError[0])text(x+22,y+106,folderError,F_SMALL,SUB);
+        button_face((Rect){x+q.w-210,y+q.h-47,85,28},0);center(x+q.w-168,y+q.h-41,"Annulla",F_SMALL,TX);
+        button_face((Rect){x+q.w-111,y+q.h-47,85,28},1);center(x+q.w-69,y+q.h-41,"Crea",F_SMALL,TX);return;
+    }
     if (ov == OV_MENU) {
         const char *l[16];
         int a[16], n = menus(menuId, l, a);
@@ -608,7 +689,8 @@ static void paintoverlay(void)
     }
     if (ov == OV_SEARCH) {
         icon(x + 19, y + 26, 27, 20);
-        text(x + 59, y + 23, query[0] ? query : "Cerca app e documenti", F_TITLE, query[0] ? TX : SUB);
+        if(!query[0])text(x+59,y+23,"Cerca app e documenti",F_TITLE,SUB);
+        inputline((Rect){x+59,y+26,q.w-135,18},query,queryAt,caret_phase(sys.ticks,fieldTick,sys.reduce_motion),TX);
         roundr(x + q.w - 61, y + 26, 39, 24, 8, INK(I_CARD), 193);
         center(x + q.w - 41, y + 32, "ESC", F_MICRO, SUB);
         rect(x + 16, y + 72, q.w - 32, 1, LN);
@@ -641,9 +723,9 @@ static void paintoverlay(void)
     text(x + 23, y + 15, "tinymacOS  /  Tramontana", F_MICRO, INK(I_ACC_TXT));
     text(x + 22, y + 39, ov == OV_HELP ? "Scorciatoie" : ov == OV_OFF ? "Spegnere il sistema?" : "Riavviare il sistema?",
          F_TITLE, TX);
-    text(x + 23, y + 91, ov == OV_HELP ? "Ctrl+Spazio: Cerca  ·  F10: Mission Control" :
+    text(x + 23, y + 91, ov == OV_HELP ? "Win+Spazio: Cerca · Ctrl+↑: Mission Control" :
          "I documenti non salvati andranno persi.", F_BODY, SUB);
-    text(x + 23, y + 118, ov == OV_HELP ? "F1–F9: app  ·  Ctrl+Shift+Q: blocca lo schermo" :
+    text(x + 23, y + 118, ov == OV_HELP ? "Win+Maiusc+A: app · Win+Ctrl+Q: blocca" :
          "Invio per confermare, Esc per annullare.", F_SMALL, SUB);
     button_face((Rect) {
         x + q.w - 100, y + 144, 80, 29
@@ -695,13 +777,17 @@ int shell_click(int x, int y)
             overlay_show(0);
             return 1;
         }
-        if (ov == OV_MENU) {
+        if(ov==OV_NEW_FOLDER){
+            if(y>=q.y+q.h-50){if(x>=q.x+q.w-115)folder_confirm();else if(x>=q.x+q.w-215)overlay_show(0);}
+            else if(y>=q.y+55&&y<q.y+91){folderAt=text_hit_offset(folderName,folderAt,q.w-60,x-q.x-30);folderSelected=0;fieldTick=sys.ticks;}
+        } else if (ov == OV_MENU) {
             const char *l[16];
             int a[16], n = menus(menuId, l, a), dy = y - q.y - 6;
             if (dy >= 0 && dy / 31 < n)itemchoice(a[dy / 31]);
         } else if (ov == OV_SEARCH) {
             int dy = y - q.y - 81;
             if (dy >= 0)choose(MAX(0, pick - 5) + dy / 46);
+            else{queryAt=text_hit_offset(query,queryAt,q.w-135,x-q.x-59);querySelected=0;fieldTick=sys.ticks;}
         } else if (ov == OV_LIBRARY) {
             for (int j = 0; j < libcount(); j++)if (inside(x, y, libcell(q, j))) {
                     overlay_show(0);
@@ -721,7 +807,7 @@ int shell_click(int x, int y)
         } else overlay_show(OV_LIBRARY);
         return 1;
     }
-    if (inside(x, y, widget)) {
+    if (inside(x, y, widget)&&deskhit(x,y)==-2) {
         for (int j = 0; j < nz; j++)if (!views[order[j]].mini && inside(x, y, views[order[j]].box))return 0;
         launch(CALENDAR);
         return 1;
@@ -733,7 +819,7 @@ int shell_click(int x, int y)
         return 1;
     }
     for(int j=nz;j--;){View*v=views+order[j];if(!v->mini&&!v->dead&&inside(x,y,v->box))return 0;}
-    int item=deskhit(x,y);deskSel=item;
+    desktopFocus=1;int item=deskhit(x,y);deskSel=item;
     if(item!=-2){if(lastHit==item&&sys.ticks-deskTick<50){deskopen(item);lastHit=-2;}else{lastHit=item;deskTick=sys.ticks;}return 1;}
     lastHit=-2;
     return 0;
@@ -753,17 +839,17 @@ void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;di
         cmadd("Contrai finestra",141);cmadd("Zoom / ripristina",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina",205);cmadd("Elimina…",206);}}
     else if(inside(mx,my,widget)){cmadd("Apri Calendario",100+CALENDAR);}
-    else {cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd(INSTALLER_TITLE "…",100+INSTALLER);}showctx();}
+    else {desktopFocus=1;cmadd("Nuova cartella…",202);cmadd("Apri Scrivania in Finder",201);if(sys.live_cd)cmadd(INSTALLER_TITLE "…",100+INSTALLER);}showctx();}
 int shell_key(Event *e)
 {
     pending=0;int k = e->a;
-    if (mc) {if (k == K_F10 || k == 27)mc_exit();return 1;}
+    if (mc) {if (key_mission(e) || k == 27)mc_exit();return 1;}
     if(ov==OV_MENU&&want&&menuId==7){if(k==K_UP||k==K_DOWN){keyboardPick=(keyboardPick+(k==K_DOWN?1:cmn-1)+cmn)%cmn;dirty=1;return 1;}if(k=='\n'){if(keyboardPick>=0)itemchoice(codes[keyboardPick]);return 1;}}
     if (e->b && k == ' ') {
         overlay_show(want && ov == OV_SEARCH ? 0 : OV_SEARCH);
         return 1;
     }
-    if (k == K_F10) {
+    if (key_mission(e)) {
         if (ov && want)overlay_show(0);
         mc_enter();
         return 1;
@@ -777,10 +863,10 @@ int shell_key(Event *e)
         overlay_show(0);
         return 1;
     }
-    if (k >= K_F1 && k <= K_F9) {
-        overlay_show(0);
-        launch(k - K_F1 + 1);
-        return 1;
+    if(ov==OV_NEW_FOLDER){
+        fieldTick=sys.ticks;
+        if(k=='\n')folder_confirm();else if(text_edit_key(folderName,sizeof folderName,&folderAt,&folderSelected,k,e->b))folderError[0]=0;
+        dirty=1;return 1;
     }
     if (ov == OV_CONTROL)return control_key(panel,e);
     if (ov == OV_SEARCH) {
@@ -791,7 +877,7 @@ int shell_key(Event *e)
         if (k == K_UP)pick = MAX(0, pick - 1);
         else if (k == K_DOWN)pick = MIN(MAX(0, count - 1), pick + 1);
         else {
-            text_append_key(query,sizeof query,k);
+            text_edit_key(query,sizeof query,&queryAt,&querySelected,k,e->b);fieldTick=sys.ticks;
             hits();
         }
     } else if (ov == OV_LIBRARY) {
@@ -810,6 +896,6 @@ int shell_key(Event *e)
 int shell_overlay_open(void) { return ov && want; }
 
 /* Desktop files participate in cross-window drag without changing clipboard. */
-int shell_drag_source(int x,int y,char out[PATHLEN]){int i=deskhit(x,y);if(i<0)return 0;deskpath(out,i);return 1;}
+int shell_drag_source(int x,int y,char out[PATHLEN]){int i=deskhit(x,y);if(i==-2)return 0;if(i==-1){strset(out,"@installer",PATHLEN);return 2;}deskpath(out,i);return 1;}
 
 int shell_drop_folder(int x,int y){int i=deskhit(x,y);return i>=0&&i<ndesk&&ondesk[i].dir?i:-1;}

@@ -1,0 +1,100 @@
+{
+  "base_commit": "04ddc8362a14bec5458c4fcafa1067672d48880a",
+  "production_inputs_verified": 1079,
+  "frozen_source_asset_inputs": 976,
+  "remaining_tools_and_metadata_unchanged_from_base": 103,
+  "production_paths_changed_from_block3": [
+    "tinymacOS/boot/loader.c",
+    "tinymacOS/boot/recoveryboot.h",
+    "tinymacOS/desktop/desk.h",
+    "tinymacOS/desktop/desktop_layout.h",
+    "tinymacOS/desktop/gfx.c",
+    "tinymacOS/desktop/gfx.h",
+    "tinymacOS/desktop/login.c",
+    "tinymacOS/desktop/main.c",
+    "tinymacOS/desktop/recovery.c",
+    "tinymacOS/desktop/shell.c",
+    "tinymacOS/drivers/input.c",
+    "tinymacOS/include/abi.h",
+    "tinymacOS/include/shortcuts.h",
+    "tinymacOS/include/text_input.h",
+    "tinymacOS/userspace/calendar.c",
+    "tinymacOS/userspace/diskutility.c",
+    "tinymacOS/userspace/filepanel.c",
+    "tinymacOS/userspace/finder.c",
+    "tinymacOS/userspace/installer.c",
+    "tinymacOS/userspace/settings.c",
+    "tinymacOS/userspace/terminal.c",
+    "tinymacOS/userspace/ui.c",
+    "tinymacOS/userspace/ui.h",
+    "tinymacOS/userspace/vaultpanel.c"
+  ],
+  "artifacts": {
+    "tmc-block4-retail.iso": {
+      "sha256": "39b040509a63a4cfa4ca3d9136744fc430dcfc432b8226e46c2b8d4c6752d413",
+      "bytes": 227805184
+    },
+    "KernelCache": {
+      "sha256": "07407fe839f670bc4d3e4ffba37b4a40f87b50b3a973deb15cb9775a954fd435",
+      "bytes": 1298728
+    },
+    "kernel.elf": {
+      "sha256": "82a5bdec9c54aceb3acf8a2d278998751df9f87b4366dc96c5549688f609c684",
+      "bytes": 1298664
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "c920a34caadabc946a3d9186a6770993cf1503caf58f7ac2c398637fcc3a2267",
+      "bytes": 1298664
+    },
+    "BOOTX64.EFI": {
+      "sha256": "447fb342e8712227e08c59b1fc0047106653ecfa52cee0ec128b456a4d4958bb",
+      "bytes": 177152
+    },
+    "RECBOOT.EFI": {
+      "sha256": "66fe33e295fb577f98d9419ed91e6b299e5b9462edd18b5a703e8519b7dd35d0",
+      "bytes": 173056
+    },
+    "desktop.elf": {
+      "sha256": "d5f364e8bea22e2055bab47aa9290dd9e514207ce09fe0f181119bfb0114a9fa",
+      "bytes": 2811392
+    },
+    "finder.elf": {
+      "sha256": "e097e479538a11109d1e7ec6ccc4216de3997f2b2d46718d2e317ffc203ea859",
+      "bytes": 50176
+    },
+    "terminal.elf": {
+      "sha256": "39e3e3f31a0464be9845a4b3e0b202e9e4c6f4b99c974cce8d2e80da38c557ac",
+      "bytes": 37752
+    },
+    "installer.elf": {
+      "sha256": "76fcd6bff0ce48af359b3e3acdb23671e062c746590b7af7ceb5ab4dc5f273f5",
+      "bytes": 37376
+    },
+    "settings.elf": {
+      "sha256": "bfbd83f9937c003c25450096bd7228e374f90ff0604b7b83130f097762167610",
+      "bytes": 45816
+    },
+    "diskutility.elf": {
+      "sha256": "f8f1300772a687786d1cafd5fc031e2c6a8d820b73c3182e917c87c80e0a13df",
+      "bytes": 45576
+    },
+    "calendar.elf": {
+      "sha256": "be3e7d4fccb81752013d56130370d3d445d6ce3f995f7c87573ed90418986475",
+      "bytes": 25152
+    },
+    "textedit.elf": {
+      "sha256": "1910b771872448b8b6c8ffcb4371ed713dc9b52575bc011b7a0f92fe383eabb8",
+      "bytes": 37472
+    },
+    "notes.elf": {
+      "sha256": "b7d0a35bedac22edd1b45762fa310d68dfe705ecf5cc810fccdc7dc34b61f77e",
+      "bytes": 29096
+    },
+    "stickies.elf": {
+      "sha256": "019dd54767a8d31834588e11741cde93b60becb3f3e969e8bc675e8c6c78a04f",
+      "bytes": 29096
+    }
+  },
+  "physical_hardware_tested": false,
+  "release_ready": false
+}

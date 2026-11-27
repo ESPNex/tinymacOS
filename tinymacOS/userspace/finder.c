@@ -480,7 +480,7 @@ static void event(Event *e)
     if (dialog) {
         if(e->type==EV_CLICK&&dialog<=3){int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-184)/2;
             if(e->b>=y+139&&e->b<y+165){if(e->a>=x+w-210&&e->a<x+w-118)dialog=0;else if(e->a>=x+w-108&&e->a<x+w-16)confirm();}
-            else if(e->a>=x+16&&e->a<x+w-16&&e->b>=y+43&&e->b<y+78){field_selected=0;field_at=strlen(field);}return;}
+            else if(e->a>=x+16&&e->a<x+w-16&&e->b>=y+43&&e->b<y+78){field_selected=0;field_at=text_hit_offset(field,field_at,w-50,e->a-x-25);}return;}
         if(e->type!=EV_KEY)return;int k=e->a;
         if(k==27)dialog=0;else if(k=='\n'||k=='\r')confirm();
         else if(dialog<=3){
@@ -506,20 +506,18 @@ static void event(Event *e)
         item_click.armed=0;
         int k = e->a;
         if (e->b) {
-            if (e->c && (k == 'K' || k == 'k')) {
-                go(KERNELDIR);
-                return;
-            }
+            if(e->c&&(k=='h'||k=='d'||k=='o')){go(k=='h'?HOME:k=='d'?HOME "/Desktop":DOCS);return;}
             if (k == '[' || k == ']')historygo(k == '[' ? -1 : 1);
-            if (k == 'n' || k == 'N')act(e->c ? 30 : ACT_NEW);
+            if(k=='n'||k=='N'){if(e->c)act(ACT_NEW);else sc(S_SPAWN,FINDER,cwd,0,0);}
+            if(k==K_UP)act(ACT_PARENT);
+            if(k==K_DOWN||k=='o')act(ACT_OPEN);
+            if(k==8)act(ACT_DELETE);
             paste_selected=0;
             if(k=='x'||k=='X')act(ACT_CUT);
             if (k == 'c'||k=='C')
                 act(ACT_COPY);
             if (k == 'v'||k=='V')
                 act(ACT_PASTE);
-            if (k == 'r')
-                act(ACT_RENAME);
             if (k == 'i')
                 act(ACT_PROPS);
             return;
@@ -553,12 +551,8 @@ static void event(Event *e)
             return;
         }
         prefix[0] = 0;
-        if (k == 8)
-            act(ACT_PARENT);
-        else if (k == '\n')
-            act(ACT_OPEN);
-        else if (k == K_DEL)
-            act(ACT_DELETE);
+        if (k == '\n')
+            act(ACT_RENAME);
         else if (k == K_UP || k == K_DOWN || k == K_LEFT || k == K_RIGHT) {
             if (!n)return;
             int step = listview ? 1 : cols();

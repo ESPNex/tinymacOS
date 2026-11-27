@@ -16,7 +16,7 @@ static int sel, view, dialog, op, nsn,side_scroll;
 static char msg[160], snapname[32];
 static DiskEdit edit;
 static char editsize[16],editname[48];
-static int editfield;
+static int editfield,editAt[2],editSelected[2],exportSelected;
 static void edit_begin(int operation)
 {
     if(sel<0||sel>=d.count||view<200)return;
@@ -33,7 +33,7 @@ static void edit_begin(int operation)
         DiskPartition*p=m->part+j;edit.number=p->number;edit.start=p->start;edit.sectors=p->sectors;edit.size=p->sectors;
         editname[0]=0;
     }
-    disk_size_mb_exact(editsize,sizeof editsize,edit.size);dialog=3;
+    disk_size_mb_exact(editsize,sizeof editsize,edit.size);editAt[0]=strlen(operation==DISK_EDIT_DELETE?editname:editsize);editAt[1]=strlen(editname);memset(editSelected,0,sizeof editSelected);dialog=3;
 }
 static void edit_preview(void)
 {
@@ -69,9 +69,9 @@ static void edit_paint(void)
     if(dialog==3){
         Text(xx+20,yy+101,edit.op==DISK_EDIT_DELETE?"Conferma":"Dimensione (MB)",F_SMALL,TX);
         Box(xx+157,yy+94,tw-178,30,6,editfield==0?ACC:EDGE);Box(xx+158,yy+95,tw-180,28,5,CARD);
-        const char *value=edit.op==DISK_EDIT_DELETE?editname:editsize;InputText(xx+168,yy+101,tw-200,value,strlen(value),editfield==0,0,TX);
+        const char *value=edit.op==DISK_EDIT_DELETE?editname:editsize;InputText(xx+168,yy+101,tw-200,value,editAt[0],editfield==0,0,TX);
         if(edit.op==DISK_EDIT_CREATE){
-            Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,strlen(editname),editfield==1,0,TX);
+            Text(xx+20,yy+143,"Nome",F_SMALL,TX);Box(xx+157,yy+136,tw-178,30,6,editfield==1?ACC:EDGE);Box(xx+158,yy+137,tw-180,28,5,CARD);InputText(xx+168,yy+143,tw-200,editname,editAt[1],editfield==1,0,TX);
         }
         lines(xx+20,yy+181,tw-40,msg[0]?msg:edit.op==DISK_EDIT_DELETE?"Digita ELIMINA. Il contenitore esteso include tutte le partizioni logiche.":edit.op==DISK_EDIT_CREATE?"TMCFS2, filesystem proprietario del sistema.":"Resize: FAT32 e NTFS. TMCFS2: non disponibile.");
     }else{
@@ -90,13 +90,14 @@ static void edit_event(Event*e)
         if(e->a=='\n'){if(dialog==3)edit_preview();else if(dialog==4)dialog=5;return;}
         if(dialog!=3)return;
         if(e->a=='\t'&&edit.op==DISK_EDIT_CREATE){editfield=!editfield;return;}
-        char*s=edit.op==DISK_EDIT_DELETE||editfield?editname:editsize;int cap=s==editname?sizeof editname:sizeof editsize,n=strlen(s);
-        if((e->a==8||e->a==127)&&n)s[n-1]=0;
-        else if(e->a>=32&&e->a<=126&&n<cap-1&&(s==editname||(e->a>='0'&&e->a<='9'))){s[n]=e->a;s[n+1]=0;}
+        char*s=edit.op==DISK_EDIT_DELETE||editfield?editname:editsize;int cap=s==editname?sizeof editname:sizeof editsize;
+        if(s==editname||!text_printable(e->a)||(e->a>='0'&&e->a<='9')||e->b)
+            text_edit_key(s,cap,&editAt[editfield],&editSelected[editfield],e->a,e->b);
         msg[0]=0;
     }
     if(e->type==EV_CLICK){
-        if(dialog==3&&e->a>=xx+157&&e->a<xx+tw-21){if(e->b>=yy+94&&e->b<yy+124)editfield=0;if(e->b>=yy+136&&e->b<yy+166&&edit.op==DISK_EDIT_CREATE)editfield=1;}
+        if(dialog==3&&e->a>=xx+157&&e->a<xx+tw-21){if(e->b>=yy+94&&e->b<yy+124)editfield=0;if(e->b>=yy+136&&e->b<yy+166&&edit.op==DISK_EDIT_CREATE)editfield=1;
+            if((e->b>=yy+94&&e->b<yy+124)||(edit.op==DISK_EDIT_CREATE&&e->b>=yy+136&&e->b<yy+166)){char*s=edit.op==DISK_EDIT_DELETE||editfield?editname:editsize;editAt[editfield]=text_hit_offset(s,editAt[editfield],tw-200,e->a-xx-168);editSelected[editfield]=0;}}
         if(e->b>=yy+233&&e->b<yy+271){
             if(e->a>=xx+tw-218&&e->a<xx+tw-130){dialog=0;msg[0]=0;}
             if(e->a>=xx+tw-119&&e->a<xx+tw-22){if(dialog==3)edit_preview();else if(dialog==4)dialog=5;}
@@ -260,7 +261,7 @@ static void export_begin(void)
     }
     if(si.live_cd){strset(msg,"Esporta dal sistema installato, senza modificare il supporto live o Recupero.",sizeof msg);return;}
     strset(export_request.destination,"disk0",PATHLEN);
-    export_cursor=strlen(export_request.destination);dialog=6;msg[0]=0;
+    export_cursor=strlen(export_request.destination);exportSelected=0;dialog=6;msg[0]=0;
 }
 static void export_paint(void)
 {
@@ -292,15 +293,10 @@ static void export_event(Event*e)
         if(dialog==8){sc(S_SPAWN,FINDER,export_request.destination,0,0);dialog=0;}
         else{export_request.part.confirm=export_request.bytes?DISK_EDIT_CONFIRM:0;export_request.message[0]=0;dialog=7;}return;
     }
+    if(dialog==6&&e->type==EV_CLICK&&e->a>=xx+20&&e->a<xx+tw-20&&e->b>=yy+99&&e->b<yy+131){export_cursor=text_hit_offset(export_request.destination,export_cursor,tw-58,e->a-xx-29);exportSelected=0;return;}
     if(dialog!=6||e->type!=EV_KEY)return;
     char*value=export_request.destination;int k=e->a;export_request.bytes=0;export_request.part.confirm=0;
-    if(k==K_LEFT)export_cursor=text_prev(value,export_cursor);
-    else if(k==K_RIGHT)export_cursor=text_next(value,export_cursor);
-    else if(k==K_HOME)export_cursor=0;
-    else if(k==K_END)export_cursor=strlen(value);
-    else if(k==8||k==127)text_backspace(value,&export_cursor);
-    else if(k==K_DEL)text_delete(value,export_cursor);
-    else if(text_printable(k))text_insert(value,PATHLEN,&export_cursor,k);
+    text_edit_key(value,PATHLEN,&export_cursor,&exportSelected,k,e->b);
 }
 static void yes(void)
 {
