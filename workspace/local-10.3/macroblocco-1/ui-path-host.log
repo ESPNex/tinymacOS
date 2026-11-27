@@ -1,0 +1,8 @@
+PASS UI paths: real UTF8/spaced inode canonicalization, retained old-name fallback, no snapshot/prefix alias pollution or untrusted path components
+PASS MonoText 10.3: compact Draw uses one reference per scalar, accents/symbols preserved, unsupported scalar consumes one cell, 8px advances; Draw size/NCMDS unchanged
+PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS UI paths: real UTF8/spaced inode canonicalization, retained old-name fallback, no snapshot/prefix alias pollution or untrusted path components
+PASS MonoText 10.3: compact Draw uses one reference per scalar, accents/symbols preserved, unsupported scalar consumes one cell, 8px advances; Draw size/NCMDS unchanged
+PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure

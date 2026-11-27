@@ -129,6 +129,7 @@ Process *by_pid(int);
 void post(Process *, const Event *);
 void fs_init(void);
 int fs_stat(const char *, Dirent *);
+int fs_home_bind(const char *);
 int fs_list(const char *, Dirent *, int, int);
 int fs_create(const char *, int);
 int fs_remove(const char *);

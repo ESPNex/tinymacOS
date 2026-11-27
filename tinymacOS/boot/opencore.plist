@@ -280,7 +280,52 @@
 			<false/>
 		</dict>
 		<key>Tools</key>
-		<array/>
+		<array>
+			<dict>
+				<key>Arguments</key>
+				<string></string>
+				<key>Auxiliary</key>
+				<true/>
+				<key>Comment</key>
+				<string>tinymacOS user-confirmed maintenance; no Microsoft file changes</string>
+				<key>Enabled</key>
+				<true/>
+				<key>Flavour</key>
+				<string>OpenShell:UEFIShell:Shell</string>
+				<key>FullNvramAccess</key>
+				<false/>
+				<key>Name</key>
+				<string>Diagnostica video UEFI</string>
+				<key>Path</key>
+				<string>TmcVideo.efi</string>
+				<key>RealPath</key>
+				<false/>
+				<key>TextMode</key>
+				<true/>
+			</dict>
+			<dict>
+				<key>Arguments</key>
+				<string></string>
+				<key>Auxiliary</key>
+				<true/>
+				<key>Comment</key>
+				<string>tinymacOS user-confirmed maintenance; no Microsoft file changes</string>
+				<key>Enabled</key>
+				<true/>
+				<key>Flavour</key>
+				<string>OpenShell:UEFIShell:Shell</string>
+				<key>FullNvramAccess</key>
+				<false/>
+				<key>Name</key>
+				<string>Ripristina ordine di avvio</string>
+				<key>Path</key>
+				<string>TmcRestore.efi</string>
+				<key>RealPath</key>
+				<false/>
+				<key>TextMode</key>
+				<true/>
+			</dict>
+		</array>
 	</dict>
 	<key>NVRAM</key>
 	<dict>
@@ -483,14 +528,20 @@
 				<string>UsbMouseDxe.efi</string>
 			</dict>
 			<dict>
-                <key>Arguments</key><string></string>
-                <key>Comment</key><string>Source-built NVMe BlockIO for OpenDuet and firmware without NVMe; native kernel takes over after ExitBootServices</string>
-                <key>Enabled</key><true/>
-                <key>HideVerbose</key><false/>
-                <key>LoadEarly</key><false/>
-                <key>Path</key><string>NvmExpressDxe.efi</string>
-            </dict>
-            </array>
+				<key>Arguments</key>
+				<string></string>
+				<key>Comment</key>
+				<string>Source-built NVMe BlockIO for OpenDuet and firmware without NVMe; native kernel takes over after ExitBootServices</string>
+				<key>Enabled</key>
+				<true/>
+				<key>HideVerbose</key>
+				<false/>
+				<key>LoadEarly</key>
+				<false/>
+				<key>Path</key>
+				<string>NvmExpressDxe.efi</string>
+			</dict>
+		</array>
 		<key>Input</key>
 		<dict>
 			<key>KeyFiltering</key>

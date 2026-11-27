@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 512,
+  "storage_bus": "nvme",
+  "disk_sectors": 23437500,
+  "selected_gap_sectors": 19531776,
+  "work": "/var/tmp/tmc-m2-capacity-ac5jfzag",
+  "checks": [
+    "Real GUI 12.0 GB 512B install: container owns entire 10.0 GB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap",
+    "ISO-detached cold native boot: imported account/file usable; Terminal physical/container/data sizes and Utility physical disk agree with independent GPT/FS2 geometry",
+    "Same installed disk after cold Recovery boot: Installer, Utility Disco and Terminal all show physical capacity 12.0 GB; container 10.0 GB remains distinct and foreign metadata intact"
+  ],
+  "iso_sha256": "234bad9e9f40c75bf965884a2b396c2bb74d32f2978c239045fdd6d851d282eb",
+  "actual_data_sectors": 19408896,
+  "foreign_content": {
+    "all_foreign_bytes_verified": true,
+    "method": "SEEK_DATA/HOLE zero holes plus every allocated 512B sector",
+    "nonzero_foreign_sectors": 32,
+    "sha256": "c874c0a80ad59447476af9c9e53cdfc1d88844184a7360f62e60657bb21ef26f"
+  }
+}

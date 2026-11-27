@@ -1,0 +1,1 @@
+PASS independent read-only mounted image: exactly one account-named home, no physical User directory, live-imported and snapshot-restored documents intact; metadata/account verified

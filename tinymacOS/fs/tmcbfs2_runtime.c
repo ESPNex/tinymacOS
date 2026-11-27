@@ -8,8 +8,31 @@
 #include "prefs_plist.h"
 #include "fs2_runtime.h"
 #include "fs2_volume.h"
+#include "home_name.h"
 int fs2_active;
 static Tmc2 fs;
+static char home_name[48]="User";
+/* No migration at mount. Bind only to a verified account's existing inode. */
+static void home_refresh(void){
+ strset(home_name,"User",48);T2Entry users,old,named;u8 record[512];char name[48];
+ if(tmc2_lookup(&fs,1,"Users",&users)||users.kind!=T2_DIR||!tmc2_lookup(&fs,users.key,"User",&old))return;
+ for(int slot=0;slot<2;slot++)if(!tmc2_account(&fs,slot,record,0)&&home_account_name(record,name)){
+  if(!tmc2_lookup(&fs,users.key,name,&named)&&named.kind==T2_DIR)strset(home_name,name,48);
+  break;
+ }
+ erase(record,sizeof record);
+}
+int fs2_home_bind(const char*name){
+ if(!home_name_valid(name))return -3;T2Entry users,old,named;
+ if(tmc2_lookup(&fs,1,"Users",&users)||users.kind!=T2_DIR)return -1;
+ int have_old=!tmc2_lookup(&fs,users.key,"User",&old),have_named=!tmc2_lookup(&fs,users.key,name,&named);
+ if(have_named){if(named.kind!=T2_DIR||(have_old&&named.key!=old.key))return -2;strset(home_name,name,48);return 0;}
+ if(!have_old||old.kind!=T2_DIR||old.reserved&1||users.reserved&1)return -1;
+ /* One COW metadata publication; file inodes/extents, open handles, account
+  * records and historical snapshot roots are untouched. No copy or overwrite. */
+ if(tmc2_move(&fs,old.key,users.key,name))return -1;
+ strset(home_name,name,48);fsrev++;return 0;
+}
 static struct{int disk;u64 base,sectors;} medium;
 extern int volume_extent(u64*,u64*);
 static int disk_read(void*x,u64 block,void*p){(void)x;return fs2_volume_read(medium.disk,medium.base,medium.sectors,block,p);}
@@ -27,12 +50,23 @@ static int normalize(const char*path,char out[PATHLEN]){
   if(n==2&&start[0]=='.'&&start[1]=='.'){while(used&&out[used-1]!='/')used--;if(used)used--;continue;}
   if(n>=T2_NAME||used+1+n>=PATHLEN)return -1;out[used++]='/';memcpy(out+used,start,n);used+=n;
  }
- if(!used)out[used++]='/';out[used]=0;return 0;
+ if(!used)out[used++]='/';out[used]=0;
+ /* Keep a canonical compatibility path for protection checks, without adding
+  * a second directory to /Users. Snapshot paths deliberately bypass this. */
+ if(!eq(home_name,"User")){
+  char actual[64]="/Users/";append(actual,home_name,sizeof actual);size_t n=strlen(actual);
+  if(used>=n&&!memcmp(out,actual,n)&&(!out[n]||out[n]=='/')){
+   char suffix[PATHLEN];strset(suffix,out+n,PATHLEN);strset(out,HOME,PATHLEN);append(out,suffix,PATHLEN);
+  }
+ }
+ return 0;
 }
 static int resolve(const char*path,T2Entry*out){
  char q[PATHLEN];if(normalize(path,q))return -1;u64 id=1;char*p=q;
  while(*p){while(*p=='/')p++;if(!*p)break;char*s=p;while(*p&&*p!='/')p++;char saved=*p;*p=0;
-  T2Entry e;int bad=tmc2_lookup(&fs,id,s,&e);*p=saved;if(bad)return -1;id=e.key;
+  T2Entry e;const char*component=s;
+  if(s==q+7&&!memcmp(q,"/Users/",7)&&eq(s,"User"))component=home_name;
+  int bad=tmc2_lookup(&fs,id,component,&e);*p=saved;if(bad)return -1;id=e.key;
  }
  return tmc2_stat(&fs,id,out);
 }
@@ -45,8 +79,19 @@ static int view_resolve(const char*q,u64*snapshot,T2Entry*out){
  const char*p=q+12,*start=p;while(*p&&*p!='/')p++;size_t n=p-start;
  if(!n||n>=T2_NAME)return -1;char name[T2_NAME];memcpy(name,start,n);name[n]=0;
  T2Entry snap;if(tmc2_snapshot_find(&fs,name,&snap))return -1;*snapshot=snap.key;u64 id=1;
+ int at_users=0;
  while(*p){p++;start=p;while(*p&&*p!='/')p++;n=p-start;if(!n||n>=T2_NAME)return -1;
-  memcpy(name,start,n);name[n]=0;T2Entry child;if(tmc2_view_lookup(&fs,*snapshot,id,name,&child))return -1;id=child.key;
+  memcpy(name,start,n);name[n]=0;T2Entry child;int bad=tmc2_view_lookup(&fs,*snapshot,id,name,&child);
+  /* Old HOME aliases in a snapshot bind ONLY to that snapshot's own account,
+   * never to the live account/name or an arbitrary directory. */
+  if(bad&&at_users&&eq(name,"User")){
+   u8 record[512];char actual[48];
+   for(unsigned slot=0;slot<2;slot++)if(!tmc2_view_account(&fs,*snapshot,slot,record)&&home_account_name(record,actual)){
+    bad=tmc2_view_lookup(&fs,*snapshot,id,actual,&child);break;
+   }
+   erase(record,sizeof record);
+  }
+  if(bad)return -1;at_users=id==1&&eq(name,"Users");id=child.key;
  }
  return tmc2_view_stat(&fs,*snapshot,id,out)?-1:1;
 }
@@ -134,7 +179,7 @@ int fs2_seek(Process*p,int fd,u64 offset){
  else{Dirent e;if(bootfs_stat(f->id,&e)||offset>e.size)return -1;}
  f->at=offset;return 0;
 }
-int fs2_account(int slot,void*p,int write){return slot<0?-1:tmc2_account(&fs,slot,p,write);}
+int fs2_account(int slot,void*p,int write){if(slot<0)return -1;int r=tmc2_account(&fs,slot,p,write);if(!r&&write)home_refresh();return r;}
 static int write_path(const char*path,const void*p,size_t n){T2Entry e;if(resolve(path,&e)||tmc2_write(&fs,e.key,0,p,n)!=(i64)n||tmc2_truncate(&fs,e.key,n))return -1;return 0;}
 int fs2_prefs(void){u8 values[6]={theme,wall,dock,reduce_motion,opaque,dark};char xml[1024];int n=prefs_plist_write(xml,sizeof xml,values);return n<0?-1:write_path(HOME "/Library/Preferences/com.tinymacos.appearance.plist",xml,n);}
 static void load_prefs(void){T2Entry e;char xml[1024]={0};u8 conf[6];if(!resolve(HOME "/Library/Preferences/com.tinymacos.appearance.plist",&e)&&e.size<sizeof xml&&tmc2_read(&fs,e.key,0,xml,e.size)==(i64)e.size&&prefs_plist_read(xml,conf)){theme=conf[0]%NTHEME;wall=conf[1]%NWALL;dock=conf[2]&1;reduce_motion=conf[3]&1;opaque=conf[4]&1;dark=conf[5]&1;}}
@@ -145,7 +190,7 @@ int fs2_local_backup(int op){
  if(op==0){T2Entry e;return !tmc2_snapshot_find(&fs,"Copia locale",&e);}
  if(op!=1)return -1;int r=tmc2_checkpoint(&fs,"Copia locale");if(!r)fsrev++;return r;
 }
-int fs2_snap_restore(const char*name){if(tmc2_snapshot_restore(&fs,name))return -1;fsrev++;i64 count=tmc2_inode_count(&fs);if(count<0)return -1;usednodes=MIN((u64)count,0xffffffffu);load_prefs();return 0;}
+int fs2_snap_restore(const char*name){if(tmc2_snapshot_restore(&fs,name))return -1;fsrev++;i64 count=tmc2_inode_count(&fs);if(count<0)return -1;usednodes=MIN((u64)count,0xffffffffu);home_refresh();load_prefs();return 0;}
 int fs2_snap_delete(const char*name){if(tmc2_snapshot_delete(&fs,name)||tmc2_collect(&fs))return -1;fsrev++;return 0;}
 int fs2_snap_verify(const char*name){return tmc2_snapshot_verify(&fs,name);}
 int fs2_info(FsInfo*out){if(!out)return -1;u64 cookie=0;T2Entry e;u32 snaps=0;int r;while((r=tmc2_snapshots(&fs,&cookie,&e))==1)snaps++;if(r<0)return -1;*out=(FsInfo){fs.io.blocks*T2_BLOCK,tmc2_used_blocks(&fs)*T2_BLOCK,snaps,(u32)fs.super.generation};return 0;}
@@ -160,7 +205,7 @@ int fs2_mount(void){
  if(tmc2_mount(&fs,io))panic("TMCBFS2 metadata needs recovery; disk untouched",0,0);
  fs2_active=persistent=1;wall=12;theme=7;dark=darktheme(theme);usednodes=0;fsrev=fs.super.generation;
  i64 count=tmc2_inode_count(&fs);if(count<0)panic("TMCBFS2 inode catalog invalid",0,0);usednodes=MIN((u64)count,0xffffffffu);
- load_prefs();device_add("TMCBFS2 scalable CoW", "block", &fs);boot_logstr("[fs2] mounted full data extent: blocks=");boot_lognum(fs.io.blocks);boot_logstr("\n");return 1;
+ home_refresh();load_prefs();device_add("TMCBFS2 scalable CoW", "block", &fs);boot_logstr("[fs2] mounted full data extent: blocks=");boot_lognum(fs.io.blocks);boot_logstr("\n");return 1;
 }
 
 /* Legacy vault dispatch must not inspect fixed v1 offsets in a mounted v2

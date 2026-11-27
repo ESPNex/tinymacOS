@@ -1,0 +1,17 @@
+Installed BIOS bridge: 440-byte MBR + official OpenDuet full USB/AHCI 543 sectors at LBA 64
+PASS MBR extent crossing the 32-bit address limit refuses before writes on a 3TiB disk
+PASS actual GPT installer + maintenance at 1953125000 sectors (1000000000000 bytes), native extent near high LBA 1952600064, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual GPT installer + maintenance at 34359738368 sectors (17592186044416 bytes), native extent near high LBA 34359214080, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual MBR installer + maintenance at 2147483648 sectors (1099511627776 bytes), native extent near high LBA 2146959360, foreign entry preserved, strict write canaries, primary/backup readback
+PASS above-16TiB capacity is explicitly rejected without I/O or writes; no signed LBA truncation at 0x80000000
+PASS 1TB/16TiB actual installer normal
+PASS MBR extent crossing the 32-bit address limit refuses before writes on a 3TiB disk
+PASS actual GPT installer + maintenance at 1953125000 sectors (1000000000000 bytes), native extent near high LBA 1952600064, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual GPT installer + maintenance at 34359738368 sectors (17592186044416 bytes), native extent near high LBA 34359214080, foreign entry preserved, strict write canaries, primary/backup readback
+PASS high-LBA corrupt backup GPT still refuses before writes
+PASS actual MBR installer + maintenance at 2147483648 sectors (1099511627776 bytes), native extent near high LBA 2146959360, foreign entry preserved, strict write canaries, primary/backup readback
+PASS above-16TiB capacity is explicitly rejected without I/O or writes; no signed LBA truncation at 0x80000000
+PASS 1TB/16TiB actual installer sanitized

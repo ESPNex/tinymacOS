@@ -94,6 +94,7 @@ static int nextpage(int direction)
 }
 static void go(const char *p)
 {
+    char canonical[PATHLEN];if(absolutepath(canonical,"/",p))return;p=canonical;
     Dirent d;
     if (sc(S_STAT, p, &d, 0, 0) < 0 || !d.dir)
         return;

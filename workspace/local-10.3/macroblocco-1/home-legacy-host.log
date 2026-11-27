@@ -1,0 +1,2 @@
+PASS actual legacy home migration: UTF8 inode rename, verified-account old path alias, payload sectors byte-identical in plaintext and legacy cipher, no rewrite on repeat, invalid/colliding names refuse without writes
+PASS actual legacy home migration: UTF8 inode rename, verified-account old path alias, payload sectors byte-identical in plaintext and legacy cipher, no rewrite on repeat, invalid/colliding names refuse without writes

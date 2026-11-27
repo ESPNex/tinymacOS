@@ -29,13 +29,13 @@ def data_digest():
  return h.hexdigest()
 try:
  with Retail(iso,w,ev,'fs2-install',disk='target',live=False) as g:
-  g.enroll(name='Fs2Install');g.key('f2');g.visible('Sessione locale');g.cmd('echo IMPORTED_FROM_LIVE_ACCOUNT > Documents/imported.txt');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.shot('fs2-real-installer-completed');g.key('ret');g.p.wait(timeout=20)
+  g.enroll(name='Fs2Install');g.key('f2');g.visible('Sessione locale');g.cmd('pwd','/Users/Fs2Install');g.cmd('echo $HOME','/Users/Fs2Install');g.cmd('echo IMPORTED_FROM_LIVE_ACCOUNT > Documents/imported.txt');g.key('f11');g.visible('Installa tinymacOS Tramontana');g.key('ret');g.visible('Seleziona la destinazione');g.key('down');g.key('ret');g.visible('Conferma l’installazione');g.key('ret');g.key('spc');g.key('ret');g.visible('Il disco è pronto',180);g.shot('fs2-real-installer-completed');g.key('ret');g.p.wait(timeout=20)
  a,b=data_range()
  with disk.open('rb') as f:
   f.seek(a*512);superblock=f.read(128);assert superblock[:8]==b'TMCBFS2\0';assert struct.unpack_from('<Q',superblock,16)[0]==(b-a+1)//32
  ok('Real GUI installer creates TMCBFS2 spanning the actual data partition, imports current live files and account; target was never host-formatted')
  with Installed('/not-attached',w,ev,'fs2-installed',disk='target',boot_disk=True) as g:
-  assert str(iso) not in str(g.req('query-block'));g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('bootverbose log','[fs2] mounted full data extent');g.cmd('cat Documents/imported.txt','IMPORTED_FROM_LIVE_ACCOUNT');g.cmd('echo FS2_INSTALL_PERSISTENT > Documents/persistent.txt');g.cmd('diskutil apfs snapshot create installer-guest','Snapshot creato.');g.cmd('echo CHANGED > Documents/persistent.txt');g.cmd('diskutil apfs snapshot restore installer-guest','Volume ripristinato.');g.cmd('cat Documents/persistent.txt','FS2_INSTALL_PERSISTENT');g.shot('fs2-installed-import-and-cow');g.cmd('off');g.p.wait(timeout=20)
+  assert str(iso) not in str(g.req('query-block'));g.unlock();g.key('f2');g.visible('Sessione locale');g.cmd('pwd','/Users/Fs2Install');g.cmd('echo $HOME','/Users/Fs2Install');g.cmd('bootverbose log','[fs2] mounted full data extent');g.cmd('cat Documents/imported.txt','IMPORTED_FROM_LIVE_ACCOUNT');g.cmd('echo FS2_INSTALL_PERSISTENT > Documents/persistent.txt');g.cmd('diskutil apfs snapshot create installer-guest','Snapshot creato.');g.cmd('echo CHANGED > Documents/persistent.txt');g.cmd('diskutil apfs snapshot restore installer-guest','Volume ripristinato.');g.cmd('cat Documents/persistent.txt','FS2_INSTALL_PERSISTENT');g.shot('fs2-installed-import-and-cow');g.cmd('off');g.p.wait(timeout=20)
  ok('Installed NVMe boot without ISO authenticates imported account, reads imported file and performs real shared-root CoW restore')
  before=data_digest()
  with Recovery('/not-attached',w,ev,'fs2-recovery',disk='target',boot_disk=True) as g:

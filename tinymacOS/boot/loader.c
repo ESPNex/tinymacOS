@@ -80,7 +80,8 @@ EFI_STATUS _entry(EFI_HANDLE image, EFI_SYSTEM_TABLE *st)
     EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *fs;
     EFI_FILE_PROTOCOL *root, *f;
     EFI_GRAPHICS_OUTPUT_PROTOCOL *go;
-    if (EFI_ERROR(bs->LocateProtocol(&gg, 0, (void **)&go)))
+    if (EFI_ERROR(bs->HandleProtocol(st->ConsoleOutHandle,&gg,(void **)&go)) &&
+        EFI_ERROR(bs->LocateProtocol(&gg, 0, (void **)&go)))
         FAIL("GOP unavailable");
     ginst = st;
     if (EFI_ERROR(bs->HandleProtocol(image, &lg, (void **)&li))

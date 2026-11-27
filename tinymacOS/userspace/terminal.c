@@ -3,6 +3,7 @@
 #define NR 240
 #define STAGES 6
 #define INPUT 320
+static char actual_home[PATHLEN]=HOME;
 static char cwd[PATHLEN] = HOME, oldcwd[PATHLEN] = HOME, input[INPUT], saved[INPUT], history[NH][INPUT],
                            screen[NR][400], redir[PATHLEN], readfrom[PATHLEN];
 static u8 kinds[NR];
@@ -81,7 +82,7 @@ static void prompt(char *q, int cap)
 {
     strset(q, si.user[0] ? si.user : "user", cap);
     append(q, "@tramontana ", cap);
-    append(q, eq(cwd, HOME) ? "~" : eq(cwd, "/") ? "/" : leaf(cwd), cap);
+    append(q, eq(cwd, actual_home) ? "~" : eq(cwd, "/") ? "/" : leaf(cwd), cap);
     append(q, " % ", cap);
 }
 static void store(void)
@@ -135,7 +136,7 @@ static int parse(const char *s)
                     used = 1;
                 } else {
                     const char *names[] = {"PWD", "HOME", "USER"};
-                    const char *vals[] = {cwd, HOME, si.user};
+                    const char *vals[] = {cwd, actual_home, si.user};
                     for (int i = 0; i < 3; i++) {
                         int z = strlen(names[i]);
                         if (!memcmp(s, names[i], z) && !((s[z] >= 'A' && s[z] <= 'Z') || (s[z] >= 'a' && s[z] <= 'z') || (s[z] >= '0' &&
@@ -189,7 +190,7 @@ static int builtin(void)
     if (eq(k, "cd")) {
         char p[PATHLEN];
         Dirent d;
-        if (n > 2 || expandpath(p, cwd, n == 1 ? HOME : eq(a->argv[1], "-") ? oldcwd : a->argv[1]) ||
+        if (n > 2 || expandpath(p, cwd, n == 1 ? actual_home : eq(a->argv[1], "-") ? oldcwd : a->argv[1]) ||
             sc(S_STAT, p, &d, 0, 0) || !d.dir) {
             note("cd: cartella non trovata");
             last = 1;
@@ -387,7 +388,7 @@ static void paint(void)
         pr = dark ? 0xb8cfeb : 0x29415c;
     Box(0, 0, aw, ah, 0, paper);
     char ttl[48];
-    strset(ttl, eq(cwd, HOME) ? "~" : eq(cwd, "/") ? "/" : leaf(cwd), 48);
+    strset(ttl, eq(cwd, actual_home) ? "~" : eq(cwd, "/") ? "/" : leaf(cwd), 48);
     append(ttl, " — shell", 48);
     title("Terminale — ", ttl);
     int rows = MAX(3, (ah - 43) / 19);
@@ -498,6 +499,7 @@ static void key(Event *e)
 void app_main(void)
 {
     win(730, 398, "Terminale");
+    ui_home(actual_home);strset(cwd,actual_home,PATHLEN);strset(oldcwd,actual_home,PATHLEN);
     char s[80] = "Sessione locale del ";
     addnum(s, si.day, 80);
     append(s, "/", 80);

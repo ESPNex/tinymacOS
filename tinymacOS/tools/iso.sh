@@ -3,7 +3,9 @@ set -eu
 cd "$(dirname "$0")/..";. tools/env.sh
 export SOURCE_DATE_EPOCH=1735689600 LC_ALL=C TZ=UTC MTOOLS_SKIP_CHECK=1 MTOOLS_DATE_STRING=2025-01-01T00:00:00
 D=$TMC_BUILD;python3 tools/media_path.py "$D" "$D/$TMC_ISO";R=$(mktemp -d "$D/disc.XXXXXXXX");trap 'rm -rf "$R"' EXIT
-mkdir -p "$R/EFI/TMC" "$R/EFI/OC/Drivers" "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/TMC/BOOTX64.EFI";cp vendor/opencore-1.0.8/BOOTx64.efi "$R/EFI/BOOT/BOOTX64.EFI";cp vendor/opencore-1.0.8/OpenCore.efi "$R/EFI/OC/";cp boot/opencore.plist "$R/EFI/OC/config.plist";python3 tools/firmware_drivers.py "$R/EFI/OC/Drivers";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
+mkdir -p "$R/EFI/TMC" "$R/EFI/OC/Drivers" "$R/EFI/OC/Tools" "$R/EFI/BOOT" "$R/System/Library/KernelCollections" "$R/Recovery" "$R/LICENSES";cp "$D/KernelCache" "$R/System/Library/KernelCollections/";cp "$D/BOOTX64.EFI" "$R/EFI/TMC/BOOTX64.EFI";cp vendor/opencore-1.0.8/BOOTx64.efi "$R/EFI/BOOT/BOOTX64.EFI";cp vendor/opencore-1.0.8/OpenCore.efi "$R/EFI/OC/";cp boot/opencore.plist "$R/EFI/OC/config.plist";python3 tools/firmware_drivers.py "$R/EFI/OC/Drivers";cp licenses/* "$R/LICENSES/";cp docs/QUICKSTART.txt "$R/START.TXT"
+cp "$D/TmcVideo.EFI" "$R/EFI/OC/Tools/TmcVideo.efi"
+cp "$D/TmcRestore.EFI" "$R/EFI/OC/Tools/TmcRestore.efi"
 # BaseSystem is created in external scratch. Only the finished ISO is distributed.
 # Firmware still launches these files normally. Only OpenCore's OS scan must
 # hide its own bootstrap/manager, or a registered Boot#### can recurse.
@@ -46,7 +48,7 @@ mkesp "$D/install.esp" 24M TRAMONTANA System-disk.vol
 # Otherwise OpenDuet BDS bypasses OC, and its USB input drivers never load.
 # Precreate empty OC legacy-NVRAM directory before sealing: LoadNvram opens it
 # with CREATE even with an empty schema, which would otherwise alter the seal.
-mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/LICENSES ::/NVRAM
+mmd -i "$D/install.esp" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/EFI/OC/Tools ::/LICENSES ::/NVRAM
 mcopy -i "$D/install.esp" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -i "$D/install.esp" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
 mcopy -o -i "$D/install.esp" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
@@ -59,6 +61,8 @@ from pathlib import Path
 p=plistlib.loads(Path('boot/opencore.plist').read_bytes());p['NVRAM']['Add']={}
 Path(sys.argv[1]).write_bytes(plistlib.dumps(p,sort_keys=False))
 PYOC
+mcopy -i "$D/install.esp" "$D/TmcVideo.EFI" ::/EFI/OC/Tools/TmcVideo.efi
+mcopy -i "$D/install.esp" "$D/TmcRestore.EFI" ::/EFI/OC/Tools/TmcRestore.efi
 mcopy -i "$D/install.esp" "$D/installed-opencore.plist" ::/EFI/OC/config.plist
 mcopy -i "$D/install.esp" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibility
 mcopy -i "$D/install.esp" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility
@@ -76,12 +80,14 @@ import hashlib,sys
 p=Path(sys.argv[1]);(p/'Payload4K.sha').write_bytes(b''.join(hashlib.sha256((p/n).read_bytes()).digest() for n in ['install-4k.esp','recovery-4k.img']))
 PY4KHASH
 mkesp "$R/EFI.IMG" 128M TRAMONTANA System-live.vol
-mmd -i "$R/EFI.IMG" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/NVRAM ::/LICENSES
+mmd -i "$R/EFI.IMG" ::/EFI/TMC ::/EFI/OC ::/EFI/OC/Drivers ::/EFI/OC/Tools ::/NVRAM ::/LICENSES
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/LICENSE.txt ::/LICENSES/OpenCore.txt
 for notice in licenses/*;do mcopy -i "$R/EFI.IMG" "$notice" "::/LICENSES/$(basename "$notice")";done
 mcopy -i "$R/EFI.IMG" "$D/BOOTX64.EFI" ::/EFI/TMC/BOOTX64.EFI
 mcopy -o -i "$R/EFI.IMG" vendor/opencore-1.0.8/BOOTx64.efi ::/EFI/BOOT/BOOTX64.EFI
 mcopy -i "$R/EFI.IMG" vendor/opencore-1.0.8/OpenCore.efi ::/EFI/OC/OpenCore.efi
+mcopy -i "$R/EFI.IMG" "$D/TmcVideo.EFI" ::/EFI/OC/Tools/TmcVideo.efi
+mcopy -i "$R/EFI.IMG" "$D/TmcRestore.EFI" ::/EFI/OC/Tools/TmcRestore.efi
 mcopy -i "$R/EFI.IMG" boot/opencore.plist ::/EFI/OC/config.plist
 mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/BOOT/.contentVisibility
 mcopy -i "$R/EFI.IMG" "$D/opencore.contentVisibility" ::/EFI/OC/.contentVisibility

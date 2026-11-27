@@ -7,16 +7,21 @@
 #include "base.h"
 #include "../boot/bootdefault.h"
 static struct {CHAR16 name[64];EFI_GUID guid;u8 data[2048];UINTN bytes;UINT32 attrs;int used;} vars[16];
-static int writes,deny_backup,deny_order;
+static int writes,deny_backup,deny_order,read_fail,read_mismatch,after_order,deny_rollback;
 static int nameeq(const CHAR16*a,const CHAR16*b){while(*a&&*a==*b)a++,b++;return *a==*b;}
 static int indexof(CHAR16*n,EFI_GUID*g){for(int i=0;i<16;i++)if(vars[i].used&&nameeq(n,vars[i].name)&&!memcmp(g,&vars[i].guid,16))return i;return -1;}
 static EFI_STATUS EFIAPI get(CHAR16*n,EFI_GUID*g,UINT32*a,UINTN*size,void*data){
+ if(after_order&&nameeq(n,L"BootOrder")&&read_fail){read_fail=0;return EFI_DEVICE_ERROR;}
  int i=indexof(n,g);if(i<0)return EFI_NOT_FOUND;
  if(*size<vars[i].bytes||!data){*size=vars[i].bytes;return EFI_BUFFER_TOO_SMALL;}
- *size=vars[i].bytes;if(a)*a=vars[i].attrs;memcpy(data,vars[i].data,*size);return EFI_SUCCESS;
+ *size=vars[i].bytes;if(a)*a=vars[i].attrs;memcpy(data,vars[i].data,*size);
+ if(after_order&&nameeq(n,L"BootOrder")&&read_mismatch){read_mismatch=0;((u8*)data)[0]^=1;}
+ return EFI_SUCCESS;
 }
 static EFI_STATUS EFIAPI set(CHAR16*n,EFI_GUID*g,UINT32 a,UINTN size,void*data){
  if((deny_backup&&nameeq(n,L"tinymacOS-previousBootOrder"))||(deny_order&&nameeq(n,L"BootOrder")))return EFI_WRITE_PROTECTED;
+ if(after_order&&deny_rollback&&nameeq(n,L"BootOrder"))return EFI_WRITE_PROTECTED;
+ if(nameeq(n,L"BootOrder")&&size==6)after_order=1;
  writes++;int i=indexof(n,g);
  if(!size){if(i>=0)vars[i].used=0;return EFI_SUCCESS;}
  if(i<0)for(int j=0;j<16;j++)if(!vars[j].used){i=j;break;}
@@ -26,7 +31,7 @@ static EFI_STATUS EFIAPI set(CHAR16*n,EFI_GUID*g,UINT32 a,UINTN size,void*data){
 static EFI_RUNTIME_SERVICES rs={.GetVariable=get,.SetVariable=set};
 static EFI_GUID global=EFI_GLOBAL_VARIABLE,vendor=TMC_BOOT_VENDOR;
 static u8 path[]={4,4,10,0,'a',0,0,0,0,0,0x7f,0xff,4,0};
-static void reset(void){memset(vars,0,sizeof vars);writes=deny_backup=deny_order=0;u16 order[]={9,10};u8 ms[]={0x57,0x49,0x4e,0x44,0x4f,0x57,0x53};set(L"BootOrder",&global,7,sizeof order,order);set(L"Boot0009",&global,7,sizeof ms,ms);set(L"Boot000A",&global,7,sizeof ms,ms);writes=0;}
+static void reset(void){memset(vars,0,sizeof vars);writes=deny_backup=deny_order=read_fail=read_mismatch=after_order=deny_rollback=0;u16 order[]={9,10};u8 ms[]={0x57,0x49,0x4e,0x44,0x4f,0x57,0x53};set(L"BootOrder",&global,7,sizeof order,order);set(L"Boot0009",&global,7,sizeof ms,ms);set(L"Boot000A",&global,7,sizeof ms,ms);writes=0;}
 static void original(void){int i=indexof(L"Boot0009",&global);assert(i>=0&&vars[i].bytes==7&&!memcmp(vars[i].data,"WINDOWS",7));i=indexof(L"Boot000A",&global);assert(i>=0&&vars[i].bytes==7&&!memcmp(vars[i].data,"WINDOWS",7));}
 static void order_is(u16 a,u16 b,u16 c){int i=indexof(L"BootOrder",&global);assert(i>=0);u16*p=(void*)vars[i].data;assert(p[0]==a&&p[1]==b);if(c!=65535)assert(vars[i].bytes==6&&p[2]==c);else assert(vars[i].bytes==4);}
 int main(void){
@@ -35,5 +40,18 @@ int main(void){
  int before=writes;assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));assert(writes==before);original();puts("PASS repeated registration is idempotent and does not rewrite NVRAM");
  reset();deny_backup=1;assert(EFI_ERROR(boot_set_default(&rs,path,sizeof path)));assert(writes==0);original();order_is(9,10,65535);puts("PASS backup denial prevents both entry creation and BootOrder changes");
  reset();deny_order=1;assert(EFI_ERROR(boot_set_default(&rs,path,sizeof path)));original();order_is(9,10,65535);assert(indexof(L"Boot0000",&global)<0);puts("PASS BootOrder failure removes only the newly created native entry, preserving Microsoft");
+ for(int mode=0;mode<2;mode++){
+  reset();if(mode)read_mismatch=1;else read_fail=1;
+  assert(EFI_ERROR(boot_set_default(&rs,path,sizeof path)));original();order_is(9,10,65535);assert(indexof(L"Boot0000",&global)<0);
+ }
+ puts("PASS failed/mismatched BootOrder readback restores and verifies original order before deleting new option");
+ reset();read_fail=deny_rollback=1;assert(EFI_ERROR(boot_set_default(&rs,path,sizeof path)));original();order_is(0,9,10);assert(indexof(L"Boot0000",&global)>=0);
+ puts("PASS denied rollback retains referenced boot option, original backup and Microsoft entries");
+ reset();assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));assert(!EFI_ERROR(boot_restore_default(&rs)));original();order_is(9,10,65535);before=writes;
+ assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path))&&writes==before);order_is(9,10,65535);
+ puts("PASS explicit restore returns exact original order and blocks future auto-promotion; Microsoft options and backup preserved");
+ reset();before=writes;assert(EFI_ERROR(boot_restore_default(&rs))&&writes==before);
+ reset();assert(!EFI_ERROR(boot_set_default(&rs,path,sizeof path)));deny_order=1;assert(EFI_ERROR(boot_restore_default(&rs)));order_is(0,9,10);assert(indexof(L"tinymacOS-default-disabled",&vendor)<0);original();
+ puts("PASS restore without backup or with denied BootOrder never pretends success or destroys options; disabled flag is rolled back on write failure");
  reset();assert(EFI_ERROR(boot_set_default(&rs,path,0)));assert(!writes);puts("PASS invalid load-option path is rejected without writes");return 0;
 }

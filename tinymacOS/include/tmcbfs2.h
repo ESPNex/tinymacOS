@@ -63,6 +63,8 @@ int tmc2_checkpoint(Tmc2*,const char*);
 int tmc2_snapshot_find(Tmc2*,const char*,T2Entry*);
 int tmc2_view_lookup(Tmc2*,u64,u64,const char*,T2Entry*);
 int tmc2_view_stat(Tmc2*,u64,u64,T2Entry*);
+/* Private snapshot account slots for kernel namespace binding, not file I/O. */
+int tmc2_view_account(Tmc2*,u64,unsigned,void*);
 int tmc2_view_readdir(Tmc2*,u64,u64,u64*,T2Entry*);
 i64 tmc2_view_read(Tmc2*,u64,u64,u64,void*,size_t);
 int tmc2_snapshot_restore(Tmc2*,const char*);

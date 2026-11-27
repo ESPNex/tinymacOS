@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "physical_hardware_tested": false,
+  "windows_boot_tested": false,
+  "iso_sha256": "234bad9e9f40c75bf965884a2b396c2bb74d32f2978c239045fdd6d851d282eb",
+  "work": "/var/tmp/tmc-fs2-install-4e5uumyh",
+  "checks": [
+    "Actual installed NVRAM first entry is dedicated OpenCore, original BootOrder backup retained",
+    "Installed OpenCore launches real read-only GOP/EDID diagnostic, lists firmware modes and returns to user prompt",
+    "User-confirmed real EFI tool restores exact original BootOrder, retains OpenCore option/backup and persists auto-promotion disable flag"
+  ]
+}

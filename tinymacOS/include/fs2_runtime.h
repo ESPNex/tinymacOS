@@ -3,6 +3,7 @@
  * conversion or implicit format is performed when mounting existing media. */
 extern int fs2_active;
 int fs2_mount(void);
+int fs2_home_bind(const char*);
 int fs2_stat(const char*,Dirent*);
 int fs2_list(const char*,Dirent*,int,int);
 int fs2_create(const char*,int);

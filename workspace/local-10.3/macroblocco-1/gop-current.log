@@ -1,0 +1,4 @@
+PASS GOP: 1366x768/padded stride, all width remainders and standard RGB/BGR masks accepted; BLT-only, arbitrary masks, invalid dimensions/stride/aperture and overflowing addresses rejected. Not physical hardware acceptance.
+PASS BootConfig v1 backward compatibility, 135642 legacy mode/verbose combinations + all width remainders, digest tamper, reserved/range rejection
+PASS GOP: 1366x768/padded stride, all width remainders and standard RGB/BGR masks accepted; BLT-only, arbitrary masks, invalid dimensions/stride/aperture and overflowing addresses rejected. Not physical hardware acceptance.
+PASS BootConfig v1 backward compatibility, 135642 legacy mode/verbose combinations + all width remainders, digest tamper, reserved/range rejection

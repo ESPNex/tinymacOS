@@ -1,0 +1,4 @@
+PASS actual home plain: real UTF8 inode name, unchanged IDs/content/account, old path alias, no duplicate, protected named home, open FD, idempotence, invalid/colliding refusal, before/after snapshots, cold remount/unlock
+PASS actual home FV003: real UTF8 inode name, unchanged IDs/content/account, old path alias, no duplicate, protected named home, open FD, idempotence, invalid/colliding refusal, before/after snapshots, cold remount/unlock
+PASS actual home plain: real UTF8 inode name, unchanged IDs/content/account, old path alias, no duplicate, protected named home, open FD, idempotence, invalid/colliding refusal, before/after snapshots, cold remount/unlock
+PASS actual home FV003: real UTF8 inode name, unchanged IDs/content/account, old path alias, no duplicate, protected named home, open FD, idempotence, invalid/colliding refusal, before/after snapshots, cold remount/unlock

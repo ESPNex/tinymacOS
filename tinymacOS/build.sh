@@ -83,6 +83,8 @@ P=$(mktemp -d "$D/recovery.XXXXXXXX");trap 'rm -rf "$P"' EXIT
 python3 tools/baseimage.py "$P" "$D/RecoveryKernel.elf" "$D/System-recovery.vol"
 gcc "${E[@]}" -I"$P" -c boot/loader.c -o "$D/efi.o";efilink BOOTX64 "$D/efi.o"
 gcc "${E[@]}" -DTMC_RECOVERY_ENTRY -I"$P" -c boot/loader.c -o "$D/rec-volume.o";efilink RECBOOT "$D/rec-volume.o"
+gcc "${E[@]}" -c boot/firmware_tools.c -o "$D/firmware-video.o";efilink TmcVideo "$D/firmware-video.o"
+gcc "${E[@]}" -DTMC_RESTORE_TOOL -c boot/firmware_tools.c -o "$D/firmware-restore.o";efilink TmcRestore "$D/firmware-restore.o"
 # Browser intentionally omitted: legacy NetSurf retired; WebKit port not yet buildable.
 python3 tools/system_volume.py "$D" cache;python3 tools/system_volume.py "$D" disk;python3 tools/system_volume.py "$D" live
 bash tools/iso.sh "$P"

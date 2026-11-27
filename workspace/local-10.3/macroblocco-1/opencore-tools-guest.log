@@ -1,0 +1,62 @@
+penCore Boot Menu
+« 1. TRAMONTANA
+2. RECOVERYHD
+3. Diagnostica video UEFI
+4. Ripristina ordine di avvio
+Ishutdown| [Restart |
+Choose the Operating System:
+
+Diagnostica video UEFI (nessuna modifica)
+Firmvare: Debian distribution of EDK IT
+
+Hodalita offerte dal firmware: 30 Corrente: 6
+
+8: 1280x800 stride=1280 formato-1 compatibile
+1: 640x480 stride=649 formato=1 non compatibile
+2: 800x480 stride=800 formato=1 non compatibile
+3: 800x600 stride=800 fornato=1 conpatibile
+
+4: 832x624 stride=832 formato=1 conpatibile
+
+5: 960x640 stride-960 formato=1 conpatibile
+
+6: 1024x608 stride=1024 formato-1 compatibile
+7: 1824x768 stride=1024 formato-1 compatibile
+8: 1152x864 stride=1152 formato=1 compatibile
+9: 1152x870 stride=-1152 formato=1 compatibile
+18: 1280x720 stride=1280 formato=1 compatibile
+11: 1280x769 stride=1280 formato=1 compatibile
+12: 1280x768 stride=1280 formato=1 compatibile
+13: 1280x960 stride=1280 formato=1 compatibile
+Premi un tasto per proseguire, Esc per uscire.
+
+PASS Installed OpenCore launches real read-only GOP/EDID diagnostic, lists firmware modes and returns to user prompt
+penCore Boot Menu
+« 1. TRAMONTANA
+2. RECOVERYHD
+3. Diagnostica video UEFI
+4. Ripristina ordine di avvio
+Ishutdown| [Restart |
+Choose the Operating System:
+
+Ripristino ordine di avvio
+
+R: ripristina L’ordine precedente a tinymacOS.
+
+E: riabilita la preferenza OpenCore al prossimo avvio nativo.
+Esc: annulla senza modifiche.
+
+I file Microsoft e le voci Boot#### non verranno eliminati.
+
+Ripristino ordine di avvio
+
+R: ripristina L’ordine precedente a tinymacOS.
+
+E: riabilita la preferenza OpenCore al prossimo avvio nativo.
+Esc: annulla senza modifiche.
+
+I file Microsoft e le voci Boot#### non verranno eliminati.
+Operazione verificata. Nessun file Microsoft modificato.
+Premi un tasto per tornare a OpenCore.
+
+PASS User-confirmed real EFI tool restores exact original BootOrder, retains OpenCore option/backup and persists auto-promotion disable flag

@@ -1,5 +1,8 @@
 #pragma once
 #include "lib.h"
+#include "home_name.h"
+/* Query the real inode name; a failed/colliding migration keeps the old home. */
+static inline void ui_home(char out[PATHLEN]){Dirent d={0};strset(out,HOME,PATHLEN);if(sc(S_STAT,HOME,&d,0,0)>=0&&d.dir&&home_name_valid(d.name)){strset(out,"/Users/",PATHLEN);append(out,d.name,PATHLEN);}}
 extern int aw, ah;
 extern SysInfo si;
 extern char wintitle[48];

@@ -380,6 +380,15 @@ int tmc2_account(Tmc2*c,unsigned slot,void*buffer,int write){
  T2Super s=c->super;if(put(c,s.control,MAP,&m,&s.control))return fail(c);return publish(c,s);
 }
 
+int tmc2_view_account(Tmc2*c,u64 snap,unsigned slot,void*buffer){
+ T2Entry catalogue,m;if(!c||c->faulted||!buffer||slot>1||get(c,c->super.snapshots,SNAPS,snap,&catalogue)!=1||catalogue.kind!=SNAPS)return -1;
+ int found=get(c,catalogue.root,MAP,slot,&m);if(found<0)return -1;
+ if(!found){memset(buffer,0,512);return 0;}
+ u8*p=alloc(c,T2_BLOCK);if(!p)return -1;
+ int bad=readblock(c,m.parent,p)||crc(p,T2_BLOCK)!=m.size;
+ if(!bad)memcpy(buffer,p,512);release(c,p);return bad?-1:0;
+}
+
 static int verify_data(const T2Entry*e,void*x){
  Tmc2*c=x;u8*p=alloc(c,T2_BLOCK);if(!p)return -1;
  int r=readblock(c,e->parent,p);if(!r&&crc(p,T2_BLOCK)!=e->size)r=fail(c);release(c,p);return r;

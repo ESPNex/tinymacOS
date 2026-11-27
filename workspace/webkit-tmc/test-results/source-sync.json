@@ -89,7 +89,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "6a6d5dc9772d5252c63bd77fd44e25080dc7b3832348d0f3ca641dcd175ab5cd"
+    "sha256": "e90ceb7f2c09461fe26ad6ef22ce43f4496468a2692aa433c9898f7abc24d264"
   },
   {
     "path": "desktop/gfx.c",

@@ -3,6 +3,7 @@
 #include "nativecow.h"
 #include "../kernel/k.h"
 #include "fs2_runtime.h"
+#include "home_name.h"
 #ifndef TMC_FS2_BACKEND
 #define fs2_active 0
 #endif
@@ -102,6 +103,13 @@ static int child(int par, const char *name)
             return i;
     return -1;
 }
+/* Derive aliases from validated account metadata; never guess another user's
+ * directory. Literal User in an older snapshot continues to take precedence. */
+static void legacy_home_name(char name[48]){
+ strset(name,"User",48);if(!block.read)return;u8 record[512];
+ for(int slot=0;slot<2;slot++)if(!block.read(13+slot,record)&&home_account_name(record,name))break;
+ erase(record,sizeof record);
+}
 static int resolve(const char *p)
 {
     if (!p || *p != '/')
@@ -128,7 +136,10 @@ static int resolve(const char *p)
             a = nodes[a].parent;
             continue;
         }
-        a = child(a, name);
+        int parent=a;a = child(parent, name);
+        if(a<0&&eq(name,"User")&&parent>0&&nodes[parent].parent==0&&eq(nodes[parent].name,"Users")){
+            char actual[48];legacy_home_name(actual);a=child(parent,actual);
+        }
         if (a < 0)
             return -1;
     }
@@ -1596,6 +1607,26 @@ int fs_snap_delete_i(const char *name)
 RecSpin fs_gate;
 
 // Public wrappers: one recursive filesystem gate serializes all disk state.
+static int legacy_home_bind(const char*name){
+ if(!home_name_valid(name))return -3;
+ int users=resolve("/Users"),old=users>0?child(users,"User"):-1,named=users>0?child(users,name):-1;
+ if(named>=0)return nodes[named].kind==1&&(old<0||old==named)?0:-2;
+ if(old<=0||nodes[old].kind!=1)return -1;
+ Node saved=nodes[old];strset(nodes[old].name,name,48);
+ if(syncnode(old)<0){nodes[old]=saved;return -1;}
+ fsrev++;return 0;
+}
+int fs_home_bind(const char *name)
+{
+ if(!home_name_valid(name)||boot.recovery)return -3;
+ u32 fl;rec_lock(&fs_gate,&fl);int r;
+#ifdef TMC_FS2_BACKEND
+ if(fs2_active)r=fs2_home_bind(name);else
+#endif
+ r=legacy_home_bind(name);
+ rec_unlock(&fs_gate,fl);return r;
+}
+
 int fs_stat(const char *p, Dirent *d)
 {
     u32 fl;

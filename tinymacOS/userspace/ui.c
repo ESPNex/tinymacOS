@@ -200,6 +200,12 @@ int absolutepath(char *out, const char *cwd, const char *name)
             append(out, "/", PATHLEN);
         append(out, part, PATHLEN);
     }
+    char actual[PATHLEN];ui_home(actual);size_t hn=strlen(HOME),on=strlen(out);
+    if(on>=hn&&!memcmp(out,HOME,hn)&&(!out[hn]||out[hn]=='/')&&!eq(actual,HOME)){
+        char suffix[PATHLEN];strset(suffix,out+hn,PATHLEN);
+        if(strlen(actual)+strlen(suffix)>=PATHLEN)return -1;
+        strset(out,actual,PATHLEN);append(out,suffix,PATHLEN);
+    }
     return 0;
 }
 int readfile(const char *p,char *b,int cap)

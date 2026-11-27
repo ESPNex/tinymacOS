@@ -1,11 +1,16 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include "../userspace/lib.h"
+static long hostcall(long,u64,u64,u64,u64);
+#undef sc
+#define sc(n,a,b,c,d) hostcall(n,(u64)(a),(u64)(b),(u64)(c),(u64)(d))
 #include "../userspace/ui.h"
+static const char *home_inode;
 static unsigned char files[2][262144];static int sizes[2],positions[2],exists[2],closed,partial,fail_write;
 static int idx(const char*p){return eq(p,"/source")?0:eq(p,"/destination")?1:-1;}
 static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
- (void)d;if(n==S_STAT){int i=idx((char*)a);if(i<0||!exists[i])return -1;*(Dirent*)b=(Dirent){.size=sizes[i]};return 0;}
+ (void)d;if(n==S_STAT){if(eq((char*)a,HOME)&&home_inode){*(Dirent*)b=(Dirent){.dir=1};strset(((Dirent*)b)->name,home_inode,48);return 0;}int i=idx((char*)a);if(i<0||!exists[i])return -1;*(Dirent*)b=(Dirent){.size=sizes[i]};return 0;}
  if(n==S_CREATE){int i=idx((char*)a);if(i<0||exists[i])return -1;exists[i]=1;sizes[i]=0;return 0;}
  if(n==S_OPEN){int i=idx((char*)a);if(i<0||!exists[i])return -1;positions[i]=0;return i+1;}
  if(n==S_CLOSE){closed++;return 0;}
@@ -19,6 +24,15 @@ static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
 #define sc(n,a,b,c,d) hostcall(n,(u64)(a),(u64)(b),(u64)(c),(u64)(d))
 #include "../userspace/ui.c"
 int main(void){
+ char path[PATHLEN];ui_home(path);assert(eq(path,HOME));
+ home_inode="Elena Ròssi";ui_home(path);assert(eq(path,"/Users/Elena Ròssi"));
+ assert(!absolutepath(path,HOME,"Documents/a.txt")&&eq(path,"/Users/Elena Ròssi/Documents/a.txt"));
+ assert(!absolutepath(path,"/",HOME "2/test")&&eq(path,HOME "2/test"));
+ assert(!absolutepath(path,"/","/.snapshots/old/Users/User/test")&&eq(path,"/.snapshots/old/Users/User/test"));
+ assert(!absolutepath(path,HOME,"..")&&eq(path,"/Users"));
+ home_inode="User";assert(!absolutepath(path,HOME,"Documents")&&eq(path,HOME "/Documents"));
+ home_inode="../bad";ui_home(path);assert(eq(path,HOME));home_inode=0;
+ puts("PASS UI paths: real UTF8/spaced inode canonicalization, retained old-name fallback, no snapshot/prefix alias pollution or untrusted path components");
  static char payload[131199],readback[262144];for(unsigned i=0;i<sizeof payload;i++)payload[i]=(i*17+23)%251;
  assert(writefile("/source",payload,sizeof payload)==sizeof payload&&sizes[0]==sizeof payload);partial=1;assert(readfile("/source",readback,sizeof readback)==sizeof payload&&!memcmp(payload,readback,sizeof payload));partial=0;
  assert(!copyfile("/source","/destination")&&sizes[1]==sizeof payload&&!memcmp(files[0],files[1],sizeof payload));assert(copyfile("/source","/destination")<0&&!memcmp(files[0],files[1],sizeof payload));

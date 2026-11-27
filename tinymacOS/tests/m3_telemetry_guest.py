@@ -28,7 +28,7 @@ try:
     ok('Real Monitor '+str(cpus)+'-CPU bars and allocator labels; pause/sort freezes CPU card and resume works; guest sysstat completed actual threads/sleep/alloc/VM test and saved 13 native records')
     with disk.open('rb') as f:f.seek(1024+128+32);a,b=struct.unpack('<QQ',f.read(16))
     root=Path(__file__).resolve().parents[1];exe=w/'read-results'
-    subprocess.run(['gcc','-O2','-fno-builtin','-I'+str(root/'include'),str(root/'tests/m3_read_result.c'),str(root/'storage/tmcbfs2.c'),str(root/'kernel/string.c'),'-o',str(exe)],check=True)
+    subprocess.run(['gcc','-O2','-fno-builtin','-I'+str(root/'include'),str(root/'tests/m3_read_result.c'),str(root/'storage/tmcbfs2.c'),str(root/'crypto/sha256.c'),str(root/'kernel/string.c'),'-o',str(exe)],check=True)
     raw=subprocess.check_output([str(exe),str(disk),str(a),str(b-a+1)]);(qa/('m3-'+str(cpus)+'-'+timer+'-raw.jsonl')).write_bytes(raw)
     rows=[json.loads(x) for x in raw.decode().splitlines()];d={x['phase']:x for x in rows};assert len(rows)==len(d)==13
     for x in rows:

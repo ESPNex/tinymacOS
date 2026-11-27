@@ -10,7 +10,12 @@ iso=Path(os.environ['TMC_STAGE_ISO']);qa=Path(os.environ['TMC_QA_DIR']);qa.mkdir
 w=Path(tempfile.mkdtemp(prefix='tmc-m2-capacity-',dir='/var/tmp'));ev=w/'evidence';ev.mkdir();disk=w/'target/system.raw';disk.parent.mkdir()
 logical=int(os.environ.get('TMC_M2_LOGICAL','4096'));scale=logical//512
 bus=os.environ.get('TMC_M2_STORAGE','nvme');assert bus in ('nvme','sata') and (bus=='nvme' or logical==512)
-total=3*(1<<31);start=2097152;span=5*(1<<30);end=start+span
+total=3*(1<<31);start=2097152;span=5*(1<<30)
+# Reuse the same installer/preservation assertions for the PDF's ~10GB case.
+# Align the synthetic gap to the container's documented 1MiB granularity.
+small_gap=os.environ.get('TMC_BLOCK1_SMALL_GAP')=='1'
+if small_gap:total=12_000_000_000//512;span=((10_000_000_000+1048575)//1048576)*2048
+end=start+span
 ranges=[(2048,start-1),(end,total-2049)]
 os.environ.update(TMC_MEM='512',TMC_SMP='2',TMC_POINTER='tablet',TMC_STORAGE=bus,TMC_NVME_LBA_BYTES=str(logical))
 def size(n):
@@ -56,12 +61,12 @@ try:
     assert fingerprints()==before
     with disk.open('rb') as f:
         f.seek(2*logical);p=f.read(16384);a,b=struct.unpack_from('<QQ',p,2*128+32);assert a*scale==start and (b+1)*scale==end
-        f.seek((start+9)*512);h=f.read(512);assert h[:8]==b'TMCVOL23' and struct.unpack_from('<I',h,8)[0]==3
+        f.seek((start+9)*512);h=f.read(512);assert h[:8]==b'TMCVOL23' and struct.unpack_from('<I',h,8)[0]==(3 if span>0xffffffff else 2)
         stored=struct.unpack_from('<I',h,64)[0];hc=bytearray(h);struct.pack_into('<I',hc,64,0);assert zlib.crc32(hc)==stored
-        span64,rec,source,duet=struct.unpack_from('<QQQQ',h,68);assert span64==span and rec==span-73728 and source==rec+20480 and duet==source+49153
+        span64,rec,source,duet=struct.unpack_from('<QQQQ',h,68) if span>0xffffffff else (struct.unpack_from('<I',h,12)[0],*struct.unpack_from('<III',h,20));assert span64==span and rec==span-73728 and source==rec+20480 and duet==source+49153
         f.seek((start+49152)*512);sb=f.read(128);assert sb[:8]==b'TMCBFS2\0';assert struct.unpack_from('<Q',sb,16)[0]==(rec-49152)//32
         r['actual_data_sectors']=rec-49152
-    ok('Real GUI 3TiB '+str(logical)+'B install: v3 owns entire 2.5TiB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap')
+    ok('Real GUI '+capacity+' '+str(logical)+'B install: container owns entire '+allocated+' genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap')
     with Installed('/not-attached',w,ev,'m2-cold-installed',disk='target',boot_disk=True) as g:
         g.unlock();terminal(g);g.cmd('cat Documents/m2-proof.txt','M2_NATIVE_IMPORT');g.cmd('diskutil list');g.visible(capacity);g.visible(allocated);g.visible('FOREIGN_1')
         g.cmd('diskutil apfs list');g.visible(size(r['actual_data_sectors']*512),timeout=180)
@@ -77,5 +82,5 @@ try:
     r['passed']=True
 except Exception as e:r['failure']=str(e);raise
 finally:
-    (qa/('m2-capacity-'+str(logical)+'-result.json')).write_text(json.dumps(r,indent=2)+'\n')
+    (qa/(('block1-gap10-' if small_gap else 'm2-capacity-')+str(logical)+'-result.json')).write_text(json.dumps(r,indent=2)+'\n')
     for p in w.glob('*.ppm'):p.unlink()

@@ -110,7 +110,7 @@ try:
         with disk.open('rb') as f:
             f.seek(1024+128+32);a,b=struct.unpack('<QQ',f.read(16))
         root=Path(__file__).resolve().parents[1];exe=w/'append-utf8'
-        subprocess.run(['gcc','-O2','-fno-builtin','-I'+str(root/'include'),str(root/'tests/m1_utf8_fixture.c'),str(root/'storage/tmcbfs2.c'),str(root/'kernel/string.c'),'-o',str(exe)],check=True)
+        subprocess.run(['gcc','-O2','-fno-builtin','-I'+str(root/'include'),str(root/'tests/m1_utf8_fixture.c'),str(root/'storage/tmcbfs2.c'),str(root/'crypto/sha256.c'),str(root/'kernel/string.c'),'-o',str(exe)],check=True)
         subprocess.run([str(exe),str(disk),str(a),str(b-a+1)],check=True)
         r['host_prepared_long_document_inputs_only']=True
     class Installed(QA):initial='M1Test'

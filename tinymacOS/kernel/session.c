@@ -1,6 +1,7 @@
 #include "k.h"
 #include "sha256.h"
 #include "text_input.h"
+#include "home_name.h"
 #define ROUNDS 120000u
 // Redundant records in reserved sectors 13/14. Trailer SHA detects torn/corrupt
 // records; it is NOT an integrity guarantee against an offline disk editor.
@@ -120,7 +121,7 @@ int session_begin(const AuthRequest *q)
     if (n < 1)return -1;
     if(volume_locked()){strset(volume_pass,q->password,sizeof volume_pass);volume_job=1;busy=1;return 0;}
     if (state == SESSION_SETUP) {
-        if (n < 0 || text_columns(q->password,n) < 8 || field(q->name, 32) < 1)return -1;
+        if (n < 0 || text_columns(q->password,n) < 8 || !home_name_valid(q->name))return -1;
         memset(&draft, 0, sizeof draft);
         memcpy(draft.magic, "TMCUSER2", 8);
         draft.version = 1;
@@ -185,6 +186,9 @@ int session_work(void)
         state = SESSION_OPEN;
         attempts = 0;
         retry_at = 0;
+        /* Existing paths remain aliases, but /Users now enumerates the real
+         * account-named inode. Failure never deletes/merges another directory. */
+        if(fs_home_bind(saved.name)<0)boot_logstr("[home] rename not applied: invalid name, collision or I/O; original home retained\n");
         logstr("[session] authenticated\n");
         return 1;
     }
