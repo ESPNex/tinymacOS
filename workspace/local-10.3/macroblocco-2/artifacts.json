@@ -1,0 +1,28 @@
+{
+  "development_only": true,
+  "release_ready": false,
+  "macroblock_2_complete": false,
+  "build_inputs_verified_unchanged": 931,
+  "artifacts": {
+    "block2-catalogue-dev.iso": {
+      "sha256": "3debba9e7e65245d015bbe2b086b90977098812c3506be97023dc15dfef6a765",
+      "bytes": 227710976
+    },
+    "KernelCache": {
+      "sha256": "4733f482cb510cbdb12416286ac55dada346460b9cc3f00a5ccd83a6b2d4b075",
+      "bytes": 1237288
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "bac2a9f389edea554814f3de0b180d0d45e95d441b944365d04cbecfc442b75d",
+      "bytes": 1237224
+    },
+    "finder.elf": {
+      "sha256": "9e6c63037f921a25be801513c386075133cfbecac48fe076be94050032f1c98c",
+      "bytes": 46072
+    },
+    "diskutility.elf": {
+      "sha256": "ebc835fb85ad7fa0072f81c4ae039d60a94d7a1577f61b284196a62c6fdce227",
+      "bytes": 37384
+    }
+  }
+}

@@ -17,13 +17,13 @@ int main(void)
     d.disk[0].sectors=2147483648u;d.disk[0].region_sectors[0]=49152;
     d.disk[0].region_sectors[1]=1000000;d.disk[0].region_sectors[2]=20480;d.disk[0].region_sectors[3]=49153;
     fi.used=1000000;fi.total=512000000;
-    view=1;paint();assert(contains("1.0 MB")&&!contains("KB usati MiB")&&!contains("Copia dati")&&contains("Nuovo snapshot"));
+    view=1;paint();assert(contains("1.0 MB su 512.0 MB")&&!contains("KB usati MiB")&&!contains("Copia dati")&&contains("Nuovo snapshot"));
     view=0;paint();assert(contains("25.1 MB"));
     view=2;paint();assert(contains("10.4 MB"));
     view=3;paint();assert(contains("Origine sistema")&&contains("25.1 MB"));
     view=-1;d.disk[0].map.count=1;d.disk[0].map.part[0]=(DiskPartition){.start=2048,.sectors=131072};
     paint();assert(contains("1.0 TB")&&contains("Partizioni del disco · spazio non allocato in grigio"));
-    view=100;nsn=1;sn[0].date=0;paint();assert(contains("Condivisa (CoW)")&&contains("Non disponibile"));
+    view=100;nsn=1;sn[0].date=0;paint();assert(contains("Condivisa (CoW)")&&contains("Non disponibile")&&contains("Mostra nel Finder"));
     assert(count<NCMDS);
-    puts("PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date");
+    puts("PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), actual used/total SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date");
 }

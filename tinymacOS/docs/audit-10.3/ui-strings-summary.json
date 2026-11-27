@@ -117,14 +117,14 @@
     "userspace/calculator.c": "ad486efe694b1d7ba39a732eaa886cc10b3b97241e85e7d96c81830566663fe3",
     "userspace/calendar.c": "02edcbf3315723e31883f16b7b668e480edf43d7eceec0c96d9247344a7a09b3",
     "userspace/command.c": "db406d355af83d0a539778266a36513fcfd7f873243ad6f1525142e1cac86c7e",
-    "userspace/diskutility.c": "8fb6247b46262a02d5106d99400b253a838a30281aa2f01969dae241186b73c7",
-    "userspace/filebrowser.c": "4dcf4c16ce5c20348566414b1e54ff2346699ac5ec96c09e7a4689bd93c8915e",
-    "userspace/filebrowser.h": "3cb3d1978cfe7679a870627632a209d94a6d352d2e575d263f25b7a372ad3e1c",
+    "userspace/diskutility.c": "c861e112756ee9dc43ebf7013e5da8dda50f92ca7da01613e4f03e94a2236937",
+    "userspace/filebrowser.c": "c407b352e939987fb46d35aae72f0a37560cbb38f722fbeffc241efdc52a8fd9",
+    "userspace/filebrowser.h": "deac6993f42b54edc30249850719f6d39510c0754f2f8641d25a422959950075",
     "userspace/fileops.c": "4273f2a641c20b28d7bc3de4bc15978b0ccb138a0c117a7ae1f0a08f8e8d1b8f",
     "userspace/fileops.h": "dc610b9add9c3eb4d42a0faafa1cc08f832ebd91788999446f451c2495c3e3fe",
     "userspace/filepanel.c": "a45f0fadb87aa2179ab5cb555e32d34bffcd8b7d093db46fdfb208efd436eb90",
     "userspace/filepanel.h": "4816c2db72df4d25fc29b3efc8cdff9bc527397fb4e8e83691d59095fbc21f94",
-    "userspace/finder.c": "3aa31bb7d30c1f7fbaafcd1acf92309af0688a9dfcb33341f341c5ed7930007a",
+    "userspace/finder.c": "e08831f0e77a7e968aab123fa6fdbeb3fc4fd2fcf72b49250f5b060c5c4c47a4",
     "userspace/fontmetrics.c": "5c156ce3f4c481e9423e7da70f33eff735c7377c9530683b9334887bc42da9d7",
     "userspace/gallery.c": "58d5e4864106d35fb2fdeaf7670c132690c35bac2b5ee49e689ce1f6fc365d77",
     "userspace/inspector.c": "22a091ee3c67de2635a910863693832e9f0465a4b117bbca977d51578b8a5689",
@@ -149,20 +149,20 @@
     "userspace/vaultview.h": "afe70ff1b60b3fdc5a9c546bd6421e318e02d58823e56243166e127eb4059c43",
     "userspace/volume.h": "52265915bf6f0b3cf57e8d2d1c5574c88cd7445d8dd55b238bd0a1b019eb9760"
   },
-  "literal_count": 2468,
+  "literal_count": 2478,
   "counts_by_directory": {
     "boot": 106,
     "desktop": 287,
     "fs": 267,
     "include": 156,
     "storage": 143,
-    "userspace": 1509
+    "userspace": 1519
   },
   "counts_by_tag": {
     "diagnostic-or-assert-hint": 50,
-    "identifier-or-fragment-hint": 1165,
+    "identifier-or-fragment-hint": 1169,
     "safety-retain-meaning": 127,
     "technical-review": 24,
-    "text-review": 1122
+    "text-review": 1128
   }
 }

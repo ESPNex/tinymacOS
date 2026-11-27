@@ -4,7 +4,6 @@
 static int total=1100;
 static int context_mask,folder_ro;
 static Clipboard shared_clip;
-void ui_motion(int k){(void)k;}
 static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
  if(n==S_STAT){*(Dirent*)b=(Dirent){.dir=1,.ro=folder_ro};return 0;}
  if(n==S_CLIPBOARD&&a==0){*(Clipboard*)b=shared_clip;return 0;}
@@ -15,8 +14,11 @@ static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){
 #define sc(n,a,b,c,d) hostcall(n,(u64)(a),(u64)(b),(u64)(c),(u64)(d))
 #include "../userspace/filebrowser.c"
 #include "../userspace/finder.c"
-SysInfo si;int aw=760,ah=480;
 int main(void){
+ aw=782;ah=392;
+ assert(BROWSER_PLACES==10&&eq(paths[BROWSER_PLACES-1],"/.snapshots"));
+ assert(sidebar_at(ny(BROWSER_PLACES-1)+8)==BROWSER_PLACES-1);
+ ah=300;assert(sidebar_at(ny(BROWSER_PLACES-1)+8)==-1);ah=392;
  strset(cwd,DOCS,PATHLEN);reload();assert(n==64&&more&&!pagebase);int seen=0;
  do{for(int j=0;j<n;j++){char expected[48];sprintf(expected,"item-%04d",seen++);assert(eq(expected,files[j].name));}sel=n-1;offset=53;item_click.armed=1;}while(nextpage(1));
  assert(seen==1100&&pagebase==1088&&n==12&&!more);assert(nextpage(-1)&&pagebase==1024&&sel==-1&&!offset&&!item_click.armed);

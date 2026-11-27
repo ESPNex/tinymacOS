@@ -1,0 +1,54 @@
+{
+  "iso_sha256": "3debba9e7e65245d015bbe2b086b90977098812c3506be97023dc15dfef6a765",
+  "operation": "Lossless rectangular crop and lossless WebP encoding only. No compositing, retouching or rescaling. Full source PNG screenshots remain in the external guest work directory.",
+  "images": {
+    "block2-actual-used-and-total-crop.webp": {
+      "source": "/var/tmp/tmc-fs2-install-2hnlr6e2/evidence/block2-actual-used-and-total.png",
+      "source_sha256": "cc1a812df2b62fd2f48874bc9e33b8e4a34aac3b89b0ac468c0af744d1df2c03",
+      "crop_box": [
+        525,
+        315,
+        1080,
+        460
+      ],
+      "sha256": "13856978fdd09dd02b113000ead3b21782b2a66a952d9a3bc0a998cd6e0fc0af",
+      "bytes": 4052
+    },
+    "block2-third-snapshot-page-crop.webp": {
+      "source": "/var/tmp/tmc-fs2-install-2hnlr6e2/evidence/block2-third-snapshot-page.png",
+      "source_sha256": "6dbd705a760624dd551c7eb2dadc0df1d7f32052197af6225967fa5649fc9c10",
+      "crop_box": [
+        525,
+        255,
+        860,
+        545
+      ],
+      "sha256": "92247a829b15bc1e0c95d2e685c6868b4deff4820de0244af77b9adf116fb604",
+      "bytes": 8538
+    },
+    "block2-finder-snapshot-location-crop.webp": {
+      "source": "/var/tmp/tmc-fs2-install-2hnlr6e2/evidence/block2-finder-snapshot-location.png",
+      "source_sha256": "827f64b9ed9e36509d05c7daf548ad5c173610a1e2b01361d7b18d47e50d1a61",
+      "crop_box": [
+        312,
+        176,
+        1098,
+        615
+      ],
+      "sha256": "66513b509c95637d533bbaf8580398400ba311d7dc571606d9b14ef24874badf",
+      "bytes": 55088
+    },
+    "block2-local-checkpoint-finder-crop.webp": {
+      "source": "/var/tmp/tmc-fs2-install-2hnlr6e2/evidence/block2-local-checkpoint-finder.png",
+      "source_sha256": "93783c0753a8d65bbc685f44753bd71f3deaaf9739779dd6f00d61a9f5636a90",
+      "crop_box": [
+        425,
+        250,
+        1020,
+        430
+      ],
+      "sha256": "29bb44032440d102c6d76baf8368d1173037c7ccdb0e694cd1c118e01d22a258",
+      "bytes": 5080
+    }
+  }
+}

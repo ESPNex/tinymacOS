@@ -37,6 +37,12 @@ static int ny(int i)
 {
     return i < 5 ? 39 + i * 30 : 222 + (i - 5) * 30;
 }
+static int sidebar_at(int y)
+{
+    for(int i=0;i<BROWSER_PLACES;i++)
+        if(ny(i)+26<=ah-12&&y>=ny(i)-2&&y<ny(i)+25)return i;
+    return -1;
+}
 static int bundle(Dirent *f)
 {
     if(!f->dir||!f->ro)return 0;
@@ -262,9 +268,9 @@ static void paint(void)
     Box(S + 1, 0, aw - S - 1, ah, 0, CARD);
     Box(S, 0, 1, ah, 0, EDGE);
     Text(16, 14, "Preferiti", F_SMALL, SUB);
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < BROWSER_PLACES; i++) {
         int y = ny(i);
-        if (y + 26 > ah - 26)
+        if (y + 26 > ah - 12)
             continue;
         if (eq(cwd, paths[i]) || (i == 7 && eq(cwd,KERNELDIR)))
             Box(8, y - 2, S - 16, 26, 6, SEL);
@@ -359,7 +365,7 @@ static void paint(void)
 static int entryat(int x,int y){int left=side()+15;if(x<left||x>=aw-12||y<102||y>=ah-36)return -1;
     int cw=(aw-left-12)/cols(),col=(x-left)/MAX(1,cw);if(!listview&&(col>=cols()||y<103))return -1;
     int j=listview?(y-102)/31:(y-103)/82*cols()+col;return j>=0&&j<visible()&&j+offset<n?j+offset:-1;}
-static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int hit=0;for(int j=0;j<9;j++)if(y>=ny(j)-2&&y<ny(j)+25&&y<ah-26){go(paths[j]);hit=1;break;}if(!hit)return;}
+static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;go(paths[j]);}
     sel=sidebar?-1:entryat(x,y);Dirent wd;int writable=!sc(S_STAT,cwd,&wd,0,0)&&!wd.ro;
     unsigned m=AMASK(ACT_VIEW);if(sel>=0){m|=AMASK(ACT_OPEN)|AMASK(ACT_PROPS);if(!files[sel].dir)m|=AMASK(ACT_PREVIEW);if(bundle(files+sel))m|=AMASK(ACT_PACKAGE);
         m|=AMASK(ACT_COPY);if(writable&&!files[sel].ro)m|=AMASK(ACT_CUT)|AMASK(ACT_RENAME)|AMASK(ACT_DELETE);
@@ -374,7 +380,7 @@ static void event(Event *e)
     if(e->type==EV_DROP){
         if(dialog)return;char dir[PATHLEN],placed[PATHLEN];strset(dir,e->d?HOME "/Desktop":cwd,PATHLEN);
         if(e->d==2){Dirent target;if(sc(S_LIST,HOME "/Desktop",&target,1,e->a)!=1||!target.dir||absolutepath(dir,HOME "/Desktop",target.name))return;}
-        if(!e->d){int nav=-1;if(e->a<side())for(int j=0;j<9;j++)if(e->b>=ny(j)-2&&e->b<ny(j)+25)nav=j;
+        if(!e->d){int nav=e->a<side()?sidebar_at(e->b):-1;
             if(nav>=0)strset(dir,paths[nav],PATHLEN);else{int i=entryat(e->a,e->b);if(i>=0&&files[i].dir)absolutepath(dir,cwd,files[i].name);}}
         Dirent from;int move=!e->c&&!sc(S_STAT,e->text,&from,0,0)&&!from.ro;int r=fileop_place(e->text,dir,move,placed);
         strset(note,r==FILEOP_CYCLE?"Spostamento annullato: stessa cartella o ciclo.":r<0?"Trascinamento non riuscito: controlla spazio e permessi.":move?"Elemento spostato.":"Copia creata.",96);reload();item_click.armed=0;return;
@@ -505,11 +511,8 @@ static void event(Event *e)
         return;
     int x = e->a, y = e->b, S = side();
     if (x < S) {
-        for (int i = 0; i < 9; i++)
-            if (y >= ny(i) - 2 && y < ny(i) + 25 && y < ah - 26) {
-                go(paths[i]);
-                return;
-            }
+        int i=sidebar_at(y);
+        if(i>=0){go(paths[i]);return;}
     } else if (y >= ah - 35) {
         if((pagebase||more)&&x>=aw-78){nextpage(x<aw-48?-1:1);return;}
         if (bootpath(cwd))return;

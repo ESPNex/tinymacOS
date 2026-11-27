@@ -2,7 +2,11 @@
 #include "display_size.h"
 #include "disk_size_input.h"
 static DiskInfo d;
-static SnapInfo sn[8];
+#define SNAP_PAGE 16
+#define SNAP_PREVIOUS 98
+#define SNAP_NEXT 99
+static SnapInfo sn[SNAP_PAGE];
+static int snapbase, snapmore, snaperror;
 static FsInfo fi;
 static EncInfo ei;
 static int sel, view, dialog, op, nsn,side_scroll;
@@ -104,12 +108,32 @@ static void refresh(void)
     if (d.count && sel >= d.count)sel = d.count - 1;
     if (sc(S_SNAP, 6, 0, 0, &ei))
         memset(&ei, 0, sizeof ei);
-    nsn = sc(S_SNAP, 0, 0, sn, 8);
-    if (nsn < 0 || sc(S_SNAP, 5, 0, &fi, 0)) {
-        nsn = 0;
-        memset(&fi, 0, sizeof fi);
+    /* Preserve identity, not a page slot: deletion/reordering must not silently
+     * retarget Restore/Delete to the next snapshot. */
+    char selected[28]="";
+    if(view>=100&&view<100+nsn)strset(selected,sn[view-100].name,sizeof selected);
+    nsn=0;snapmore=0;snaperror=0;
+    if(sc(S_SNAP,5,0,&fi,0)){
+        memset(&fi,0,sizeof fi);snaperror=1;
+    }else{
+        do {
+            nsn=sc(S_SNAP,7,snapbase,sn,SNAP_PAGE);
+            if(nsn<0||nsn>SNAP_PAGE){nsn=0;snaperror=1;break;}
+            if(nsn||!snapbase)break;
+            snapbase=MAX(0,snapbase-SNAP_PAGE);
+        }while(1);
+        if(!snaperror&&nsn==SNAP_PAGE){
+            SnapInfo next;int n=sc(S_SNAP,7,snapbase+nsn,&next,1);
+            if(n<0||n>1)snaperror=1;
+            else snapmore=n;
+        }
     }
-    if (view >= 100 && view < 200 && (!installed() || view - 100 >= nsn))view = -1;
+    if(snaperror){nsn=0;snapmore=0;strset(msg,"Impossibile leggere il catalogo snapshot.",sizeof msg);}
+    if(view>=100&&view<200){
+        view=1;
+        if(installed()&&selected[0])for(int i=0;i<nsn;i++)
+            if(eq(selected,sn[i].name)){view=100+i;break;}
+    }
 }
 static int installed(void)
 {
@@ -191,6 +215,16 @@ static void verify_now(void)
     strset(msg, r ? "Verifica fallita: immagine danneggiata." : "Integrità dello snapshot verificata.",
            sizeof msg);
 }
+static void snapshot_open(void)
+{
+    if(!installed()||view<100||view-100>=nsn){
+        strset(msg,"Seleziona uno snapshot nella colonna laterale.",sizeof msg);return;
+    }
+    char path[PATHLEN]="/.snapshots/";append(path,sn[view-100].name,sizeof path);
+    Dirent target;
+    if(sc(S_STAT,path,&target,0,0)<0||!target.dir||sc(S_SPAWN,FINDER,path,0,0)<0)
+        strset(msg,"Impossibile aprire lo snapshot nel Finder.",sizeof msg);
+}
 static void yes(void)
 {
     if (dialog != 1)return;
@@ -212,19 +246,52 @@ static int side_row(int wanted,int *disk,int *v,char *label)
         int native=nvol();
         for(int j=0;j<native;j++)if(row++==wanted){*disk=i;*v=j;strset(label,j==1?"Dati tinymacOS":names[j],64);return 1;}
         /* S_SNAP is the mounted volume catalogue, NOT the selected disk. */
-        if(native==4&&installed())for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
+        if(native==4&&installed()){
+            if(snapbase&&row++==wanted){*disk=i;*v=SNAP_PREVIOUS;strset(label,"Snapshot precedenti…",64);return 1;}
+            for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
+            if(snapmore&&row++==wanted){*disk=i;*v=SNAP_NEXT;strset(label,"Altri snapshot…",64);return 1;}
+        }
         DiskMap*m=&d.disk[i].map;
         for(int j=0;j<m->count;j++)if(row++==wanted){*disk=i;*v=200+j;strset(label,"s",64);addnum(label,m->part[j].number,64);append(label,"  ",64);append(label,filesystem_name(m->part[j].fs),64);return 1;}
         for(int j=0;j<m->gaps;j++)if(row++==wanted){char size[32];display_size(size,sizeof size,(u64)m->gap[j].sectors*512);*disk=i;*v=400+j;strset(label,"Non allocato · ",64);append(label,size,64);return 1;}
     }
     return 0;
 }
+static void side_select(int disk,int v)
+{
+    msg[0]=0;
+    if(disk==sel&&installed()&&(v==SNAP_PREVIOUS||v==SNAP_NEXT)){
+        if((v==SNAP_PREVIOUS&&!snapbase)||(v==SNAP_NEXT&&!snapmore))return;
+        int back=v==SNAP_PREVIOUS;
+        snapbase=MAX(0,snapbase+(back?-SNAP_PAGE:SNAP_PAGE));
+        view=1;refresh();
+        if(nsn)view=100+(back?nsn-1:0);
+        side_scroll=0;
+        return;
+    }
+    sel=disk;view=v;
+}
+static void side_reveal(void)
+{
+    int disk,v,row;char label[64];
+    for(row=0;side_row(row,&disk,&v,label);row++)if(disk==sel&&v==view)break;
+    int slots=MAX(1,(ah-51)/27);
+    if(row<side_scroll)side_scroll=row;
+    if(row>=side_scroll+slots)side_scroll=row-slots+1;
+}
 static void side_move(int delta)
 {
     char label[64];int disk,v,current=0,total=0;
     while(side_row(total,&disk,&v,label)){if(disk==sel&&v==view)current=total;total++;}
-    int next=MAX(0,MIN(total-1,current+delta));if(side_row(next,&disk,&v,label)){sel=disk;view=v;}
-    int slots=MAX(1,(ah-59)/27);if(next<side_scroll)side_scroll=next;if(next>=side_scroll+slots)side_scroll=next-slots+1;
+    int next=MAX(0,MIN(total-1,current+delta));if(side_row(next,&disk,&v,label))side_select(disk,v);
+    side_reveal();
+}
+static void side_wheel(int delta)
+{
+    int disk,v,total=0;char label[64];
+    while(side_row(total,&disk,&v,label))total++;
+    int slots=MAX(1,(ah-51)/27);
+    side_scroll=MAX(0,MIN(MAX(0,total-slots),side_scroll-MAX(-16,MIN(16,delta))*3));
 }
 static void pair(int x, int y, const char *k, const char *v)
 {
@@ -249,7 +316,7 @@ static void paint(void)
     }
     button(x, 13, 57, "SOS", 0);
     /* A local FS2 checkpoint is already a snapshot in the catalogue. Do not
-     * expose a duplicate backup button; exFAT export gets its own real flow in M5. */
+     * expose a duplicate backup button; exFAT export must use a separate, implemented copy flow. */
     button(x + 65, 13, 92, "Recupero…", 0);
     button(x + 165, 13, 104, "Nuovo snapshot", 0);
     Box(r + 1, 52, aw - r - 1, 1, 0, EDGE);
@@ -278,6 +345,7 @@ static void paint(void)
         button(x, 282, 110, "Ripristina", 1);
         button(x + 118, 282, 96, "Verifica", 0);
         button(x + 222, 282, 96, "Elimina", 0);
+        button(x, 322, 194, "Mostra nel Finder", 0);
         Box(r + 1, ah - 45, aw - r - 1, 1, 0, EDGE);
         Text(x, ah - 31, msg[0] ? msg : "Snapshot CoW: blocchi condivisi, spazio occupato solo dalle modifiche.", F_SMALL, SUB);
         if (dialog) {
@@ -408,20 +476,20 @@ void app_main(void)
                 }
                 continue;
             }
+            if(e.type==EV_SCROLL){side_wheel(e.a);continue;}
             if (e.type == EV_KEY) {
                 if (e.a == 's')start(1);
                 if (e.a == 'r')start(3);
                 if (e.a == 'n')start(4);
                 if (e.a == K_UP || e.a == K_DOWN) {
                     side_move(e.a==K_DOWN?1:-1);
-                    msg[0] = 0;
                 }
             }
             if (e.type == EV_CLICK) {
                 int r = rail(), x = r + 22;
                 if (e.a < r) {
                     int row=side_scroll+(e.b-54)/27,dd,vv;char label[64];
-                    if(e.b>=51&&side_row(row,&dd,&vv,label)){sel=dd;view=vv;msg[0]=0;}
+                    if(e.b>=51&&side_row(row,&dd,&vv,label)){side_select(dd,vv);side_reveal();}
                 } else if (e.b >= 10 && e.b < 43) {
                     if (e.a >= x && e.a < x + 58)start(1);
                     else if (e.a >= x + 65 && e.a < x + 157)start(3);
@@ -429,6 +497,8 @@ void app_main(void)
                 } else if(view>=200&&e.b>=284&&e.b<325){
                     if(view>=400&&e.a>=x&&e.a<x+150)edit_begin(DISK_EDIT_CREATE);
                     else if(view<400){if(e.a>=x&&e.a<x+110)edit_begin(DISK_EDIT_DELETE);else if(e.a>=x+120&&e.a<x+280)edit_begin(DISK_EDIT_RESIZE);}
+                } else if(view>=100&&view<100+nsn&&e.b>=318&&e.b<356&&e.a>=x&&e.a<x+194){
+                    snapshot_open();
                 } else if (view >= 100 && view<200 && e.b >= 278 && e.b < 316) {
                     if (e.a >= x && e.a < x + 110)start(5);
                     else if (e.a >= x + 118 && e.a < x + 214)verify_now();
@@ -456,7 +526,7 @@ void app_main(void)
             }
             dialog = 0;
             if (op == 4 && !rr) {
-                strset(msg, "Snapshot creato: ora visibile nella colonna laterale.", sizeof msg);
+                strset(msg, "Snapshot creato.", sizeof msg);
             } else if (op == 5 && !rr) {
                 strset(msg, "Volume ripristinato nello stato dello snapshot.", sizeof msg);
             } else if (op == 7 && !rr) {
