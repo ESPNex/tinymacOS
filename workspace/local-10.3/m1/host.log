@@ -1,0 +1,6 @@
+PASS real Terminal no-echo: command aliases, invariant full Draw wire/position for UTF8 typing/deletion, no history/output/clipboard/drop leakage, bounded overflow, exact legacy/FS2 backend credential, success/failure/Ctrl-C/Escape wiping; shared modal caret inside actual field
+PASS real TextEdit disk round-trip: 144000-byte UTF8 without newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real TextEdit disk round-trip: 141735-byte UTF8 with newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real Terminal no-echo: command aliases, invariant full Draw wire/position for UTF8 typing/deletion, no history/output/clipboard/drop leakage, bounded overflow, exact legacy/FS2 backend credential, success/failure/Ctrl-C/Escape wiping; shared modal caret inside actual field
+PASS real TextEdit disk round-trip: 144000-byte UTF8 without newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real TextEdit disk round-trip: 141735-byte UTF8 with newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes

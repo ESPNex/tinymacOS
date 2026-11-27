@@ -135,29 +135,29 @@
     "userspace/settings.c": "194563849bbd1206e1fadc86264799a19f69dfb65aad29e80dc9410158959592",
     "userspace/sha1.h": "b7c3e54329e18d916204e089089189daab2204fd956afb63bfd4329c9d74bd3c",
     "userspace/stickies.c": "e6b758227e5040443423fa8acbb132ead0da62eb9898c022a739b53877134a5c",
-    "userspace/terminal.c": "47c65ec70e9ccb8153eaaafdbca57e7b99500d4d02ecaf7a9220691702a157b0",
+    "userspace/terminal.c": "f76179a66c1a87f2ebb849596a3885e540960d05eedc68c78c102eedf8f1465c",
     "userspace/textedit.c": "bdc17427f97c05398527d813cfc27a1ec6f77ef3f07eca745188cea323941074",
     "userspace/timemachine.c": "dd88dde54df38a38ba7717b5866b18d36a4d5b9a9d68cb87273828eb5d736c8c",
-    "userspace/ui.c": "a47f306b407eafc28e195193a79b7129a29a5515201b648c4f8b7bea7d4e6228",
+    "userspace/ui.c": "f0f7a13aaf4a3a5c9bd8cc272a83ec196858d3dccd0765cc4dc82296912a8b8f",
     "userspace/ui.h": "a716a4f7e5975de1b2b952492e89373dd49f5fac3412f465e974a3a4c074e771",
     "userspace/vaultpanel.c": "63788594b1bbe32c0e2eacae3d0aff626728f48e1ea04ebb3d944f4f2ad6c433",
     "userspace/vaultview.h": "afe70ff1b60b3fdc5a9c546bd6421e318e02d58823e56243166e127eb4059c43",
     "userspace/volume.h": "52265915bf6f0b3cf57e8d2d1c5574c88cd7445d8dd55b238bd0a1b019eb9760"
   },
-  "literal_count": 2337,
+  "literal_count": 2345,
   "counts_by_directory": {
     "boot": 61,
     "desktop": 287,
     "fs": 250,
     "include": 151,
     "storage": 142,
-    "userspace": 1446
+    "userspace": 1454
   },
   "counts_by_tag": {
     "diagnostic-or-assert-hint": 50,
-    "identifier-or-fragment-hint": 1097,
-    "safety-retain-meaning": 125,
-    "technical-review": 19,
-    "text-review": 1065
+    "identifier-or-fragment-hint": 1101,
+    "safety-retain-meaning": 126,
+    "technical-review": 20,
+    "text-review": 1068
   }
 }

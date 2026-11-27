@@ -1,0 +1,11 @@
+{
+  "tinymacOS/userspace/terminal.c": "f76179a66c1a87f2ebb849596a3885e540960d05eedc68c78c102eedf8f1465c",
+  "tinymacOS/userspace/ui.c": "f0f7a13aaf4a3a5c9bd8cc272a83ec196858d3dccd0765cc4dc82296912a8b8f",
+  "tinymacOS/kernel/syscall.c": "015c203571f271e509f087a5747f6f95d88363a6e93285c8489bd046cf014457",
+  "tinymacOS/tests/m1_acceptance_guest.py": "73fa51e054b7b41f2f96a0bd0b47c12c59cc67e2911704db4b63200828a10d02",
+  "tinymacOS/tests/m1_terminal_vault_guest.py": "22f76112333326b38fd4cffddf02895ec13f1e03d8e3915aa0ee3132919d9f3a",
+  "tinymacOS/tests/m1_utf8_fixture.c": "599b781f1c33a9f79fcc7fe3ef5fc6193a8e6e44a0c6407f22a774261e0f41ff",
+  "tinymacOS/tests/test-m1-acceptance.sh": "fcdd192b5f3c8502e6becad458870a8fe1c8b5abde8dc85895fb2945455a9e59",
+  "tinymacOS/tests/terminal_secret_host.c": "3537ed669707a4f783e6cfc8b882b98633023ca3e36301eb99f7b146f9c345a6",
+  "tinymacOS/tests/textedit_roundtrip_host.c": "405b5f3c4e3eb0097f6f70f26e7f8f335f83754adf1b0c51d965930535e796cf"
+}

@@ -111,7 +111,7 @@ void modal(const char *name, const char *value, const char *hint)
 void inputmodal(const char *name,const char *value,const char *hint,int secret)
 {
     modal(name,"",hint);
-    int w=MIN(460,aw-40),x=(aw-w)/2,y=(ah-154)/2;
+    int w=MIN(aw-46,430),x=(aw-w)/2,y=(ah-143)/2;
     InputText(x+25,y+52,w-50,value,strlen(value),1,secret,TX);
 }
 int baseevent(Event *e)

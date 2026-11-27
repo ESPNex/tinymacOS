@@ -1,0 +1,34 @@
+{
+  "tinymacOS-10.3-M1-native.iso": {
+    "bytes": 227639296,
+    "sha256": "76d7a6b52b3167fd132434136503569241d1ae37cc63c4208a7369a1b0db8018"
+  },
+  "KernelCache": {
+    "bytes": 1229000,
+    "sha256": "20a8f91569fd202b2907474c50241c9d28fa1d88e355390e8473fc197e30b10c"
+  },
+  "RecoveryKernel.elf": {
+    "bytes": 1228936,
+    "sha256": "2aa4f259e0dfd3b59f394f787ffc2b926fb5209e49730de1ec41eec3d985543e"
+  },
+  "BOOTX64.EFI": {
+    "bytes": 172544,
+    "sha256": "22952451023680e15287896e563fbd737732f9e3355a84b93212aa481fd31074"
+  },
+  "RECBOOT.EFI": {
+    "bytes": 161792,
+    "sha256": "92d2dec80b3af81fa055db9784898adef9c8c59dfb38106127ba3fbc02bcbbc2"
+  },
+  "terminal.elf": {
+    "bytes": 33496,
+    "sha256": "e23ff77ba57dfee5c46902cb5817aa2c2573f4cd645e32aa667253912b628ed8"
+  },
+  "textedit.elf": {
+    "bytes": 33360,
+    "sha256": "50ba878763c5449a42ef71096d27ce207d4d7eebf145407f2855cd7b4b7f3284"
+  },
+  "desktop.elf": {
+    "bytes": 2799104,
+    "sha256": "0c93e7ce10dbd2a75f1fa4eb5f9051a7f35b49328129f5f4c9a5219af115838f"
+  }
+}

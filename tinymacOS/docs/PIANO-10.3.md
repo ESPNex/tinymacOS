@@ -34,6 +34,8 @@ Implementare una gestione condivisa di focus, posizione e fase visibile dove app
 
 Accettazione: file UTF-8 lungo con/senza newline, round-trip byte-identico, click/scroll/resize, inserimento e cancellazione ai confini delle righe; test host sanitizzati e guest con input reale. Separare a capo visivo da newline realmente presenti nel documento. Per il caret verificare campo vuoto, focus via click/Tab, digitazione continua, pausa/lampeggio, frecce e cancellazione, perdita del focus, password grafiche e input Terminale senza eco. Verificare esplicitamente TextEdit, Note, Memo, Terminale, setup e Recovery. Questa precisazione modifica il piano, non certifica l'implementazione.
 
+**Chiusura M1 (gate locali):** completata la matrice host normale/sanitizzata e guest USB/pixel su setup, Terminale, TextEdit, Note/Memo, Installer e Recovery nativa. File UTF-8 con/senza newline da 141.735/144.000 byte salvati e riaperti con SHA-256 invariato; prompt senza eco verificato anche su FV003 realmente creato dalla GUI. Evidenze e limiti: `../../workspace/local-10.3/m1/VERIFICA.md`. Non chiude M2 né la certificazione hardware/release.
+
 ## M2 — Unità, spazio e nomi
 
 Un solo formatter decimale (B/kB/MB/GB/TB) con conversione numerica corretta; non sostituire «MiB» con «MB» lasciando una divisione per 1048576. Correggere doppia unità «KB usati MiB» in Utility Disco. Le dimensioni distruttive in input devono avere unità non ambigue e conversione verificata; migrare insieme validazione, limiti e messaggi, non con ricerca/sostituzione cieca.

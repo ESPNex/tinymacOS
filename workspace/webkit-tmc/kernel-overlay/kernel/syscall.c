@@ -166,7 +166,7 @@ static Frame *syscall_inner(Frame *f)
     switch (n) {
     case S_FILEVAULT:
         if(IN(b,sizeof(VaultRequest))&&OUT(b,sizeof(VaultRequest))&&OUT(c,sizeof(VaultInfo))&&
-           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND||(p->app==INSTALLER&&a==0))){
+           (desktop||session_open())&&(desktop||p->app==SETTINGS||p->app==DISKUTIL||p->app==COMMAND||(p->app==TERMINAL&&(a==0||a==4))||(p->app==INSTALLER&&a==0))){
             VaultRequest q=*(VaultRequest*)b;VaultInfo out;
             if(q.password[64]||q.replacement[64]||q.recovery[64]){erase(&q,sizeof q);break;}
             if(a<=9){r=filevault_control(a,&q,&out);memcpy(((VaultRequest*)b)->recovery,q.recovery,65);*(VaultInfo*)c=out;}
@@ -248,8 +248,10 @@ static Frame *syscall_inner(Frame *f)
                 r = fs_enc(0, 0, (void *)d);
             else if (b == 3)
                 r = fs_enc(3, 0, 0);
-            else if (b >= 1 && b <= 4 && string(c, s, sizeof s))
+            else if (b >= 1 && b <= 4 && string(c, s, sizeof s)) {
                 r = fs_enc((int)b, s, 0);
+                erase(s,sizeof s);
+            }
         }
         break;
     case S_RESMODE:

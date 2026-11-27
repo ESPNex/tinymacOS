@@ -12,6 +12,30 @@ static ExecResult result;
 static Dirent matches[NSLOTS];
 static Clipboard clipboard;
 static int selection,selecting,anchor_row,anchor_byte,end_row,end_byte;
+/* Credentials never enter the command line, history, selection or Draw wire. */
+static int secret_mode,secret_at;
+static char secret_input[65];
+static void secret_clear(void)
+{
+    volatile char *p=secret_input;for(unsigned i=0;i<sizeof secret_input;i++)p[i]=0;
+    secret_at=secret_mode=0;
+}
+
+
+/* Modern whole-volume FileVault and the historical per-file backend share the
+ * prompt, not credential argv. Terminal has only status/unlock authorization. */
+static int secret_unlock(void)
+{
+    VaultRequest q={.disk=si.recovery?0:-1};VaultInfo v={0};
+    sc(S_FILEVAULT,0,&q,&v,0);
+    int r;
+    if(v.format){
+        strset(q.password,secret_input,sizeof q.password);
+        r=sc(S_FILEVAULT,4,&q,&v,0);
+    }else r=sc(S_SNAP,6,4,secret_input,0);
+    volatile u8 *p=(volatile u8*)&q;for(unsigned i=0;i<sizeof q;i++)p[i]=0;
+    return r;
+}
 
 static int cols(void)
 {
@@ -227,6 +251,11 @@ static void enter(void)
         last = 2;
         return;
     }
+    if(count==1&&!*redir&&!*readfrom&&
+       ((cmd[0].argc==1&&eq(cmd[0].argv[0],"apfs_unlockfv"))||
+        (cmd[0].argc==3&&eq(cmd[0].argv[0],"diskutil")&&eq(cmd[0].argv[1],"apfs")&&eq(cmd[0].argv[2],"unlockVolume")))){
+        secret_clear();secret_mode=1;selection=selecting=0;return;
+    }
     if (builtin())return;
     if (*readfrom) {
         Dirent d;
@@ -332,6 +361,7 @@ static void insert_input(const char*s){
  memmove(input+cur+n,input+cur,old-cur+1);memcpy(input+cur,s,n);cur+=n;selection=0;scroll=0;
 }
 static void clipboard_action(int action){
+ if(secret_mode)return;
  if(action==ACT_COPY||action==ACT_CUT){
   if(action==ACT_CUT&&selection){note("L’output è in sola lettura: usa Copia.");return;}
   memset(&clipboard,0,sizeof clipboard);clipboard.kind=CLIP_TEXT;int at=0;
@@ -346,6 +376,7 @@ static void clipboard_action(int action){
  }
 }
 static void drop_path(const char*path){
+ if(secret_mode)return;
  char quoted[PATHLEN*2+5];int n=0;quoted[n++]='"';for(int j=0;path[j]&&j<PATHLEN-1;j++){if(path[j]=='"'||path[j]=='\\'||path[j]=='$'||path[j]=='`')quoted[n++]='\\';quoted[n++]=path[j];}quoted[n++]='"';quoted[n++]=' ';quoted[n]=0;insert_input(quoted);
 }
 static void paint(void)
@@ -361,9 +392,9 @@ static void paint(void)
     title("Terminale — ", ttl);
     int rows = MAX(3, (ah - 43) / 19);
     char q[INPUT + 96];
-    prompt(q, sizeof q);
-    int pre = strlen(q);
-    append(q, input, sizeof q);
+    if(secret_mode)strset(q,"Password del volume: ",sizeof q);else prompt(q,sizeof q);
+    int pre=strlen(q);
+    if(!secret_mode)append(q,input,sizeof q);
     int nr = job ? 0 : (text_columns(q,strlen(q)) / c + 1);
     int end = MAX(0, nt - scroll), start = MAX(MAX(0, nt - NR), end - rows + (scroll ? 0 : nr)), y = 12;
     for (int i = start; i < end; i++, y += 19) {
@@ -376,7 +407,7 @@ static void paint(void)
             char row[400];
             int begin=text_offset(q,0,strlen(q),i*c),end=text_offset(q,begin,strlen(q),c),z=end-begin;
             memcpy(row,q+begin,z);row[z]=0;
-            int caret=text_columns(q,pre+cur);
+            int caret=text_columns(q,pre+(secret_mode?0:cur));
             if(caret/c==i){int x=14+(caret%c)*8;Caret(x,y+1,2,15,fg);}
             MonoText(14,y,row,z,fg);
         }
@@ -385,12 +416,24 @@ static void paint(void)
     Box(0, ah - 25, aw, 25, 0, SOFT);
     Icon(12, ah - 21, 16, 6);
     Text(36, ah - 22, cwd, F_SMALL, dim);
-    Text(aw - 109, ah - 22, job ? "In esecuzione" : scroll ? "Cronologia" : "Sessione locale", F_SMALL, dim);
+    Text(aw - 109, ah - 22, secret_mode?"Senza eco":job ? "In esecuzione" : scroll ? "Cronologia" : "Sessione locale", F_SMALL, dim);
     finish();
 }
 static void key(Event *e)
 {
-    int k = e->a, n = strlen(input);
+    int k=e->a,n=strlen(input);
+    if(secret_mode){
+        scroll=0;
+        if(k==27||(e->b&&(k=='c'||k=='C'))){secret_clear();last=130;return;}
+        if(k=='\n'){
+            int r=secret_unlock();secret_clear();last=r?1:0;
+            note(r?"Sblocco non riuscito: volume non disponibile o credenziali errate.":"Il volume è stato sbloccato.");return;
+        }
+        if(e->b||e->c)return;
+        if(k==8)text_backspace(secret_input,&secret_at);
+        else if(text_printable(k))text_insert(secret_input,sizeof secret_input,&secret_at,k);
+        return;
+    }
     if(e->b&&e->c&&(k=='c'||k=='C'||k=='v'||k=='V'||k=='x'||k=='X')){clipboard_action(k=='v'||k=='V'?ACT_PASTE:k=='x'||k=='X'?ACT_CUT:ACT_COPY);return;}
     if (e->b && (k == 'c' || k == 'C')) {
         if (job)sc(S_KILL, job, 0, 0, 0);
@@ -470,9 +513,9 @@ void app_main(void)
         while (sc(S_EVENT, &e, 0, 0, 0) > 0) {
             dirty = 1;
             if (baseevent(&e))continue;
-            if (e.type == EV_CLOSE)quit();
+            if (e.type == EV_CLOSE){secret_clear();quit();}
             if (e.type == EV_KEY)key(&e);
-            if(e.type==EV_SELECT)select_event(&e);
+            if(e.type==EV_SELECT&&!secret_mode)select_event(&e);
             if(e.type==EV_DROP)drop_path(e.text);
             if(e.type==EV_ACTION&&(e.a==ACT_COPY||e.a==ACT_CUT||e.a==ACT_PASTE))clipboard_action(e.a);
             if (e.type == EV_SCROLL) scroll=MAX(0,MIN(MIN(nt,NR),scroll+3*e.a));
