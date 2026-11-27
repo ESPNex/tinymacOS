@@ -5,8 +5,8 @@
   "background_work_running": false,
   "Safari_in_scope": false,
   "published": false,
-  "ISO_built": false,
-  "guest_tested": false,
+  "ISO_built": true,
+  "guest_tested": true,
   "hardware_tested": false,
   "decisions": {
     "OpenCore": "replace Windows Boot Manager as primary boot flow, preserve Microsoft EFI files and Windows chainload with rollback",
@@ -14,7 +14,7 @@
   },
   "macroblocks": {
     "M0": "plan and baseline hashes recorded; initial audit done",
-    "M1": "Compact Mono wire format and full-frame stress PASS; compositor caret/partial damage, shared masked fields, TextEdit/Note/Memo/Terminal host PASS; login empty field caret corrected; integration build/guest in progress",
+    "M1": "Implementation and targeted host/integration guest checks PASS; hardware and exhaustive app-field matrix remain final release gates",
     "M2": "shared SI formatter and first UI migrations PASS; full migration, home name, duplicate snapshot and unallocated-space diagnosis pending",
     "M3": "multicore CPU interval source fix and actual sample() host tests PASS; RAM accounting audit and runtime verification pending",
     "M4": "pending",
@@ -32,14 +32,14 @@
     ],
     "USB_retirement_guard": "PASS",
     "source_overlay_sync": "PASS",
-    "full_build": "IN PROGRESS; first attempt compiled kernels/apps but failed because mkfs.fat was outside PATH; corrected PATH",
-    "guest": "PENDING",
+    "full_build": "PASS M1 development ISO, no release",
+    "guest": "PASS M1 real USB/screenshot checks: empty setup field, Terminal, TextEdit UTF-8 tail and Home/End/newline, Note, Memo",
     "physical_hardware": "NOT RUN"
   },
   "next_steps": [
-    "Finish M1 integration build and real input guest checks",
-    "Continue M2 (units, real disk extents, home labels, snapshot/backup distinction)",
-    "Then M3 through M7 in plan order"
+    "M2: correct fixed 96MiB coexistence allocation, SI units, real extents and home labels",
+    "M3 audit RAM and runtime load",
+    "Continue M4-M7"
   ],
   "references": [
     "tinymacOS/docs/PIANO-10.3.md",
