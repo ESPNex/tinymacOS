@@ -97,6 +97,7 @@ static void edit_event(Event*e)
     }
 }
 
+static int installed(void);
 static void refresh(void)
 {
     sc(S_DISK, 0, &d, 0, 0);
@@ -108,7 +109,7 @@ static void refresh(void)
         nsn = 0;
         memset(&fi, 0, sizeof fi);
     }
-    if (view >= 100 && view < 200 && view - 100 >= nsn)view = -1;
+    if (view >= 100 && view < 200 && (!installed() || view - 100 >= nsn))view = -1;
 }
 static int installed(void)
 {
@@ -182,7 +183,7 @@ static void start(int a)
 }
 static void verify_now(void)
 {
-    if (view < 100 || view - 100 >= nsn) {
+    if (!installed() || view < 100 || view - 100 >= nsn) {
         strset(msg, "Seleziona uno snapshot nella colonna laterale.", sizeof msg);
         return;
     }
@@ -210,7 +211,8 @@ static int side_row(int wanted,int *disk,int *v,char *label)
         if(i!=sel)continue;
         int native=nvol();
         for(int j=0;j<native;j++)if(row++==wanted){*disk=i;*v=j;strset(label,j==1?"Dati tinymacOS":names[j],64);return 1;}
-        if(native==4)for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
+        /* S_SNAP is the mounted volume catalogue, NOT the selected disk. */
+        if(native==4&&installed())for(int j=0;j<nsn;j++)if(row++==wanted){*disk=i;*v=100+j;strset(label,sn[j].name,64);return 1;}
         DiskMap*m=&d.disk[i].map;
         for(int j=0;j<m->count;j++)if(row++==wanted){*disk=i;*v=200+j;strset(label,"s",64);addnum(label,m->part[j].number,64);append(label,"  ",64);append(label,filesystem_name(m->part[j].fs),64);return 1;}
         for(int j=0;j<m->gaps;j++)if(row++==wanted){char size[32];display_size(size,sizeof size,(u64)m->gap[j].sectors*512);*disk=i;*v=400+j;strset(label,"Non allocato · ",64);append(label,size,64);return 1;}
@@ -233,7 +235,7 @@ static void paint(void)
 {
     begin();
     int r = rail(), x = r + 22, w = aw - x - 19;
-    int sh = view >= 100 && view - 100 < nsn;
+    int sh = installed() && view >= 100 && view < 200 && view - 100 < nsn;
     Box(0, 0, r, ah, 0, PANEL);
     Box(r, 0, 1, ah, 0, EDGE);
     Box(r + 1, 0, aw - r - 1, ah, 0, CARD);
@@ -318,7 +320,7 @@ static void paint(void)
     u64 sum=0;for(int j=0;j<(d.disk[sel].layout==2?4:2);j++)sum+=z[j];
     char s[64] = "";
     if (view == 1 && installed()) {
-        display_size(s,sizeof s,fi.used);
+        display_usage(s,sizeof s,fi.used,fi.total);
     } else
         display_size(s,sizeof s,view>=0?(u64)z[view]*512:(u64)d.disk[sel].sectors*512);
     pair(x, 155, view == 1 && installed() ? "Utilizzo" : "Capacità", s);

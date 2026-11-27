@@ -117,7 +117,7 @@
     "userspace/calculator.c": "ad486efe694b1d7ba39a732eaa886cc10b3b97241e85e7d96c81830566663fe3",
     "userspace/calendar.c": "02edcbf3315723e31883f16b7b668e480edf43d7eceec0c96d9247344a7a09b3",
     "userspace/command.c": "db406d355af83d0a539778266a36513fcfd7f873243ad6f1525142e1cac86c7e",
-    "userspace/diskutility.c": "34e29ef65b21060e4d1921ce60a956744c9d8323553423eb42e70a7bfc3f3927",
+    "userspace/diskutility.c": "8fb6247b46262a02d5106d99400b253a838a30281aa2f01969dae241186b73c7",
     "userspace/filebrowser.c": "4dcf4c16ce5c20348566414b1e54ff2346699ac5ec96c09e7a4689bd93c8915e",
     "userspace/filebrowser.h": "3cb3d1978cfe7679a870627632a209d94a6d352d2e575d263f25b7a372ad3e1c",
     "userspace/fileops.c": "4273f2a641c20b28d7bc3de4bc15978b0ccb138a0c117a7ae1f0a08f8e8d1b8f",

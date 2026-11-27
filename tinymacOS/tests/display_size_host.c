@@ -16,5 +16,8 @@ int main(void)
         assert(s[cap-1]==0||strlen((char*)s)<(unsigned)cap);
         for(unsigned i=cap;i<sizeof s;i++)assert(s[i]==0xa5);
     }
+    char usage[80];display_usage(usage,sizeof usage,8192000,10000000000ull);
+    assert(eq(usage,"8.1 MB su 10.0 GB"));display_usage(usage,sizeof usage,0,1000);assert(eq(usage,"0 B su 1.0 kB"));
+    puts("PASS usage formatter: exactly one SI unit per value, actual used bytes and total capacity, no appended MiB/Kb labels");
     puts("PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations");
 }
