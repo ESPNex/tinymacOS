@@ -19,7 +19,7 @@ static u8 arena[NT_HEAP] ALIGNED(16);
 typedef struct Allocation {size_t size;struct Allocation*next;u64 free,magic;} Allocation;
 #define ALLOC_MAGIC 0x4e544653414c4c4full
 static Allocation*first;
-static struct {Medium*m;u32 start,extent;u64 position,epoch;int dry,error,io_failed,wrote,write_attempts;size_t high;void*jmp[5];} ctx;
+static struct {Medium*m;u64 start,extent;u64 position,epoch;int dry,error,io_failed,wrote,write_attempts;size_t high;void*jmp[5];} ctx;
 static u8 verify[NT_CHUNK*512] ALIGNED(512);
 static char report[4096];static size_t reportused;
 extern int ntp_tmc_ntfsresize_run(unsigned long long,int);
@@ -77,7 +77,7 @@ static i64 transfer(i64 pos,i64 bytes,void*p,int write){
  if(write){ctx.write_attempts++;if(ctx.dry){ctx.error=EROFS;return -1;}}
  i64 done=0;
  while(done<bytes){
-  u32 sector=(pos+done)/512,off=(pos+done)%512,n;
+  u64 sector=(pos+done)/512;u32 off=(pos+done)%512,n;
   if(off||bytes-done<512){
    u8 b[512] ALIGNED(512);n=MIN((i64)(512-off),bytes-done);
    if(ctx.m->io(ctx.m->d,ctx.start+sector,1,b,0))goto bad;
@@ -125,7 +125,7 @@ static u64 utc_now(void){
 }
 int ntfs_resize_native(Medium*m,DiskEdit*q,int apply){
  if(!q)return DE_INVALID;
- u32 extent=MAX(q->sectors,q->size);
+ u64 extent=MAX(q->sectors,q->size);
  if(!m||!m->flush||!q->sectors||!q->size||q->start>=m->z||extent>m->z-q->start)return DE_INVALID;
  reportused=0;report[0]=0;
  u8 bp[512];

@@ -749,8 +749,8 @@ static int run(void)
             if(n!=args&&!apply)return fail("Uso: diskutil deletePartition diskNsM [--confirm] | resizeVolume diskNsM MB [--confirm] | addPartition diskN LBA MB nome [--confirm]");
             DiskEdit q={.op=create?DISK_EDIT_CREATE:del?DISK_EDIT_DELETE:DISK_EDIT_RESIZE};
             if(create){
-                q.disk=diskid(V(2));u32 mb;
-                if(q.disk<0||q.disk>=di.count||disk_uint(V(3),&q.start)||disk_size_mb(V(4),&mb))return fail("Disco, LBA o dimensione non validi.");
+                q.disk=diskid(V(2));u64 mb;
+                if(q.disk<0||q.disk>=di.count||disk_lba(V(3),&q.start)||disk_size_mb(V(4),&mb))return fail("Disco, LBA o dimensione non validi.");
                 q.size=mb;strset(q.name,V(5),sizeof q.name);
             }else{
                 if(disk_partition_id(V(2),&q.disk,&q.number)||q.disk>=di.count)return fail("Identificatore partizione non valido.");
@@ -758,7 +758,7 @@ static int run(void)
                 for(int j=0;j<m->count;j++)if(m->part[j].number==q.number)p=m->part+j;
                 if(!p)return fail("Partizione non trovata.");
                 q.start=p->start;q.sectors=p->sectors;
-                if(!del){u32 mb;if(disk_size_mb(V(3),&mb))return fail("Dimensione MB non valida.");q.size=mb;}
+                if(!del){u64 mb;if(disk_size_mb(V(3),&mb))return fail("Dimensione MB non valida.");q.size=mb;}
             }
             int r=sc(S_DISK,10,&q,0,0);ln(q.message);if(r)return 1;
             if(!del){char size[40];disk_size_mb_exact(size,sizeof size,q.size);say("Dimensione effettiva: ");say(size);ln(" MB (allineata per difetto)");}

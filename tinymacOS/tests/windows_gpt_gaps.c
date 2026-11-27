@@ -7,7 +7,7 @@
 static u32 total=500118192,free_at,free_n=10u*1024*2048;
 static unsigned writes;
 static u8 pmbr[512];static Gpt primary,backup;static Part table[128],copy[128];
-static int io(int d,u32 l,u32 n,void*p,int w){
+static int io(int d,u64 l,u32 n,void*p,int w){
  (void)d;assert(l<total&&n<=total-l);if(w){writes++;assert(!"partition scan must not write");}
  memset(p,0,n*512u);
  if(l==0&&n==1)memcpy(p,pmbr,512);

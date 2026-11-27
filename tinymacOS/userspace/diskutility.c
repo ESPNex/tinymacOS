@@ -19,7 +19,7 @@ static void edit_begin(int operation)
         int j=view-400;if(j<0||j>=m->gaps)return;
         DiskGap*g=m->gap+j;edit.start=((u64)g->start+2047)&~2047ull;
         if(edit.start>=g->start+g->sectors)return;
-        edit.size=(g->sectors-(edit.start-g->start))&~2047u;
+        edit.size=(g->sectors-(edit.start-g->start))&~2047ull;
         strset(editname,"Senza titolo",sizeof editname);
     }else{
         int j=view-200;if(j<0||j>=m->count)return;
@@ -33,7 +33,7 @@ static void edit_preview(void)
     if(edit.op==DISK_EDIT_DELETE){
         if(!eq(editname,"ELIMINA")){strset(msg,"Digita ELIMINA per confermare la selezione.",sizeof msg);return;}
     }else{
-        u32 size;if(disk_size_mb(editsize,&size)){strset(msg,"Dimensione MB non valida (fino a 6 decimali).",sizeof msg);return;}
+        u64 size;if(disk_size_mb(editsize,&size)){strset(msg,"Dimensione MB non valida (fino a 6 decimali).",sizeof msg);return;}
         edit.size=size;strset(edit.name,editname,sizeof edit.name);
     }
     if(!sc(S_DISK,10,&edit,0,0)){dialog=4;msg[0]=0;}
@@ -298,7 +298,7 @@ static void paint(void)
     }
     if(view>=200){
         DiskMap*m=&d.disk[sel].map;int free=view>=400,j=view-(free?400:200);
-        u32 start=0,sectors=0;const char*title="Partizione",*format="Spazio non allocato";
+        u64 start=0,sectors=0;const char*title="Partizione",*format="Spazio non allocato";
         if(free){if(j>=m->gaps){view=-1;finish();return;}start=m->gap[j].start;sectors=m->gap[j].sectors;title="Spazio non allocato";}
         else{if(j>=m->count){view=-1;finish();return;}DiskPartition*p=m->part+j;start=p->start;sectors=p->sectors;format=filesystem_name(p->fs);title=p->name[0]?p->name:format;}
         Icon(x,75,57,33);Text(x+69,77,title,F_CAPTION,TX);Text(x+70,109,free?"Nessuna partizione in questa estensione":"Partizione del disco",F_SMALL,SUB);
@@ -314,7 +314,7 @@ static void paint(void)
     Icon(x, 75, 57, view == -1 ? 33 : 39);
     Text(x + 69, 77, view < 0 ? "Disco interno" : names[view], F_CAPTION, TX);
     Text(x + 70, 109, view < 0 ? d.disk[sel].model : "Volume del disco interno", F_SMALL, SUB);
-    const u32 *z=d.disk[sel].region_sectors;
+    const u64 *z=d.disk[sel].region_sectors;
     u64 sum=0;for(int j=0;j<(d.disk[sel].layout==2?4:2);j++)sum+=z[j];
     char s[64] = "";
     if (view == 1 && installed()) {

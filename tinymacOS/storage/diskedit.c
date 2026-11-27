@@ -19,8 +19,8 @@ static u16 r16(const u8*p){return p[0]|(u16)p[1]<<8;}
 static u32 r32(const u8*p){return r16(p)|(u32)r16(p+2)<<16;}
 static void w32(u8*p,u32 n){memcpy(p,&n,4);}
 static int nonzero(const u8*p,unsigned n){while(n--)if(*p++)return 1;return 0;}
-static int readat(Medium*m,u32 at,u32 n,void*p){return at>=m->z||n>m->z-at||m->io(m->d,at,n,p,0);}
-static int writeat(Medium*m,u32 at,u32 n,const void*p){
+static int readat(Medium*m,u64 at,u32 n,void*p){return at>=m->z||n>m->z-at||m->io(m->d,at,n,p,0);}
+static int writeat(Medium*m,u64 at,u32 n,const void*p){
     if(!n||n>8||at>=m->z||n>m->z-at)return -1;
     return m->io(m->d,at,n,(void*)p,1)||m->flush(m->d)||readat(m,at,n,verifybuf)||memcmp(p,verifybuf,n*512)?-1:0;
 }
@@ -31,7 +31,7 @@ static int readtable(Medium*m){
     memset(table,0,sizeof table);return readat(m,primary_edit.entries,(primary_edit.num+3)/4,table);
 }
 static int fingerprint(Medium*m,u8 hash[32]){
-    SHA256 s;sha_init(&s);sha_update(&s,&m->z,4);sha_update(&s,mbrbuf,512);
+    SHA256 s;sha_init(&s);sha_update(&s,&m->z,sizeof m->z);sha_update(&s,mbrbuf,512);
     if(editmap.scheme==MAP_GPT){sha_update(&s,&primary_edit,512);sha_update(&s,&backup_edit,512);sha_update(&s,table,primary_edit.num*128);}
     if(editmap.scheme==MAP_MBR){
         for(int i=0;i<editmap.count;i++){
@@ -100,7 +100,7 @@ static int native_format(Medium*m,DiskEdit*q){
     return writeat(m,q->start,1,root);
 }
 static int fattail(Medium*m,DiskEdit*q,DiskPartition*p,int apply){
-    u32 a=p->start;if(readat(m,a,1,bootsector))return DE_IO;
+    u64 a=p->start;if(readat(m,a,1,bootsector))return DE_IO;
     u32 r=r16(bootsector+14),fat=r32(bootsector+36),spc=bootsector[13],nf=bootsector[16],old=r32(bootsector+32);
     u32 info=r16(bootsector+48),backup=r16(bootsector+50),oldcl,newcl;
     if(r16(bootsector+19)||r16(bootsector+40)||nf!=2||!spc||!r||!fat||q->size<=r+(u64)nf*fat||old<=r+(u64)nf*fat)return DE_UNSUPPORTED;
@@ -160,14 +160,14 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
     }
     if(q->op==DISK_EDIT_CREATE){
         int inside=0;for(int i=0;i<editmap.gaps;i++){DiskGap*g=editmap.gap+i;if(q->start>=g->start&&q->start-g->start<g->sectors&&q->size<=g->sectors-(q->start-g->start))inside=1;}
-        if(!inside||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
+        if(!inside||q->size>0xffffffffull||q->size<NATIVE_MIN||q->start%2048||q->size%2048||editmap.slot<0||!q->name[0])return say(q,DE_INVALID,"Servono almeno 33.5 MB allineati, una voce libera e un nome.");
         for(unsigned j=0;j<sizeof q->name;j++){unsigned char c=q->name[j];if(!c)break;if(c<32||c>126||j==sizeof q->name-1)return say(q,DE_INVALID,"Usa un nome ASCII di massimo 47 caratteri.");}
         if(!apply)return say(q,0,"Crea BTRFS nativo (subset proprietario, non Btrfs Linux). Capacità file fissa.");
         if(native_format(m,q))return say(q,DE_IO,"Errore di formattazione: partizione non pubblicata. Non riprovare senza verifica.");
         int slot=editmap.slot;
         if(editmap.scheme==MAP_GPT){
             Part*t=table+slot;memset(t,0,sizeof *t);memcpy(t->type,dat_type,16);
-            SHA256 s;u8 id[32];sha_init(&s);sha_update(&s,q->stamp,32);sha_update(&s,&q->start,4);sha_update(&s,q->name,strlen(q->name));sha_final(&s,id);
+            SHA256 s;u8 id[32];sha_init(&s);sha_update(&s,q->stamp,32);sha_update(&s,&q->start,sizeof q->start);sha_update(&s,q->name,strlen(q->name));sha_final(&s,id);
             memcpy(t->id,id,16);t->id[6]=(t->id[6]&15)|64;t->id[8]=(t->id[8]&63)|128;
             t->start=q->start;t->end=(u64)q->start+q->size-1;for(int i=0;i<35&&q->name[i];i++)t->name[i]=(u8)q->name[i];
         }else{u8*t=mbrbuf+446+slot*16;memset(t,0,16);t[4]=0xda;t[1]=t[5]=0xfe;t[2]=t[3]=t[6]=t[7]=0xff;w32(t+8,q->start);w32(t+12,q->size);}
@@ -181,6 +181,7 @@ int partition_edit(Medium*m,DiskEdit*q,int apply){
         u64 end=(u64)p->start+q->size,max=(u64)p->start+p->sectors;
         for(int j=0;j<editmap.gaps;j++)if(editmap.gap[j].start==max){max+=editmap.gap[j].sectors;break;}
         if(!q->size||q->size%2048||end>max||q->size==p->sectors)return say(q,DE_INVALID,"Dimensione non valida o spazio contiguo insufficiente.");
+        if(q->size>0xffffffffull||p->sectors>0xffffffffull)return say(q,DE_UNSUPPORTED,"Resize del formato legacy oltre 2 TiB non supportato: nessuna scrittura.");
         int ntfs=p->fs==FS_NTFS,native=p->fs==FS_TMC;
         int r=native?native_resize(m,q,0):ntfs?ntfs_resize_native(m,q,0):fattail(m,q,p,0);
         if(r&&native)return say(q,r,r==DE_OCCUPIED?"Nodi allocati nella coda di dati o snapshot: libera spazio prima di ridurre.":"Nativo: capacità 8.3–33.5 MB con numero di slot variabile; decifra FileVault e verifica dati/snapshot prima di riprovare.");

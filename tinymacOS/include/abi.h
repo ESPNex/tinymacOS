@@ -158,17 +158,17 @@ static inline const char *wallname(unsigned v)
 #define SETUP_MAX_DISKS 8
 enum { INSTALL_IDLE, INSTALL_SCAN, INSTALL_ESP, INSTALL_DATA, INSTALL_VERIFY, INSTALL_DONE, INSTALL_ERROR };
 typedef struct {
-    u32 sectors;
+    u64 sectors;
     int usable,scheme;
     int repair_mbr_signature; /* flags: 1 missing 55AA, 2 stale EE coverage; explicit fresh-install consent */
-    u32 start,available;
+    u64 start,available;
     char formats[72],reason[96];
     char model[41];
 } InstallDisk;
 typedef struct {
     int count, live, state, target;
     int encryption_available; /* fresh FV003 installation only */
-    u32 done, total;
+    u64 done, total;
     char message[112];
     InstallDisk disk[SETUP_MAX_DISKS];
 } InstallInfo;
@@ -221,10 +221,10 @@ typedef struct {
 typedef struct {
     int count, current;
     struct {
-        u32 sectors;
+        u64 sectors;
         int layout, healthy, backup;
         char model[44];
-        u32 region_start[4],region_sectors[4]; /* verified native layout, not UI estimates */
+        u64 region_start[4],region_sectors[4]; /* verified native layout, not UI estimates */
         DiskMap map;
     } disk[8];
 } DiskInfo;
@@ -256,7 +256,7 @@ static inline unsigned theme_wallpaper(unsigned t)
 
 /* Native volume encryption, NOT Apple's on-disk FileVault format. */
 typedef struct {int disk;char password[65],replacement[65],recovery[65];} VaultRequest;
-typedef struct {int available,enabled,locked,state,progress,error;u32 protected_sectors;int format; /* 1=FV002/legacy, 2=plain FS2, 3=FV003 */} VaultInfo;
+typedef struct {int available,enabled,locked,state,progress,error;u64 protected_sectors;int format; /* 1=FV002/legacy, 2=plain FS2, 3=FV003 */} VaultInfo;
 
 /* S_DISK 12=read-only external checkpoint preflight, 13=confirmed import.
  * Recovery-only; replaces destination files AND private account together. */

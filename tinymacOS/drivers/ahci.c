@@ -20,7 +20,7 @@ static struct Table table[ND] ALIGNED(128);
 static u8 bounce[MAXS * 512] ALIGNED(4096);
 static struct {
     volatile u32 *p;
-    u32 sectors;
+    u64 sectors;
     char model[41];
     int dead;
 } ds[ND];
@@ -34,7 +34,7 @@ static int waitclr(volatile u32 *p, u32 mask)
     }
     return 0;
 }
-static int issue(int d, int op, u32 lba, u32 n, void *b, int wr)
+static int issue(int d, int op, u64 lba, u32 n, void *b, int wr)
 {
     volatile u32 *p = ds[d].p;
     if (ds[d].dead || !waitclr(p + 8, 0x88))
@@ -55,6 +55,8 @@ static int issue(int d, int op, u32 lba, u32 n, void *b, int wr)
     f[6] = lba >> 16;
     f[7] = 0x40;
     f[8] = lba >> 24;
+    f[9] = lba >> 32;
+    f[10] = lba >> 40;
     f[12] = n;
     f[13] = n >> 8;
     if (n) {
@@ -125,7 +127,7 @@ void ahci_init(void)
             memcpy(&z, id + 100, 8);
             if (!z)
                 z = (u32)id[60] | (u32)id[61] << 16;
-            if (!z || z >= 0xffffffffu)
+            if (!z || z > TMC_DISK_MAX_SECTORS)
                 continue;
             ds[d].sectors = z;
             for (int j = 0; j < 20; j++) {
@@ -148,7 +150,7 @@ int ahci_count(void)
 {
     return nd;
 }
-u32 ahci_size(int d)
+u64 ahci_size(int d)
 {
     return d >= 0 && d < nd ? ds[d].sectors : 0;
 }
@@ -156,7 +158,7 @@ const char *ahci_model(int d)
 {
     return d >= 0 && d < nd ? ds[d].model : "";
 }
-int ahci_io(int d, u32 l, u32 n, void *b, int wr)
+int ahci_io(int d, u64 l, u32 n, void *b, int wr)
 {
     if (d < 0 || d >= nd || !n || n > MAXS || l > ds[d].sectors || n > ds[d].sectors - l)
         return -1;

@@ -1,0 +1,2 @@
+[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01HBdsDxe: loading Boot0001 "tinymacOS OpenCore" from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)/HD(3,GPT,354D77E4-2707-4A01-923E-487FF7C1D7A0,0x200000,0x140000000)/\EFI\OC\OpenCore.efi
+BdsDxe: starting Boot0001 "tinymacOS OpenCore" from PciRoot(0x0)/Pci(0x1F,0x2)/Sata(0x0,0xFFFF,0x0)/HD(3,GPT,354D77E4-2707-4A01-923E-487FF7C1D7A0,0x200000,0x140000000)/\EFI\OC\OpenCore.efi

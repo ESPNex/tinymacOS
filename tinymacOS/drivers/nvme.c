@@ -30,7 +30,7 @@ void nvme_init(void){
   for(unsigned j=0;j<c->count;j++){
    NvNamespace*n=c->ns+j;
 
-   if(n->sectors512>TMC_DISK_MAX_SECTORS){boot_logstr("[nvme] namespace exceeds current 1TiB block ABI; no truncation\n");continue;}
+   if(n->sectors512>TMC_DISK_MAX_SECTORS){boot_logstr("[nvme] namespace exceeds supported 16TiB media limit; no truncation\n");continue;}
    if(count==SETUP_MAX_DISKS){boot_logstr("[nvme] device table full\n");break;}
    disks[count].controller=id;disks[count].ns=j;
    boot_logstr("[nvme] disk ");boot_lognum(count);boot_logstr(" nsid=");boot_lognum(n->id);boot_logstr(" sectors=");boot_lognum(n->sectors512);boot_logstr("\n");count++;
@@ -40,9 +40,9 @@ void nvme_init(void){
  if(!used)boot_logstr("[nvme] absent\n");
 }
 int nvme_count(void){return count;}
-u32 nvme_size(int d){if(d<0||d>=count)return 0;return controllers[disks[d].controller]->ns[disks[d].ns].sectors512;}
+u64 nvme_size(int d){if(d<0||d>=count)return 0;return controllers[disks[d].controller]->ns[disks[d].ns].sectors512;}
 const char*nvme_model(int d){return d>=0&&d<count?controllers[disks[d].controller]->model:"";}
-int nvme_io(int d,u32 l,u32 n,void*p,int w){
+int nvme_io(int d,u64 l,u32 n,void*p,int w){
  if(d<0||d>=count)return -1;unsigned k=disks[d].controller;u32 flags;spin_lock(locks+k,&flags);
  int r=nvme_namespace_io(controllers[k],disks[d].ns,l,n,p,w);spin_unlock(locks+k,flags);return r;
 }

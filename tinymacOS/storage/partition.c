@@ -1,5 +1,5 @@
 /* Read-only partition inventory. Never infer free space from a filesystem signature.
- * Conservative 512-byte / 32-bit block-device ABI: reject unsupported metadata,
+ * Conservative 512-byte / 64-bit block-device ABI: reject unsupported metadata,
  * hybrids, overlaps and degraded GPT for allocation. EBR containers stay reserved.
  */
 #include "disklayout.h"
@@ -8,7 +8,7 @@ static Part entries[128], mirror[128];
 static u16 rd16(const u8*p){return p[0]|(u16)p[1]<<8;}
 static u32 rd32(const u8*p){return rd16(p)|(u32)rd16(p+2)<<16;}
 static int nz(const void*v,size_t n){const u8*p=v;while(n--)if(*p++)return 1;return 0;}
-int filesystem_probe(Medium*m,u32 at,u32 n)
+int filesystem_probe(Medium*m,u64 at,u64 n)
 {
     u8 b[512] ALIGNED(512);
     if(!n||at>=m->z||n>m->z-at||m->io(m->d,at,1,b,0))return FS_UNREADABLE;
@@ -40,7 +40,7 @@ static int add(Medium*m,DiskMap*x,u64 a,u64 n,int num,const u8*t,int tn)
     DiskPartition*p=x->part+x->count++;p->start=a;p->sectors=n;p->number=num;memcpy(p->type,t,tn);
     p->fs=filesystem_probe(m,a,n);strset(p->name,filesystem_name(p->fs),sizeof p->name);return 1;
 }
-static int header(Medium*m,u32 l,Gpt*h,Part*p){
+static int header(Medium*m,u64 l,Gpt*h,Part*p){
  u32 scale=medium_scale(m);if(!scale||m->z%scale)return 0;u64 z=m->z/scale;
  if(m->io(m->d,l,1,h,0)||memcmp(h->sig,"EFI PART",8)||h->size<92||h->size>512||h->rev!=0x10000||h->at!=l/scale||h->other!=(l==scale?z-1:1)||h->res||!h->num||h->num>128||h->entrysize!=128)return 0;
  u32 size=(h->num*128+511)/512,physical=(size+scale-1)/scale;
@@ -51,7 +51,7 @@ static int header(Medium*m,u32 l,Gpt*h,Part*p){
  if(scale!=1)for(u32 i=0;i<h->num;i++)if(nz(p[i].type,16)){if(p[i].start>=z||p[i].end>=z||p[i].end<p[i].start)return 0;p[i].start*=scale;p[i].end=(p[i].end+1)*scale-1;}
  return 1;
 }
-static void gap(DiskMap*x,u32 a,u32 end)
+static void gap(DiskMap*x,u64 a,u64 end)
 {
     if(a>=end||x->gaps>=DISK_GAPS)return;
     x->gap[x->gaps++]=(DiskGap){a,end-a};u64 aligned=((u64)a+2047)&~2047ull;
@@ -81,7 +81,7 @@ static int extended(Medium*m,DiskMap*x,u32 base,u32 size,int *number)
 int partition_scan(Medium*m,DiskMap*x)
 {
     memset(x,0,sizeof *x);x->slot=-1;
-    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Disco oltre i limiti del driver (512 B, 1 TiB)");
+    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Geometria non supportata (massimo 16 TiB)");
     if(m->io(m->d,0,1,sector,0)||m->io(m->d,scale,1,other,0))return bad(x,"Errore di lettura della tabella");
     if(!nz(sector,512)&&!nz(other,512)){
         /* A zero first sector is NOT proof of an empty disk. The legacy blank
@@ -93,7 +93,7 @@ int partition_scan(Medium*m,DiskMap*x)
     u8 mbr[512];memcpy(mbr,sector,512);int protective=0;
     for(int i=0;i<4;i++)if(mbr[446+16*i+4]==0xee)protective++;
     if(!mbr_signature_ok&&!protective&&memcmp(other,"EFI PART",8))return bad(x,"Tabella non riconosciuta: disco protetto");
-    u32 lo=1,hi=m->z;int pmbr_repair=0;const char *unsafe_reason=0;
+    u64 lo=1,hi=m->z;int pmbr_repair=0;const char *unsafe_reason=0;
     if(protective||!memcmp(other,"EFI PART",8)){
         x->scheme=MAP_GPT;Gpt a,b;int av=header(m,scale,&a,entries),bv=header(m,m->z-scale,&b,mirror);
         if(!av&&!bv)return bad(x,"GPT non valida: nessuna modifica consentita");
@@ -108,7 +108,7 @@ int partition_scan(Medium*m,DiskMap*x)
             if(t[4]&&t[4]!=0xee){x->safe=0;unsafe_reason="MBR ibrido non supportato: disco protetto";}
             if(t[4]==0xee){
                 if(t[0]||rd32(t+8)!=1){x->safe=0;unsafe_reason="MBR protettivo: avvio o LBA iniziale ambiguo, disco protetto";}
-                if(rd32(t+12)!=m->z/scale-1)pmbr_repair|=2;
+                if(rd32(t+12)!=MIN(m->z/scale-1,0xffffffffull))pmbr_repair|=2;
             }
         }
         for(u32 i=0;i<h->num;i++){
@@ -125,17 +125,17 @@ int partition_scan(Medium*m,DiskMap*x)
          * when its peer/PMBR is unsafe. Allocation stays fail-closed below. */
     }else{
         if(scale!=1)return bad(x,"MBR su 4Kn non supportato: nessuna scrittura");
-        x->scheme=MAP_MBR;x->safe=1;
+        x->scheme=MAP_MBR;x->safe=1;hi=MIN(hi,0x100000000ull);
         for(int i=0;i<4;i++){
             const u8*p=mbr+446+i*16;u32 a=rd32(p+8),n=rd32(p+12);
             if(!p[4]){if(n||a)return bad(x,"Voce MBR ambigua");if(x->slot<0)x->slot=i;continue;}
-            if((p[0]!=0&&p[0]!=128)||!add(m,x,a,n,i+1,p+4,1))return bad(x,"MBR non valida");
+            if((p[0]!=0&&p[0]!=128)||(u64)a+n>0x100000000ull||!add(m,x,a,n,i+1,p+4,1))return bad(x,"MBR non valida");
             if(p[4]==0x42||p[4]==0xee)return bad(x,"Disco dinamico o ibrido: protetto");
         }
     }
     /* Allocation uses all occupied extents, irrespective of filesystem/type. */
     for(int i=0;i<x->count;i++)for(int j=i+1;j<x->count;j++)if(x->part[j].start<x->part[i].start){DiskPartition t=x->part[i];x->part[i]=x->part[j];x->part[j]=t;}
-    u32 cursor=lo;
+    u64 cursor=lo;
     for(int i=0;i<x->count;i++){DiskPartition*p=x->part+i;if(p->start<cursor)return bad(x,"Partizioni sovrapposte: disco protetto");gap(x,cursor,p->start);cursor=p->start+p->sectors;}
     gap(x,cursor,hi);
     if(x->scheme==MAP_MBR){int logical=5,primary=x->count;

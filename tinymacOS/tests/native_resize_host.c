@@ -14,7 +14,7 @@ int bootfs_read(FD*f,void*p,int n){(void)f;(void)p;(void)n;return -1;}
 static u8*media;static u32 extent=65536;static int writes,failure=-1;
 #define BASE 2048u
 #define TOTAL (BASE+65536u+2048u)
-static int io(int d,u32 l,u32 n,void*p,int w){assert(!d&&n&&l>=BASE&&l+n<=BASE+65536);if(w){if(writes++==failure)return -1;memcpy(media+l*512,p,n*512);}else memcpy(p,media+l*512,n*512);return 0;}
+static int io(int d,u64 l,u32 n,void*p,int w){assert(!d&&n&&l>=BASE&&l+n<=BASE+65536);if(w){if(writes++==failure)return -1;memcpy(media+l*512,p,n*512);}else memcpy(p,media+l*512,n*512);return 0;}
 static int flush(int d){assert(!d);return 0;}
 static int br(u32 l,void*p){assert(l<extent);return io(0,BASE+l,1,p,0);}
 static int bw(u32 l,const void*p){assert(l<extent);return io(0,BASE+l,1,(void*)p,1);}

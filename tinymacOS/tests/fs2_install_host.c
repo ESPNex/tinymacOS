@@ -153,7 +153,22 @@ static void run_missing_signature(void){
  fixture(MAP_GPT);disk[510]=disk[511]=0;disk[(u64)(sectors-1)*512+16]^=1;assert(install_begin_i(0)<0&&!writes);
  puts("PASS actual FS2 missing-55AA installer: preflight/cancel zero writes, confirmed install restores only signature with planned boot/table activation, existing extents/entries unchanged, old MBR saved, degraded peer refused");
 }
+static void high_fs2_adapter(void){
+ u64 original=sectors;sectors=3ull*(1ull<<31);sparse_high=sectors-524288;sparse_window=524288;
+ disk=calloc(sparse_window+64,512);assert(disk);mounted=-1;write_guard=0;fail_at=-1;writes=0;
+ assert(!fs2_seed_snapshot(snapshot,sizeof snapshot));
+ assert(!fs2_install_data(0,sparse_high+2048,sparse_window-4096,snapshot,sizeof snapshot,0));
+ assert(!fs2_install_data(0,sparse_high+2048,sparse_window-4096,snapshot,sizeof snapshot,1));
+ fs2_volume_forget(0);
+ static u8 sent[T2_BLOCK],got[T2_BLOCK];for(unsigned i=0;i<sizeof sent;i++)sent[i]=(i*37+9)%251;
+ u64 block=(sparse_high-2048)/32;assert(block*32>0xffffffffull);
+ assert(!fs2_volume_write(0,2048,sectors-4096,block,sent));
+ assert(!fs2_volume_read(0,2048,sectors-4096,block,got)&&!memcmp(sent,got,sizeof sent));
+ fs2_volume_forget(0);free(disk);disk=0;sparse_high=sparse_window=0;sectors=original;
+ puts("PASS actual FS2 format/import/verify at >2TiB base and 16KiB write/read at >32-bit relative sector offset on a 3TiB device; no LBA narrowing");
+}
 int main(void){
+ high_fs2_adapter();
  disk=calloc(sectors,512);assert(disk);run_stale_pmbr();run_missing_signature();run_fs2(MAP_GPT);run_fs2(MAP_MBR);encrypted_adapter();fresh_encrypted_install(MAP_GPT);fresh_encrypted_install(MAP_MBR);
  fixture(MAP_GPT);invalid_source=1;assert(!install_begin_i(0));while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!writes);invalid_source=0;
  fixture(MAP_GPT);assert(!install_begin_i(0));while(st.state==INSTALL_SCAN)assert(!install_step_i());fail_at=writes+3;while(isbusy())install_step_i();assert(st.state==INSTALL_ERROR&&!memcmp(disk+1024,oldparts,3*128));

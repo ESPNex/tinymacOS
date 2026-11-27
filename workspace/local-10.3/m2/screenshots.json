@@ -1,0 +1,85 @@
+[
+  {
+    "file": "nvme-4096-m2-cold-utility-data-crop.png",
+    "original_file": "m2-cold-utility-data.png",
+    "original_sha256": "a03814813f88aa8ec5ef8d0d5cd239a1a1a552c00f62bf9d20896180522f2c4d",
+    "crop_xyxy": [
+      120,
+      142,
+      1112,
+      650
+    ],
+    "sha256": "cb0b9ee5b0dbd52bdc448fa7bff7d2da1c7ec51bfff43fca67e73dab95c001eb"
+  },
+  {
+    "file": "nvme-4096-m2-recovery-terminal.png",
+    "original_file": "m2-recovery-terminal.png",
+    "original_sha256": "bc28cd206cfb8a44e4be67a967e74da9fe6cc6504b2f035579ebd654b11b7ac6",
+    "crop_xyxy": null,
+    "sha256": "d8f56a88af05e1b5ed3bc00475b01a41d9708c31e61180903b2f6896c794491b"
+  },
+  {
+    "file": "nvme-4096-m2-recovery-installer.png",
+    "original_file": "m2-recovery-installer.png",
+    "original_sha256": "92553432e45a725faf419f88d84d8c5e473b7f832e23ec8d8a4fd0e0cd2e25fb",
+    "crop_xyxy": null,
+    "sha256": "7052c499c03ef0afe78d027a7350e22c2c77e3fdaffed11cbd770b2406ef24f2"
+  },
+  {
+    "file": "nvme-4096-m2-installer-genuine-gap-crop.png",
+    "original_file": "m2-installer-genuine-gap.png",
+    "original_sha256": "237bb92038311bb429e54258026ebc4933a29a928b6940946c9ea271507247ff",
+    "crop_xyxy": [
+      264,
+      165,
+      1025,
+      651
+    ],
+    "sha256": "b58df115f68d94af6173e527619cbb2b1733e6e602b2a5ea729f8a5a4152ea32"
+  },
+  {
+    "file": "nvme-4096-m2-live-utility-gap-crop.png",
+    "original_file": "m2-live-utility-gap.png",
+    "original_sha256": "c1dff0724c112e116410714b2f49d46ddfc84776c3a6440e554c124ae3165ce5",
+    "crop_xyxy": [
+      120,
+      142,
+      1112,
+      650
+    ],
+    "sha256": "c89686c3758c2e49da3532d0484c7df0e0a9ee8c96d8f1051a49b8ca5d2896ca"
+  },
+  {
+    "file": "nvme-4096-m2-cold-utility-disk-crop.png",
+    "original_file": "m2-cold-utility-disk.png",
+    "original_sha256": "5ba1a6a2169d7fcfb8ec7f802721ccb1e5a5cf5395305070b9e22c5401122383",
+    "crop_xyxy": [
+      120,
+      142,
+      1112,
+      650
+    ],
+    "sha256": "29f6e50ebe57f00f57df06f78b66d9c28a5048c234d492ce8cfce863b13a045f"
+  },
+  {
+    "file": "nvme-4096-m2-recovery-utility.png",
+    "original_file": "m2-recovery-utility.png",
+    "original_sha256": "505582ca7cd729bf7cb2bed595fd3bf7ea1a3cba1331f642d97a220cc4296f60",
+    "crop_xyxy": null,
+    "sha256": "9d5b6c367a330b3921e217a0b03bed1545727f3b7e6100659d30b7e11c656834"
+  },
+  {
+    "file": "nvme-512-m2-recovery-terminal.png",
+    "original_file": "m2-recovery-terminal.png",
+    "original_sha256": "bd1118088401d48717c39c348cd91aec95af43d123a6f46bc40251f5ed68bed4",
+    "crop_xyxy": null,
+    "sha256": "fee2c4b6d11caead93bd831c8c0dccb9e17d7ed5026ad7270e03b857b2b8c0fd"
+  },
+  {
+    "file": "sata-512-m2-recovery-terminal.png",
+    "original_file": "m2-recovery-terminal.png",
+    "original_sha256": "bd1118088401d48717c39c348cd91aec95af43d123a6f46bc40251f5ed68bed4",
+    "crop_xyxy": null,
+    "sha256": "fee2c4b6d11caead93bd831c8c0dccb9e17d7ed5026ad7270e03b857b2b8c0fd"
+  }
+]

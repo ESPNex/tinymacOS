@@ -1,7 +1,7 @@
 {
   "version_target": "10.3",
   "base": "10.2.6 / 30C1",
-  "status": "Development: M0 local gates and M1 host/native-guest acceptance closed. M2 INCOMPLETE: 1TiB block ABI still excludes >2TB; 4Kn coexistence and same-install three-view acceptance remain. Not a release.",
+  "status": "Development: M0 local gates, M1 and M2 plan acceptance COMPLETE. M2 64-bit/16TiB support with full host gates and real 3TiB native cold-boot tests on NVMe 4Kn/512B and AHCI 512B; M1 regression PASS. M3 not started by this work. Not a release.",
   "background_work_running": false,
   "Safari_in_scope": false,
   "published": false,
@@ -15,8 +15,8 @@
   "macroblocks": {
     "M0": "Revisited explicitly: local cleanup with immutable remote readback; extended source baseline reconstructed honestly; 135-file/2337-literal inventory, 20 wording fixes, font/USB/disk safety gates; two clean builds yield 32 byte-identical artifacts including ISO; targeted live/Recovery guest PASS. Full visual/hardware matrix remains M7.",
     "M1": "COMPLETE local plan gates: full normal+ASan/UBSan host tests, fresh same-ISO USB/pixel matrix setup/Terminal/TextEdit/Note/Memo/Installer/native Recovery, 144000/141735B UTF8 native save/close/reopen SHA256 round-trips, actual GUI-created FV003 no-echo bad/good password unlock. Evidence m1/VERIFICA.md; not hardware certification.",
-    "M2": "INCOMPLETE. Prior targeted geometry/SI/UI checks remain valid, but actual >2TB support is absent (1TiB ABI); native 4Kn coexistence and same-install Installer/Utility/Terminal before/after cold-boot comparison remain open. Never interpret prior M2 commit title as milestone closure.",
-    "M3": "DEFERRED until M2 closes; historical partial CPU changes exist, not a completed milestone and not advanced by this work.",
+    "M2": "COMPLETE local plan gates. 64-bit block ABI and GPT/FS2 geometry up to explicit 16TiB limit; full-gap v3 with v1/v2 reads; decimal SI/parser boundaries; three same-final-ISO GUI 3TiB guests, 2.5TiB gap, foreign bytes preserved, cold native/Recovery no ISO and Installer/Utility/Terminal consistency. Full normal+ASan/UBSan host acceptance and M1 regression PASS. Evidence m2/VERIFICA.md. Hardware NOT TESTED.",
+    "M3": "NEXT in ordered plan, not implemented or advanced by this M2 work; historical partial CPU changes are not milestone completion.",
     "M4": "pending",
     "M5": "pending; exFAT detection is not a mount/export driver",
     "M6": "initial audit only; OpenCore 1.0.8 already vendored; persistent installation/BootOrder/rollback and GOP fix pending",
@@ -32,17 +32,18 @@
     ],
     "USB_retirement_guard": "PASS",
     "source_overlay_sync": "PASS",
-    "full_build": "PASS M1 development ISO, no release",
-    "guest": "PASS M1 real USB/screenshot checks: empty setup field, Terminal, TextEdit UTF-8 tail and Home/End/newline, Note, Memo",
+    "full_build": "PASS final M2 development ISO BIOS/UEFI/Recovery; no version/release/tag",
+    "guest": "PASS same-final-ISO NVMe 3TiB 4Kn/512B, AHCI 3TiB 512B + full M1 regression",
     "physical_hardware": "NOT RUN",
     "M2": {
-      "foundation": "PASS including M2 geometry/actual Utility Disco paint",
-      "legacy_partition_installer": "PASS normal + ASan/UBSan",
-      "FS2_installer": "PASS normal + ASan/UBSan, GPT/MBR, encryption/reset/PMBR protection",
-      "full_build": "PASS development ISO; old integration version strings retained, not release",
-      "guest": "PASS real GUI install in 10GiB genuine gap, v2 descriptor/full FS2 data extent, occupied boundaries + GPT entries unchanged, PMBR consent/cancel, ISO-detached cold NVMe boot and imported account/file",
+      "host": "PASS test-m2-acceptance.sh, 13 suites normal + ASan/UBSan",
+      "foundation": "PASS final foundation + M0 workspace + deterministic supplied fonts",
+      "capacity_limit": "Supported maximum 16TiB; high base and high relative FS2 I/O exercised, >limit fails closed; unsupported legacy operations refuse without writes",
+      "guest": "PASS nvme-4096 / nvme-512 / sata-512, real 3TiB and 2.5TiB genuine gap, native and Recovery ISO-detached cold boots, three-view agreement, all synthetic foreign partition bytes verified",
+      "M1_regression": "PASS full native UTF8/text/caret/password matrix and actual GUI-created FV003 bad/good no-echo unlock on same final ISO",
+      "iso_sha256": "40f897e83a2e83bfb548cd63bac0be4f93586c54afded28261315a277d7a7c82",
       "physical_hardware": "NOT RUN",
-      "capacity_limit": "Existing 1TiB ABI/backend ceiling retained; >2TB not claimed supported"
+      "evidence": "m2/VERIFICA.md"
     },
     "M0": {
       "source_and_safety_contract": "PASS, including negative test for removal of destructive warning",
@@ -64,20 +65,21 @@
     }
   },
   "next_steps": [
-    "M0 evidence/commit review; no M3 advancement in this user-requested return",
-    "Resume ordered plan only after this checkpoint; M3 RAM/runtime audit still pending",
-    "Full app-field, hardware/capacity/4Kn and release matrix remain open"
+    "Publish completed M2 source/evidence commit on ESPNex/tinymacOS main; no release/tag/version change.",
+    "M3 is the next separate macroblock in the ordered plan, with complete acceptance required before declaring it finished.",
+    "M4\u2013M7 and physical hardware/Windows/release certification remain open; Safari excluded."
   ],
   "references": [
     "tinymacOS/docs/PIANO-10.3.md",
     "workspace/local-10.3/AUDIT-INIZIALE.md",
-    "workspace/local-10.3/logs/foundation.log"
+    "workspace/local-10.3/logs/foundation.log",
+    "workspace/local-10.3/m2/VERIFICA.md"
   ],
   "git": {
     "target_branch": "main",
     "remote": "https://github.com/ESPNex/tinymacOS",
-    "checkpoint_pushed": "3453dc8a874be85197d7118df996d31788deb23d",
-    "remote_hash_verified": true,
-    "note": "Previous verified M2 main commit; this record is included in the subsequent M0 cleanup/audit commit (no self-referential hash)."
+    "previous_checkpoint_pushed": "9fb9fbdd1614e04502cf1536e3a73dd8547976d6",
+    "previous_remote_hash_verified": true,
+    "note": "This file accompanies the M2 closure commit; find its non-self-referential hash in Git history and authenticated remote readback."
   }
 }

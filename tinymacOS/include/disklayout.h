@@ -36,21 +36,21 @@ typedef struct PACK {
 } Seal;
 _Static_assert(sizeof(Seal) == 512 && sizeof(Gpt) == 512 && sizeof(Part) == 128, "media ABI");
 typedef struct {
-    int(*io)(int, u32, u32, void *, int);
+    int(*io)(int, u64, u32, void *, int);
     int(*flush)(int);
     int d;
-    u32 z;
-    int(*raw)(int,u32,u32,void*,int); /* optional metadata-only raw path */
+    u64 z;
+    int(*raw)(int,u64,u32,void*,int); /* optional metadata-only raw path */
     u32 logical_bytes; /* 0 defaults to 512; IO coordinates stay 512-byte units */
 } Medium;
 static inline u32 medium_scale(const Medium*m){return m->logical_bytes==4096?8u:m->logical_bytes==0||m->logical_bytes==512?1u:0u;}
-static inline u32 medium_source(const Medium*m){return medium_scale(m)==8?m->z-40u-NESP-8u:RESTORE_AT(m->z);}
-static inline u32 medium_rec(const Medium*m){return medium_source(m)-NREC;}
-static inline u32 medium_last(const Medium*m){return medium_scale(m)==8?m->z-41u:m->z-34u;}
+static inline u64 medium_source(const Medium*m){return medium_scale(m)==8?m->z-40u-NESP-8u:RESTORE_AT(m->z);}
+static inline u64 medium_rec(const Medium*m){return medium_source(m)-NREC;}
+static inline u64 medium_last(const Medium*m){return medium_scale(m)==8?m->z-41u:m->z-34u;}
 u32 sata_logical_bytes(int);
 typedef struct {
     int pv, bv, type, container;
-    u32 esp,data,rec,source;
+    u64 esp,data,rec,source;
     Gpt g;
     Part parts[128];
 } Layout;
@@ -66,7 +66,7 @@ int reset_data(Medium *);
 int tiny_check(const void *);
 
 int partition_scan(Medium *, DiskMap *);
-int filesystem_probe(Medium *,u32,u32);
+int filesystem_probe(Medium *,u64,u64);
 
 #include "diskedit.h"
 int partition_edit(Medium *,DiskEdit *,int);

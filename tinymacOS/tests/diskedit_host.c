@@ -10,7 +10,7 @@ static u8*disk,*fatfixture;
 static const u32 z=524288,fa=2048,fn=131072,foreign=400000;
 static int writes,failat=-1;
 static u32 allowed_start,allowed_count;
-static int io(int d,u32 l,u32 n,void*p,int write){
+static int io(int d,u64 l,u32 n,void*p,int write){
  assert(d==0&&n&&l<z&&n<=z-l);
  if(write){
   assert((l==0&&n==1)||(l>=1&&l+n<=34)||(l>=z-33&&l+n<=z)||

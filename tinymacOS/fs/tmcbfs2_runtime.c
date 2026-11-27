@@ -10,8 +10,8 @@
 #include "fs2_volume.h"
 int fs2_active;
 static Tmc2 fs;
-static struct{int disk;u32 base,sectors;} medium;
-extern int volume_extent(u32*,u32*);
+static struct{int disk;u64 base,sectors;} medium;
+extern int volume_extent(u64*,u64*);
 static int disk_read(void*x,u64 block,void*p){(void)x;return fs2_volume_read(medium.disk,medium.base,medium.sectors,block,p);}
 static int disk_write(void*x,u64 block,const void*p){(void)x;return fs2_volume_write(medium.disk,medium.base,medium.sectors,block,p);}
 static int disk_flush(void*x){(void)x;return sata_flush(medium.disk);}

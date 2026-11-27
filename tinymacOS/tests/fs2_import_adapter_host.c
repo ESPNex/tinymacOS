@@ -12,9 +12,9 @@ static u8*media[2];static int mounted_disk=-1;static u64 writes[2];
 #define BASE 2048u
 #define EXTENT 32768u
 int sata_count(void){return 2;}
-u32 sata_size(int d){assert(d>=0&&d<2);return SECTORS;}
+u64 sata_size(int d){assert(d>=0&&d<2);return SECTORS;}
 int volume_current(void){return mounted_disk;}
-int sata_io(int d,u32 l,u32 n,void*p,int write){assert(d>=0&&d<2&&l<SECTORS&&n<=SECTORS-l);if(write){writes[d]++;memcpy(media[d]+(u64)l*512,p,n*512);}else memcpy(p,media[d]+(u64)l*512,n*512);return 0;}
+int sata_io(int d,u64 l,u32 n,void*p,int write){assert(d>=0&&d<2&&l<SECTORS&&n<=SECTORS-l);if(write){writes[d]++;memcpy(media[d]+(u64)l*512,p,n*512);}else memcpy(p,media[d]+(u64)l*512,n*512);return 0;}
 int sata_flush(int d){assert(d>=0&&d<2);return 0;}
 void*kmalloc(size_t n){return malloc(n);}
 void kfree(void*p){free(p);}

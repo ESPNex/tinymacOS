@@ -26,13 +26,13 @@ int fs2_info(FsInfo*);
 int fs2_touch(const char*);
 int fs2_enc(int,const char*,EncInfo*);
 
-int fs2_install_data(int,u32,u32,const void*,size_t,int);
-int fs2_disk_verify(int,u32,u32);
-int fs2_disk_reset(int,u32,u32);
-int fs2_disk_backup(int,u32,u32,int);
-int fs2_disk_present(int,u32,u32);
+int fs2_install_data(int,u64,u64,const void*,size_t,int);
+int fs2_disk_verify(int,u64,u64);
+int fs2_disk_reset(int,u64,u64);
+int fs2_disk_backup(int,u64,u64,int);
+int fs2_disk_present(int,u64,u64);
 
-int fs2_install_encrypted(int,u32,u32,const void*,size_t,const char*,const u8[128],char[65]);
+int fs2_install_encrypted(int,u64,u64,const void*,size_t,const char*,const u8[128],char[65]);
 
-int fs2_disk_rekey_reset(int,u32,u32,const char*,const u8[128],char[65]);
-int fs2_external_import(int,u32,u32,int,u32,u32,const char*,int,u64*);
+int fs2_disk_rekey_reset(int,u64,u64,const char*,const u8[128],char[65]);
+int fs2_external_import(int,u64,u64,int,u64,u64,const char*,int,u64*);

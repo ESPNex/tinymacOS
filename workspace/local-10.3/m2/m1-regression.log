@@ -1,0 +1,12 @@
+PASS Setup empty/name/password/confirmation: real Tab focus, continuous per-key visible caret, masked password fields
+PASS Terminal normal prompt: empty/continuous typing/arrows/backspace caret
+PASS Terminal real no-echo aliases: invariant prompt pixels/cursor for typing/deletion/movement, Escape and backend failure return safely
+PASS TextEdit empty and continuous UTF8 typing/arrows/backspace caret
+PASS Note: continuous typing, UTF8 movement/deletion and caret suppression behind menu
+PASS Memo: continuous typing, UTF8 movement/deletion and caret suppression behind menu
+PASS Installer: empty/masked password and Tab confirmation per-key visible caret; cancel discards enrollment before installation
+Prepared 144000 UTF8 bytes, without newlines
+Prepared 141735 UTF8 bytes, with newlines
+PASS Native guest TextEdit raw: 144000 UTF8 bytes, SHA256 exact after click/scroll/resize/Home-End/insert/backspace/save/close/reopen/save
+PASS Native guest TextEdit lines: 141735 UTF8 bytes, SHA256 exact after click/scroll/resize/Home-End/insert/backspace/save/close/reopen/save
+PASS Installed native Recovery, ISO detached: FileVault empty/typed masked fields and Tab caret verified, activation cancelled

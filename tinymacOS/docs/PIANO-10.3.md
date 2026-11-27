@@ -46,6 +46,8 @@ Spazio non allocato dopo installazione: confrontare tabella GPT riletta, extent 
 
 Accettazione: test limiti 999/1000 e 10^6/10^9/10^12 byte, dischi >2 TB/4Kn, partizioni esterne intatte, stato coerente tra Installer, Utility Disco e Terminale.
 
+**Chiusura M2 (gate locali):** ABI/LBA a 64 bit, contenitore v3 oltre 32 bit con lettura v1/v2 preservata, FS2 fino al limite supportato di 16 TiB. Suite host normale/sanitizzata completa; tre guest freschi sulla stessa ISO finale con dischi da 3 TiB (NVMe 4Kn, NVMe 512 B, AHCI 512 B), gap reale da 2,5 TiB, partizioni esterne preservate, avvio nativo e Recovery senza ISO e confronto delle tre viste PASS. M1 ricollaudato sulla stessa build. Evidenze, riproduzione e limiti: `../../workspace/local-10.3/m2/VERIFICA.md`. Non è certificazione Windows/hardware né release; M3 resta il prossimo macroblocco, non svolto qui.
+
 ## M3 — Monitoraggio CPU e memoria reali
 
 Audit della provenienza di total/free, core_ticks/core_busy, tick processo e scheduler SMP. RAM fisica usata/libera da allocatore, distinguendo riservata, cache e memoria processi laddove disponibili. CPU per intervalli con denominatore corretto per core e totale, non conteggi cumulativi o percentuali inventate. Nessuna rimozione cosmetica della parola «stima» per nascondere limiti dei contatori.

@@ -17,11 +17,11 @@
   },
   {
     "path": "include/diskedit.h",
-    "sha256": "6eb53689649c8c0a74b28c985b5db6aee4e88bb31628d94858e35e597a090471"
+    "sha256": "14b564566b8510290582d2c8cbf3b841f810e8dfa1625b06f680f572c8f6e0e2"
   },
   {
     "path": "include/partition.h",
-    "sha256": "4c234f8988d7b9c35da09bcbca97ee504e32ce8509df07dc985962762b2d9af1"
+    "sha256": "f3c739275986ec41f4db3be21d90355acc644e01263edf5a55e1a95bc6855888"
   },
   {
     "path": "include/clipboard.h",
@@ -89,7 +89,7 @@
   },
   {
     "path": "kernel/k.h",
-    "sha256": "a20134df70e19921c51195b19ee9f6f7abef6dc1cd0217b5d8fa29ec2a495e8d"
+    "sha256": "3cc1d02a530646cb72610462ec803bc6af6a61c4121c7194b105c4af85502b53"
   },
   {
     "path": "desktop/gfx.c",
@@ -105,7 +105,7 @@
   },
   {
     "path": "include/abi.h",
-    "sha256": "b809451319317d1924793be61d42b11c2f264a83d8740f975cfd1fd1e3d03bce"
+    "sha256": "a04216f6bf5b7b1032ebcc097e2b85ba4cb5551e9433bc8234b55cfce9365ed5"
   },
   {
     "path": "include/vmabi.h",

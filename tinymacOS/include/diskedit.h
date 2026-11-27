@@ -7,7 +7,7 @@
 enum { DISK_EDIT_CREATE=1, DISK_EDIT_DELETE=2, DISK_EDIT_RESIZE=3 };
 typedef struct {
     int disk,op,number;
-    u32 start,sectors,size,confirm;
+    u64 start,sectors,size;u32 confirm;
     char name[48];
     u8 stamp[32];
     int result;

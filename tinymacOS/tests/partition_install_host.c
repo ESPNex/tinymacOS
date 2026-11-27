@@ -9,16 +9,16 @@ struct Boot boot;
 u64 ticks=987654321;
 u32 persistent;
 static u8 *disk;
-static u32 sectors=524288,guard_start,guard_end;
+static u64 sectors=524288,guard_start,guard_end;
 static int writes,fail_at=-1,write_guard;
 /* Optional sparse high-LBA window for tests/large_disk_host.c. */
-static u32 sparse_high,sparse_window;
+static u64 sparse_high,sparse_window;
 static u8 payload[24*1024*1024],recovery[10*1024*1024];
 int sata_count(void){return 1;}
-u32 sata_size(int d){assert(d==0);return sectors;}
+u64 sata_size(int d){assert(d==0);return sectors;}
 const char*sata_model(int d){(void)d;return "Disposable partition fixture";}
 int sata_flush(int d){(void)d;return 0;}
-int sata_io(int d,u32 l,u32 n,void*p,int wr){
+int sata_io(int d,u64 l,u32 n,void*p,int wr){
  assert(d==0&&l<sectors&&n<=sectors-l);
  u8 *where;
  if(sparse_high){
@@ -33,7 +33,7 @@ int sata_io(int d,u32 l,u32 n,void*p,int wr){
   memcpy(where,p,n*512);
  }else memcpy(p,where,n*512);return 0;
 }
-int volume_cipher_io(int d,u32 l,u32 n,void*p,int w){return sata_io(d,l,n,p,w);}
+int volume_cipher_io(int d,u64 l,u32 n,void*p,int w){return sata_io(d,l,n,p,w);}
 Vault*volume_vault(int d){(void)d;return 0;}
 #ifdef TMC_FS2_BACKEND
 extern int fs2_seed_snapshot(void*,u32);

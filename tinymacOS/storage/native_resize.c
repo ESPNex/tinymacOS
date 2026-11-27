@@ -54,8 +54,8 @@ int native_image_check(const void*v,const NativeGeometry*g){
  }
  return 1;
 }
-static int rd(Medium*m,u32 start,u32 limit,u32 at,u32 n,void*p){return at>=limit||n>limit-at||m->io(m->d,start+at,n,p,0);}
-static int wr(Medium*m,u32 start,u32 limit,u32 at,u32 n,const void*p){
+static int rd(Medium*m,u64 start,u32 limit,u32 at,u32 n,void*p){return at>=limit||n>limit-at||m->io(m->d,start+at,n,p,0);}
+static int wr(Medium*m,u64 start,u32 limit,u32 at,u32 n,const void*p){
  if(!n||n>8||at>=limit||n>limit-at)return -1;
  return m->io(m->d,start+at,n,(void*)p,1)||m->flush(m->d)||rd(m,start,limit,at,n,verify)||memcmp(p,verify,n*512)?-1:0;
 }
@@ -77,7 +77,7 @@ static void update_image(int preserve_nodes){
 }
 int native_resize(Medium*m,DiskEdit*q,int apply){
  if(!m||!m->flush||!q||!q->sectors||!q->size||q->start>=m->z||MAX(q->sectors,q->size)>m->z-q->start)return DE_INVALID;
- if(!native_geometry_fit(q->size,&after))return DE_UNSUPPORTED;
+ if(q->size>NF_MAX_VOLUME||!native_geometry_fit(q->size,&after))return DE_UNSUPPORTED;
  memset(present,0,sizeof present);memset(snapcrc,0,sizeof snapcrc);memset(&backupseal,0,sizeof backupseal);
  if(rd(m,q->start,q->sectors,0,1,header))return DE_IO;
  if(!native_geometry(header,&before)||before.payload>q->sectors)return DE_PROTECTED;

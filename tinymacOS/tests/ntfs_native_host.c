@@ -9,7 +9,7 @@
 static FILE*f;
 static u32 sectors,start=2048,maximum;
 static int writes,failat=-1;
-static int io(int d,u32 at,u32 n,void*p,int w){
+static int io(int d,u64 at,u32 n,void*p,int w){
  assert(!d&&n&&at<sectors&&n<=sectors-at);
  /* No upstream request may escape the selected partition, including errors. */
  assert(at>=start&&at+n<=start+maximum);

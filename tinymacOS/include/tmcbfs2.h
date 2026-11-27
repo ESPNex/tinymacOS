@@ -6,7 +6,7 @@
 #pragma once
 #include "base.h"
 #define T2_BLOCK 16384u
-#define T2_MAX_BYTES (1ull<<40)
+#define T2_MAX_BYTES (1ull<<44)
 #define T2_NAME 48u
 #define T2_DIR 1u
 #define T2_FILE 2u

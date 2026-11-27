@@ -8,14 +8,14 @@
 #include "vault2.h"
 #include "fs2_convert.h"
 #include "disklayout.h"
-typedef struct {Vault2 v;Fs2Convert cv;int initialized,encrypted,disk,acknowledged;char acknowledge[9];u32 base,sectors;} Volume;
+typedef struct {Vault2 v;Fs2Convert cv;int initialized,encrypted,disk,acknowledged;char acknowledge[9];u64 base,sectors;} Volume;
 static Volume volumes[SETUP_MAX_DISKS];
-static int read_unit(void*x,u64 n,void*p){Volume*v=x;return n>=v->sectors/8?-1:sata_io(v->disk,v->base+(u32)(n*8),8,p,0);}
-static int write_unit(void*x,u64 n,const void*p){Volume*v=x;return n>=v->sectors/8?-1:sata_io(v->disk,v->base+(u32)(n*8),8,(void*)p,1);}
+static int read_unit(void*x,u64 n,void*p){Volume*v=x;return n>=v->sectors/8?-1:sata_io(v->disk,v->base+n*8,8,p,0);}
+static int write_unit(void*x,u64 n,const void*p){Volume*v=x;return n>=v->sectors/8?-1:sata_io(v->disk,v->base+n*8,8,(void*)p,1);}
 static int flush_unit(void*x){return sata_flush(((Volume*)x)->disk);}
 static void*allocate(void*x,size_t n){(void)x;return n==4096?(void*)page_get():kmalloc(n);}
 static void deallocate(void*x,void*p){(void)x;if(kmalloc_owns(p))kfree(p);else page_put((u64)p);}
-static Volume*open_volume(int disk,u32 base,u32 sectors){
+static Volume*open_volume(int disk,u64 base,u64 sectors){
  if(disk<0||disk>=sata_count()||disk>=SETUP_MAX_DISKS||base>=sata_size(disk)||sectors>sata_size(disk)-base)return 0;
  Volume*v=volumes+disk;
  if(v->initialized&&v->base==base&&v->sectors==sectors)return v;
@@ -39,17 +39,17 @@ static Volume*open_volume(int disk,u32 base,u32 sectors){
  }
  return v;
 }
-int fs2_volume_encrypted(int d,u32 base,u32 sectors){Volume*v=open_volume(d,base,sectors);return v?v->encrypted:-1;}
-u64 fs2_volume_blocks(int d,u32 base,u32 sectors){Volume*v=open_volume(d,base,sectors);return !v||v->cv.present?0:!v->encrypted?sectors/32:v->v.poison?0:v->v.h.blocks;}
-int fs2_volume_read(int d,u32 base,u32 sectors,u64 block,void*p){
+int fs2_volume_encrypted(int d,u64 base,u64 sectors){Volume*v=open_volume(d,base,sectors);return v?v->encrypted:-1;}
+u64 fs2_volume_blocks(int d,u64 base,u64 sectors){Volume*v=open_volume(d,base,sectors);return !v||v->cv.present?0:!v->encrypted?sectors/32:v->v.poison?0:v->v.h.blocks;}
+int fs2_volume_read(int d,u64 base,u64 sectors,u64 block,void*p){
  Volume*v=open_volume(d,base,sectors);if(!v||!p||v->cv.present)return -1;
  if(v->encrypted)return vault2_read(&v->v,block,p);
- return block>=sectors/32?-1:sata_io(d,base+(u32)(block*32),32,p,0);
+ return block>=sectors/32?-1:sata_io(d,base+block*32,32,p,0);
 }
-int fs2_volume_write(int d,u32 base,u32 sectors,u64 block,const void*p){
+int fs2_volume_write(int d,u64 base,u64 sectors,u64 block,const void*p){
  Volume*v=open_volume(d,base,sectors);if(!v||!p||v->cv.present)return -1;
  if(v->encrypted)return vault2_write(&v->v,block,p);
- return block>=sectors/32?-1:sata_io(d,base+(u32)(block*32),32,(void*)p,1);
+ return block>=sectors/32?-1:sata_io(d,base+block*32,32,(void*)p,1);
 }
 static Volume*find_volume(int disk){
  if(disk<0||disk>=sata_count()||disk>=SETUP_MAX_DISKS)return 0;
@@ -58,7 +58,7 @@ static Volume*find_volume(int disk){
  Volume*v=open_volume(disk,map.data,map.parts[1].end-map.data+1);return v;
 }
 int fs2_volume_locked(int disk){Volume*v=find_volume(disk);return v&&(v->cv.present?1:v->encrypted&&(!v->v.unlocked||v->v.poison));}
-int fs2_volume_sector_guard(int disk,u32 l,u32 n){
+int fs2_volume_sector_guard(int disk,u64 l,u32 n){
  Volume*v=find_volume(disk);if(!v||!n||(!v->encrypted&&!v->cv.present))return 0;
  /* Legacy sector-addressed reads/writes must NEVER bypass the envelope,
   * whether it is locked or unlocked. GPT/system/Recovery remain public. */
@@ -103,14 +103,14 @@ int fs2_volume_control(int op,int disk,VaultRequest*q,VaultInfo*out,int*result){
  else if(op==6){if(!vault_random(random,72))r=FV_ENTROPY;else r=vault2_recovery(&v->v,q->password,random,q->recovery);}
  else if(op==7&&boot.recovery){vault2_lock(&v->v);r=0;}
  erase(random,sizeof random);
- *out=(VaultInfo){.available=1,.enabled=1,.format=3,.locked=!v->v.unlocked||v->v.poison,.state=FV_ON,.progress=100,.error=v->v.poison?FV_CORRUPT:r<0?r:0,.protected_sectors=(u32)(v->v.h.blocks*32)};
+ *out=(VaultInfo){.available=1,.enabled=1,.format=3,.locked=!v->v.unlocked||v->v.poison,.state=FV_ON,.progress=100,.error=v->v.poison?FV_CORRUPT:r<0?r:0,.protected_sectors=(v->v.h.blocks*32)};
  *result=r;return 1;
 }
 void fs2_volume_forget(int disk){if(disk>=0&&disk<SETUP_MAX_DISKS){vault2_lock(&volumes[disk].v);fs2_convert_lock(&volumes[disk].cv);erase(volumes+disk,sizeof(Volume));}}
 
 /* Never called by mount, reset or Settings conversion. The installer owns a
  * new partition extent not yet published in its destination partition table. */
-int fs2_volume_create_fresh(int disk,u32 base,u32 sectors,const char*pass,const u8 random[128],char recovery[65]){
+int fs2_volume_create_fresh(int disk,u64 base,u64 sectors,const char*pass,const u8 random[128],char recovery[65]){
  if(disk==volume_current()||base%8)return FV_STATE;
  Volume*v=open_volume(disk,base,sectors);if(!v||v->encrypted)return FV_STATE;
  Fv2Io io={v,sectors/8,read_unit,write_unit,flush_unit,allocate,deallocate};
@@ -126,7 +126,7 @@ int fs2_volume_create_fresh(int disk,u32 base,u32 sectors,const char*pass,const 
  * sanitization or rollback protection against an externally retained image.
  * A failure after key-header retirement may destroy access: never report it as
  * an atomic old/new reset. Public partitions are not touched. */
-int fs2_volume_rekey_fresh(int disk,u32 base,u32 sectors,const char*pass,const u8 random[128],char recovery[65]){
+int fs2_volume_rekey_fresh(int disk,u64 base,u64 sectors,const char*pass,const u8 random[128],char recovery[65]){
  Volume*v=open_volume(disk,base,sectors);
  if(!boot.recovery||disk==volume_current()||!v||!v->encrypted||!v->v.unlocked||v->v.poison||!pass||strlen(pass)<8||strlen(pass)>64||!random||!recovery)return FV_STATE;
  unsigned nonzero[3]={0};for(unsigned i=0;i<32;i++){nonzero[0]|=random[i];nonzero[2]|=random[48+i];if(i<16)nonzero[1]|=random[32+i];}

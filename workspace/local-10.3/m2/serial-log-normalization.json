@@ -1,0 +1,56 @@
+[
+  {
+    "file": "nvme-512-m2-live.log",
+    "raw_sha256": "e58be4c4bee3e738a1dade4aeee9f22e1438de39c4f67c1a5f0206669d9cbe59",
+    "normalized_sha256": "a054c10da45a1bb6c7ecd67f8437e813f2468c99d7459af346492553c8fa6b64",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "nvme-4096-m2-cold-installed.log",
+    "raw_sha256": "4116e30b27da954d125f4a670165fa55a3c8bd41f24ef580c84f3d2af247c5cd",
+    "normalized_sha256": "ad90d5048339bfc7aa4f06d0ff2cd116173a1467920bcb9ad67c34b9d3fdf30e",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "nvme-4096-m2-live.log",
+    "raw_sha256": "e58be4c4bee3e738a1dade4aeee9f22e1438de39c4f67c1a5f0206669d9cbe59",
+    "normalized_sha256": "a054c10da45a1bb6c7ecd67f8437e813f2468c99d7459af346492553c8fa6b64",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "nvme-512-m2-cold-recovery-three-views.log",
+    "raw_sha256": "fc1955d9aaec64a8d5f6286de9f8cda51c34f53da77be647d949d99fdae895c9",
+    "normalized_sha256": "0b66a1b1c35e228633ea59b903fd482abc8f25dbd7cf7982c77b4e5da3a17f7c",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "nvme-512-m2-cold-installed.log",
+    "raw_sha256": "4116e30b27da954d125f4a670165fa55a3c8bd41f24ef580c84f3d2af247c5cd",
+    "normalized_sha256": "ad90d5048339bfc7aa4f06d0ff2cd116173a1467920bcb9ad67c34b9d3fdf30e",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "sata-512-m2-cold-installed.log",
+    "raw_sha256": "9882296a7df9b299fbbf8d0582aeb33d9b9b64a03f7229e77cb9aad9d103ee26",
+    "normalized_sha256": "dd01e7cb636a5d946543f91f61977b9d6f07144c13b96129d6f3753ae7b5bf82",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "nvme-4096-m2-cold-recovery-three-views.log",
+    "raw_sha256": "51d2bb3d806d111a1da84e331d8a3436b0e2e7572c473605d6e0f06e8198598a",
+    "normalized_sha256": "5206d91ae2dc0108251f98ef831ef719f6aca0d85f1a7f91d155406943257c27",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "sata-512-m2-live.log",
+    "raw_sha256": "e58be4c4bee3e738a1dade4aeee9f22e1438de39c4f67c1a5f0206669d9cbe59",
+    "normalized_sha256": "a054c10da45a1bb6c7ecd67f8437e813f2468c99d7459af346492553c8fa6b64",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  },
+  {
+    "file": "sata-512-m2-cold-recovery-three-views.log",
+    "raw_sha256": "fcfafc204f19be5a9258473bda1ee9704a5a6b91cf1dc86ee24601862cb159c0",
+    "normalized_sha256": "b77f6c02b84e9e94750a5b40da6aca98424b8059e11f6c858e5f9dd293d5d5f7",
+    "normalization": "CRLF to LF and strip trailing whitespace only; ANSI sequences retained"
+  }
+]

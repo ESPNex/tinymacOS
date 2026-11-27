@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "host_prepared_encrypted_data": false,
+  "work": "/var/tmp/tmc-m1-vault-sqs287fs",
+  "checks": [
+    "Actual GUI installer created FV003 on a fresh target; host only read the resulting volume signature",
+    "ISO-detached native Recovery: Terminal no-echo alias rejects bad password, second alias unlocks actual FV003 with correct password; independent FileVault GUI reports Attivo"
+  ],
+  "iso_sha256": "40f897e83a2e83bfb548cd63bac0be4f93586c54afded28261315a277d7a7c82"
+}

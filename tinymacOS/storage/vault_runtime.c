@@ -2,7 +2,7 @@
 #include "disklayout.h"
 #include "fs2_volume.h"
 #define MAXVAULT 16
-typedef struct {Vault v;int initialized,d;u32 base,extent;} Runtime;
+typedef struct {Vault v;int initialized,d;u64 base,extent;} Runtime;
 static Runtime volumes[MAXVAULT];
 static int rawread(void*p,u32 l,void*out){Runtime*r=p;return sata_io(r->d,r->base+l,1,out,0);}
 static int rawwrite(void*p,u32 l,const void*in){Runtime*r=p;return sata_io(r->d,r->base+l,1,(void*)in,1);}
@@ -17,7 +17,7 @@ Vault *volume_vault(int d)
  if(layout_read(&m,&map)!=2)return 0;
 #ifdef TMC_FS2_BACKEND
  /* Recovery must not mistake arbitrary scalable data for v1 vault metadata. */
- extern int fs2_disk_present(int,u32,u32);
+ extern int fs2_disk_present(int,u64,u64);
  if(fs2_disk_present(d,map.data,map.parts[1].end-map.data+1)!=0)return 0;
 #endif
  r->base=map.data;r->extent=map.parts[1].end-map.data+1;r->d=d;r->initialized=1;
@@ -30,13 +30,13 @@ int volume_locked(void){
  Vault*v=volume_vault(volume_current());return v&&v->present&&(!v->unlocked||v->poison);}
 /* This is the sole data-volume path for normal FS, metadata, snapshots and
  * Recovery backup/restore. GPT/EFI/Recovery OS remain intentionally public. */
-int volume_cipher_io(int d,u32 l,u32 n,void*p,int write)
+int volume_cipher_io(int d,u64 l,u32 n,void*p,int write)
 {
  if(!n)return 0;
 #ifdef TMC_FS2_BACKEND
  if(fs2_volume_sector_guard(d,l,n))return FV_STATE;
 #endif
- Vault*v=volume_vault(d);u32 base=v?volumes[d].base:0;
+ Vault*v=volume_vault(d);u64 base=v?volumes[d].base:0;
  if(!v || l<base || l>=base+FV_PAYLOAD){
   if(v&&v->present&&l<base+FV_REQUIRED&&l+n>base+FV_PAYLOAD)return FV_STATE;
   if(v&&v->present&&l<base&&n>base-l)return FV_STATE;

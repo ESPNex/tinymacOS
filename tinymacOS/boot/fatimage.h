@@ -17,6 +17,7 @@ static int check_base(const u8 *p, UINTN n)
 typedef struct {
     const u8 *b;
     u32 bytes, spc, nfat, fat, root, rootsz, data, clusters;
+    int fat12;
 } FatImage;
 static inline u32 field16(const u8 *p)
 {
@@ -42,6 +43,7 @@ static int clok(FatImage *f, u32 c)
 }
 static u32 nextcl(FatImage *f, u32 c)
 {
+    if(f->fat12){u32 at=c+c/2;if(at+1>=f->nfat)return 0;u32 n=field16(f->b+f->fat+at);return c&1?n>>4:n&4095;}
     return field16(f->b + f->fat + c * 2);
 }
 static const u8 *dirent16(FatImage *f, u32 c, const char *s)

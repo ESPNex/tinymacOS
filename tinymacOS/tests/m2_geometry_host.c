@@ -8,7 +8,7 @@ int main(void)
     NativeContainer h={.version=1,.sectors=TC_SECTORS,.data=TC_DATA,.rec=TC_REC,.source=TC_SOURCE,.duet=TC_DUET};
     memcpy(h.magic,TC_MAGIC,8);assert(container_bounds(&h,TC_SECTORS));
     h.sectors+=2048;assert(!container_bounds(&h,h.sectors));h.sectors=TC_SECTORS;
-    u32 sizes[]={TC_SECTORS,TC_SECTORS+2048,524288,20971520,TMC_DISK_MAX_SECTORS};
+    u32 sizes[]={TC_SECTORS,TC_SECTORS+2048,524288,20971520,2147483648u};
     for(unsigned i=0;i<COUNT(sizes);i++){
         h.version=2;h.sectors=sizes[i];h.rec=container_rec(h.sectors);h.source=h.rec+20480;h.duet=h.source+49153;
         assert(container_bounds(&h,h.sectors));assert(h.rec-h.data==h.sectors-(TC_SECTORS-TC_DATA_N));
@@ -16,16 +16,19 @@ int main(void)
         assert(!container_bounds(&h,h.sectors-1));h.rec++;assert(!container_bounds(&h,h.sectors));h.rec--;
     }
     h.version=3;assert(!container_bounds(&h,h.sectors));h.version=2;h.sectors=TC_SECTORS-2048;assert(!container_bounds(&h,TC_SECTORS));
-    u32 out;assert(!disk_size_mb("33.554432",&out)&&out==65536);
+    h=(NativeContainer){.version=3,.data=TC_DATA,.span64=TMC_DISK_MAX_SECTORS};memcpy(h.magic,TC_MAGIC,8);
+    h.rec64=container_rec(h.span64);h.source64=h.rec64+20480;h.duet64=h.source64+49153;
+    assert(container_bounds(&h,h.span64));h.rec64++;assert(!container_bounds(&h,h.span64));
+    u64 out;assert(!disk_size_mb("33.554432",&out)&&out==65536);
     assert(!disk_size_mb("33,554432",&out)&&out==65536);
     assert(!disk_size_mb("34",&out)&&out==65536);
     assert(disk_size_mb("0",&out)&&disk_size_mb("1",&out));
     assert(disk_size_mb("-32",&out)&&disk_size_mb("32MiB",&out)&&disk_size_mb("33.",&out));
-    assert(disk_size_mb("33.5544321",&out)&&disk_size_mb("1099511.627777",&out));
+    assert(disk_size_mb("33.5544321",&out)&&disk_size_mb("17592186.044417",&out));
     assert(disk_size_mb("999999999999999999999999999999",&out));
     for(u64 i=2048;i<=TMC_DISK_MAX_SECTORS;i+=1048576){
-        char exact[32];disk_size_mb_exact(exact,sizeof exact,(u32)i);assert(!disk_size_mb(exact,&out)&&out==i);
+        char exact[32];disk_size_mb_exact(exact,sizeof exact,i);assert(!disk_size_mb(exact,&out)&&out==i);
     }
-    char exact[32];disk_size_mb_exact(exact,sizeof exact,TMC_DISK_MAX_SECTORS);assert(eq(exact,"1099511.627776"));assert(!disk_size_mb(exact,&out)&&out==TMC_DISK_MAX_SECTORS);
-    puts("PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected");
+    char exact[32];disk_size_mb_exact(exact,sizeof exact,TMC_DISK_MAX_SECTORS);assert(eq(exact,"17592186.044416"));assert(!disk_size_mb(exact,&out)&&out==TMC_DISK_MAX_SECTORS);
+    puts("PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected");
 }

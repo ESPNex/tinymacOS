@@ -1,0 +1,89 @@
+PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
+PASS static UI inventory: 135 files, 2347 literals; not a visual acceptance claim
+PASS M0: lexer + safety mutation test, 568 locked font/asset/vendor/USB inputs, truthful native FS labels and preserved public version; no hardware claim
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional
+PASS actual TextEdit full frames: 27 window/UTF-8 combinations through 1278x1024; every visible cell serialized below unchanged 144-command budget; wire repertoire equals production TFN2
+PASS TextEdit 10.3: dynamic UTF-8 wrap, independent/clamped scroll, redraw preserves viewport, click caret and visual End, document bytes unchanged
+PASS TextEdit: modern Open/Save only, Ctrl+O and action share chooser, dirty-document Cancel/Continue by mouse and keyboard preserve bytes until a file is selected; close confirmation, 64KiB load and failed/partial load preservation remain functional
+PASS actual TextEdit full frames: 27 window/UTF-8 combinations through 1278x1024; every visible cell serialized below unchanged 144-command budget; wire repertoire equals production TFN2
+PASS MonoText 10.3: compact Draw uses one reference per scalar, accents/symbols preserved, unsupported scalar consumes one cell, 8px advances; Draw size/NCMDS unchanged
+PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS MonoText 10.3: compact Draw uses one reference per scalar, accents/symbols preserved, unsupported scalar consumes one cell, 8px advances; Draw size/NCMDS unchanged
+PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar
+PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS decimal sizes: B/kB/MB/GB/TB/PB/EB, SI numeric conversion, truncation at boundaries, UINT64_MAX, bounded destinations
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained
+PASS CPU intervals: SMP one-core/4 = 25%, all cores = 100%, zero/reset/inconsistent counters rejected, percentage safe at UINT64_MAX
+PASS actual Monitor sample(): 4-core aggregate 25%/100%, per-core bars, reset handling, offline core baseline, sample clock maintained
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS missing 55AA: both GPT copies verified and gap exposed; signature-only installer recovery flagged, ordinary writes still protected
+PASS missing 55AA with stale untyped MBR entry refuses repair
+PASS missing MBR signature never permits repair when GPT is invalid/discordant or protective entry is absent
+PASS Windows GPT: EFI+16MiB MSR+2 NTFS, exact 10GiB genuine gap visible/selectable; zero writes
+PASS degraded GPT: validated primary still exposes genuine 10GiB unallocated inventory, but writes remain forbidden
+PASS validated backup inventory exposes same gap without silently repairing Windows GPT
+PASS discordant valid GPT copies: gap visible, unsafe allocation refused
+PASS stale protective MBR: consent-only coverage normalization offered; scanner never writes and ordinary disk editing stays blocked
+PASS saturated EE length repairable only with identical valid GPT; boot flag, bad start, residual entries and degraded peer stay blocked
+PASS no real gap: occupied NTFS/RAW/MSR never reclassified as free space
+PASS real caret overlay: input-visible phase, blink, reduce-motion, reset counter, focus/modal/lock/Mission Control/motion suppression, bounded geometry, exact background restoration and tiny partial damage only
+PASS actual Note paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Memo paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing
+PASS real caret overlay: input-visible phase, blink, reduce-motion, reset counter, focus/modal/lock/Mission Control/motion suppression, bounded geometry, exact background restoration and tiny partial damage only
+PASS actual Note paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Memo paint: one caret in empty/nonempty editor or search, none behind confirmation; within command budget
+PASS actual Terminal: shared clipboard type/cut validation, full input copy/cut/paste, output mouse-range copy, output cut refusal, Ctrl+Shift+C/V vs preserved Ctrl+C, all-or-nothing overflow, multiline/control-character paste cannot execute, escaped path drop cannot execute, clipboard clearing
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
+PASS real file panel: open/save validation, overwrite/cancel, readonly/missing/oversized, UTF8 caret, navigation, new folder, shared Finder, 1100 files via bounded pages, no document writes before acceptance
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS M2 geometry: v1 backward compatibility, v2 min/10GiB/1TiB and v3 16TiB spans and malformed bounds; decimal MB exact round-trip, alignment never grows request, overflow/extra precision rejected
+PASS actual Utility Disco paint: kernel extent sizes (not mb-45 estimates), SI values, no duplicate units, disk partition map, distinct system-source label; no invented snapshot bytes/date
+PASS real Terminal no-echo: command aliases, invariant full Draw wire/position for UTF8 typing/deletion, no history/output/clipboard/drop leakage, bounded overflow, exact legacy/FS2 backend credential, success/failure/Ctrl-C/Escape wiping; shared modal caret inside actual field
+PASS real TextEdit disk round-trip: 144000-byte UTF8 without newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real TextEdit disk round-trip: 141735-byte UTF8 with newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real Terminal no-echo: command aliases, invariant full Draw wire/position for UTF8 typing/deletion, no history/output/clipboard/drop leakage, bounded overflow, exact legacy/FS2 backend credential, success/failure/Ctrl-C/Escape wiping; shared modal caret inside actual field
+PASS real TextEdit disk round-trip: 144000-byte UTF8 without newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS real TextEdit disk round-trip: 141735-byte UTF8 with newlines, click/scroll/4 resizes/visual Home-End/insert/backspace/delete+restore, exact saved bytes
+PASS USB retirement: rejected facade sources absent; no alternate USB selector in kernel/drivers/build
+In file included from include/abi.h:2,
+                 from userspace/lib.h:2,
+                 from userspace/ui.h:2,
+                 from userspace/filebrowser.h:2,
+                 from userspace/filepanel.h:2,
+                 from userspace/filepanel.c:1:
+userspace/filepanel.c: In function 'filepanel_event':
+include/base.h:13:22: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |                      ^
+userspace/filepanel.c:169:15: note: in expansion of macro 'MAX'
+  169 |     p->cursor=MAX(0,MIN(p->cursor,strlen(s)));
+      |               ^~~
+userspace/settings.c: In function 'row2':
+userspace/settings.c:84:37: warning: unused parameter 'w' [-Wunused-parameter]
+   84 | static void row2(int x, int ry, int w, const char *l, const char *v)
+      |                                 ~~~~^
+In file included from include/text_input.h:2,
+                 from desktop/login.c:1:
+desktop/login.c: In function 'login_input':
+include/base.h:13:22: warning: comparison of unsigned expression in '< 0' is always false [-Wtype-limits]
+   13 | #define MAX(a,b) ((a)>(b)?(a):(b))
+      |                      ^
+desktop/login.c:426:32: note: in expansion of macro 'MAX'
+  426 |     int *at=&carets[field];*at=MAX(0,MIN(*at,strlen(p)));
+      |                                ^~~
+PASS 10.3 foundation host gate only; ISO, guest and hardware acceptance still pending

@@ -37,8 +37,8 @@ u32 crc32(const void *v, size_t n)
     while (n--)c = table[(c^*p++) & 255] ^ (c >> 8);
     return ~c;
 }
-static int readh(Medium*m,u32 l,Gpt*h){
- u32 scale=medium_scale(m);if(!scale||m->z%scale)return 0;u32 z=m->z/scale,table=(32+scale-1)/scale;
+static int readh(Medium*m,u64 l,Gpt*h){
+ u32 scale=medium_scale(m);if(!scale||m->z%scale)return 0;u64 z=m->z/scale,table=(32+scale-1)/scale;
  if(m->io(m->d,l,1,h,0)||memcmp(h->sig,"EFI PART",8)||h->size!=92||h->rev!=0x10000||h->res||h->at!=l/scale||h->other!=(l==scale?z-1:1)||h->first!=2+table||h->last!=z-2-table||h->entries!=(l==scale?2:z-1-table)||h->num!=128||h->entrysize!=128)return 0;
  u32 c=h->crc;h->crc=0;int ok=c==crc32(h,92);h->crc=c;
  if(!ok||m->io(m->d,h->entries*scale,32,pt,0)||crc32(pt,sizeof pt)!=h->ecrc)return 0;
@@ -57,9 +57,9 @@ int layout_read(Medium *m, Layout *x)
             if(p->sectors<TC_SECTORS||m->io(m->d,p->start+TC_HEADER,1,&h,0)||!container_bounds(&h,p->sectors))continue;
             u32 c=h.crc;h.crc=0;if(c!=crc32(&h,sizeof h))continue;
             x->pv=x->bv=1;x->type=2;x->container=1;
-            x->esp=p->start;x->data=p->start+h.data;x->rec=p->start+h.rec;x->source=p->start+h.source;
+            x->esp=p->start;x->data=p->start+h.data;x->rec=p->start+container_rec_at(&h);x->source=p->start+container_source_at(&h);
             memcpy(x->g.guid,h.id,16);memcpy(x->parts[0].id,h.esp_id,16);
-            u32 a[]={x->esp,x->data,x->rec,x->source},n[]={NESP,h.rec-h.data,NREC,NESP+1};
+            u64 a[]={x->esp,x->data,x->rec,x->source},n[]={NESP,container_rec_at(&h)-h.data,NREC,NESP+1};
             for(int j=0;j<4;j++){x->parts[j].start=a[j];x->parts[j].end=a[j]+n[j]-1;}
             return 2;
         }
@@ -79,7 +79,7 @@ int layout_read(Medium *m, Layout *x)
     }
     if (!x->pv && !x->bv)return 0;
     Part *p = x->parts;
-    u32 z = m->z;
+    u64 z = m->z;
     if (memcmp(p[0].type, esp_type, 16) || p[0].start != LESP || p[0].end != LDATA - 1 ||
         memcmp(p[1].type, dat_type, 16) || p[1].start != LDATA)return 0;
     int type = !memcmp(p[2].type,esp_type,16)?2:1;
@@ -93,7 +93,7 @@ int layout_read(Medium *m, Layout *x)
     x->type = type;
     return type;
 }
-static int commit(Medium *m, u32 l, u32 n, const void *p)
+static int commit(Medium *m, u64 l, u32 n, const void *p)
 {
     return m->io(m->d, l, n, (void *)p, 1) || m->flush(m->d) || m->io(m->d, l, n, buf, 0) ||
            memcmp(p, buf, n * 512) ? -1 : 0;
@@ -131,7 +131,7 @@ int tiny_check(const void *v)
     NativeGeometry geom;if(!native_geometry(v,&geom))return 0;
     return check_nodes(r + FNODE * 512, geom.slots);
 }
-static int bulk(Medium *m, u32 at, u32 n, u8 *p, int wr)
+static int bulk(Medium *m, u64 at, u32 n, u8 *p, int wr)
 {
     for (u32 j = 0; j < n;) {
         u32 k = MIN(CHUNK, n - j);
@@ -140,13 +140,13 @@ static int bulk(Medium *m, u32 at, u32 n, u8 *p, int wr)
     }
     return wr ? m->flush(m->d) : 0;
 }
-static int getseal(Medium *, u32, const char *, u32);
+static int getseal(Medium *, u64, const char *, u32);
 static int data_geometry(Medium*,NativeGeometry*);
-static int hashdisk(Medium *, u32, u32, u8[32]);
+static int hashdisk(Medium *, u64, u32, u8[32]);
 static int verify_system(Medium *m)
 {
     u8 sum[32];
-    u32 l = map.source;
+    u64 l = map.source;
     return getseal(m, l, "TMCSYS20", NESP) && !hashdisk(m, map.esp, NESP, sum) && !memcmp(sum, seal.digest, 32);
 }
 /* System seal validation is independent of the user-volume format. */
@@ -161,7 +161,7 @@ int firstaid(Medium *m, int fix)
     if (map.pv && map.bv)return 0;
     if (!fix)return 1;
     if(medium_scale(m)!=1)return -1; /* native GPT repair is deliberately not a legacy-sector rewrite */
-    u32 l = map.pv ? m->z - 1 : 1;
+    u64 l = map.pv ? m->z - 1 : 1;
     Gpt h = map.g;
     h.at = l;
     h.other = l == 1 ? m->z - 1 : 1;
@@ -171,7 +171,7 @@ int firstaid(Medium *m, int fix)
     return commit(m, h.entries, 32, map.parts) || commit(m, l, 1, &h) || !layout_read(m, &map) || !map.pv ||
            !map.bv ? -1 : 0;
 }
-static int getseal(Medium *m, u32 l, const char *magic, u32 n)
+static int getseal(Medium *m, u64 l, const char *magic, u32 n)
 {
     return !m->io(m->d, l, 1, &seal, 0) && !memcmp(seal.magic, magic, 8) && seal.ver == 1 && seal.sectors == n &&
            !memcmp(seal.disk, map.g.guid, 16);
@@ -188,7 +188,7 @@ int save_copy(Medium *m, const void *p)
 {
     NativeGeometry g;
     if(layout_read(m,&map)!=2||!map.pv||!map.bv||!tiny_check(p)||!native_geometry(p,&g)||g.payload>map.parts[1].end-map.data+1)return -1;
-    u32 l=map.data+g.backup;
+    u64 l=map.data+g.backup;
     memset(&seal,0,sizeof seal);
     if(commit(m,l-1,1,&seal)||bulk(m,l,g.image,(u8*)p,1)||bulk(m,l,g.image,data,0)||memcmp(p,data,g.image*512))return -1;
     memcpy(seal.magic,"TMCSNAP2",8);memcpy(seal.disk,map.g.guid,16);seal.sectors=g.image;seal.ver=1;
@@ -217,7 +217,7 @@ int restore_copy(Medium *m)
     }
     return 0;
 }
-static int hashdisk(Medium *m, u32 l, u32 n, u8 out[32])
+static int hashdisk(Medium *m, u64 l, u32 n, u8 out[32])
 {
     SHA256 h;
     sha_init(&h);
@@ -232,7 +232,7 @@ static int hashdisk(Medium *m, u32 l, u32 n, u8 out[32])
 int restore_os(Medium *m)
 {
     if (layout_read(m, &map) != 2 || !map.pv || !map.bv)return -1;
-    u32 l = map.source;
+    u64 l = map.source;
     u8 sum[32];
     if (!getseal(m, l, "TMCSYS20", NESP) || hashdisk(m, l + medium_scale(m), NESP, sum) || memcmp(sum, seal.digest, 32))return -1;
     for (u32 j = 0; j < NESP; j += CHUNK) {
