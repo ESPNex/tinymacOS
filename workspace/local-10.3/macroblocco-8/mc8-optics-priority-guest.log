@@ -1,0 +1,16 @@
+{
+  "iso_sha256": "81dff498571f4f21f9741a650d8d072268076a47832f80d824bb114ab55b5d82",
+  "work": "/var/tmp/tmc-priority8-52rii6e0",
+  "checks": [
+    "Calculator actual app: arithmetic 7+5=12; capture of keypad edge without duplicate lens, history/window retained",
+    "Library has no external dark veil or cast shadow: exact outside-panel pixel comparisons",
+    "Dock remains visible and luminous above Mission Control backdrop, matching Sonoma screenshot reference; no full-screen post-composition veil",
+    "Mission Control menubar uses same 112/256 dim as backdrop exactly once; exit restores original pixels",
+    "Changing theme accent also changes its associated wallpaper; original transition restored"
+  ],
+  "library_outside_pixels_unchanged": 1.0,
+  "library_shadow_strip_unchanged": 1.0,
+  "menubar_dim_exact_pixel_agreement": 1.0,
+  "dock_bright_icon_pixels_unchanged": 1.0,
+  "accent_changes_wallpaper_fraction": 0.9714761904761905
+}

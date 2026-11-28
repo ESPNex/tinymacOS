@@ -1,0 +1,11 @@
+{
+  "work": "/var/tmp/tmc-mc8-optics-ov4072b4",
+  "iso_sha256": "81dff498571f4f21f9741a650d8d072268076a47832f80d824bb114ab55b5d82",
+  "checks": [
+    "Three native windows, live MC glass at destination, warm Dock region stable; original Finder moved by title drag; same MC slots retain calculator/calendar pixels; exit restores native windows"
+  ],
+  "calendar_dock_region_steady_agreement": 1.0,
+  "native_geometry_changed_fraction": 0.6997990654205607,
+  "calculator_old_position_invariance": 1.0,
+  "calendar_old_position_invariance": 1.0
+}

@@ -2,7 +2,7 @@
   "source_hashes_match": true,
   "compression_receipts_match": true,
   "original_full_git_bundle_sha256": "093b045b0979965aacaafd4599cfa36c847c6c5e882982f11c9ee9f5835a9ca1",
-  "workspace_bytes_before_this_small_receipt": 66123260,
+  "workspace_bytes_before_this_small_receipt": 67405269,
   "workspace_limit_decimal_bytes": 128000000,
   "macroblock_complete": false,
   "published_new_release": false,
@@ -19,5 +19,10 @@
   "toolbar_host_final_process_exit": 0,
   "usb_input_473_files_unchanged": true,
   "safety_commit_pushed": "80537612eeea68bda1efe8cc4b643d0cbc9c3937",
-  "git_backup_drive_get_rechecked": true
+  "git_backup_drive_get_rechecked": true,
+  "optics_candidate_iso_sha256": "81dff498571f4f21f9741a650d8d072268076a47832f80d824bb114ab55b5d82",
+  "mc_actual_destination_glass_host_sanitized_pass": true,
+  "mc_calendar_dock_padding_replay_removed": true,
+  "mc_optics_guest_pass": true,
+  "optics_screenshot_drive_verified": true
 }

@@ -395,8 +395,6 @@ static void render(int dt)
             j++;
             continue;
         }
-        u64 tag = backdrop_key(v->box);
-        u64 key = geo(hash(hash(hash(tag, v->s.seq), v->s.pid), focus == i), v->box) | 1;
         Rect q;
         int alpha, bend;
         int p = motionstep(v, &q, &alpha, &bend);
@@ -407,14 +405,18 @@ static void render(int dt)
             if (!mk)q = slot;
             mcidx++;
         }
+        int projected=mc||mk==AN_MC;
+        Rect samplebox=projected?q:v->box;
+        u64 tag=backdrop_key(samplebox);
+        u64 key=geo(hash(hash(hash(tag,v->s.seq),v->s.pid),focus==i),samplebox)|1;
         if (mk)dirty = 1;
-        if(standalone_dialog(v)){
+        if(standalone_dialog(v)&&!projected){
             if(v->previous)dropbuf(&v->previous);
             wincontent(v,focus==i);
-        } else if (cache(v, key, focus == i)) {
+        } else if (projected?cache_projected(v,key,focus==i,q):cache(v,key,focus==i)) {
             int radius = MAX(2, MIN(18, q.w * 18 / MAX(1, v->box.w)));
             if(!standalone_dialog(v))shadow(q, radius, focus == i ? 52 : 29);
-            if (v->previous && !mk && !sys.reduce_motion && !standalone_dialog(v)) {
+            if (v->previous && !mk && !mc && !sys.reduce_motion && !standalone_dialog(v)) {
                 v->contentAge += animation_delta(sys.ticks, v->contentTick, 21 - v->contentAge);
                 v->contentTick = sys.ticks;
                 int t = ease(clampi(v->contentAge * 256 / 21, 0, 256));
@@ -444,7 +446,7 @@ static void render(int dt)
                 dirty = 1;
             }
         } else wincontent(v, focus == i); // Hover marks are composited over the cached, untransformed traffic lights.
-        if (!mk && lights == i + 1 && focus == i && !standalone_dialog(v)) {
+        if (!mk && !mc && lights == i + 1 && focus == i && !standalone_dialog(v)) {
             int x = q.x + 20, y = q.y + 20;
             line(x, y, x + 5, y + 5, 0x803235);
             line(x + 5, y, x, y + 5, 0x803235);

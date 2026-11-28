@@ -9,7 +9,7 @@ from pathlib import Path
 import sys
 s=Path('desktop/glass.c').read_text();needle='if (ex >= MAX(r, 18) && ey >= MAX(r, 18))'
 assert s.count(needle)==1
-s=s.replace(needle,'if (0)').replace('void glass(', 'void glass_reference(').replace('void stroke(', 'void reference_stroke(').replace('void shadow(', 'void reference_shadow(').replace('void glass_sheet_backdrop(', 'void reference_sheet_backdrop(')
+s=s.replace(needle,'if (0)').replace('void glass(', 'void glass_reference(').replace('void stroke(', 'void reference_stroke(').replace('void shadow(', 'void reference_shadow(').replace('void glass_sheet_backdrop(', 'void reference_sheet_backdrop(').replace('void glass_project_backdrop(', 'void reference_project_backdrop(')
 Path(sys.argv[1]).write_text(s)
 PY
 for mode in normal sanitized;do

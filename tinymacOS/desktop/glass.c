@@ -8,12 +8,36 @@ static u32 raw[SW * SH], pass[SW * SH], blur[SW * SH];
 /* Modal sheets sample the actual scene beneath their parent window, not the
  * opaque document/sidebar that the client has just painted over that scene. */
 static u32 sheet_underlay[1920*1080];
-static int sheet_valid;
+static int sheet_valid,projected_backdrop;
+static int project_x[1920];
+/* A transformed window keeps its logical client layout, but its glass must
+ * sample the CURRENT scene at the destination, not its old window position.
+ * Capture first (source/destination can overlap), then seed only the logical
+ * window rectangle. The compositor restores that scratch rectangle afterwards.
+ * The existing sheet buffer holds a 32px halo for every material lookup. */
+void glass_project_backdrop(Rect logical,Rect destination,int enabled)
+{
+    projected_backdrop=0;sheet_valid=0;
+    if(!enabled||logical.w<=0||logical.h<=0||destination.w<=0||destination.h<=0)return;
+    int l=MAX(0,logical.x-32),t=MAX(0,logical.y-32);
+    int r=MIN(W,logical.x+logical.w+32),b=MIN(H,logical.y+logical.h+32);
+    for(int x=l;x<r;x++)project_x[x]=clampi(destination.x+(long)(x-logical.x)*destination.w/logical.w,0,W-1);
+    for(int y=t;y<b;y++){
+        int sy=clampi(destination.y+(long)(y-logical.y)*destination.h/logical.h,0,H-1);
+        for(int x=l;x<r;x++)sheet_underlay[y*W+x]=canvas[sy*W+project_x[x]];
+    }
+    for(int y=MAX(0,logical.y);y<MIN(H,logical.y+logical.h);y++){
+        int x=MAX(0,logical.x),end=MIN(W,logical.x+logical.w);
+        if(x<end)memcpy(canvas+y*W+x,sheet_underlay+y*W+x,(end-x)*sizeof(u32));
+    }
+    projected_backdrop=1;
+}
 void glass_sheet_backdrop(Rect q,int enabled)
 {
+    if(projected_backdrop)return;
     sheet_valid=enabled;
     if(!enabled)return;
-    int l=MAX(0,q.x-24),t=MAX(0,q.y-24),rr=MIN(W,q.x+q.w+24),bb=MIN(H,q.y+q.h+24);
+    int l=MAX(0,q.x-32),t=MAX(0,q.y-32),rr=MIN(W,q.x+q.w+32),bb=MIN(H,q.y+q.h+32);
     if(l>=rr||t>=bb){sheet_valid=0;return;}
     for(int y=t;y<bb;y++)memcpy(sheet_underlay+y*W+l,canvas+y*W+l,(rr-l)*sizeof(u32));
 }
@@ -123,7 +147,7 @@ void glass(Rect q, int r, int kind)
     if (L >= R || T >= B)return;
     int left = L - 20, top = T - 20, nx = (R - L + 40 + 3) / 4 + 2, ny = (B - T + 40 + 3) / 4 + 2;
     if (nx > SW || ny > SH)return;
-    const u32 *source=sheet&&sheet_valid?sheet_underlay:canvas;
+    const u32 *source=projected_backdrop||(sheet&&sheet_valid)?sheet_underlay:canvas;
     for (int y = 0; y < ny; y++) {
         int sy = clampi(top + y * 4, 0, H - 1), sy2 = MIN(H - 1, sy + 2);
         for (int x = 0; x < nx; x++) {

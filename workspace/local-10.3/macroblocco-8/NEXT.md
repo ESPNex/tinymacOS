@@ -30,4 +30,10 @@
 - [x] Mission Control: riferimento visivo macOS Sonoma esaminato; Dock visibile e luminoso mantenuto intenzionalmente, nessun velo globale sopra le miniature. Nuova prova pixel: nuclei opachi Dock invariati al 100%, barra oscurata al 100% del blend atteso.
 - [x] Tre screenshot nuovi su Drive, stessa cartella delle priorità; size e MD5 verificati.
 
-Rapporto corrente: `TOOLBAR-DOCK-E-BACKUP.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.
+## Correzione successiva da screenshot utente
+
+- [x] Eliminato il replay rettangolare di vecchio sfondo attorno al Dock, causa della fascia chiara sul Calendario.
+- [x] Mission Control: vetro e sheet interni campionano la scena alla destinazione attuale, anche durante entrata/uscita, non le vecchie posizioni. Rimossa la cache AN_MC congelata; contenuto nativo conservato.
+- [x] Normale + ASan/UBSan sul compositore/materiali reali; guest con tre finestre: spostare il Finder nativo non altera più le ottiche delle altre miniature (100% invarianti); regione Calendario/Dock stabile (100%). Nuovo PNG originale su Drive verificato.
+
+Rapporto corrente: `MISSION-CONTROL-OTTICA.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.

@@ -1,6 +1,6 @@
 # M8 — toolbar Utility Disco, riferimento Dock, backup su Drive
 
-**Checkpoint parziale verificato. M8 non concluso, nessuna release anticipata.** Supera `PRIORITA-E-MOUNT.md` per UI Utility Disco, Dock, backup e stato pubblicazione. I risultati precedenti restano storici, non vengono cancellati.
+**Checkpoint parziale storico. M8 non concluso, nessuna release anticipata.** La successiva segnalazione dell’utente ha rivelato due bug non coperti dal test dei nuclei luminosi delle icone: replay rettangolare del fondale Dock e vetro congelato delle finestre. Corretti e verificati in `MISSION-CONTROL-OTTICA.md`, che supera questo rapporto per l’ottica Mission Control. Toolbar e backup qui descritti rimangono validi. Supera `PRIORITA-E-MOUNT.md` per UI Utility Disco, Dock, backup e stato pubblicazione. I risultati precedenti restano storici, non vengono cancellati.
 
 ## Commit di sicurezza immediato
 

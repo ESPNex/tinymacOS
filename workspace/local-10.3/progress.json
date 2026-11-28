@@ -291,7 +291,7 @@
     "ui_guest_pass": true,
     "usb_input_473_files_unchanged": true,
     "base_system_udif_independent_decode_pass": true,
-    "report": "macroblocco-8/TOOLBAR-DOCK-E-BACKUP.md",
+    "report": "macroblocco-8/MISSION-CONTROL-OTTICA.md",
     "next": "macroblocco-8/NEXT.md",
     "priority_screenshots_folder": "https://drive.google.com/drive/folders/13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
     "priority_visual_guest_pass": true,
@@ -308,6 +308,11 @@
     "mission_control_dock_opaque_icon_cores_unchanged_fraction": 1.0,
     "safety_commit_pushed": "80537612eeea68bda1efe8cc4b643d0cbc9c3937",
     "git_bundle_moved_to_drive_verified": true,
-    "heavy_workspace_git_bundle_removed": true
+    "heavy_workspace_git_bundle_removed": true,
+    "optics_candidate_iso_sha256": "81dff498571f4f21f9741a650d8d072268076a47832f80d824bb114ab55b5d82",
+    "mc_actual_destination_glass_host_sanitized_pass": true,
+    "mc_three_window_native_move_invariance_guest_pass": true,
+    "mc_calendar_dock_padding_replay_removed": true,
+    "optics_screenshot_drive_id": "1Mk-PyBtrKhOPX8oTMyIJC7g_3775fVNj"
   }
 }

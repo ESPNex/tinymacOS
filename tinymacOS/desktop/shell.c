@@ -402,6 +402,11 @@ static void remember(Tile *t, Rect b, u64 key)
 }
 static void chrome(int id, Rect q, int r, int kind)
 {
+    /* A Dock tile with shadow padding also contains raw window pixels.
+     * Replaying that rectangle can overwrite a moving/scaled window with an
+     * earlier scene. Composite the small live material/shadow, never its
+     * rectangular captured backdrop (also correct for a side-positioned Dock). */
+    if(id==1){shadow(q,r,52);glass(q,r,kind);return;}
     int pad = id ? 18 : 0;
     Rect b = bounded((Rect) {
         q.x - pad, q.y - pad, q.w + 2 * pad, q.h + 2 * pad + (id ? 5 : 0)

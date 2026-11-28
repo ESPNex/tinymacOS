@@ -39,6 +39,7 @@ int coverage(int, int, int, int, int);
 void shadow(Rect, int, int);
 void glass(Rect, int, int);
 void glass_sheet_backdrop(Rect, int);
+void glass_project_backdrop(Rect, Rect, int);
 void stroke(Rect, int, u32, int);
 void copyout(Rect, u32 *);
 void copyin(Rect, const u32 *);
