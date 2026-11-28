@@ -142,6 +142,7 @@ int install_begin_i(int d)
     st.done = pos = 0;st.boot_status=0;
     Medium medium={sata_io,sata_flush,d,sata_size(d),0,sata_logical_bytes(d)};
     int table_ok=partition_scan(&medium,&inventory);
+    if(inventory.scheme==MAP_APM)return err("Apple Partition Map supportata solo in lettura: nessuna conversione o modifica.");
     if((!table_ok||!inventory.safe)&&!(inventory.pmbr_signature_repairable&&inventory.scheme==MAP_GPT&&medium_scale(&medium)==1))return err("Tabella cambiata: nessuna modifica.");
     coexist=inventory.scheme!=MAP_EMPTY;install_scale=medium_scale(&medium);if(install_scale!=1&&install_scale!=8)return err("Geometria logica non supportata.");
     u64 span=TC_SECTORS;

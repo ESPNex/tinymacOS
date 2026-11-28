@@ -19,7 +19,7 @@ for mode in normal sanitized;do
  gcc -O1 -g -fno-builtin -no-pie -Iinclude "${flags[@]}" tests/foreignfs_host.c storage/foreignfs.c storage/exfat_copy.c kernel/string.c -o "$out/$mode-generator"
  "$out/$mode-generator" export "$out/$mode-exfat.img";fsck.exfat -n "$out/$mode-exfat.img";"$out/$mode-generator" export-read "$out/$mode-exfat.img"
  truncate -s 64M "$out/$mode-current.img";truncate -s 32M "$out/$mode-native.img";truncate -s 96M "$out/$mode-target.raw"
- gcc -O1 -g -fno-builtin -no-pie -DTMC_NTFS_HOST -ffunction-sections -fdata-sections -Iinclude -Iarch "${flags[@]}" tests/volume_export_host.c fs/volumes.c storage/foreignfs.c storage/exfat_copy.c storage/tmcbfs2.c storage/partition.c storage/maintenance.c storage/diskedit.c storage/ntfs_resize.c crypto/sha256.c kernel/string.c "$out/$mode/k-native-fat.o" "$out/$mode/k-native-ntfs.o" -Wl,--gc-sections -o "$out/$mode-adapter"
+ gcc -O1 -g -fno-builtin -no-pie -DTMC_NTFS_HOST -ffunction-sections -fdata-sections -Iinclude -Iarch "${flags[@]}" tests/volume_export_host.c fs/volumes.c storage/iso9660.c storage/hfs.c storage/apfs.c storage/foreignfs.c storage/exfat_copy.c storage/tmcbfs2.c storage/partition.c storage/maintenance.c storage/diskedit.c storage/ntfs_resize.c crypto/sha256.c kernel/string.c "$out/$mode/k-native-fat.o" "$out/$mode/k-native-ntfs.o" -Wl,--gc-sections -o "$out/$mode-adapter"
  "$out/$mode-adapter" "$out/$mode-current.img" "$out/$mode-fat32.img" "$out/$mode-ntfs.img" "$out/$mode-exfat.img" "$out/$mode-native.img" "$out/$mode-target.raw" "$out/$mode-exported.img"
  fsck.exfat -n "$out/$mode-exported.img";fsck.fat -n "$out/$mode-fat32.img";ntfsresize -i -f "$out/$mode-ntfs.img" >/dev/null
  echo "PASS $mode actual RW namespace and NEW REAL partition export, independent fsck"

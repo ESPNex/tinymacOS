@@ -834,8 +834,8 @@ int shell_click(int x, int y)
 }
 static void showctx(void){if(cmn){menuId=7;keyboardPick=-1;overlay_show(OV_MENU);trace("menu contestuale");}}
 void context_ready(Event*e){if(!pending||e->a!=pending||e->d!=nonce||topwin()<0||views[topwin()].s.pid!=pending)return;
-    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW,ACT_MOUNT,ACT_UNMOUNT};
-    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Come icone / Come elenco","Monta","Smonta"};
+    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW,ACT_MOUNT,ACT_UNMOUNT,ACT_EJECT};
+    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Come icone / Come elenco","Monta","Smonta","Espelli"};
     for(unsigned j=0;j<sizeof a/sizeof *a;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
 void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;dirty=1;
     if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Centro di Controllo",163);showctx();return;}

@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include "../compat/linux/usbcore_storage.c"
 static struct usb_device device;
+static unsigned media_events;
+void tmc_usbcore_os_storage_changed(void){media_events++;}
 static u8 wire_cdb[16],media[256*512];
 static u32 wire_tag,wire_len,residue;static unsigned phase,resets,clear_count,commands,flushes,writes;
 static unsigned badsig,badtag,badresidue,phase_error,command_fail,short_cbw,short_data,csw_stall,data_stall,timeout_cbw,big_capacity,large_sector;
@@ -82,6 +84,8 @@ int main(void)
  fixture();csw_stall=1;assert(!tmc_usb_stack_storage_io(0,0,1,data,0));assert(clear_count==1&&!resets);
  fixture();short_data=1;assert(tmc_usb_stack_storage_io(0,0,1,data,0)<0);assert(!resets);/* valid residue, but block read incomplete */
  fixture();command_fail=1;old=commands;assert(tmc_usb_stack_storage_io(0,0,1,data,0)<0);assert(commands==old+2&&!resets);/* REQUEST SENSE, no data-command replay */
+ fixture();assert(tmc_usb_stack_storage_ejectable(0));assert(!tmc_usb_stack_storage_eject(0));assert(!tmc_usb_stack_storage_ejectable(0)&&!tmc_usb_stack_storage_size(0));assert(tmc_usb_stack_storage_io(0,0,1,data,1)<0);
+ fixture();command_fail=1;assert(tmc_usb_stack_storage_eject(0)<0&&tmc_usb_stack_storage_ejectable(0));
  fixture();large_io=1;disks[0].blocks=((u64)1<<32)+256;assert(!tmc_usb_stack_storage_io(0,((u64)1<<32)+1,1,data,0));assert(!memcmp(data,media+512,512));
  fixture();badsig=reset_fail=1;unsigned before_gen=storage_generation;assert(tmc_usb_stack_storage_io(0,0,1,data,1)<0);assert(!disks[0].online&&storage_generation==before_gen+1);old=commands;assert(tmc_usb_stack_storage_io(0,0,1,data,1)<0&&commands==old);
  fixture();struct usb_interface intf={0};usb_set_intfdata(&intf,&disks[0]);storage_disconnect(&intf);assert(disks[0].dead&&!disks[0].online&&!disks[0].dev&&put_refs==1);assert(tmc_usb_stack_storage_count()==1);assert(tmc_usb_stack_storage_io(0,0,1,data,0)<0);

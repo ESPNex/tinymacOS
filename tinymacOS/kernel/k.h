@@ -39,6 +39,8 @@ int vm_access(u64 *,u64,u64);
 void *kmalloc(size_t);
 void kfree(void *);
 int kmalloc_owns(const void*);
+void*kernel_span_alloc(size_t);
+void kernel_span_free(void*);
 typedef struct {
     u64 r15, r14, r13, r12, r11, r10, r9, r8, rdi, rsi, rbp, rdx, rcx, rbx, rax, vec, err, rip, cs, flags, rsp,
         ss;

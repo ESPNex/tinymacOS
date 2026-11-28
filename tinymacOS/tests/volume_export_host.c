@@ -15,6 +15,9 @@ u32 persistent,fsrev,usednodes,theme,wall,dock,reduce_motion,opaque,dark;
 struct Boot boot;u64 ticks=12345;
 static int media[6];static u64 sizes[6];static int foreign_writes,source_data_error,readback_corruption;
 static int allocation_failure=-1,flush_failure=-1;
+static int removable_test=-1,eject_failure,eject_calls;
+int sata_ejectable(int d){return d==removable_test;}
+int sata_eject(int d){if(d!=removable_test||eject_failure)return -1;eject_calls++;removable_test=-1;return 0;}
 void*kmalloc(size_t n){if(allocation_failure==0)return 0;if(allocation_failure>0)allocation_failure--;return malloc(n);}void kfree(void*p){free(p);}int kmalloc_owns(const void*p){(void)p;return 1;}
 u64 page_get(void){return (u64)calloc(1,4096);}void page_put(u64 p){free((void*)p);}
 int volume_current(void){return 0;}int volume_extent(u64*b,u64*s){*b=0;*s=sizes[0]/512;return 0;}
@@ -78,6 +81,13 @@ int main(int argc,char**argv){
  VolumeMount protected={.operation=VOLUME_UNMOUNT};strset(protected.target,"/",PATHLEN);assert(vol_manage(&protected,0,0)==VOLUME_PROTECTED&&protected.mounted);
  VolumeMount invalid={.operation=VOLUME_MOUNT};memset(invalid.target,'x',sizeof invalid.target);assert(vol_manage(&invalid,0,0)==VOLUME_BAD_REQUEST);
  puts("PASS real FAT32/NTFS/exFAT/TMCFS2 mount state: open-FD busy refusal, flush-failure rollback, no IO offline, validated remount, allocation-failure rollback, unrelated FD preserved, startup protected");
+ removable_test=1;Process eject_clients[2]={0};VolumeMount eject={.operation=VOLUME_QUERY};strset(eject.target,"disk1s1",PATHLEN);
+ assert(!vol_manage(&eject,eject_clients,2)&&eject.ejectable);int held=vol_open(eject_clients,"/Volumes/disk1s1/proof.bin",0);assert(held>=0);
+ eject.operation=VOLUME_EJECT;assert(vol_manage(&eject,eject_clients,2)==VOLUME_BUSY&&!eject_calls);fs_close(eject_clients,held);
+ flush_failure=1;assert(vol_manage(&eject,eject_clients,2)==VOLUME_IO&&!eject_calls);flush_failure=-1;
+ eject_failure=1;assert(vol_manage(&eject,eject_clients,2)==VOLUME_IO&&sata_ejectable(1));eject_failure=0;
+ assert(!vol_manage(&eject,eject_clients,2)&&eject_calls==1&&!eject.mounted&&!eject.ejectable);
+ puts("PASS actual volume safe-eject transaction: authenticated API structure, open-FD preflight, flush and detach failures never report success, all storage state changed only on success");
  VolumeExport q={0};strset(q.source,"/.snapshots/utente-copy",PATHLEN);strset(q.destination,"disk5",PATHLEN);assert(run(&q)==1&&q.bytes>33554432&&!foreign_writes);q.part.confirm=DISK_EDIT_CONFIRM;
  table[440]=1;assert(pwrite(media[5],table,512,0)==512);assert(run(&q)<0&&!foreign_writes);table[440]=0;assert(pwrite(media[5],table,512,0)==512);
  q.part.confirm=0;assert(run(&q)==1&&!foreign_writes);q.part.confirm=DISK_EDIT_CONFIRM;assert(!run(&q)&&q.part.number==2&&foreign_writes);assert(!strcmp(q.destination,"/Volumes/disk5s2"));

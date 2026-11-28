@@ -45,7 +45,8 @@ C+=(-DTMC_COEXIST_PATH=\""$D/bios-coexist.bin"\")
 C+=(-DTMC_MBR_PATH=\""$D/bios-mbr.bin"\")
 python3 tools/build-ntfs.py "$D"
 python3 tools/build-fatfs.py "$D"
-KOBJ=(k-native-ntfs.o k-native-fat.o)
+python3 tools/build-image-codecs.py "$D"
+KOBJ=(k-native-ntfs.o k-native-fat.o k-image-codecs.o)
 # lwIP (IPv4 core) + in-kernel network glue
 LWIP=(net/lwip/core/def.c net/lwip/core/inet_chksum.c net/lwip/core/init.c net/lwip/core/ip.c
       net/lwip/core/mem.c net/lwip/core/memp.c net/lwip/core/netif.c net/lwip/core/pbuf.c

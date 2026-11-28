@@ -21,7 +21,7 @@ for unit in "${units[@]}";do
 done
 # Native bootstrap registers the genuine bus/hub/generic/class drivers. Unused
 # Linux USBFS/VFS/module-init paths are eliminated, NOT successful no-op stubs.
-ld -r --gc-sections -u tmc_usb_stack_init -u tmc_usb_stack_poll -u tmc_usb_stack_leds -u vsnprintf -u tmc_usb_stack_storage_generation -u tmc_usb_stack_storage_count -u tmc_usb_stack_storage_size -u tmc_usb_stack_storage_bytes -u tmc_usb_stack_storage_model -u tmc_usb_stack_storage_io -u tmc_usb_stack_storage_flush "${objects[@]}" -o "$D/usbcore/combined.o"
+ld -r --gc-sections -u tmc_usb_stack_init -u tmc_usb_stack_poll -u tmc_usb_stack_leds -u vsnprintf -u tmc_usb_stack_storage_eject -u tmc_usb_stack_storage_ejectable -u tmc_usb_stack_storage_generation -u tmc_usb_stack_storage_count -u tmc_usb_stack_storage_size -u tmc_usb_stack_storage_bytes -u tmc_usb_stack_storage_model -u tmc_usb_stack_storage_io -u tmc_usb_stack_storage_flush "${objects[@]}" -o "$D/usbcore/combined.o"
 # ld -r keeps orphan undefined SYMTAB entries after section GC. Remove them
 # so no absent optional API can bind by name to a different private ABI.
 objcopy --strip-unneeded "$D/usbcore/combined.o"

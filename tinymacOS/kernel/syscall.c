@@ -1,4 +1,6 @@
 #include "k.h"
+#include "image8.h"
+extern int fs_image_manage(Process*,ImageRequest*);
 #include "window_update.h"
 volatile u64 tmc_window_draw_requests,tmc_window_draw_unchanged;
 #include "bootconfig.h"
@@ -194,7 +196,7 @@ static Frame *syscall_inner(Frame *f)
     case S_DRAG:
         if(session_open()&&p->app==FINDER&&string(a,s,sizeof s)&&s[0]=='/'){
             for(int i=1;i<NPROC;i++)if(proc[i].pid&&proc[i].app==DESKTOP&&!proc[i].dying){
-                Event e={.type=EV_DRAG_READY,.a=p->pid,.d=b};strset(e.text,s,sizeof e.text);post(proc+i,&e);r=0;break;
+                Event e={.type=EV_DRAG_READY,.a=p->pid,.b=c>=1&&c<=42?c:7,.d=b};strset(e.text,s,sizeof e.text);post(proc+i,&e);r=0;break;
             }
         }
         break;
@@ -202,7 +204,7 @@ static Frame *syscall_inner(Frame *f)
         if (session_open() && (p->app == FINDER || p->app == DISKUTIL)) {
             for (int i = 1; i < NPROC; i++)if (proc[i].pid && proc[i].app == DESKTOP && !proc[i].dying) {
                     post(proc + i, &(Event) {
-                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & ((1u<<(ACT_UNMOUNT+1))-2), .d = (int)b
+                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & ((1u<<(ACT_EJECT+1))-2), .d = (int)b
                     });
                     r = 0;
                     break;
@@ -395,6 +397,9 @@ static Frame *syscall_inner(Frame *f)
         if (a == 0 && OUT(b, sizeof(DiskInfo))) {
             disk_info((void *)b);
             r = 0;
+        } else if(a==16&&p->app==COMMAND&&eq(p->program,"hdiutil")&&IN(b,sizeof(ImageRequest))&&OUT(b,sizeof(ImageRequest))){
+            ImageRequest request;memcpy(&request,(void*)b,sizeof request);
+            r=fs_image_manage(p,&request);memcpy((void*)b,&request,sizeof request);
         } else if(a==15&&(p->app==DISKUTIL||p->app==FINDER||(p->app==COMMAND&&(eq(p->program,"diskutil")||eq(p->program,"mount")||eq(p->program,"umount"))))&&IN(b,sizeof(VolumeMount))&&OUT(b,sizeof(VolumeMount))){
             VolumeMount request;memcpy(&request,(void*)b,sizeof request);
             r=fs_volume_manage(&request);memcpy((void*)b,&request,sizeof request);

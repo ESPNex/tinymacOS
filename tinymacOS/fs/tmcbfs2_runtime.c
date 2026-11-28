@@ -12,6 +12,13 @@
 #include "tmcbfs2_seed.h"
 int fs2_active;
 static Tmc2 fs;
+/* The image manager pins source inodes, including handles opened before
+ * attach. Weak linkage keeps standalone filesystem fixtures independent. */
+extern int image_native_busy(u64) __attribute__((weak));
+extern int image_native_attached(void) __attribute__((weak));
+extern int image_source_snapshot_busy(u64) __attribute__((weak));
+static int image_pinned(u64 id){return image_native_busy&&image_native_busy(id);}
+
 static char home_name[48]="User";
 /* No migration at mount. Bind only to a verified account's existing inode. */
 static void home_refresh(void){
@@ -137,7 +144,7 @@ static int validate_remove(u64 id,int recursive,unsigned depth){
  if(tmc2_stat(&fs,id,&e))return -REMOVE_IO;
  const char*ro[]={"/","/Users",HOME,"/Library","/Volumes",HOME "/Library/Preferences/com.tinymacos.appearance.plist","/Library/Preferences/com.tinymacos.system.plist"};
  for(unsigned i=0;i<COUNT(ro);i++){T2Entry p;if(!resolve(ro[i],&p)&&p.key==id)return -REMOVE_READ_ONLY;}
- if(e.reserved&1)return -REMOVE_READ_ONLY;
+ if((e.reserved&1)||image_pinned(id))return -REMOVE_READ_ONLY;
  if(e.kind==T2_DIR){u64 cookie=0;int r;T2Entry child;while((r=tmc2_readdir(&fs,id,&cookie,&child))==1){if(!recursive)return -REMOVE_NOT_EMPTY;int bad=validate_remove(child.key,recursive,depth+1);if(bad)return bad;}if(r<0)return -REMOVE_IO;}
  return 0;
 }
@@ -160,7 +167,7 @@ int fs2_open(Process*p,const char*path,int write){
  u64 snapshot;T2Entry frozen;int view=view_resolve(q,&snapshot,&frozen);
  if(view){if(view<0||write||frozen.kind!=T2_FILE)return -1;for(int d=0;d<12;d++)if(!p->fd[d].id){p->fd[d]=(FD){.id=-1,.backend=3,.inode=frozen.key,.snapshot=snapshot};return d;}return -1;}
  int v=bootfs_lookup(q);if(v!=-2)return bootfs_open(p,v,write);
- T2Entry e;if(resolve(q,&e)||e.kind!=T2_FILE||(write&&(protected(q)||(e.reserved&1))))return -1;
+ T2Entry e;if(resolve(q,&e)||e.kind!=T2_FILE||(write&&(protected(q)||(e.reserved&1)||image_pinned(e.key))))return -1;
  for(int d=0;d<12;d++)if(!p->fd[d].id){p->fd[d]=(FD){.id=-1,.write=!!write,.backend=2,.inode=e.key};return d;}return -1;
 }
 int fs2_close(Process*p,int fd){if(fd<0||fd>=12||!p->fd[fd].id)return -1;memset(p->fd+fd,0,sizeof(FD));return 0;}
@@ -170,7 +177,7 @@ int fs2_read(Process*p,int fd,void*out,int count){
  i64 n=tmc2_read(&fs,f->inode,f->at,out,count);if(n>=0)f->at+=n;return n;
 }
 int fs2_write(Process*p,int fd,const void*in,int count){
- if(fd<0||fd>=12||count<0)return -1;FD*f=p->fd+fd;if(f->backend!=2||!f->id||!f->write)return -1;
+ if(fd<0||fd>=12||count<0)return -1;FD*f=p->fd+fd;if(f->backend!=2||!f->id||!f->write||image_pinned(f->inode))return -1;
  i64 n=tmc2_write(&fs,f->inode,f->at,in,count);if(n>=0){if(tmc2_truncate(&fs,f->inode,f->at+n))return -1;f->at+=n;fsrev++;}return n;
 }
 int fs2_seek(Process*p,int fd,u64 offset){
@@ -181,7 +188,7 @@ int fs2_seek(Process*p,int fd,u64 offset){
  f->at=offset;return 0;
 }
 int fs2_account(int slot,void*p,int write){if(slot<0)return -1;int r=tmc2_account(&fs,slot,p,write);if(!r&&write)home_refresh();return r;}
-static int write_path(const char*path,const void*p,size_t n){T2Entry e;if(resolve(path,&e)||tmc2_write(&fs,e.key,0,p,n)!=(i64)n||tmc2_truncate(&fs,e.key,n))return -1;return 0;}
+static int write_path(const char*path,const void*p,size_t n){T2Entry e;if(resolve(path,&e)||image_pinned(e.key)||tmc2_write(&fs,e.key,0,p,n)!=(i64)n||tmc2_truncate(&fs,e.key,n))return -1;return 0;}
 int fs2_prefs(void){u8 values[6]={theme,wall,dock,reduce_motion,opaque,dark};char xml[1024];int n=prefs_plist_write(xml,sizeof xml,values);return n<0?-1:write_path(HOME "/Library/Preferences/com.tinymacos.appearance.plist",xml,n);}
 static void load_prefs(void){T2Entry e;char xml[1024]={0};u8 conf[6];if(!resolve(HOME "/Library/Preferences/com.tinymacos.appearance.plist",&e)&&e.size<sizeof xml&&tmc2_read(&fs,e.key,0,xml,e.size)==(i64)e.size&&prefs_plist_read(xml,conf)){theme=conf[0]%NTHEME;wall=conf[1]%NWALL;dock=conf[2]&1;reduce_motion=conf[3]&1;opaque=conf[4]&1;dark=conf[5]&1;}}
 int fs2_snap_create(const char*name){if(!name||strlen(name)>27||tmc2_snapshot(&fs,name,0))return -1;fsrev++;return 0;}
@@ -189,10 +196,10 @@ int fs2_snap_page(void*out,int cap,int skip){if(cap<0||skip<0||(!out&&cap))retur
 int fs2_snap_list(void*out,int cap){return fs2_snap_page(out,cap,0);}
 int fs2_local_backup(int op){
  if(op==0){T2Entry e;return !tmc2_snapshot_find(&fs,"Copia locale",&e);}
- if(op!=1)return -1;int r=tmc2_checkpoint(&fs,"Copia locale");if(!r)fsrev++;return r;
+ if(op!=1)return -1;T2Entry held;if(image_source_snapshot_busy&&!tmc2_snapshot_find(&fs,"Copia locale",&held)&&image_source_snapshot_busy(held.key))return -1;int r=tmc2_checkpoint(&fs,"Copia locale");if(!r)fsrev++;return r;
 }
-int fs2_snap_restore(const char*name){if(tmc2_snapshot_restore(&fs,name))return -1;fsrev++;i64 count=tmc2_inode_count(&fs);if(count<0)return -1;usednodes=MIN((u64)count,0xffffffffu);home_refresh();load_prefs();return 0;}
-int fs2_snap_delete(const char*name){if(tmc2_snapshot_delete(&fs,name)||tmc2_collect(&fs))return -1;fsrev++;return 0;}
+int fs2_snap_restore(const char*name){if(image_native_attached&&image_native_attached())return -1;if(tmc2_snapshot_restore(&fs,name))return -1;fsrev++;i64 count=tmc2_inode_count(&fs);if(count<0)return -1;usednodes=MIN((u64)count,0xffffffffu);home_refresh();load_prefs();return 0;}
+int fs2_snap_delete(const char*name){T2Entry held;if(image_source_snapshot_busy&&!tmc2_snapshot_find(&fs,name,&held)&&image_source_snapshot_busy(held.key))return -1;if(tmc2_snapshot_delete(&fs,name)||tmc2_collect(&fs))return -1;fsrev++;return 0;}
 int fs2_snap_verify(const char*name){return tmc2_snapshot_verify(&fs,name);}
 int fs2_info(FsInfo*out){if(!out)return -1;u64 cookie=0;T2Entry e;u32 snaps=0;int r;while((r=tmc2_snapshots(&fs,&cookie,&e))==1)snaps++;if(r<0)return -1;*out=(FsInfo){fs.io.blocks*T2_BLOCK,tmc2_used_blocks(&fs)*T2_BLOCK,snaps,(u32)fs.super.generation};return 0;}
 int fs2_touch(const char*path){T2Entry e;return resolve(path,&e)?fs2_create(path,0):protected(path)?-1:0;}
@@ -241,6 +248,6 @@ int fs2_mount(void){
 }
 
 i64 fs2_write_at(Process*p,int fd,u64 off,const void*data,size_t bytes){
- if(!fs2_active||fd<0||fd>=12||!p->fd[fd].id||p->fd[fd].backend!=2||!p->fd[fd].write)return -1;
+ if(!fs2_active||fd<0||fd>=12||!p->fd[fd].id||p->fd[fd].backend!=2||!p->fd[fd].write||image_pinned(p->fd[fd].inode))return -1;
  i64 n=tmc2_write(&fs,p->fd[fd].inode,off,data,bytes);if(n>=0)fsrev++;return n;
 }

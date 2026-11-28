@@ -16,6 +16,8 @@ struct storage_disk {
 static struct storage_disk disks[STORAGE_SLOTS];
 static unsigned slots;
 static unsigned storage_generation=1;
+extern void tmc_usbcore_os_storage_changed(void);
+static void storage_changed(void){storage_generation++;tmc_usbcore_os_storage_changed();}
 static u8 block_buffer[4096]; /* serialized by storage_busy, including RMW */
 static int storage_busy;
 static u32 be32get(const u8 *p){return ((u32)p[0]<<24)|((u32)p[1]<<16)|((u32)p[2]<<8)|p[3];}
@@ -61,7 +63,7 @@ static int bot_command(struct storage_disk *d,const u8 *cdb,unsigned clen,void *
  return 0;
 transport:
  if(!r)r=-EIO;
- if(bot_reset(d)&&d->online){d->online=0;storage_generation++;}
+ if(bot_reset(d)&&d->online){d->online=0;storage_changed();}
  return r<0?r:-EIO;
 }
 static int scsi_command(struct storage_disk *d,const u8 *cdb,unsigned clen,void *data,unsigned len,int input,unsigned *actual)
@@ -96,7 +98,7 @@ static int storage_probe(struct usb_interface *intf,const struct usb_device_id *
 static void storage_disconnect(struct usb_interface *intf)
 {
  struct storage_disk *d=usb_get_intfdata(intf);usb_set_intfdata(intf,NULL);if(!d)return;
- d->online=0;d->pending=0;d->dead=1;storage_generation++;
+ d->online=0;d->pending=0;d->dead=1;storage_changed();
  /* The slot owns the ref until no synchronous command can hold the device. */
  if(!d->busy){usb_put_dev(d->dev);d->dev=NULL;}
 }
@@ -111,7 +113,7 @@ void tmc_usb_storage_poll(void)
   u8 lun=0;int r=usb_control_msg(d->dev,usb_rcvctrlpipe(d->dev,0),0xfe,0xa1,0,d->interface,&lun,1,BOT_TIMEOUT);
   /* GET_MAX_LUN STALL is specified for single-LUN devices. Other failures
    * or multiple LUNs are explicit unsupported, not misreported as one disk. */
-  if((r==1&&lun==0)||r==-EPIPE){r=storage_identify(d);if(!r&&!d->dead){d->online=1;storage_generation++;}}
+  if((r==1&&lun==0)||r==-EPIPE){r=storage_identify(d);if(!r&&!d->dead){d->online=1;storage_changed();}}
   d->busy=0;if(d->dead&&d->dev){usb_put_dev(d->dev);d->dev=NULL;}
  }storage_busy=0;
 }
@@ -159,4 +161,14 @@ int tmc_usb_stack_storage_flush(int i)
 {
  struct storage_disk *d=storage_enter(i);if(!d)return -ENODEV;
  u8 cdb[10]={0x35};int r=scsi_command(d,cdb,10,NULL,0,0,NULL);storage_leave(d);return r;
+}
+
+/* Logical safe removal only: never deconfigure a composite device or power
+ * down its port (that could interrupt unrelated HID interfaces). Storage is
+ * inaccessible until physical reconnect; SYNCHRONIZE CACHE is mandatory. */
+int tmc_usb_stack_storage_ejectable(int i){return i>=0&&(unsigned)i<slots&&disks[i].online&&!disks[i].dead;}
+int tmc_usb_stack_storage_eject(int i){
+ struct storage_disk *d=storage_enter(i);if(!d)return -ENODEV;
+ u8 cdb[10]={0x35};int r=scsi_command(d,cdb,10,NULL,0,0,NULL);
+ if(!r){d->online=0;storage_changed();}storage_leave(d);return r;
 }

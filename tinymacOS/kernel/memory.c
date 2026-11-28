@@ -52,6 +52,29 @@ void page_put(u64 p) {
     page_put_l(p);
     spin_unlock(&kmem_lock, fl);
 }
+/* Contiguous supervisor identity-map spans for large codec workspaces.
+ * No new virtual mappings or changes to user page tables/TLB ownership.
+ * Metadata and allocation marking are atomic under the existing page lock;
+ * clearing the data happens after releasing that leaf lock. */
+typedef struct {u64 magic,pages,requested;} KernelSpan;
+#define KERNEL_SPAN_MAGIC 0x544d435350414e38ull
+void*kernel_span_alloc(size_t bytes){
+ if(!bytes||bytes>~(size_t)0-2*PAGE)return NULL;u64 wanted=(bytes+PAGE-1)/PAGE+1;
+ u32 flags;spin_lock(&kmem_lock,&flags);u64 first=0;unsigned run=0;
+ if(wanted<=freepages&&wanted<limit){for(unsigned n=256;n<limit;n++){
+  if(used[n>>3]&(1u<<(n&7))){run=0;continue;}if(!run)first=n;
+  if(++run==wanted){for(unsigned k=0;k<run;k++)mark(first+k);freepages-=wanted;if((unsigned)hint>=first&&(unsigned)hint<first+wanted)hint=first+wanted;break;}
+ }}
+ if(run!=wanted)first=0;spin_unlock(&kmem_lock,flags);if(!first)return NULL;
+ KernelSpan*h=(void*)(first*PAGE);memset(h,0,wanted*PAGE);*h=(KernelSpan){KERNEL_SPAN_MAGIC,wanted,bytes};return (u8*)h+PAGE;
+}
+void kernel_span_free(void*p){
+ if(!p)return;u64 address=(u64)p;if(address<PAGE||address%PAGE)panic("bad kernel span",address,0);
+ KernelSpan*h=(void*)(address-PAGE);u32 flags;spin_lock(&kmem_lock,&flags);u64 first=(u64)h/PAGE;if(first<256||first>=limit)panic("kernel span outside RAM",address,0);u64 n=h->pages;
+ if(h->magic!=KERNEL_SPAN_MAGIC||n<2||n>limit-first)panic("invalid kernel span",address,0);
+ for(u64 k=0;k<n;k++)if(!(used[(first+k)>>3]&(1u<<((first+k)&7))))panic("duplicate kernel span release",address,0);
+ h->magic=0;for(u64 k=0;k<n;k++)page_put_l((first+k)*PAGE);spin_unlock(&kmem_lock,flags);
+}
 static u64 table(void) {
     u64 p = page_get_l();
     if (!p)

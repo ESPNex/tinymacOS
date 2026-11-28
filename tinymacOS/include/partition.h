@@ -6,8 +6,8 @@
 #define TMC_DISK_MAX_MIB (TMC_DISK_MAX_SECTORS/2048u)
 #define DISK_PARTS 128
 #define DISK_GAPS 129
-enum { MAP_UNKNOWN, MAP_EMPTY, MAP_GPT, MAP_MBR };
-enum { FS_RAW, FS_FAT12, FS_FAT16, FS_FAT32, FS_NTFS, FS_EXFAT, FS_UNSUPPORTED_NATIVE, FS_OTHER, FS_UNREADABLE, FS_BTRFS, FS_TMC2, FS_COUNT };
+enum { MAP_UNKNOWN, MAP_EMPTY, MAP_GPT, MAP_MBR, MAP_APM };
+enum { FS_RAW, FS_FAT12, FS_FAT16, FS_FAT32, FS_NTFS, FS_EXFAT, FS_UNSUPPORTED_NATIVE, FS_OTHER, FS_UNREADABLE, FS_BTRFS, FS_TMC2, FS_ISO9660, FS_HFS, FS_HFSPLUS, FS_HFSX, FS_APFS, FS_COUNT };
 typedef struct { u64 start,sectors; int number,fs,logical; u8 type[16]; char name[48]; } DiskPartition;
 typedef struct { u64 start,sectors; } DiskGap;
 typedef struct {
@@ -19,9 +19,11 @@ typedef struct {
     char reason[96];
 } DiskMap;
 static inline const char *filesystem_name(int f){
-    const char *const n[]={"RAW / non riconosciuto","FAT12","FAT16","FAT32","NTFS","exFAT","TMCFS legacy — non supportato","Altro filesystem","Errore di lettura","Btrfs (Linux)","TMCFS2"};
+    const char *const n[]={"RAW / non riconosciuto","FAT12","FAT16","FAT32","NTFS","exFAT","TMCFS legacy — non supportato","Altro filesystem","Errore di lettura","Btrfs (Linux)","TMCFS2","ISO9660 (sola lettura)","HFS (sola lettura)","HFS+ (sola lettura)","HFSX (sola lettura)","APFS (sola lettura)"};
     return f>=0&&f<(int)COUNT(n)?n[f]:n[0];
 }
-static inline const char *partition_scheme(int s){return s==MAP_GPT?"GPT":s==MAP_MBR?"MBR":s==MAP_EMPTY?"Senza tabella":"Tabella non valida";}
+static inline const char *partition_scheme(int s){return s==MAP_GPT?"GPT":s==MAP_MBR?"MBR":s==MAP_APM?"Apple Partition Map":s==MAP_EMPTY?"Senza tabella":"Tabella non valida";}
 
 static inline int filesystem_native(int f){return f==FS_TMC2;}
+
+static inline int filesystem_hfs(int f){return f==FS_HFS||f==FS_HFSPLUS||f==FS_HFSX;}

@@ -37,3 +37,33 @@
 - [x] Normale + ASan/UBSan sul compositore/materiali reali; guest con tre finestre: spostare il Finder nativo non altera più le ottiche delle altre miniature (100% invarianti); regione Calendario/Dock stabile (100%). Nuovo PNG originale su Drive verificato.
 
 Rapporto corrente: `USB8-STORAGE.md`; ottica pubblicata precedente: `MISSION-CONTROL-OTTICA.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.
+
+
+## Nuove richieste utente — pianificate, implementazione non avviata
+
+- [ ] Drag & drop: miniatura/icona effettiva di cartella o file al posto del quadrato generico.
+- [ ] Dispositivo USB e volumi nella sidebar Finder, sincronizzati con hotplug ed espulsione.
+- [ ] Menu contestuale Finder **Espelli**: vera espulsione device-wide, distinta da Smonta, con controllo volumi occupati/protetti e flush; errori espliciti, nessun cambiamento HID/input.
+- [ ] Prima di iniziare queste aggiunte, rispondere sullo stato immagini disco: attach/mount RAW/IMG/ISO/DMG generico e navigazione contenuti **non disponibili attualmente**. Il vero BaseSystem UDIF per il boot non è un hdiutil funzionante.
+
+Stato di questa richiesta: aggiornato soltanto il piano; nessuna nuova modifica al codice o build. In attesa del seguito dell’utente dopo il chiarimento preventivo.
+
+
+## Priorità aggiornata — sospendere nuovi test immagini
+
+Prima dei nuovi test: backend file-backed a 64 bit per RAW/IMG/ISO9660/DMG >128 MB, rimozione del cap provvisorio 64 MiB e supporto DMG compressi. Chiarire separatamente codec/contenitori, filesystem Apple e cifratura/password. Implementazione attuale non ancora conforme; non dichiarare supporto universale o M8 concluso. Vedere ultima sezione di `PIANO.md`.
+
+
+## Perimetro immagini confermato — scelta apple_fs
+
+L’utente ha scelto anche **HFS, HFS+ e APFS in sola lettura**, oltre ai contenitori RAW/IMG/ISO9660/DMG compressi e >128 MB. Cifratura/password escluse. Nuovi test sospesi fino all’implementazione dell’estensione. Il precedente backend snapshot da 64 MiB non è accettabile: sostituzione con lettura posizionale, cache limitata, pinning della sorgente e protezione dalle mutazioni. Distinguere riconoscimento della firma, decodifica del contenitore e reale navigazione dei file. Nessuna dichiarazione di supporto universale, release o pubblicazione anticipata.
+
+
+## Checkpoint successivo — estensione scritta, non ancora accettata
+
+Vedere `IMMAGINI-ESTENSIONE.md` per stato corrente e limiti effettivi. Il vecchio snapshot da 64 MiB è stato sostituito nel codice con file backing nativo/bootfs a 64 bit, cache limitate e pin sorgente; aggiunti multi-blkx, ADC/zlib/bzip2/LZFSE/XZ-LZMA2, HFS/HFS+/HFSX, APFS v2 RO iniziale e Apple Partition Map RO. Compilate soltanto 12 unità e dipendenze decode-only (log esterno `compile-only.log`), senza diagnostiche: **nessun nuovo test, sanitizer, guest, link/build ISO, commit o push**. Non supporto universale: restano sorgenti esterne, APFS sealed/compressione file/Unicode completo, varianti UDIF non XML/segmenti e limiti decoder da completare/valutare prima dei test. I PASS storici non verificano questo codice. Main e ISO pubblicati invariati. Input/HID non modificato.
+
+
+## Checkpoint corrente — rimozione limiti una per una
+
+Fa fede la checklist aggiornata `IMMAGINI-ESTENSIONE.md`, non le descrizioni storiche sopra. Codice: registri immagini/block estensibili, mappe DMG radix senza tetti run/XML, indirizzamento immagini u64 separato dai dischi scrivibili, sorgenti esterne/snapshot/annidate con pin/freeze e stack dedicati, allocazioni grandi da pagine fisiche, crescita LZFSE/dizionario XZ non cappati provvisoriamente, plist binario/resource fork UDIF, resource fork HFS e bootstrap overflow esteso, nomi reali APFS con alias stabili, FAT12/16 e runlist NTFS senza 64-run cap. Compilazione/link incrementale riusciti: **non accettazione**. Restano checksum/segmenti/NDIF, funzioni Apple avanzate/compressione/Unicode/namespace, attribute list/compressione NTFS, reattività, thumbnail contenuto e matrice finale. Nessun nuovo test/guest/commit/push o ISO. Non avviare il test finale dichiarando risolte le voci ancora aperte.

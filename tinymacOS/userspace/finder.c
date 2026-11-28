@@ -24,6 +24,8 @@ static int hp = -1, hn, trav;
 static Dirent volume_items[VOLUME_PAGE];
 static char volume_paths[VOLUME_PAGE][PATHLEN];
 static int volume_count,volume_base,volume_more,sidebar_offset;
+static int volume_usb[VOLUME_PAGE];
+static int volume_rows(void){return volume_count+!!volume_base+!!volume_more;}
 static int side(void)
 {
     return aw < 570 ? 145 : 171;
@@ -45,9 +47,9 @@ static int visible(void)
 #define navicon browser_icons
 static int ny(int i)
 {
-    return (i < 5 ? 39 + i * 30 : 222 + (i - 5) * 30)-sidebar_offset;
+    return (i < 5 ? 39 + i * 30 : 262 + volume_rows()*30 + (i - 5) * 30)-sidebar_offset;
 }
-static int vy(int i){return ny(BROWSER_PLACES)+28+i*30;}
+static int vy(int i){return 222+i*30-sidebar_offset;}
 static int sidebar_visible(int y){return y>=32&&y+26<=ah-12;}
 static int sidebar_at(int y)
 {
@@ -64,11 +66,11 @@ static void sidebar_refresh(void)
     volume_count=browser_page("/Volumes",volume_items,VOLUME_PAGE,1+volume_base,&volume_more);
     while(!volume_count&&volume_base){volume_base=MAX(0,volume_base-VOLUME_PAGE);volume_count=browser_page("/Volumes",volume_items,VOLUME_PAGE,1+volume_base,&volume_more);}
     if(volume_count<0){volume_count=0;volume_more=0;}
-    for(int i=0;i<volume_count;i++){strset(volume_paths[i],"/Volumes/",PATHLEN);append(volume_paths[i],volume_items[i].name,PATHLEN);}
+    for(int i=0;i<volume_count;i++){strset(volume_paths[i],"/Volumes/",PATHLEN);append(volume_paths[i],volume_items[i].name,PATHLEN);VolumeMount q={0};strset(q.target,volume_paths[i],PATHLEN);volume_usb[i]=!sc(S_DISK,15,&q,0,0)&&q.ejectable;}
 }
 static void sidebar_wheel(int delta)
 {
-    int last=vy(volume_count+!!volume_base+!!volume_more)+28;
+    int last=ny(BROWSER_PLACES-1)+28;
     int maximum=MAX(0,last+sidebar_offset-(ah-12));
     sidebar_offset=MAX(0,MIN(maximum,sidebar_offset-MAX(-16,MIN(16,delta))*30));
 }
@@ -163,7 +165,7 @@ static void sidebar_select(int i)
  if(i==VOLUME_PREVIOUS||i==VOLUME_NEXT){
   if((i==VOLUME_PREVIOUS&&!volume_base)||(i==VOLUME_NEXT&&!volume_more))return;
   volume_base=MAX(0,volume_base+(i==VOLUME_NEXT?VOLUME_PAGE:-VOLUME_PAGE));sidebar_refresh();
-  sidebar_offset=MAX(0,222+(BROWSER_PLACES-5)*30-35);return;
+  sidebar_offset=MAX(0,222-35);return;
  }
  const char*p=sidebar_path(i);if(p)go(p);
 }
@@ -209,9 +211,9 @@ static void openfile(void)
 }
 static void act(int k)
 {
-    if(k==ACT_MOUNT||k==ACT_UNMOUNT){
+    if(k==ACT_MOUNT||k==ACT_UNMOUNT||k==ACT_EJECT){
         if(!mount_target[0])return;
-        VolumeMount q={.operation=k==ACT_MOUNT?VOLUME_MOUNT:VOLUME_UNMOUNT};strset(q.target,mount_target,PATHLEN);
+        VolumeMount q={.operation=k==ACT_EJECT?VOLUME_EJECT:k==ACT_MOUNT?VOLUME_MOUNT:VOLUME_UNMOUNT};strset(q.target,mount_target,PATHLEN);
         int result=sc(S_DISK,15,&q,0,0);mount_target[0]=0;
         if(!result)reload();strset(note,q.message,sizeof note);return;
     }
@@ -325,14 +327,15 @@ static void paint(void)
         Icon(16, y + 1, 19, navicon[i]);
         Text(43, y + 1, browser_label(i), F_SMALL, eq(cwd, paths[i]) ? EMP : TX);
     }
-    if(198-sidebar_offset>=32&&198-sidebar_offset<ah-26)Text(16,198-sidebar_offset,"Posizioni",F_SMALL,SUB);
-    int header=ny(BROWSER_PLACES);if(header>=32&&header<ah-26)Text(16,header,"Volumi collegati",F_SMALL,SUB);
+    if(198-sidebar_offset>=32&&198-sidebar_offset<ah-26)Text(16,198-sidebar_offset,"Dispositivi",F_SMALL,SUB);
+    int header=238+volume_rows()*30-sidebar_offset;if(header>=32&&header<ah-26)Text(16,header,"Posizioni",F_SMALL,SUB);
     int vr=0;
     if(volume_base){int yy=vy(vr++);if(sidebar_visible(yy))Text(18,yy+1,"← Volumi precedenti",F_SMALL,TX);}
     for(int i=0;i<volume_count;i++){
         int yy=vy(vr++);if(!sidebar_visible(yy))continue;
         if(eq(cwd,volume_paths[i]))Box(8,yy-2,S-16,26,6,SEL);
-        Icon(16,yy+1,19,33);Text(43,yy+1,volume_items[i].name,F_SMALL,TX);
+        char label[64]="";if(volume_usb[i])strset(label,"USB · ",sizeof label);append(label,volume_items[i].name,sizeof label);
+        Icon(16,yy+1,19,33);Text(43,yy+1,label,F_SMALL,TX);
     }
     if(volume_more){int yy=vy(vr);if(sidebar_visible(yy))Text(18,yy+1,"Altri volumi…",F_SMALL,TX);}
 
@@ -431,7 +434,7 @@ static int entryat(int x,int y){int left=side()+15;if(x<left||x>=aw-12||y<102||y
     int j=listview?(y-102)/31:(y-103)/82*cols()+col;return j>=0&&j<visible()&&j+offset<n?j+offset:-1;}
 static void context(Event*e){if(dialog)return;mount_target[0]=0;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;const char*place=sidebar_path(j);if(!place){sidebar_select(j);return;}
         if(j>=BROWSER_PLACES){VolumeMount q={0};strset(q.target,place,PATHLEN);unsigned mask=0;
-            if(!sc(S_DISK,15,&q,0,0)&&q.managed){strset(mount_target,place,PATHLEN);mask=AMASK(q.mounted?ACT_UNMOUNT:ACT_MOUNT);}
+            if(!sc(S_DISK,15,&q,0,0)&&q.managed){strset(mount_target,place,PATHLEN);mask=AMASK(q.mounted?ACT_UNMOUNT:ACT_MOUNT);if(q.ejectable)mask|=AMASK(ACT_EJECT);}
             sc(S_CONTEXT,mask,e->d,0,0);return;}
         go(place);}
     sel=sidebar?-1:entryat(x,y);Dirent wd;int writable=!sc(S_STAT,cwd,&wd,0,0)&&!wd.ro;
@@ -443,7 +446,7 @@ static void context(Event*e){if(dialog)return;mount_target[0]=0;int x=e->a,y=e->
 static void event(Event *e)
 {
     if(e->type==EV_DRAG_BEGIN){
-        if(dialog)return;int i=entryat(e->a,e->b);if(i<0)return;char p[PATHLEN];if(!absolutepath(p,cwd,files[i].name))sc(S_DRAG,p,e->d,0,0);item_click.armed=0;return;
+        if(dialog)return;int i=entryat(e->a,e->b);if(i<0)return;char p[PATHLEN];if(!absolutepath(p,cwd,files[i].name))sc(S_DRAG,p,e->d,idico(files+i),0);item_click.armed=0;return;
     }
     if(e->type==EV_DROP){
         if(dialog)return;char dir[PATHLEN],placed[PATHLEN];strset(dir,e->d?HOME "/Desktop":cwd,PATHLEN);

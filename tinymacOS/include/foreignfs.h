@@ -9,7 +9,8 @@ typedef struct {u64 vcn,lcn,length;int sparse;} FvRun;
 typedef struct {
  void *context;u64 bytes;int (*read)(void*,u64,void*,size_t);
  int type;u32 bps,cluster,clusters,record,slots;u64 fat,heap,root,mft,mft_size;
- FvRun runs[64];unsigned nruns;
+ /* Retain encoded MFT mapping pairs, not a fixed 64-run expansion. */
+ u8 runs[4096];unsigned nruns;u64 fixed_root;u32 root_entries;
 } ForeignFs;
 int fv_mount(ForeignFs*,void*,u64,int(*)(void*,u64,void*,size_t));
 int fv_root(ForeignFs*,FvNode*);

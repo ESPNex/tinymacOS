@@ -1,5 +1,5 @@
 {
-  "purpose": "Explicit M8 canonical BULK-only extension to five M0-pinned integration files. Original M0 hashes are preserved, not refreshed. No HID/input handler authorization.",
+  "purpose": "Explicit M8 bulk storage integration plus storage-only safe-eject roots and media-change notification. Historical M0 hashes and independent unchanged input-function pins remain preserved; no HID handlers authorized.",
   "base_commit": "4a11a562ecbe0f7f2701b616c51d1838dde7e981",
   "modified_protected_files": {
     "compat/linux/ehci_runtime.c": {
@@ -41,12 +41,12 @@
     },
     "tools/build-usbcore.sh": {
       "original_sha256": "e3b426af2d589df20427e5172ac274f69e11810dff660907e868385fed0a4028",
-      "reviewed_bulk_sha256": "7b526840411b2511d1a2a4b15ba7198e29f632a5f7413e447a62a8e1230630bd",
+      "reviewed_bulk_sha256": "98481674576407020d8e9341b39e8803b7066249240a0f3745d9241373fd1b38",
       "unchanged_input_functions": {}
     }
   },
   "new_production_files": {
     "compat/linux/bulk_runtime.inc": "c70329713f3151ec37bb993937db629603d464e132ee6c60d0326609287ccb17",
-    "compat/linux/usbcore_storage.c": "9dc14efa144aca69b763635fece4bbe38c5787716f1f793468cfa2e3d9d56424"
+    "compat/linux/usbcore_storage.c": "14253d6e845f53d9794a07dc82e982fa318252ea5fd6d80ba703da83fc62cb71"
   }
 }

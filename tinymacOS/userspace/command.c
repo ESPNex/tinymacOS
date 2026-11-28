@@ -7,6 +7,7 @@
 #include "date.h"
 #include "volume_export.h"
 #include "volume_mount.h"
+#include "image8.h"
 int strncmp(const char *, const char *, unsigned long); /* kernel/string.c */
 // The executable is shared on disk; exec resolves its invoked path and supplies argv[0].
 static ExecArgs A;
@@ -734,6 +735,24 @@ static int run(void)
             for (int i = 0; i < nline; i++)ln(bytes + pos[i]);
         }
         return IS("grep") && !hit;
+    }
+    if(IS("hdiutil")){
+        ImageRequest q={0};
+        if(n==2&&eq(V(1),"info")){
+            int found=0;q=(ImageRequest){.operation=IMAGE_NEXT,.disk=-1};while(!sc(S_DISK,16,&q,0,0)){say("disk");num(q.disk);say(" — ");ln(q.path);found=1;}
+            if(!found)ln("Nessuna immagine collegata.");return 0;
+        }
+        if((n==3||n==4)&&eq(V(1),"attach")){
+            int arg=2;if(n==4){if(!eq(V(2),"-readonly"))return fail("Sono supportate solo immagini in sola lettura.");arg=3;}
+            if(path(pa,arg))return 1;q.operation=IMAGE_ATTACH;strset(q.path,pa,PATHLEN);
+            int r=sc(S_DISK,16,&q,0,0);ln(q.message);if(!r){say("/dev/disk");num(q.disk);ln(" — /Volumes");}return !!r;
+        }
+        if(n==3&&eq(V(1),"detach")){
+            q.operation=IMAGE_DETACH;q.disk=diskid(V(2));
+            if(q.disk<0)return fail("Indica diskN oppure /dev/diskN.");
+            int r=sc(S_DISK,16,&q,0,0);ln(q.message);return !!r;
+        }
+        return fail("hdiutil attach [-readonly] file | detach diskN | info. RAW/IMG, ISO9660, DMG UDIF v4 raw/zero, ADC/zlib/bzip2/LZFSE/LZMA2. Lettura file-backed a 64 bit, anche da volumi esterni, snapshot e immagini annidate. HFS/HFS+/HFSX e APFS non cifrato/non sealed in sola lettura; varianti non implementate rifiutate.");
     }
     if (IS("diskutil")) {
         if(n>=2&&(eq(V(1),"mount")||eq(V(1),"unmount"))){

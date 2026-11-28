@@ -37,3 +37,18 @@ int nt_volume_remove(ForeignIo*,const char*);
 int nt_volume_move(ForeignIo*,const char*,const char*);
 i64 nt_volume_read(ForeignIo*,const char*,u64,void*,size_t);
 i64 nt_volume_write(ForeignIo*,const char*,u64,const void*,size_t);
+
+int iso_volume_stat(ForeignIo*,const char*,ForeignEntry*);
+int iso_volume_list(ForeignIo*,const char*,ForeignEntry*,int,int);
+i64 iso_volume_read(ForeignIo*,const char*,u64,void*,size_t);
+
+/* Apple catalogue/data-fork readers: never write or replay a journal. */
+int hfs_volume_stat(ForeignIo*,const char*,ForeignEntry*);
+int hfs_volume_list(ForeignIo*,const char*,ForeignEntry*,int,int);
+i64 hfs_volume_read(ForeignIo*,const char*,u64,void*,size_t);
+
+int apfs_volume_stat(ForeignIo*,const char*,ForeignEntry*);
+int apfs_volume_list(ForeignIo*,const char*,ForeignEntry*,int,int);
+i64 apfs_volume_read(ForeignIo*,const char*,u64,void*,size_t);
+
+int apfs_volume_validate(ForeignIo*);

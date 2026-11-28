@@ -60,6 +60,7 @@ int verify_system_volume(Medium*);
 int restore_os(Medium *);
 
 int partition_scan(Medium *, DiskMap *);
+int partition_scan_image(Medium*,DiskMap*);
 int filesystem_probe(Medium *,u64,u64);
 
 #include "diskedit.h"

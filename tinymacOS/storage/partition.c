@@ -12,6 +12,7 @@ int filesystem_probe(Medium*m,u64 at,u64 n)
 {
     u8 b[512] ALIGNED(512);
     if(!n||at>=m->z||n>m->z-at||m->io(m->d,at,1,b,0))return FS_UNREADABLE;
+    if(!memcmp(b+32,"NXSB",4)&&n>=8)return FS_APFS;
     if(!memcmp(b,"TMCBFS2\0",8))return FS_TMC2;
     if(!memcmp(b,"TMCBFS1\0",8)||!memcmp(b,"TINYFS1\0",8))return FS_UNSUPPORTED_NATIVE;
     if(b[510]==85&&b[511]==170){
@@ -31,7 +32,13 @@ int filesystem_probe(Medium*m,u64 at,u64 n)
             if(!fat32&&roots&&c<4085&&(u64)f*bps*2>=(c+2)*3)return FS_FAT12;
         }
     }
+    if(n>=3&&!m->io(m->d,at+2,1,b,0)){
+        if(b[0]=='H'&&b[1]=='+')return FS_HFSPLUS;
+        if(b[0]=='H'&&b[1]=='X')return FS_HFSX;
+        if(b[0]=='B'&&b[1]=='D')return FS_HFS;
+    }
     if(n>128&&!m->io(m->d,at+128,1,b,0)&&!memcmp(b+64,"_BHRfS_M",8))return FS_BTRFS;
+    if(n>=68&&!m->io(m->d,at+64,1,b,0)&&b[0]==1&&!memcmp(b+1,"CD001",5)&&b[6]==1)return FS_ISO9660;
     return FS_RAW;
 }
 static int bad(DiskMap*x,const char*s){x->safe=0;strset(x->reason,s,sizeof x->reason);return 0;}
@@ -79,11 +86,34 @@ static int extended(Medium*m,DiskMap*x,u32 base,u32 size,int *number)
     }
     return 1;
 }
-int partition_scan(Medium*m,DiskMap*x)
+/* Read-only Apple Partition Map inventory. Never advertise APM gaps as
+ * installable/allocatable space, and never synthesize a GPT/MBR conversion. */
+static u32 apm4(const u8*p){return (u32)p[0]<<24|(u32)p[1]<<16|(u32)p[2]<<8|p[3];}
+static int apple_map(Medium*m,DiskMap*x,unsigned block_bytes){
+ if(block_bytes<512||block_bytes>4096||(block_bytes&(block_bytes-1)))return bad(x,"Geometria Apple Partition Map non supportata");
+ unsigned scale=block_bytes/512;
+ if(m->z%scale||m->io(m->d,scale,1,other,0)||other[0]!='P'||other[1]!='M')return bad(x,"Apple Partition Map non valida");
+ u32 count=apm4(other+4);if(!count||count>DISK_PARTS||(u64)(count+1)*scale>m->z)return bad(x,"Troppe partizioni Apple o tabella fuori limite");
+ x->scheme=MAP_APM;
+ for(u32 j=1;j<=count;j++){
+  if(m->io(m->d,(u64)j*scale,1,other,0)||other[0]!='P'||other[1]!='M'||apm4(other+4)!=count)return bad(x,"Voci Apple Partition Map discordanti");
+  u64 start=(u64)apm4(other+8)*scale,size=(u64)apm4(other+12)*scale;
+  if(!size||!start||start>=m->z||size>m->z-start||apm4(other+80)||apm4(other+84)>apm4(other+12))return bad(x,"Estensione Apple Partition Map non valida");
+  /* add() probes using stack memory: preserve the APM entry for its label. */
+  u8 label[32];memcpy(label,other+16,32);u8 type[16];memcpy(type,other+48,16);
+  if(!add(m,x,start,size,j,type,16))return 0;
+  DiskPartition*p=x->part+x->count-1;unsigned len=0;while(len<32&&label[len]){p->name[len]=label[len]>=32&&label[len]<127?label[len]:'?';len++;}p->name[len]=0;
+  for(int k=0;k<x->count-1;k++){DiskPartition*q=x->part+k;if(p->start<q->start+q->sectors&&q->start<p->start+p->sectors)return bad(x,"Partizioni Apple sovrapposte");}
+ }
+ x->safe=1;strset(x->reason,"Apple Partition Map: inventario in sola lettura",sizeof x->reason);return 1;
+}
+static int partition_scan_limit(Medium*m,DiskMap*x,u64 ceiling)
 {
     memset(x,0,sizeof *x);x->slot=-1;
-    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>TMC_DISK_MAX_SECTORS)return bad(x,"Geometria non supportata (limite 17.592186044416 TB)");
+    u32 scale=medium_scale(m);if(!scale||m->z%scale||m->z<4*scale||m->z>ceiling)return bad(x,"Geometria oltre l’indirizzamento supportato per questo tipo di supporto");
     if(m->io(m->d,0,1,sector,0)||m->io(m->d,scale,1,other,0))return bad(x,"Errore di lettura della tabella");
+    if(sector[0]=='E'&&sector[1]=='R')return apple_map(m,x,(unsigned)sector[2]*256+sector[3]);
+    if(other[0]=='P'&&other[1]=='M'&&scale==1)return apple_map(m,x,512);
     if(!nz(sector,512)&&!nz(other,512)){
         /* A zero first sector is NOT proof of an empty disk. The legacy blank
          * path scans every sector before its first write. */
@@ -156,3 +186,8 @@ int partition_scan(Medium*m,DiskMap*x)
     if(x->slot<0){strset(x->reason,"Tabella piena: nessuna voce libera",sizeof x->reason);return 1;}
     strset(x->reason,x->sectors?"Spazio non allocato disponibile":"Nessuno spazio non allocato",sizeof x->reason);return 1;
 }
+
+/* Writable physical-media policy is deliberately unchanged. The image path
+ * is inventory-only and can use the complete checked byte-address ABI. */
+int partition_scan(Medium*m,DiskMap*x){return partition_scan_limit(m,x,TMC_DISK_MAX_SECTORS);}
+int partition_scan_image(Medium*m,DiskMap*x){return partition_scan_limit(m,x,(~(u64)0)/512);}

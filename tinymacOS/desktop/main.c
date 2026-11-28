@@ -13,7 +13,7 @@ int window_interacting(const View*v){return drag>=0&&v==views+drag;}
 static Rect drag0;
 static ClickPair client_click;
 static u64 pointer_when;
-static struct {int pid,token,started,ready,released,x,y,copy,startx,starty;u64 until;char path[PATHLEN];} filedrag;
+static struct {int pid,token,started,ready,released,x,y,copy,startx,starty,icon;u64 until;char path[PATHLEN];} filedrag;
 static u32 drag_serial;
 static int select_pid;
 static void drag_reset(void){memset(&filedrag,0,sizeof filedrag);cursorDirty=1;}
@@ -33,12 +33,12 @@ static void drag_deliver(void){
 }
 static void drag_ready(Event*e){
  if(!filedrag.started||filedrag.pid!=e->a||filedrag.token!=e->d)return;
- if(e->text[0]!='/')return;strset(filedrag.path,e->text,sizeof filedrag.path);filedrag.ready=1;drag_deliver();
+ if(e->text[0]!='/')return;strset(filedrag.path,e->text,sizeof filedrag.path);filedrag.icon=e->b>=1&&e->b<=42?e->b:7;filedrag.ready=1;cursorDirty=1;drag_deliver();
 }
 static u32 undo[1920 * 1080];
 int cursorDirty = 1;
 static int curx, cury, curw, curh;
-static u32 undercursor[64 * 64];
+static u32 undercursor[96 * 96];
 static int cursorValid;
 static PointerScale pointer_scale;
 static u64 scanout_heartbeat;
@@ -344,14 +344,18 @@ static void drawcursor(void)
     CursorFrame *frame=pointer_kind>=0&&pointer_ok[pointer_kind]?pointer_images[pointer_kind].frame+MAX(0,pointer_index):0;
     int left=mx-(frame?frame->hx:3), top=my-(frame?frame->hy:2);
     int right=left+(frame?32:26),bottom=top+(frame?32:26);
-    if(filedrag.started){right=MAX(right,mx+23);bottom=MAX(bottom,my+23);}
+    if(filedrag.started&&filedrag.ready){right=MAX(right,mx+64);bottom=MAX(bottom,my+64);}
     curx=MAX(0,left); cury=MAX(0,top);
     curw=MAX(0,MIN(W,right)-curx); curh=MAX(0,MIN(H,bottom)-cury);
     copyout((Rect) {
         curx, cury, curw, curh
     }, undercursor);
+    if(filedrag.started&&filedrag.ready){
+        /* Same transparent asset as the source Finder item, never a square. */
+        icon(mx+10,my+10,48,filedrag.icon?filedrag.icon:7);
+        if(filedrag.copy){rect(mx+48,my+48,14,14,0x2eaa65);rect(mx+54,my+51,2,8,0xffffff);rect(mx+51,my+54,8,2,0xffffff);}
+    }
     if(frame)cursor_pixels(frame->rgba,frame->invert,left,top);else icon(left, top, 26, 15);
-    if(filedrag.started){rect(mx+9,my+11,12,12,filedrag.copy?0x2eaa65:0x367bd6);if(filedrag.copy){rect(mx+14,my+13,2,8,0xffffff);rect(mx+11,my+16,8,2,0xffffff);}}
     cursorValid = 1;
 }
 static void scanrect(int x, int y, int w, int h)
@@ -613,7 +617,7 @@ static void down(void)
     drag_reset();select_pid=0;
     if(!sys.recovery&&!shell_overlay_open()){
         int hit=0;for(int j=nz;j--;){View*v=views+order[j];if(!v->mini&&!v->dead&&inside(mx,my,v->box)){hit=1;break;}}
-        int source=!hit?shell_drag_source(mx,my,filedrag.path):0;if(source){filedrag.pid=source==2?-2:-1;filedrag.ready=1;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
+        int source=!hit?shell_drag_source(mx,my,filedrag.path):0;if(source){filedrag.pid=source==2?-2:-1;Dirent item;filedrag.icon=source==2?33:!sc(S_STAT,filedrag.path,&item,0,0)&&item.dir?6:7;filedrag.ready=1;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
     }
     if(sys.recovery){
         if(recovery_bar_click(mx,my))return;
