@@ -14,11 +14,11 @@
 - [x] Comandi nativi `mount`, `umount`, `diskutil mount`, `diskutil unmount`.
 - [x] Clic destro Monta/Smonta nel Finder; in Utility Disco pulsante nella toolbar accanto a S.O.S., con query di stato al disegno e al clic e ricontrollo nel kernel.
 - [x] Host normali + ASan/UBSan sui quattro filesystem reali; guest retail su partizione FAT32/NVMe disposable: Terminale, menu Finder e toolbar Utility Disco, assenza azioni mount nel menu Utility, rimontaggio/readback, SHA-256 dell’intero disco invariata.
-- [x] Input: tutti i 473 file della baseline USB/input ancora byte-identici; guard pre-authentication invariato.
+- [x] Al checkpoint grafico/mount precedente, tutti i 473 file baseline erano byte-identici. Dopo l’estensione bulk: 466 identici e 7 integrazioni storage esplicite, handler input/HID invariati; ricevuta `usb8-input-preservation.json`. Guard pre-authentication invariato.
 
 ## Ancora da completare — M8 NON concluso
 
-1. Storage USB canonico: estensioni bulk solo negli adapter originali EHCI/xHCI e bridge, classe BOT/SCSI, block layer, init/hotplug, flush/errori/timeout/stall/reset e geometrie, test input simultaneo. Non cambiare handler input/HID, non ripristinare driver ritirati. Gli attuali test mount su NVMe NON provano USB storage.
+1. Storage USB canonico **implementato e verificato parzialmente**: bulk negli adapter originali EHCI/xHCI/bridge, BOT/SCSI, block layer e bootstrap, flush/errori/timeout/reset, geometrie e hotplug. Due guest QEMU USB FAT32 xHCI/EHCI PASS: write/readback, smonta/rimonta, stesso-port detach/reattach su nuovo slot, tastiera/cursore e verifica mtools. Host O1/O2 ASan/UBSan e regressioni quattro filesystem PASS. **Ancora da fare prima di chiudere USB**: guest USB TMCFS2/exFAT/NTFS, 4Kn, Recovery/installato, stress input durante I/O sostenuto e guasti/disconnessione durante write. Nessun handler input/HID modificato; audit bulk esplicito senza refresh degli hash M0 originali. Vedere `USB8-STORAGE.md` e limiti single-LUN/BOT/8 slot non riutilizzati. Nessuna certificazione hardware USB3.1.
 2. `hdiutil` nativo RAW/IMG/ISO/DMG: attach/detach/backend effettivo, parsing con bounds, scope varianti DMG esplicito. BaseSystem è già UDIF vero e viene verificato con decoder indipendente, non è una funzionalità hdiutil completata.
 3. Accettazione integrata completa, Recovery/live/installato e regressioni; rimisurare le prestazioni sul prodotto finale, senza riutilizzare i vecchi numeri come benchmark della build corrente.
 4. Solo dopo i gate: versione 10.3, commit/push, backup indipendente e release GitHub con ISO/checksum; video nuovo su Drive, soltanto M8.
@@ -36,4 +36,4 @@
 - [x] Mission Control: vetro e sheet interni campionano la scena alla destinazione attuale, anche durante entrata/uscita, non le vecchie posizioni. Rimossa la cache AN_MC congelata; contenuto nativo conservato.
 - [x] Normale + ASan/UBSan sul compositore/materiali reali; guest con tre finestre: spostare il Finder nativo non altera più le ottiche delle altre miniature (100% invarianti); regione Calendario/Dock stabile (100%). Nuovo PNG originale su Drive verificato.
 
-Rapporto corrente: `MISSION-CONTROL-OTTICA.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.
+Rapporto corrente: `USB8-STORAGE.md`; ottica pubblicata precedente: `MISSION-CONTROL-OTTICA.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.

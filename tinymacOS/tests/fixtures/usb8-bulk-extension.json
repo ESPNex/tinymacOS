@@ -1,0 +1,52 @@
+{
+  "purpose": "Explicit M8 canonical BULK-only extension to five M0-pinned integration files. Original M0 hashes are preserved, not refreshed. No HID/input handler authorization.",
+  "base_commit": "4a11a562ecbe0f7f2701b616c51d1838dde7e981",
+  "modified_protected_files": {
+    "compat/linux/ehci_runtime.c": {
+      "original_sha256": "4edbaae0ae637d60ed37e8b41243e35d355eaec334e003716e0d8b0826debb0b",
+      "reviewed_bulk_sha256": "96500a2de49e33588fb057fefbb2a2ef01fa7426c1f72a66b24ceec50d705d9c",
+      "unchanged_input_functions": {
+        "tmc_linux_ehci_interrupt_report": "93c0889aafbbc3d0d425bbab5d5f0601908f157892a1ea3da867884fac071f92",
+        "tmc_linux_ehci_interrupt": "d38fe5761902bbc8d3f287b80fd61990297db02ea6493b2616fa7a358f45f669",
+        "tmc_linux_ehci_interrupt_stop": "f511e83e6f7147e098a27a7cb8cd2d2dd594d11b17d1129ee9243f47d5c9c475",
+        "tmc_linux_ehci_reset_toggle": "46ccf4df776c51438a8a39dcb5b05ff58f21e60c757a6b802886349d48a36dae"
+      }
+    },
+    "compat/linux/xhci_runtime.c": {
+      "original_sha256": "9d863799c93ce7689814de0c2b2f114118b40295f15eacbbefc2468478fd5b07",
+      "reviewed_bulk_sha256": "463ad7a5bb31ccfc8477175ac659c00dfdd50f060d3c5a4bfdeeee0b4df24a95",
+      "unchanged_input_functions": {
+        "tmc_linux_xhci_interrupt_companion": "f8be4249852ca4970c44f7dc85c8c74fbe47e08ba58fe0653825937473357368",
+        "tmc_linux_xhci_interrupt_report": "e8be8647ec8ef4929a314695bd97205637a4e2ee9a5814b8fd80003a0bd2ebd8",
+        "tmc_linux_xhci_interrupt": "0e421a488fc091014f94c7fe1d5c182c8c7044f55d4fc25076a07e9936ff6f1f",
+        "tmc_linux_xhci_interrupt_stop": "19ddd669efd2f6d66826e244422eb5b7c1d1b71699cb721ea06940bafab7f497",
+        "tmc_linux_xhci_reset_toggle": "57ea2245b11998e9934f2311f9c49b50052986d05c5ed4fe9e2986f8939c3635"
+      }
+    },
+    "compat/linux/usbcore_bridge.c": {
+      "original_sha256": "44708b5d8524ef47f29201f62c65116b0c5c4116c02ba721683d40bec7594607",
+      "reviewed_bulk_sha256": "50addfe75c624f6b61d2897ed63d3feb34234f2bc4ab1503e1a3546de2c2b516",
+      "unchanged_input_functions": {
+        "interrupt_complete": "90a09b8fb64bb06d4a7e734b3ac3a28840aa83e1b4202153c70ec277a76eb515",
+        "start_interrupt": "43e628b2814c5860e028da4b9c0ef835a822bfe1f10bfe899004373535ab2cf3",
+        "control_work": "3fd2d3d1add476c48a5a699a0b3d4b55d4845336a14a5287ffeb14af941b7a96"
+      }
+    },
+    "compat/linux/usbcore_stack.c": {
+      "original_sha256": "f1ba8b482c8f48486b8a697fb84ec7440485086d1cb6ecd159815244aee5f1c2",
+      "reviewed_bulk_sha256": "abddcaccbfe8837bd327cb23d31cdadf44ec19c62333641878e52598b4f8961a",
+      "unchanged_input_functions": {
+        "tmc_usb_stack_leds": "50ba03b218196ac87bf7b52303a054b2ac94e3ebeeb990a80132aa8089fc5b88"
+      }
+    },
+    "tools/build-usbcore.sh": {
+      "original_sha256": "e3b426af2d589df20427e5172ac274f69e11810dff660907e868385fed0a4028",
+      "reviewed_bulk_sha256": "7b526840411b2511d1a2a4b15ba7198e29f632a5f7413e447a62a8e1230630bd",
+      "unchanged_input_functions": {}
+    }
+  },
+  "new_production_files": {
+    "compat/linux/bulk_runtime.inc": "c70329713f3151ec37bb993937db629603d464e132ee6c60d0326609287ccb17",
+    "compat/linux/usbcore_storage.c": "9dc14efa144aca69b763635fece4bbe38c5787716f1f793468cfa2e3d9d56424"
+  }
+}

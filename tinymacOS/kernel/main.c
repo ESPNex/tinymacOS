@@ -21,13 +21,15 @@ void kmain(struct Boot *b)
     platform_init();
     boot_logstr("[boot] platform enumeration complete\n");
     boot_progress(81);
+    /* Start the one canonical USB stack before boot-volume discovery.
+     * Input/HID handlers and their initialization implementation are unchanged. */
+    input_init();
     storage_init();
     bootfs_init();
     fs_init();
     session_init();
     boot_logstr("[boot] storage, filesystems and session initialized\n");
     boot_progress(88);
-    input_init();
     irq_init();
     boot_logstr("[boot] input and interrupt routing initialized\n");
     kext_init();     /* autoload /System/Library/Extensions (e1000, wifi …) */

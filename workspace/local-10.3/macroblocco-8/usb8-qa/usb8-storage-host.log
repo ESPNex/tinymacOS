@@ -1,0 +1,2 @@
+PASS production BOT/SCSI wire MODEL: inquiry/readiness/capacity10+16, 4Kn unaligned read/RMW preservation, 128KiB split reads, exact data, flush, bounds/overflow, CSW signature/tag/residue/phase, short/STALL/timeout/reset ordering, request sense, no replay, offline and busy rejection
+PASS production BOT/SCSI wire MODEL: inquiry/readiness/capacity10+16, 4Kn unaligned read/RMW preservation, 128KiB split reads, exact data, flush, bounds/overflow, CSW signature/tag/residue/phase, short/STALL/timeout/reset ordering, request sense, no replay, offline and busy rejection

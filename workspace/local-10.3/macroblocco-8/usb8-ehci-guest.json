@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "work": "/var/tmp/tmc-usb8-ehci-lotwjkv1",
+  "iso_sha256": "7bf58df557d3f322e4c2a1d4733468a24e5cc20f286d8e8c1bbf2ac9f510d841",
+  "transport": "ehci original HCD + canonical usbcore + native BOT/SCSI, QEMU usb-storage",
+  "physical_hardware_tested": false,
+  "checks": [
+    "USB disk discovered before initial filesystem inventory; FAT32 read through real BOT and common block layer",
+    "USB FAT32 write/copy, actual flush/unmount/remount and readback with USB-only keyboard and rendered cursor",
+    "USB hot unplug/reattach on same port uses new stable slot disk1, not stale disk0; filesystem inventory refreshed; keyboard and pointer still work",
+    "Independent host mtools reads exact new file from USB backing medium after guest exit"
+  ]
+}

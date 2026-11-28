@@ -16,6 +16,10 @@ static struct {int disk,type;u64 base,sectors;} offline_volumes[VOLUMES];
 static int noffline;
 extern int volume_current(void),volume_extent(u64*,u64*);
 static DiskMap inventory;
+/* Existing host-only filesystem fixtures do not link the physical block layer. */
+extern unsigned sata_generation(void) __attribute__((weak));
+static unsigned media_generation;
+static void media_refresh(void);
 int vol_normalize(const char*p,char out[PATHLEN]){
  if(!p||*p!='/')return -1;unsigned used=0;
  while(*p){while(*p=='/')p++;const char*s=p;while(*p&&*p!='/')p++;size_t n=p-s;if(!n)break;
@@ -57,7 +61,12 @@ void vol_refresh(void){
  for(int i=0;i<nvolumes;i++){Volume*v=volumes+i;if(v->native){tmc2_close(v->native);kfree(v->native);}}
  memset(volumes,0,sizeof volumes);nvolumes=0;inventory_error=0;discovered=0;if(++generation==0)generation=1;
 }
+static void media_refresh(void){
+ unsigned now=sata_generation?sata_generation():0;
+ if(now!=media_generation){media_generation=now;vol_refresh();}
+}
 static void discover(void){
+ media_refresh();
  if(discovered)return;discovered=1;u64 current_base=0,current_size=0;int current=volume_current();volume_extent(&current_base,&current_size);
  for(int disk=0;disk<sata_count();disk++){
   Medium medium={sata_io,sata_flush,disk,sata_size(disk),0,sata_logical_bytes(disk)};
@@ -128,6 +137,7 @@ int vol_open(Process*p,const char*name,int write){
  }return -1;
 }
 int vol_read(Process*p,int fd,void*out,int count){
+ media_refresh();
  if(fd<0||fd>=12||count<0||(!out&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
  if((f->backend!=4&&f->backend!=5)||!f->id||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes||volumes[at].offline)return -1;Volume*v=volumes+at;i64 r;
  if(f->backend==5)r=tmc2_read(v->native,f->inode,f->at,out,count);
@@ -135,10 +145,11 @@ int vol_read(Process*p,int fd,void*out,int count){
  else r=data_foreign(v,f->foreign_path,f->at,out,count,0);
  if(r>=0)f->at+=r;return r;
 }
-int vol_seek(Process*p,int fd,u64 off){if(fd<0||fd>=12||off>T2_MAX_BYTES)return -1;FD*f=p->fd+fd;if(!f->id||(f->backend!=4&&f->backend!=5)||(f->snapshot>>32)!=generation||(u32)f->snapshot>=(unsigned)nvolumes||volumes[(u32)f->snapshot].offline)return -1;f->at=off;return 0;}
+int vol_seek(Process*p,int fd,u64 off){media_refresh();if(fd<0||fd>=12||off>T2_MAX_BYTES)return -1;FD*f=p->fd+fd;if(!f->id||(f->backend!=4&&f->backend!=5)||(f->snapshot>>32)!=generation||(u32)f->snapshot>=(unsigned)nvolumes||volumes[(u32)f->snapshot].offline)return -1;f->at=off;return 0;}
 int vol_exportable(const char*p){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at<=0||!eq(inner,"/"))return 0;Volume*v=volumes+at-1;return filesystem_native(v->type)&&!mount(v);}
 
 int vol_write(Process*p,int fd,const void*data,int count){
+ media_refresh();
  if(fd<0||fd>=12||count<0||(!data&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
  if((f->backend!=4&&f->backend!=5)||!f->id||!f->write||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes||volumes[at].offline)return -1;
  Volume*v=volumes+at;i64 r;

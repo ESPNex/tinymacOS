@@ -259,10 +259,11 @@ int tmc_linux_ehci_interrupt_stop(TmcEhciDevice *d,unsigned ep)
 }
 int tmc_linux_ehci_interrupt(TmcEhciDevice *d,unsigned ep,unsigned packet,unsigned interval,void *data,TmcEhciComplete complete,void *context)
 {return tmc_linux_ehci_interrupt_report(d,ep,packet,interval,packet,data,complete,context);}
+#include "bulk_runtime.inc"
 int tmc_linux_ehci_device_destroy(TmcEhciDevice *d)
 {
  if(!d)return -EINVAL;if(atomic_read(&d->core.references)!=1)return -EBUSY;for(unsigned i=0;i<30;i++)if(d->interrupt[i].callback_depth)return -EBUSY;
- if(!list_empty(&d->ep0.urb_list))return -EBUSY;struct usb_hcd *h=bus_to_hcd(d->core.bus);d->core.can_submit=0;
+ if(!list_empty(&d->ep0.urb_list))return -EBUSY;int br=bulk_release(d);if(br)return br;struct usb_hcd *h=bus_to_hcd(d->core.bus);d->core.can_submit=0;
  for(unsigned i=0;i<30;i++){tmc_linux_ehci_interrupt_stop(d,(i%15+1)|(i>=15?0x100:0));if(d->eps[i].hcpriv)h->driver->endpoint_disable(h,&d->eps[i]);}
  h->driver->endpoint_disable(h,&d->ep0);if(h->driver->free_dev)h->driver->free_dev(h,&d->core);if(atomic_read(&d->core.references)!=1)return -EBUSY;if(d->core.tt)usb_put_dev(d->core.tt->hub);kfree(d);return 0;
 }

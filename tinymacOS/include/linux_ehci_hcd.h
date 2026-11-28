@@ -27,3 +27,8 @@ void tmc_linux_ehci_stats(TmcEhciStats *);
 
 /* Endpoint token: 1..15 IN (legacy ABI), 0x100|1..15 OUT. Exact report length. */
 int tmc_linux_ehci_interrupt_report(TmcEhciDevice *,unsigned,unsigned,unsigned,unsigned,void *,TmcEhciComplete,void *);
+
+/* Additive storage bulk transport: original HCD URBs/DMA; <=64KiB per URB.
+ * SS burst 0..15, zero for USB2. No streams/UAS/SG claims. */
+int tmc_linux_ehci_bulk_submit(TmcEhciDevice *,unsigned,unsigned,unsigned,unsigned,void *,TmcEhciComplete,void *);
+int tmc_linux_ehci_bulk_stop(TmcEhciDevice *,unsigned);

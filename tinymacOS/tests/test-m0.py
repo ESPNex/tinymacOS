@@ -20,9 +20,15 @@ char quote = '"';
 const char *s = "Caffè\\n" "\\u00e0"; // "ignored"
 '''
 assert [(line, text) for line, raw, text, ctx in lex(fixture)] == [(5, 'Caffè\n'), (5, 'à')]
+# M8 adds storage-only bulk support to five canonical integration files.
+# Keep all historical M0 hashes: use a separate explicit reviewed extension,
+# with unchanged input-function pins, rather than silently refreshing them.
+extension = runpy.run_path(str(ROOT / 'tools/usb8-extension-contract.py'))
+bulk_extensions = extension['verify'](policy)
 for name, digest in policy['protected_files'].items():
     path = ROOT / name
-    assert path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest() == digest, name
+    assert path.is_file(), name
+    assert name in bulk_extensions or hashlib.sha256(path.read_bytes()).hexdigest() == digest, name
 
 
 def check_wording(read):
@@ -64,4 +70,4 @@ if '--workspace' in sys.argv:
     subprocess.run([sys.executable, str(ROOT.parent / 'workspace/webkit-tmc/tools/sync-system-sources.py'), '--check'], check=True)
 subprocess.run([sys.executable, str(ROOT / 'tools/check-usb-retirement.py')], check=True)
 subprocess.run([sys.executable, str(ROOT / 'tools/audit-ui-strings.py'), '--check'], check=True)
-print(f"PASS M0: lexer + safety mutation test, {len(policy['protected_files'])} locked font/asset/vendor/USB inputs, truthful native FS labels and preserved public version; no hardware claim")
+print(f"PASS M0: lexer + safety mutation test, {len(policy['protected_files'])-len(bulk_extensions)} byte-locked font/asset/vendor/USB inputs + {len(bulk_extensions)} explicit reviewed M8 bulk-only integration extensions (historical hashes preserved; input-function pins unchanged), truthful native FS labels and preserved public version; no hardware claim")

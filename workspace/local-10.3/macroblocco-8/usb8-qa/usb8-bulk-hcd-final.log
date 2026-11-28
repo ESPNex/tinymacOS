@@ -1,0 +1,34 @@
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter erst
+
+PASS bulk original HCD: 64KiB IN with guards, 32KiB exact OUT, busy/invalid bounds, short-copy actual length, STALL/clear-halt/reset, non-completion/cancel, 64 immediate callback requeues, unchanged interrupt callback state; nonidentity DMA MODEL only
+PASS 96 controller allocation budgets and 32 endpoint/configure/DMA failure budgets with successful retry and zero leaked resources
+PASS original xHCI whole core/memory/ring/hub/PCI: separate USB2/USB3 root hubs, SuperSpeed companion burst/ESIT and EP0=512, nonidentity DMA command and event/transfer rings, control, full/short/STALL interrupt and clear-halt, cancellation, timeout, 600 callback requeues with ring rollover, nested route/TT contexts and parent lifetime, teardown with no leaks
+control=18 requests=1
+int callbacks=1 status=0 bytes=8
+PASS bulk original HCD: 64KiB IN with guards, 32KiB exact OUT, busy/invalid bounds, short-copy actual length, STALL/clear-halt/reset, non-completion/cancel, 64 immediate callback requeues, unchanged interrupt callback state; nonidentity DMA MODEL only
+PASS complete original Linux EHCI core/queue/memory/schedule/root-hub/timer/PCI on nonidentity DMA hardware model: control, full/short/STALL/cancel/timeout, 16 immediate callback resubmissions, HCD_BH lock isolation, TT-worker/control-BH progress, real hrtimers, sysfs-method registry and failure rollback. Not full USB/usbhid port or physical-board proof.
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter event ring
+
+driver: Failed to allocate interrupter erst
+
+PASS bulk original HCD: 64KiB IN with guards, 32KiB exact OUT, busy/invalid bounds, short-copy actual length, STALL/clear-halt/reset, non-completion/cancel, 64 immediate callback requeues, unchanged interrupt callback state; nonidentity DMA MODEL only
+PASS 96 controller allocation budgets and 32 endpoint/configure/DMA failure budgets with successful retry and zero leaked resources
+PASS original xHCI whole core/memory/ring/hub/PCI: separate USB2/USB3 root hubs, SuperSpeed companion burst/ESIT and EP0=512, nonidentity DMA command and event/transfer rings, control, full/short/STALL interrupt and clear-halt, cancellation, timeout, 600 callback requeues with ring rollover, nested route/TT contexts and parent lifetime, teardown with no leaks
+control=18 requests=1
+int callbacks=1 status=0 bytes=8
+PASS bulk original HCD: 64KiB IN with guards, 32KiB exact OUT, busy/invalid bounds, short-copy actual length, STALL/clear-halt/reset, non-completion/cancel, 64 immediate callback requeues, unchanged interrupt callback state; nonidentity DMA MODEL only
+PASS complete original Linux EHCI core/queue/memory/schedule/root-hub/timer/PCI on nonidentity DMA hardware model: control, full/short/STALL/cancel/timeout, 16 immediate callback resubmissions, HCD_BH lock isolation, TT-worker/control-BH progress, real hrtimers, sysfs-method registry and failure rollback. Not full USB/usbhid port or physical-board proof.

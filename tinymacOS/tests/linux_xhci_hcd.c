@@ -86,7 +86,7 @@ static void transfer(unsigned slot,unsigned ep)
   if(type==TRB_SETUP){memcpy(setup_bytes,t,8);control_requests++;}
   else if(type==TRB_DATA||type==TRB_NORMAL){
    if(ep>1&&hw_stall){code=COMP_STALL_ERROR;e[0]=(e[0]&~7u)|EP_STATE_HALTED;hw_stall=0;}
-   else {unsigned got=ep>1&&hw_short?min_t(unsigned,len,3):len;if(got){u8 *data=(flags&TRB_IDT)?(u8 *)t:cpu(ptr,len);if(ep>1&&!(ep&1)){assert(got==1&&data[0]==0x5a);output_bytes+=got;}else for(unsigned i=0;i<got;i++)data[i]=ep>1?0x40+i:0x5a;}
+   else {unsigned got=ep>1&&hw_short?min_t(unsigned,len,3):len;if(got){u8 *data=(flags&TRB_IDT)?(u8 *)t:cpu(ptr,len);if(ep>1&&!(ep&1)){if(ep==2)assert(got==1&&data[0]==0x5a);else for(unsigned bi=0;bi<got;bi++)assert(data[bi]==0xa5);output_bytes+=got;}else for(unsigned i=0;i<got;i++)data[i]=ep>1?0x40+i:0x5a;}
     actual+=got;remaining=len-got;if(remaining)code=COMP_SHORT_PACKET;if(ep>1){hw_interrupt_ready--;hw_packets++;}}
   }else assert(type==TRB_STATUS||type==TRB_TR_NOOP);
   deq+=16;e[2]=(u32)deq|cycle;e[3]=deq>>32;
@@ -148,6 +148,9 @@ static void init_hardware(void)
 }
 static void clean(void)
 {if(heap_alive||dma_alive||timers)fprintf(stderr,"LIVE heap%lu dma%lu timers%p\n",heap_alive,dma_alive,(void*)timers);assert(!heap_alive&&!dma_alive&&!timers&&!registered_driver&&!work_head&&!bh_head[0]&&!bh_head[1]);assert(irq_flags==0x200);}
+#ifdef TMC_USB8_BULK_TEST
+#include "usb8_bulk_hcd_checks.inc"
+#endif
 int main(void)
 {
  init_hardware();assert(!tmc_linux_xhci_module_init());assert(tmc_linux_xhci_controllers()==2);
@@ -172,6 +175,9 @@ int main(void)
  /* Exact interrupt-OUT payload/length and distinct endpoint direction. */
  payload[0]=0x5a;before=int_callbacks;assert(!tmc_linux_xhci_interrupt_report(d,0x101,8,8,1,payload,done,(void *)0x1234));hw_interrupt_ready=1;
  for(unsigned i=0;i<40&&int_callbacks==before;i++)tmc_linux_xhci_poll();assert(int_callbacks==before+1&&!int_status&&int_bytes==1&&output_bytes==1&&payload[0]==0x5a);
+#ifdef TMC_USB8_BULK_TEST
+ bulk8_checks(d);
+#endif
  assert(!tmc_linux_xhci_device_destroy(d));
  /* Hardware slot contexts are checked, not private facade counters. */
  TmcXhciDevice *hub=tmc_linux_xhci_device(0,USB_SPEED_HIGH);assert(hub);assert(!tmc_linux_xhci_device_port(hub,NULL,1));

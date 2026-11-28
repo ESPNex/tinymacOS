@@ -17,12 +17,19 @@
   "mission_control_dock_guest_pass": true,
   "toolbar_normal_and_sanitized_host_pass": true,
   "toolbar_host_final_process_exit": 0,
-  "usb_input_473_files_unchanged": true,
+  "usb_input_473_files_unchanged": false,
   "safety_commit_pushed": "80537612eeea68bda1efe8cc4b643d0cbc9c3937",
   "git_backup_drive_get_rechecked": true,
   "optics_candidate_iso_sha256": "81dff498571f4f21f9741a650d8d072268076a47832f80d824bb114ab55b5d82",
   "mc_actual_destination_glass_host_sanitized_pass": true,
   "mc_calendar_dock_padding_replay_removed": true,
   "mc_optics_guest_pass": true,
-  "optics_screenshot_drive_verified": true
+  "optics_screenshot_drive_verified": true,
+  "usb_input_466_files_unchanged": true,
+  "usb_storage_report": "USB8-STORAGE.md",
+  "usb_storage_7_bulk_integration_extensions": true,
+  "usb_hid_handlers_changed": false,
+  "usb_storage_xhci_ehci_fat32_hotplug_guest_pass": true,
+  "usb_storage_complete": false,
+  "usb_storage_iso_sha256": "7bf58df557d3f322e4c2a1d4733468a24e5cc20f286d8e8c1bbf2ac9f510d841"
 }

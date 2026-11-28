@@ -1,6 +1,6 @@
 {
   "version_target": "10.3",
-  "status": "M8 partial: priority visual fixes and native per-volume mount/unmount implemented/tested locally, screenshots delivered to Drive. USB mass storage and hdiutil still NOT implemented; no new commit/release/video. See macroblocco-8/NEXT.md.",
+  "status": "M8 partial: graphics published; native volume mount/unmount and canonical USB BOT/SCSI common-block implementation tested. xHCI/EHCI FAT32 USB guest write/flush/hotplug/input and independent mtools PASS; USB four-FS/4Kn/Recovery/installed matrix and sustained-load input still pending. hdiutil not implemented; no 10.3 release/video.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
@@ -289,9 +289,9 @@
     "ui_candidate_iso_sha256": "29cba13f6a95be2f7862a5d6d9817b3dc1f6f79c2422cac1f1b9c07b61a1a928",
     "ui_host_sanitized": true,
     "ui_guest_pass": true,
-    "usb_input_473_files_unchanged": true,
+    "usb_input_473_files_unchanged": false,
     "base_system_udif_independent_decode_pass": true,
-    "report": "macroblocco-8/MISSION-CONTROL-OTTICA.md",
+    "report": "macroblocco-8/USB8-STORAGE.md",
     "next": "macroblocco-8/NEXT.md",
     "priority_screenshots_folder": "https://drive.google.com/drive/folders/13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
     "priority_visual_guest_pass": true,
@@ -313,6 +313,16 @@
     "mc_actual_destination_glass_host_sanitized_pass": true,
     "mc_three_window_native_move_invariance_guest_pass": true,
     "mc_calendar_dock_padding_replay_removed": true,
-    "optics_screenshot_drive_id": "1Mk-PyBtrKhOPX8oTMyIJC7g_3775fVNj"
+    "optics_screenshot_drive_id": "1Mk-PyBtrKhOPX8oTMyIJC7g_3775fVNj",
+    "usb_input_466_files_unchanged": true,
+    "usb_storage_7_explicit_integration_extensions": true,
+    "usb_hid_handlers_changed": false,
+    "usb_storage_implemented": true,
+    "usb_storage_guest_xhci_fat32_pass": true,
+    "usb_storage_guest_ehci_fat32_pass": true,
+    "usb_storage_hotplug_new_slot_and_input_guest_pass": true,
+    "usb_storage_candidate_iso_sha256": "7bf58df557d3f322e4c2a1d4733468a24e5cc20f286d8e8c1bbf2ac9f510d841",
+    "usb_storage_host_bulk_bot_o1_o2_sanitized_pass": true,
+    "usb_storage_remaining": "USB guest TMCFS2/exFAT/NTFS + 4Kn + Recovery/installed; sustained-I/O input and disconnect/write failure stress; no hardware certification"
   }
 }

@@ -11,7 +11,7 @@ struct physical_bus {unsigned kind,index;struct usb_hcd *hcd;struct device contr
 struct physical_device {struct list_head entry;struct usb_device *usb;struct physical_bus *bus;void *handle;unsigned configured;};
 struct bridge_endpoint;
 struct bridge_request {struct list_head entry;struct urb *urb;struct bridge_endpoint *endpoint;struct work_struct work;u8 *bounce;};
-struct bridge_endpoint {struct physical_device *device;struct list_head requests;struct bridge_request *active;unsigned number,packet,stopping;};
+struct bridge_endpoint {struct physical_device *device;struct list_head requests;struct bridge_request *active;unsigned number,packet,stopping,bulk,burst;};
 static LIST_HEAD(devices);static struct physical_bus buses[16];static unsigned bus_count,polling;
 static struct device_driver controller_identity={.name="original-linux-HCD-transport"};
 static struct physical_bus *physical_bus(struct usb_hcd *h){struct physical_bus *b;memcpy(&b,h->hcd_priv,sizeof(b));return b;}
@@ -31,18 +31,51 @@ static void control_work(struct work_struct *work){struct bridge_request *r=cont
 static int start_interrupt(struct bridge_endpoint *e);
 static void interrupt_complete(void *context,int status,unsigned actual){struct bridge_endpoint *e=context;struct bridge_request *r=e->active;BUG_ON(!r);e->active=NULL;list_del_init(&r->entry);if(actual>(unsigned)r->urb->transfer_buffer_length){actual=r->urb->transfer_buffer_length;if(!status)status=-EOVERFLOW;}if(!status&&actual&&usb_pipein(r->urb->pipe))memcpy(r->urb->transfer_buffer,r->bounce,actual);finish_request(r,status,actual);if(!e->stopping&&!list_empty(&e->requests))start_interrupt(e);}
 static int start_interrupt(struct bridge_endpoint *e){while(!e->active&&!list_empty(&e->requests)){struct bridge_request *r=list_first_entry(&e->requests,struct bridge_request,entry);struct physical_device *d=e->device;struct urb *u=r->urb;e->active=r;state(d);int n=u->interval;int rc=d->bus->kind==0?tmc_linux_xhci_interrupt_report(d->handle,e->number,e->packet,n,u->transfer_buffer_length,r->bounce,interrupt_complete,e):tmc_linux_ehci_interrupt_report(d->handle,e->number,e->packet,n,u->transfer_buffer_length,r->bounce,interrupt_complete,e);if(!rc)return 0;e->active=NULL;list_del_init(&r->entry);finish_request(r,rc,0);}return 0;}
-static int enqueue(struct usb_hcd *h,struct urb *u,gfp_t f){if(!usb_pipecontrol(u->pipe)&&!usb_pipeint(u->pipe))return -EOPNOTSUPP;if(u->num_sgs||u->sg)return -EOPNOTSUPP;struct physical_device *d=find_device(u->dev);if(!d)return -ENODEV;struct bridge_request *r=kzalloc(sizeof(*r),f);if(!r)return -ENOMEM;r->urb=u;
- if(usb_pipeint(u->pipe)){struct bridge_endpoint *e=u->ep->hcpriv;if(!e){kfree(r);return -ENODEV;}if(u->transfer_buffer_length<0||(unsigned)u->transfer_buffer_length>e->packet){kfree(r);return -EMSGSIZE;}r->endpoint=e;r->bounce=kmalloc(e->packet,f);if(!r->bounce){kfree(r);return -ENOMEM;}if(usb_pipeout(u->pipe)&&u->transfer_buffer_length)memcpy(r->bounce,u->transfer_buffer,u->transfer_buffer_length);}
+/* Bulk has its own queues/callbacks. The existing interrupt path stays intact. */
+static int start_bulk(struct bridge_endpoint *e);
+static void bulk_complete(void *context,int status,unsigned actual){
+ struct bridge_endpoint *e=context;struct bridge_request *r=e->active;BUG_ON(!r);e->active=NULL;list_del_init(&r->entry);
+ if(actual>(unsigned)r->urb->transfer_buffer_length){actual=r->urb->transfer_buffer_length;status=-EOVERFLOW;}
+ /* Preserve partial data/actual_length even on transfer errors, as Linux URBs do. */
+ if(actual&&usb_pipein(r->urb->pipe))memcpy(r->urb->transfer_buffer,r->bounce,actual);
+ finish_request(r,status,actual);if(!e->stopping&&!list_empty(&e->requests))start_bulk(e);
+}
+static int start_bulk(struct bridge_endpoint *e){
+ while(!e->active&&!list_empty(&e->requests)){
+  struct bridge_request *r=list_first_entry(&e->requests,struct bridge_request,entry);struct physical_device *d=e->device;struct urb *u=r->urb;e->active=r;state(d);
+  int rc=d->bus->kind==0?tmc_linux_xhci_bulk_submit(d->handle,e->number,e->packet,e->burst,u->transfer_buffer_length,r->bounce,bulk_complete,e):tmc_linux_ehci_bulk_submit(d->handle,e->number,e->packet,0,u->transfer_buffer_length,r->bounce,bulk_complete,e);
+  if(!rc)return 0;e->active=NULL;list_del_init(&r->entry);finish_request(r,rc,0);
+ }return 0;
+}
+static int endpoint_stop(struct bridge_endpoint *e){
+ struct physical_device *d=e->device;
+ if(e->bulk)return d->bus->kind==0?tmc_linux_xhci_bulk_stop(d->handle,e->number):tmc_linux_ehci_bulk_stop(d->handle,e->number);
+ return d->bus->kind==0?tmc_linux_xhci_interrupt_stop(d->handle,e->number):tmc_linux_ehci_interrupt_stop(d->handle,e->number);
+}
+static int enqueue(struct usb_hcd *h,struct urb *u,gfp_t f){if(!usb_pipecontrol(u->pipe)&&!usb_pipeint(u->pipe)&&!usb_pipebulk(u->pipe))return -EOPNOTSUPP;if(u->num_sgs||u->sg)return -EOPNOTSUPP;struct physical_device *d=find_device(u->dev);if(!d)return -ENODEV;struct bridge_request *r=kzalloc(sizeof(*r),f);if(!r)return -ENOMEM;r->urb=u;
+ if(usb_pipeint(u->pipe)){struct bridge_endpoint *e=u->ep->hcpriv;if(!e||e->bulk){kfree(r);return -ENODEV;}if(u->transfer_buffer_length<0||(unsigned)u->transfer_buffer_length>e->packet){kfree(r);return -EMSGSIZE;}r->endpoint=e;r->bounce=kmalloc(e->packet,f);if(!r->bounce){kfree(r);return -ENOMEM;}if(usb_pipeout(u->pipe)&&u->transfer_buffer_length)memcpy(r->bounce,u->transfer_buffer,u->transfer_buffer_length);}
+ if(usb_pipebulk(u->pipe)){
+  if(u->transfer_flags&URB_ZERO_PACKET){kfree(r);return -EOPNOTSUPP;}
+  struct bridge_endpoint *e=u->ep->hcpriv;
+  if(!e||!e->bulk){kfree(r);return -ENODEV;}
+  if(u->transfer_buffer_length<0||u->transfer_buffer_length>65536||(u->transfer_buffer_length&&!u->transfer_buffer)){kfree(r);return -EMSGSIZE;}
+  r->endpoint=e;r->bounce=kmalloc(max_t(unsigned,1,u->transfer_buffer_length),f);if(!r->bounce){kfree(r);return -ENOMEM;}
+  if(usb_pipeout(u->pipe)&&u->transfer_buffer_length)memcpy(r->bounce,u->transfer_buffer,u->transfer_buffer_length);
+ }
  int rc=usb_hcd_link_urb_to_ep(h,u);if(rc){kfree(r->bounce);kfree(r);return rc;}u->hcpriv=r;
  if(usb_pipecontrol(u->pipe)){INIT_WORK(&r->work,control_work);BUG_ON(!queue_work(system_bh_wq,&r->work));}
- else{list_add_tail(&r->entry,&r->endpoint->requests);start_interrupt(r->endpoint);}return 0;}
+ else{list_add_tail(&r->entry,&r->endpoint->requests);if(r->endpoint->bulk)start_bulk(r->endpoint);else start_interrupt(r->endpoint);}return 0;}
 static int dequeue(struct usb_hcd *h,struct urb *u,int status){int rc=usb_hcd_check_unlink_urb(h,u,status);if(rc)return rc;struct bridge_request *r=u->hcpriv;if(!r)return -EIDRM;
  if(usb_pipecontrol(u->pipe)){cancel_work_sync(&r->work);finish_request(r,status,0);return 0;}
  struct bridge_endpoint *e=r->endpoint;
- if(e->active==r){struct physical_device *d=e->device;e->stopping=1;rc=d->bus->kind==0?tmc_linux_xhci_interrupt_stop(d->handle,e->number):tmc_linux_ehci_interrupt_stop(d->handle,e->number);/* Original stop invokes completion, which retires r. */e->stopping=0;if(!rc)start_interrupt(e);return rc;}
+ if(e->active==r){struct physical_device *d=e->device;e->stopping=1;rc=endpoint_stop(e);/* Original stop invokes completion, which retires r. */e->stopping=0;if(!rc){if(e->bulk)start_bulk(e);else start_interrupt(e);}return rc;}
  list_del_init(&r->entry);finish_request(r,status,0);return 0;}
-static int add_endpoint(struct usb_hcd *h,struct usb_device *u,struct usb_host_endpoint *ep){(void)h;if(!u->parent||!usb_endpoint_num(&ep->desc))return 0;if(!usb_endpoint_xfer_int(&ep->desc))return -EOPNOTSUPP;if(ep->hcpriv)return 0;struct physical_device *d=find_device(u);if(!d)return -ENODEV;int r=ensure_device(d);if(r)return r;struct bridge_endpoint *e=kzalloc(sizeof(*e),GFP_KERNEL);if(!e)return -ENOMEM;e->device=d;e->number=usb_endpoint_num(&ep->desc)|(usb_endpoint_dir_in(&ep->desc)?0:0x100);e->packet=usb_endpoint_maxp(&ep->desc);INIT_LIST_HEAD(&e->requests);if(d->bus->kind==0&&u->speed>=USB_SPEED_SUPER){r=tmc_linux_xhci_interrupt_companion(d->handle,e->number,ep->ss_ep_comp.bMaxBurst,ep->ss_ep_comp.bmAttributes,le16_to_cpu(ep->ss_ep_comp.wBytesPerInterval));if(r){kfree(e);return r;}}ep->hcpriv=e;return 0;}
-static void disable_endpoint(struct usb_hcd *h,struct usb_host_endpoint *ep){(void)h;struct bridge_endpoint *e=ep->hcpriv;if(!e)return;BUG_ON(e->active||!list_empty(&e->requests));struct physical_device *d=e->device;int rc=d->bus->kind==0?tmc_linux_xhci_interrupt_stop(d->handle,e->number):tmc_linux_ehci_interrupt_stop(d->handle,e->number);BUG_ON(rc);ep->hcpriv=NULL;kfree(e);}
+static int add_endpoint(struct usb_hcd *h,struct usb_device *u,struct usb_host_endpoint *ep){(void)h;if(!u->parent||!usb_endpoint_num(&ep->desc))return 0;if(!usb_endpoint_xfer_int(&ep->desc)&&!usb_endpoint_xfer_bulk(&ep->desc))return -EOPNOTSUPP;if(ep->hcpriv)return 0;struct physical_device *d=find_device(u);if(!d)return -ENODEV;int r=ensure_device(d);if(r)return r;struct bridge_endpoint *e=kzalloc(sizeof(*e),GFP_KERNEL);if(!e)return -ENOMEM;e->device=d;e->number=usb_endpoint_num(&ep->desc)|(usb_endpoint_dir_in(&ep->desc)?0:0x100);e->packet=usb_endpoint_maxp(&ep->desc);e->bulk=usb_endpoint_xfer_bulk(&ep->desc);if(e->bulk){e->burst=u->speed>=USB_SPEED_SUPER?ep->ss_ep_comp.bMaxBurst:0;if(!e->packet||e->burst>15||(u->speed>=USB_SPEED_SUPER&&(ep->ss_ep_comp.bmAttributes||ep->ss_ep_comp.wBytesPerInterval))){kfree(e);return -EOPNOTSUPP;}}INIT_LIST_HEAD(&e->requests);if(!e->bulk&&d->bus->kind==0&&u->speed>=USB_SPEED_SUPER){r=tmc_linux_xhci_interrupt_companion(d->handle,e->number,ep->ss_ep_comp.bMaxBurst,ep->ss_ep_comp.bmAttributes,le16_to_cpu(ep->ss_ep_comp.wBytesPerInterval));if(r){kfree(e);return r;}}ep->hcpriv=e;return 0;}
+static void disable_endpoint(struct usb_hcd *h,struct usb_host_endpoint *ep){(void)h;struct bridge_endpoint *e=ep->hcpriv;if(!e)return;BUG_ON(e->active||!list_empty(&e->requests));struct physical_device *d=e->device;int rc=endpoint_stop(e);BUG_ON(rc);ep->hcpriv=NULL;kfree(e);}
+static void reset_endpoint(struct usb_hcd *h,struct usb_host_endpoint *ep){
+ (void)h;struct bridge_endpoint *e=ep->hcpriv;if(!e||!e->bulk||e->active)return;struct physical_device *d=e->device;
+ if(d->bus->kind==0)tmc_linux_xhci_reset_toggle(d->handle,e->number);else tmc_linux_ehci_reset_toggle(d->handle,e->number);
+}
 static int drop_endpoint(struct usb_hcd *h,struct usb_device *u,struct usb_host_endpoint *e){(void)h;(void)u;if(e->hcpriv){struct bridge_endpoint *p=e->hcpriv;if(p->active||!list_empty(&p->requests))return -EBUSY;}return 0;}
 static int check_bandwidth(struct usb_hcd *h,struct usb_device *u){if(!u->parent)return 0;/* Allocate adapters for descriptors accepted by original config.c. */for(unsigned n=1;n<32;n++){if(n==16)continue;struct usb_host_endpoint *e=n<16?u->ep_in[n]:u->ep_out[n-16];if(e&&e->enabled&&!e->hcpriv){int r=add_endpoint(h,u,e);if(r)return r;}}return 0;}
 static void reset_bandwidth(struct usb_hcd *h,struct usb_device *u){(void)h;(void)u;/* No hardware reservation exists before the physical first submit. */}
@@ -51,7 +84,7 @@ static int root_control(struct usb_hcd *h,u16 request,u16 value,u16 index,char *
 static int root_changes(struct usb_hcd *h,char *buf){struct physical_bus *b=physical_bus(h);unsigned ports=b->kind==0?tmc_linux_xhci_ports(b->index):tmc_linux_ehci_ports(b->index);unsigned bytes=1+ports/8;memset(buf,0,bytes);int changed=0;for(unsigned p=1;p<=ports;p++){u8 s[4];int r=root_control(h,GetPortStatus,0,p,(char *)s,4);if(!r&&(s[2]||s[3])){buf[p/8]|=1u<<(p%8);changed=1;}}return changed?bytes:0;}
 static int start(struct usb_hcd *h){h->uses_new_polling=1;set_bit(HCD_FLAG_POLL_RH,&h->flags);return 0;}
 static void stop(struct usb_hcd *h){(void)h;/* Physical controller is module-owned, after all canonical URBs drain. */}
-static const struct hc_driver xdriver={.description="Linux XHCI opaque transport",.product_desc="Original Linux XHCI + canonical USB core",.hcd_priv_size=sizeof(void *),.flags=HCD_MEMORY|HCD_USB2|HCD_BH,.start=start,.stop=stop,.urb_enqueue=enqueue,.urb_dequeue=dequeue,.alloc_dev=alloc_device,.free_dev=free_device,.enable_device=enable_device,.address_device=address_device,.update_hub_device=update_hub,.hub_control=root_control,.hub_status_data=root_changes,.endpoint_disable=disable_endpoint,.add_endpoint=add_endpoint,.drop_endpoint=drop_endpoint,.check_bandwidth=check_bandwidth,.reset_bandwidth=reset_bandwidth};
+static const struct hc_driver xdriver={.description="Linux XHCI opaque transport",.product_desc="Original Linux XHCI + canonical USB core",.hcd_priv_size=sizeof(void *),.flags=HCD_MEMORY|HCD_USB2|HCD_BH,.start=start,.stop=stop,.urb_enqueue=enqueue,.urb_dequeue=dequeue,.alloc_dev=alloc_device,.free_dev=free_device,.enable_device=enable_device,.address_device=address_device,.update_hub_device=update_hub,.hub_control=root_control,.hub_status_data=root_changes,.endpoint_disable=disable_endpoint,.endpoint_reset=reset_endpoint,.add_endpoint=add_endpoint,.drop_endpoint=drop_endpoint,.check_bandwidth=check_bandwidth,.reset_bandwidth=reset_bandwidth};
 static struct hc_driver ssdriver,edriver;
 static void controller_release(struct device *d){(void)d;}
 void tmc_usb_physical_poll(void){if(polling)return;polling=1;tmc_linux_xhci_poll();tmc_linux_ehci_poll();polling=0;}

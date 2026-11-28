@@ -1,0 +1,37 @@
+{
+  "baseline_unchanged": true,
+  "baseline_files": 473,
+  "byte_identical_files": 466,
+  "explicit_storage_integration_extensions": {
+    "compat/linux/ehci_runtime.c": {
+      "original_sha256": "4edbaae0ae637d60ed37e8b41243e35d355eaec334e003716e0d8b0826debb0b",
+      "bulk_extension_sha256": "96500a2de49e33588fb057fefbb2a2ef01fa7426c1f72a66b24ceec50d705d9c"
+    },
+    "compat/linux/usbcore_bridge.c": {
+      "original_sha256": "44708b5d8524ef47f29201f62c65116b0c5c4116c02ba721683d40bec7594607",
+      "bulk_extension_sha256": "50addfe75c624f6b61d2897ed63d3feb34234f2bc4ab1503e1a3546de2c2b516"
+    },
+    "compat/linux/xhci_runtime.c": {
+      "original_sha256": "9d863799c93ce7689814de0c2b2f114118b40295f15eacbbefc2468478fd5b07",
+      "bulk_extension_sha256": "463ad7a5bb31ccfc8477175ac659c00dfdd50f060d3c5a4bfdeeee0b4df24a95"
+    },
+    "compat/linux/usbcore_stack.c": {
+      "original_sha256": "f1ba8b482c8f48486b8a697fb84ec7440485086d1cb6ecd159815244aee5f1c2",
+      "bulk_extension_sha256": "abddcaccbfe8837bd327cb23d31cdadf44ec19c62333641878e52598b4f8961a"
+    },
+    "include/linux_xhci_hcd.h": {
+      "original_sha256": "9b835c42d30a006ccfc5787d11da3afb3e6cc870fd037d4978f274841f5e4530",
+      "bulk_extension_sha256": "402e7a23e10c64bb88bfd3e4353607e374e08fee0b430f1efd7820ccba34aced"
+    },
+    "include/linux_ehci_hcd.h": {
+      "original_sha256": "e47a423dc858f86a4b47808235ed1c9346a3b9461a92080a4d17f7b0ebfa4c38",
+      "bulk_extension_sha256": "9760a2c2d744a9677338dc73cda42ba40b53a5c722307b2a6ad4639e5daa2ac8"
+    },
+    "tools/build-usbcore.sh": {
+      "original_sha256": "e3b426af2d589df20427e5172ac274f69e11810dff660907e868385fed0a4028",
+      "bulk_extension_sha256": "7b526840411b2511d1a2a4b15ba7198e29f632a5f7413e447a62a8e1230630bd"
+    }
+  },
+  "input_hid_handlers_changed": false,
+  "scope": "Seven storage integration paths only; original M0 hashes untouched, separate extension/function-pin audit. Kernel boot call moved before filesystem discovery; input_init implementation unchanged."
+}

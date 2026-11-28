@@ -50,7 +50,7 @@ static void execute_qh(u32 address)
   unsigned remaining=0;
   if(ep&&hw_stall){td->hw_token=(token&~0x80)|0x40;qh->hw_token=td->hw_token;op()[1]|=2;hw_stall=0;break;}
   if(pid==2){assert(n==8);memcpy(setup_bytes,cpu(td->hw_buf[0],8),8);control_requests++;}
-  else if(pid==0&&ep&&n){assert(n==1&&*(u8 *)cpu(td->hw_buf[0],n)==0x5a);output_bytes+=n;hw_interrupt_ready--;hw_packets++;}
+  else if(pid==0&&ep&&n){if(ep==1)assert(n==1&&*(u8 *)cpu(td->hw_buf[0],n)==0x5a);else{u8 *data=cpu(td->hw_buf[0],n);for(unsigned bi=0;bi<n;bi++)assert(data[bi]==0xa5);}output_bytes+=n;hw_interrupt_ready--;hw_packets++;}
   else if(pid==1&&n){u8 *data=cpu(td->hw_buf[0],n);unsigned actual=n;if(ep){actual=hw_short?min_t(unsigned,3,n):n;hw_interrupt_ready--;hw_packets++;}for(unsigned i=0;i<actual;i++)data[i]=ep?0x40+i:0x5a;remaining=n-actual;}
   td->hw_token=(token&~(0x80u|0x7fff0000u))|(remaining<<16);
   qh->hw_current=link;qh->hw_token=td->hw_token^(1u<<31); /* one packet toggle */
@@ -114,6 +114,9 @@ static void done(void *ctx,int status,unsigned bytes)
 }
 static void init_hardware(void)
 {memset(registers,0,sizeof registers);registers[0]=0x1000020;registers[1]=0x112;registers[2]=0;op()[1]=1u<<12;registers[25]=1;registers[26]=1|1u<<10;clock_ms=0;hw_never=0;hw_interrupt_ready=0;hw_short=hw_stall=0;}
+#ifdef TMC_USB8_BULK_TEST
+#include "usb8_bulk_hcd_checks.inc"
+#endif
 int main(void)
 {
  init_hardware();assert(!tmc_linux_ehci_module_init());assert(tmc_linux_ehci_controllers()==1&&tmc_linux_ehci_ports(0)==2);assert(pci_command&0x400);
@@ -139,6 +142,9 @@ int main(void)
  /* Exact interrupt-OUT payload/length and distinct endpoint direction. */
  payload[0]=0x5a;unsigned before_output=int_callbacks;assert(!tmc_linux_ehci_interrupt_report(d,0x101,8,8,1,payload,done,(void *)0x1234));hw_interrupt_ready=1;
  for(unsigned i=0;i<40&&int_callbacks==before_output;i++)tmc_linux_ehci_poll();assert(int_callbacks==before_output+1&&!int_status&&int_bytes==1&&output_bytes==1&&payload[0]==0x5a);
+#ifdef TMC_USB8_BULK_TEST
+ bulk8_checks(d);
+#endif
  assert(!tmc_linux_ehci_device_destroy(d));
  TmcEhciDevice *hub=tmc_linux_ehci_device(0,USB_SPEED_HIGH);d=tmc_linux_ehci_device(0,USB_SPEED_FULL);assert(hub&&d);
  tmc_linux_ehci_device_state(hub,1,64,1);tmc_linux_ehci_device_state(d,2,64,1);

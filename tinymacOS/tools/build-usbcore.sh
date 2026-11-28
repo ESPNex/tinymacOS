@@ -10,7 +10,7 @@ C=("$@" -std=gnu11 -fno-strict-aliasing -fwrapv -fno-pie -ffunction-sections -fd
  -Wno-int-in-bool-context -I"$A" -include "$A/tmc_kernel.h")
 units=(vendor/linux-v6.12/usbcore-{usb,driver,generic,quirks,endpoint,buffer,port}.c
  vendor/linux-v6.12/{config,urb,hub,message,hcd,hid-input,hid-generic,hid-quirks}.c
- compat/linux/usbcore_{services,platform,bridge,input,keymap,format,common,stack,hidcore,usbhid,hidservices}.c)
+ compat/linux/usbcore_{storage,services,platform,bridge,input,keymap,format,common,stack,hidcore,usbhid,hidservices}.c)
 C+=(-Ivendor/linux-v6.12)
 
 objects=()
@@ -21,7 +21,7 @@ for unit in "${units[@]}";do
 done
 # Native bootstrap registers the genuine bus/hub/generic/class drivers. Unused
 # Linux USBFS/VFS/module-init paths are eliminated, NOT successful no-op stubs.
-ld -r --gc-sections -u tmc_usb_stack_init -u tmc_usb_stack_poll -u tmc_usb_stack_leds -u vsnprintf "${objects[@]}" -o "$D/usbcore/combined.o"
+ld -r --gc-sections -u tmc_usb_stack_init -u tmc_usb_stack_poll -u tmc_usb_stack_leds -u vsnprintf -u tmc_usb_stack_storage_generation -u tmc_usb_stack_storage_count -u tmc_usb_stack_storage_size -u tmc_usb_stack_storage_bytes -u tmc_usb_stack_storage_model -u tmc_usb_stack_storage_io -u tmc_usb_stack_storage_flush "${objects[@]}" -o "$D/usbcore/combined.o"
 # ld -r keeps orphan undefined SYMTAB entries after section GC. Remove them
 # so no absent optional API can bind by name to a different private ABI.
 objcopy --strip-unneeded "$D/usbcore/combined.o"
