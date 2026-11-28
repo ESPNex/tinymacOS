@@ -1,0 +1,25 @@
+{
+  "base_bundle": {
+    "drive_id": "101FfA1ByltMiCsYt9csHeU0lhJNZs3-k",
+    "bytes": 61934891,
+    "sha256": "093b045b0979965aacaafd4599cfa36c847c6c5e882982f11c9ee9f5835a9ca1",
+    "md5": "92593ced101265f05f1f78c91412f4ec"
+  },
+  "pushed_commit": "80537612eeea68bda1efe8cc4b643d0cbc9c3937",
+  "independent_restore_and_fsck": true,
+  "shallow_boundary": "c4597948f6b48ea9ed9e6e95c039a8edb0e8ee0e",
+  "note": "Shallow history: restore recorded boundary before unbundle. Not pre-boundary full upstream history.",
+  "incremental_bundle": {
+    "drive_id": "1qP1B1t7bAZYRyneN0VDqPOUBUcsKXuPh",
+    "bytes": 4398816,
+    "md5": "5ac01962f95e6ded59bf9c3917e8ea18",
+    "sha256": "9e0b52beae28c54e390e7098519acd13631181ae98460458dff7c2d70d6c3a10"
+  },
+  "local_bundle_files_removed_after_remote_size_md5_verification": true,
+  "restore_metadata": {
+    "drive_id": "1mBrcaJDjtI9_mnY6Sr_rBWnZv_OuoCye",
+    "bytes": 120308,
+    "md5": "6a6cb7d958315af787b4b951d9c9cdb2",
+    "sha256": "3527d72132b4fb537f2b5a23c23b9b130a122c9908892d73858377cd26fff997"
+  }
+}

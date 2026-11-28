@@ -466,7 +466,9 @@ static void render(int dt)
     }
     if(sys.recovery)recovery_bar_draw();else shell_draw();
     /* The menu bar is composed last. Dim it here, exactly once, with the
-     * same phase as the desktop; keep transformed window previews undimmed. */
+     * same phase as the desktop; keep transformed window previews undimmed.
+     * The Dock intentionally stays above this backdrop, as in macOS Sonoma
+     * Mission Control (512 Pixels screenshot library); do not veil shell_draw. */
     if(mcdim>0)roundr(0,0,W,BAR,0,0x07090f,mcdim);
     caret_paint();
     drawcursor();

@@ -1,6 +1,6 @@
 # Montare e smontare i volumi
 
-Nel Finder e in Utility Disco, fai clic destro su un volume dati nella barra laterale e scegli **Smonta** o **Monta**, secondo il suo stato. Un volume smontato rimane nell’elenco, ma i suoi file non sono accessibili finché non viene rimontato.
+Nel Finder, fai clic destro su un volume dati nella barra laterale e scegli **Smonta** o **Monta**, secondo il suo stato. In Utility Disco, seleziona il volume nella barra laterale e usa **Smonta** o **Monta** nella barra degli strumenti, accanto a **S.O.S.** Il pulsante cambia secondo lo stato effettivo del volume; per dischi interi, spazio non allocato, snapshot e volumi protetti è disabilitato. Un volume smontato rimane nell’elenco, ma i suoi file non sono accessibili finché non viene rimontato.
 
 Nel Terminale:
 

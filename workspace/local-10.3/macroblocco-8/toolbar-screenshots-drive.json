@@ -1,0 +1,53 @@
+{
+  "folder_id": "13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
+  "files": [
+    {
+      "name": "04-diskutility-toolbar-smonta",
+      "source_sha256": "fb6dad3f7054ea34ab59c78dcc48e9e7af176402a19b1fb92dfca615b8bcd72c",
+      "file": "/home/user/toolbar-drive-staging/04-diskutility-toolbar-smonta.jpg",
+      "bytes": 165400,
+      "md5": "2dd84c53460155f55108691c5b9c1613",
+      "sha256": "68c1d7ac40ce1e4c17cd424c5f46757fccc2485d696da1549573eaee62e96a90",
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop/annotations/retouching",
+      "iso_sha256": "97104d7c09285284f39e23d7bf425e72728ce0366385c7c235ce4e1c8acf57f7",
+      "drive_id": "1aZqnyngMO12CJGeQdOY7iLF8IWEa95sX",
+      "drive_verified": true
+    },
+    {
+      "name": "05-diskutility-toolbar-monta",
+      "source_sha256": "0c07a23b087754b8267a10eb8f8387f05af0aa05b68f5332a3c6fda7cd44be18",
+      "file": "/home/user/toolbar-drive-staging/05-diskutility-toolbar-monta.jpg",
+      "bytes": 163516,
+      "md5": "0893539ec6bfcbce6d226274ccd4b444",
+      "sha256": "2d358c3335fbf0ecce15f2d2ec5416c04709918adba2ee4d7ea30b71757ffe10",
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop/annotations/retouching",
+      "iso_sha256": "97104d7c09285284f39e23d7bf425e72728ce0366385c7c235ce4e1c8acf57f7",
+      "drive_id": "1qbJJTMr9v3k4tk1X7WLe0pViOf8hRBXR",
+      "drive_verified": true
+    },
+    {
+      "name": "03-mission-control-barra-menu",
+      "source_sha256": "05f54abfe125120f97a19ad40f6e87535f211fe762efd7f4db10eb395d8aec97",
+      "file": "/home/user/toolbar-drive-staging/03-mission-control-barra-menu.jpg",
+      "bytes": 163407,
+      "md5": "25c1f46e3d9c3cc8644116f8895a3358",
+      "sha256": "d637ecc9b01cf3d0cfe3075bba8bf5cad167bd2168212b2a65716e76bf8aedb6",
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop/annotations/retouching",
+      "iso_sha256": "97104d7c09285284f39e23d7bf425e72728ce0366385c7c235ce4e1c8acf57f7",
+      "drive_id": "15TJqkbW37tazTUv69d-MxD3ec0oUyUhe",
+      "drive_verified": true
+    }
+  ]
+}

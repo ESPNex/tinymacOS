@@ -1,6 +1,6 @@
 # M8 — correzioni prioritarie e mount/unmount
 
-**Stato parziale aggiornato. M8 non concluso.** Nessun nuovo commit/push/tag/release/video. Main pubblicato ancora `3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae`. Il precedente `VERIFICA-PARZIALE.md` descrive un checkpoint storico, superato da questo documento dove differisce.
+**Checkpoint storico prima della correzione toolbar. M8 non concluso.** Il seguito autorevole è `TOOLBAR-DOCK-E-BACKUP.md`: commit di sicurezza pushato, backup Git spostato su Drive, Monta/Smonta ora nella toolbar di Utility Disco (non nel suo menu contestuale). `VERIFICA-PARZIALE.md` è anch’esso storico. Le prove qui sotto si riferiscono alla precedente ISO.
 
 ## Ordine richiesto e rispettato
 

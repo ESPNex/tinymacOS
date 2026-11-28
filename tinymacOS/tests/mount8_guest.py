@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real live guest mount/unmount via native commands and both context menus.
+"""Real live guest mount/unmount via native commands and Finder context menu and Disk Utility toolbar.
 Disposable FAT32 partition on NVMe, not USB certification. No action injection.
 Usage: python3 tests/mount8_guest.py /external/candidate.iso
 """
@@ -56,10 +56,23 @@ def main():
         x,y=g.visible('disk0s1',box=(cx,cy,cx+170,cy+390),faces=(0,));right(g,x+12,y+4);g.visible('Smonta',faces=(1,));g.shot('02-finder-smonta');choose(g,'Smonta')
         x,y=g.visible('disk0s1',box=(cx,cy,cx+170,cy+390),faces=(0,));right(g,x+12,y+4);g.visible('Monta',faces=(1,));g.shot('03-finder-monta');choose(g,'Monta')
         r['checks'].append('Finder sidebar right click switches Smonta to Monta after real unmount; volume stays in inventory and can be remounted')
-        launch(g,'Utility Disco','Disco 0');x,y=g.visible('s1',faces=(0,));right(g,x+10,y+4);g.visible('Smonta',faces=(1,));g.shot('04-diskutility-smonta');choose(g,'Smonta')
-        x,y=g.visible('s1',faces=(0,));right(g,x+10,y+4);g.visible('Monta',faces=(1,));g.shot('05-diskutility-monta');choose(g,'Monta')
+        launch(g,'Utility Disco','Disco 0')
+        # Whole disk has only a disabled control. Select the actual partition.
+        x,y=g.visible('s1',faces=(0,));g.click(x+10,y+4);time.sleep(.5)
+        g.visible('Smonta',faces=(0,));g.shot('04-diskutility-toolbar-smonta')
+        right(g,x+10,y+4);g.visible('Chiudi finestra',faces=(1,))
+        try:
+            g.visible('Smonta',faces=(1,),timeout=1)
+        except (AssertionError,TimeoutError):pass
+        else:raise AssertionError('Disk Utility must not expose mount context actions')
+        g.key('esc');time.sleep(.3)
+        # The button is adjacent to S.O.S., not an EV_ACTION or context target.
+        x,y=g.visible('Smonta',faces=(0,));g.click(x+12,y+4);g.move(45,745);time.sleep(.6)
+        g.visible('Monta',faces=(0,));g.shot('05-diskutility-toolbar-monta')
+        x,y=g.visible('Monta',faces=(0,));g.click(x+12,y+4);g.move(45,745);time.sleep(.6)
+        g.visible('Smonta',faces=(0,))
         launch(g,'Terminale','Sessione locale');command(g,'cat /Volumes/disk0s1/proof.txt','MOUNT_PROOF_8')
-        r['checks'].append('Disk Utility partition sidebar right click switches real state in both directions; native Terminal reads the same file afterwards')
+        r['checks'].append('Disk Utility toolbar beside SOS switches actual Smonta/Monta state both ways; context has no mount actions; Terminal reads same file afterwards')
     after=hashlib.sha256(disk.read_bytes()).hexdigest();assert before==after,(before,after)
     listing=subprocess.check_output(['mdir','-i',str(disk)+'@@1048576','::/'],text=True);assert 'proof' in listing
     r['partition_image_sha256_before_and_after']=after;r['checks'].append('Entire disposable partitioned disk SHA256 unchanged; mtools independently reads FAT32 after guest')

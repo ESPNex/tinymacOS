@@ -3,7 +3,6 @@
 #include "disk_size_input.h"
 #include "volume_export.h"
 #include "volume_mount.h"
-static char mount_target[PATHLEN];
 static VolumeExport export_request;
 static int export_cursor;
 static DiskInfo d;
@@ -255,6 +254,21 @@ static int selected_path(char out[PATHLEN],int copy)
     if(!copy&&sel==d.current&&p->start==d.disk[sel].region_start[1]){strset(out,"/Volumes/Macintosh HD",PATHLEN);return 1;}
     strset(out,"/Volumes/disk",PATHLEN);addnum(out,sel,PATHLEN);append(out,"s",PATHLEN);addnum(out,p->number,PATHLEN);return 1;
 }
+/* The toolbar queries the selected volume each paint and again on click.
+ * No cached context-menu target: changing the sidebar cannot retarget an action. */
+static int mount_query(VolumeMount *q)
+{
+    memset(q,0,sizeof *q);
+    return selected_path(q->target,0)&&!sc(S_DISK,15,q,0,0)&&q->managed;
+}
+static void mount_toggle(void)
+{
+    VolumeMount q;
+    if(!mount_query(&q))return;
+    q.operation=q.mounted?VOLUME_UNMOUNT:VOLUME_MOUNT;
+    sc(S_DISK,15,&q,0,0);
+    strset(msg,q.message,sizeof msg);
+}
 static void volume_open(void)
 {
     char path[PATHLEN];Dirent entry;
@@ -396,10 +410,17 @@ static void paint(void)
         Text(v<0?32:38,y+2,label,F_SMALL,TX);
     }
     button(x, 13, 57, "S.O.S.", 0);
+    VolumeMount mount;
+    int canmount=mount_query(&mount);
+    if(canmount)button(x+65,13,72,mount.mounted?"Smonta":"Monta",0);
+    else {
+        Box(x+65,13,72,26,6,PANEL);
+        Center(x+101,17,"Smonta",F_SMALL,SUB);
+    }
     /* A local FS2 checkpoint is already a snapshot in the catalogue. Do not
      * expose a duplicate backup button; exFAT export must use a separate, implemented copy flow. */
-    button(x + 65, 13, 92, "Recupero…", 0);
-    button(x + 165, 13, 104, "Nuovo snapshot", 0);
+    button(x + 145, 13, 92, "Recupero…", 0);
+    button(x + 245, 13, 104, "Nuovo snapshot", 0);
     Box(r + 1, 52, aw - r - 1, 1, 0, EDGE);
     if (!d.count) {
         Icon(x, 88, 50, 39);
@@ -562,20 +583,6 @@ void app_main(void)
                 }
                 continue;
             }
-            if(e.type==EV_CONTEXT){
-                mount_target[0]=0;unsigned mask=0;
-                if(e.a<rail()&&e.b>=51){int dd,vv;char label[64];int row=side_scroll+(e.b-54)/27;
-                    if(side_row(row,&dd,&vv,label)){side_select(dd,vv);VolumeMount q={0};
-                        if(selected_path(q.target,0)&&!sc(S_DISK,15,&q,0,0)&&q.managed){strset(mount_target,q.target,PATHLEN);mask=AMASK(q.mounted?ACT_UNMOUNT:ACT_MOUNT);}
-                    }
-                }
-                sc(S_CONTEXT,mask,e.d,0,0);continue;
-            }
-            if(e.type==EV_ACTION&&(e.a==ACT_MOUNT||e.a==ACT_UNMOUNT)){
-                if(mount_target[0]){VolumeMount q={.operation=e.a==ACT_MOUNT?VOLUME_MOUNT:VOLUME_UNMOUNT};strset(q.target,mount_target,PATHLEN);
-                    sc(S_DISK,15,&q,0,0);mount_target[0]=0;strset(msg,q.message,sizeof msg);
-                }continue;
-            }
             if(e.type==EV_SCROLL){side_wheel(e.a);continue;}
             if (e.type == EV_KEY) {
                 if (e.a == 's')start(1);
@@ -593,8 +600,9 @@ void app_main(void)
                     if(e.b>=51&&side_row(row,&dd,&vv,label)){side_select(dd,vv);side_reveal();}
                 } else if (e.b >= 10 && e.b < 43) {
                     if (e.a >= x && e.a < x + 58)start(1);
-                    else if (e.a >= x + 65 && e.a < x + 157)start(3);
-                    else if (e.a >= x + 165 && e.a < x + 269)start(4);
+                    else if (e.a >= x + 65 && e.a < x + 137)mount_toggle();
+                    else if (e.a >= x + 145 && e.a < x + 237)start(3);
+                    else if (e.a >= x + 245 && e.a < x + 349)start(4);
                 } else if(view>=200&&view<400&&e.b>=326&&e.b<365){
                     if(e.a>=x&&e.a<x+170)volume_open();else if(e.a>=x+180&&e.a<x+374)export_begin();
                 } else if(view>=200&&e.b>=284&&e.b<325){

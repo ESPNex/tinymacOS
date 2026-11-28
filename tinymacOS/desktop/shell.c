@@ -837,7 +837,7 @@ void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;di
     int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Mostra applicazioni",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Applicazioni",161);showctx();return;}
     for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(mx,my,v->box))continue;focuswin(i);owner=v->s.pid;
         int x=mx-v->box.x-1,y=my-v->box.y-TITLE;
-        if(y>=0&&(v->s.app==FINDER||v->s.app==DISKUTIL)){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
+        if(y>=0&&v->s.app==FINDER){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
         if(y>=0&&(v->s.app==TEXTEDIT||v->s.app==TERMINAL)){if(v->s.app==TERMINAL)cmadd("Taglia",ACT_CUT);cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);if(v->s.app==TEXTEDIT)cmadd("Salva",ACT_SAVE);}
         cmadd("Riduci a icona",141);cmadd("Zoom",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina",205);cmadd("Elimina…",206);}}

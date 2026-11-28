@@ -36,6 +36,20 @@ def main():
         expected=(a*144+tint*112)>>8;b=after[2:27,580:800]
         agreement=float(np.mean(np.all(expected==b,axis=2)));assert agreement>.98,agreement
         r['menubar_dim_exact_pixel_agreement']=agreement
+        # macOS keeps opaque Dock icon cores luminous above the darkened scene.
+        # Glass/translucent pixels may legitimately change with their backdrop.
+        a=before[738:754,285:995].astype(np.uint32);b=after[738:754,285:995].astype(np.uint32)
+        white=np.min(a,axis=2)>240
+        # Erode the white mask: antialiased/translucent icon edges are backdrop
+        # dependent and must not be mistaken for opaque icon cores.
+        bright=white.copy()
+        for dy,dx in ((0,1),(0,-1),(1,0),(-1,0)):
+            bright &= np.roll(white,(dy,dx),(0,1))
+        bright[[0,-1],:]=False;bright[:,[0,-1]]=False
+        assert int(np.sum(bright))>100
+        exact=float(np.mean(np.all(a==b,axis=2)[bright]));assert exact>.98,exact
+        r['dock_bright_icon_pixels_unchanged']=exact
+        r['checks'].append('Dock remains visible and luminous above Mission Control backdrop, matching Sonoma screenshot reference; no full-screen post-composition veil')
         g.key('esc');time.sleep(.9);restored=np.asarray(g.snap());assert np.mean(np.all(restored[2:27,580:800]==before[2:27,580:800],axis=2))>.98
         r['checks'].append('Mission Control menubar uses same 112/256 dim as backdrop exactly once; exit restores original pixels')
         launch(g,'Impostazioni','Colore dettagli');g.move(45,745);before=np.asarray(g.snap()).copy()

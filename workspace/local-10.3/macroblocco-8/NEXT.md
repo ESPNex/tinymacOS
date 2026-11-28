@@ -12,8 +12,8 @@
 
 - [x] Backend mount/unmount per TMCFS2/FAT32/exFAT/NTFS: stato effettivo, flush prima di chiudere, file aperti→rifiuto, volume di avvio protetto, rollback su errore, nessun force-unmount, stato offline conservato nei rescan.
 - [x] Comandi nativi `mount`, `umount`, `diskutil mount`, `diskutil unmount`.
-- [x] Clic destro Monta/Smonta secondo lo stato nelle sidebar di Finder e Utility Disco, con ricontrollo nel kernel.
-- [x] Host normali + ASan/UBSan sui quattro filesystem reali; guest retail su partizione FAT32/NVMe disposable: Terminale e i due menu, rimontaggio/readback, SHA-256 dell’intero disco invariata.
+- [x] Clic destro Monta/Smonta nel Finder; in Utility Disco pulsante nella toolbar accanto a S.O.S., con query di stato al disegno e al clic e ricontrollo nel kernel.
+- [x] Host normali + ASan/UBSan sui quattro filesystem reali; guest retail su partizione FAT32/NVMe disposable: Terminale, menu Finder e toolbar Utility Disco, assenza azioni mount nel menu Utility, rimontaggio/readback, SHA-256 dell’intero disco invariata.
 - [x] Input: tutti i 473 file della baseline USB/input ancora byte-identici; guard pre-authentication invariato.
 
 ## Ancora da completare — M8 NON concluso
@@ -23,4 +23,11 @@
 3. Accettazione integrata completa, Recovery/live/installato e regressioni; rimisurare le prestazioni sul prodotto finale, senza riutilizzare i vecchi numeri come benchmark della build corrente.
 4. Solo dopo i gate: versione 10.3, commit/push, backup indipendente e release GitHub con ISO/checksum; video nuovo su Drive, soltanto M8.
 
-Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun commit/tag/release nuovo pubblicato finora. I report precedenti documentano stati storici, non il risultato finale.
+## Ultima richiesta eseguita
+
+- [x] Commit di sicurezza `80537612eeea68bda1efe8cc4b643d0cbc9c3937` pushato e SHA remoto verificato, prima di altre modifiche.
+- [x] Backup Git storico + incremento M8 + metadati boundary/sorgenti originali su Drive; size/MD5 confrontati, ripristino indipendente e fsck PASS. Bundle locali rimossi dopo verifica; repository di lavoro conservato. La storia rimane shallow al confine documentato, non si inventano antenati assenti.
+- [x] Mission Control: riferimento visivo macOS Sonoma esaminato; Dock visibile e luminoso mantenuto intenzionalmente, nessun velo globale sopra le miniature. Nuova prova pixel: nuclei opachi Dock invariati al 100%, barra oscurata al 100% del blend atteso.
+- [x] Tre screenshot nuovi su Drive, stessa cartella delle priorità; size e MD5 verificati.
+
+Rapporto corrente: `TOOLBAR-DOCK-E-BACKUP.md`. Nessuna attività prosegue automaticamente dopo la fine di un checkpoint. Nessun tag/release/version bump/video M8 finale; M8 resta aperto.

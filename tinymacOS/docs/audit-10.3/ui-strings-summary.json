@@ -29,14 +29,14 @@
     "desktop/glass.c": "3ed97747f2e51739e90caf8c5c9bd16799a2759275abf28ad8775b63deb242ac",
     "desktop/input_budget.h": "eea3d53a0fc865c8787bda549ac1171c3aa9436d6790269fdc7288e1aefc5894",
     "desktop/login.c": "f03b16cb555e8f24839c6f10f159c05d91de3e4b8c339f3a12e17d0914fa6c02",
-    "desktop/main.c": "3f5a875dfcf990e1ce2d02c11325a6b03854702807a3791a2912909cc7407c61",
+    "desktop/main.c": "fd1bd53264e0d517e42f46fcb6eb7aa0b2248a6ca6846027f36355d47a2892c8",
     "desktop/modifier_symbols.h": "4a8603d68ab52f4c976bbb02c2b62c830af0d841ec09c99cc273e5e27c6249b7",
     "desktop/motion.c": "73ebaf5f1f005c8250fee9563770352f54c513abb6fe29490a828ad740720a66",
     "desktop/pointer.h": "b6caf5502dbe56d1158f8a0dc5a046e57ddf6158c51fa1b8917fd739b85448c5",
     "desktop/proportional_input.h": "d39d9c96a3082b8295b1c15a232b5a12980b42d4f31d209f6b6d4f54ddd70223",
     "desktop/recovery.c": "c29f525057e55681d90d8bc888e073cb29d81f22c176266d53c671ee165bdeaf",
     "desktop/recovery_background.h": "c67710f34f3c3c8d9062acfdf72a0528dffa7ff7171de976d4fedb6fd1f9cfda",
-    "desktop/shell.c": "b0261f82f37477b1c2bdb1f5573337fba680024eec27c47e378b779eaf650259",
+    "desktop/shell.c": "b802a55fd0920721d7bb8bf33bce572c440478228bea9d1253de3a7847b9dbae",
     "desktop/window_surface.h": "5a4a3133adc75f4e2edf586ff31d31b5e75dec61806368700ca42acd939073de",
     "fs/bootfs.c": "7b3e779ac9c695238967544ac8f3c4ec6811dc8d8b848b5492ec236237829f80",
     "fs/exfat_export.c": "880411dd5b2029bffb39d4c6f72a3182d01f11365d815ba44cc3e9ce56e6afed",
@@ -133,7 +133,7 @@
     "userspace/calculator.c": "48882e377725b0ca97956e78a0a1b1fa9d9c57a11211512fd1a85c5c3af1ef30",
     "userspace/calendar.c": "820c663b2f90cfcd6627b360693e8cbe698417ff1080ce616d04951a8856c475",
     "userspace/command.c": "f688b409ab2193650d07a10366225a00aa00d5c05fb0315d074bf101ba05a13e",
-    "userspace/diskutility.c": "fb77d0d27aa31088aae7da4f3b66d794afde4540253bf2ac45863896c4c95bca",
+    "userspace/diskutility.c": "e1d6196965b00d14595f52837638eb990a2b931cf6d33eece61bfb902321d75f",
     "userspace/filebrowser.c": "046d20ea2b2a29bec60ce30374716f81506780ef955b5b2a66cc29e886bf912d",
     "userspace/filebrowser.h": "97ecba703f36019bf66a74f255b5c50ff14aba2c57aa996108660ca4022eb935",
     "userspace/fileops.c": "4273f2a641c20b28d7bc3de4bc15978b0ccb138a0c117a7ae1f0a08f8e8d1b8f",
@@ -165,18 +165,18 @@
     "userspace/vaultview.h": "afe70ff1b60b3fdc5a9c546bd6421e318e02d58823e56243166e127eb4059c43",
     "userspace/volume.h": "52265915bf6f0b3cf57e8d2d1c5574c88cd7445d8dd55b238bd0a1b019eb9760"
   },
-  "literal_count": 2557,
+  "literal_count": 2560,
   "counts_by_directory": {
     "boot": 106,
     "desktop": 328,
     "fs": 232,
     "include": 180,
     "storage": 128,
-    "userspace": 1583
+    "userspace": 1586
   },
   "counts_by_tag": {
     "diagnostic-or-assert-hint": 42,
-    "identifier-or-fragment-hint": 1216,
+    "identifier-or-fragment-hint": 1219,
     "safety-retain-meaning": 130,
     "technical-review": 15,
     "text-review": 1171

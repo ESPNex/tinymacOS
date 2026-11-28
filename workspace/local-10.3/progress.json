@@ -291,7 +291,7 @@
     "ui_guest_pass": true,
     "usb_input_473_files_unchanged": true,
     "base_system_udif_independent_decode_pass": true,
-    "report": "macroblocco-8/PRIORITA-E-MOUNT.md",
+    "report": "macroblocco-8/TOOLBAR-DOCK-E-BACKUP.md",
     "next": "macroblocco-8/NEXT.md",
     "priority_screenshots_folder": "https://drive.google.com/drive/folders/13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
     "priority_visual_guest_pass": true,
@@ -300,6 +300,14 @@
     "native_mount_unmount_guest_terminal_finder_diskutility_pass": true,
     "mount_candidate_iso_sha256": "56ffa99cf38f341bce9c4522b487c3c5f44625a394c6f7ff40120e16df0e8a21",
     "usb_storage_complete": false,
-    "hdiutil_complete": false
+    "hdiutil_complete": false,
+    "toolbar_candidate_iso_sha256": "97104d7c09285284f39e23d7bf425e72728ce0366385c7c235ce4e1c8acf57f7",
+    "diskutility_mount_toolbar_guest_pass": true,
+    "finder_only_mount_context_guest_pass": true,
+    "mission_control_dock_sonoma_reference": "https://media.512pixels.net/downloads/macos-screenshots/14/14-Sonoma-Mission-Control-scaled.png",
+    "mission_control_dock_opaque_icon_cores_unchanged_fraction": 1.0,
+    "safety_commit_pushed": "80537612eeea68bda1efe8cc4b643d0cbc9c3937",
+    "git_bundle_moved_to_drive_verified": true,
+    "heavy_workspace_git_bundle_removed": true
   }
 }

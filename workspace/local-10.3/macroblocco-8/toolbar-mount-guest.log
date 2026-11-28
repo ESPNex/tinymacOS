@@ -1,0 +1,12 @@
+{
+  "work": "/var/tmp/tmc-mount8-cu2bacim",
+  "iso_sha256": "97104d7c09285284f39e23d7bf425e72728ce0366385c7c235ce4e1c8acf57f7",
+  "transport": "NVMe disposable fixture; no USB storage claim",
+  "checks": [
+    "mount/umount/diskutil mount/unmount are real native commands; state list, remount readback and startup refusal",
+    "Finder sidebar right click switches Smonta to Monta after real unmount; volume stays in inventory and can be remounted",
+    "Disk Utility toolbar beside SOS switches actual Smonta/Monta state both ways; context has no mount actions; Terminal reads same file afterwards",
+    "Entire disposable partitioned disk SHA256 unchanged; mtools independently reads FAT32 after guest"
+  ],
+  "partition_image_sha256_before_and_after": "3a4b2c481ef6984013142e10808b58ec02af46d08d498809d535e10687ab2d6c"
+}
