@@ -1,0 +1,496 @@
+{
+  "reason": "User requests workspace strictly below 128 MB decimal as well as 128 MiB; historical records gzip lossless; old screenshots WebP with RGBA exact comparison. Font/input/uploads and sole full Git backup untouched.",
+  "files": [
+    {
+      "original": "Tre schermate \u2014 Finder Terminale Utility Disco.html",
+      "compressed": "Tre schermate \u2014 Finder Terminale Utility Disco.html.gz",
+      "original_bytes": 2648823,
+      "gzip_bytes": 2002216,
+      "original_sha256": "86edda250838d267fa6cd51470b1ae85c9840af3bf5c4347941fa7779fd8bac4",
+      "gzip_sha256": "bd6b9c9bcee76443ee4f87cecdbe67a458efdd01386e009963a8b953aa78e1f2",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/install-home-recovery-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/install-home-recovery-guest.log.gz",
+      "original_bytes": 10191,
+      "gzip_bytes": 961,
+      "original_sha256": "da691e06f07557387b6925cf1b85904e70459e6bb7c9be6acc5429fba1915ad1",
+      "gzip_sha256": "2b1c5d141f5569d8c6410f7cc64049d9245716f909a969b59438041c7c1f0adf",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/runtime-build.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/runtime-build.log.gz",
+      "original_bytes": 37512,
+      "gzip_bytes": 4776,
+      "original_sha256": "de5d49ed073fb2689fa109c24d2ef86de4e9ad837c2577f6213d01d17ad331d0",
+      "gzip_sha256": "72f619695d4ee99db884d874dd71cbd1fbed901fc66dc7ad62d0991692c14273",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/runtime-fs2-install-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/runtime-fs2-install-host.log.gz",
+      "original_bytes": 5506,
+      "gzip_bytes": 1054,
+      "original_sha256": "b3a2785f33cd48624f9ac0313121062f3d654a5276e6b8b1b5ae0c4d8fcac27e",
+      "gzip_sha256": "47452aeedda6c32f02827ce6cc185f707fb75acd0bacfda7454e75f03225c4cd",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/build-current.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/build-current.log.gz",
+      "original_bytes": 37678,
+      "gzip_bytes": 4777,
+      "original_sha256": "4b58a5f0db2e2edad753e9559ae8a829e22d68c91dceae5313730f50674e1ac9",
+      "gzip_sha256": "87a8f3d0a653e45c1a64d13782ad3d9e801d0b00aba05024639148b7ef477a25",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/foundation-current.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/foundation-current.log.gz",
+      "original_bytes": 12585,
+      "gzip_bytes": 3336,
+      "original_sha256": "fe199e86320fa8048ab5695a90f9ead711669bf78fb2db28fab6cbf420f60a49",
+      "gzip_sha256": "f010a1c75b92b832df4549b2d396be0f33f39c565a3ce2b7c9b1c9b21438e2c9",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/runtime-install-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/runtime-install-guest.log.gz",
+      "original_bytes": 10345,
+      "gzip_bytes": 1040,
+      "original_sha256": "63a711e859c6ba95824a018fab23a6d72affbc80607d293ba4fbcc3680d2c104",
+      "gzip_sha256": "fbd98462d10a49d12f2770d126f8f0c480de91e3c8bf313e76d6d81e9423b95e",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/build.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/build.log.gz",
+      "original_bytes": 35518,
+      "gzip_bytes": 4500,
+      "original_sha256": "e81b10337ed20317ca19ccbb3aaed0f9ad80b5d6518bfc03a84e276feb1378fb",
+      "gzip_sha256": "6aa84286617872305d6926018acf3a64857a65158842eeffa97e55314ecbfc9c",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-1/runtime-final-foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-1/runtime-final-foundation-host.log.gz",
+      "original_bytes": 12585,
+      "gzip_bytes": 3333,
+      "original_sha256": "a82d12118921f07707eb8bdbdf0e4fbe5b931341afdbd0456fc8d1fb570b6a6e",
+      "gzip_sha256": "9cdc1158b16e40e5cba267cffb52fd75168fb38aadb6b651cdc306fb79acb7d6",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/catalogue-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/catalogue-guest.log.gz",
+      "original_bytes": 6150,
+      "gzip_bytes": 911,
+      "original_sha256": "9cb23dc50e51a7512cf7a3ed7f3e773889187e82a25ff2e02e37e3da4d9020f9",
+      "gzip_sha256": "cf6845d500a925fb54ca39fda54f640b1f2b02740ae25fc51b12f336e1de76ed",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/install-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/install-guest.log.gz",
+      "original_bytes": 10345,
+      "gzip_bytes": 1052,
+      "original_sha256": "7ebe24e335d3582384bfcd96c952ffee83ffcfea4480d26da6e47573264b3bf8",
+      "gzip_sha256": "a4b1269e26258e9258446b9f1121207eed8a078022a73e75bad798ac2ad8a802",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/build.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/build.log.gz",
+      "original_bytes": 37588,
+      "gzip_bytes": 4779,
+      "original_sha256": "c1aec30b2b1e1713a762c8aada981cd984406b8ec1752bcc21c081d571cf9542",
+      "gzip_sha256": "6d7707b75501d12aaae8e218bf05fa8e0c644dd24a838f3e7b191aad8542fa6e",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/foundation-host.log.gz",
+      "original_bytes": 12855,
+      "gzip_bytes": 3400,
+      "original_sha256": "3dce83bbaa4c30af792db3196a72d134dac475c8a2222bf643d569a2d95c9165",
+      "gzip_sha256": "a498c3a44b44a688fa594f9de29475a1c4e4f66341b2f35f9749a0645e84e7ae",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/fs2-install-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/fs2-install-host.log.gz",
+      "original_bytes": 6853,
+      "gzip_bytes": 1300,
+      "original_sha256": "4dca907af192e0928ac26d78ce1985e99561fbdff182de0989b86e4e55f0999a",
+      "gzip_sha256": "b3818e701a1df1ef23eee8e079bc0c6c01f68cf79ff9579876cce89251e75685",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/install-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/install-guest.log.gz",
+      "original_bytes": 5416,
+      "gzip_bytes": 1569,
+      "original_sha256": "e98ccd5bd7e76e686569107e32691a0ffa51f29fed4be984fdb09b4b5c79a523",
+      "gzip_sha256": "f6441ef8200253b36e2efdc818b4633b2f691a850bbc8b276fa69fd84cafb983",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/build-final.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/build-final.log.gz",
+      "original_bytes": 43248,
+      "gzip_bytes": 6007,
+      "original_sha256": "f5b9ddc591efc4a9301b71691a846d1809c6c422085c111fcbd514dbd30b9e4d",
+      "gzip_sha256": "00ded7cc6d5e7006fe85e45457f951729bd74fad8173edb0c250340c01389fc8",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/rename-guest-final.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/rename-guest-final.log.gz",
+      "original_bytes": 31032,
+      "gzip_bytes": 2387,
+      "original_sha256": "78b3e6fc2bfc63f52a398b5947f9692510a91ce03d7220c47a2bb0d5d8254584",
+      "gzip_sha256": "1aa6f0e682114f4c03bb68cfdfa40e89681d0f1394410cacfdbc4f6b77a571b7",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/install-guest-final.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/install-guest-final.log.gz",
+      "original_bytes": 10345,
+      "gzip_bytes": 1122,
+      "original_sha256": "1faf0600921dede9abb4a09a05f1acdb2a6c5cd27cdbd2155d5e21dee0c29b38",
+      "gzip_sha256": "140f88c9585d1b2be521677e5d633d618a3b49b31faaa466163c1122c89b2d36",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/10.3-foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/10.3-foundation-host.log.gz",
+      "original_bytes": 13003,
+      "gzip_bytes": 3462,
+      "original_sha256": "922a18869fb27d46d1523fde0796c04e66babc97bf5a6245f8a66605ab636754",
+      "gzip_sha256": "1cf2de01483c65917d177d921412fdf5807ac205733ca1fdb5d9d8facf5ae73c",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/legacy-guest-final.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/legacy-guest-final.log.gz",
+      "original_bytes": 8470,
+      "gzip_bytes": 836,
+      "original_sha256": "6ee2547435365fb1aeb34bacc0d3287faf49b13e5031ccd4de900c17ece52d8c",
+      "gzip_sha256": "c1f15de8ecc6cada20d652760066e6b46405f393f08b605c97d9de3c8f086cb0",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/diskedit-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/diskedit-host.log.gz",
+      "original_bytes": 10928,
+      "gzip_bytes": 1694,
+      "original_sha256": "95b49592f3a09281d47aa0c68ee5526fca80b91ad7a6d74f3155147c9f790d0d",
+      "gzip_sha256": "777628d1d438da0939e533694f1962268dc37bb1301e30d90bd86f2ab88a7b61",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/foreignfs-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/foreignfs-host.log.gz",
+      "original_bytes": 15859,
+      "gzip_bytes": 2014,
+      "original_sha256": "cf2870e75be741ff771e246c9091ed467fa19cd292331a86bc6643e89d2ca438",
+      "gzip_sha256": "a9a7b47b85fe1c48e3e3d38217248b963854a0eb42d2307fee7611f67e3b0673",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rimozione-legacy/build.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rimozione-legacy/build.log.gz",
+      "original_bytes": 42917,
+      "gzip_bytes": 5835,
+      "original_sha256": "4edf68b7bfa1abb724677b49b3f5f57460bb9dffd879478f2c77a921cf9ad7bf",
+      "gzip_sha256": "b5200f063a9bb820776e46843f2cab9b8ba4f921eeb991393ef1b1749c530949",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/catalogue-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/catalogue-guest.log.gz",
+      "original_bytes": 6150,
+      "gzip_bytes": 894,
+      "original_sha256": "9ef9e67f0b01fab50d6f504fe9a1f521adc1b350a2169a6fbd463185020d1b3c",
+      "gzip_sha256": "8baffd886d20bfc10ca3517d4dd6b062c8ae7c35c56685f34e34b014ceaeab85",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/install-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/install-guest.log.gz",
+      "original_bytes": 10345,
+      "gzip_bytes": 1088,
+      "original_sha256": "21b29728af59385a9c51248c2156f58eb41f2ad4f9a4cfe6e848d1309b2b4589",
+      "gzip_sha256": "f4217536833328aad15b766acd81b2c126ed69b8cd3c1b15e519642b233f9751",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-rw-real-partition-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-rw-real-partition-host.log.gz",
+      "original_bytes": 15763,
+      "gzip_bytes": 1999,
+      "original_sha256": "a29bbd310d7c18e2b4c9afea1160d756b30078e4cd1130f4a756f55bdd124810",
+      "gzip_sha256": "26f37f9feb8e08496b1b0191f445fc07fe42a11df07bdeb8ca7a8d6e8c6f0c39",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-guest.log.gz",
+      "original_bytes": 41091,
+      "gzip_bytes": 2988,
+      "original_sha256": "c00420e71e707a9082fae115d73b550f1f6e39af435b435808e33115faa2e498",
+      "gzip_sha256": "9dbf0e4fdb2123648c15957edae7bca1e81bfa1b19527f9a7fed26032f3fa708",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/ntfs-resize-regression.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/ntfs-resize-regression.log.gz",
+      "original_bytes": 6703,
+      "gzip_bytes": 1254,
+      "original_sha256": "502dba21f106a96857b946ff1b2475f824d7b9c54a708ff8c79dd44a9756f575",
+      "gzip_sha256": "c6147dcc2a4fb565a3c6b42bdda48ed9dbc85a929fae89fbc49afa4f8ed7c5f9",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/ntfs-volume-rw-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/ntfs-volume-rw-host.log.gz",
+      "original_bytes": 13080,
+      "gzip_bytes": 1372,
+      "original_sha256": "ca9e1dc5397326852470aa1c26a96704d1e6ea5c2e98494ad73d9050e56d9693",
+      "gzip_sha256": "f11b084f80698098f041234205d64826d343db4ba5224e013adf81cc8cc09758",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/foreignfs-host.log.gz",
+      "original_bytes": 4617,
+      "gzip_bytes": 965,
+      "original_sha256": "59510605743b573e1e889482a03fac332e1b6c1b6fa4fab0b478d1a046dddff1",
+      "gzip_sha256": "88f560e1aed338cf34587337c0a3f08307d8dbdecda182ecfbc3ccaaa6a3dd0d",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/final-diskedit-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/final-diskedit-host.log.gz",
+      "original_bytes": 10312,
+      "gzip_bytes": 1604,
+      "original_sha256": "74ec90b9474bdeff6b24157932408b1d6cb982cbb009e891e2a9556da22f72ab",
+      "gzip_sha256": "52afb504c90f62cf9d4e8bd968e91ccf8fe561b445647e9e315eb4a2426d8c98",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/final-10.3-foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/final-10.3-foundation-host.log.gz",
+      "original_bytes": 12855,
+      "gzip_bytes": 3400,
+      "original_sha256": "be27d6fcf48a91f8eef983b3d19e0c0bcbb5b4764348953e1b33eadf8b8f2693",
+      "gzip_sha256": "40a7c1fb7cfebc0cb9e6a22066912ad525ebf8a2c04b3b949abda543a2d7480f",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/build.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/build.log.gz",
+      "original_bytes": 37632,
+      "gzip_bytes": 4859,
+      "original_sha256": "0f7bd7e3762951f14da5913654a51b8efb01558bc5228f79ba7c13535fabe4d5",
+      "gzip_sha256": "bcbe67ec7791fb319fe6b89c2a98ffd74859d79889f1498e720240f0fd02d7c1",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/foundation-host.log.gz",
+      "original_bytes": 12855,
+      "gzip_bytes": 3400,
+      "original_sha256": "ef96a0b5e47afb875580968d015dd636cdf3e9e149db99a2215539c7f1f6bd01",
+      "gzip_sha256": "24bd98f894b852b71a0f53f357f0f9401c31959382fe4ae1654f5424c9f07582",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/guest.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/guest.log.gz",
+      "original_bytes": 31083,
+      "gzip_bytes": 2246,
+      "original_sha256": "f21ab7d15633455c37234b04154e0c02d1097768a7bffdd1c977ffeb1e5b62e3",
+      "gzip_sha256": "93ba84375da197fad425bcd669c1e83dd8fdc71f8893f06796130ff54aba6aee",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/10.3-foundation-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/10.3-foundation-host.log.gz",
+      "original_bytes": 12855,
+      "gzip_bytes": 3400,
+      "original_sha256": "a1d5ab3f076b208b156ffe8232978266af56ca9eb3004a0f908e45a75a020838",
+      "gzip_sha256": "f39668ab5fe9c0413665ea036363c973a78faedda0d33aa1b3bd9386b9fdd125",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/diskedit-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/diskedit-host.log.gz",
+      "original_bytes": 10928,
+      "gzip_bytes": 1693,
+      "original_sha256": "e6cbb0afa9aa340d9b81dfc07868dcde59b75b76d23d2082b1f5770e9d5e5c2c",
+      "gzip_sha256": "e9aea1bb56883c8196c11c798d076ad903955615d951684377c7174c51d31072",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/foreignfs-host.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/foreignfs-host.log.gz",
+      "original_bytes": 15981,
+      "gzip_bytes": 2044,
+      "original_sha256": "0f940bb7ad28d185b33c88ccb234fc097654feff69c5ea9419e6ea66f4adbbc3",
+      "gzip_sha256": "be897b3009a08b6d171008b4e200ca9a5559407c7f4c0b9b3df9ffe5a67dd3c4",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/build.log",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/build.log.gz",
+      "original_bytes": 37821,
+      "gzip_bytes": 4896,
+      "original_sha256": "da258aca961dafcfdced386a7eb8b43500241d3ce4c369c18bdc8ccbcbfaa858",
+      "gzip_sha256": "41626008cdb2ae8278907d571f8739c45f59769a9278c36d98e0cefe7dbf5451",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+      "verification": "gzip decompression byte-identical; original blob matches published main"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-3/evidence/mission-control.png",
+      "compressed": "workspace/local-10.3/macroblocco-3/evidence/mission-control.webp",
+      "original_bytes": 870243,
+      "compressed_bytes": 583128,
+      "original_sha256": "2461be2bb6f55b0c89b7e24ea43ada8ec0040cea1da4790eb80fd15ccb9b3469",
+      "compressed_sha256": "bb41848bf166b24f80974d6a2d8c05bb7809c5464d67f95a1dcdd7fa35fb5b1a",
+      "verification": "Lossless WebP: decoded RGBA byte-identical; original PNG blob verified in published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/schermate/finder.png",
+      "compressed": "workspace/local-10.3/macroblocco-2/schermate/finder.webp",
+      "original_bytes": 646541,
+      "compressed_bytes": 409906,
+      "original_sha256": "79abf96298a9d952c88a015647293cffac2c8eecc0093f699d5f3894c606e680",
+      "compressed_sha256": "cf3d7cae5c84f43952fece029abb1baab5146736d409807bbebba8478aa7dade",
+      "verification": "Lossless WebP: decoded RGBA byte-identical; original PNG blob verified in published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/schermate/terminale.png",
+      "compressed": "workspace/local-10.3/macroblocco-2/schermate/terminale.webp",
+      "original_bytes": 654929,
+      "compressed_bytes": 406114,
+      "original_sha256": "71044e549171c6b06d04b528bcdfd99ce3a1feadde07d3793a6f2f17f0837ce2",
+      "compressed_sha256": "112786078792a8d164aa4787259470b6793d91b12012d2d9e58f44fc0194a504",
+      "verification": "Lossless WebP: decoded RGBA byte-identical; original PNG blob verified in published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.png",
+      "compressed": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.webp",
+      "original_bytes": 684754,
+      "compressed_bytes": 440666,
+      "original_sha256": "2330557d793b374aedc2697d98aa5016c0a44c011153b9d8b2729a6427b84e94",
+      "compressed_sha256": "dd45ebb939f1d6455da5661a766903da43765591cd869235e9ee65e32da7a7cf",
+      "verification": "Lossless WebP: decoded RGBA byte-identical; original PNG blob verified in published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/source-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-2/rinomina-tmcfs2/source-inputs-final.json.gz",
+      "original_bytes": 133444,
+      "compressed_bytes": 46518,
+      "original_sha256": "6da2b5e65bf52c1d0da16c8655db7cea3ead9531095803d79f147b19db9c421d",
+      "compressed_sha256": "b29735893f067c2b7dce2d8027fb3a63575a3e65a2cffb8416a130cd6417eb99",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-2/completamento/source-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-2/completamento/source-inputs-final.json.gz",
+      "original_bytes": 133111,
+      "compressed_bytes": 46367,
+      "original_sha256": "a256a51f28ba1cfb0f8322efcf1a7bf5db7a450080f1d11988ce634e0a66ee2b",
+      "compressed_sha256": "e80866e0c1fbf36ae0c4da9868da22625f59bb12f8fd934ab55e1b2d0bc8216e",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-3/production-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-3/production-inputs-final.json.gz",
+      "original_bytes": 124161,
+      "compressed_bytes": 42101,
+      "original_sha256": "6c56473adf082fdc25a7f6c2b6e06d0447ca5bc8bbede072c0001e33d74c695d",
+      "compressed_sha256": "de716db9bbc658ef8a901dc6071365b4cb8519586559d493a921124ec6f00075",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-4/production-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-4/production-inputs-final.json.gz",
+      "original_bytes": 124372,
+      "compressed_bytes": 42188,
+      "original_sha256": "75f31b4b52d87aa022e01b1f5f30894fb35a6331de9a5164ab11b4d619cced31",
+      "compressed_sha256": "b90f6029f864398057341baea6756a8ea99724a8ef4488aeac4690b8fae96e6f",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-5/production-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-5/production-inputs-final.json.gz",
+      "original_bytes": 124372,
+      "compressed_bytes": 42188,
+      "original_sha256": "aa709f0d2ab39c7a9802959d268f2ebca4050ed8c6a9c9d603cf688d48549a96",
+      "compressed_sha256": "418674ddda305ffb8b2065201a4709d66d817015660ddbbc08d6f20b2f3726bf",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    },
+    {
+      "original": "workspace/local-10.3/macroblocco-6/production-inputs-final.json",
+      "compressed": "workspace/local-10.3/macroblocco-6/production-inputs-final.json.gz",
+      "original_bytes": 124372,
+      "compressed_bytes": 42184,
+      "original_sha256": "963f6a9993ffcafbb8a9c64059e707d11b4c5ff07299775ee4f34597375f926f",
+      "compressed_sha256": "6bb59261d90324c00e96102c2e7bebbdeaad20522f82ea00170e1a7b7307c0f8",
+      "verification": "gzip decompression byte-identical; original blob matches published main",
+      "recoverable_from_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae"
+    }
+  ],
+  "bytes_saved": 2764299
+}

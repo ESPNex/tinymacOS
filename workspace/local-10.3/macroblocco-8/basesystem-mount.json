@@ -1,0 +1,9 @@
+{
+  "format": "UDIF v4, raw extents, FAT16",
+  "bytes": 8391958,
+  "logical_bytes": 8388608,
+  "raw_runs": 32,
+  "sha256": "9b2f7df24452e9a13b9081fbc3aff514d1bd5c8e57f7678bdacf97c4d9bbd06b",
+  "independent_decoder": "qemu-img: autodetected dmg; full decode byte-identical; FAT16 mdir lists RECOVERY.ELF and RECOVERY.VOL",
+  "scope": "Validation of existing BaseSystem generator, not completion of native hdiutil or support for arbitrary DMG variants"
+}

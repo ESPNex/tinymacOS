@@ -1,5 +1,8 @@
-/* Kernel-only namespace of real read-only data volumes. fs_gate held. */
+/* Kernel-only namespace of real read/write data volumes. fs_gate held. */
 #pragma once
+#include "volume_mount.h"
+int vol_manage(VolumeMount*,const Process*,int);
+int fs_volume_manage(VolumeMount*);
 int vol_normalize(const char*,char[PATHLEN]);
 int vol_reserved(const char*);
 int vol_stat(const char*,Dirent*);

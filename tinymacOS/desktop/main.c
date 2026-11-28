@@ -465,6 +465,9 @@ static void render(int dt)
         j++;
     }
     if(sys.recovery)recovery_bar_draw();else shell_draw();
+    /* The menu bar is composed last. Dim it here, exactly once, with the
+     * same phase as the desktop; keep transformed window previews undimmed. */
+    if(mcdim>0)roundr(0,0,W,BAR,0,0x07090f,mcdim);
     caret_paint();
     drawcursor();
     sc(S_PRESENT, canvas, 0, 0, ((u64)(u32)W << 32) | (u32)H);
@@ -804,6 +807,7 @@ void app_main(void)
         int dt = animation_delta(s.ticks, last, 64);
         last = s.ticks;
         if (s.theme != sys.theme || s.wall != sys.wall || s.dark != sys.dark) {
+            /* Restore the requested theme + associated wallpaper transition. */
             memcpy(prevwall, back, (u64)W * H * 4);
             background(s.wall, s.theme, s.dark);
             wallpaper_age = s.reduce_motion ? 32 : 0;

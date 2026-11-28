@@ -1,0 +1,21 @@
+PASS canonical input audit: single Event.d assignment is the sole production driver delta
+PASS real input: distinct Win/Control snapshots, Shift, Italian AltGr @, Control+Up, Command+R boot eligibility, plain R/Control+R/F12 not recovery
+PASS actual shell Command+Space/Shift+A and Control+Up enter/exit; stale UTF-8 cursor clamping and Command+arrows
+PASS actual shell: direct folder create/collision/cancel/invalid names WITHOUT Finder spawn; free exact positions, reload persistence, clipping, malformed preferences, UTF-8 mouse/edit offsets
+PASS actual login: proportional-name and masked-password click insertion, UTF-8 delete, Command select-all, setup-code click insertion
+PASS actual retail/Recovery installer: both password fields and recovery-key field click insertion, select-all, UTF-8 and navigation
+PASS actual FileVault: all three masked fields and recovery-key confirmation click insertion, UTF-8 navigation/delete
+PASS actual Open/Save panel: location/name/child new-folder click insertion, no accidental replacement, UTF-8 insertion
+PASS actual Disk Utility: size/name/export-path click insertion, numeric filtering, UTF-8, Command select-all; no partition writes
+PASS actual Settings: search/passphrase click insertion, UTF-8 navigation/delete, Command select-all; no backend mutation
+PASS actual Calendar app loop: enter memo editor, type, click insertion, UTF-8; no backend mutation
+PASS real input: distinct Win/Control snapshots, Shift, Italian AltGr @, Control+Up, Command+R boot eligibility, plain R/Control+R/F12 not recovery
+PASS actual shell Command+Space/Shift+A and Control+Up enter/exit; stale UTF-8 cursor clamping and Command+arrows
+PASS actual shell: direct folder create/collision/cancel/invalid names WITHOUT Finder spawn; free exact positions, reload persistence, clipping, malformed preferences, UTF-8 mouse/edit offsets
+PASS actual login: proportional-name and masked-password click insertion, UTF-8 delete, Command select-all, setup-code click insertion
+PASS actual retail/Recovery installer: both password fields and recovery-key field click insertion, select-all, UTF-8 and navigation
+PASS actual FileVault: all three masked fields and recovery-key confirmation click insertion, UTF-8 navigation/delete
+PASS actual Open/Save panel: location/name/child new-folder click insertion, no accidental replacement, UTF-8 insertion
+PASS actual Disk Utility: size/name/export-path click insertion, numeric filtering, UTF-8, Command select-all; no partition writes
+PASS actual Settings: search/passphrase click insertion, UTF-8 navigation/delete, Command select-all; no backend mutation
+PASS actual Calendar app loop: enter memo editor, type, click insertion, UTF-8; no backend mutation

@@ -1,0 +1,9 @@
+PASS M7 security/ABI source guard: unchanged pre-authentication gate; fixed desktop-only sealed cursor allowlist with bounded copies; resize retry after queue pressure; real proportional renderer/metrics
+PASS M7 actual 17 CUR/ANI decodes/hotspots/alpha/frame changes; truncation/mutations/offset overflow rejected, seq/rate timing and 8-direction resize anchors/clamps
+PASS M7 production filesystem loader and pointer context events: 17 resources, topmost/modal/Recovery/login/client regions, 8 borders, captured move/resize, busy tick/reduced motion, no filesystem reads in pointer loop
+PASS actual kernel resize IPC: 2000 adjacent updates coalesce; key/click ordering retained; full ring reports failure for compositor retry; queue wrap and final geometry correct
+PASS actual compositor cursor pixels: exact opaque/alpha/invert operations, fully transparent pixels unchanged, every screen edge clipped without stray damage
+PASS M7 actual 17 CUR/ANI decodes/hotspots/alpha/frame changes; truncation/mutations/offset overflow rejected, seq/rate timing and 8-direction resize anchors/clamps
+PASS M7 production filesystem loader and pointer context events: 17 resources, topmost/modal/Recovery/login/client regions, 8 borders, captured move/resize, busy tick/reduced motion, no filesystem reads in pointer loop
+PASS actual kernel resize IPC: 2000 adjacent updates coalesce; key/click ordering retained; full ring reports failure for compositor retry; queue wrap and final geometry correct
+PASS actual compositor cursor pixels: exact opaque/alpha/invert operations, fully transparent pixels unchanged, every screen edge clipped without stray damage

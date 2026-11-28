@@ -237,3 +237,9 @@ int fs_touch(const char *p)
     rec_unlock(&fs_gate, fl);
     return r;
 }
+
+int fs_volume_manage(VolumeMount*q){
+ u32 flags;rec_lock(&fs_gate,&flags);
+ int r=vol_manage(q,proc,NPROC);
+ rec_unlock(&fs_gate,flags);return r;
+}

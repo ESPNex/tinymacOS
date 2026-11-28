@@ -1,0 +1,6 @@
+PASS real motionstep: delayed frames retain elapsed time, exact endpoints, long stall, reduced motion
+PASS production surface cache: 24 MC dim frames reuse; live content/focus/settled backdrop/drag/resize invalidate
+PASS glass: 88 full-frame bit-exact comparisons; 30 library panels CPU reference=0.228500 optimized=0.125443 speedup=1.82x (host only)
+PASS real motionstep: delayed frames retain elapsed time, exact endpoints, long stall, reduced motion
+PASS production surface cache: 24 MC dim frames reuse; live content/focus/settled backdrop/drag/resize invalidate
+PASS glass: 88 full-frame bit-exact comparisons; 30 library panels CPU reference=0.358776 optimized=0.265744 speedup=1.35x (host only)

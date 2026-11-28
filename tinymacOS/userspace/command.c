@@ -6,6 +6,7 @@
 #include "sha1.h"
 #include "date.h"
 #include "volume_export.h"
+#include "volume_mount.h"
 int strncmp(const char *, const char *, unsigned long); /* kernel/string.c */
 // The executable is shared on disk; exec resolves its invoked path and supplies argv[0].
 static ExecArgs A;
@@ -139,8 +140,23 @@ error:
     return status;
 }
 #include "sysstat.h"
+static int volume_command(const char*target,int operation)
+{
+    VolumeMount q={.operation=operation};strset(q.target,target,PATHLEN);
+    int r=sc(S_DISK,15,&q,0,0);ln(q.message[0]?q.message:"Volume non disponibile.");return !!r;
+}
 static int run(void)
 {
+    if(IS("mount")||IS("umount")){
+        if(IS("mount")&&A.argc==1){
+            for(int skip=0;;){int got=sc(S_LIST,"/Volumes",ds,NSLOTS,skip);if(got<0)return fail("Elenco volumi non disponibile.");
+                for(int i=0;i<got;i++){VolumeMount q={0};strset(q.target,"/Volumes/",PATHLEN);append(q.target,ds[i].name,PATHLEN);if(!sc(S_DISK,15,&q,0,0)){say(q.target);ln(q.mounted?" — Montato":" — Non montato");}}
+                skip+=got;if(got<NSLOTS)break;
+            }return 0;
+        }
+        if(A.argc!=2)return fail("Uso: mount [diskNsM | /Volumes/nome] | umount volume");
+        return volume_command(V(1),IS("mount")?VOLUME_MOUNT:VOLUME_UNMOUNT);
+    }
     if(IS("fdesetup")){
         VaultRequest q={.disk=-1};VaultInfo vi={0};
         if(eq(V(1),"status")){sc(S_FILEVAULT,0,&q,&vi,0);ln(vi.error?"FileVault: volume non disponibile.":!vi.enabled?"FileVault is Off.":vi.locked?"FileVault is On. Volume locked.":vi.state==1?"FileVault encryption in progress.":vi.state==3?"FileVault decryption in progress.":"FileVault is On.");return vi.error?1:0;}
@@ -720,6 +736,10 @@ static int run(void)
         return IS("grep") && !hit;
     }
     if (IS("diskutil")) {
+        if(n>=2&&(eq(V(1),"mount")||eq(V(1),"unmount"))){
+            if(n!=3)return fail("Uso: diskutil mount volume | unmount volume");
+            return volume_command(V(2),eq(V(1),"mount")?VOLUME_MOUNT:VOLUME_UNMOUNT);
+        }
         if(n>=2&&eq(V(1),"exportExFAT")){
             if((n!=4&&n!=5)||path(pa,2)||(n==5&&!eq(V(4),"--confirm")))return fail("Uso: diskutil exportExFAT /.snapshots/nome diskN [--confirm]");
             VolumeExport q={0};strset(q.source,pa,PATHLEN);strset(q.destination,V(3),PATHLEN);

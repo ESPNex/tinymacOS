@@ -11,6 +11,8 @@
 /bin/ps
 /sbin/fsck_apfs
 /sbin/mount_apfs
+/sbin/mount
+/sbin/umount
 /sbin/newfs_apfs
 /usr/bin/touch
 /usr/bin/whoami

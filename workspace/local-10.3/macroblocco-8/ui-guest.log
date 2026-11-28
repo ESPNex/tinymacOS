@@ -1,0 +1,43 @@
+{
+  "iso_sha256": "29cba13f6a95be2f7862a5d6d9817b3dc1f6f79c2422cac1f1b9c07b61a1a928",
+  "work": "/var/tmp/tmc-appearance8-ui-cl9xs7pj",
+  "checks": [
+    "Spotlight actual proportional body glyphs; click at font-metric boundary inserts at iii|WWW",
+    "Long proportional Spotlight query: Home/End, viewport, arrows/backspace/insertion exercised",
+    "Vertical shortcuts, modifier equivalents, inert content clicks and exact Fine button hit area"
+  ],
+  "shortcut_positions": [
+    [
+      550,
+      314
+    ],
+    [
+      550,
+      342
+    ],
+    [
+      550,
+      370
+    ],
+    [
+      550,
+      398
+    ],
+    [
+      550,
+      426
+    ],
+    [
+      550,
+      454
+    ],
+    [
+      550,
+      482
+    ],
+    [
+      550,
+      510
+    ]
+  ]
+}

@@ -1,23 +1,38 @@
 [
   {
     "application": "Finder",
-    "file": "workspace/local-10.3/macroblocco-2/schermate/finder.png",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/finder.webp",
     "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/finder.png",
-    "sha256": "79abf96298a9d952c88a015647293cffac2c8eecc0093f699d5f3894c606e680",
-    "unaltered_real_qemu_screenshot": true
+    "sha256": "cf3d7cae5c84f43952fece029abb1baab5146736d409807bbebba8478aa7dade",
+    "unaltered_real_qemu_screenshot": false,
+    "original_png_file": "workspace/local-10.3/macroblocco-2/schermate/finder.png",
+    "original_png_sha256": "79abf96298a9d952c88a015647293cffac2c8eecc0093f699d5f3894c606e680",
+    "real_qemu_screenshot_pixels_unchanged": true,
+    "storage_encoding": "Lossless WebP; decoded RGBA verified byte-identical to original PNG before removal",
+    "compression_receipt": "workspace/local-10.3/macroblocco-8/workspace-compression.json"
   },
   {
     "application": "Terminale",
-    "file": "workspace/local-10.3/macroblocco-2/schermate/terminale.png",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/terminale.webp",
     "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/terminale.png",
-    "sha256": "71044e549171c6b06d04b528bcdfd99ce3a1feadde07d3793a6f2f17f0837ce2",
-    "unaltered_real_qemu_screenshot": true
+    "sha256": "112786078792a8d164aa4787259470b6793d91b12012d2d9e58f44fc0194a504",
+    "unaltered_real_qemu_screenshot": false,
+    "original_png_file": "workspace/local-10.3/macroblocco-2/schermate/terminale.png",
+    "original_png_sha256": "71044e549171c6b06d04b528bcdfd99ce3a1feadde07d3793a6f2f17f0837ce2",
+    "real_qemu_screenshot_pixels_unchanged": true,
+    "storage_encoding": "Lossless WebP; decoded RGBA verified byte-identical to original PNG before removal",
+    "compression_receipt": "workspace/local-10.3/macroblocco-8/workspace-compression.json"
   },
   {
     "application": "Utility Disco",
-    "file": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.png",
+    "file": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.webp",
     "source": "/var/tmp/tmc-volume-export-gtamyvbn/evidence/utility-disco.png",
-    "sha256": "2330557d793b374aedc2697d98aa5016c0a44c011153b9d8b2729a6427b84e94",
-    "unaltered_real_qemu_screenshot": true
+    "sha256": "dd45ebb939f1d6455da5661a766903da43765591cd869235e9ee65e32da7a7cf",
+    "unaltered_real_qemu_screenshot": false,
+    "original_png_file": "workspace/local-10.3/macroblocco-2/schermate/utility-disco.png",
+    "original_png_sha256": "2330557d793b374aedc2697d98aa5016c0a44c011153b9d8b2729a6427b84e94",
+    "real_qemu_screenshot_pixels_unchanged": true,
+    "storage_encoding": "Lossless WebP; decoded RGBA verified byte-identical to original PNG before removal",
+    "compression_receipt": "workspace/local-10.3/macroblocco-8/workspace-compression.json"
   }
 ]

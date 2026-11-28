@@ -2,6 +2,8 @@
 #include "display_size.h"
 #include "disk_size_input.h"
 #include "volume_export.h"
+#include "volume_mount.h"
+static char mount_target[PATHLEN];
 static VolumeExport export_request;
 static int export_cursor;
 static DiskInfo d;
@@ -239,6 +241,12 @@ static int selected_path(char out[PATHLEN],int copy)
     if(installed()&&view>=100&&view<100+nsn){
         if(copy&&eq(sn[view-100].name,"Installazione"))return 0;
         strset(out,"/.snapshots/",PATHLEN);append(out,sn[view-100].name,PATHLEN);return 1;
+    }
+    if(!copy&&view==1&&d.disk[sel].layout){
+        if(sel==d.current){strset(out,"/Volumes/Macintosh HD",PATHLEN);return 1;}
+        for(int j=0;j<d.disk[sel].map.count;j++)if(d.disk[sel].map.part[j].start==d.disk[sel].region_start[1]){
+            strset(out,"/Volumes/disk",PATHLEN);addnum(out,sel,PATHLEN);append(out,"s",PATHLEN);addnum(out,d.disk[sel].map.part[j].number,PATHLEN);return 1;
+        }return 0;
     }
     if(view<200||view>=400||view-200>=d.disk[sel].map.count)return 0;
     DiskPartition*p=&d.disk[sel].map.part[view-200];
@@ -553,6 +561,20 @@ void app_main(void)
                     }
                 }
                 continue;
+            }
+            if(e.type==EV_CONTEXT){
+                mount_target[0]=0;unsigned mask=0;
+                if(e.a<rail()&&e.b>=51){int dd,vv;char label[64];int row=side_scroll+(e.b-54)/27;
+                    if(side_row(row,&dd,&vv,label)){side_select(dd,vv);VolumeMount q={0};
+                        if(selected_path(q.target,0)&&!sc(S_DISK,15,&q,0,0)&&q.managed){strset(mount_target,q.target,PATHLEN);mask=AMASK(q.mounted?ACT_UNMOUNT:ACT_MOUNT);}
+                    }
+                }
+                sc(S_CONTEXT,mask,e.d,0,0);continue;
+            }
+            if(e.type==EV_ACTION&&(e.a==ACT_MOUNT||e.a==ACT_UNMOUNT)){
+                if(mount_target[0]){VolumeMount q={.operation=e.a==ACT_MOUNT?VOLUME_MOUNT:VOLUME_UNMOUNT};strset(q.target,mount_target,PATHLEN);
+                    sc(S_DISK,15,&q,0,0);mount_target[0]=0;strset(msg,q.message,sizeof msg);
+                }continue;
             }
             if(e.type==EV_SCROLL){side_wheel(e.a);continue;}
             if (e.type == EV_KEY) {

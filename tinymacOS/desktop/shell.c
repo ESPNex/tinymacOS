@@ -4,6 +4,7 @@
 #include "date.h"
 #include "caret.h"
 #include "desktop_layout.h"
+#include "modifier_symbols.h"
 #define NS 9
 static const int pins[NS] = {FINDER, 0, CALENDAR, GALLERY, TEXTEDIT, CALC, TERMINAL, MONITOR, SETTINGS};
 static int mag[NS], hover = -1, oldHover = -2, tipA, bounceA, bounceTime, dockAge = 28, dockLast = -1;
@@ -620,6 +621,7 @@ static Rect targetpanel(void)
         };
     }
     if (ov == OV_CONTROL)return control_bounds(W,H);
+    if(ov==OV_HELP)return (Rect){(W-560)/2,MAX(BAR+6,(H-422)/2-15),560,422};
     int w = ov == OV_LIBRARY ? 688 : ov == OV_SEARCH ? 510 : 434,
         h = ov == OV_SEARCH ? 94 + MIN(6, MAX(1, count)) * 46 : ov == OV_LIBRARY ? 469 : ov==OV_NEW_FOLDER?212:188;
     return (Rect) {
@@ -664,11 +666,13 @@ static void paintoverlay(void)
     q.y += (256 - t) * (ov == OV_CONTROL || ov == OV_MENU ? -13 : 23) / 256;
     panel = q;
     popFrames++;
-    if (ov == OV_LIBRARY)roundr(0, BAR, W, H - BAR, 0, 0x191b22, t * 65 / 256);
+    /* App Library is a floating glass panel, not a modal dimming sheet.
+     * Do not bake its own cast shadow into the refracted backdrop. */
     if(ov==OV_CONTROL){control_draw(q);return;}
-    shadow(q, 20, 54);
-    glass(q, ov == OV_MENU ? 13 : 22, ov == OV_MENU ? MAT_MENU : MAT_SHEET);
+    if(ov!=OV_LIBRARY)shadow(q, 20, 54);
+    glass(q, ov == OV_MENU ? 13 : 22, ov==OV_LIBRARY?MAT_LIBRARY:ov==OV_MENU?MAT_MENU:MAT_SHEET);
     int x = q.x, y = q.y;
+    if(ov==OV_HELP){shortcuts_help(q);return;}
     if(ov==OV_NEW_FOLDER){
         text(x+22,y+17,"Nuova cartella",F_BOLD,TX);roundr(x+20,y+55,q.w-40,36,7,INK(I_CARD),255);
         if(folderSelected)roundr(x+29,y+63,MIN(q.w-61,text_columns(folderName,strlen(folderName))*8),18,2,INK(I_SEL),180);
@@ -690,7 +694,7 @@ static void paintoverlay(void)
     if (ov == OV_SEARCH) {
         icon(x + 19, y + 26, 27, 20);
         if(!query[0])text(x+59,y+23,"Ricerca Spotlight",F_TITLE,SUB);
-        inputline((Rect){x+59,y+26,q.w-135,18},query,queryAt,caret_phase(sys.ticks,fieldTick,sys.reduce_motion),TX);
+        proportional_input((Rect){x+59,y+26,q.w-135,18},query,queryAt,caret_phase(sys.ticks,fieldTick,sys.reduce_motion),TX);
         roundr(x + q.w - 61, y + 26, 39, 24, 8, INK(I_CARD), 193);
         center(x + q.w - 41, y + 32, "ESC", F_MICRO, SUB);
         rect(x + 16, y + 72, q.w - 32, 1, LN);
@@ -721,16 +725,13 @@ static void paintoverlay(void)
         return;
     }
     text(x + 23, y + 15, "tinymacOS  /  Tramontana", F_MICRO, INK(I_ACC_TXT));
-    text(x + 22, y + 39, ov == OV_HELP ? "Scorciatoie" : ov == OV_OFF ? "Vuoi spegnere il computer?" : "Vuoi riavviare il computer?",
-         F_TITLE, TX);
-    text(x + 23, y + 91, ov == OV_HELP ? "Win+Spazio: Cerca · Ctrl+↑: Mission Control" :
-         "I documenti non salvati andranno persi.", F_BODY, SUB);
-    text(x + 23, y + 118, ov == OV_HELP ? "Win+Maiusc+A: app · Win+Ctrl+Q: blocca" :
-         "Invio per confermare, Esc per annullare.", F_SMALL, SUB);
+    text(x + 22, y + 39, ov == OV_OFF ? "Vuoi spegnere il computer?" : "Vuoi riavviare il computer?",F_TITLE, TX);
+    text(x + 23, y + 91, "I documenti non salvati andranno persi.", F_BODY, SUB);
+    text(x + 23, y + 118, "Invio per confermare, Esc per annullare.", F_SMALL, SUB);
     button_face((Rect) {
         x + q.w - 100, y + 144, 80, 29
     }, 1);
-    center(x + q.w - 60, y + 150, ov == OV_HELP ? "Fine" : "Conferma", F_SMALL, night ? 0x10274a : 0xffffff);
+    center(x + q.w - 60, y + 150, "Conferma", F_SMALL, night ? 0x10274a : 0xffffff);
 }
 void shell_draw(void)
 {
@@ -787,7 +788,7 @@ int shell_click(int x, int y)
         } else if (ov == OV_SEARCH) {
             int dy = y - q.y - 81;
             if (dy >= 0)choose(MAX(0, pick - 5) + dy / 46);
-            else{queryAt=text_hit_offset(query,queryAt,q.w-135,x-q.x-59);querySelected=0;fieldTick=sys.ticks;}
+            else{queryAt=proportional_hit(query,queryAt,q.w-135,x-q.x-59);querySelected=0;fieldTick=sys.ticks;}
         } else if (ov == OV_LIBRARY) {
             for (int j = 0; j < libcount(); j++)if (inside(x, y, libcell(q, j))) {
                     overlay_show(0);
@@ -796,6 +797,8 @@ int shell_click(int x, int y)
                 }
         } else if (ov == OV_CONTROL) {
             control_click(q,x,y);
+        } else if(ov==OV_HELP){
+            if(inside(x,y,(Rect){q.x+q.w-100,q.y+q.h-44,80,29}))doconfirm();
         } else if (y > q.y + 139 && x > q.x + q.w - 116)doconfirm();
         return 1;
     }
@@ -826,15 +829,15 @@ int shell_click(int x, int y)
 }
 static void showctx(void){if(cmn){menuId=7;keyboardPick=-1;overlay_show(OV_MENU);trace("menu contestuale");}}
 void context_ready(Event*e){if(!pending||e->a!=pending||e->d!=nonce||topwin()<0||views[topwin()].s.pid!=pending)return;
-    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW};
-    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Come icone / Come elenco"};
-    for(int j=0;j<12;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
+    pending=0;int a[]={ACT_OPEN,ACT_PACKAGE,ACT_PREVIEW,ACT_PROPS,ACT_NEW,ACT_FILE,ACT_CUT,ACT_COPY,ACT_PASTE,ACT_RENAME,ACT_DELETE,ACT_VIEW,ACT_MOUNT,ACT_UNMOUNT};
+    const char*n[]={"Apri","Mostra contenuto pacchetto","Vista rapida","Ottieni informazioni","Nuova cartella…","Nuovo file…","Taglia","Copia","Incolla","Rinomina","Elimina…","Come icone / Come elenco","Monta","Smonta"};
+    for(unsigned j=0;j<sizeof a/sizeof *a;j++)if(e->b&AMASK(a[j]))cmadd(n[j],a[j]);showctx();}
 void shell_context(void){cmx=mx;cmy=my;owner=pending=cmn=0;nonce++;lastHit=-2;dirty=1;
     if(mc){mc_exit();return;}if(ov&&want){overlay_show(0);return;}if(my<BAR){cmadd("Centro di Controllo",163);showctx();return;}
     int d=dockhit(mx,my);if(d>=0){cmadd(pins[d]?"Apri applicazione":"Mostra applicazioni",pins[d]?100+pins[d]:161);if(pins[d])cmadd("Applicazioni",161);showctx();return;}
     for(int j=nz;j--;){int i=order[j];View*v=views+i;if(v->mini||v->dead||!inside(mx,my,v->box))continue;focuswin(i);owner=v->s.pid;
         int x=mx-v->box.x-1,y=my-v->box.y-TITLE;
-        if(y>=0&&v->s.app==FINDER){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
+        if(y>=0&&(v->s.app==FINDER||v->s.app==DISKUTIL)){pending=owner;eventto(i,(Event){.type=EV_CONTEXT,.a=x,.b=y,.d=nonce});return;}
         if(y>=0&&(v->s.app==TEXTEDIT||v->s.app==TERMINAL)){if(v->s.app==TERMINAL)cmadd("Taglia",ACT_CUT);cmadd("Copia",ACT_COPY);cmadd("Incolla",ACT_PASTE);if(v->s.app==TEXTEDIT)cmadd("Salva",ACT_SAVE);}
         cmadd("Riduci a icona",141);cmadd("Zoom",140);cmadd("Chiudi finestra",142);showctx();return;}
     deskSel=deskhit(mx,my);if(deskSel!=-2){cmadd("Apri",203);if(deskSel>=0){cmadd("Ottieni informazioni",204);cmadd("Rinomina",205);cmadd("Elimina…",206);}}

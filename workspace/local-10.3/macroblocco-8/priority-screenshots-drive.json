@@ -1,0 +1,78 @@
+{
+  "folder_id": "13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
+  "folder_url": "https://drive.google.com/drive/folders/13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
+  "files": [
+    {
+      "name": "01-calcolatrice-bordo-interno",
+      "source": "/var/tmp/tmc-priority8-d4k7_fb1/evidence/01-calcolatrice-bordo-interno.png",
+      "source_sha256": "d075a1edadc77a06751f6c015b514b333e1605816fd44869c89c54cf00d943f2",
+      "file": "/var/tmp/tmc-block8-qa/drive-screens/01-calcolatrice-bordo-interno.jpg",
+      "bytes": 235125,
+      "md5": "4c14a1ff910e4805ce980f932c404a99",
+      "sha256": "09eb262e63af89be0d6b3ad9dd173bf167d32445a2bc7c0525bafe5999e4be9b",
+      "jpeg_quality": 88,
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop, annotations, overlays or synthetic cursor",
+      "iso_sha256": "d26464abef13a101fd04244fedb14c86b0cbc769c5156fa530a8fffcd65cafed",
+      "drive_id": "1gGqb3XJ3astUEDMnDg0BJPFOhetWqA3Y",
+      "drive_verified": true
+    },
+    {
+      "name": "02-libreria-app-senza-velo",
+      "source": "/var/tmp/tmc-priority8-d4k7_fb1/evidence/02-libreria-app-senza-velo.png",
+      "source_sha256": "b0c9b3b2df09170fa13a7ac363199e1d636a9d924ac2724b90c282b159bfa2b9",
+      "file": "/var/tmp/tmc-block8-qa/drive-screens/02-libreria-app-senza-velo.jpg",
+      "bytes": 228442,
+      "md5": "aa57702fb90863b5b82dd21cae743199",
+      "sha256": "826e6be050ee3bed4c6562372d5502e7636ac68138ff1426e7eb4753e21b7077",
+      "jpeg_quality": 88,
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop, annotations, overlays or synthetic cursor",
+      "iso_sha256": "d26464abef13a101fd04244fedb14c86b0cbc769c5156fa530a8fffcd65cafed",
+      "drive_id": "1q42hroh6sUDlR0wVyGqqliq6oKZXFrx3",
+      "drive_verified": true
+    },
+    {
+      "name": "03-mission-control-barra-menu",
+      "source": "/var/tmp/tmc-priority8-d4k7_fb1/evidence/03-mission-control-barra-menu.png",
+      "source_sha256": "05f54abfe125120f97a19ad40f6e87535f211fe762efd7f4db10eb395d8aec97",
+      "file": "/var/tmp/tmc-block8-qa/drive-screens/03-mission-control-barra-menu.jpg",
+      "bytes": 233901,
+      "md5": "d6b77e9a6e486936f8273c2c57ea4797",
+      "sha256": "4082171d7eac3b44b2a42a0f10f2838bbaae7058ed76d21c3986e2d0c32bb97c",
+      "jpeg_quality": 92,
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop, annotations, overlays or synthetic cursor",
+      "iso_sha256": "d26464abef13a101fd04244fedb14c86b0cbc769c5156fa530a8fffcd65cafed",
+      "drive_id": "16qAjcUPVuUULIBQR2vzHh7Us4QXUQtLl",
+      "drive_verified": true
+    },
+    {
+      "name": "04-accento-con-sfondo",
+      "source": "/var/tmp/tmc-priority8-d4k7_fb1/evidence/04-accento-con-sfondo.png",
+      "source_sha256": "81fcc43e6a6cdee477df85269ad9c727049335910f70e6bfdf41809fd2bf9127",
+      "file": "/var/tmp/tmc-block8-qa/drive-screens/04-accento-con-sfondo.jpg",
+      "bytes": 225998,
+      "md5": "780ac0c40b73cba707188d8918f9a49a",
+      "sha256": "560eb23a46353197a0ccf7e782d2faf4ed8d3f7604c15f4cf64981722b257fc7",
+      "jpeg_quality": 92,
+      "size": [
+        1280,
+        800
+      ],
+      "processing": "Full native frame, JPEG encoding only; no crop, annotations, overlays or synthetic cursor",
+      "iso_sha256": "d26464abef13a101fd04244fedb14c86b0cbc769c5156fa530a8fffcd65cafed",
+      "drive_id": "1Me5qzfyxZMBYVeu0jgX32wluVFECOH1o",
+      "drive_verified": true
+    }
+  ]
+}

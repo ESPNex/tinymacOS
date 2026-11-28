@@ -80,11 +80,11 @@ int main(void){
  ah=377;int widths[]={300,594,595,605,1000};
  for(unsigned k=0;k<COUNT(widths);k++){
   aw=widths[k];paint();int sheets=0;
-  for(int j=0;j<count;j++)if(list[j].type==C_GLASS){Draw*q=list+j;if(++sheets==2){assert(q->x==padw()+8&&q->x+q->w==aw-6&&q->y==4&&q->h==ah-12);}}
-  assert(sheets==(aw>=595?2:1)&&count<NCMDS);
+  for(int j=0;j<count;j++)if(list[j].type==C_GLASS){Draw*q=list+j;sheets++;assert(q->x==padw()+8&&q->x+q->w==aw-6&&q->y==4&&q->h==ah-12&&q->radius==12);}
+  assert(sheets==(aw>=595?1:0)&&count<NCMDS);
  }
  clear();key('7');key('+');key('5');key('=');assert(!strcmp(entry,"12")&&!strcmp(hist[0],"7 + 5 = 12"));key('=');assert(!strcmp(entry,"17"));
  clear();key('8');key('/');key('0');key('=');assert(fail&&!strcmp(entry,"Errore"));
- puts("PASS actual Calculator: history glass +8px gap and unchanged right inset across thresholds/sizes; no extra sheet in compact view; arithmetic/repeat/error/history unchanged");
+ puts("PASS actual Calculator: no duplicate full-bleed keypad lens/bevel; only rounded history glass with +8px gap and unchanged inset; arithmetic/repeat/error/history unchanged");
 }
 #endif

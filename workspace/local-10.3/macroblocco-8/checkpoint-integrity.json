@@ -1,0 +1,13 @@
+{
+  "source_hashes_match": true,
+  "compression_receipts_match": true,
+  "original_full_git_bundle_sha256": "093b045b0979965aacaafd4599cfa36c847c6c5e882982f11c9ee9f5835a9ca1",
+  "workspace_bytes_before_this_small_receipt": 127756526,
+  "workspace_limit_decimal_bytes": 128000000,
+  "macroblock_complete": false,
+  "published_new_release": false,
+  "source_hashes_manifest": "priority-mount-inputs.json",
+  "priority_screenshots_drive_verified": 4,
+  "native_mount_guest_pass": true,
+  "native_mount_normal_and_sanitized_host_pass": true
+}

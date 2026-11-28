@@ -171,9 +171,9 @@ static void paint(void)
 {
     begin();
     int W = padw(), cw = (W - 32) / 4, ch = (ah - 133) / 5;
-    // Liquid gloss: a full-bleed frosted sheet (respects Opaco via lite),
-    // a translucent display well, and card keys edged with the theme line.
-    Sheet(0, 0, W, ah, 0);
+    /* The parent already supplies the glass material. A second full-bleed
+     * zero-radius lens adds a bevel at the keypad's bottom-right edge.
+     * Keep only the display/keys and the separate rounded history sheet. */
     Box(12, 4, W - 24, 100, 14, PANEL);
     Text(28, 13, "Standard", F_SMALL, SUB);
     Text(28, 37, expression, F_BODY, SUB);

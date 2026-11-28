@@ -3,6 +3,7 @@
 volatile u64 tmc_window_draw_requests,tmc_window_draw_unchanged;
 #include "bootconfig.h"
 #include "volume_export.h"
+#include "volumes.h"
 extern int volume_export(VolumeExport*);
 #include "tlsabi.h"
 #include "wordwaitabi.h"
@@ -198,10 +199,10 @@ static Frame *syscall_inner(Frame *f)
         }
         break;
     case S_CONTEXT:
-        if (session_open() && p->app == FINDER) {
+        if (session_open() && (p->app == FINDER || p->app == DISKUTIL)) {
             for (int i = 1; i < NPROC; i++)if (proc[i].pid && proc[i].app == DESKTOP && !proc[i].dying) {
                     post(proc + i, &(Event) {
-                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & 0xfffe, .d = (int)b
+                        .type = EV_CONTEXT_READY, .a = p->pid, .b = a & ((1u<<(ACT_UNMOUNT+1))-2), .d = (int)b
                     });
                     r = 0;
                     break;
@@ -394,6 +395,9 @@ static Frame *syscall_inner(Frame *f)
         if (a == 0 && OUT(b, sizeof(DiskInfo))) {
             disk_info((void *)b);
             r = 0;
+        } else if(a==15&&(p->app==DISKUTIL||p->app==FINDER||(p->app==COMMAND&&(eq(p->program,"diskutil")||eq(p->program,"mount")||eq(p->program,"umount"))))&&IN(b,sizeof(VolumeMount))&&OUT(b,sizeof(VolumeMount))){
+            VolumeMount request;memcpy(&request,(void*)b,sizeof request);
+            r=fs_volume_manage(&request);memcpy((void*)b,&request,sizeof request);
         } else if((a==10||a==11)&&(p->app==DISKUTIL||(p->app==COMMAND&&eq(p->program,"diskutil")))&&IN(b,sizeof(DiskEdit))&&OUT(b,sizeof(DiskEdit))){
             DiskEdit request;memcpy(&request,(void*)b,sizeof request);
             request.name[sizeof request.name-1]=0;

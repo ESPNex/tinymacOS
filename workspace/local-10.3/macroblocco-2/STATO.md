@@ -2,7 +2,7 @@
 
 Riferimento esclusivo: punto 2 di `tinymacOS/docs/piano.pdf`, invariato. Questo documento registra risultati, non sostituisce il piano. Il macroblocco 1 resta chiuso su indicazione dell’utente con collaudi fisici non verificati. Nessun lavoro avviato sul macroblocco 3 e nessun incremento di versione/release.
 
-**COMPLETO per implementazione e collaudi locali host + sistema reale eseguito in QEMU. Hardware fisico e Windows reale NON collaudati.** Le ricevute finali sono in `completamento/`; hash della build in `artifacts-final.json` e 1167 input congelati verificati invariati in `completamento/source-inputs-final.json`.
+**COMPLETO per implementazione e collaudi locali host + sistema reale eseguito in QEMU. Hardware fisico e Windows reale NON collaudati.** Le ricevute finali sono in `completamento/`; hash della build in `artifacts-final.json` e 1167 input congelati verificati invariati in `completamento/source-inputs-final.json.gz`.
 
 ## Risultato funzionale
 
@@ -26,7 +26,7 @@ Riferimento esclusivo: punto 2 di `tinymacOS/docs/piano.pdf`, invariato. Questo 
 
 ## Tre screenshot richiesti
 
-Soltanto tre schermate finali, reali e non ritoccate: `schermate/finder.png`, `schermate/terminale.png`, `schermate/utility-disco.png`. Provenienza e SHA256 in `screenshots-final.json`. Nessun mockup, fotomontaggio o schermata generata. Non sono una certificazione di hardware fisico.
+Soltanto tre schermate finali, reali e non ritoccate: `schermate/finder.webp`, `schermate/terminale.webp`, `schermate/utility-disco.webp`. Provenienza e SHA256 in `screenshots-final.json`. Nessun mockup, fotomontaggio o schermata generata. Non sono una certificazione di hardware fisico.
 
 ## Conservazione e limiti
 

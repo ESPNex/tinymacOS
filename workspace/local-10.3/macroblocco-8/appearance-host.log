@@ -1,0 +1,4 @@
+PASS wallpaper: optimized scaler pixel-identical at 640/1280/1920 widths in light/dark; palette-only update leaves wallpaper unchanged
+PASS Spotlight: shipped proportional font; UTF-8 caret/hit/viewport roundtrips; clipping and clip restoration
+PASS wallpaper: optimized scaler pixel-identical at 640/1280/1920 widths in light/dark; palette-only update leaves wallpaper unchanged
+PASS Spotlight: shipped proportional font; UTF-8 caret/hit/viewport roundtrips; clipping and clip restoration

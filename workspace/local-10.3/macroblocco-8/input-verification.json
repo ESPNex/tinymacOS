@@ -1,0 +1,6 @@
+{
+  "baseline": "input-baseline.json",
+  "files_checked": 473,
+  "all_unchanged": true,
+  "scope": "At UI checkpoint only. Future storage transport extensions must be audited separately; this is not a USB-storage implementation."
+}

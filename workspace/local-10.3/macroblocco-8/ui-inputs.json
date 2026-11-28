@@ -1,0 +1,15 @@
+{
+  "desktop/main.c": "4b4cdce80d995e5f4d2f91300f7491f0070446963f94281979565b799b2ac2da",
+  "desktop/gfx.c": "62681e03996dfd8be12bacd16ce56b1bb856a0b4e1ebdf155dd08d4c2c1a1acc",
+  "desktop/gfx.h": "f553f67a957feab293f27e56d909b35d347e1d04647c87577a152e8ba5682404",
+  "desktop/shell.c": "58b940485b374f0d71b1ad5110c69141a49a8e367a978ad7e94de95fc3748508",
+  "desktop/modifier_symbols.h": "4a8603d68ab52f4c976bbb02c2b62c830af0d841ec09c99cc273e5e27c6249b7",
+  "desktop/proportional_input.h": "d39d9c96a3082b8295b1c15a232b5a12980b42d4f31d209f6b6d4f54ddd70223",
+  "tests/appearance8_host.c": "843ea6eb7c3a4e77f2ceaa7504d1f8e6beb4756c9568a571b1f1f017a4fc560b",
+  "tests/appearance8_guest.py": "58dbebff572daa643e76fbbab9dec7e02fc189dac0c0300005f5ed386d126cf8",
+  "tests/appearance8_benchmark.py": "a540b0a7d5e95e2394ea621afccb825a8b4e4a0304ca16407a6d363b43d560f9",
+  "tests/baseimage8_verify.py": "530c4350ed532b0a8e5411c1770e7faf1245fa1c144a58eb8887eabffc33f234",
+  "tests/test-appearance8.sh": "e7e9e66a2abe43324c877a29ad2b234435eff799151bb62a8fa8395445632e38",
+  "docs/audit-10.3/ui-strings.csv": "97ac02724c64145681bff647ac91097be4be036983854b8841144ba6e09d1442",
+  "docs/audit-10.3/ui-strings-summary.json": "1d3d8830e74f1013773583d6fbb6aafb88001c9c944ceaaeb51d8a1e42f4dda4"
+}

@@ -59,7 +59,7 @@ Verificati **1079 hash di input di produzione**. Solo quattro percorsi differisc
 ISO collaudata: `/var/tmp/tmc-block5/tmc-block5-retail.iso`
 SHA-256: **`dd4dc2883467631a4c1864507582bb44efb86e0c567b0b5a0361678699deb177`**.
 
-Hash e dimensioni degli artefatti in `artifacts-final.json`; input in `production-inputs-final.json`. ISO/dischi sono esterni al workspace; sorgenti, ricevute, log compressi e immagini essenziali sono persistenti.
+Hash e dimensioni degli artefatti in `artifacts-final.json`; input in `production-inputs-final.json.gz`. ISO/dischi sono esterni al workspace; sorgenti, ricevute, log compressi e immagini essenziali sono persistenti.
 
 ## Attendibilità e limiti
 

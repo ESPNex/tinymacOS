@@ -1,0 +1,30 @@
+[
+  {
+    "file": "workspace/local-10.3/macroblocco-8/evidence/shortcuts-vertical-symbols.png",
+    "sha256": "5b66600b2f1be905f3c2d1e8659f46812d4c4ab945697ca6616c0fde2e956d25",
+    "source_full_frame": "/var/tmp/tmc-appearance8-ui-cl9xs7pj/evidence/shortcuts-vertical-symbols.png",
+    "source_sha256": "7691e2d5e3d985696e0b80e8c2b4020af17e697841d3c335b022d434d083cde8",
+    "crop_box": [
+      355,
+      165,
+      925,
+      605
+    ],
+    "processing": "Only lossless crop; no overlays or synthetic cursor",
+    "iso_sha256": "29cba13f6a95be2f7862a5d6d9817b3dc1f6f79c2422cac1f1b9c07b61a1a928"
+  },
+  {
+    "file": "workspace/local-10.3/macroblocco-8/evidence/spotlight-proportional-click.png",
+    "sha256": "96784d7fd2edfa9ad2ef6f51eae172a34fc2edee6f84a7c037504057a620b0e9",
+    "source_full_frame": "/var/tmp/tmc-appearance8-ui-cl9xs7pj/evidence/spotlight-proportional-click.png",
+    "source_sha256": "d04826232a5cdb0660fff62b7683b384ec137428a0d2886ac740e8abcbde9eac",
+    "crop_box": [
+      378,
+      150,
+      903,
+      310
+    ],
+    "processing": "Only lossless crop; no overlays or synthetic cursor",
+    "iso_sha256": "29cba13f6a95be2f7862a5d6d9817b3dc1f6f79c2422cac1f1b9c07b61a1a928"
+  }
+]

@@ -2,6 +2,7 @@
 #include "mono_wire.h"
 #include "caret.h"
 #include "text_input.h"
+#include "proportional_input.h"
 extern const u8 icons[];static u8 fontdata[3*1024*1024],compressed[4*1024*1024];
 static int asset(int id,u8*b,u32 cap){long n=sc(S_ART,id,0,0,0);if(n<=0||n>cap)return -1;for(int i=0;i<n;i+=65536){int z=MIN(n-i,65536);if(sc(S_ART,id,i,b+i,z)!=z)return -1;}return n;}
 int W, H, night, recovery_mode;
@@ -114,16 +115,22 @@ static int unpack(int id)
     loaded[id] = 1;
     return 1;
 }
-void background(int alt, int themei, int darki)
+void appearance_palette(int themei,int darki)
 {
     palette = themei % NTHEME;
     night = darki & 1;
+}
+void background(int alt, int themei, int darki)
+{
+    appearance_palette(themei,darki);
     alt = clampi(alt, 0, NWALL-1);
-    unpack(alt);
+    if(!unpack(alt))return;
+    int source_x[1920];
+    for(int x=0;x<W;x++)source_x[x]=x*1280/W;
     for (int y = 0; y < H; y++) {
         int sy = y * 800 / H;
         for (int x = 0; x < W; x++) {
-            u32 c = films[alt][sy * 1280 + x * 1280 / W];
+            u32 c = films[alt][sy * 1280 + source_x[x]];
             back[y * W + x] = night ? blend(c, 0x0b1225, 64) : c;
         }
     }
@@ -342,6 +349,26 @@ static void mono_run(int x,int y,const Draw *q)
             }
         x+=face==F_MONO?8:g->adv;
     }
+}
+static int field_advance(const char *s,int a,int b)
+{
+    (void)b;const char *p=s+a;return font[F_BODY].g[glyph(&p)].adv;
+}
+int proportional_hit(const char *s,int at,int width,int pixel)
+{
+    return field_hit(s,at,width,pixel,field_advance);
+}
+void proportional_input(Rect q,const char *s,int at,int active,u32 ink)
+{
+    if(q.w<=0||q.h<=0)return;
+    at=field_boundary(s,at);
+    int start=field_start(s,at,q.w,field_advance),caret=0;
+    for(int i=start;i<at;i=text_next(s,i))caret+=field_advance(s,i,text_next(s,i));
+    int l=x1,t=y1,r=x2,b=y2;
+    x1=MAX(x1,q.x);y1=MAX(y1,q.y);x2=MIN(x2,q.x+q.w);y2=MIN(y2,q.y+q.h);
+    text(q.x,q.y,s+start,F_BODY,ink);
+    if(active)rect(q.x+caret,q.y,1,MIN(q.h,17),ink);
+    x1=l;y1=t;x2=r;y2=b;
 }
 void inputline(Rect q,const char *s,int at,int active,u32 ink)
 {

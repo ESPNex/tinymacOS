@@ -1,0 +1,6 @@
+PASS actual TextEdit: whole-word/scalar wrap, every serialized glyph retained, correct End/click affinity, UTF-8 edits, 16 resize/scroll matrices, wheel/track/thumb, copy preserves viewport, full saved bytes, embedded-NUL refusal
+PASS actual Monitor: real delta CPU normalized 1/4 cores, exact allocator/resident rendering, baseline/reset/pause/process failure marked unavailable (not invented zero), memory invariants, recovery after errors
+PASS actual Calculator: no duplicate full-bleed keypad lens/bevel; only rounded history glass with +8px gap and unchanged inset; arithmetic/repeat/error/history unchanged
+PASS actual TextEdit: whole-word/scalar wrap, every serialized glyph retained, correct End/click affinity, UTF-8 edits, 16 resize/scroll matrices, wheel/track/thumb, copy preserves viewport, full saved bytes, embedded-NUL refusal
+PASS actual Monitor: real delta CPU normalized 1/4 cores, exact allocator/resident rendering, baseline/reset/pause/process failure marked unavailable (not invented zero), memory invariants, recovery after errors
+PASS actual Calculator: no duplicate full-bleed keypad lens/bevel; only rounded history glass with +8px gap and unchanged inset; arithmetic/repeat/error/history unchanged

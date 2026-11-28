@@ -14,12 +14,13 @@ static inline u32 blend(u32 a, u32 b, int t) {
     return (((((a & 0xff00ff) * z + (b & 0xff00ff) * t) >> 8) & 0xff00ff) | ((((a & 0xff00) * z +
             (b & 0xff00) * t) >> 8) & 0xff00));
 }
-enum {MAT_WINDOW, MAT_BAR, MAT_DOCK, MAT_MENU, MAT_WIDGET, MAT_SHEET, MAT_DIALOG = MAT_DOCK};
+enum {MAT_WINDOW, MAT_BAR, MAT_DOCK, MAT_MENU, MAT_WIDGET, MAT_SHEET, MAT_DIALOG = MAT_DOCK, MAT_LIBRARY = 6};
 extern int W, H, PW, PH, night, lite, lightx, lighty, recovery_mode;
 extern u32 canvas[], back[];
 extern int x1, y1, x2, y2;
 void initgfx(int, int);
 void background(int, int, int);
+void appearance_palette(int,int);
 void restorebg(void);
 void clip(int, int, int, int);
 void resetclip(void);
@@ -46,4 +47,6 @@ void button_face(Rect, int);
 
 void cursor_pixels(const u32*,const u8*,int,int);
 void inputline(Rect,const char *,int,int,u32);
+void proportional_input(Rect,const char *,int,int,u32);
+int proportional_hit(const char *,int,int,int);
 void alpha_symbol(const u8 *,int,Rect,u32);

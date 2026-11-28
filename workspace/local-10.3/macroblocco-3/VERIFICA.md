@@ -58,4 +58,4 @@ ISO candidata: `97ba0570fe036e0615c12941a2f5af3a16ab19940947f13d6893c6d1024394d6
 
 Le ricevute e i log compressi qui conservati identificano gli artefatti effettivamente provati. L'ISO resta nella directory esterna di build per non superare il budget del workspace. Il bundle Git persistente conserva sorgenti, prove e immagini essenziali, non l'ISO. Nessuna certificazione hardware/Windows, nessuna release o avanzamento al blocco 4.
 
-![Mission Control: sistema candidato reale](evidence/mission-control.png)
+![Mission Control: sistema candidato reale](evidence/mission-control.webp)

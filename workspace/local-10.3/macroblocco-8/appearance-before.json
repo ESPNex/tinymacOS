@@ -1,0 +1,56 @@
+{
+  "work": "/var/tmp/tmc-appearance8-baseline-2b38nu1g",
+  "iso_sha256": "ade556e160ddd2b0e7bd387e2ef9e4ff5a3f3705f6fa65e2dce4e217cbd0e988",
+  "source_commit": "3dab9e79cdfbc1b0e1b9b623de197f9ab415e1ae",
+  "measurements": [
+    {
+      "kind": "dark",
+      "target": "Scuro",
+      "first_observed_change_seconds": 0.3779500980017474,
+      "last_observed_change_seconds": 0.6383612560020993,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    },
+    {
+      "kind": "dark",
+      "target": "Chiaro",
+      "first_observed_change_seconds": 0.37260369699652074,
+      "last_observed_change_seconds": 0.6276224199973512,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    },
+    {
+      "kind": "dark",
+      "target": "Scuro",
+      "first_observed_change_seconds": 0.45739316399703966,
+      "last_observed_change_seconds": 0.7776457270010724,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    },
+    {
+      "kind": "wall",
+      "target": 1,
+      "first_observed_change_seconds": 0.3842243850012892,
+      "last_observed_change_seconds": 0.6438733309987583,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    },
+    {
+      "kind": "wall",
+      "target": 2,
+      "first_observed_change_seconds": 0.3861658659952809,
+      "last_observed_change_seconds": 0.7065506299986737,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    },
+    {
+      "kind": "wall",
+      "target": 0,
+      "first_observed_change_seconds": 0.3101057640014915,
+      "last_observed_change_seconds": 0.6552179349964717,
+      "distinct_observed_frames": 2,
+      "observation": "real unobstructed wallpaper ROI; stable for five captures after final change; host input-to-frame, not GPU FPS"
+    }
+  ],
+  "physical_hardware": false
+}

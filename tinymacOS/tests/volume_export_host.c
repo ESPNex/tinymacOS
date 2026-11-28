@@ -14,11 +14,11 @@
 u32 persistent,fsrev,usednodes,theme,wall,dock,reduce_motion,opaque,dark;
 struct Boot boot;u64 ticks=12345;
 static int media[6];static u64 sizes[6];static int foreign_writes,source_data_error,readback_corruption;
-static int allocation_failure=-1;
+static int allocation_failure=-1,flush_failure=-1;
 void*kmalloc(size_t n){if(allocation_failure==0)return 0;if(allocation_failure>0)allocation_failure--;return malloc(n);}void kfree(void*p){free(p);}int kmalloc_owns(const void*p){(void)p;return 1;}
 u64 page_get(void){return (u64)calloc(1,4096);}void page_put(u64 p){free((void*)p);}
 int volume_current(void){return 0;}int volume_extent(u64*b,u64*s){*b=0;*s=sizes[0]/512;return 0;}
-int sata_count(void){return 6;}u64 sata_size(int d){return sizes[d]/512+(d&&d<5?2048:0);}u32 sata_logical_bytes(int d){(void)d;return 512;}int sata_flush(int d){return fsync(media[d]);}
+int sata_count(void){return 6;}u64 sata_size(int d){return sizes[d]/512+(d&&d<5?2048:0);}u32 sata_logical_bytes(int d){(void)d;return 512;}int sata_flush(int d){return d==flush_failure?-1:fsync(media[d]);}
 static void put32(u8*p,u32 n){memcpy(p,&n,4);}
 int sata_io(int d,u64 l,u32 n,void*p,int write){
  assert(d>=0&&d<6&&n&&n<=256&&l+n<=sata_size(d));
@@ -58,6 +58,26 @@ int main(int argc,char**argv){
  assert(!vol_create("/Volumes/disk4s1/nuova",1));assert(!vol_create("/Volumes/disk4s1/nuova/a.txt",0));int nativefd=vol_open(&p,"/Volumes/disk4s1/nuova/a.txt",1);assert(nativefd>=0);assert(vol_write(&p,nativefd,"TMCFS2_RW",9)==9);fs_close(&p,nativefd);assert(!vol_move("/Volumes/disk4s1/nuova/a.txt","/Volumes/disk4s1/nuova/rinominato.txt"));Dirent ne;assert(!vol_stat("/Volumes/disk4s1/nuova/rinominato.txt",&ne)&&!ne.ro&&ne.size==9);assert(!vol_remove("/Volumes/disk4s1/nuova",REMOVE_RECURSIVE));
  puts("PASS mounted TMCFS2 data volume: same-system core, writable FD, create/rename/remove and directory recursion");
  puts("PASS real namespace adapters: FAT32/NTFS/exFAT create/write/seek/read/rename/remove through ForeignIo and FD, no readonly shim");
+ for(int disk=1;disk<=4;disk++){
+  Process clients[2]={0};VolumeMount m={.operation=VOLUME_QUERY};sprintf(m.target,"disk%ds1",disk);
+  assert(!vol_manage(&m,clients,2)&&m.managed&&m.mounted);
+  char source[96];sprintf(source,"/Volumes/disk%ds1/%s",disk,disk==4?"external.txt":"proof.bin");
+  int fd=vol_open(clients,source,0);assert(fd>=0);
+  int other=vol_open(clients+1,disk==1?"/Volumes/disk2s1/proof.bin":"/Volumes/disk1s1/proof.bin",0);assert(other>=0);
+  m.operation=VOLUME_UNMOUNT;assert(vol_manage(&m,clients,2)==VOLUME_BUSY&&m.mounted);fs_close(clients,fd);
+  flush_failure=disk;assert(vol_manage(&m,clients,2)==VOLUME_IO&&m.mounted);flush_failure=-1;
+  assert(!vol_manage(&m,clients,2)&&!m.mounted);Dirent e;assert(vol_stat(source,&e)<0&&vol_open(clients,source,0)<0);
+  assert(!vol_manage(&m,clients,2)&&!m.mounted); /* idempotent */
+  assert(vol_remove(source,REMOVE_FILE_ONLY)<0); /* no generation bump on offline refusal */
+  u8 b[8];assert(vol_read(clients+1,other,b,7)==7); /* other volume FD still valid */
+  m.operation=VOLUME_MOUNT;
+  if(disk==4){allocation_failure=0;assert(vol_manage(&m,clients,2)==VOLUME_IO&&!m.mounted);allocation_failure=-1;assert(vol_stat(source,&e)<0);}
+  assert(!vol_manage(&m,clients,2)&&m.mounted);assert(!vol_stat(source,&e)&&e.size>0);fs_close(clients+1,other);
+ }
+ VolumeMount remembered={.operation=VOLUME_UNMOUNT};strset(remembered.target,"disk1s1",PATHLEN);assert(!vol_manage(&remembered,0,0));vol_refresh();vol_refresh();remembered.operation=VOLUME_QUERY;assert(!vol_manage(&remembered,0,0)&&!remembered.mounted);remembered.operation=VOLUME_MOUNT;assert(!vol_manage(&remembered,0,0)&&remembered.mounted);
+ VolumeMount protected={.operation=VOLUME_UNMOUNT};strset(protected.target,"/",PATHLEN);assert(vol_manage(&protected,0,0)==VOLUME_PROTECTED&&protected.mounted);
+ VolumeMount invalid={.operation=VOLUME_MOUNT};memset(invalid.target,'x',sizeof invalid.target);assert(vol_manage(&invalid,0,0)==VOLUME_BAD_REQUEST);
+ puts("PASS real FAT32/NTFS/exFAT/TMCFS2 mount state: open-FD busy refusal, flush-failure rollback, no IO offline, validated remount, allocation-failure rollback, unrelated FD preserved, startup protected");
  VolumeExport q={0};strset(q.source,"/.snapshots/utente-copy",PATHLEN);strset(q.destination,"disk5",PATHLEN);assert(run(&q)==1&&q.bytes>33554432&&!foreign_writes);q.part.confirm=DISK_EDIT_CONFIRM;
  table[440]=1;assert(pwrite(media[5],table,512,0)==512);assert(run(&q)<0&&!foreign_writes);table[440]=0;assert(pwrite(media[5],table,512,0)==512);
  q.part.confirm=0;assert(run(&q)==1&&!foreign_writes);q.part.confirm=DISK_EDIT_CONFIRM;assert(!run(&q)&&q.part.number==2&&foreign_writes);assert(!strcmp(q.destination,"/Volumes/disk5s2"));

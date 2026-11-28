@@ -10,8 +10,10 @@
 typedef struct {u64 id,size,valid,start;int dir,flags;char name[48];} FvNode;
 #include "volumes.h"
 #define VOLUMES (SETUP_MAX_DISKS*DISK_PARTS)
-typedef struct {int disk,number,type;u64 base,sectors;Tmc2*native;char name[20];} Volume;
+typedef struct {int disk,number,type,offline;u64 base,sectors;Tmc2*native;char name[20];} Volume;
 static Volume volumes[VOLUMES];static int nvolumes,discovered,inventory_error;static u32 generation=1;
+static struct {int disk,type;u64 base,sectors;} offline_volumes[VOLUMES];
+static int noffline;
 extern int volume_current(void),volume_extent(u64*,u64*);
 static DiskMap inventory;
 int vol_normalize(const char*p,char out[PATHLEN]){
@@ -25,14 +27,14 @@ static int namespace(const char*p){return strlen(p)>=8&&!memcmp(p,"/Volumes",8)&
 int vol_reserved(const char*p){char q[PATHLEN];return !vol_normalize(p,q)&&namespace(q);}
 static const char*startup(void){return boot.install_len?"tinymacOS Live":"Macintosh HD";}
 static int bytes(void*x,u64 off,void*p,size_t len){
- Volume*v=x;u64 limit=v->sectors*512;if(off>limit||len>limit-off)return -1;
+ Volume*v=x;u64 limit=v->sectors*512;if(v->offline||off>limit||len>limit-off)return -1;
  while(len){u8 sector[512];u64 lba=off/512;unsigned part=off%512,n=MIN(len,512-part);
   if(!part&&len>=512){unsigned blocks=MIN(len/512,128);n=blocks*512;if(sata_io(v->disk,v->base+lba,blocks,p,0))return -1;}
   else{if(sata_io(v->disk,v->base+lba,1,sector,0))return -1;memcpy(p,sector+part,n);}
   p=(u8*)p+n;len-=n;off+=n;
  }return 0;
 }
-static int sectors(void*x,u64 at,u32 n,void*p,int write){Volume*v=x;if(!n||at>v->sectors||n>v->sectors-at)return -1;return sata_io(v->disk,v->base+at,n,p,write);}
+static int sectors(void*x,u64 at,u32 n,void*p,int write){Volume*v=x;if(v->offline||!n||at>v->sectors||n>v->sectors-at)return -1;return sata_io(v->disk,v->base+at,n,p,write);}
 static int read_sectors(void*x,u64 at,u32 n,void*p){return sectors(x,at,n,p,0);}
 static int write_sectors(void*x,u64 at,u32 n,const void*p){return sectors(x,at,n,(void*)p,1);}
 static int flush_volume(void*x){return sata_flush(((Volume*)x)->disk);}
@@ -47,6 +49,11 @@ static i64 data_foreign(Volume*v,const char*p,u64 off,void*b,size_t n,int w){For
 static int foreign_entry(const ForeignEntry*e,Dirent*d){if(strlen(e->name)>=sizeof d->name)return -1;*d=(Dirent){.dir=e->dir,.ro=e->ro,.size=e->size};strset(d->name,e->name,sizeof d->name);return 0;}
 void vol_refresh(void){
  fsrev++;
+ /* Preserve explicit unmount across inventory rebuilds, including repeated
+  * refresh calls before the next discovery. Never retain backend pointers. */
+ if(discovered){noffline=0;for(int i=0;i<nvolumes;i++)if(volumes[i].offline){Volume*v=volumes+i;
+  offline_volumes[noffline].disk=v->disk;offline_volumes[noffline].type=v->type;offline_volumes[noffline].base=v->base;offline_volumes[noffline++].sectors=v->sectors;
+ }}
  for(int i=0;i<nvolumes;i++){Volume*v=volumes+i;if(v->native){tmc2_close(v->native);kfree(v->native);}}
  memset(volumes,0,sizeof volumes);nvolumes=0;inventory_error=0;discovered=0;if(++generation==0)generation=1;
 }
@@ -61,11 +68,13 @@ static void discover(void){
    /* Never expose ESP/Recovery/system payloads as user-native volumes. */
    if(!memcmp(p->type,esp_type,16)||!memcmp(p->type,src_type,16))continue;
    if(nvolumes>=VOLUMES){inventory_error=1;return;}Volume*v=volumes+nvolumes++;v->disk=disk;v->number=p->number;v->base=p->start;v->sectors=p->sectors;v->type=p->fs;
+   for(int k=0;k<noffline;k++)if(offline_volumes[k].disk==disk&&offline_volumes[k].type==v->type&&offline_volumes[k].base==v->base&&offline_volumes[k].sectors==v->sectors){v->offline=1;break;}
    char num[24];strset(v->name,"disk",sizeof v->name);number(num,disk);append(v->name,num,sizeof v->name);append(v->name,"s",sizeof v->name);number(num,p->number);append(v->name,num,sizeof v->name);
   }
  }
 }
 static int mount(Volume*v){
+ if(v->offline)return -1;
  if(v->native)return 0;u8 magic[8];if(bytes(v,0,magic,8))return -1;
  if(!memcmp(magic,"TMCBFS2\0",8)){
   Tmc2*t=kmalloc(sizeof *t);if(!t)return -1;
@@ -78,7 +87,7 @@ static int path(const char*input,char q[PATHLEN],const char**inner){
  if(vol_normalize(input,q)||!namespace(q))return -2;if(!q[8])return 0;
  char*name=q+9,*end=name;while(*end&&*end!='/')end++;char saved=*end;*end=0;
  if(eq(name,startup())){*end=saved;return -2;}discover();int found=-1;
- for(int i=0;i<nvolumes;i++)if(eq(name,volumes[i].name)){found=i+1;break;}*end=saved;*inner=saved?end:"/";return found;
+ for(int i=0;i<nvolumes;i++)if(eq(name,volumes[i].name)){found=volumes[i].offline?-1:i+1;break;}*end=saved;*inner=saved?end:"/";return found;
 }
 static int resolve(Volume*v,const char*inner,FvNode*out){
  if(mount(v))return -1;FvNode n;
@@ -120,18 +129,18 @@ int vol_open(Process*p,const char*name,int write){
 }
 int vol_read(Process*p,int fd,void*out,int count){
  if(fd<0||fd>=12||count<0||(!out&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
- if((f->backend!=4&&f->backend!=5)||!f->id||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;Volume*v=volumes+at;i64 r;
+ if((f->backend!=4&&f->backend!=5)||!f->id||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes||volumes[at].offline)return -1;Volume*v=volumes+at;i64 r;
  if(f->backend==5)r=tmc2_read(v->native,f->inode,f->at,out,count);
 
  else r=data_foreign(v,f->foreign_path,f->at,out,count,0);
  if(r>=0)f->at+=r;return r;
 }
-int vol_seek(Process*p,int fd,u64 off){if(fd<0||fd>=12||off>T2_MAX_BYTES)return -1;FD*f=p->fd+fd;if(!f->id||(f->backend!=4&&f->backend!=5)||(f->snapshot>>32)!=generation)return -1;f->at=off;return 0;}
+int vol_seek(Process*p,int fd,u64 off){if(fd<0||fd>=12||off>T2_MAX_BYTES)return -1;FD*f=p->fd+fd;if(!f->id||(f->backend!=4&&f->backend!=5)||(f->snapshot>>32)!=generation||(u32)f->snapshot>=(unsigned)nvolumes||volumes[(u32)f->snapshot].offline)return -1;f->at=off;return 0;}
 int vol_exportable(const char*p){char q[PATHLEN];const char*inner=0;int at=path(p,q,&inner);if(at<=0||!eq(inner,"/"))return 0;Volume*v=volumes+at-1;return filesystem_native(v->type)&&!mount(v);}
 
 int vol_write(Process*p,int fd,const void*data,int count){
  if(fd<0||fd>=12||count<0||(!data&&count))return -1;FD*f=p->fd+fd;unsigned at=(u32)f->snapshot;
- if((f->backend!=4&&f->backend!=5)||!f->id||!f->write||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes)return -1;
+ if((f->backend!=4&&f->backend!=5)||!f->id||!f->write||(f->snapshot>>32)!=generation||at>=(unsigned)nvolumes||volumes[at].offline)return -1;
  Volume*v=volumes+at;i64 r;
  if(f->backend==5){T2Entry e;if(!v->native||tmc2_stat(v->native,f->inode,&e)||e.reserved&1)return -1;r=tmc2_write(v->native,f->inode,f->at,data,count);if(r>=0&&tmc2_truncate(v->native,f->inode,f->at+r))r=-1;}else r=data_foreign(v,f->foreign_path,f->at,(void*)data,count,1);if(r>=0){f->at+=r;fsrev++;}return r;
 }
@@ -159,3 +168,46 @@ int vol_remove(const char*p,unsigned flags){char q[PATHLEN];const char*inner=0;i
 int vol_move(const char*a,const char*b){char qa[PATHLEN],qb[PATHLEN];const char*pa=0,*pb=0;int ia=path(a,qa,&pa),ib=path(b,qb,&pb);if(ia==-2&&ib==-2)return -2;if(ia<=0||ib<=0)return (ia==-2||ib==-2)?-3:-1;if(ia!=ib)return -3;Volume*v=volumes+ia-1;if(eq(pa,"/")||eq(pb,"/"))return -1;
  if(filesystem_native(v->type)){FvNode n,parent;char name[48];if(resolve(v,pa,&n)||!v->native||(n.flags&1)||native_parent(v,pb,&parent,name))return -1;fsrev++;if(++generation==0)generation=1;return tmc2_move(v->native,n.id,parent.id,name);}
  fsrev++;if(++generation==0)generation=1;ForeignIo io=foreign_io(v);return (v->type==FS_NTFS?nt_volume_move(&io,pa,pb):fat_volume_move(&io,pa,pb))?-1:0;}
+
+/* fs_gate held for the complete state/FD/flush transaction. Never refresh the
+ * whole namespace here: that would invalidate unrelated volumes' open FDs. */
+static int mount_result(VolumeMount*q,int status,const char*message){q->status=status;strset(q->message,message,sizeof q->message);return status;}
+int vol_manage(VolumeMount*q,const Process*processes,int count){
+ if(!q)return VOLUME_BAD_REQUEST;
+ q->mounted=q->managed=0;q->message[0]=0;
+ int length=0;while(length<PATHLEN&&q->target[length])length++;
+ if(count<0||count>NPROC||(!processes&&count)||q->operation<VOLUME_QUERY||q->operation>VOLUME_UNMOUNT||length==PATHLEN)return mount_result(q,VOLUME_BAD_REQUEST,"Richiesta non valida.");
+ char normalized[PATHLEN],name[48];
+ if(q->target[0]=='/'){
+  if(vol_normalize(q->target,normalized))return mount_result(q,VOLUME_BAD_REQUEST,"Percorso non valido.");
+  if(eq(normalized,"/")){q->mounted=1;return mount_result(q,q->operation==VOLUME_QUERY?0:VOLUME_PROTECTED,"Volume di avvio: sempre montato.");}
+  if(!namespace(normalized)||normalized[8]!='/'||strchr(normalized+9,'/'))return mount_result(q,VOLUME_BAD_REQUEST,"Seleziona la radice del volume.");
+  strset(name,normalized+9,sizeof name);
+ }else{
+  if(strlen(q->target)>=sizeof name||strchr(q->target,'/'))return mount_result(q,VOLUME_BAD_REQUEST,"Identificatore non valido.");
+  strset(name,q->target,sizeof name);
+ }
+ if(eq(name,startup())){q->mounted=1;return mount_result(q,q->operation==VOLUME_QUERY?0:VOLUME_PROTECTED,"Volume di avvio: sempre montato.");}
+ discover();int index=-1;
+ for(int i=0;i<nvolumes;i++)if(eq(name,volumes[i].name)){index=i;break;}
+ if(index<0)return mount_result(q,VOLUME_NOT_FOUND,"Volume dati non disponibile o protetto.");
+ Volume*v=volumes+index;q->managed=1;q->mounted=!v->offline;
+ if(q->operation==VOLUME_QUERY)return mount_result(q,0,q->mounted?"Montato.":"Non montato.");
+ if(q->operation==VOLUME_UNMOUNT){
+  if(v->offline)return mount_result(q,0,"Volume già smontato.");
+  for(int p=0;p<count;p++)for(int f=0;f<12;f++){
+   const FD*fd=&processes[p].fd[f];
+   if(fd->id&&(fd->backend==4||fd->backend==5)&&(fd->snapshot>>32)==generation&&(u32)fd->snapshot==(unsigned)index)return mount_result(q,VOLUME_BUSY,"Volume in uso: chiudi i documenti aperti.");
+  }
+  if(flush_volume(v))return mount_result(q,VOLUME_IO,"Scrittura non completata: volume ancora montato.");
+  if(v->native){tmc2_close(v->native);kfree(v->native);v->native=0;}
+  v->offline=1;q->mounted=0;fsrev++;
+  return mount_result(q,0,"Volume smontato.");
+ }
+ if(!v->offline)return mount_result(q,0,"Volume già montato.");
+ v->offline=0;int rc;
+ if(filesystem_native(v->type))rc=mount(v);
+ else{ForeignEntry entry;rc=stat_foreign(v,"/",&entry);if(!rc&&!entry.dir)rc=-1;}
+ if(rc){v->offline=1;return mount_result(q,VOLUME_IO,"Impossibile montare il volume.");}
+ q->mounted=1;fsrev++;return mount_result(q,0,"Volume montato.");
+}

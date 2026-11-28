@@ -3,6 +3,8 @@
 #include "filebrowser.h"
 #include "click_pair.h"
 #include "fileops.h"
+#include "volume_mount.h"
+static char mount_target[PATHLEN];
 static ClickPair item_click;
 static char cwd[PATHLEN] = HOME, field[PATHLEN], note[96], cwdarg[PATHLEN];
 static Dirent files[BROWSER_PAGE];
@@ -207,6 +209,12 @@ static void openfile(void)
 }
 static void act(int k)
 {
+    if(k==ACT_MOUNT||k==ACT_UNMOUNT){
+        if(!mount_target[0])return;
+        VolumeMount q={.operation=k==ACT_MOUNT?VOLUME_MOUNT:VOLUME_UNMOUNT};strset(q.target,mount_target,PATHLEN);
+        int result=sc(S_DISK,15,&q,0,0);mount_target[0]=0;
+        if(!result)reload();strset(note,q.message,sizeof note);return;
+    }
     char p[PATHLEN];
     pathsel(p);
     ui_motion(FX_SHEET);
@@ -421,7 +429,11 @@ static void paint(void)
 static int entryat(int x,int y){int left=side()+15;if(x<left||x>=aw-12||y<102||y>=ah-36)return -1;
     int cw=(aw-left-12)/cols(),col=(x-left)/MAX(1,cw);if(!listview&&(col>=cols()||y<103))return -1;
     int j=listview?(y-102)/31:(y-103)/82*cols()+col;return j>=0&&j<visible()&&j+offset<n?j+offset:-1;}
-static void context(Event*e){if(dialog)return;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;const char*place=sidebar_path(j);if(!place){sidebar_select(j);return;}go(place);}
+static void context(Event*e){if(dialog)return;mount_target[0]=0;int x=e->a,y=e->b;int sidebar=x<side();if(sidebar){int j=sidebar_at(y);if(j<0)return;const char*place=sidebar_path(j);if(!place){sidebar_select(j);return;}
+        if(j>=BROWSER_PLACES){VolumeMount q={0};strset(q.target,place,PATHLEN);unsigned mask=0;
+            if(!sc(S_DISK,15,&q,0,0)&&q.managed){strset(mount_target,place,PATHLEN);mask=AMASK(q.mounted?ACT_UNMOUNT:ACT_MOUNT);}
+            sc(S_CONTEXT,mask,e->d,0,0);return;}
+        go(place);}
     sel=sidebar?-1:entryat(x,y);Dirent wd;int writable=!sc(S_STAT,cwd,&wd,0,0)&&!wd.ro;
     unsigned m=AMASK(ACT_VIEW);if(sel>=0){m|=AMASK(ACT_OPEN)|AMASK(ACT_PROPS);if(!files[sel].dir)m|=AMASK(ACT_PREVIEW);if(bundle(files+sel))m|=AMASK(ACT_PACKAGE);
         m|=AMASK(ACT_COPY);if(writable&&!files[sel].ro)m|=AMASK(ACT_CUT)|AMASK(ACT_RENAME)|AMASK(ACT_DELETE);

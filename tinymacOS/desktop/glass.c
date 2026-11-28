@@ -106,7 +106,7 @@ void glass(Rect q, int r, int kind)
     if(kind==MAT_BAR)return;
     initroot();
     r = clampi(r, 0, MIN(60, MIN(q.w, q.h) / 2));
-    int sheet=kind==MAT_SHEET;
+    int sheet=kind==MAT_SHEET,flat=kind==MAT_LIBRARY;
     kind=MAT_DOCK; /* one Control Center material for every Liquid Glass surface */
     int dark = night;
     u32 tint = dark ? (kind == MAT_WIDGET ? 0x34363d : 0x28282c) : (kind == MAT_DOCK ? 0xe1e1e8 : 0xf5f5f7);
@@ -146,6 +146,13 @@ void glass(Rect q, int r, int kind)
         int rowShade = clampi(strength + (q.h / 2 - j) * 16 / MAX(1, q.h), 0, 246);
         for (int X = L; X < R; X++, p++) {
             int i = X - q.x, sx = X - left, ex = MIN(i, q.w - 1 - i), ey = MIN(j, q.h - 1 - j);
+            /* Library retains real backdrop blur/tint but has no lens bevel,
+             * displaced edge samples, dark inset rim or specular border. */
+            if(flat){
+                int mask=coverage(i,j,q.w,q.h,r);
+                if(mask){u32 col=blend(sample(blur,sx,sy),tint,rowShade);*p=mask==255?col:blend(*p,col,mask);}
+                continue;
+            }
             if (kind == MAT_BAR || (kind!=MAT_DOCK && kind!=MAT_SHEET && ex >= r + 7 && ey >= 7)) {
                 *p = blend(sample(blur, sx, sy), tint, rowShade);
                 continue;

@@ -1,13 +1,13 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 7 COMPLETE local implementation/acceptance: provided filesystem CUR/ANI resources in live/installed/Recovery with native bounded runtime decoding/animation/context, fluid move/eight-edge resize with queue retries, proportional TextEdit/Note/Memo using real system metrics. Final retail build, foundation normal+ASan/UBSan, M0, 12 storage suites, sealed volume bytes, actual USB/pixel live and cold installed/internal Recovery plus native dialogs/Calculator regression PASS. No new public release/version or physical hardware certification.",
+  "status": "M8 partial: priority visual fixes and native per-volume mount/unmount implemented/tested locally, screenshots delivered to Drive. USB mass storage and hdiutil still NOT implemented; no new commit/release/video. See macroblocco-8/NEXT.md.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 7,
-  "active_macroblock_title": "Cursori CUR/ANI, finestre fluide e font proporzionale",
-  "active_macroblock_complete": true,
+  "active_macroblock": 8,
+  "active_macroblock_title": "Temi, Spotlight, USB storage, mount e immagini disco",
+  "active_macroblock_complete": false,
   "background_work_running": false,
   "release_ready": false,
   "hardware_tested": false,
@@ -278,5 +278,28 @@
       "dialogs-guest.json"
     ],
     "native_logical_bytes": 4096
+  },
+  "macroblock_8": {
+    "authorized_extension": true,
+    "complete_local": false,
+    "release_requested": "10.3 GitHub release after acceptance",
+    "video_scope": "M8 only, Google Drive",
+    "input_modification_authorized": false,
+    "plan": "macroblocco-8/PIANO.md",
+    "ui_candidate_iso_sha256": "29cba13f6a95be2f7862a5d6d9817b3dc1f6f79c2422cac1f1b9c07b61a1a928",
+    "ui_host_sanitized": true,
+    "ui_guest_pass": true,
+    "usb_input_473_files_unchanged": true,
+    "base_system_udif_independent_decode_pass": true,
+    "report": "macroblocco-8/PRIORITA-E-MOUNT.md",
+    "next": "macroblocco-8/NEXT.md",
+    "priority_screenshots_folder": "https://drive.google.com/drive/folders/13rcn8izgQOjVSbgxALro1ftP9oqwmj3R",
+    "priority_visual_guest_pass": true,
+    "accent_wallpaper_original_restored": true,
+    "native_mount_unmount_host_four_filesystems_sanitized": true,
+    "native_mount_unmount_guest_terminal_finder_diskutility_pass": true,
+    "mount_candidate_iso_sha256": "56ffa99cf38f341bce9c4522b487c3c5f44625a394c6f7ff40120e16df0e8a21",
+    "usb_storage_complete": false,
+    "hdiutil_complete": false
   }
 }

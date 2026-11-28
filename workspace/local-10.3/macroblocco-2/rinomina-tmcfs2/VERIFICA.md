@@ -34,7 +34,7 @@ Pulizia delle cache Python generate; build e supporti di prova grandi conservati
 
 Tracciabilità degli errori di automazione: i primi tentativi si sono fermati su selettori grafici (spazio libero iniziale, nome account coincidente con Rinomina, font del menu contestuale). L'ultimo guest ha completato tutti i 6 controlli GUI e si è spento, ma l'estrattore host passava un callback write nullo non ammesso dall'API del core. Corretto **solo l'helper di test** con un callback che rifiuta ogni scrittura, mantenendo il disco aperto O_RDONLY. Il controllo post-spegnimento è stato ripreso sul medesimo disco, verificando hash ISO/kernel e le 6 ricevute GUI precedenti; risultato finale PASS. `guest.log` conserva il fallimento dell'helper e `postshutdown.log` il PASS successivo; `--verify-existing` rende esplicita e riproducibile questa ripresa. Nessuna modifica al core o alla ISO per superare questo controllo.
 
-`artifacts-final.json` lega hash e dimensioni alla nuova ISO; `source-inputs-final.json` congela gli input. Le sole modifiche successive alla build riguardano lo script guest e l'helper host di estrazione; gli input di produzione sono invariati.
+`artifacts-final.json` lega hash e dimensioni alla nuova ISO; `source-inputs-final.json.gz` congela gli input. Le sole modifiche successive alla build riguardano lo script guest e l'helper host di estrazione; gli input di produzione sono invariati.
 
 ## Limiti e provenienza
 

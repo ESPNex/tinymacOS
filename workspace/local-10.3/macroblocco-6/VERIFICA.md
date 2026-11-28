@@ -74,7 +74,7 @@ ISO collaudata: `/var/tmp/tmc-block6/tmc-block6-retail.iso`
 
 SHA-256: **`daf1ebc3e704089236a0bb56067a8fcf91d40554badb048b6fae2b7008e1646c`**.
 
-Verificati **1079 hash di input di produzione**, con 18 percorsi cambiati dal blocco 5. Solo due messaggi sono cambiati nei backend storage; i relativi algoritmi risultano identici fuori dai letterali. Hash/dimensioni dei binari e dei test in `artifacts-final.json`; input in `production-inputs-final.json`. ISO e dischi restano esterni al workspace, mentre sorgenti, ricevute, log e immagini essenziali sono persistenti.
+Verificati **1079 hash di input di produzione**, con 18 percorsi cambiati dal blocco 5. Solo due messaggi sono cambiati nei backend storage; i relativi algoritmi risultano identici fuori dai letterali. Hash/dimensioni dei binari e dei test in `artifacts-final.json`; input in `production-inputs-final.json.gz`. ISO e dischi restano esterni al workspace, mentre sorgenti, ricevute, log e immagini essenziali sono persistenti.
 
 ```sh
 bash tinymacOS/tests/test-localization6.sh
