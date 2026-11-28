@@ -1,0 +1,289 @@
+{
+  "passed": false,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 4096,
+  "storage_bus": "nvme",
+  "disk_sectors": 6442450944,
+  "selected_gap_sectors": 5368709120,
+  "work": "/var/tmp/tmc-m2-capacity-af8zpozn",
+  "checks": [
+    "Localized setup heading and account field visible with original font/threshold; temporary-account warning retained",
+    "Live setup: original Text/Select cursor images and hotspots match framebuffer at editable field and real Continue button",
+    "Actual native Italian settings panes, Schermi and Privacy e sicurezza labels, storage units, Monitor memory/CPU caveats and Applicazioni surface visible",
+    "m7-live: actual TextEdit proportional F_BODY pixels, supplied pointer art/hotspots, intermediate window-move frames, all eight resize directions, original native UTF8 bytes retained",
+    "m7-live: actual Note and Memo document text uses proportional system face, not F_MONO",
+    "Live real installer: supplied Busy.ani renders multiple matched original frames on OS timer while installation proceeds",
+    "Before first installed boot: real EFI BootOrder already prefers new target OpenCore; short HD path identifies correct partition and native logical LBAs",
+    "Real GUI 3.2 TB 4096B install: container owns entire 2.7 TB genuine gap, exact FS2 span, preserved foreign GPT entries/boundaries, no 32-bit wrap"
+  ],
+  "iso_sha256": "afe5abff625d8169a11792bd9d230fbb1ca3d73e2a8ac3b07ceda8f70b8d0fa4",
+  "setup_cursor": [
+    {
+      "asset": "Text.cur",
+      "hotspot": [
+        16,
+        16
+      ],
+      "pointer": [
+        700,
+        445
+      ],
+      "matched_visible_pixels": 130,
+      "agreement": 1.0
+    },
+    {
+      "asset": "Select.cur",
+      "hotspot": [
+        12,
+        9
+      ],
+      "pointer": [
+        640,
+        574
+      ],
+      "matched_visible_pixels": 179,
+      "agreement": 1.0
+    }
+  ],
+  "live_interaction": {
+    "environment": "m7-live",
+    "cursors": [
+      {
+        "asset": "Text.cur",
+        "hotspot": [
+          16,
+          16
+        ],
+        "pointer": [
+          383,
+          279
+        ],
+        "matched_visible_pixels": 130,
+        "agreement": 1.0
+      },
+      {
+        "asset": "Normal.cur",
+        "hotspot": [
+          12,
+          10
+        ],
+        "pointer": [
+          683,
+          144
+        ],
+        "matched_visible_pixels": 130,
+        "agreement": 1.0
+      },
+      {
+        "asset": "Horizontal Resize.cur",
+        "hotspot": [
+          14,
+          14
+        ],
+        "pointer": [
+          285,
+          382
+        ],
+        "matched_visible_pixels": 119,
+        "agreement": 1.0
+      },
+      {
+        "asset": "Vertical Resize.cur",
+        "hotspot": [
+          14,
+          14
+        ],
+        "pointer": [
+          663,
+          642
+        ],
+        "matched_visible_pixels": 122,
+        "agreement": 1.0
+      },
+      {
+        "asset": "Diagonal Resize 1.cur",
+        "hotspot": [
+          15,
+          15
+        ],
+        "pointer": [
+          285,
+          121
+        ],
+        "matched_visible_pixels": 135,
+        "agreement": 1.0
+      },
+      {
+        "asset": "Diagonal Resize 2.cur",
+        "hotspot": [
+          16,
+          15
+        ],
+        "pointer": [
+          1040,
+          121
+        ],
+        "matched_visible_pixels": 135,
+        "agreement": 1.0
+      }
+    ],
+    "resizes": [
+      {
+        "edge": "l",
+        "before": [
+          213,
+          94,
+          760,
+          526
+        ],
+        "after": [
+          195,
+          94,
+          778,
+          526
+        ]
+      },
+      {
+        "edge": "r",
+        "before": [
+          195,
+          94,
+          778,
+          526
+        ],
+        "after": [
+          195,
+          94,
+          796,
+          526
+        ]
+      },
+      {
+        "edge": "t",
+        "before": [
+          195,
+          94,
+          796,
+          526
+        ],
+        "after": [
+          195,
+          82,
+          796,
+          538
+        ]
+      },
+      {
+        "edge": "b",
+        "before": [
+          195,
+          82,
+          796,
+          538
+        ],
+        "after": [
+          195,
+          82,
+          796,
+          550
+        ]
+      },
+      {
+        "edge": "lt",
+        "before": [
+          195,
+          82,
+          796,
+          550
+        ],
+        "after": [
+          183,
+          70,
+          808,
+          562
+        ]
+      },
+      {
+        "edge": "rt",
+        "before": [
+          183,
+          70,
+          808,
+          562
+        ],
+        "after": [
+          183,
+          58,
+          820,
+          574
+        ]
+      },
+      {
+        "edge": "lb",
+        "before": [
+          183,
+          58,
+          820,
+          574
+        ],
+        "after": [
+          171,
+          58,
+          832,
+          586
+        ]
+      },
+      {
+        "edge": "rb",
+        "before": [
+          171,
+          58,
+          832,
+          586
+        ],
+        "after": [
+          171,
+          58,
+          844,
+          598
+        ]
+      }
+    ],
+    "move": {
+      "elapsed_host_seconds": 1.2206170279969228,
+      "intermediate_text_positions": [
+        [
+          295,
+          229
+        ],
+        [
+          277,
+          222
+        ],
+        [
+          259,
+          216
+        ],
+        [
+          242,
+          210
+        ]
+      ]
+    }
+  },
+  "busy_animation_frames": [
+    0,
+    12,
+    24,
+    4,
+    16,
+    27,
+    6,
+    6
+  ],
+  "opencore_verified_before_first_native_boot": true,
+  "actual_data_sectors": 5368586240,
+  "failure": "('r', (238, 107, 778, 526), (239, 107, 778, 526), (238, 107, 796, 526))"
+}

@@ -10,6 +10,8 @@
 static long hostcall(long,u64,u64,u64,u64);
 #undef sc
 #define sc(n,a,b,c,d) hostcall(n,(u64)(a),(u64)(b),(u64)(c),(u64)(d))
+#include "body_font_fixture.h"
+#include "../userspace/body_metrics.h"
 #include "../userspace/textedit.c"
 int aw=758,ah=480;SysInfo si;
 static char target[PATHLEN];

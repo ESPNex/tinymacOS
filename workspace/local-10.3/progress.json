@@ -1,12 +1,12 @@
 {
   "version_target": "10.3",
-  "status": "Macroblock 6 COMPLETE for implementation and local host/real-QEMU acceptance: native Italian wording and redundant text cleanup with retained safety/capability warnings; actual live/disk/Recovery bundle display names; decimal SI size display and exact backend limit labels. Final retail build, foundation normal+ASan/UBSan, 12 current M2 families in two documented batches, M0 workspace, actual 4Kn 3.2TB/2.7TB GUI install/cold native/internal Recovery capacities and foreign preservation, Open/Save/Quick Look UTF8 plus unchanged Calculator regression PASS. No public version/release, additional block or physical certification.",
+  "status": "Macroblock 7 COMPLETE local implementation/acceptance: provided filesystem CUR/ANI resources in live/installed/Recovery with native bounded runtime decoding/animation/context, fluid move/eight-edge resize with queue retries, proportional TextEdit/Note/Memo using real system metrics. Final retail build, foundation normal+ASan/UBSan, M0, 12 storage suites, sealed volume bytes, actual USB/pixel live and cold installed/internal Recovery plus native dialogs/Calculator regression PASS. No new public release/version or physical hardware certification.",
   "authoritative_plan": "tinymacOS/docs/piano.pdf",
   "authoritative_plan_sha256": "fe66291ae6368af7abbec48877f4086ed4c76180469c2e87873abd6aa175a86f",
   "supplied_title": "Changelog 10.2.7 \u2013 Piano di Sviluppo",
   "note": "PDF preserved byte-for-byte, including its original title. Public release/version not changed. Old PIANO-10.3.md removed; no replacement plan written.",
-  "active_macroblock": 6,
-  "active_macroblock_title": "Localizzazione, Testi e Unit\u00e0 di Misura",
+  "active_macroblock": 7,
+  "active_macroblock_title": "Cursori CUR/ANI, finestre fluide e font proporzionale",
   "active_macroblock_complete": true,
   "background_work_running": false,
   "release_ready": false,
@@ -236,5 +236,47 @@
     "calculator_binary_unchanged_from_block5": true,
     "physical_hardware_tested": false,
     "release_ready": false
+  },
+  "macroblock_7": {
+    "authorized_extension": true,
+    "plan": "macroblocco-7/PIANO.md",
+    "complete_local": true,
+    "production_inputs_frozen": 1102,
+    "release_ready": false,
+    "physical_hardware_tested": false,
+    "evidence": "macroblocco-7/VERIFICA.md",
+    "iso_sha256": "ade556e160ddd2b0e7bd387e2ef9e4ff5a3f3705f6fa65e2dce4e217cbd0e988",
+    "production_inputs_verified": 1102,
+    "production_paths_changed": 41,
+    "cursor_resources": 17,
+    "cursor_bytes": 322066,
+    "runtime_formats": [
+      "CUR DIB",
+      "ANI ACON"
+    ],
+    "three_sealed_volume_byte_checks": true,
+    "live_installed_recovery_actual_pixels": true,
+    "animated_installer_frame_indices": [
+      0,
+      0,
+      10,
+      19,
+      8,
+      18,
+      29,
+      11
+    ],
+    "live_resize_directions": 8,
+    "installed_resize_directions": 8,
+    "body_font": "unchanged supplied proportional F_BODY, real advances cached per process",
+    "draw_command_capacity": 256,
+    "draw_layout_and_existing_ids_unchanged": true,
+    "preauthentication_file_gate_unchanged": true,
+    "storage_host_families_passed": 12,
+    "guest_receipts_passed": [
+      "capacity-interaction-guest.json",
+      "dialogs-guest.json"
+    ],
+    "native_logical_bytes": 4096
   }
 }

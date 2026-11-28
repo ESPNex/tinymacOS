@@ -9,6 +9,7 @@ u32 *desk_ras;               /* global C_RASTER staging (one payload at a time) 
 int order[NPROC], nz, dirty = 1, mx, my, buttons;
 SysInfo sys;
 static int pend = -1, drag = -1, mode, ax, ay, wallEpoch;
+int window_interacting(const View*v){return drag>=0&&v==views+drag;}
 static Rect drag0;
 static ClickPair client_click;
 static u64 pointer_when;
@@ -37,7 +38,7 @@ static void drag_ready(Event*e){
 static u32 undo[1920 * 1080];
 int cursorDirty = 1;
 static int curx, cury, curw, curh;
-static u32 undercursor[28 * 28];
+static u32 undercursor[64 * 64];
 static int cursorValid;
 static PointerScale pointer_scale;
 static u64 scanout_heartbeat;
@@ -196,10 +197,12 @@ static Rect fit(int w, int h, int count, int app)
 }
 static void resize(int i)
 {
-    Rect q = views[i].box;
-    eventto(i, (Event) {
-        .type = EV_RESIZE, .a = q.w - 2, .b = q.h - TITLE - FOOT
-    });
+ View *v=views+i;Rect q=v->box;
+ if(v->requestedw==q.w&&v->requestedh==q.h)return;
+ Event e={.type=EV_RESIZE,.a=q.w-2,.b=q.h-TITLE-FOOT};
+ /* Retry on queue pressure on the next wins() pass; never remember a dropped
+  * final size as delivered. The kernel coalesces only adjacent resize states. */
+ if(sc(S_SEND,v->s.pid,&e,0,0)>=0){v->requestedw=q.w;v->requestedh=q.h;}
 }
 static void wins(void)
 {
@@ -324,6 +327,7 @@ void wintile(int i, Rect q)
     View *v = views + i;
     if (v->surface)sprite(v->surface, v->sw, v->sh, q, 9, 255, 0, 0);
 }
+#include "pointer.h"
 static void undocursor(void)
 {
     if (cursorValid) {
@@ -337,13 +341,16 @@ static void drawcursor(void)
 {
     // Clip the saved damage region, not the sprite origin: the hotspot stays
     // at the reported pixel even when the sprite crosses the top/left edge.
-    int left=mx-3, top=my-2;
+    CursorFrame *frame=pointer_kind>=0&&pointer_ok[pointer_kind]?pointer_images[pointer_kind].frame+MAX(0,pointer_index):0;
+    int left=mx-(frame?frame->hx:3), top=my-(frame?frame->hy:2);
+    int right=left+(frame?32:26),bottom=top+(frame?32:26);
+    if(filedrag.started){right=MAX(right,mx+23);bottom=MAX(bottom,my+23);}
     curx=MAX(0,left); cury=MAX(0,top);
-    curw=MIN(W,left+26)-curx; curh=MIN(H,top+26)-cury;
+    curw=MAX(0,MIN(W,right)-curx); curh=MAX(0,MIN(H,bottom)-cury);
     copyout((Rect) {
         curx, cury, curw, curh
     }, undercursor);
-    icon(left, top, 26, 15);
+    if(frame)cursor_pixels(frame->rgba,frame->invert,left,top);else icon(left, top, 26, 15);
     if(filedrag.started){rect(mx+9,my+11,12,12,filedrag.copy?0x2eaa65:0x367bd6);if(filedrag.copy){rect(mx+14,my+13,2,8,0xffffff);rect(mx+11,my+16,8,2,0xffffff);}}
     cursorValid = 1;
 }
@@ -618,7 +625,9 @@ static void down(void)
             action(x < 34 ? 142 : x < 54 ? 141 : 140);
             return;
         }
-        if (y < TITLE) {
+        int edge=!v->max&&!standalone_dialog(v)?window_edge(x,y,q.w,q.h):0;
+        if(edge){drag=i;mode=edge<<1;}
+        else if (y < TITLE) {
             if (titlePid == v->s.pid && sys.ticks - titleTick < 38 && mx >= titlex - 4 && mx <= titlex + 4 && my >= titley - 4 &&
                     my <= titley + 4) {
                 titlePid = 0;
@@ -632,9 +641,6 @@ static void down(void)
             if (v->max)return;
             drag = i;
             mode = 1;
-        } else if (x > q.w - 18 && y > q.h - 17 && !v->max) {
-            drag = i;
-            mode = 2;
         } else {
             if(v->s.app==FINDER){filedrag.pid=v->s.pid;filedrag.token=(int)++drag_serial;filedrag.x=mx;filedrag.y=my;}
             if(v->s.app==TERMINAL||v->s.app==TEXTEDIT){select_pid=v->s.pid;eventto(i,(Event){.type=EV_SELECT,.a=x-1,.b=y-TITLE,.c=1,.d=1});}
@@ -700,7 +706,7 @@ static void input(Event *e)
             lights = hl;
             dirty = 1;
         }
-        if(sys.recovery)dirty=1;else{shell_mouse();shell_control_pointer(e->c & 1);}
+        if(!sys.recovery){shell_mouse();shell_control_pointer(e->c & 1);}
         if ((e->c & 2) && !(buttons & 2)){drag_reset();select_pid=0;drag=-1;if(!sys.recovery)shell_context();}
         else if ((e->c & 1) && !(buttons & 1))down();
         else if ((e->c & 1) && drag >= 0) {
@@ -709,16 +715,16 @@ static void input(Event *e)
                 v->box.x = clampi(drag0.x + mx - ax, 0, W - v->box.w);
                 v->box.y = clampi(drag0.y + my - ay, BAR, H - v->box.h);
             } else {
-                v->box.w = clampi(drag0.w + mx - ax, MIN(v->s.app==INSTALLER?659:460, W - v->box.x), W - v->box.x);
-                v->box.h = clampi(drag0.h + my - ay, MIN(v->s.app == INSTALLER ? 426 : v->s.app == SETTINGS ? 398 : v->s.app == CALENDAR ||
-                                  v->s.app == MONITOR ? 365 : 286, H - v->box.y), H - v->box.y);
-                resize(drag);
+                int minw=MIN(v->s.app==INSTALLER?659:v->s.app==CALC?300:460,drag0.w);
+                int minh=MIN(v->s.app==INSTALLER?426:v->s.app==SETTINGS?398:v->s.app==CALENDAR||v->s.app==MONITOR?365:286,drag0.h);
+                window_resize_geometry(&v->box.x,&v->box.y,&v->box.w,&v->box.h,drag0.x,drag0.y,drag0.w,drag0.h,mode>>1,mx-ax,my-ay,minw,minh,W,H,BAR);
             }
             dirty = 1;
         } else if (!(e->c & 1) && drag >= 0) {
             trace(mode == 1 ? "window moved" : "window resized");
             viewtrace(views[drag].s.app, views[drag].box);
             drag = -1;
+            dirty = 1; /* settle the real glass backdrop after snapshot dragging */
         }
         if((e->c&1)&&filedrag.pid&&!filedrag.started&&
            (mx-filedrag.x>6||filedrag.x-mx>6||my-filedrag.y>6||filedrag.y-my>6)){
@@ -737,6 +743,7 @@ void app_main(void)
     sc(S_INFO, &sys, 0, 0, 0);
     recovery_mode=!!sys.recovery;
     initgfx(sys.w, sys.h);
+    pointer_load();
     lite = sys.opaque;
     if(sys.recovery)recovery_background();else background(sys.wall, sys.theme, sys.dark);
     mx = W - 92;
@@ -829,6 +836,10 @@ void app_main(void)
             if (gate)login_input(&e);
             else input(&e);
         }
+        /* One latest geometry per window/frame; resize() remembers only
+         * accepted sends, so queue pressure is retried even after release. */
+        for(int j=0;j<nz;j++)if(!views[order[j]].dead)resize(order[j]);
+        pointer_step();
         memset(&e, 0, sizeof e);
         for(unsigned batch=0;batch<TMC_MESSAGE_FRAME_BUDGET && sc(S_EVENT,&e,0,0,0)>0;++batch)if(!gate){if(e.type==EV_CONTEXT_READY)context_ready(&e);else if(e.type==EV_DRAG_READY)drag_ready(&e);}
         if(filedrag.released&&sys.ticks>filedrag.until)drag_reset();

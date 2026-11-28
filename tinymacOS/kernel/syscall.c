@@ -209,9 +209,13 @@ static Frame *syscall_inner(Frame *f)
         }
         break;
     case S_ART:
-        if (desktop && a <= NWALL) {
+        if (desktop && a <= NWALL+CUR_COUNT) {
             char path[PATHLEN] = "/System/Library/Fonts/Interface.tfn";
-            if (a) {
+            /* Pre-login cursor access is only to this fixed allowlist of
+             * sealed files. Ordinary S_OPEN/READ and all session data remain
+             * blocked by the unchanged authentication gate above. */
+            if(a>NWALL){strset(path,"/System/Library/Cursors/",PATHLEN);append(path,cursorname(a-NWALL-1),PATHLEN);}
+            else if (a) {
                 strset(path, "/System/Library/Desktop Pictures/", PATHLEN);
                 append(path, wallname(a - 1), PATHLEN);
                 append(path, ".qoi", PATHLEN);
@@ -744,8 +748,7 @@ static Frame *syscall_inner(Frame *f)
             if (q) {
                 Event e = *(Event *)b;
                 e.text[PATHLEN - 1] = 0;
-                post(q, &e);
-                r = 0;
+                r = post_event(q, &e) ? 0 : -1;
             }
         }
         break;

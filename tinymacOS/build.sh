@@ -23,7 +23,7 @@ python3 tools/control-svg.py "$D"
 python3 tools/settings-svg.py "$D"
 U+=(-DTMC_ICON_ATLAS=\""$D/icons.atlas"\" -DTMC_CONTROL_SVG=\""$D/control-svg.alpha"\")
 U+=(-DTMC_SETTINGS_SVG=\""$D/settings-svg.alpha"\")
-for f in userspace/start.S kernel/string.c userspace/ui.c crypto/sha256.c; do gcc "${U[@]}" -c "$f" -o "$D/u-${f##*/}.o"; done
+for f in userspace/start.S kernel/string.c userspace/ui.c userspace/fontmetrics.c crypto/sha256.c; do gcc "${U[@]}" -c "$f" -o "$D/u-${f##*/}.o"; done
 APPS=(desktop finder terminal textedit settings about calculator calendar monitor gallery diskutility notes stickies timemachine installer command)
 for a in "${APPS[@]}"; do
  src=userspace/$a.c; units=(); objects=(); case "$a" in
@@ -32,13 +32,13 @@ for a in "${APPS[@]}"; do
  terminal) objects=(u-ui.c.o u-sha256.c.o);;
  command) objects=(u-ui.c.o u-sha256.c.o);units=(userspace/fileops.c);;
  textedit) objects=(u-ui.c.o);units=(userspace/filepanel.c userspace/filebrowser.c);;
- settings) objects=(u-ui.c.o);units=(userspace/fontmetrics.c userspace/vaultpanel.c);;
- about) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
- diskutility) objects=(u-ui.c.o);units=(userspace/fontmetrics.c);;
+ settings) objects=(u-ui.c.o);units=(userspace/vaultpanel.c);;
+ about) objects=(u-ui.c.o);units=();;
+ diskutility) objects=(u-ui.c.o);units=();;
  *) objects=(u-ui.c.o);; esac
  for f in "${units[@]}";do o="u-${f##*/}.o";gcc "${U[@]}" -c "$f" -o "$D/$o";objects+=("$o");done
  gcc "${U[@]}" -c "$src" -o "$D/u-$a.o"
- (cd "$D" && ld "${L[@]}" -T "$ROOT/userspace/layout.ld" u-start.S.o u-string.c.o "u-$a.o" "${objects[@]}" -o "$a.debug" && objcopy --strip-all "$a.debug" "$a.elf")
+ (cd "$D" && ld "${L[@]}" -T "$ROOT/userspace/layout.ld" u-start.S.o u-string.c.o "u-$a.o" u-fontmetrics.c.o "${objects[@]}" -o "$a.debug" && objcopy --strip-all "$a.debug" "$a.elf")
 done
 python3 tools/bios-image.py "$D"
 C+=(-DTMC_COEXIST_PATH=\""$D/bios-coexist.bin"\")

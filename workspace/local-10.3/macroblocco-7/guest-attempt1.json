@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 4096,
+  "storage_bus": "nvme",
+  "disk_sectors": 6442450944,
+  "selected_gap_sectors": 5368709120,
+  "work": "/var/tmp/tmc-m2-capacity-gci9k0d1",
+  "checks": [
+    "Localized setup heading and account field visible with original font/threshold; temporary-account warning retained"
+  ],
+  "iso_sha256": "8797eda4817ed87be78f28fdc3da9dd2f1ae855ae55c7d0122aa382498beaa78",
+  "failure": "('m7-setup-text-cursor', 'Text.cur', 0.007692307692307693, 232)"
+}

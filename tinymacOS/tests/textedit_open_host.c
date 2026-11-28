@@ -5,6 +5,8 @@
 static long mockcall(long n,u64 a,u64 b,u64 c,u64 d){(void)c;(void)d;if(n==S_STAT){if(eq((char*)a,"/large")){*(Dirent*)b=(Dirent){.size=65536};return 0;}return -1;}return 0;}
 #undef sc
 #define sc(n,a,b,c,d) mockcall(n,(u64)(a),(u64)(b),(u64)(c),(u64)(d))
+#include "body_font_fixture.h"
+#include "../userspace/body_metrics.h"
 #include "../userspace/textedit.c"
 int aw=760,ah=480;SysInfo si;
 static int opens,closed,readmode;
@@ -32,13 +34,13 @@ int main(void){
  blank();aw=1056;ah=215;
  for(int i=0;i<400;i++)paste("à",2);
  char original[1024];memcpy(original,doc,length+1);int saved_length=length;
- layout();assert(starts[1]==250&&nlines==4);
- aw=216;layout();assert(starts[1]==40&&nlines==20);
+ layout();int adv=BodyWidth("à",2);assert(starts[1]==2*((aw-56)/adv)&&nlines==(400+(aw-56)/adv-1)/((aw-56)/adv));
+ aw=216;layout();assert(starts[1]==2*((aw-56)/adv));
  assert(length==saved_length&&!memcmp(original,doc,length+1));
  cursor=0;firstline=0;scroll_document(-3);assert(firstline==9&&cursor==0);
  viewport(0);assert(firstline==9); /* redraw leaves scrolled view intact */
  document_click(28,70);assert(cursor==starts[9]);
- document_click(44,70);assert(cursor==starts[9]+4);
+ document_click(28+2*adv,70);assert(cursor==starts[9]+4);
  document_click(10000,70);assert(cursorline()==9);
  key(&(Event){.type=EV_KEY,.a=K_END});assert(cursorline()==9);
  viewport(1);assert(firstline==9);

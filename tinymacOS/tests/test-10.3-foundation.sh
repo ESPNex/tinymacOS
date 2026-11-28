@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 python3 tests/test-m0.py
-for suite in localization6 apps5 desktop4 animation-performance textedit-open ui-stream display-size m3-acceptance windows-gaps caret filepanel m2-geometry m1-acceptance;do
+for suite in cursor7 localization6 apps5 desktop4 animation-performance textedit-open ui-stream display-size m3-acceptance windows-gaps caret filepanel m2-geometry m1-acceptance;do
  bash "tests/test-$suite.sh"
 done
 python3 tools/check-usb-retirement.py

@@ -36,6 +36,9 @@ font=Path(os.environ.get('TMC_FONT','assets/type.tfn')).read_bytes()
 font_lock=json.loads(Path('assets/interface-font-lock.json').read_text())
 assert len(font)==font_lock['bytes'] and hashlib.sha256(font).hexdigest()==font_lock['sha256'],'Unaccepted interface font: release packaging refuses silent font substitution'
 add('/System/Library/Fonts/Interface.tfn',font)
+# Identical real cursor resources in every boot environment, including Recovery.
+for resource in sorted(Path('assets/cursors').iterdir()):
+    if resource.suffix in ('.cur','.ani','.json'):add('/System/Library/Cursors/'+resource.name,resource.read_bytes())
 # Original supplied PNGs and size-specific PNGs remain ordinary read-only files.
 import json
 atlas=json.loads((D/'icon-atlas.json').read_text());slots={int(k):v for k,v in atlas['slots'].items()}

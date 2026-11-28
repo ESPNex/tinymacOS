@@ -19,7 +19,8 @@ typedef struct {
 typedef struct {
     Win s;
     int used, mini, max, dead, n, stamp, sw, sh, oldw, oldh, contentAge, contentFx, focusWait;
-    u64 key, contentTick, surfaceContent;
+    u64 key, contentTick, surfaceContent, surfaceRevision;
+    int requestedw, requestedh;
     Rect box, saved;
     Motion motion;
     u32 *surface, *previous;
@@ -35,6 +36,9 @@ static inline void pointer_position(const Event *e) {
 }
 extern SysInfo sys;
 int topwin(void);
+int window_interacting(const View *);
+int login_cursor(int,int);
+int shell_cursor(int,int);
 int focuswin(int);
 void launch(int);
 void openarg(int, const char *);

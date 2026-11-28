@@ -1,0 +1,46 @@
+{
+  "passed": false,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 4096,
+  "storage_bus": "nvme",
+  "disk_sectors": 6442450944,
+  "selected_gap_sectors": 5368709120,
+  "work": "/var/tmp/tmc-m2-capacity-9_i0dblw",
+  "checks": [
+    "Localized setup heading and account field visible with original font/threshold; temporary-account warning retained",
+    "Live setup: original Text/Select cursor images and hotspots match framebuffer at editable field and real Continue button",
+    "Actual native Italian settings panes, Schermi and Privacy e sicurezza labels, storage units, Monitor memory/CPU caveats and Applicazioni surface visible"
+  ],
+  "iso_sha256": "afe5abff625d8169a11792bd9d230fbb1ca3d73e2a8ac3b07ceda8f70b8d0fa4",
+  "setup_cursor": [
+    {
+      "asset": "Text.cur",
+      "hotspot": [
+        16,
+        16
+      ],
+      "pointer": [
+        700,
+        445
+      ],
+      "matched_visible_pixels": 130,
+      "agreement": 1.0
+    },
+    {
+      "asset": "Select.cur",
+      "hotspot": [
+        12,
+        9
+      ],
+      "pointer": [
+        640,
+        574
+      ],
+      "matched_visible_pixels": 179,
+      "agreement": 1.0
+    }
+  ],
+  "failure": "m2-live expected ['Riga 1']; visible text: eoc5e\n\nN\n\nm7-body.txt\n\niI\n\nNuovo\n\nApri\n\nTestosemplce\n\n18\n\nz\n\nWiwi Www iii cate \u20ac\n\n=\n\niT\n\n\u2018retals\n\ntiaymacOS Tramontana\n\n>:\n\n2 gi\n\noft\n\npeer\n\na\n\neae\n\nff\n\nee,\n\na\n\nyi\n\nDocument\n\nRiga\n\n248\n\ns\n\nai\n\n\u00a3g\n\noF\n"
+}

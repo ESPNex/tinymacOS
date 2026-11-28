@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "work": "/var/tmp/tmc-m2-capacity-9__9wzrq",
+  "iso_sha256": "ade556e160ddd2b0e7bd387e2ef9e4ff5a3f3705f6fa65e2dce4e217cbd0e988",
+  "checks": [
+    "Actual TextEdit opens native UTF-8 bytes; localized Salva con nome, Save As and Open choosers render, cancel without changing the document"
+  ],
+  "physical_hardware_tested": false,
+  "host_prepared_document": false,
+  "failure": "m7-dialogs-native expected ['Vista rapida']; visible text: as\n\nale\n\n18\n\nz\n\nece\n\nFinder\n\nPrefer\n\nElenc:\n\nCapacityQA\n\nDocumenti\n\nSerivania\n\nS\n\n>\n\nn\n\nU:\n\n7s\n\nCapactyQA/fecuments\n\nDocument\n\nDownload\n\n~~\n\ni.\n\nimmagini\n\nm7-body txt\n\nm2-proof.txt\n\nm7-testotxt\n\ny\n\n\u2014\n\ncated\n\n=~\n\n=\n\nApplicazioni\n\n,\n\nDiscodiavvio\n\nKernelCollections\n\nte\n\noe\n\nLibreria\n\nde\n\n@\n\n\u00a2\n\n3\n\n(Snapshot\n\nR\n\na\n\n+Cartella\n\n+ File\n\nnent\n\nis\n\nNX\n\n\u201ci,\n\nai\n\n\u00a3g\n\n\\q\n\n8.\n"
+}

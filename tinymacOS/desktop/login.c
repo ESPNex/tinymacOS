@@ -482,3 +482,12 @@ int login_step(void)
     }
     return 0;
 }
+
+int login_cursor(int x,int y)
+{
+ if(confirmPower)return CUR_NORMAL;
+ if(account.needs_seed)return inside(x,y,seed_box(0))?CUR_TEXT:inside(x,y,seed_box(1))?CUR_SELECT:CUR_NORMAL;
+ for(int i=0;i<(setup()?3:1);i++)if(inside(x,y,inputbox(i)))return CUR_TEXT;
+ if(inside(x,y,submitbox()))return CUR_SELECT;
+ return CUR_NORMAL;
+}

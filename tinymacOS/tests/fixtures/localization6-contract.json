@@ -1,17 +1,31 @@
 {
   "base_commit": "7a615ecb82b817976faf9fbca09f7c1d5fd190c3",
   "algorithm_and_abi_outside_literals_sha256": {
-    "include/abi.h": "16d59ea97a6edddc348ccffabe62a4ac5cc71b887debc26a2dc63e497c825fd7",
+    "include/abi.h": "9cf9a00e7e1d9c76e489f3cf9887032492c799bc84ab98120b7be9ce0419ee9b",
     "storage/partition.c": "32f1ebf4981ac4092cf2f99224bf95832c0ae5fb6873d4d82eb4a649023e4d06",
     "storage/diskedit.c": "0d7b5186a6e822ab651e52b54694e30d6e5e1963cfe977798bd7bf8989165a73",
     "desktop/recovery.c": "737b0d77768232c194838606627e348e0ddd7174b3f3b0d0d7389d66aa369e96",
-    "desktop/shell.c": "f22b4aa68fdd88064524f07128b78b024897720ce6bbc136cfad735708e0f0e3",
+    "desktop/shell.c": "f4eb546347475f6f3c26bc0fcdf97bc721b58c8dee0a223eceec34509207e3d1",
     "desktop/control.c": "78b85035e52a66723406a32d0b947203be781cd7322497c955bfdb8061984f66",
-    "userspace/installer.c": "d23052f733c930d5d2fa5bdb884edf688cd6fbe827c00c2cae669f6a576a0ec3",
+    "userspace/installer.c": "56ea50345fa54e2ff87dfb874e51f4ce95c11236bc561e842f0329395c7fa44d",
     "userspace/diskutility.c": "f42c52623f47a4c5823c6407826c92fe84f550b3cec83ab11a34053a38eec6c3"
   },
   "binary_limits": {
     "capacity_bytes": 17592186044416,
     "resize_bytes": 2199023255040
+  },
+  "authorized_macroblock7_changes": {
+    "include/abi.h": {
+      "previous_m6_canonical_sha256": "16d59ea97a6edddc348ccffabe62a4ac5cc71b887debc26a2dc63e497c825fd7",
+      "reason": "Append C_CURSOR/C_BODY, roles and fixed sealed-resource-name allowlist. Raise bounded command capacity 144\u2192256 for full tall frames of narrow proportional glyphs; unchanged Draw/Win/Event layout and preexisting enum IDs."
+    },
+    "desktop/shell.c": {
+      "previous_m6_canonical_sha256": "f22b4aa68fdd88064524f07128b78b024897720ce6bbc136cfad735708e0f0e3",
+      "reason": "Add cursor hit testing for existing editable overlays; no action or filesystem semantic change."
+    },
+    "userspace/installer.c": {
+      "previous_m6_canonical_sha256": "d23052f733c930d5d2fa5bdb884edf688cd6fbe827c00c2cae669f6a576a0ec3",
+      "reason": "Publish a Busy cursor region on the existing busy page; installation/encryption code unchanged."
+    }
   }
 }

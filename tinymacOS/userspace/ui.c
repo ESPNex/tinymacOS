@@ -37,6 +37,10 @@ static Draw *op(int kind, int x, int y, int w, int h, int style, u32 col, int r)
     };
     return q;
 }
+void CursorRegion(int x,int y,int w,int h,int kind)
+{
+ if(w>0&&h>0&&kind>=0&&kind<CUR_COUNT)op(C_CURSOR,x,y,w,h,kind,0,0);
+}
 void Box(int x, int y, int w, int h, int r, u32 c)
 {
     op(C_RECT, x, y, w, h, 0, c, r);
@@ -59,6 +63,20 @@ void MonoText(int x,int y,const char *s,int bytes,u32 color)
         q->w=n;x+=n*8;
     }
 }
+#include "body_metrics.h"
+/* Compact repertoire references, like Terminal, but measured and drawn using
+ * F_BODY. 99 variable-width glyphs/packet keeps tall UTF-8 editors below NCMDS. */
+void BodyText(int x,int y,const char*s,int bytes,u32 ink)
+{
+ while(bytes>0&&*s){Draw*q=op(C_BODY,x,y,0,0,F_BODY,ink,0);int n=0;
+  while(bytes>0&&*s&&n<99){int used;unsigned code=mono_decode(s,bytes,&used);
+   if(code=='\t'){if(n>95)break;for(int j=0;j<4;j++)q->text[n++]=(char)mono_reference(' ');}
+   else q->text[n++]=(char)mono_reference(code);
+   x+=BodyWidth(s,used);s+=used;bytes-=used;
+  }
+  q->w=n;
+ }
+}
 void Caret(int x,int y,int w,int h,u32 ink)
 {
     if(caret_dimensions(w,h))op(C_CARET,x,y,w,h,0,ink,0);
@@ -67,6 +85,7 @@ void Caret(int x,int y,int w,int h,u32 ink)
  * both masked and normal fields reserve a cell for the insertion marker. */
 void InputText(int x,int y,int width,const char *s,int at,int active,int secret,u32 ink)
 {
+    CursorRegion(x,y,width,20,CUR_TEXT);
     int len=strlen(s);at=MAX(0,MIN(at,len));
     while(at>0&&((u8)s[at]&0xc0)==0x80)at--;
     int columns=MAX(1,width/8-1),col=text_columns(s,at);

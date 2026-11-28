@@ -133,6 +133,7 @@ static void paint(void)
     begin();
     int r = rail(), x = r + 24, w = aw - x - 23, foot = ah - 52;
     Box(0, 0, aw, ah, 0, CARD);
+    if(page==3)CursorRegion(0,0,aw,ah,CUR_BUSY);
     if(page==7){
         Text(x,20,reinstall?"Nuove credenziali del volume":"Proteggi la nuova installazione",F_TITLE,TX);
         Text(x,70,reinstall?"OPERAZIONE IRREVERSIBILE: elimina dati, account e snapshot.":"FileVault cifra dati, account e snapshot fin dalla creazione.",F_SMALL,SUB);

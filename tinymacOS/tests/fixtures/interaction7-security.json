@@ -1,0 +1,6 @@
+{
+  "base_commit": "f035d94d5a12d57d91f5a8975a31a4c09782a336",
+  "unchanged_preauth_gate_sha256": "6acaed4e040913545ebdb3ce9e88ef99fe8b5258acc4e80aef7324805b0a6613",
+  "public_version": "10.2.6",
+  "public_build": "30C1"
+}

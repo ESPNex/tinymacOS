@@ -6,7 +6,7 @@
 #define NAPPS 17
 #define LASTAPP COMMAND
 #define NPROC 23
-#define NCMDS 144
+#define NCMDS 256 /* bounded full-frame proportional text at 1280x1024 */
 #define MAXFILE 8192
 #define PATHLEN 144
 #define NSLOTS 384
@@ -23,7 +23,9 @@ enum {S_TICKS = 3, S_SLEEP, S_EXIT, S_SPAWN, S_PS, S_KILL, S_INFO, S_ALLOC, S_FR
 enum {EV_KEY = 1, EV_MOUSE, EV_CLICK, EV_RESIZE, EV_THEME, EV_ACTION, EV_CLOSE, EV_OPEN, EV_CONTEXT, EV_CONTEXT_READY, EV_POINTER_ABS, EV_SCROLL, EV_DRAG_BEGIN, EV_DRAG_READY, EV_DROP, EV_SELECT};
 enum {ACT_NEW = 1, ACT_OPEN, ACT_SAVE, ACT_COPY, ACT_PASTE, ACT_RENAME, ACT_DELETE, ACT_VIEW, ACT_PARENT, ACT_PROPS, ACT_PREVIEW, ACT_SYSTEM, ACT_FILE, ACT_PACKAGE, ACT_CUT};
 enum {K_UP = 128, K_DOWN, K_LEFT, K_RIGHT, K_DEL, K_HOME, K_END, K_F1 = 145, K_F2, K_F3, K_F4, K_F5, K_F6, K_F7, K_F8, K_F9, K_F10, K_F11};
-enum {C_RECT = 1, C_TEXT, C_ICON, C_LINE, C_IMAGE, C_BUTTON, C_GLASS, C_RASTER, C_MONO, C_CARET};
+enum {C_RECT = 1, C_TEXT, C_ICON, C_LINE, C_IMAGE, C_BUTTON, C_GLASS, C_RASTER, C_MONO, C_CARET, C_CURSOR, C_BODY};
+/* Declarative client hit regions; appended ABI values keep existing IDs stable. */
+enum {CUR_NORMAL,CUR_TEXT,CUR_SELECT,CUR_MOVE,CUR_HORIZONTAL,CUR_VERTICAL,CUR_DIAGONAL1,CUR_DIAGONAL2,CUR_UNAVAILABLE,CUR_BUSY,CUR_WORKING,CUR_HELP,CUR_PRECISION,CUR_HANDWRITING,CUR_ALTERNATE,CUR_LOCATION,CUR_PERSON,CUR_COUNT};
 /* C_GLASS style: standalone dialog, without the owning window chrome. */
 enum {GLASS_DIALOG = 1};
 /* Reserved signed C_ICON styles: original Settings SVG masks, never legacy sprites. */
@@ -153,6 +155,12 @@ typedef struct {
 
 #define NWALL 13
 #define NTHEME 8
+/* Fixed read-only resource allowlist, shared by WindowServer and S_ART. */
+static inline const char *cursorname(unsigned v)
+{
+ static const char *const names[]={"Normal.cur","Text.cur","Select.cur","Move.cur","Horizontal Resize.cur","Vertical Resize.cur","Diagonal Resize 1.cur","Diagonal Resize 2.cur","Unavailable.cur","Busy.ani","Working.ani","Help.cur","Precision.cur","Handwriting.cur","Alternate.cur","Location.cur","Person.cur"};
+ return v<CUR_COUNT?names[v]:"";
+}
 static inline const char *wallname(unsigned v)
 {
     static const char *const a[] = {"Prisma", "Alba", "Laguna", "Aurora", "Prisma glaciale", "Aurora boreale", "Rame vespertino", "Riviera", "Levante", "Meriggio", "Notturno", "Brezza", "Tramontana"};

@@ -1,0 +1,109 @@
+{
+  "source": "User-supplied Cursors.zip from Google Drive",
+  "archive_sha256": "0da6090ef31810bf93c50d13f59a58036507ccc31f8803d610c390474508263a",
+  "processing": "Original 32px DIB bytes, hotspot, ANI metadata/order/timing preserved; unused resolutions removed; no redrawing",
+  "files": [
+    {
+      "name": "Normal.cur",
+      "source_sha256": "4047f39039bc725d61837535103fb14346b5e3e3cb41453014edcb4a311794d3",
+      "sha256": "db66c078bd5020521a2727aee8b8eca76f57a380333c0e3d33adfb68ebea1655",
+      "bytes": 4286
+    },
+    {
+      "name": "Text.cur",
+      "source_sha256": "b4e2271e9b44740310ae8aac4d2dc41188d5b28c984a9fb4a32971dda42bb267",
+      "sha256": "08f19f8199975001106a2322d61292700db41241326cba6895485feddcef349d",
+      "bytes": 4286
+    },
+    {
+      "name": "Select.cur",
+      "source_sha256": "100d22ce74909d2faad59286e3eec54d4569947c8c278655bb58282faa076454",
+      "sha256": "1a47b2104775128beceae2e43d2c443b7ba4588253980b4eac490a5c06dab2c5",
+      "bytes": 4286
+    },
+    {
+      "name": "Move.cur",
+      "source_sha256": "1f6cc6aea315a3805103602bda14e9b28eaf263e2d23dc7e7a4e37e67f344633",
+      "sha256": "2af003fffcfc736ce3dc108780cec48652fb0f95e0234bfd6ba2530712b51729",
+      "bytes": 4286
+    },
+    {
+      "name": "Horizontal Resize.cur",
+      "source_sha256": "215e1c6c7d4b9843689b66e86f21eb4144d2d544a34771289e67f386823cf613",
+      "sha256": "8ac97f0780b4322f3e622509ab30517b97ab4fb92d2cd8f86da96fa9d0ead5a4",
+      "bytes": 4286
+    },
+    {
+      "name": "Vertical Resize.cur",
+      "source_sha256": "3fce620153cdb086203e763da526e753f8208cca118c40bbdef0d059d01faa63",
+      "sha256": "9b3599715f9eaffc63e1fbbdd9e3b7d36d03ec416b0379efc052225f1a3f59d6",
+      "bytes": 4286
+    },
+    {
+      "name": "Diagonal Resize 1.cur",
+      "source_sha256": "62a34c0e8d945b00177feab6b1bd09f7d0ab63b70013254c1d8f61b1a619ee7f",
+      "sha256": "71c0528d6bad159ef68385e7b9ccf2fad1d2be886ad4aade510b081bfbd1ecb6",
+      "bytes": 4286
+    },
+    {
+      "name": "Diagonal Resize 2.cur",
+      "source_sha256": "8f7650d1e2fe1a1c043fa24d392b830c41c0ae619c63147372895398498997ca",
+      "sha256": "4462fc22573ff8a035bcafdeea404fc2fd7ad85e4d53853429d619dd2bcabf86",
+      "bytes": 4286
+    },
+    {
+      "name": "Unavailable.cur",
+      "source_sha256": "2a2ef905e14767312ab8f6d90cabca304d18062bf1b6b637f58b4d02dd3a3a23",
+      "sha256": "761468e81e57133fb23cd18a474ad27ca879e55f4569a938b7074217c498d57b",
+      "bytes": 4286
+    },
+    {
+      "name": "Busy.ani",
+      "source_sha256": "466b605b2c99a8047033e6292abe87a2b59a3ed476b51cab4e7ff16bb98a7040",
+      "sha256": "cd3583e80b32bcc11baed588712c613ca25ed53d4cc59713b96079d8714129f3",
+      "bytes": 128888
+    },
+    {
+      "name": "Working.ani",
+      "source_sha256": "b963ea711e1cfc224336c35a766a52b76f4ea4a55a5dc184ca9dd012820ed3ef",
+      "sha256": "4881bc1dd94f2989e2f1b293055193af848e0bd14aac8a18dce58b47f3d05a5e",
+      "bytes": 128888
+    },
+    {
+      "name": "Help.cur",
+      "source_sha256": "93851cb5a13c482d0f18036a42eacfa5207f722704a322008aae51f2652523da",
+      "sha256": "c08e79c1de31a7838b88bc4b3e14a5d8e7ea846553b7c10b59ed16c1b6539b32",
+      "bytes": 4286
+    },
+    {
+      "name": "Precision.cur",
+      "source_sha256": "0c9abefdfafbd79b6ec71a68372cc55a9753dafade1f440d3ffac8c5c1484255",
+      "sha256": "04b347e316e91d51f4f8f32f452bb9e0a8793e8d0584b909543554ca83dac4ea",
+      "bytes": 4286
+    },
+    {
+      "name": "Handwriting.cur",
+      "source_sha256": "dbf0ea662302f424d0455755e0f2fbf4e078095f4d5d84499fc6d02eef593c01",
+      "sha256": "ffd1cf3596a117defdfdf35d5ca28b7743c1b70439b865854c1a66a4c8853d92",
+      "bytes": 4286
+    },
+    {
+      "name": "Alternate.cur",
+      "source_sha256": "4d9df31d202e3e4d296db7c3e3e3dcbfe28c760cbe447b8b23933c4f26f9654b",
+      "sha256": "b9c2e1bcadf263bb83ed04db365df947ac6fb0344850c0c33b3eec56a4e011c7",
+      "bytes": 4286
+    },
+    {
+      "name": "Location.cur",
+      "source_sha256": "a5cd73e387d2879e09838a810e9626867ada40aa3b32c332c5bf55b5d015f6c6",
+      "sha256": "eaa21bb5beff7772e0ae08635a94b44855e6a8872bcb4511ef6b8ed331ca1ce7",
+      "bytes": 4286
+    },
+    {
+      "name": "Person.cur",
+      "source_sha256": "ab8ef5f4ec766350ef0600df1a6b8c498abd3165674d815df7e98756e7fcc615",
+      "sha256": "bdfe096de52118e2a3c616843322c5c1bea5c6f32ca13651d163ec037d2612fd",
+      "bytes": 4286
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "passed": false,
+  "release_ready": false,
+  "physical_hardware_tested": false,
+  "synthetic_foreign_partitions": true,
+  "native_logical_bytes": 4096,
+  "storage_bus": "nvme",
+  "disk_sectors": 6442450944,
+  "selected_gap_sectors": 5368709120,
+  "work": "/var/tmp/tmc-m2-capacity-1xrwm7fa",
+  "checks": [
+    "Localized setup heading and account field visible with original font/threshold; temporary-account warning retained",
+    "Live setup: original Text/Select cursor images and hotspots match framebuffer at editable field and real Continue button",
+    "Actual native Italian settings panes, Schermi and Privacy e sicurezza labels, storage units, Monitor memory/CPU caveats and Applicazioni surface visible"
+  ],
+  "iso_sha256": "afe5abff625d8169a11792bd9d230fbb1ca3d73e2a8ac3b07ceda8f70b8d0fa4",
+  "setup_cursor": [
+    {
+      "asset": "Text.cur",
+      "hotspot": [
+        16,
+        16
+      ],
+      "pointer": [
+        700,
+        445
+      ],
+      "matched_visible_pixels": 130,
+      "agreement": 1.0
+    },
+    {
+      "asset": "Select.cur",
+      "hotspot": [
+        12,
+        9
+      ],
+      "pointer": [
+        640,
+        574
+      ],
+      "matched_visible_pixels": 179,
+      "agreement": 1.0
+    }
+  ],
+  "failure": "m2-live expected ['Riga']; visible text: Riga1 / 24B\n\net\n\n\u2014\n\naay\n\nSf\n"
+}

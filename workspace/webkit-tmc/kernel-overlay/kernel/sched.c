@@ -56,25 +56,20 @@ Process *by_pid(int pid)
             return proc + i;
     return 0;
 }
-static void post_l(Process *p, const Event *e)
+/* Adjacent resize updates describe one replaceable geometry state. Never
+ * coalesce across a key/click/action: those retain their ordering. */
+int post_event(Process *p,const Event *e)
 {
-    if (!p)
-        return;
-    int n = (p->head + 1) % 32;
-    if (n != p->tail) {
-        p->events[p->head] = *e;
-        p->head = n;
-    }
+ if(!p)return 0;u32 fl;spin_lock(&sched_lock,&fl);
+ int previous=(p->head+31)%32;
+ if(e->type==EV_RESIZE&&p->head!=p->tail&&p->events[previous].type==EV_RESIZE){
+  p->events[previous]=*e;spin_unlock(&sched_lock,fl);return 1;
+ }
+ int next=(p->head+1)%32;
+ if(next==p->tail){spin_unlock(&sched_lock,fl);return 0;}
+ p->events[p->head]=*e;p->head=next;spin_unlock(&sched_lock,fl);return 1;
 }
-void post(Process *p, const Event *e)
-{
-    if (!p)
-        return;
-    u32 fl;
-    spin_lock(&sched_lock, &fl);
-    post_l(p, e);
-    spin_unlock(&sched_lock, fl);
-}
+void post(Process *p,const Event *e){(void)post_event(p,e);}
 static int load(Process *p, const char *path, u64 *entry)
 {
     logstr("[load] start\n");

@@ -1,0 +1,93 @@
+[
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-setup-text-cursor.png",
+    "original_sha256": "beaed7d72ddc198ae0e1d0afa4da61e86886332a2fcdf81329d6a679d935355f",
+    "crop": [
+      490,
+      385,
+      790,
+      595
+    ],
+    "persisted_file": "evidence/setup-text-cursor.png",
+    "persisted_sha256": "859044c64fae7043d68e2214b586d330feb99b0665cf43bd4416b2548f962b30",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-live-text-cursor.png",
+    "original_sha256": "2d5017dbabcf40f3b5482a5626abe7e5cf97a82840c8578695fb335b927044e9",
+    "crop": [
+      250,
+      100,
+      1050,
+      650
+    ],
+    "persisted_file": "evidence/textedit-proportional-cursor.png",
+    "persisted_sha256": "1753714dd60b451c9780c25de25e1d07c35f79e06633d9314c66a251f2823cd8",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-live-note-proportional.png",
+    "original_sha256": "8d3a488ef5d29d1c11fb4abaa229a324501985318de8a9e1d67acad6a66e8819",
+    "crop": [
+      230,
+      150,
+      1070,
+      660
+    ],
+    "persisted_file": "evidence/notes-proportional.png",
+    "persisted_sha256": "fb4ed4164e1a32764f006a289c68ada12a495ff7894141dfcc884d7a947c0277",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-live-memo-proportional.png",
+    "original_sha256": "4b846437f7b93ce895054dc7666ed57b1cbfd8e8e484fe01b47af83f1b863ab4",
+    "crop": [
+      230,
+      150,
+      1070,
+      660
+    ],
+    "persisted_file": "evidence/memo-proportional.png",
+    "persisted_sha256": "a292672264941e83d8e2a2a825c56ec4f1276f69fa9092a0baae13508f622692",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-live-busy-ani.png",
+    "original_sha256": "7293a6e938782ba63ca28ad67508429ed25a97c2e60e23ab4e4d55f7df198573",
+    "crop": [
+      280,
+      180,
+      1045,
+      626
+    ],
+    "persisted_file": "evidence/busy-ani-installer.png",
+    "persisted_sha256": "ac8ddf4253df5c1de65bd6008b9752832619dea847919ff9aa2e04b2d50e0525",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-recovery-text-cursor.png",
+    "original_sha256": "2c2d0556b5f932693f764f9973e801a94941cc6ad4613b082c73c49a897e4479",
+    "crop": [
+      200,
+      120,
+      1100,
+      660
+    ],
+    "persisted_file": "evidence/recovery-cursor.png",
+    "persisted_sha256": "eb0afc7c684b363e4c7e52bb4d3d994c1cedb2324a0b159edf7e07056cccbc74",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  },
+  {
+    "original_external_path": "/var/tmp/tmc-m2-capacity-9__9wzrq/evidence/m7-calculator-history.png",
+    "original_sha256": "8e0a8a41a5763ed402018d8955bfbcf62dd89c5f8aa39fdd24ea44b08b99db6f",
+    "crop": [
+      350,
+      160,
+      972,
+      598
+    ],
+    "persisted_file": "evidence/calculator-history.png",
+    "persisted_sha256": "3c169513d1df7b42248f76d3b25ea0f83ececc67b683ec20df779ad100df98aa",
+    "processing": "lossless rectangular crop only; no scaling, retouching or synthesis"
+  }
+]

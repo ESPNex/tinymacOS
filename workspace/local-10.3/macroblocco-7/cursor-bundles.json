@@ -1,0 +1,20 @@
+{
+  "live": {
+    "volume_sha256": "c0c6ee77b00eb3a36629200a934f03245e0619e80408202e17c15c76e81138e6",
+    "cursor_files_verified": 17,
+    "cursor_bytes_verified": 322066,
+    "font_unchanged": true
+  },
+  "disk": {
+    "volume_sha256": "6329b7d93883d866e176544fb7e7026b094ddaf8ae3c058ede294fbaaa32b4e7",
+    "cursor_files_verified": 17,
+    "cursor_bytes_verified": 322066,
+    "font_unchanged": true
+  },
+  "recovery": {
+    "volume_sha256": "1dd4e03bd5b88327db5dbeaef21976f119a1d8cb6be7d8c55b83e351ebece623",
+    "cursor_files_verified": 17,
+    "cursor_bytes_verified": 322066,
+    "font_unchanged": true
+  }
+}

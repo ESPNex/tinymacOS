@@ -15,6 +15,7 @@ static long hostcall(long,u64,u64,u64,u64);
 #undef writefile
 #undef op
 #if APP_CASE==1
+#include "body_font_fixture.h"
 #include "../userspace/textedit.c"
 static char fixture[32],written[TEXTEDIT_LIMIT+1];static int fixture_len,written_len;
 static long hostcall(long n,u64 a,u64 b,u64 c,u64 d){(void)a;(void)c;(void)d;if(n==S_STAT){*(Dirent*)b=(Dirent){.size=fixture_len};return 0;}if(n==S_CLIPBOARD)return 0;assert(n==S_WDRAW);return 0;}
@@ -26,23 +27,23 @@ static void setdoc(const char*s){strset(doc,s,sizeof doc);length=strlen(doc);cur
 static void press(int k,int command){key(&(Event){.type=EV_KEY,.a=k,.b=command});viewport(key_follows);}
 static void check_paint(void){
  paint();assert(count<NCMDS);int row=firstline,offset=starts[row],glyphs=0;
- for(int i=0;i<count;i++)if(list[i].type==C_MONO){Draw*q=list+i;int target=firstline+(q->y-70)/20;
+ for(int i=0;i<count;i++)if(list[i].type==C_BODY){Draw*q=list+i;int target=firstline+(q->y-70)/20;
   if(target!=row){assert(offset==endline(row));row=target;offset=starts[row];}
-  assert(q->x>=28&&q->x+q->w*8<=aw-28);
+  assert(q->x>=28&&q->x+BodyWidth(doc+offset,BodyOffset(doc,offset,endline(row),aw-56)-offset)<=aw-28);
   for(int j=0;j<q->w;j++){int z;unsigned c=mono_decode(doc+offset,length-offset,&z);assert((u8)q->text[j]==mono_reference(c));offset+=z;glyphs++;}
  }
  assert(glyphs>0&&offset==endline(row));
 }
 int main(void){
- aw=104;ah=215;setdoc("uno due tre");layout();assert(wrap_columns()==6&&nlines==3&&starts[1]==4&&starts[2]==8&&!strcmp(doc,"uno due tre"));
- aw=88;setdoc("abcdef");layout();assert(starts[1]==4);press(K_END,0);assert(cursor==4&&upstream&&cursorline()==0);press('X',0);assert(!strcmp(doc,"abcdXef"));press(8,0);assert(!strcmp(doc,"abcdef"));
- document_click(1000,70);assert(cursor==4&&upstream&&cursorline()==0);press(K_DOWN,0);assert(cursor==6&&cursorline()==1);press(K_UP,0);assert(cursor==2&&cursorline()==0);
- setdoc("àèéòù€");layout();press(K_END,0);assert(cursor==8&&upstream&&cursorline()==0);press('Z',0);assert(!strcmp(doc,"àèéòZù€"));press(8,0);assert(!strcmp(doc,"àèéòù€"));
+ aw=56+BodyWidth("uno due",7);ah=215;setdoc("uno due tre");layout();assert(nlines>=2&&!strcmp(doc,"uno due tre"));
+ aw=56+BodyWidth("abcd",4);setdoc("abcdef");layout();assert(starts[1]==4);press(K_END,0);assert(cursor==4&&upstream&&cursorline()==0);press('X',0);assert(!strcmp(doc,"abcdXef"));press(8,0);assert(!strcmp(doc,"abcdef"));
+ document_click(1000,70);assert(cursor==4&&upstream&&cursorline()==0);press(K_DOWN,0);assert(cursor==6&&cursorline()==1);press(K_UP,0);assert(cursor>=1&&cursor<=3&&cursorline()==0);
+ setdoc("àèéòù€");layout();press(K_END,0);int boundary=cursor;assert(boundary>0&&boundary<length&&upstream&&cursorline()==0);press('Z',0);assert(doc[boundary]=='Z');press(8,0);assert(!strcmp(doc,"àèéòù€"));
  static char original[TEXTEDIT_LIMIT+1];int pos=0;for(int i=0;i<1800;i++){const char*s=i%7?"àè WORD fgj ":"LOOOOOOOOOOOOOOOOOOOONG€ ";int z=strlen(s);memcpy(original+pos,s,z);pos+=z;}original[pos]=0;
  int widths[]={88,216,758,1278},heights[]={130,190,480,1024};
  for(unsigned a=0;a<COUNT(widths);a++)for(unsigned b=0;b<COUNT(heights);b++){
   aw=widths[a];ah=heights[b];setdoc(original);layout();assert(length==pos&&!memcmp(doc,original,pos));
-  for(int j=1;j<nlines;j++){assert(starts[j]>starts[j-1]&&((u8)doc[starts[j]]&0xc0)!=0x80);assert(text_columns(doc+starts[j-1],endline(j-1)-starts[j-1])<=wrap_columns());}
+  for(int j=1;j<nlines;j++){assert(starts[j]>starts[j-1]&&((u8)doc[starts[j]]&0xc0)!=0x80);assert(BodyWidth(doc+starts[j-1],endline(j-1)-starts[j-1])<=wrap_pixels());}
   check_paint();scroll_document(-4);int top=firstline,cur=cursor;paint();assert(firstline==top&&cursor==cur&&!dirty);
   press('c',1);assert(firstline==top&&!key_follows); /* Copy is not caret navigation. */
   int tx=aw-15,topY=thumb_y();scrollbar_event(&(Event){.type=EV_SELECT,.a=tx,.b=topY+1,.c=1,.d=1});assert(scroll_drag);

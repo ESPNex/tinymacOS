@@ -62,10 +62,10 @@ int main(void){
   if(list[i].type==C_MONO){masked+=list[i].w;for(int j=0;j<list[i].w;j++)assert(mono_code((u8)list[i].text[j]-1)==0x2022);}
  }
  assert(carets==1&&masked==7);
- begin();InputText(0,0,48,"",0,1,1,0);assert(count==1&&list[0].type==C_CARET&&list[0].x==0);
+ begin();InputText(0,0,48,"",0,1,1,0);assert(count==2&&list[0].type==C_CURSOR&&list[1].type==C_CARET&&list[1].x==0);
  begin();InputText(0,0,48,"abcdefghijklmnop",16,1,0,0);
- assert(count==2&&list[0].w==5&&list[1].type==C_CARET&&list[1].x==40);
- begin();InputText(0,0,80,"abc",3,0,0,0);assert(count==1&&list[0].type==C_MONO);
+ assert(count==3&&list[1].w==5&&list[2].type==C_CARET&&list[2].x==40);
+ begin();InputText(0,0,80,"abc",3,0,0,0);assert(count==2&&list[0].type==C_CURSOR&&list[1].type==C_MONO);
  puts("PASS shared InputText: empty active fields show caret, long input scrolls within field, inactive fields omit caret, passwords serialize bullets only and UTF-8 counts one mask per scalar");
  puts("PASS shared UI streaming: 128KiB+ files read/write/copy in <=8KiB syscalls, partial read continuation, exclusive destination creation, zero-length truncation and explicit write failure");
 }

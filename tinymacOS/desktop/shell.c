@@ -899,3 +899,12 @@ int shell_overlay_open(void) { return ov && want; }
 int shell_drag_source(int x,int y,char out[PATHLEN]){int i=deskhit(x,y);if(i==-2)return 0;if(i==-1){strset(out,"@installer",PATHLEN);return 2;}deskpath(out,i);return 1;}
 
 int shell_drop_folder(int x,int y){int i=deskhit(x,y);return i>=0&&i<ndesk&&ondesk[i].dir?i:-1;}
+
+int shell_cursor(int x,int y)
+{
+ /* The existing editable overlays own the pointer, not covered windows. */
+ Rect q=panel;
+ if(ov==OV_NEW_FOLDER&&inside(x,y,(Rect){q.x+20,q.y+55,q.w-40,36}))return CUR_TEXT;
+ if(ov==OV_SEARCH&&inside(x,y,(Rect){q.x+59,q.y+20,q.w-135,38}))return CUR_TEXT;
+ (void)x;(void)y;return CUR_NORMAL;
+}

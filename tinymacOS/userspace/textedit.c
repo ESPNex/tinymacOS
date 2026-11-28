@@ -10,24 +10,23 @@ static int length, cursor, dirty, dialog, firstline;
 static int upstream,scroll_drag,scroll_grab,key_follows;
 static Clipboard clipboard;
 static int starts[TEXTEDIT_LIMIT + 2], nlines;
-static int wrap_columns(void){return MAX(1,(aw-56)/8);}
+static int wrap_pixels(void){return MAX(1,aw-56);}
 static void layout(void)
 {
-    int width=wrap_columns(),n=1,col=0,break_at=-1;
-    starts[0]=0;
-    for(int i=0;i<length;){
-        int next=text_next(doc,i);
-        if(doc[i]=='\n'){starts[n++]=next;col=0;break_at=-1;i=next;continue;}
-        if(doc[i]==' '||doc[i]=='\t')break_at=next;
-        col++;
-        if(col>=width&&next<length&&doc[next]!='\n'){
-            /* Prefer a whole-word break. Keep EVERY byte, including spaces;
-             * an overlong word falls back to a UTF-8 scalar boundary. */
-            int at=break_at>starts[n-1]?break_at:next;
-            starts[n++]=at;i=at;col=0;break_at=-1;
-        }else i=next;
-    }
-    starts[n]=length;nlines=n;
+ int width=wrap_pixels(),n=1,pixels=0,break_at=-1;starts[0]=0;
+ for(int i=0;i<length;){
+  int next=text_next(doc,i);
+  if(doc[i]=='\n'){starts[n++]=next;pixels=0;break_at=-1;i=next;continue;}
+  int advance=BodyWidth(doc+i,next-i);
+  if(pixels+advance>width&&i>starts[n-1]){
+   int at=break_at>starts[n-1]?break_at:i;starts[n++]=at;i=at;pixels=0;break_at=-1;continue;
+  }
+  pixels+=advance;if(doc[i]==' '||doc[i]=='\t')break_at=next;
+  if(pixels>=width&&next<length&&doc[next]!='\n'){
+   int at=break_at>starts[n-1]?break_at:next;starts[n++]=at;i=at;pixels=0;break_at=-1;
+  }else i=next;
+ }
+ starts[n]=length;nlines=n;
 }
 static int soft_start(int j){return j>0&&starts[j]>0&&doc[starts[j]-1]!='\n';}
 static int cursorline(void)
@@ -64,7 +63,7 @@ static void scroll_document(int delta)
 /* Place a logical offset on a chosen visual row, including its right edge. */
 static void row_cursor(int j,int columns)
 {
-    cursor=text_offset(doc,starts[j],endline(j),MAX(0,columns));
+    cursor=BodyOffset(doc,starts[j],endline(j),MAX(0,columns));
     upstream=j+1<nlines&&soft_start(j+1)&&cursor==starts[j+1];
 }
 static int line_cursor_end(int j){return endline(j);}
@@ -93,7 +92,7 @@ static void document_click(int x,int y)
 {
     viewport(0);
     int j=MIN(nlines-1,MAX(0,firstline+(y-70)/20));
-    row_cursor(j,MAX(0,(x-28+4)/8));
+    row_cursor(j,MAX(0,x-28));
 }
 static int saved(void)
 {
@@ -211,7 +210,7 @@ static void key(Event *e)
     }
     if (e->b) {
         if(k==K_UP||k==K_DOWN){key_follows=1;cursor=k==K_UP?0:length;upstream=0;return;}
-        if(k==K_LEFT||k==K_RIGHT){key_follows=1;layout();int j=cursorline();row_cursor(j,k==K_LEFT?0:text_columns(doc+starts[j],endline(j)-starts[j]));return;}
+        if(k==K_LEFT||k==K_RIGHT){key_follows=1;layout();int j=cursorline();row_cursor(j,k==K_LEFT?0:BodyWidth(doc+starts[j],endline(j)-starts[j]));return;}
         if ((k == 's' || k == 'S') && e->c)
             prompt(1);
         else if (k == 's')
@@ -236,9 +235,9 @@ static void key(Event *e)
         cursor = text_next(doc,cursor);
     else if (k == K_HOME || k == K_END || k == K_UP || k == K_DOWN) {
         layout();upstream=previous_upstream;
-        int j = cursorline(), col = text_columns(doc+starts[j],cursor-starts[j]);
+        int j = cursorline(), col = BodyWidth(doc+starts[j],cursor-starts[j]);
         if(k==K_HOME)row_cursor(j,0);
-        else if(k==K_END)row_cursor(j,text_columns(doc+starts[j],endline(j)-starts[j]));
+        else if(k==K_END)row_cursor(j,BodyWidth(doc+starts[j],endline(j)-starts[j]));
         else{j=MAX(0,MIN(nlines-1,j+(k==K_UP?-1:1)));row_cursor(j,col);}
     } else if(k=='\n'||text_printable(k)){
         if(text_insert(doc,sizeof doc,&cursor,k)){length=strlen(doc);dirty=1;}
@@ -261,16 +260,17 @@ static void paint(void)
     Text(aw - 117, 16, "Testo semplice", F_SMALL, SUB);
     Box(0, 47, aw, 1, 0, EDGE);
     Box(0, 48, aw, ah - 82, 0, CARD);
+    if(!dialog)CursorRegion(28,64,aw-56,MAX(1,ah-108),CUR_TEXT);
     Box(0, ah - 34, aw, 1, 0, EDGE);
     for (int i = firstline; i < nlines && i < firstline + nrows; i++) {
-        MonoText(28,70+(i-firstline)*20,doc+starts[i],endline(i)-starts[i],TX);
+        BodyText(28,70+(i-firstline)*20,doc+starts[i],endline(i)-starts[i],TX);
     }
     if(scroll_limit()){
         Box(aw-18,scroll_y(),7,scroll_height(),3,SOFT);
         Box(aw-18,thumb_y(),7,thumb_height(),3,SUB);
     }
     if(!dialog&&j>=firstline&&j<firstline+nrows)
-        Caret(28 + 8 * text_columns(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, ACC);
+        Caret(28 + BodyWidth(doc+starts[j],cursor-starts[j]), 71 + 20 * (j - firstline), 2, 16, ACC);
     char z[96] = "Riga ";
     addnum(z, j + 1, 96);
     append(z, "   /   ", 96);

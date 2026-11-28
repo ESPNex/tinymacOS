@@ -2,6 +2,10 @@
 static int cache(View *v, u64 tag, int focus)
 {
     Rect q = v->box;
+    u64 revision=hash(hash(v->s.seq,v->s.pid),focus);
+    /* Freeze the optical texture during move; during resize reuse it until a
+     * new client transaction arrives. Re-key the real backdrop on release. */
+    if(window_interacting(v)&&v->surface&&v->surfaceRevision==revision)return 1;
     int correct = v->sw == q.w && v->sh == q.h;
     if (!correct || !v->surface) {
         dropbuf(&v->surface);
@@ -23,5 +27,6 @@ static int cache(View *v, u64 tag, int focus)
     copyin(q, undo);
     v->key = tag;
     v->surfaceContent = content;
+    v->surfaceRevision = revision;
     return 1;
 }

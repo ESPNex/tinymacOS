@@ -168,19 +168,19 @@ static void edit(int k)
     if (k == K_UP || k == K_DOWN) {
         int a = cur;
         while (a && body[a - 1] != '\n')a--;
-        int col = text_columns(body+a,cur-a);
+        int col = BodyWidth(body+a,cur-a);
         if (k == K_UP) {
             if (!a)return;
             int end = a - 1;
             a = end;
             while (a && body[a - 1] != '\n')a--;
-            cur = text_offset(body,a,end,col);
+            cur = BodyOffset(body,a,end,col);
         } else {
             while (cur < n && body[cur] != '\n')cur++;
             if (cur < n) {
                 a = ++cur;
                 int end=cur;while(end<n&&body[end]!='\n')end++;
-                cur=text_offset(body,a,end,col);
+                cur=BodyOffset(body,a,end,col);
             }
         }
         return;
@@ -206,13 +206,15 @@ static int firstrow(void)
 static int lineends[6002], nlines;
 static int editor(int draw, int hitx, int hity)
 {
-    int r = rail(), c = MIN(88, MAX(12, (aw - r - 40) / 8)), at = 0, n = strlen(body), here = 0;
+    int r = rail(), c = MAX(1,aw-r-40), at = 0, n = strlen(body), here = 0;
+    if(draw&&!confirm)CursorRegion(r+20,72,MAX(1,aw-r-40),MAX(1,ah-111),CUR_TEXT);
     lineends[nlines = 0] = 0;
     while (at < n) {
         int z = 0;
-        while (at < n && z < c && body[at] != '\n') {
-            at=text_next(body,at);
-            z++;
+        while (at < n && body[at] != '\n') {
+            int next=text_next(body,at),advance=BodyWidth(body+at,next-at);
+            if(z+advance>c&&z)break;
+            at=next;z+=advance;
         }
         if (at < n && body[at] == '\n')at++;
         else if (at == n)break;
@@ -225,10 +227,10 @@ static int editor(int draw, int hitx, int hity)
         int a = lineends[i], b = i + 1 < nlines ? lineends[i + 1] : n;
         if (b > a && body[b - 1] == '\n')b--;
         int z = b - a;
-        if (!draw && hity >= y - 2 && hity < y + 20)return text_offset(body,a,b,MAX(0,(hitx-x)/8));
+        if (!draw && hity >= y - 2 && hity < y + 20)return BodyOffset(body,a,b,MAX(0,hitx-x));
         if (draw) {
-            MonoText(x,y,body+a,z,STICKY ? 0x34322c : TX);
-            if (!focus && !confirm && i == here)Caret(x + text_columns(body+a,MIN(z,cur-a)) * 8, y + 1, 1, 16, STICKY ? 0x423941 : ACC);
+            BodyText(x,y,body+a,z,STICKY ? 0x34322c : TX);
+            if (!focus && !confirm && i == here)Caret(x + BodyWidth(body+a,MIN(z,cur-a)), y + 1, 1, 16, STICKY ? 0x423941 : ACC);
         }
     }
     return cur;

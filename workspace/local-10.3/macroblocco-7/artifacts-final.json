@@ -1,0 +1,137 @@
+{
+  "base_commit": "f035d94d5a12d57d91f5a8975a31a4c09782a336",
+  "production_inputs_verified": 1102,
+  "production_paths_changed_from_block6": [
+    "tinymacOS/assets/cursors/Alternate.cur",
+    "tinymacOS/assets/cursors/Busy.ani",
+    "tinymacOS/assets/cursors/Diagonal Resize 1.cur",
+    "tinymacOS/assets/cursors/Diagonal Resize 2.cur",
+    "tinymacOS/assets/cursors/Handwriting.cur",
+    "tinymacOS/assets/cursors/Help.cur",
+    "tinymacOS/assets/cursors/Horizontal Resize.cur",
+    "tinymacOS/assets/cursors/Location.cur",
+    "tinymacOS/assets/cursors/Move.cur",
+    "tinymacOS/assets/cursors/Normal.cur",
+    "tinymacOS/assets/cursors/Person.cur",
+    "tinymacOS/assets/cursors/Precision.cur",
+    "tinymacOS/assets/cursors/Select.cur",
+    "tinymacOS/assets/cursors/Text.cur",
+    "tinymacOS/assets/cursors/Unavailable.cur",
+    "tinymacOS/assets/cursors/Vertical Resize.cur",
+    "tinymacOS/assets/cursors/Working.ani",
+    "tinymacOS/assets/cursors/manifest.json",
+    "tinymacOS/build.sh",
+    "tinymacOS/desktop/desk.h",
+    "tinymacOS/desktop/gfx.c",
+    "tinymacOS/desktop/gfx.h",
+    "tinymacOS/desktop/login.c",
+    "tinymacOS/desktop/main.c",
+    "tinymacOS/desktop/pointer.h",
+    "tinymacOS/desktop/shell.c",
+    "tinymacOS/desktop/window_surface.h",
+    "tinymacOS/include/abi.h",
+    "tinymacOS/include/cursor_format.h",
+    "tinymacOS/include/window_interaction.h",
+    "tinymacOS/kernel/k.h",
+    "tinymacOS/kernel/sched.c",
+    "tinymacOS/kernel/syscall.c",
+    "tinymacOS/tools/cursor-assets.py",
+    "tinymacOS/tools/system_volume.py",
+    "tinymacOS/userspace/body_metrics.h",
+    "tinymacOS/userspace/installer.c",
+    "tinymacOS/userspace/notebook.h",
+    "tinymacOS/userspace/textedit.c",
+    "tinymacOS/userspace/ui.c",
+    "tinymacOS/userspace/ui.h"
+  ],
+  "physical_hardware_tested": false,
+  "release_ready": false,
+  "artifacts": {
+    "tmc-block7-retail.iso": {
+      "sha256": "ade556e160ddd2b0e7bd387e2ef9e4ff5a3f3705f6fa65e2dce4e217cbd0e988",
+      "bytes": 228190208
+    },
+    "KernelCache": {
+      "sha256": "af7b3d7aaf6a70a8f28d708d32b8219f4a965e01f97d813fe9c8d7553ef55b5e",
+      "bytes": 1298728
+    },
+    "kernel.elf": {
+      "sha256": "1426e499ee0b4432c06441bc278eae61fd24c1b49145462a9e20a435847ca67a",
+      "bytes": 1298664
+    },
+    "RecoveryKernel.elf": {
+      "sha256": "7d5639cde93e86d798f8f037ff2948b4ceb9a9e14dc4a620df65cfd34de93d06",
+      "bytes": 1298664
+    },
+    "BOOTX64.EFI": {
+      "sha256": "7252afc43ef818559fa73e82512cbe3d5cfd89fc7e0885498fedef186758f40c",
+      "bytes": 177152
+    },
+    "RECBOOT.EFI": {
+      "sha256": "092b1b94b85469fddf5ad7e5b330172a6ba8429c8d171e4fa23c8fcba7c2322a",
+      "bytes": 173056
+    },
+    "desktop.elf": {
+      "sha256": "0cedbea986d969f5251f47d6e6193ee6de6dd8c93350488e737ee5e8665947ae",
+      "bytes": 2819616
+    },
+    "finder.elf": {
+      "sha256": "b355c67b7280e9137e5937c4cdde7579d818ead6426ef758a3c36601ce74aed4",
+      "bytes": 54336
+    },
+    "terminal.elf": {
+      "sha256": "25f68a5693a210ce914ac3e880e24ffdeca8442d4d0371519bc430362feecbfb",
+      "bytes": 41848
+    },
+    "monitor.elf": {
+      "sha256": "45925ceb82b425dd2f89d856bc5b66cedaf498e27e9fa64f02e8549687cedc7c",
+      "bytes": 33280
+    },
+    "textedit.elf": {
+      "sha256": "9990814e4ccf87f58ce04e6a0b3f7a67d06b19daaa041689ba8c61252429263c",
+      "bytes": 41632
+    },
+    "notes.elf": {
+      "sha256": "f277f142da9af5971772ab1afdb76ebad3e9fba5029c93074806759bbbb9bca3",
+      "bytes": 33192
+    },
+    "stickies.elf": {
+      "sha256": "af8a10867bd62fe4635fb5abbde994df667c15ceaf74eff443eb59cd40f56901",
+      "bytes": 33192
+    },
+    "calculator.elf": {
+      "sha256": "96077377ef1a4e7fea8d3e5f016dc85d2515d914056fa4700cda3ebed1856e4e",
+      "bytes": 25352
+    }
+  },
+  "source_tests": {
+    "tests/cursor7_bundle_check.py": "0cbc7b228f37428775acb9fbba3b49c9cd14f7ed36028ebed329aac5bfe833b5",
+    "tests/cursor7_context_host.c": "af88a1a69b38f7780f0ffbacbeb5f71105483b1fea9a265d02b26c4c9d8215ac",
+    "tests/cursor7_host.c": "e71e04999e55b7d6ebcd2f5acf44dea4220526aaf698e80ac83bc09f95ef5714",
+    "tests/cursor7_pixels_host.c": "a7ac65f2ac72bbf4d8caf96b0bbda4cbc49bdc83c29dc1fa1ea085cb1eddbf2d",
+    "tests/interaction7_checks.py": "9e895fcfa035e4ec6fc878af3d4b32ce7adab472ca26a100c86be3f248516ab9",
+    "tests/interaction7_dialogs_guest.py": "83a86d85f1f0d095c439a21d97b6937d7bff2647576a94a14479993ddfafe06f",
+    "tests/interaction7_guest.py": "a6eb9b71123b7d99b3ec669f05dc944a5b18dd6fcf959a8e0189c0d252900f07",
+    "tests/interaction7_source_contract.py": "c25b347d2a239667964e5106a1a4160c873d6dcee71dc9fb327d5434d4b9eb25",
+    "tests/resize7_queue_host.c": "02d775bcc82bf478d81b9bfc9321f5b054e84b826a7846c82e387281beb58581",
+    "tests/test-cursor7.sh": "8963cc051e2fe7d40163803fcc4cf8720dfec989c38f2814b4a9622ddb2c7476",
+    "tests/apps5_host.c": "0b421ad7691af65b38a8f03f4a0d079db055b61ec209b3efc8b239d68451b0cf",
+    "tests/textedit_frame_host.c": "6083369baca36530369a91e71064ab0869c4d4cb9e100b3c012c96a490138881",
+    "tests/textedit_open_host.c": "be90832a139b5851bb08a668fb0e14cac78f87f7f776777a2e90bc2f7eadc9aa",
+    "tests/textedit_roundtrip_host.c": "3ca1261cba54c55534e2805aa9123b0ed3bb7c6346c4938c71147aae6bb8f84b",
+    "tests/notebook_caret_host.c": "a1e33ab96d4d63804a5294ca5eadb2e4a88eed3054dd73d6030500d659785409",
+    "tests/window_surface_host.c": "bf989c0823aa656dc087891e4467d4933c1ece1f0da24a0c6b7c7d2b2529562a",
+    "tests/body_font_fixture.h": "df962536ea7302739b04a22cc5d62b9355dded9c092bac61bdfc64d45fe4d705",
+    "tests/test-10.3-foundation.sh": "7ad7e8821efaec840782d1d6ed7efb32861c667d71528cb5838dd09d86d96f17"
+  },
+  "storage_test_execution": "12 current M2 suites in one uninterrupted wrapper run; initial attempt without required TMC_BUILD failed before any suite and is preserved separately. Relevant storage production unchanged throughout final wrapper. UI/ABI refinements and final full foundation/build/real guests followed.",
+  "cursor_resources": {
+    "count": 17,
+    "cur": 15,
+    "ani": 2,
+    "bytes": 322066,
+    "source_archive_sha256": "0da6090ef31810bf93c50d13f59a58036507ccc31f8803d610c390474508263a"
+  },
+  "draw_packet_bytes": 116,
+  "draw_commands_max": 256
+}

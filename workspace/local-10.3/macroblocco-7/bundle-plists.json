@@ -1,0 +1,14 @@
+{
+  "live": {
+    "volume_sha256": "c0c6ee77b00eb3a36629200a934f03245e0619e80408202e17c15c76e81138e6",
+    "localized_bundles_verified": 14
+  },
+  "disk": {
+    "volume_sha256": "6329b7d93883d866e176544fb7e7026b094ddaf8ae3c058ede294fbaaa32b4e7",
+    "localized_bundles_verified": 13
+  },
+  "recovery": {
+    "volume_sha256": "1dd4e03bd5b88327db5dbeaef21976f119a1d8cb6be7d8c55b83e351ebece623",
+    "localized_bundles_verified": 4
+  }
+}

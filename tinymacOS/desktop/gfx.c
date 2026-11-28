@@ -296,6 +296,14 @@ static int glyph(const char **s)
     for (int i = 191; i < ng; i++)if (symbols[i] == c)return i;
     return '?' - 32;
 }
+void cursor_pixels(const u32 *rgba,const u8 *invert,int x,int y)
+{
+ for(int j=0;j<32;j++)for(int i=0;i<32;i++){int X=x+i,Y=y+j,k=j*32+i;
+  if(X<0||Y<0||X>=W||Y>=H)continue;
+  if(invert[k])canvas[Y*W+X]^=0xffffff;
+  else {u32 p=rgba[k];pix(X,Y,p&0xffffff,p>>24);}
+ }
+}
 int textw(const char *s, int f)
 {
     if (f < 0 || f >= NFONTS)f = 1;
@@ -323,14 +331,16 @@ void text(int x, int y, const char *s, int f, u32 col)
 static void mono_run(int x,int y,const Draw *q)
 {
     int n=MAX(0,MIN(99,q->w));u32 ink=color(q->ink);
-    for(int k=0;k<n&&x<x2;k++,x+=8){
+    int face=q->type==C_BODY?F_BODY:F_MONO;
+    for(int k=0;k<n&&x<x2;k++){
         unsigned ref=(u8)q->text[k];int i=ref&&ref<=207?(int)ref-1:'?'-32;
         if(i>=ng)i='?'-32;
-        const Glyph *g=font[F_MONO].g+i;const u8 *p=bits+g->off;
-        for(int j=MAX(0,y1-y);j<MIN((int)font[F_MONO].h,y2-y);j++)
+        const Glyph *g=font[face].g+i;const u8 *p=bits+g->off;
+        for(int j=MAX(0,y1-y);j<MIN((int)font[face].h,y2-y);j++)
             for(int col=MAX(0,x1-x);col<MIN(g->w,x2-x);col++){
                 int alpha=p[j*g->w+col];if(alpha)pix(x+col,y+j,ink,alpha);
             }
+        x+=face==F_MONO?8:g->adv;
     }
 }
 void inputline(Rect q,const char *s,int at,int active,u32 ink)
@@ -371,7 +381,7 @@ void client(int x, int y, int w, int h, Draw *d, int n)
                 center(X, Y, q->text, q->style & 127, q->ink);
             else
                 text(X, Y, q->text, q->style, q->ink);
-        } else if (q->type == C_MONO)mono_run(X,Y,q);
+        } else if ((q->type == C_MONO||q->type==C_BODY))mono_run(X,Y,q);
         else if (q->type == C_ICON)
             icon(X, Y, q->w, (int8_t)q->style);
         else if (q->type == C_LINE)
